@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.shell-content-inner {
+  animation: routeFadeIn var(--mis-transition-base) ease;
+}
+
+@keyframes routeFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

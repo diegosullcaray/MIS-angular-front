@@ -1,0 +1,75 @@
+<div class="flex flex-col gap-6">
+  <!-- Header -->
+  <header class="mb-2">
+    <div>
+      <h1 class="text-2xl font-bold text-[var(--mis-primary)] m-0 mb-1">Gestión de Accesos (IAM)</h1>
+      <p class="text-base text-[var(--mis-text-secondary)] m-0 max-w-[760px] leading-normal">Administra los usuarios de la plataforma, define sus roles e indica a qué micro-frontends (Remotes) tienen acceso.</p>
+    </div>
+  </header>
+
+  <!-- KPI Summary Cards -->
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <p-card styleClass="border border-[var(--mis-border)] rounded-[10px] shadow-sm">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-[10px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] flex items-center justify-center shrink-0">
+          <ng-icon name="lucideUsers" size="20" />
+        </div>
+        <div class="flex flex-col gap-[2px]">
+          <span class="text-[11px] font-semibold text-[var(--mis-text-secondary)] uppercase tracking-[0.5px]">Usuarios Activos</span>
+          <span class="text-2xl font-bold text-[var(--mis-text-primary)] leading-none">{{ service.totalUsuariosActivos() }}</span>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card styleClass="border border-[var(--mis-border)] rounded-[10px] shadow-sm">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-[10px] bg-[var(--mis-secondary-light)] text-[var(--mis-secondary)] flex items-center justify-center shrink-0">
+          <ng-icon name="lucideShield" size="20" />
+        </div>
+        <div class="flex flex-col gap-[2px]">
+          <span class="text-[11px] font-semibold text-[var(--mis-text-secondary)] uppercase tracking-[0.5px]">Roles Definidos</span>
+          <span class="text-2xl font-bold text-[var(--mis-text-primary)] leading-none">{{ service.totalRoles() }}</span>
+        </div>
+      </div>
+    </p-card>
+  </section>
+
+  <!-- Management Boxes -->
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
+    <div class="bg-[var(--mis-surface)] border border-[var(--mis-border)] rounded-[10px] p-5 flex flex-col justify-between gap-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[var(--mis-border-strong)]">
+      <div class="flex items-start gap-4">
+        <div class="w-11 h-11 rounded-[10px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] flex items-center justify-center shrink-0">
+          <ng-icon name="lucideUsers" size="24" />
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-[var(--mis-text-primary)] m-0 mb-[2px]">Usuarios</h3>
+          <p class="text-sm text-[var(--mis-text-secondary)] m-0 leading-normal">Crear nuevos usuarios, desactivar cuentas existentes, cambiar emails y configurar contraseñas.</p>
+        </div>
+      </div>
+      <div class="border-t border-[var(--mis-border)] pt-3">
+        <a routerLink="/admin/accesos/usuarios" class="inline-flex items-center gap-2 text-[var(--mis-primary)] no-underline text-sm font-semibold transition-colors duration-150 hover:text-[var(--mis-secondary-hover)]">
+          Ir a listado
+          <ng-icon name="lucideArrowRight" size="14" />
+        </a>
+      </div>
+    </div>
+
+    <div class="bg-[var(--mis-surface)] border border-[var(--mis-border)] rounded-[10px] p-5 flex flex-col justify-between gap-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[var(--mis-border-strong)]">
+      <div class="flex items-start gap-4">
+        <div class="w-11 h-11 rounded-[10px] bg-[var(--mis-secondary-light)] text-[var(--mis-secondary)] flex items-center justify-center shrink-0">
+          <ng-icon name="lucideShield" size="24" />
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-[var(--mis-text-primary)] m-0 mb-[2px]">Roles & Permisos</h3>
+          <p class="text-sm text-[var(--mis-text-secondary)] m-0 leading-normal">Define roles del sistema y mapea qué subsistemas remotos tiene permitido ver cada rol de forma predeterminada.</p>
+        </div>
+      </div>
+      <div class="border-t border-[var(--mis-border)] pt-3">
+        <a routerLink="/admin/accesos/roles" class="inline-flex items-center gap-2 text-[var(--mis-primary)] no-underline text-sm font-semibold transition-colors duration-150 hover:text-[var(--mis-secondary-hover)]">
+          Ir a listado
+          <ng-icon name="lucideArrowRight" size="14" />
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

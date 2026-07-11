@@ -1,0 +1,15 @@
+.nav-link:hover,
+.nav-link--active {
+  background: var(--mis-primary-light) !important;
+  color: var(--mis-primary) !important;
+}
+
+.nav-link:hover .nav-link-icon,
+.nav-link--active .nav-link-icon {
+  color: var(--mis-primary) !important;
+}
+
+.nav-link:hover .nav-link-dot,
+.nav-link--active .nav-link-dot {
+  background: var(--mis-primary) !important;
+}

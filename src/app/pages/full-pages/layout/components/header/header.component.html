@@ -1,0 +1,59 @@
+<header class="flex items-center gap-4 h-[var(--mis-header-h)] px-5 relative">
+  <!-- Logo / Wordmark -->
+  <div class="flex items-center gap-2 shrink-0">
+    <span class="text-[var(--mis-text-base)] font-bold text-[var(--mis-primary)] tracking-[1px]">MIS</span>
+    <span class="text-[var(--mis-border-strong)] text-[var(--mis-text-lg)] font-thin">|</span>
+    <span class="text-sm text-[var(--mis-text-secondary)] font-medium whitespace-nowrap">Management Information System</span>
+  </div>
+
+  <!-- Spacer -->
+  <div class="flex-1"></div>
+
+  <!-- Acciones de cabecera -->
+  <div class="flex items-center gap-2 relative">
+    <!-- Notificaciones -->
+    <button class="w-8 h-8 rounded-[6px] border-0 bg-transparent text-[var(--mis-text-secondary)] flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-[var(--mis-primary-light)] hover:text-[var(--mis-primary)]" aria-label="Notificaciones">
+      <ng-icon name="lucideBell" size="16" />
+    </button>
+
+    <!-- Pill de usuario -->
+    <div class="flex items-center gap-2 p-1 pr-2 rounded-full border-1.5 border-[var(--mis-border-strong)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-primary-light)] hover:border-[var(--mis-primary)]"
+         (click)="toggleDropdown()" (keydown.enter)="toggleDropdown()" tabindex="0" role="button" aria-haspopup="true" [attr.aria-expanded]="dropdownOpen()">
+      <div class="w-7 h-7 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-xs font-semibold shrink-0">{{ shell.inicialesUsuario() }}</div>
+      <div class="flex flex-col">
+        <span class="text-sm font-medium text-[var(--mis-text-primary)] leading-tight">{{ shell.usuarioActivo()?.nombre }}</span>
+        <span class="text-[10px] text-[var(--mis-text-tertiary)] leading-none">{{ rolLabel() }}</span>
+      </div>
+      <ng-icon name="lucideChevronDown" size="14" class="text-[var(--mis-text-tertiary)] transition-transform duration-150" [class.rotate-180]="dropdownOpen()" />
+    </div>
+
+    <!-- Dropdown del usuario -->
+    @if (dropdownOpen()) {
+      <div class="absolute top-[calc(100%+8px)] right-0 w-[240px] bg-[var(--mis-surface)] border border-[var(--mis-border)] rounded-[10px] shadow-[var(--mis-shadow-lg)] z-[var(--mis-z-dropdown)] overflow-hidden animate-dropdownFadeIn" role="menu">
+        <div class="flex items-center gap-3 p-3 px-4">
+          <div class="w-9 h-9 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-sm font-semibold shrink-0">{{ shell.inicialesUsuario() }}</div>
+          <div>
+            <div class="text-sm font-semibold text-[var(--mis-text-primary)]">{{ shell.usuarioActivo()?.nombre }}</div>
+            <div class="text-xs text-[var(--mis-text-tertiary)]">{{ shell.usuarioActivo()?.email }}</div>
+          </div>
+        </div>
+        <div class="h-[1px] bg-[var(--mis-border)] my-1"></div>
+        <button class="flex items-center gap-3 w-full p-2 px-4 border-0 bg-transparent text-sm text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem">
+          <ng-icon name="lucideUser" size="14" />
+          Mi perfil
+        </button>
+        <button class="flex items-center gap-3 w-full p-2 px-4 border-0 bg-transparent text-sm text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem">
+          <ng-icon name="lucideSettings" size="14" />
+          Preferencias
+        </button>
+        <div class="h-[1px] bg-[var(--mis-border)] my-1"></div>
+        <button class="flex items-center gap-3 w-full p-2 px-4 border-0 bg-transparent text-sm text-[var(--mis-danger)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-danger-light)]" role="menuitem" (click)="cerrarSesion()">
+          <ng-icon name="lucideLogOut" size="14" />
+          Cerrar sesión
+        </button>
+      </div>
+      <!-- Overlay para cerrar dropdown al click fuera -->
+      <div class="fixed inset-0 z-[calc(var(--mis-z-dropdown)-1)]" (click)="dropdownOpen.set(false)"></div>
+    }
+  </div>
+</header>

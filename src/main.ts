@@ -1,6 +1,9 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { App } from './app/app';
+(globalThis as any).ngDevMode = (globalThis as any).ngDevMode || false;
 
-bootstrapApplication(App, appConfig)
+import { initFederation } from '@angular-architects/native-federation';
+
+initFederation('federation.manifest.json')
+  .catch((err) => console.error(err))
+  .then((_) => import('./bootstrap'))
   .catch((err) => console.error(err));
+

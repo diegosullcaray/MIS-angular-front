@@ -1,0 +1,14 @@
+<div class="flex flex-col items-center justify-center gap-3 py-12 px-6 text-center">
+  <div class="w-16 h-16 rounded-full bg-[var(--mis-primary-light)] flex items-center justify-center">
+    <ng-icon [name]="icono()" size="28" class="text-[var(--mis-primary)] opacity-50" />
+  </div>
+  <h4 class="m-0 text-[17px] font-semibold text-[var(--mis-text-primary)]">{{ titulo() }}</h4>
+  @if (descripcion()) {
+    <p class="m-0 text-[13px] text-[var(--mis-text-secondary)] max-w-[320px] leading-normal">{{ descripcion() }}</p>
+  }
+  @if (accionLabel()) {
+    <button class="mt-2 px-4 py-2 rounded-[6px] bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] border-0 text-[13px] font-medium cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-primary-hover)]" (click)="onAccion()">
+      {{ accionLabel() }}
+    </button>
+  }
+</div>

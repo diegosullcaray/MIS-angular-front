@@ -1,0 +1,17 @@
+<div class="flex flex-col">
+  <!-- Header de tabla -->
+  <div class="flex items-center gap-4 py-3 px-4 bg-[var(--mis-panel-bg)] border-b border-[var(--mis-border)]">
+    @for (col of cols(); track col) {
+      <div class="skeleton h-3.5 flex-1 rounded-[6px]"></div>
+    }
+  </div>
+
+  <!-- Filas -->
+  @for (row of rows(); track row) {
+    <div class="flex items-center gap-4 p-4 border-b border-[var(--mis-border)] hover:bg-[var(--mis-panel-bg)]">
+      @for (col of cols(); track col) {
+        <div class="skeleton h-3.5 flex-1 rounded-[6px]" [style.width]="getCellWidth(col)"></div>
+      }
+    </div>
+  }
+</div>

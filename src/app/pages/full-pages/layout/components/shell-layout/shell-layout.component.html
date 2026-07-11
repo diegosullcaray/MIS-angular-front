@@ -1,0 +1,19 @@
+<div class="h-screen flex overflow-hidden bg-[var(--mis-bg)]">
+  <!-- Sidebar: Col1 (íconos) + Col2 (panel) -->
+  <app-sidebar class="flex shrink-0 h-full" />
+
+  <!-- Zona principal -->
+  <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+    <!-- Header glass effect -->
+    <header class="h-[var(--mis-header-h)] shrink-0 bg-white/85 backdrop-blur-[12px] border-b border-[var(--mis-border)] z-10">
+      <app-header />
+    </header>
+
+    <!-- Contenido de la ruta activa -->
+    <main class="flex-1 overflow-y-auto bg-[var(--mis-bg)]">
+      <div class="max-w-[1400px] mx-auto p-6 shell-content-inner">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+</div>

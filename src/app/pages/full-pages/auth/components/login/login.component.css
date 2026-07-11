@@ -1,0 +1,36 @@
+.login-wrapper {
+    background: radial-gradient(circle at top right, var(--mis-primary) 0%, #0A1630 60%, #050B18 100%);
+    font-family: var(--mis-font-family);
+}
+
+.bg-circle-1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--mis-secondary) 0%, rgba(66, 173, 224, 0) 70%);
+    top: -100px;
+    right: -100px;
+}
+
+.bg-circle-2 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--mis-primary) 0%, rgba(29, 57, 110, 0) 70%);
+    bottom: -150px;
+    left: -150px;
+}
+
+.login-card-container {
+    animation: loginFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes loginFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+:host ::ng-deep p-password,
+:host ::ng-deep .p-password,
+:host ::ng-deep .p-password-input {
+    display: block !important;
+    width: 100% !important;
+}

@@ -1,0 +1,12 @@
+<div class="flex items-start gap-3 p-3 border border-[rgba(255,59,48,0.15)] rounded-[10px] bg-[var(--mis-danger-light)]" role="alert">
+  <ng-icon name="lucideAlertCircle" size="16" class="text-[var(--mis-danger)] mt-[1px] shrink-0" />
+  <div class="flex flex-col gap-[2px] flex-1">
+    <span class="text-[13px] font-medium text-[var(--mis-danger)]">{{ titulo() }}</span>
+    @if (detalle()) {
+      <span class="text-[11px] text-[var(--mis-text-secondary)]">{{ detalle() }}</span>
+    }
+  </div>
+  @if (accionLabel()) {
+    <button class="px-2 py-0.5 border border-[var(--mis-danger)] bg-transparent text-[var(--mis-danger)] rounded-[6px] text-xs cursor-pointer whitespace-nowrap transition-all duration-150 hover:bg-[rgba(255,59,48,0.08)]" (click)="reintentar.emit()">{{ accionLabel() }}</button>
+  }
+</div>

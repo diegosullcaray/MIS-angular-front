@@ -1,0 +1,91 @@
+<div class="flex flex-col gap-6 max-w-[800px] mx-auto">
+  <!-- Header -->
+  <header class="mb-2">
+    <div>
+      <a routerLink="/admin/accesos/roles" class="inline-flex items-center gap-1 text-[var(--mis-text-secondary)] no-underline text-sm mb-2 transition-colors duration-150 hover:text-[var(--mis-primary)]">
+        <ng-icon name="lucideArrowLeft" size="16" />
+        Volver a Roles
+      </a>
+      <h1 class="text-2xl font-bold text-[var(--mis-primary)] m-0 mb-1">{{ id() ? 'Editar Rol' : 'Nuevo Rol' }}</h1>
+      <p class="text-base text-[var(--mis-text-secondary)] m-0">Configura los datos del perfil y sus permisos de acceso predeterminados.</p>
+    </div>
+  </header>
+
+  <p-card styleClass="border border-[var(--mis-border)] shadow-sm">
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="flex flex-col gap-6">
+      <!-- Datos del Rol -->
+      <div class="flex flex-col gap-4">
+        <h3 class="text-lg font-semibold text-[var(--mis-primary)] m-0 border-l-[3px] border-[var(--mis-secondary)] pl-2">Detalles del Rol</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex flex-col gap-2">
+            <label for="nombre" class="text-sm font-semibold text-[var(--mis-text-primary)]">Nombre del Rol</label>
+            <input
+              id="nombre"
+              type="text"
+              pInputText
+              formControlName="nombre"
+              placeholder="Ej. Operador Contable"
+              (input)="onNombreInput()"
+            />
+            @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+              <small class="text-xs text-[var(--mis-danger)]">El nombre es requerido.</small>
+            }
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="slug" class="text-sm font-semibold text-[var(--mis-text-primary)]">Identificador (Slug)</label>
+            <input
+              id="slug"
+              type="text"
+              pInputText
+              formControlName="slug"
+              placeholder="Ej. operador-contable"
+              [attr.disabled]="id() ? true : null"
+            />
+            @if (form.get('slug')?.invalid && form.get('slug')?.touched) {
+              <small class="text-xs text-[var(--mis-danger)]">El slug es requerido y debe ser en minúsculas y sin espacios.</small>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="h-[1px] bg-[var(--mis-border)]"></div>
+
+      <!-- Permisos del Rol -->
+      <div class="flex flex-col gap-4">
+        <h3 class="text-lg font-semibold text-[var(--mis-primary)] m-0 border-l-[3px] border-[var(--mis-secondary)] pl-2">Accesos Predeterminados</h3>
+        <div class="flex flex-col gap-2">
+          <span class="text-sm font-semibold text-[var(--mis-text-primary)]">Sistemas Embebidos (Remotes)</span>
+          <p class="text-xs text-[var(--mis-text-secondary)] m-0">Selecciona qué subsistemas remotos tiene permitido acceder por defecto cualquier usuario con este rol.</p>
+          <div class="flex flex-col gap-3 pt-1">
+            @for (opt of remotesOptions; track opt.value) {
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  [checked]="isSubscribed(opt.value)"
+                  (change)="onCheckboxChange($event, opt.value)"
+                />
+                <span class="text-sm text-[var(--mis-text-primary)]">{{ opt.label }}</span>
+              </label>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 border-t border-[var(--mis-border)] pt-4">
+        <p-button
+          label="Cancelar"
+          [text]="true"
+          severity="secondary"
+          routerLink="/admin/accesos/roles"
+          type="button"
+        />
+        <p-button
+          [label]="id() ? 'Guardar Cambios' : 'Crear Rol'"
+          type="submit"
+          [disabled]="form.invalid || cargando()"
+        />
+      </div>
+    </form>
+  </p-card>
+</div>

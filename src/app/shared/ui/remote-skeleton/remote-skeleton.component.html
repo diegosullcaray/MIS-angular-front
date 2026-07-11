@@ -1,0 +1,14 @@
+<div class="p-6 flex flex-col gap-6">
+  <div class="h-[120px] rounded-[10px] skeleton"></div>
+  <div class="flex flex-col gap-4">
+    @for (row of rows; track row) {
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-[10px] shrink-0 skeleton"></div>
+        <div class="flex-1 flex flex-col gap-2">
+          <div class="h-4 rounded-[6px] w-[60%] skeleton"></div>
+          <div class="h-3 rounded-[6px] w-[40%] skeleton"></div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
