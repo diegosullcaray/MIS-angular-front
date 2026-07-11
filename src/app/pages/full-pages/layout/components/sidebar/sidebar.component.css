@@ -1,0 +1,27 @@
+:host {
+  display: contents;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-icon-btn--active {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+}
+
+.sidebar-icon-btn--active::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: var(--mis-secondary);
+  border-radius: 0 var(--mis-radius-xs) var(--mis-radius-xs) 0;
+}

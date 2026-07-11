@@ -1,0 +1,39 @@
+<!-- Col 1: Tira de íconos -->
+<aside class="w-[var(--mis-sidebar-col1-w)] bg-[var(--mis-sidebar-bg)] flex flex-col items-center py-2 gap-1 h-full overflow-hidden" aria-label="Sistemas">
+  <!-- Botón Menú Hamburguesa en top -->
+  <button
+    class="w-9 h-9 rounded-[10px] bg-transparent hover:bg-white/10 text-white/70 hover:text-white flex items-center justify-center shrink-0 mb-1 border-0 cursor-pointer transition-all duration-150 active:bg-white/15 focus:outline-none"
+    (click)="toggleNavPanel()"
+    aria-label="Alternar menú lateral"
+    title="Alternar menú"
+  >
+    <ng-icon name="lucideMenu" size="20" />
+  </button>
+
+  <div class="w-7 h-[1px] bg-white/12 my-1 shrink-0"></div>
+
+  <!-- Íconos de sistemas -->
+  <div class="flex flex-col items-center gap-[2px] flex-1 overflow-y-auto w-full px-1 scrollbar-none">
+    @for (icon of iconos(); track icon.id) {
+      <button
+        class="sidebar-icon-btn w-11 flex flex-col items-center gap-[3px] py-2 border-0 bg-transparent text-white/55 rounded-[10px] cursor-pointer transition-all duration-150 relative hover:bg-white/10 hover:text-white/90"
+        [class.sidebar-icon-btn--active]="iconActivoId() === icon.id"
+        [title]="icon.etiqueta"
+        (click)="seleccionarIcono(icon)"
+        [attr.aria-label]="icon.etiqueta"
+        [attr.aria-current]="iconActivoId() === icon.id ? 'page' : null"
+      >
+        <ng-icon [name]="icon.icono" size="20" />
+        <span class="text-[9px] font-medium text-center leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]">{{ icon.etiqueta }}</span>
+      </button>
+    }
+  </div>
+</aside>
+
+<!-- Col 2: Panel de navegación -->
+@if (!isNavPanelCollapsed()) {
+  <app-sidebar-nav-panel
+    [panelConfig]="panelActivo()"
+    (rutaSeleccionada)="onRutaSeleccionada($event)"
+  />
+}
