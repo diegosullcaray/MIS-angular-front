@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { CardModule } from 'primeng/card';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideBoxes, lucideEye, lucideEdit2, lucideTrash2, lucideAlertTriangle, lucideLayers
@@ -23,6 +24,7 @@ import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inli
     TableModule,
     ButtonModule,
     DialogModule,
+    CardModule,
     NgIconComponent,
     ListSkeletonComponent,
     EmptyStateComponent,

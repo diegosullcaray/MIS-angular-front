@@ -1,26 +1,23 @@
-<div class="flex flex-col gap-6">
-  <!-- Header -->
-  <header class="flex justify-between items-end mb-2">
-    <div>
-      <a routerLink="/admin/accesos" class="inline-flex items-center gap-1 text-[var(--mis-text-secondary)] no-underline text-sm mb-2 transition-colors duration-150 hover:text-[var(--mis-primary)]">
-        <ng-icon name="lucideArrowLeft" size="16" />
-        Volver a Accesos
-      </a>
-      <h1 class="text-2xl font-bold text-[var(--mis-primary)] m-0 mb-1">Usuarios</h1>
-      <p class="text-base text-[var(--mis-text-secondary)] m-0">Visualiza y gestiona las cuentas de usuario de la plataforma.</p>
-    </div>
+<div class="flex flex-col gap-6 w-full">
+  <p-card styleClass="mis-card">
+    <!-- Card Header -->
+    <ng-template pTemplate="header">
+      <div class="flex justify-between items-center gap-4 px-5 py-4 border-b border-[var(--mis-border)]">
+        <div>
+          <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">Usuarios</h2>
+          <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">Visualiza y gestiona las cuentas de usuario de la plataforma.</p>
+        </div>
+        <p-button
+          label="Nuevo Usuario"
+          icon="pi pi-plus"
+          routerLink="/admin/accesos/usuarios/nuevo"
+        />
+      </div>
+    </ng-template>
 
-    <p-button
-      label="Nuevo Usuario"
-      icon="pi pi-plus"
-      routerLink="/admin/accesos/usuarios/nuevo"
-    />
-  </header>
-
-  <!-- Main card container -->
-  <div class="bg-[var(--mis-surface)] border border-[var(--mis-border)] rounded-[10px] shadow-sm overflow-hidden pt-4">
-    <!-- Search bar -->
-    <div class="px-4 pb-4 border-b border-[var(--mis-border)]">
+    <!-- Card Body -->
+    <div class="flex flex-col gap-4">
+      <!-- Search bar -->
       <span class="p-input-icon-left w-full sm:w-80">
         <i class="pi pi-search"></i>
         <input
@@ -31,84 +28,84 @@
           (input)="onSearch($event)"
         />
       </span>
-    </div>
 
-    @if (service.isLoadingUsuarios()) {
-      <app-list-skeleton [rows]="[1,2,3,4]" [cols]="[1,2,3,4,5]" />
-    } @else {
-      @if (service.usuarios().length === 0) {
-        <app-empty-state
-          titulo="No se encontraron usuarios"
-          descripcion="Prueba ajustando tu criterio de búsqueda o agrega un nuevo usuario."
-          accionLabel="Agregar usuario"
-          routerLink="/admin/accesos/usuarios/nuevo"
-        />
+      @if (service.isLoadingUsuarios()) {
+        <app-list-skeleton [rows]="[1,2,3,4]" [cols]="[1,2,3,4,5]" />
       } @else {
-        <p-table
-          [value]="service.usuarios()"
-          [paginator]="true"
-          [rows]="10"
-          [rowsPerPageOptions]="[5, 10, 20]"
-          responsiveLayout="scroll"
-          class="mis-table"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Nombre</th>
-              <th>Correo</th>
-              <th>Rol</th>
-              <th>Sistemas habilitados</th>
-              <th>Estado</th>
-              <th class="text-right">Acciones</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-user>
-            <tr>
-              <td class="font-semibold text-[var(--mis-text-primary)]">{{ user.nombre }}</td>
-              <td>{{ user.email }}</td>
-              <td>
-                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full" [class]="getRolClass(user.rol)">
-                  {{ getRolLabel(user.rol) }}
-                </span>
-              </td>
-              <td>
-                <div class="flex flex-wrap gap-1">
-                  @for (sub of user.subsistemas; track sub) {
-                    <span class="text-[10px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] font-medium px-2 py-0.5 rounded-[6px]">{{ formatRemoteLabel(sub) }}</span>
-                  } @empty {
-                    <span class="text-[var(--mis-text-tertiary)] font-normal text-xs">Ninguno</span>
-                  }
-                </div>
-              </td>
-              <td>
-                <button
-                  class="inline-flex items-center gap-2 px-2 py-1 rounded-full border cursor-pointer text-[11px] font-semibold transition-all duration-150 hover:border-[var(--mis-text-secondary)]"
-                  [class]="user.activo 
-                    ? 'bg-[var(--mis-success-light)] text-[var(--mis-success)] border-[rgba(52,199,89,0.2)]' 
-                    : 'bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] border-[var(--mis-border-strong)]'"
-                  (click)="toggleStatus(user)"
-                  [title]="user.activo ? 'Desactivar usuario' : 'Activar usuario'"
-                >
-                  <span class="w-1.5 h-1.5 rounded-full transition-colors duration-150"
-                        [class]="user.activo ? 'bg-[var(--mis-success)]' : 'bg-[var(--mis-text-tertiary)]'"></span>
-                  <span class="toggle-text">{{ user.activo ? 'Activo' : 'Inactivo' }}</span>
-                </button>
-              </td>
-              <td class="text-right">
-                <div class="inline-flex gap-1 justify-end">
+        @if (service.usuarios().length === 0) {
+          <app-empty-state
+            titulo="No se encontraron usuarios"
+            descripcion="Prueba ajustando tu criterio de búsqueda o agrega un nuevo usuario."
+            accionLabel="Agregar usuario"
+            routerLink="/admin/accesos/usuarios/nuevo"
+          />
+        } @else {
+          <p-table
+            [value]="service.usuarios()"
+            [paginator]="true"
+            [rows]="10"
+            [rowsPerPageOptions]="[5, 10, 20]"
+            responsiveLayout="scroll"
+            class="mis-table"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Sistemas habilitados</th>
+                <th>Estado</th>
+                <th class="text-right">Acciones</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-user>
+              <tr>
+                <td class="font-semibold text-[var(--mis-text-primary)]">{{ user.nombre }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full" [class]="getRolClass(user.rol)">
+                    {{ getRolLabel(user.rol) }}
+                  </span>
+                </td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    @for (sub of user.subsistemas; track sub) {
+                      <span class="text-[10px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] font-medium px-2 py-0.5 rounded-[6px]">{{ formatRemoteLabel(sub) }}</span>
+                    } @empty {
+                      <span class="text-[var(--mis-text-tertiary)] font-normal text-xs">Ninguno</span>
+                    }
+                  </div>
+                </td>
+                <td>
                   <button
-                    class="w-7 h-7 rounded-[6px] border-0 bg-transparent text-[var(--mis-text-secondary)] flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-[var(--mis-primary-light)] hover:text-[var(--mis-primary)]"
-                    [routerLink]="['/admin/accesos/usuarios', user.id]"
-                    title="Editar"
+                    class="inline-flex items-center gap-2 px-2 py-1 rounded-full border cursor-pointer text-[11px] font-semibold transition-all duration-150 hover:border-[var(--mis-text-secondary)]"
+                    [class]="user.activo
+                      ? 'bg-[var(--mis-success-light)] text-[var(--mis-success)] border-[rgba(52,199,89,0.2)]'
+                      : 'bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] border-[var(--mis-border-strong)]'"
+                    (click)="toggleStatus(user)"
+                    [title]="user.activo ? 'Desactivar usuario' : 'Activar usuario'"
                   >
-                    <ng-icon name="lucideEdit2" size="13" />
+                    <span class="w-1.5 h-1.5 rounded-full transition-colors duration-150"
+                          [class]="user.activo ? 'bg-[var(--mis-success)]' : 'bg-[var(--mis-text-tertiary)]'"></span>
+                    <span class="toggle-text">{{ user.activo ? 'Activo' : 'Inactivo' }}</span>
                   </button>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+                </td>
+                <td class="text-right">
+                  <div class="inline-flex gap-1 justify-end">
+                    <button
+                      class="w-7 h-7 rounded-[6px] border-0 bg-transparent text-[var(--mis-text-secondary)] flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-[var(--mis-primary-light)] hover:text-[var(--mis-primary)]"
+                      [routerLink]="['/admin/accesos/usuarios', user.id]"
+                      title="Editar"
+                    >
+                      <ng-icon name="lucideEdit2" size="13" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        }
       }
-    }
-  </div>
+    </div>
+  </p-card>
 </div>

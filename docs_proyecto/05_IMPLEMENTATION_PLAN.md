@@ -143,68 +143,52 @@ Plan de ruta crítica para la construcción del **MIS Host**: un shell Angular 2
 
 ---
 
-## FASE 3 — Feature Catálogos (Módulo Interno del Host) 🟠
+## FASE 3 — Módulo de Gestión de Sistemas Embebidos (MFEs) 🟠
 
-> **Objetivo:** Implementar el CRUD de catálogos del Host consumiendo la API REST con `HttpClient` + Signals.
+> **Objetivo:** Implementar la administración, registro y parametrización de microfrontends (Sistemas, Estructura de Secciones/Módulos, y matriz de Permisos).
 
-- [ ] **F3-01** · Crear modelos de catálogos
-  - Archivo: `src/app/features/catalogos/models/catalogo.model.ts`
-  - Interfaces: `CatalogoMeta`, `CatalogoItem`, `CatalogoPageResponse`, `CatalogoItemRequest`, `ApiError`
+- [ ] **F3-01** · Crear modelos de Sistemas
+  - Archivo: `src/app/pages/modules/sistemas/models/sistema.model.ts`
+  - Interfaces: `Sistema`, `Seccion`, `Subseccion`, `Modulo`, `PermisoRolSistema`
 
-- [ ] **F3-02** · Crear `CatalogosService`
-  - Archivo: `src/app/features/catalogos/services/catalogos.service.ts`
-  - Signals de estado: `isLoading`, `error`, `catalogosMeta`, `paginaActual`
-  - Computed: `tieneError`, `totalItems`
-  - Métodos HTTP: `cargarCatalogos()`, `cargarItems()`, `crearItem()`, `actualizarItem()`, `eliminarItem()`
+- [ ] **F3-02** · Crear `SistemasService`
+  - Archivo: `src/app/pages/modules/sistemas/services/sistemas.service.ts`
+  - Signals: `isLoading`, `error`, `sistemas`
+  - Métodos HTTP: `cargarSistemas()`, `obtenerSistema()`, `crearSistema()`, `actualizarSistema()`, `eliminarSistema()`, `guardarEstructura()`, `guardarPermisos()`
 
-- [ ] **F3-03** · Crear `catalogos.routes.ts` con lazy loading interno:
+- [ ] **F3-03** · Crear `sistemas.routes.ts` con lazy loading interno:
   ```typescript
-  // src/app/features/catalogos/catalogos.routes.ts
-  export const CATALOGOS_ROUTES: Routes = [
-    { path: '', component: CatalogosShellComponent },
-    { path: ':tipo', component: CatalogoDetalleComponent }
+  // src/app/pages/modules/sistemas/sistemas.routes.ts
+  export const SISTEMAS_ROUTES: Routes = [
+    { path: '', component: SistemasListComponent },
+    { path: 'nuevo', component: SistemaFormComponent },
+    { path: ':id', component: SistemaDetalleComponent },
+    { path: ':id/editar', component: SistemaFormComponent }
   ];
   ```
 
-- [ ] **F3-04** · Crear `CatalogosShellComponent` (Standalone, Smart)
-  - Archivo: `src/app/features/catalogos/components/catalogos-shell/catalogos-shell.component.ts`
-  - Inyecta: `CatalogosService`
-  - `ngOnInit`: llama `cargarCatalogos()`
-  - Template: usa `@defer` para skeleton y `@if` para lista y error
-  - Al seleccionar un catálogo, llama `ShellStateService.setCatalogoActivo()`
+- [ ] **F3-04** · Crear `SistemasListComponent` (Standalone, Smart)
+  - Archivo: `src/app/pages/modules/sistemas/components/sistemas-list/sistemas-list.component.ts`
+  - Muestra la cuadrícula (MFE grid) de 3 columnas de los sistemas embebidos, con botón de edición en el pie de cada tarjeta.
 
-- [ ] **F3-05** · Crear `CatalogoDetalleComponent` (Standalone, Smart)
-  - Archivo: `src/app/features/catalogos/components/catalogo-detalle/catalogo-detalle.component.ts`
-  - Recibe `tipo` como input (vía `withComponentInputBinding`)
-  - Inyecta: `CatalogosService`
-  - Template: tabla paginada con acciones de edición/borrado
+- [ ] **F3-05** · Crear `SistemaFormComponent` (Standalone, Smart)
+  - Archivo: `src/app/pages/modules/sistemas/components/sistema-form/sistema-form.component.ts`
+  - Formulario estructurado con `SelectButton` (Información de Registro / Configuración de Despliegue).
 
-- [ ] **F3-06** · Crear `ListSkeletonComponent` (Standalone, Dumb) en `shared/ui`
-  - Archivo: `src/app/shared/ui/list-skeleton/list-skeleton.component.ts`
+- [ ] **F3-06** · Crear `SistemaDetalleComponent` (Standalone, Smart)
+  - Archivo: `src/app/pages/modules/sistemas/components/sistema-detalle/sistema-detalle.component.ts`
+  - Vista de detalles estructurada con `SelectButton` para togglear entre:
+    * `Información` (datos del MFE).
+    * `Estructura` (árbol jerárquico de secciones y subsecciones).
+    * `Permisos` (configuración de permisos CRUD por Rol para cada módulo).
 
-- [ ] **F3-07** · Crear `EmptyStateComponent` (Standalone, Dumb) en `shared/ui`
-  - Archivo: `src/app/shared/ui/empty-state/empty-state.component.ts`
-
-- [ ] **F3-08** · Registrar la ruta en `app.routes.ts` con lazy load:
-  ```typescript
-  {
-    path: 'catalogos',
-    loadChildren: () => import('./features/catalogos/catalogos.routes').then(m => m.CATALOGOS_ROUTES)
-  }
-  ```
-
-- [ ] **F3-09** · Verificar: navegar a `/admin/catalogos` muestra la lista de catálogos desde la API
-
-**Archivos creados:**
-- `src/app/features/catalogos/models/catalogo.model.ts`
-- `src/app/features/catalogos/services/catalogos.service.ts`
-- `src/app/features/catalogos/catalogos.routes.ts`
-- `src/app/features/catalogos/components/catalogos-shell/catalogos-shell.component.ts`
-- `src/app/features/catalogos/components/catalogos-shell/catalogos-shell.component.scss`
-- `src/app/features/catalogos/components/catalogo-detalle/catalogo-detalle.component.ts`
-- `src/app/features/catalogos/components/catalogo-detalle/catalogo-detalle.component.scss`
-- `src/app/shared/ui/list-skeleton/list-skeleton.component.ts`
-- `src/app/shared/ui/empty-state/empty-state.component.ts`
+**Archivos creados/modificados:**
+- `src/app/pages/modules/sistemas/models/sistema.model.ts`
+- `src/app/pages/modules/sistemas/services/sistemas.service.ts`
+- `src/app/pages/modules/sistemas/sistemas.routes.ts`
+- `src/app/pages/modules/sistemas/components/sistemas-list/`
+- `src/app/pages/modules/sistemas/components/sistema-form/`
+- `src/app/pages/modules/sistemas/components/sistema-detalle/`
 
 ---
 
@@ -214,11 +198,11 @@ Plan de ruta crítica para la construcción del **MIS Host**: un shell Angular 2
 > Depende de FASE 2 (ShellStateService + roleGuard) y puede desarrollarse en paralelo con FASE 4.
 
 - [ ] **F3B-01** · Crear modelos IAM
-  - Archivo: `src/app/features/accesos/models/acceso.model.ts`
+  - Archivo: `src/app/pages/modules/accesos/models/acceso.model.ts`
   - Tipos: `RolSlug`, `Rol`, `Usuario`, `UsuarioRequest`, `RolRequest`, `PageResponse<T>`
 
 - [ ] **F3B-02** · Crear `AccesosService`
-  - Archivo: `src/app/features/accesos/services/accesos.service.ts`
+  - Archivo: `src/app/pages/modules/accesos/services/accesos.service.ts`
   - Signals: `isLoading`, `error`, `usuarios`, `roles`
   - Métodos: `cargarUsuarios()`, `crearUsuario()`, `actualizarUsuario()`, `cambiarEstado()`, `cargarRoles()`, `crearRol()`, `actualizarRol()`, `eliminarRol()`
 
@@ -227,14 +211,17 @@ Plan de ruta crítica para la construcción del **MIS Host**: un shell Angular 2
   export const ACCESOS_ROUTES: Routes = [
     { path: '', component: AccesosShellComponent },
     { path: 'usuarios', component: UsuariosListComponent },
+    { path: 'usuarios/nuevo', component: UsuarioFormComponent },
     { path: 'usuarios/:id', component: UsuarioFormComponent },
     { path: 'roles', component: RolesListComponent },
-    { path: 'roles/:id', component: RolFormComponent }
+    { path: 'roles/nuevo', component: RolFormComponent },
+    { path: 'roles/:id', component: RolDetalleComponent },
+    { path: 'roles/:id/editar', component: RolFormComponent }
   ];
   ```
 
 - [ ] **F3B-04** · Crear `AccesosShellComponent` (Standalone, Smart)
-  - Archivo: `src/app/features/accesos/components/accesos-shell/accesos-shell.component.ts`
+  - Archivo: `src/app/pages/modules/accesos/components/accesos-shell/accesos-shell.component.ts`
   - Dashboard IAM: tarjetas con total usuarios activos, total roles, remotes configurados
 
 - [ ] **F3B-05** · Crear `UsuariosListComponent` (Standalone, Smart)
@@ -258,21 +245,22 @@ Plan de ruta crítica para la construcción del **MIS Host**: un shell Angular 2
   {
     path: 'accesos',
     canActivate: [roleGuard('admin-sistema')],
-    loadChildren: () => import('./features/accesos/accesos.routes').then(m => m.ACCESOS_ROUTES)
+    loadChildren: () => import('./pages/modules/accesos/accesos.routes').then(m => m.ACCESOS_ROUTES)
   }
   ```
 
 - [ ] **F3B-11** · Verificar: solo el usuario con rol `admin-sistema` puede acceder a `/admin/accesos`
 
 **Archivos creados:**
-- `src/app/features/accesos/models/acceso.model.ts`
-- `src/app/features/accesos/services/accesos.service.ts`
-- `src/app/features/accesos/accesos.routes.ts`
-- `src/app/features/accesos/components/accesos-shell/accesos-shell.component.ts`
-- `src/app/features/accesos/components/usuarios/usuarios-list.component.ts`
-- `src/app/features/accesos/components/usuarios/usuario-form.component.ts`
-- `src/app/features/accesos/components/roles/roles-list.component.ts`
-- `src/app/features/accesos/components/roles/rol-form.component.ts`
+- `src/app/pages/modules/accesos/models/acceso.model.ts`
+- `src/app/pages/modules/accesos/services/accesos.service.ts`
+- `src/app/pages/modules/accesos/accesos.routes.ts`
+- `src/app/pages/modules/accesos/components/accesos-shell/accesos-shell.component.ts`
+- `src/app/pages/modules/accesos/components/usuarios/usuarios-list/usuarios-list.component.ts`
+- `src/app/pages/modules/accesos/components/usuarios/usuario-form/usuario-form.component.ts`
+- `src/app/pages/modules/accesos/components/roles/roles-list/roles-list.component.ts`
+- `src/app/pages/modules/accesos/components/roles/rol-form/rol-form.component.ts`
+- `src/app/pages/modules/accesos/components/roles/rol-detalle/rol-detalle.component.ts`
 - `src/app/shared/ui/toast/toast.component.ts`
 - `src/app/shared/ui/access-denied/access-denied.component.ts`
 

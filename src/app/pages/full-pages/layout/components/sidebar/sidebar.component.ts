@@ -72,27 +72,22 @@ export class SidebarComponent {
   private getPanelHost(): SidebarNavPanelConfig {
     return {
       tipo:   'host-admin',
-      titulo: 'Sistema Principal (MIS)',
+      titulo: 'Host Principal',
       icono:  'lucideHome',
       secciones: [
         {
           titulo: 'Acceso directo',
           rutas: [
-            { etiqueta: 'Dashboard', ruta: '/admin/dashboard', icono: 'lucideGrid' },
+            { etiqueta: 'Mi espacio', ruta: '/admin/dashboard', icono: 'lucideGrid' },
           ],
         },
+        // SB-04: opciones de administración bajo la sección "Accesos [Admin]"
         {
-          titulo: 'Administración',
+          titulo: 'Accesos [Admin]',
           rutas: [
-            { etiqueta: 'Catálogos', ruta: '/admin/catalogos', icono: 'lucideGrid', soloAdmin: true },
-            { etiqueta: 'Sistemas',  ruta: '/admin/sistemas',  icono: 'lucideBoxes', soloAdminSistema: true },
-          ],
-        },
-        {
-          titulo: 'Accesos',
-          rutas: [
-            { etiqueta: 'Usuarios',  ruta: '/admin/accesos/usuarios', icono: 'lucideUsers',  soloAdminSistema: true },
-            { etiqueta: 'Roles',     ruta: '/admin/accesos/roles',    icono: 'lucideActivity', soloAdminSistema: true },
+            { etiqueta: 'Gestión de usuarios', ruta: '/admin/accesos/usuarios', icono: 'lucideUsers',    soloAdminSistema: true },
+            { etiqueta: 'Gestión de roles',    ruta: '/admin/accesos/roles',    icono: 'lucideActivity', soloAdminSistema: true },
+            { etiqueta: 'Gestión de sistemas', ruta: '/admin/sistemas',         icono: 'lucideBoxes',    soloAdminSistema: true },
           ],
         },
       ],

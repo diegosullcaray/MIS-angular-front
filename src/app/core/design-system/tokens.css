@@ -28,6 +28,7 @@
   --mis-sidebar-bg: #1D396E;
   --mis-panel-bg: #F8FAFC;
   --mis-border: rgba(29,57,110,0.10);
+  --mis-border-strong: rgba(29,57,110,0.20);
 
   /* Primario: Navy */
   --mis-primary: #1D396E;
@@ -95,6 +96,7 @@
   --mis-sidebar-bg: #162D58;
   --mis-panel-bg: #1A2740;
   --mis-border: rgba(66,173,224,0.12);
+  --mis-border-strong: rgba(66,173,224,0.25);
 
   --mis-primary: #2A4E8F;
   --mis-primary-hover: #1D396E;

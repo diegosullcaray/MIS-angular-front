@@ -1,29 +1,28 @@
-<div class="flex flex-col gap-6">
-  <!-- Header -->
-  <header class="flex justify-between items-end mb-2">
-    <div>
-      <h1 class="text-2xl font-bold text-[var(--mis-primary)] m-0 mb-1">Sistemas</h1>
-      <p class="text-base text-[var(--mis-text-secondary)] m-0">Registra los sistemas embebidos (Remotes), define su estructura y controla los permisos por rol.</p>
-    </div>
+<div class="flex flex-col gap-6 w-full">
+  <p-card styleClass="mis-card">
+    <!-- Card Header -->
+    <ng-template pTemplate="header">
+      <div class="flex justify-between items-center gap-4 px-5 py-4 border-b border-[var(--mis-border)]">
+        <div>
+          <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">Sistemas</h2>
+          <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">Registra los sistemas embebidos (Remotes), define su estructura y controla los permisos por rol.</p>
+        </div>
+        <p-button
+          label="Nuevo Sistema"
+          icon="pi pi-plus"
+          routerLink="/admin/sistemas/nuevo"
+        />
+      </div>
+    </ng-template>
 
-    <p-button
-      label="Nuevo Sistema"
-      icon="pi pi-plus"
-      routerLink="/admin/sistemas/nuevo"
-    />
-  </header>
-
-  @if (service.error()) {
-    <app-inline-error
-      titulo="Error al cargar los sistemas"
-      [detalle]="service.error() ?? undefined"
-      (reintentar)="service.cargarSistemas()"
-    />
-  }
-
-  <!-- Table Section -->
-  <div class="bg-[var(--mis-surface)] border border-[var(--mis-border)] rounded-[10px] shadow-sm overflow-hidden pt-4">
-    @if (service.isLoading()) {
+    <!-- Card Body -->
+    @if (service.error()) {
+      <app-inline-error
+        titulo="Error al cargar los sistemas"
+        [detalle]="service.error() ?? undefined"
+        (reintentar)="service.cargarSistemas()"
+      />
+    } @else if (service.isLoading()) {
       <app-list-skeleton [rows]="[1,2,3,4]" [cols]="[1,2,3,4,5]" />
     } @else {
       @if (service.sistemas().length === 0) {
@@ -102,7 +101,7 @@
         </p-table>
       }
     }
-  </div>
+  </p-card>
 
   <!-- Delete Confirmation Modal -->
   <p-dialog

@@ -34,14 +34,6 @@ export const APP_ROUTES: Routes = [
           )
       },
       {
-        path: 'catalogos',
-        canActivate: [roleGuard('admin-general')], // admin-general o superior (admin-sistema)
-        loadChildren: () =>
-          import('./pages/modules/catalogos/catalogos.routes').then(
-            (m) => m.CATALOGOS_ROUTES
-          )
-      },
-      {
         path: 'accesos',
         canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
         loadChildren: () =>

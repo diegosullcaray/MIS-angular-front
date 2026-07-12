@@ -201,17 +201,10 @@ src/
 │   ├── app.routes.ts             ← Rutas raíz del Host
 │   │
 │   ├── core/
-│   │   ├── design-system/          ← [NUEVO] Tema y tokens macOS
+│   │   ├── design-system/          ← Tema y tokens macOS
 │   │   │   ├── mis-theme.ts          ← Preset PrimeNG personalizado
 │   │   │   ├── tokens.css            ← CSS custom properties (colores, tipografía, spacing)
-│   │   │   └── index.css             ← Estilos base globales (importado en styles.css)
-│   │   ├── layout/
-│   │   │   ├── shell-layout/         ← ShellLayoutComponent (grid de 3 columnas)
-│   │   │   ├── header/               ← HeaderComponent (Standalone, Dumb)
-│   │   │   └── sidebar/
-│   │   │       ├── sidebar.component.ts         ← Col 1: tira de íconos
-│   │   │       ├── sidebar.model.ts
-│   │   │       └── sidebar-nav-panel/           ← Col 2: panel de navegación persistente
+│   │   │   └── index.css             ← Estilos base globales
 │   │   ├── federation/
 │   │   │   └── remote-wrapper/       ← RemoteWrapperComponent (Standalone)
 │   │   ├── guards/
@@ -220,10 +213,15 @@ src/
 │   │   └── services/
 │   │       └── shell-state.service.ts
 │   │
-│   ├── features/
-│   │   ├── dashboard/
-│   │   ├── catalogos/
-│   │   └── accesos/
+│   ├── pages/
+│   │   ├── full-pages/
+│   │   │   ├── auth/                 ← LoginComponent y flujo MFA
+│   │   │   ├── error/                ← NotFoundComponent
+│   │   │   └── layout/               ← ShellLayout, Header y Sidebar
+│   │   └── modules/
+│   │       ├── accesos/              ← Gestión de Accesos (Usuarios, Roles y sistemas)
+│   │       ├── dashboard/            ← Mi espacio (Dashboard del Host)
+│   │       └── sistemas/             ← Gestión de Sistemas (Configuración de MFEs)
 │   │
 │   └── shared/
 │       └── ui/

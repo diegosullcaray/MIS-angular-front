@@ -7,40 +7,35 @@
       <a routerLink="/admin/accesos/roles" class="text-[var(--mis-secondary)]">Volver a Roles</a>
     </div>
   } @else {
-    <!-- Header -->
-    <header class="flex justify-between items-end">
-      <div>
-        <a routerLink="/admin/accesos/roles" class="inline-flex items-center gap-1 text-[var(--mis-text-secondary)] no-underline text-sm mb-2 transition-colors duration-150 hover:text-[var(--mis-primary)]">
-          <ng-icon name="lucideArrowLeft" size="16" />
-          Volver a Roles
-        </a>
-        <div class="flex items-center gap-2">
-          <h1 class="text-2xl font-bold text-[var(--mis-primary)] m-0">{{ rol()!.nombre }}</h1>
-          <code class="text-xs bg-[var(--mis-primary-light)] text-[var(--mis-primary)] font-semibold px-2 py-0.5 rounded-[4px]">{{ rol()!.slug }}</code>
+    <p-card styleClass="mis-card">
+    <!-- Card Header -->
+    <ng-template pTemplate="header">
+      <div class="flex justify-between items-center gap-4 px-5 py-4 border-b border-[var(--mis-border)]">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">{{ rol()!.nombre }}</h2>
+            <code class="text-xs bg-[var(--mis-primary-light)] text-[var(--mis-primary)] font-semibold px-2 py-0.5 rounded-[4px]">{{ rol()!.slug }}</code>
+          </div>
+          <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">
+            {{ sistemasAsignados().length }} sistemas asignados · {{ usuarios().length }} usuarios con este rol
+          </p>
         </div>
-        <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-1">
-          {{ sistemasAsignados().length }} sistemas asignados · {{ usuarios().length }} usuarios con este rol
-        </p>
+
+        <p-button label="Editar" icon="pi pi-pencil" [text]="true" [routerLink]="['/admin/accesos/roles', rol()!.id, 'editar']" />
       </div>
+    </ng-template>
 
-      <p-button label="Editar" icon="pi pi-pencil" [text]="true" [routerLink]="['/admin/accesos/roles', rol()!.id, 'editar']" />
-    </header>
-
-    <!-- Tabs -->
-    <nav class="tab-bar" role="tablist">
-      @for (t of tabs; track t.id) {
-        <button
-          class="tab-btn"
-          [class.tab-btn--active]="tab() === t.id"
-          role="tab"
-          [attr.aria-selected]="tab() === t.id"
-          (click)="tab.set(t.id)"
-        >
-          <ng-icon [name]="t.icono" size="14" />
-          {{ t.etiqueta }}
-        </button>
-      }
-    </nav>
+    <!-- Card Body -->
+    <div class="flex flex-col gap-5">
+    <!-- Tabs with PrimeNG SelectButton -->
+    <div class="flex justify-center">
+      <p-selectButton
+        [options]="tabOptions"
+        [ngModel]="tab()"
+        (ngModelChange)="tab.set($event)"
+        [ngModelOptions]="{ standalone: true }"
+      />
+    </div>
 
     <!-- ═══ TAB: Detalle ═══ -->
     @if (tab() === 'detalle') {
@@ -166,5 +161,7 @@
         }
       </div>
     }
+    </div>
+    </p-card>
   }
 </div>

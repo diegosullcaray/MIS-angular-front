@@ -1,8 +1,4 @@
 import type {
-  CatalogoItem,
-  CatalogoMeta,
-} from '../../pages/modules/catalogos/models/catalogo.model';
-import type {
   Rol,
   Usuario,
 } from '../../pages/modules/accesos/models/acceso.model';
@@ -96,48 +92,6 @@ const SEED_USUARIOS: Usuario[] = [
     creadoEn: '2026-04-05T00:00:00Z',
   },
 ];
-
-const SEED_CATALOGOS: CatalogoMeta[] = [
-  { id: 'cat-001', tipo: 'bancos',        nombre: 'Catálogo de Bancos',        totalRegistros: 0, activo: true,  ultimaActualizacion: '2026-07-08T14:30:00Z' },
-  { id: 'cat-002', tipo: 'monedas',       nombre: 'Catálogo de Monedas',       totalRegistros: 0, activo: true,  ultimaActualizacion: '2026-07-01T10:00:00Z' },
-  { id: 'cat-003', tipo: 'departamentos', nombre: 'Catálogo de Departamentos', totalRegistros: 0, activo: true,  ultimaActualizacion: '2026-06-15T08:00:00Z' },
-  { id: 'cat-004', tipo: 'tipos-doc',     nombre: 'Tipos de Documento',        totalRegistros: 0, activo: true,  ultimaActualizacion: '2026-06-20T09:00:00Z' },
-  { id: 'cat-005', tipo: 'estados',       nombre: 'Estados de Operación',      totalRegistros: 0, activo: false, ultimaActualizacion: '2026-05-30T11:00:00Z' },
-];
-
-const SEED_ITEMS: Record<string, CatalogoItem[]> = {
-  bancos: [
-    { id: 'ban-001', codigo: 'BCP',  descripcion: 'Banco de Crédito del Perú', activo: true },
-    { id: 'ban-002', codigo: 'BBVA', descripcion: 'BBVA Perú',                 activo: true },
-    { id: 'ban-003', codigo: 'IBK',  descripcion: 'Interbank',                 activo: true },
-    { id: 'ban-004', codigo: 'SCO',  descripcion: 'Scotiabank Perú',           activo: true },
-    { id: 'ban-005', codigo: 'BAN',  descripcion: 'BANBIF',                    activo: false },
-  ],
-  monedas: [
-    { id: 'mon-001', codigo: 'PEN', descripcion: 'Sol Peruano',     activo: true },
-    { id: 'mon-002', codigo: 'USD', descripcion: 'Dólar Americano', activo: true },
-    { id: 'mon-003', codigo: 'EUR', descripcion: 'Euro',            activo: true },
-  ],
-  departamentos: [
-    { id: 'dep-001', codigo: 'LIM', descripcion: 'Lima',        activo: true },
-    { id: 'dep-002', codigo: 'ARE', descripcion: 'Arequipa',    activo: true },
-    { id: 'dep-003', codigo: 'TRU', descripcion: 'La Libertad', activo: true },
-    { id: 'dep-004', codigo: 'CUS', descripcion: 'Cusco',       activo: true },
-    { id: 'dep-005', codigo: 'PIU', descripcion: 'Piura',       activo: true },
-  ],
-  'tipos-doc': [
-    { id: 'doc-001', codigo: 'DNI', descripcion: 'Documento Nacional de Identidad', activo: true },
-    { id: 'doc-002', codigo: 'CE',  descripcion: 'Carné de Extranjería',            activo: true },
-    { id: 'doc-003', codigo: 'RUC', descripcion: 'Registro Único de Contribuyente', activo: true },
-    { id: 'doc-004', codigo: 'PAS', descripcion: 'Pasaporte',                       activo: true },
-  ],
-  estados: [
-    { id: 'est-001', codigo: 'PEN', descripcion: 'Pendiente', activo: true },
-    { id: 'est-002', codigo: 'APR', descripcion: 'Aprobado',  activo: true },
-    { id: 'est-003', codigo: 'REC', descripcion: 'Rechazado', activo: true },
-    { id: 'est-004', codigo: 'ANU', descripcion: 'Anulado',   activo: false },
-  ],
-};
 
 // ─── Sistemas registrados (Remotes) con su estructura jerárquica ──────────────
 // Sistema → Secciones → Subsecciones → Módulos
@@ -333,34 +287,13 @@ const clone = <T>(v: T): T => structuredClone(v);
 export class FakeDb {
   readonly roles: Rol[] = clone(SEED_ROLES);
   readonly usuarios: Usuario[] = clone(SEED_USUARIOS);
-  readonly catalogos: CatalogoMeta[] = clone(SEED_CATALOGOS);
-  readonly items: Record<string, CatalogoItem[]> = clone(SEED_ITEMS);
   readonly sistemas: Sistema[] = clone(SEED_SISTEMAS);
   readonly permisos: PermisoRolSistema[] = clone(SEED_PERMISOS);
 
   private secuencia = 100;
 
-  constructor() {
-    // totalRegistros siempre derivado de los ítems reales
-    this.sincronizarTotales();
-  }
-
   nextId(prefijo: string): string {
     return `${prefijo}-${++this.secuencia}`;
-  }
-
-  sincronizarTotales(): void {
-    for (const meta of this.catalogos) {
-      meta.totalRegistros = (this.items[meta.tipo] ?? []).length;
-    }
-  }
-
-  tocarCatalogo(tipo: string): void {
-    const meta = this.catalogos.find(c => c.tipo === tipo);
-    if (meta) {
-      meta.ultimaActualizacion = new Date().toISOString();
-      meta.totalRegistros = (this.items[tipo] ?? []).length;
-    }
   }
 }
 

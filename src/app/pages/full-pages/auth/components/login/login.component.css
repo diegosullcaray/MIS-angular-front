@@ -44,3 +44,30 @@
 :host ::ng-deep .login-card-container .p-card-content {
     padding: 0 !important;
 }
+
+/* Celdas del código OTP (paso MFA) — según Figma login.html */
+.otp-cell {
+    height: 40px;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--mis-primary);
+    border: 1px solid var(--mis-border-strong, rgba(29, 57, 110, 0.2));
+    border-radius: 6px;
+    outline: none;
+    background: #FFFFFF;
+    font-family: 'Fira Code', ui-monospace, monospace;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.otp-cell:focus {
+    border-color: var(--mis-secondary);
+    box-shadow: var(--mis-shadow-focus);
+}
+
+.otp-cell:disabled {
+    background: var(--mis-bg);
+    color: var(--mis-text-tertiary);
+    cursor: not-allowed;
+}

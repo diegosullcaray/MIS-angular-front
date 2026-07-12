@@ -2,6 +2,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import type { RolSlug } from '../../pages/modules/accesos/models/acceso.model';
 import { ShellStateService } from '../services/shell-state.service';
+import { ToastService } from '../../shared/ui/toast/toast.service';
 
 /**
  * Guard funcional de fábrica para control de roles.
@@ -19,6 +20,7 @@ export function roleGuard(rolRequerido: RolSlug): CanActivateFn {
   return () => {
     const shell  = inject(ShellStateService);
     const router = inject(Router);
+    const toast  = inject(ToastService);
 
     const usuario = shell.usuarioActivo();
 
@@ -40,7 +42,11 @@ export function roleGuard(rolRequerido: RolSlug): CanActivateFn {
       return true;
     }
 
-    // Sin permiso → redirigir a dashboard
+    // Sin permiso → aviso + redirigir a dashboard (F2-06)
+    toast.advertencia(
+      'Acceso denegado',
+      'No tienes permisos para acceder a esta sección.'
+    );
     return router.createUrlTree(['/admin/dashboard']);
   };
 }

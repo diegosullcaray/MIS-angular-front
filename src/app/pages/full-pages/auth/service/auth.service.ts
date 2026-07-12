@@ -12,6 +12,14 @@ export interface LoginRequest {
   password: string;
 }
 
+/** Respuesta del primer paso: credenciales válidas → desafío MFA (CA-07). */
+export interface MfaChallengeResponse {
+  mfaRequerido: boolean;
+  mfaToken: string;
+  email: string;
+}
+
+/** Respuesta del segundo paso: OTP válido → sesión emitida. */
 export interface LoginResponse {
   token: string;
   usuario: Usuario;
@@ -25,10 +33,14 @@ interface SesionPersistida {
 }
 
 /**
- * Servicio de autenticación del Host.
+ * Servicio de autenticación del Host — flujo MFA en dos pasos (CA-07).
  *
- * - `login()` llama a `POST /api/v1/auth/login` (atendido por la Fake API
- *   mientras no exista backend real) y publica el usuario en el ShellStateService.
+ * 1. `login()` → `POST /api/v1/auth/login`: valida credenciales y devuelve
+ *    un desafío MFA (`mfaToken`). Todavía NO hay sesión.
+ * 2. `verificarOtp()` → `POST /api/v1/auth/verificar-otp`: valida el código
+ *    de 6 dígitos, emite el token de sesión y publica el usuario en el
+ *    ShellStateService.
+ *
  * - La sesión se persiste en `sessionStorage` para sobrevivir al refresh (F5).
  * - `restaurarSesion()` se ejecuta al arrancar la app (ver app.config.ts).
  */
@@ -41,16 +53,34 @@ export class AuthService {
   private readonly baseUrl = '/api/v1/auth';
 
   private readonly _token = signal<string | null>(null);
+  private mfaToken: string | null = null;
 
   /** Token de sesión actual (lo consume el authInterceptor). */
   readonly token = this._token.asReadonly();
 
   // ─── Ciclo de vida de la sesión ──────────────────────────────────────────
 
-  async login(credenciales: LoginRequest): Promise<UsuarioActivo> {
+  /** Paso 1: valida credenciales y devuelve el desafío MFA (sin sesión aún). */
+  async login(credenciales: LoginRequest): Promise<MfaChallengeResponse> {
+    try {
+      const desafio = await firstValueFrom(
+        this.http.post<MfaChallengeResponse>(`${this.baseUrl}/login`, credenciales)
+      );
+      this.mfaToken = desafio.mfaToken;
+      return desafio;
+    } catch (err) {
+      throw new Error(this.mensajeDeError(err));
+    }
+  }
+
+  /** Paso 2: verifica el código OTP de 6 dígitos y establece la sesión. */
+  async verificarOtp(otp: string): Promise<UsuarioActivo> {
     try {
       const respuesta = await firstValueFrom(
-        this.http.post<LoginResponse>(`${this.baseUrl}/login`, credenciales)
+        this.http.post<LoginResponse>(`${this.baseUrl}/verificar-otp`, {
+          mfaToken: this.mfaToken,
+          otp,
+        })
       );
 
       const usuarioActivo: UsuarioActivo = {
@@ -61,6 +91,7 @@ export class AuthService {
         subsistemas: respuesta.usuario.subsistemas,
       };
 
+      this.mfaToken = null;
       this._token.set(respuesta.token);
       this.shell.setUsuarioActivo(usuarioActivo);
       this.persistir({ token: respuesta.token, usuario: usuarioActivo });
@@ -69,6 +100,11 @@ export class AuthService {
     } catch (err) {
       throw new Error(this.mensajeDeError(err));
     }
+  }
+
+  /** Cancela un desafío MFA en curso (volver al paso de credenciales). */
+  cancelarMfa(): void {
+    this.mfaToken = null;
   }
 
   /** Restaura la sesión persistida al recargar la página. */

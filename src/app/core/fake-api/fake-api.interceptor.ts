@@ -9,11 +9,6 @@ import {
 import { Observable, delay, dematerialize, materialize, of, throwError } from 'rxjs';
 import { fakeDb, FAKE_CREDENCIALES } from './fake-db';
 import type {
-  CatalogoItem,
-  CatalogoItemRequest,
-  CatalogoPageResponse,
-} from '../../pages/modules/catalogos/models/catalogo.model';
-import type {
   PageResponse,
   Rol,
   RolRequest,
@@ -75,15 +70,8 @@ function manejarRuta(
 
   switch (recurso) {
     case 'auth':
-      if (p1 === 'login' && metodo === 'POST') return login(req.body);
-      break;
-
-    case 'catalogos':
-      if (!p1 && metodo === 'GET')       return ok(fakeDb.catalogos);
-      if (p1 && !p2 && metodo === 'GET') return listarItems(p1, query);
-      if (p1 && !p2 && metodo === 'POST') return conRol(req, ['admin-sistema', 'admin-general'], () => crearItem(p1, req.body as CatalogoItemRequest));
-      if (p1 && p2 && metodo === 'PUT')   return conRol(req, ['admin-sistema', 'admin-general'], () => actualizarItem(p1, p2, req.body as CatalogoItemRequest));
-      if (p1 && p2 && metodo === 'DELETE') return conRol(req, ['admin-sistema', 'admin-general'], () => eliminarItem(p1, p2));
+      if (p1 === 'login' && metodo === 'POST')         return login(req.body);
+      if (p1 === 'verificar-otp' && metodo === 'POST') return verificarOtp(req.body);
       break;
 
     case 'usuarios':
@@ -154,7 +142,10 @@ function conRol(
   return handler();
 }
 
-// ─── Auth ─────────────────────────────────────────────────────────────────────
+// ─── Auth (login + MFA OTP, CA-07) ────────────────────────────────────────────
+
+/** Código OTP fijo de la Fake API (solo demo — el backend real genera el suyo). */
+const FAKE_OTP = '123456';
 
 function login(body: unknown): Observable<HttpEvent<unknown>> {
   const { email, password } = (body ?? {}) as { email?: string; password?: string };
@@ -171,85 +162,40 @@ function login(body: unknown): Observable<HttpEvent<unknown>> {
     return error(403, 'El usuario está desactivado. Contacta al administrador.');
   }
 
+  // Credenciales válidas → desafío MFA (la sesión se emite al verificar el OTP)
+  return ok({
+    mfaRequerido: true,
+    mfaToken: `fake-mfa.${btoa(usuario.id)}.${Date.now()}`,
+    email: usuario.email,
+  });
+}
+
+function verificarOtp(body: unknown): Observable<HttpEvent<unknown>> {
+  const { mfaToken, otp } = (body ?? {}) as { mfaToken?: string; otp?: string };
+
+  const usuarioId = decodificarMfaToken(mfaToken);
+  const usuario = usuarioId ? fakeDb.usuarios.find(u => u.id === usuarioId) : undefined;
+  if (!usuario || !usuario.activo) {
+    return error(401, 'La sesión de verificación expiró. Vuelve a iniciar sesión.');
+  }
+
+  if (otp !== FAKE_OTP) {
+    return error(401, 'El código de verificación es incorrecto.');
+  }
+
   return ok({
     token: `fake-jwt.${btoa(usuario.id)}.${Date.now()}`,
     usuario,
   });
 }
 
-// ─── Catálogos ────────────────────────────────────────────────────────────────
-
-function listarItems(tipo: string, query: URLSearchParams): Observable<HttpEvent<unknown>> {
-  const meta = fakeDb.catalogos.find(c => c.tipo === tipo);
-  if (!meta) return error(404, `El catálogo '${tipo}' no existe.`);
-
-  const page = Number(query.get('page') ?? 1);
-  const pageSize = Number(query.get('pageSize') ?? 20);
-  const q = query.get('q')?.toLowerCase();
-
-  let items = fakeDb.items[tipo] ?? [];
-  if (q) {
-    items = items.filter(
-      i => i.codigo.toLowerCase().includes(q) || i.descripcion.toLowerCase().includes(q)
-    );
+function decodificarMfaToken(token: string | undefined): string | null {
+  if (!token?.startsWith('fake-mfa.')) return null;
+  try {
+    return atob(token.split('.')[1] ?? '');
+  } catch {
+    return null;
   }
-
-  const respuesta: CatalogoPageResponse = {
-    tipo,
-    page,
-    pageSize,
-    total: items.length,
-    items: items.slice((page - 1) * pageSize, page * pageSize),
-  };
-  return ok(respuesta);
-}
-
-function crearItem(tipo: string, body: CatalogoItemRequest): Observable<HttpEvent<unknown>> {
-  if (!fakeDb.catalogos.some(c => c.tipo === tipo)) {
-    return error(404, `El catálogo '${tipo}' no existe.`);
-  }
-  if (!body?.codigo?.trim() || !body?.descripcion?.trim()) {
-    return error(400, 'Los campos código y descripción son requeridos.');
-  }
-  const lista = (fakeDb.items[tipo] ??= []);
-  if (lista.some(i => i.codigo.toUpperCase() === body.codigo.toUpperCase())) {
-    return error(409, `Ya existe un registro con el código '${body.codigo}'.`);
-  }
-
-  const nuevo: CatalogoItem = {
-    id: fakeDb.nextId(tipo.slice(0, 3)),
-    codigo: body.codigo.toUpperCase().trim(),
-    descripcion: body.descripcion.trim(),
-    activo: body.activo ?? true,
-  };
-  lista.push(nuevo);
-  fakeDb.tocarCatalogo(tipo);
-  return ok(nuevo, 201);
-}
-
-function actualizarItem(tipo: string, id: string, body: CatalogoItemRequest): Observable<HttpEvent<unknown>> {
-  const lista = fakeDb.items[tipo];
-  const idx = lista?.findIndex(i => i.id === id) ?? -1;
-  if (idx === -1) return error(404, `El registro '${id}' no existe en '${tipo}'.`);
-
-  const actualizado: CatalogoItem = {
-    ...lista[idx],
-    descripcion: body.descripcion?.trim() ?? lista[idx].descripcion,
-    activo: body.activo ?? lista[idx].activo,
-  };
-  lista[idx] = actualizado;
-  fakeDb.tocarCatalogo(tipo);
-  return ok(actualizado);
-}
-
-function eliminarItem(tipo: string, id: string): Observable<HttpEvent<unknown>> {
-  const lista = fakeDb.items[tipo];
-  const idx = lista?.findIndex(i => i.id === id) ?? -1;
-  if (idx === -1) return error(404, `El registro '${id}' no existe en '${tipo}'.`);
-
-  lista.splice(idx, 1);
-  fakeDb.tocarCatalogo(tipo);
-  return ok(null, 204);
 }
 
 // ─── Usuarios (IAM) ───────────────────────────────────────────────────────────

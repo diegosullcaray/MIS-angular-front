@@ -40,7 +40,6 @@ export class ShellStateService {
 
 
   private readonly _menuItemActivo = signal<MenuItemActivo | null>(null);
-  private readonly _catalogoActivo = signal<string | null>(null);
   private readonly _sidebarIconActivo = signal<string>('host-inicio');
 
   // ─── Signals de solo lectura (expuestos — Remotes solo leen) ────────────
@@ -50,9 +49,6 @@ export class ShellStateService {
 
   /** Ítem del menú principal actualmente seleccionado. */
   readonly menuItemActivo = this._menuItemActivo.asReadonly();
-
-  /** Slug del catálogo activo (seleccionado en el Host). */
-  readonly catalogoActivo = this._catalogoActivo.asReadonly();
 
   /** ID del ícono activo en la Col 1 del sidebar. */
   readonly sidebarIconActivo = this._sidebarIconActivo.asReadonly();
@@ -99,10 +95,6 @@ export class ShellStateService {
     this._menuItemActivo.set(item);
   }
 
-  setCatalogoActivo(slug: string): void {
-    this._catalogoActivo.set(slug);
-  }
-
   setSidebarIconActivo(iconId: string): void {
     this._sidebarIconActivo.set(iconId);
   }
@@ -110,6 +102,5 @@ export class ShellStateService {
   cerrarSesion(): void {
     this._usuarioActivo.set(null);
     this._menuItemActivo.set(null);
-    this._catalogoActivo.set(null);
   }
 }

@@ -4,8 +4,9 @@ import { AccesosService } from '../../../services/accesos.service';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { CardModule } from 'primeng/card';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucidePlus, lucideEdit2, lucideTrash2, lucideSearch, lucideCheck, lucideX } from '@ng-icons/lucide';
+import { lucidePlus, lucideEdit2, lucideTrash2, lucideSearch, lucideCheck, lucideX } from '@ng-icons/lucide';
 import { ListSkeletonComponent } from '../../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/empty-state.component';
 import { CommonModule } from '@angular/common';
@@ -20,12 +21,13 @@ import { ROL_LABELS, type RolSlug } from '../../../models/acceso.model';
     TableModule,
     ButtonModule,
     InputTextModule,
+    CardModule,
     NgIconComponent,
     ListSkeletonComponent,
     EmptyStateComponent
   ],
   viewProviders: [provideIcons({
-    lucideArrowLeft, lucidePlus, lucideEdit2, lucideTrash2, lucideSearch, lucideCheck, lucideX
+    lucidePlus, lucideEdit2, lucideTrash2, lucideSearch, lucideCheck, lucideX
   })],
   templateUrl: './usuarios-list.component.html',
   styleUrl: './usuarios-list.component.css',

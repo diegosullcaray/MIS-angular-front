@@ -6,8 +6,6 @@ import { SistemasService } from '../../../../sistemas/services/sistemas.service'
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucideCheck, lucideX } from '@ng-icons/lucide';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -19,10 +17,8 @@ import { CommonModule } from '@angular/common';
     FormField,
     CardModule,
     InputTextModule,
-    ButtonModule,
-    NgIconComponent
+    ButtonModule
   ],
-  viewProviders: [provideIcons({ lucideArrowLeft, lucideCheck, lucideX })],
   templateUrl: './rol-form.component.html',
   styleUrl: './rol-form.component.css',
 })

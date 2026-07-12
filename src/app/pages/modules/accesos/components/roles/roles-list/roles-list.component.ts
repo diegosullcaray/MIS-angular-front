@@ -4,8 +4,9 @@ import { AccesosService } from '../../../services/accesos.service';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { CardModule } from 'primeng/card';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucidePlus, lucideEdit2, lucideTrash2, lucideAlertTriangle } from '@ng-icons/lucide';
+import { lucidePlus, lucideEdit2, lucideTrash2, lucideAlertTriangle } from '@ng-icons/lucide';
 import { ListSkeletonComponent } from '../../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/empty-state.component';
 import { CommonModule } from '@angular/common';
@@ -19,12 +20,13 @@ import { CommonModule } from '@angular/common';
     TableModule,
     ButtonModule,
     DialogModule,
+    CardModule,
     NgIconComponent,
     ListSkeletonComponent,
     EmptyStateComponent
   ],
   viewProviders: [provideIcons({
-    lucideArrowLeft, lucidePlus, lucideEdit2, lucideTrash2, lucideAlertTriangle
+    lucidePlus, lucideEdit2, lucideTrash2, lucideAlertTriangle
   })],
   templateUrl: './roles-list.component.html',
   styleUrl: './roles-list.component.css',

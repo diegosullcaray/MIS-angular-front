@@ -7,8 +7,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft } from '@ng-icons/lucide';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { SistemasService } from '../../services/sistemas.service';
 import { SISTEMA_ESTADO_LABELS, type SistemaEstado } from '../../models/sistema.model';
 
@@ -24,9 +23,8 @@ import { SISTEMA_ESTADO_LABELS, type SistemaEstado } from '../../models/sistema.
     InputTextModule,
     ButtonModule,
     SelectModule,
-    NgIconComponent
+    SelectButtonModule
   ],
-  viewProviders: [provideIcons({ lucideArrowLeft })],
   templateUrl: './sistema-form.component.html',
   styleUrl: './sistema-form.component.css',
 })
@@ -37,8 +35,14 @@ export class SistemaFormComponent implements OnInit {
   // Input bound from route parameter :id (undefined en modo crear)
   readonly id = input<string>();
 
+  protected readonly activeTab = signal<'identificacion' | 'despliegue'>('identificacion');
   protected readonly cargando = signal(false);
   protected readonly errorMsg = signal<string | null>(null);
+
+  protected readonly tabOptions = [
+    { label: 'Información de Registro', value: 'identificacion' },
+    { label: 'Configuración de Despliegue', value: 'despliegue' }
+  ];
 
   // ─── Signal Form (TRD §6.1) ──────────────────────────────────────────────
 

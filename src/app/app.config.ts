@@ -8,6 +8,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
 
 import { APP_ROUTES } from './app.routes';
 import { MisTheme } from './core/design-system/mis-theme';
@@ -50,6 +51,9 @@ export const appConfig: ApplicationConfig = {
       },
       ripple: false, // Sin ripple — estilo macOS
     }),
+
+    // Toasts globales de PrimeNG (consumido vía ToastService + <p-toast> en el root)
+    MessageService,
   ],
 };
 

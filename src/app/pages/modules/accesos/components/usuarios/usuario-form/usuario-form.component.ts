@@ -8,8 +8,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucideCheck, lucideX } from '@ng-icons/lucide';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -24,9 +23,8 @@ import { CommonModule } from '@angular/common';
     InputTextModule,
     ButtonModule,
     SelectModule,
-    NgIconComponent
+    SelectButtonModule
   ],
-  viewProviders: [provideIcons({ lucideArrowLeft, lucideCheck, lucideX })],
   templateUrl: './usuario-form.component.html',
   styleUrl: './usuario-form.component.css',
 })
@@ -40,6 +38,13 @@ export class UsuarioFormComponent implements OnInit {
 
   protected readonly cargando = signal(false);
   protected readonly errorMsg = signal<string | null>(null);
+
+  // ─── Pestañas (Subsecciones con SelectButton) ─────────────────────────────
+  protected readonly activeTab = signal<'info' | 'roles'>('info');
+  protected readonly tabOptions = [
+    { label: 'Información General', value: 'info' },
+    { label: 'Roles y Sistemas', value: 'roles' }
+  ];
 
   // ─── Signal Form (TRD §6.1) ──────────────────────────────────────────────
 

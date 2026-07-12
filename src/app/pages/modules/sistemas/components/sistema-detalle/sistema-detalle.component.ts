@@ -2,9 +2,11 @@ import { Component, computed, effect, inject, input, signal } from '@angular/cor
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { CardModule } from 'primeng/card';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
-  lucideArrowLeft, lucideInfo, lucideNetwork, lucideShieldCheck,
+  lucideInfo, lucideNetwork, lucideShieldCheck,
   lucidePlus, lucideTrash2, lucideChevronRight, lucideCheck, lucideLayers
 } from '@ng-icons/lucide';
 import { SistemasService } from '../../services/sistemas.service';
@@ -16,6 +18,7 @@ import {
   type SistemaEstado,
 } from '../../models/sistema.model';
 import type { Rol } from '../../../accesos/models/acceso.model';
+import { FormsModule } from '@angular/forms';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 
 type Tab = 'info' | 'estructura' | 'permisos';
@@ -23,9 +26,9 @@ type Tab = 'info' | 'estructura' | 'permisos';
 @Component({
   selector: 'app-sistema-detalle',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonModule, NgIconComponent, ListSkeletonComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ButtonModule, SelectButtonModule, CardModule, NgIconComponent, ListSkeletonComponent],
   viewProviders: [provideIcons({
-    lucideArrowLeft, lucideInfo, lucideNetwork, lucideShieldCheck,
+    lucideInfo, lucideNetwork, lucideShieldCheck,
     lucidePlus, lucideTrash2, lucideChevronRight, lucideCheck, lucideLayers
   })],
   templateUrl: './sistema-detalle.component.html',
@@ -46,10 +49,10 @@ export class SistemaDetalleComponent {
   protected readonly cargando = signal(true);
   protected readonly tab = signal<Tab>('info');
 
-  protected readonly tabs: { id: Tab; etiqueta: string; icono: string }[] = [
-    { id: 'info',       etiqueta: 'Información', icono: 'lucideInfo' },
-    { id: 'estructura', etiqueta: 'Estructura',  icono: 'lucideNetwork' },
-    { id: 'permisos',   etiqueta: 'Permisos',    icono: 'lucideShieldCheck' },
+  protected readonly tabOptions = [
+    { label: 'Información', value: 'info' },
+    { label: 'Estructura', value: 'estructura' },
+    { label: 'Permisos', value: 'permisos' }
   ];
 
   // ─── Editor de estructura (borrador local) ───────────────────────────────

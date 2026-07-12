@@ -3,12 +3,15 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { CardModule } from 'primeng/card';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
-  lucideArrowLeft, lucideInfo, lucideBoxes, lucideUsers, lucideChevronRight
+  lucideInfo, lucideBoxes, lucideUsers, lucideChevronRight
 } from '@ng-icons/lucide';
 import { AccesosService } from '../../../services/accesos.service';
 import { SistemasService } from '../../../../sistemas/services/sistemas.service';
+import { FormsModule } from '@angular/forms';
 import { ROL_LABELS, type Rol, type Usuario } from '../../../models/acceso.model';
 import type { PermisoRolSistema } from '../../../../sistemas/models/sistema.model';
 import { ListSkeletonComponent } from '../../../../../../shared/ui/list-skeleton/list-skeleton.component';
@@ -18,9 +21,19 @@ type Tab = 'detalle' | 'sistemas' | 'usuarios';
 @Component({
   selector: 'app-rol-detalle',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonModule, TableModule, NgIconComponent, ListSkeletonComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ButtonModule,
+    TableModule,
+    SelectButtonModule,
+    CardModule,
+    FormsModule,
+    NgIconComponent,
+    ListSkeletonComponent
+  ],
   viewProviders: [provideIcons({
-    lucideArrowLeft, lucideInfo, lucideBoxes, lucideUsers, lucideChevronRight
+    lucideInfo, lucideBoxes, lucideUsers, lucideChevronRight
   })],
   templateUrl: './rol-detalle.component.html',
   styleUrl: './rol-detalle.component.css',
@@ -42,10 +55,10 @@ export class RolDetalleComponent {
   protected readonly cargando = signal(true);
   protected readonly tab = signal<Tab>('detalle');
 
-  protected readonly tabs: { id: Tab; etiqueta: string; icono: string }[] = [
-    { id: 'detalle',  etiqueta: 'Detalle',  icono: 'lucideInfo' },
-    { id: 'sistemas', etiqueta: 'Sistemas', icono: 'lucideBoxes' },
-    { id: 'usuarios', etiqueta: 'Usuarios', icono: 'lucideUsers' },
+  protected readonly tabOptions = [
+    { label: 'Información del Rol', value: 'detalle' },
+    { label: 'Permisos Asignados', value: 'sistemas' },
+    { label: 'Usuarios Vinculados', value: 'usuarios' }
   ];
 
   // ─── Computed ────────────────────────────────────────────────────────────

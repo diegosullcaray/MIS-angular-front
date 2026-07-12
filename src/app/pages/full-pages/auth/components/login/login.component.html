@@ -9,7 +9,7 @@
             <!-- 2-column grid -->
             <div class="grid grid-cols-1 md:grid-cols-[1.15fr_0.85fr]">
                 
-                <!-- Left Column: Login Form -->
+                <!-- Left Column: Login Form / MFA -->
                 <div class="p-6 md:p-10 flex flex-col gap-4 bg-white">
                     <header class="flex flex-col gap-1 mb-2">
                         <div class="self-start text-[18px] font-bold text-[var(--mis-primary)] tracking-[0.5px] bg-[var(--mis-primary-light)] px-3 py-1 rounded-[6px] mb-1">MIS</div>
@@ -22,6 +22,8 @@
                     </div>
                     }
 
+                    @if (paso() === 'credenciales') {
+                    <!-- Paso 1: Credenciales -->
                     <form (submit)="onSubmit($event)" class="flex flex-col gap-4">
                         <div class="flex flex-col gap-1">
                             <label for="email" class="text-sm font-semibold text-[var(--mis-text-primary)]">Correo electrónico</label>
@@ -59,6 +61,61 @@
                             <li><strong>Supervisor:</strong> <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">supervisor&#64;confianza.pe</code> / <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">supervisor123</code></li>
                         </ul>
                     </div>
+                    } @else {
+                    <!-- Paso 2: Verificación MFA (OTP de 6 dígitos) -->
+                    <div class="bg-[var(--mis-primary-light)] border border-[rgba(29,57,110,0.15)] rounded-[10px] text-[var(--mis-primary)] text-sm p-3 flex items-center gap-2" role="status">
+                        <ng-icon name="lucideInfo" size="16" />
+                        <span>Código OTP enviado a <b>{{ emailEnmascarado() }}</b></span>
+                    </div>
+
+                    <form (submit)="onVerificarOtp($event)" class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-semibold text-[var(--mis-text-primary)]">Código de verificación (MFA)</label>
+                                <span class="text-xs" [class]="otpExpirado() ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-secondary)]'">
+                                    {{ otpExpirado() ? 'Código expirado' : 'Expira en ' + expiraEn() }}
+                                </span>
+                            </div>
+                            <div class="otp-grid grid grid-cols-6 gap-2 my-3">
+                                @for (digito of otpDigitos(); track $index) {
+                                <input
+                                    type="text"
+                                    inputmode="numeric"
+                                    autocomplete="one-time-code"
+                                    maxlength="6"
+                                    class="otp-cell"
+                                    [value]="digito"
+                                    [disabled]="otpExpirado() || cargando()"
+                                    (input)="onOtpInput($index, $event)"
+                                    (keydown.backspace)="onOtpBackspace($index, $event)"
+                                    [attr.aria-label]="'Dígito ' + ($index + 1) + ' del código'"
+                                />
+                                }
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <p-button label="Verificar código" type="submit"
+                                [disabled]="!otpCompleto() || otpExpirado() || cargando()" [loading]="cargando()"
+                                styleClass="w-full" />
+                            <button type="button" (click)="volverALogin()"
+                                class="inline-flex items-center justify-center gap-1 text-xs text-[var(--mis-text-secondary)] bg-transparent border-none cursor-pointer mt-3 w-full hover:text-[var(--mis-primary)] hover:underline">
+                                <ng-icon name="lucideArrowLeft" size="12" />
+                                Volver al inicio de sesión
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="flex flex-col gap-2 border-t border-dashed border-[var(--mis-border)] pt-4 mt-2">
+                        <span class="text-xs font-semibold text-[var(--mis-text-secondary)] uppercase tracking-[0.5px]">Instrucciones de seguridad:</span>
+                        <ul class="m-0 pl-4 text-xs text-[var(--mis-text-secondary)] flex flex-col gap-[3px]">
+                            <li>El código OTP es generado por su aplicación autenticadora.</li>
+                            <li>Si no tiene acceso, use sus códigos de respaldo corporativos.</li>
+                            <li>Para asistencia técnica, contacte a <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">soporte&#64;confianza.pe</code></li>
+                            <li><strong>Demo:</strong> usa el código <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">123456</code></li>
+                        </ul>
+                    </div>
+                    }
                 </div>
                 
                 <!-- Right Column: Banner Image -->

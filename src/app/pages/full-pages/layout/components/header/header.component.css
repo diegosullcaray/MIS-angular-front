@@ -2,6 +2,25 @@
   animation: dropdownFadeIn var(--mis-transition-fast) ease;
 }
 
+/* Breadcrumb integrado al header glass: sin fondo, sin borde ni padding propio */
+.header-breadcrumb ::ng-deep .p-breadcrumb {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: var(--mis-text-sm);
+}
+
+.header-breadcrumb ::ng-deep .p-breadcrumb .p-breadcrumb-item-link,
+.header-breadcrumb ::ng-deep .p-breadcrumb .p-menuitem-link {
+  color: var(--mis-text-secondary);
+}
+
+.header-breadcrumb ::ng-deep .p-breadcrumb .p-breadcrumb-item:last-child .p-breadcrumb-item-label,
+.header-breadcrumb ::ng-deep .p-breadcrumb .p-menuitem:last-child .p-menuitem-text {
+  color: var(--mis-text-primary);
+  font-weight: var(--mis-font-semibold);
+}
+
 @keyframes dropdownFadeIn {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
