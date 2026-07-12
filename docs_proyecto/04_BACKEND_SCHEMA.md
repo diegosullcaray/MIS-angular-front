@@ -1,601 +1,254 @@
-# 04 — Backend Schema (Integración de Datos — API y Estado)
-> **Proyecto:** MIS - Management Information System  
-> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/06_FIGMA_UX_KIT.html)  
-> **Versión:** 1.0.0  
-> **Fecha:** 2026-07-09  
-> **Estado:** 🟡 En revisión
+# 04 — Backend Schema (Spring Boot — API, Arquitectura y Datos)
+> **Proyecto:** MIS - Management Information System
+> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [07_DATABASE_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/07_DATABASE_SCHEMA.sql)
+> **Versión:** 2.0.0
+> **Fecha:** 2026-07-12
+> **Estado:** 🟢 Alineado al frontend actual (la Fake API implementa este contrato)
 
 ---
 
-## 1. Estrategia de Consumo de APIs
+## 1. Stack Tecnológico del Backend
 
-| Actor | APIs que Consume | Estrategia |
-|---|---|---|
-| **Host (MIS)** | APIs REST propias: catálogos, usuarios, roles y configuración del panel | `HttpClient` + `withFetch()` |
-| **Remote (Subsistema)** | APIs REST propias de su dominio | `HttpClient` independiente, configurado en el Remote |
-
-> ⚠️ **Regla de Aislamiento:** Los Remotes **nunca** llaman APIs del Host ni viceversa. La única comunicación entre ellos es a través del `ShellStateService` vía Signals.
-
-> 🧪 **Modo desarrollo (Fake API):** mientras el backend real no exista, todos los endpoints `/api/v1/*`
-> son atendidos por `fakeApiInterceptor` (`src/app/core/fake-api/`) con una base de datos en memoria
-> que implementa este contrato (incluye latencia simulada y validación de rol por token).
-> Para conectar el backend real basta con retirar el interceptor de `app.config.ts`.
-
----
-
-## 2. Endpoints del Host — Catálogos
-
-### Base URL
-
-```
-/api/v1   (relativo — configurado por proxy o variable de entorno)
-```
-
-### 2.1 `GET /api/v1/catalogos`
-
-Obtiene la lista de tipos de catálogos disponibles en el Host.
-
-**Request:** Sin body.
-
-**Response `200 OK`:**
-```json
-[
-  {
-    "id": "cat-001",
-    "tipo": "bancos",
-    "nombre": "Catálogo de Bancos",
-    "totalRegistros": 45,
-    "activo": true,
-    "ultimaActualizacion": "2026-07-08T14:30:00Z"
-  }
-]
-```
-
----
-
-### 2.2 `GET /api/v1/catalogos/:tipo`
-
-Obtiene los ítems de un catálogo específico.
-
-**Path Param:** `tipo` — slug del tipo de catálogo (ej. `bancos`, `monedas`, `departamentos`)
-
-**Query Params:**
-| Param | Tipo | Default | Descripción |
+| Capa | Tecnología | Versión | Notas |
 |---|---|---|---|
-| `page` | `number` | `1` | Página de resultados |
-| `pageSize` | `number` | `20` | Ítems por página |
-| `q` | `string` | — | Búsqueda por texto |
+| Lenguaje | Java | 21 LTS | Records para DTOs, virtual threads habilitados |
+| Framework | **Spring Boot** | 3.3+ | starters: web, validation, actuator |
+| Seguridad | Spring Security | 6.x | JWT stateless + MFA OTP (CA-07) |
+| Persistencia | Spring Data JPA (Hibernate) | — | Un repositorio por agregado |
+| Base de datos | **PostgreSQL** | 16+ | DDL en [07_DATABASE_SCHEMA.sql](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/07_DATABASE_SCHEMA.sql) |
+| Migraciones | Flyway | — | `db/migration/V1__baseline.sql` = script 07 |
+| Mapeo DTO | MapStruct | — | Entity ↔ DTO en compile-time |
+| Documentación | springdoc-openapi | — | Swagger UI solo en perfil `dev` |
+| Contenedores | Docker (multi-stage) | — | JRE 21 alpine, orquestado con Dokploy/Coolify |
 
-**Response `200 OK`:**
-```json
-{
-  "tipo": "bancos",
-  "page": 1,
-  "pageSize": 20,
-  "total": 45,
-  "items": [
-    {
-      "id": "ban-001",
-      "codigo": "BCP",
-      "descripcion": "Banco de Crédito del Perú",
-      "activo": true
-    }
-  ]
-}
-```
+> El frontend consume la API con prefijo **`/api/v1`**. La Fake API del Host
+> (`src/app/core/fake-api/`) implementa exactamente este contrato: al desplegar el
+> backend real solo se retira `fakeApiInterceptor` de `app.config.ts` (ver §8).
+
+> ⚠️ **Regla de Aislamiento (RN-02/RN-03):** los Remotes nunca llaman APIs del Host ni
+> viceversa; cada Remote tiene su propio backend. Este documento cubre únicamente el
+> backend del **Host** (auth + IAM + registro de sistemas).
 
 ---
 
-### 2.3 `POST /api/v1/catalogos/:tipo`
+## 2. Arquitectura — Monolito Modular (escalable, robusto, extraíble a microservicios)
 
-Crea un nuevo ítem en el catálogo especificado.
+Un **monolito modular** organizado por *bounded contexts*: `auth`, `accesos` (IAM) y
+`sistemas`. Cada módulo es autocontenido — API, aplicación, dominio e infraestructura
+propias — y solo se comunica con otros módulos a través de sus servicios públicos, nunca
+tocando repositorios ajenos. Así, cualquier módulo puede extraerse a microservicio sin
+reescritura (el mismo criterio de independencia que los Remotes del frontend).
 
-**Request Body:**
-```json
-{
-  "codigo": "string",
-  "descripcion": "string",
-  "activo": true
-}
+```
+mis-backend/
+├── src/main/java/pe/confianza/mis/
+│   ├── MisBackendApplication.java
+│   │
+│   ├── shared/                          ← Núcleo transversal (sin lógica de negocio)
+│   │   ├── config/                        CORS, OpenAPI, Jackson (ISO-8601 UTC), Clock
+│   │   ├── security/                      SecurityConfig, JwtAuthFilter, RoleHierarchy
+│   │   ├── web/                           ApiError, GlobalExceptionHandler, PageResponse<T>
+│   │   └── persistence/                   AuditableEntity (creado_en / actualizado_en)
+│   │
+│   ├── auth/                            ← Módulo: Autenticación + MFA
+│   │   ├── api/            AuthController · dto: LoginRequest, MfaChallengeResponse,
+│   │   │                                        VerificarOtpRequest, LoginResponse
+│   │   ├── application/    AuthService, OtpService (genera/valida OTP, TTL 3 min)
+│   │   ├── domain/         OtpChallenge · OtpChallengeRepository
+│   │   └── infrastructure/ JwtProvider, BCryptPasswordEncoder, OtpSender (log|email|SMS)
+│   │
+│   ├── accesos/                         ← Módulo: IAM (Usuarios y Roles)
+│   │   ├── api/            UsuarioController, RolController · dto/ · mapper/
+│   │   ├── application/    UsuarioService, RolService
+│   │   ├── domain/         Usuario, Rol · UsuarioRepository, RolRepository
+│   │   └── infrastructure/ Specifications de búsqueda/paginación
+│   │
+│   └── sistemas/                        ← Módulo: Registro de MFEs + Estructura + Permisos
+│       ├── api/            SistemaController · dto: SistemaResumen, SistemaDetalle,
+│       │                                          EstructuraRequest, PermisoRolSistema · mapper/
+│       ├── application/    SistemaService, EstructuraService, PermisoService
+│       ├── domain/         Sistema, Seccion, Subseccion, Modulo, PermisoRolModulo · repos
+│       └── infrastructure/
+│
+├── src/main/resources/
+│   ├── application.yml                  perfiles: dev / prod
+│   └── db/migration/V1__baseline.sql    = 07_DATABASE_SCHEMA.sql
+├── Dockerfile
+└── pom.xml
 ```
 
-**Response `201 Created`:**
-```json
-{
-  "id": "ban-002",
-  "codigo": "BBVA",
-  "descripcion": "BBVA Perú",
-  "activo": true
-}
-```
+### Reglas de modularidad (no negociables)
 
----
-
-### 2.4 `PUT /api/v1/catalogos/:tipo/:id`
-
-Actualiza un ítem existente del catálogo.
-
-**Response `200 OK`:** Ítem actualizado (mismo schema que POST response).
-
----
-
-### 2.5 `DELETE /api/v1/catalogos/:tipo/:id`
-
-Elimina (soft delete) un ítem del catálogo.
-
-**Response `204 No Content`.**
-
----
-
-## 3. Endpoints del Host — Gestión de Accesos (IAM)
-
-> Estos endpoints solo son accesibles para el rol `admin-sistema`. El backend valida el JWT y el claim de rol.
-
-### 3.1 `GET /api/v1/usuarios`
-
-Listado paginado de usuarios del sistema.
-
-**Query Params:** `page`, `pageSize`, `q` (búsqueda por nombre/email), `activo` (boolean)
-
-**Response `200 OK`:**
-```json
-{
-  "page": 1, "pageSize": 20, "total": 12,
-  "items": [
-    { "id": "usr-001", "nombre": "Diego Sullcarayra", "email": "diego@confianza.pe",
-      "rol": "admin-sistema", "activo": true, "creadoEn": "2026-01-15T00:00:00Z" }
-  ]
-}
-```
-
-### 3.2 `POST /api/v1/usuarios` — Crear usuario
-
-```json
-{
-  "nombre": "string",
-  "email": "string",
-  "password": "string",
-  "rolId": "string",
-  "subsistemas": ["subsistema-contabilidad", "subsistema-rrhh"]
-}
-```
-**Response `201 Created`:** Objeto `Usuario` completo.
-
-### 3.3 `PUT /api/v1/usuarios/:id` — Editar usuario
-
-Mismo body que POST (sin `password` si no cambia).
-
-### 3.4 `PATCH /api/v1/usuarios/:id/estado` — Activar/desactivar
-
-```json
-{ "activo": false }
-```
-**Response `200 OK`:** `{ "activo": false }`
-
----
-
-### 3.5 `GET /api/v1/roles`
-
-```json
-[
-  { "id": "rol-001", "nombre": "Admin Sistema", "slug": "admin-sistema",
-    "subsistemas": ["subsistema-contabilidad", "subsistema-rrhh"] },
-  { "id": "rol-002", "nombre": "Supervisor de Área", "slug": "supervisor-area",
-    "subsistemas": ["subsistema-rrhh"] }
-]
-```
-
-### 3.6 `POST /api/v1/roles` / `PUT /api/v1/roles/:id`
-
-```json
-{
-  "nombre": "string",
-  "slug": "string",
-  "subsistemas": ["string"]
-}
-```
-**Response `201 Created` / `200 OK`:** Objeto `Rol` completo.
-
-### 3.7 `DELETE /api/v1/roles/:id`
-
-**Response `204 No Content`.**  
-> Solo si no tiene usuarios asignados; de lo contrario devuelve `409 Conflict`.
-
----
-
-## 3B. Endpoints del Host — Sistemas Registrados
-
-> El MIS es un **centralizador de sistemas**: cada Remote se registra como un `Sistema` con una
-> estructura jerárquica `Sistema → Secciones → Subsecciones → Módulos`. Los permisos de los roles
-> se controlan **a nivel de módulo**. Los endpoints de escritura requieren rol `admin-sistema`.
-
-### 3B.1 `GET /api/v1/sistemas`
-
-Listado resumido de sistemas registrados.
-
-**Response `200 OK`:**
-```json
-[
-  {
-    "id": "sis-001", "nombre": "Contabilidad", "slug": "subsistema-contabilidad",
-    "descripcion": "Gestión contable y tesorería", "icono": "pi pi-chart-bar",
-    "version": "1.4.2", "estado": "activo",
-    "totalSecciones": 3, "totalModulos": 9, "rolesAsignados": 2,
-    "actualizadoEn": "2026-07-01T00:00:00Z"
-  }
-]
-```
-
-### 3B.2 `GET /api/v1/sistemas/:id`
-
-Detalle completo (acepta `id` o `slug`). Incluye el árbol `secciones[] → subsecciones[] → modulos[]`.
-
-### 3B.3 `POST /api/v1/sistemas` / `PUT /api/v1/sistemas/:id`
-
-Crea/actualiza la **información general** del sistema (no la estructura).
-
-```json
-{
-  "nombre": "string", "slug": "string", "descripcion": "string",
-  "icono": "pi pi-*", "url": "http://host/remoteEntry.json",
-  "version": "string", "estado": "activo | mantenimiento | inactivo"
-}
-```
-> `slug` es inmutable tras la creación (identifica al Remote en `federation.manifest.json`).
-> `POST` responde `409 Conflict` si el slug ya existe.
-
-### 3B.4 `PUT /api/v1/sistemas/:id/estructura`
-
-Reemplaza el árbol completo de secciones del sistema.
-
-**Request Body:** `Seccion[]` — cada sección con sus `subsecciones[]` y `modulos[]`.
-**Response `200 OK`:** `Sistema` actualizado.
-> Los permisos que referencien módulos eliminados se depuran automáticamente.
-
-### 3B.5 `DELETE /api/v1/sistemas/:id`
-
-**Response `204 No Content`.**
-> `409 Conflict` si el sistema está asignado a algún rol.
-
-### 3B.6 Permisos por rol (a nivel de módulo)
-
-| Endpoint | Descripción |
+| # | Regla |
 |---|---|
-| `GET /api/v1/sistemas/:id/permisos` | `PermisoRolSistema[]` de todos los roles en ese sistema |
-| `PUT /api/v1/sistemas/:id/permisos/:rolId` | Body `{ "modulos": ["mod-001", ...] }` — reemplaza los módulos permitidos del rol |
-| `GET /api/v1/roles/:id/permisos` | Permisos del rol en **todos** los sistemas (para el detalle de rol) |
-| `GET /api/v1/roles/:id/usuarios` | Usuarios que tienen asignado el rol (para el detalle de rol) |
-
-### 3B.7 Modelo jerárquico (`src/app/pages/modules/sistemas/models/sistema.model.ts`)
-
-```typescript
-export type SistemaEstado = 'activo' | 'mantenimiento' | 'inactivo';
-
-export interface Modulo     { id: string; nombre: string; slug: string; activo: boolean; }
-export interface Subseccion { id: string; nombre: string; slug: string; modulos: Modulo[]; }
-export interface Seccion    { id: string; nombre: string; slug: string; subsecciones: Subseccion[]; }
-
-export interface Sistema {
-  id: string;
-  nombre: string;
-  slug: string;            // nombre del Remote en federation.manifest.json
-  descripcion: string;
-  icono: string;           // clase PrimeIcons
-  url: string;             // remoteEntry.json
-  version: string;
-  estado: SistemaEstado;
-  secciones: Seccion[];
-  creadoEn: string;        // ISO 8601
-  actualizadoEn: string;   // ISO 8601
-}
-
-/** Permiso de un rol sobre los módulos de un sistema. */
-export interface PermisoRolSistema {
-  rolId: string;
-  sistemaId: string;
-  modulos: string[];       // IDs de módulos habilitados
-}
-```
+| BE-01 | Un módulo **no importa** `domain/` ni `infrastructure/` de otro módulo; solo su capa `application/` (interfaz pública). Verificable con ArchUnit. |
+| BE-02 | Los controllers solo orquestan: `@Valid` + delegar al service + mapear DTO. Cero lógica de negocio. |
+| BE-03 | Las entidades JPA **nunca** cruzan la frontera del módulo: todo intercambio usa DTOs (MapStruct). |
+| BE-04 | Errores de negocio → excepciones propias (`NotFoundException`, `ConflictException`, `ValidationException`) traducidas por `GlobalExceptionHandler` al formato `ApiError` (§3.1). |
+| BE-05 | Toda tabla lleva auditoría mínima (`creado_en`, `actualizado_en`) heredada de `AuditableEntity`. |
+| BE-06 | Cambios de esquema solo via Flyway; Hibernate con `ddl-auto: validate` en todos los perfiles. |
+| BE-07 | Operaciones que tocan varios agregados (p. ej. reemplazar estructura + depurar permisos) van en **una sola transacción** de servicio. |
 
 ---
 
-## 4. Interfaces TypeScript (Modelos)
+## 3. Convenciones Transversales del API
 
-### `src/app/features/catalogos/models/catalogo.model.ts`
+### 3.1 Formato de error (`ApiError`) — el que ya espera el frontend
 
-```typescript
-// ─── Tipos de Catálogo (metadata) ────────────────────────────────────────────
-
-export interface CatalogoMeta {
-  id: string;
-  tipo: string;
-  nombre: string;
-  totalRegistros: number;
-  activo: boolean;
-  ultimaActualizacion: string; // ISO 8601
-}
-
-// ─── Ítem de Catálogo ─────────────────────────────────────────────────────────
-
-export interface CatalogoItem {
-  id: string;
-  codigo: string;
-  descripcion: string;
-  activo: boolean;
-}
-
-// ─── Response Paginado ───────────────────────────────────────────────────────
-
-export interface CatalogoPageResponse {
-  tipo: string;
-  page: number;
-  pageSize: number;
-  total: number;
-  items: CatalogoItem[];
-}
-
-// ─── Request de Creación/Edición ─────────────────────────────────────────────
-
-export interface CatalogoItemRequest {
-  codigo: string;
-  descripcion: string;
-  activo: boolean;
-}
-
-// ─── Estado de Error de API ──────────────────────────────────────────────────
-
-export interface ApiError {
-  status: number;
-  message: string;
-  timestamp: string;
-}
+```json
+{ "status": 409, "message": "No se puede eliminar: el rol 'X' tiene usuarios asignados.", "timestamp": "2026-07-12T10:00:00Z" }
 ```
 
-### `src/app/features/accesos/models/acceso.model.ts`
+### 3.2 Paginación (`PageResponse<T>`) — coincide con `acceso.model.ts`
 
-```typescript
-// ─── Rol del sistema ───────────────────────────────────────────────────────────────
-
-export type RolSlug = 'admin-sistema' | 'admin-general' | 'supervisor-area';
-
-export interface Rol {
-  id: string;
-  nombre: string;
-  slug: RolSlug;
-  subsistemas: string[];  // slugs de Remotes habilitados para este rol
-}
-
-// ─── Usuario del sistema ─────────────────────────────────────────────────────────
-
-export interface Usuario {
-  id: string;
-  nombre: string;
-  email: string;
-  rol: RolSlug;
-  subsistemas: string[];  // Remotes habilitados para este usuario específico
-  activo: boolean;
-  creadoEn: string; // ISO 8601
-}
-
-// ─── Requests ────────────────────────────────────────────────────────────────────
-
-export interface UsuarioRequest {
-  nombre: string;
-  email: string;
-  password?: string;  // Opcional en edición
-  rolId: string;
-  subsistemas: string[];
-}
-
-export interface RolRequest {
-  nombre: string;
-  slug: string;
-  subsistemas: string[];
-}
-
-// ─── Responses paginados ─────────────────────────────────────────────────────────
-
-export interface PageResponse<T> {
-  page: number;
-  pageSize: number;
-  total: number;
-  items: T[];
-}
+```json
+{ "page": 1, "pageSize": 20, "total": 57, "items": [ ... ] }
 ```
+
+### 3.3 Seguridad
+
+- **JWT stateless** (`Authorization: Bearer <token>`). Claims: `sub` (usuarioId), `rol` (slug), `subsistemas` (string[]).
+- Autorización con `@PreAuthorize`; jerarquía `admin-sistema > admin-general > supervisor-area` vía `RoleHierarchy` (paridad con `role.guard.ts`).
+- Contraseñas con **BCrypt** (cost ≥ 10). El hash jamás viaja en un DTO.
+- **MFA obligatorio** (CA-07): el login con credenciales no emite sesión; emite un desafío OTP (§6).
 
 ---
 
-## 5. Estado Global Compartido — `ShellStateService`
+## 4. Contrato de Endpoints
 
-### Ubicación
+> Contrato 1:1 con la Fake API actual. Los códigos de error indicados ya se manejan
+> en los servicios Angular (`AuthService`, `AccesosService`, `SistemasService`).
 
-```
-src/app/core/services/shell-state.service.ts
-```
+### 4.1 Módulo `auth`
 
-### Implementación
+| Método y ruta | Acceso | Descripción |
+|---|---|---|
+| `POST /api/v1/auth/login` | público | Valida credenciales. **No emite token de sesión**: genera OTP (TTL 3 min) y responde `{ mfaRequerido: true, mfaToken, email }`. Errores: `401` credenciales inválidas · `403` usuario desactivado. |
+| `POST /api/v1/auth/verificar-otp` | público | Body `{ mfaToken, otp }`. Valida el código de 6 dígitos (máx. 5 intentos). Responde `{ token, usuario }`. Errores: `401` OTP incorrecto o desafío expirado. |
 
-```typescript
-import { Injectable, signal, computed } from '@angular/core';
-import { RolSlug } from '../../features/accesos/models/acceso.model';
+### 4.2 Módulo `accesos` — Usuarios
 
-export interface UsuarioActivo {
-  id: string;
-  nombre: string;
-  rol: RolSlug;  // 'admin-sistema' | 'admin-general' | 'supervisor-area'
-  subsistemas: string[]; // Remotes habilitados para este usuario
-}
+| Método y ruta | Rol mínimo | Descripción |
+|---|---|---|
+| `GET /api/v1/usuarios?page&pageSize&q&activo` | admin-sistema | Listado paginado; `q` busca en nombre/email; `activo` filtra por estado. |
+| `GET /api/v1/usuarios/{id}` | admin-sistema | Detalle. `404` si no existe. |
+| `POST /api/v1/usuarios` | admin-sistema | Crea usuario. `400` campos requeridos · `409` email duplicado. |
+| `PUT /api/v1/usuarios/{id}` | admin-sistema | Actualiza nombre/email/rol/subsistemas; `password` opcional. |
+| `PATCH /api/v1/usuarios/{id}/estado` | admin-sistema | Body `{ activo: boolean }`. Activa/desactiva la cuenta. |
 
-export interface MenuItemActivo {
-  ruta: string;
-  etiqueta: string;
-  subsistema?: string;
-}
+### 4.3 Módulo `accesos` — Roles
 
-@Injectable({ providedIn: 'root' })
-export class ShellStateService {
+| Método y ruta | Rol mínimo | Descripción |
+|---|---|---|
+| `GET /api/v1/roles` | autenticado | Lista de roles (la consumen selects del Host). |
+| `GET /api/v1/roles/{id}` | autenticado | Detalle. |
+| `GET /api/v1/roles/{id}/usuarios` | admin-sistema | Usuarios vinculados al rol. |
+| `GET /api/v1/roles/{id}/permisos` | admin-sistema | `PermisoRolSistema[]` del rol. |
+| `POST /api/v1/roles` | admin-sistema | `400` nombre/slug requeridos · `409` slug duplicado. |
+| `PUT /api/v1/roles/{id}` | admin-sistema | El slug es inmutable tras la creación. |
+| `DELETE /api/v1/roles/{id}` | admin-sistema | `409` si el rol tiene usuarios asignados. |
 
-  // ─── Signals privados (escritura solo desde el Host) ─────────────────────
+### 4.4 Módulo `sistemas`
 
-  private readonly _usuarioActivo = signal<UsuarioActivo | null>(null);
-  private readonly _menuItemActivo = signal<MenuItemActivo | null>(null);
-  private readonly _catalogoActivo = signal<string | null>(null);
+| Método y ruta | Rol mínimo | Descripción |
+|---|---|---|
+| `GET /api/v1/sistemas` | autenticado | `SistemaResumen[]` (contadores agregados, sin árbol). Alimenta sidebar y dashboard. |
+| `GET /api/v1/sistemas/{idOSlug}` | autenticado | `Sistema` completo con árbol Secciones → Subsecciones → Módulos. |
+| `POST /api/v1/sistemas` | admin-sistema | Registra un Remote. `409` slug duplicado. |
+| `PUT /api/v1/sistemas/{id}` | admin-sistema | Actualiza datos generales (la estructura tiene su propio endpoint). |
+| `DELETE /api/v1/sistemas/{id}` | admin-sistema | `409` si está asignado a algún rol. Cascada sobre estructura y permisos. |
+| `PUT /api/v1/sistemas/{id}/estructura` | admin-sistema | Reemplaza el árbol completo (`Seccion[]`) y depura permisos huérfanos en la misma transacción (BE-07). |
+| `GET /api/v1/sistemas/{id}/permisos` | admin-sistema | `PermisoRolSistema[]` del sistema. |
+| `PUT /api/v1/sistemas/{id}/permisos/{rolId}` | admin-sistema | Body `{ modulos: string[] }`. Upsert de los permisos del rol en el sistema. |
 
-  // ─── Signals de solo lectura (expuestos a Remotes) ───────────────────────
+### 4.5 DTOs de referencia
 
-  /** Usuario autenticado actualmente en el sistema. */
-  readonly usuarioActivo = this._usuarioActivo.asReadonly();
-
-  /** Ítem del menú principal actualmente seleccionado. */
-  readonly menuItemActivo = this._menuItemActivo.asReadonly();
-
-  /** Slug del catálogo activo (seleccionado en el Host). */
-  readonly catalogoActivo = this._catalogoActivo.asReadonly();
-
-  // ─── Computed ────────────────────────────────────────────────────────────
-
-  /** True si el usuario es Administrador del Sistema (puede gestionar IAM). */
-  readonly esAdminSistema = computed(() => this._usuarioActivo()?.rol === 'admin-sistema');
-
-  /** True si el usuario tiene acceso a gestión operativa (admin-general o admin-sistema). */
-  readonly esAdmin = computed(() =>
-    ['admin-sistema', 'admin-general'].includes(this._usuarioActivo()?.rol ?? '')
-  );
-
-  /** Subsistemas habilitados para el usuario activo (controla visibilidad en el sidebar). */
-  readonly subsistemas = computed(() => this._usuarioActivo()?.subsistemas ?? []);
-
-  // ─── Métodos de mutación (solo el Host puede invocar estos) ──────────────
-
-  setUsuarioActivo(usuario: UsuarioActivo): void {
-    this._usuarioActivo.set(usuario);
-  }
-
-  setMenuItemActivo(item: MenuItemActivo): void {
-    this._menuItemActivo.set(item);
-  }
-
-  setCatalogoActivo(slug: string): void {
-    this._catalogoActivo.set(slug);
-  }
-}
-```
-
-> ✅ **Patrón de Contrato:** Los Remotes **importan** `ShellStateService` y leen `usuarioActivo()`, `catalogoActivo()` como Signals de solo lectura. No tienen acceso a los métodos `set*`.
+Los DTOs Java replican los modelos del frontend (fuente de verdad del contrato):
+`Usuario`, `UsuarioRequest`, `Rol`, `RolRequest`, `PageResponse<T>` (en
+`acceso.model.ts`) y `Sistema`, `SistemaResumen`, `SistemaRequest`, `Seccion`,
+`Subseccion`, `Modulo`, `PermisoRolSistema` (en `sistema.model.ts`).
+Fechas siempre **ISO-8601 UTC** (`Instant` + Jackson).
 
 ---
 
-## 5. Servicio de Catálogos (`CatalogosService`)
+## 5. Modelo de Datos
 
-### Ubicación
+El DDL completo (PostgreSQL) vive en **[07_DATABASE_SCHEMA.sql](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/07_DATABASE_SCHEMA.sql)** — es también la migración baseline de Flyway.
 
 ```
-src/app/features/catalogos/services/catalogos.service.ts
+roles ─────────────< usuarios                    usuarios >───── auth_otp
+  │                     │
+  │ (rol_sistema)       │ (usuario_sistema)
+  ▼                     ▼
+sistemas ────< secciones ────< subsecciones ────< modulos
+  ▲                                                  ▲
+  └────────────── permiso_rol_modulo >───────────────┘
+                         │
+                       roles
 ```
 
-### Implementación con Signals + HttpClient
-
-```typescript
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { CatalogoMeta, CatalogoPageResponse, CatalogoItemRequest, CatalogoItem, ApiError } from '../models/catalogo.model';
-
-@Injectable({ providedIn: 'root' })
-export class CatalogosService {
-
-  private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api/v1/catalogos';
-
-  // ─── Estado reactivo ─────────────────────────────────────────────────────
-
-  readonly isLoading = signal<boolean>(false);
-  readonly error = signal<ApiError | null>(null);
-  readonly catalogosMeta = signal<CatalogoMeta[]>([]);
-  readonly paginaActual = signal<CatalogoPageResponse | null>(null);
-
-  // ─── Computed ────────────────────────────────────────────────────────────
-
-  readonly tieneError = computed(() => this.error() !== null);
-  readonly totalItems = computed(() => this.paginaActual()?.total ?? 0);
-
-  // ─── Métodos ─────────────────────────────────────────────────────────────
-
-  cargarCatalogos(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.http.get<CatalogoMeta[]>(this.baseUrl).subscribe({
-      next: (data) => {
-        this.catalogosMeta.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.error.set({ status: err.status, message: err.message, timestamp: new Date().toISOString() });
-        this.isLoading.set(false);
-      }
-    });
-  }
-
-  cargarItems(tipo: string, page = 1, pageSize = 20, q?: string): void {
-    this.isLoading.set(true);
-    let params: Record<string, string | number> = { page, pageSize };
-    if (q) params['q'] = q;
-
-    this.http.get<CatalogoPageResponse>(`${this.baseUrl}/${tipo}`, { params }).subscribe({
-      next: (data) => {
-        this.paginaActual.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.error.set({ status: err.status, message: err.message, timestamp: new Date().toISOString() });
-        this.isLoading.set(false);
-      }
-    });
-  }
-
-  crearItem(tipo: string, request: CatalogoItemRequest) {
-    return this.http.post<CatalogoItem>(`${this.baseUrl}/${tipo}`, request);
-  }
-
-  actualizarItem(tipo: string, id: string, request: CatalogoItemRequest) {
-    return this.http.put<CatalogoItem>(`${this.baseUrl}/${tipo}/${id}`, request);
-  }
-
-  eliminarItem(tipo: string, id: string) {
-    return this.http.delete<void>(`${this.baseUrl}/${tipo}/${id}`);
-  }
-}
-```
+| Tabla | Propósito |
+|---|---|
+| `roles` | Perfiles (`admin-sistema`, `admin-general`, `supervisor-area` + personalizados). |
+| `usuarios` | Cuentas con `password_hash` (BCrypt), FK a rol, flag `activo`. |
+| `sistemas` | Remotes registrados (slug = nombre en `federation.manifest.json`). |
+| `secciones` / `subsecciones` / `modulos` | Árbol jerárquico del sistema (cascada al eliminar). |
+| `rol_sistema` | Subsistemas habilitados por rol (campo `subsistemas` del `Rol`). |
+| `usuario_sistema` | Override de subsistemas por usuario (campo `subsistemas` del `Usuario`). |
+| `permiso_rol_modulo` | Permisos a nivel de módulo; `PermisoRolSistema` se deriva agrupando por sistema. |
+| `auth_otp` | Desafíos MFA: hash del código, expiración, contador de intentos, marca de uso. |
 
 ---
 
-## 6. Contrato de Comunicación Host ↔ Remote
+## 6. Flujo MFA (secuencia)
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│                     HOST (MIS Shell)                       │
-│                                                            │
-│  ShellStateService                                         │
-│   ├── _usuarioActivo (signal privado)  ─── SET aquí       │
-│   ├── _menuItemActivo (signal privado) ─── SET aquí       │
-│   └── _catalogoActivo (signal privado) ─── SET aquí       │
-│                                                            │
-│   Expone: usuarioActivo.asReadonly()  ────────────────┐   │
-│           menuItemActivo.asReadonly() ─────────────┐  │   │
-│           catalogoActivo.asReadonly() ──────────┐  │  │   │
-└─────────────────────────────────────────────────│──│──│───┘
-                                                  │  │  │
-              READ-ONLY (solo lectura) ────────────┘  │  │
-                                                      │  │
-┌─────────────────────────────────────────────────────│──│───┐
-│                   REMOTE (Subsistema X)             │  │   │
-│                                                     │  │   │
-│   inject(ShellStateService)                         │  │   │
-│    └── lee: catalogoActivo()  ◄─────────────────────┘  │   │
-│    └── lee: usuarioActivo()   ◄────────────────────────┘   │
-│                                                             │
-│   ❌ NO puede invocar setUsuarioActivo()                    │
-│   ❌ NO puede invocar setCatalogoActivo()                   │
-└─────────────────────────────────────────────────────────────┘
+Angular Host                 Spring Boot                      PostgreSQL
+    │  POST /auth/login           │                                │
+    ├─────────────────────────────►  valida credenciales (BCrypt)  │
+    │                             ├──── INSERT auth_otp ───────────►
+    │  ◄── { mfaToken, email } ───┤     (codigo_hash, expira +3m)  │
+    │                             │                                │
+    │  POST /auth/verificar-otp   │                                │
+    ├─────────────────────────────►  valida otp + intentos ≤ 5     │
+    │                             ├──── UPDATE usado_en ───────────►
+    │  ◄── { token(JWT), usuario }┤                                │
 ```
+
+- En `dev`, el OTP se escribe en el log del servidor (paridad con el `123456` de la Fake API).
+- En `prod`, `OtpSender` lo envía por el canal corporativo (email/SMS) — **nunca** viaja en la respuesta HTTP.
+- El `mfaToken` es un token opaco firmado con TTL de 3 min, de un solo uso.
+
+---
+
+## 7. Despliegue
+
+```dockerfile
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn -q dependency:go-offline
+COPY src ./src
+RUN mvn -q package -DskipTests
+
+FROM eclipse-temurin:21-jre-alpine
+COPY --from=build /app/target/mis-backend.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app.jar"]
+```
+
+| Perfil | Base de datos | OTP | Swagger UI |
+|---|---|---|---|
+| `dev` | PostgreSQL local (docker-compose junto al Host) | log | ✅ |
+| `prod` | PostgreSQL gestionado | email / SMS | ❌ |
+
+Variables de entorno: `SPRING_DATASOURCE_URL / USERNAME / PASSWORD`, `MIS_JWT_SECRET`,
+`MIS_CORS_ORIGINS`. La imagen se registra en Dokploy/Coolify junto a los Remotes (03_TRD §7).
+
+---
+
+## 8. Conexión del Frontend al Backend Real
+
+1. Desplegar `mis-backend` detrás del mismo dominio del Host: el nginx del Host hace proxy de `/api` → `mis-backend:8080`.
+2. En `src/app/app.config.ts`, retirar `fakeApiInterceptor` de `withInterceptors([...])`.
+3. Nada más cambia: servicios, modelos y manejo de errores del Host ya cumplen este contrato.

@@ -1,8 +1,15 @@
 # Guía de Importación y Especificación UX/UI para Figma (MIS - Financiera Confianza)
-> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/06_FIGMA_UX_KIT.html)  
-> **Kit:** v3.0 (julio 2026) — Iconos SVG neutrales, Perfil/Salir en header, estructura macOS corregida
+> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/06_FIGMA_UX_KIT.html)  
+> **Kit:** v3.1 (2026-07-12) — plantillas en `docs_proyecto/FIGMA/` (login.html · dashboard_interaccion.html · gestion_iam.html)
 
-Este documento sirve como guía para importar el kit de diseño interactivo `06_FIGMA_UX_KIT.html` a Figma, y detalla la especificación técnica de arquitectura de información y UX.
+Este documento sirve como guía para importar las plantillas interactivas de `docs_proyecto/FIGMA/` a Figma, y detalla la especificación técnica de arquitectura de información y UX.
+
+### Cambios v3.1 (alineación con el frontend implementado)
+- **Breadcrumb SOLO en el header:** el header glass muestra `MIS | [🏠 / sección / vista]` con `p-breadcrumb` de PrimeNG. Las vistas de gestión **no** llevan títulos de página ni enlaces "Volver" propios.
+- **Gestión encapsulada en cards:** cada vista de gestión (listas, formularios, detalles) es una **card a ancho completo** con *header de card* (título + descripción + botón de acción a la derecha) y *body* (tablas, formularios, pestañas SelectButton).
+- **Mensajes:** toasts de PrimeNG (`p-toast`) en la esquina superior derecha, severidades success/info/warn/error. El aviso de "Acceso denegado" del roleGuard usa severidad warn.
+- **Rutas corregidas** en las URL-bars de las plantillas: `/admin/dashboard` (antes `mi-espacio`), `/admin/sistemas/...` (antes `accesos/sistemas/...`), `/admin/accesos/usuarios/:id` y `/admin/accesos/roles/:id` (antes con `/detalle/`), y `/login` para ambas pantallas de autenticación.
+- **Sin catálogos:** el módulo Catálogos se retiró del alcance (PRD v1.1 / UI-UX v1.4); ninguna pantalla debe referenciarlo.
 
 ### Cambios v3.0
 - **Sin emojis:** todos los íconos de navegación son SVG inline estilo Lucide (stroke, sin relleno, color via CSS)
@@ -12,13 +19,37 @@ Este documento sirve como guía para importar el kit de diseño interactivo `06_
 
 ---
 
+## 📋 Inventario de Frames
+
+### Existentes (en `docs_proyecto/FIGMA/`)
+
+| Archivo | Frames | Ruta real |
+|---|---|---|
+| `login.html` | Login (credenciales) · Verificación MFA (OTP 6 dígitos, expira 03:00) | `/login` |
+| `dashboard_interaccion.html` | Mi espacio (KPIs + tabla de MFEs) · Remote cargando (skeleton) · Remote cargado · Remote en error | `/admin/dashboard`, `/admin/:remote` |
+| `gestion_iam.html` | Usuarios (lista) · Usuario editar (2 pestañas) · Roles (lista) · Rol detalle (3 pestañas) · Sistemas (lista) · Sistema detalle (2 frames) | `/admin/accesos/*`, `/admin/sistemas/*` |
+
+### ⏳ Diseños pendientes de crear
+
+| Frame | Ruta | Notas |
+|---|---|---|
+| Formulario **Nuevo Usuario** | `/admin/accesos/usuarios/nuevo` | Card con pestañas `Información General` / `Roles y Sistemas` (SelectButton) |
+| Formulario **Nuevo/Editar Rol** | `/admin/accesos/roles/nuevo` · `roles/:id/editar` | Card única: Detalles del Rol + Accesos Predeterminados |
+| Formulario **Registrar/Editar Sistema** | `/admin/sistemas/nuevo` · `:id/editar` | Card con pestañas `Identificación` / `Despliegue` |
+| Pestaña **Estructura** del sistema | `/admin/sistemas/:id` (tab 2) | Editor del árbol Secciones → Subsecciones → chips de Módulos |
+| **Acceso denegado** | vista compartida | Ícono escudo + mensaje + botón "Volver a Mi espacio" |
+| **404 Not Found** | `**` | Página completa fuera del shell |
+| **Estados de toast** | overlay global | 4 severidades PrimeNG, top-right, auto-cierre 4.5 s |
+
+---
+
 ## 🚀 Cómo importar este diseño en Figma
 
 Para convertir el archivo interactivo en capas editables y componentes nativos de Figma (incluyendo Auto Layout, colores y textos), siga estos pasos:
 
 1. **Abra el archivo en su navegador**:
-   - Localice el archivo generado [mis_figma_ux_kit.html](file:///C:/Users/DIEGO/.gemini/antigravity-ide/brain/8fd6fcdf-36d3-47fe-80cd-b58cea594452/mis_figma_ux_kit.html).
-   - Ábralo en Google Chrome o su navegador preferido.
+   - Localice las plantillas en `docs_proyecto/FIGMA/` (`login.html`, `dashboard_interaccion.html`, `gestion_iam.html`).
+   - Ábralas en Google Chrome o su navegador preferido.
 
 2. **Instale el plugin "html.to.design" en Figma**:
    - Abra **Figma**.
@@ -92,19 +123,12 @@ La comunicación y ciclo de vida de los subsistemas se define a través de:
 - Los Remotes consumen señales de solo lectura (`usuarioActivo()`, `catalogoActivo()`, `esAdmin()`).
 - Se restringe la escritura desde los remotes mediante firmas de solo lectura (`asReadonly()`), garantizando seguridad y consistencia en el estado de la aplicación empresarial.
 
+---
 
-Infrestutura
+## 🏗️ Notas de Infraestructura y Plataforma
 
-- azure (contendores)  - con terraform 
-- google ( maquinas virtuales)  - dokploy  ( tomcat)
-
-
-
-Frontend 
-
-- MACs ( diseño ) 
-- angular ( embevidos ) dentro del mis propio   - ( talwind con primeng )
-- (web y movil )
-- embever lo que son los sistemas () 
-
-
+| Capa | Decisión |
+|---|---|
+| **Backend** | Spring Boot 3 (monolito modular) + PostgreSQL — ver [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/04_BACKEND_SCHEMA.md) y [07_DATABASE_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/07_DATABASE_SCHEMA.sql) |
+| **Contenedores** | Azure (contenedores, aprovisionados con Terraform) y Google Cloud (VMs con Dokploy) |
+| **Frontend** | Angular zoneless + Native Federation, Tailwind v4 + PrimeNG (preset MisTheme), diseño macOS Aurora Minimalist; los subsistemas se embeben como Remotes (web y móvil) |
