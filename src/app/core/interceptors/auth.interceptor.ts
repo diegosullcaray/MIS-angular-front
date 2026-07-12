@@ -1,51 +1,48 @@
 import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { catchError, throwError, Observable } from 'rxjs';
 import { ShellStateService } from '../services/shell-state.service';
+import { AuthService } from '../../pages/full-pages/auth/service/auth.service';
 
 /**
- * Interceptor funcional de Autenticación (Angular 22).
+ * Interceptor funcional de Autenticación.
  *
- * - Injecta el token/headers a las llamadas de API si hay sesión.
- * - Captura errores HTTP globales (ej: 401 Unauthorized → redirige al login).
+ * - Adjunta el token Bearer y el rol del usuario activo a cada petición.
+ * - Ante un 401 del backend cierra la sesión y redirige al login.
  *
- * Se configura en el app.config.ts usando:
+ * Registrado en app.config.ts:
  * ```typescript
- * provideHttpClient(withInterceptors([authInterceptor]))
+ * provideHttpClient(withInterceptors([authInterceptor, fakeApiInterceptor]))
  * ```
  */
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> => {
-  const shell  = inject(ShellStateService);
-  const router = inject(Router);
+  const auth = inject(AuthService);
+  const shell = inject(ShellStateService);
 
-  // Obtener usuario activo
+  const token = auth.token();
   const usuario = shell.usuarioActivo();
   let authReq = req;
 
-  // Si hay un usuario activo, simulamos adjuntar un token Bearer
-  if (usuario) {
+  // Los endpoints de login no llevan token
+  const esLogin = req.url.includes('/auth/');
+
+  if (token && usuario && !esLogin) {
     authReq = req.clone({
       setHeaders: {
-        Authorization: `Bearer mock-token-for-${usuario.id}`,
+        Authorization: `Bearer ${token}`,
         'X-User-Role': usuario.rol,
       },
     });
   }
 
-  // Continuar petición y manejar errores
   return next(authReq).pipe(
     catchError((error: unknown) => {
-      if (error instanceof HttpErrorResponse) {
-        // Si el servidor responde 401, cerramos la sesión y enviamos al login
-        if (error.status === 401) {
-          console.warn('[AuthInterceptor] Sesión no válida o expirada (401). Redirigiendo al login...');
-          shell.cerrarSesion();
-          router.navigate(['/login']);
-        }
+      if (error instanceof HttpErrorResponse && error.status === 401 && !esLogin) {
+        console.warn('[AuthInterceptor] Sesión no válida o expirada (401). Redirigiendo al login...');
+        auth.cerrarSesion();
       }
       return throwError(() => error);
     })

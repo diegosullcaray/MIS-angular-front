@@ -1,14 +1,14 @@
 # Guía de Importación y Especificación UX/UI para Figma (MIS - Financiera Confianza)
 > **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/06_FIGMA_UX_KIT.html)  
-> **Kit:** v2.0 (julio 2026) — Iconos SVG neutrales, Perfil/Salir en header, estructura macOS corregida
+> **Kit:** v3.0 (julio 2026) — Iconos SVG neutrales, Perfil/Salir en header, estructura macOS corregida
 
 Este documento sirve como guía para importar el kit de diseño interactivo `06_FIGMA_UX_KIT.html` a Figma, y detalla la especificación técnica de arquitectura de información y UX.
 
-### Cambios v2.0
+### Cambios v3.0
 - **Sin emojis:** todos los íconos de navegación son SVG inline estilo Lucide (stroke, sin relleno, color via CSS)
 - **Sidebar limpio:** Col 1 contiene únicamente íconos de sistemas (Inicio + Remotes). Perfil y Cerrar sesión se eliminaron del sidebar.
 - **Menú de usuario en Header:** el pill `[avatar + nombre + chevron]` en el header despliega un dropdown con Mi perfil / Preferencias / Cerrar sesión.
-- **macOS minimalista:** chrome de ventana (semafóforo), header glass 44px, Col 1 navy 56px, Col 2 panel 220px. Sin colores planos, sin elementos de relleno innecesarios.
+- **macOS Aurora Minimalist:** chrome de ventana (semafóforo), header glass 44px, Col 1 navy 56px, Col 2 panel 220px. Sin colores planos, sin elementos de relleno innecesarios.
 
 ---
 
@@ -40,7 +40,7 @@ Para convertir el archivo interactivo en capas editables y componentes nativos d
 ## 🎨 Especificaciones del Design System
 
 ### 1. Paleta de Colores (Branding)
-Diseño alineado con la identidad corporativa y estética macOS minimalista:
+Diseño alineado con la identidad corporativa y estética macOS Aurora Minimalist:
 - **Navy Primario (`#1D396E`)**: Color dominante para el Host. Representa solidez, seguridad y control institucional. Utilizado en el Sidebar principal (Col 1), botones primarios y encabezados importantes.
 - **Sky Blue Secundario (`#42ADE0`)**: Color de acento para la interacción. Utilizado para enlaces, estados activos (el ícono seleccionado de la columna 1) y focos visuales (focus-ring).
 - **Fondos de Superficie**:

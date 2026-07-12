@@ -34,6 +34,7 @@ export class RolesListComponent implements OnInit {
 
   protected readonly confirmDeleteOpen = signal(false);
   protected readonly rolAEliminar = signal<any | null>(null);
+  protected readonly errorEliminar = signal<string | null>(null);
 
   ngOnInit(): void {
     this.service.cargarRoles();
@@ -51,15 +52,23 @@ export class RolesListComponent implements OnInit {
 
   protected confirmarEliminar(rol: any): void {
     this.rolAEliminar.set(rol);
+    this.errorEliminar.set(null);
     this.confirmDeleteOpen.set(true);
   }
 
   protected async eliminar(): Promise<void> {
     const rol = this.rolAEliminar();
-    if (rol) {
+    if (!rol) return;
+
+    try {
       await this.service.eliminarRol(rol.id);
       this.confirmDeleteOpen.set(false);
       this.rolAEliminar.set(null);
+    } catch (err: any) {
+      // 409: el rol tiene usuarios asignados (regla del Backend Schema §3.7)
+      this.errorEliminar.set(
+        err?.error?.message ?? 'No se pudo eliminar el rol. Inténtalo de nuevo.'
+      );
     }
   }
 }

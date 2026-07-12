@@ -1,8 +1,9 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { form, FormField, required, email, minLength, applyWhen } from '@angular/forms/signals';
 import { AccesosService } from '../../../services/accesos.service';
-import { ROL_LABELS } from '../../../models/acceso.model';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { SistemasService } from '../../../../sistemas/services/sistemas.service';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -17,7 +18,8 @@ import { CommonModule } from '@angular/common';
   imports: [
     CommonModule,
     RouterLink,
-    ReactiveFormsModule,
+    FormField,
+    FormsModule,
     CardModule,
     InputTextModule,
     ButtonModule,
@@ -30,101 +32,127 @@ import { CommonModule } from '@angular/common';
 })
 export class UsuarioFormComponent implements OnInit {
   protected readonly service = inject(AccesosService);
-  private readonly fb        = inject(FormBuilder);
+  private readonly sistemasService = inject(SistemasService);
   private readonly router    = inject(Router);
 
   // Input bound from route parameter :id
   readonly id = input<string>();
 
-  protected form!: FormGroup;
   protected readonly cargando = signal(false);
+  protected readonly errorMsg = signal<string | null>(null);
 
-  protected readonly rolesOptions = [
-    { label: ROL_LABELS['admin-sistema'],   value: 'rol-001' },
-    { label: ROL_LABELS['admin-general'],   value: 'rol-002' },
-    { label: ROL_LABELS['supervisor-area'], value: 'rol-003' }
-  ];
+  // ─── Signal Form (TRD §6.1) ──────────────────────────────────────────────
 
-  protected readonly remotesOptions = [
-    { label: 'Contabilidad', value: 'subsistema-contabilidad' },
-    { label: 'RRHH',         value: 'subsistema-rrhh' },
-    { label: 'Ventas',       value: 'subsistema-ventas' },
-    { label: 'Logística',    value: 'subsistema-logistica' }
-  ];
+  protected readonly usuarioModel = signal({
+    nombre: '',
+    email: '',
+    password: '',
+  });
 
-  protected selectedRemotes: string[] = [];
+  protected readonly usuarioForm = form(this.usuarioModel, (schema) => {
+    required(schema.nombre, { message: 'El nombre es requerido.' });
+    required(schema.email,  { message: 'El correo electrónico es requerido.' });
+    email(schema.email,     { message: 'Introduce un correo electrónico válido.' });
+
+    // La contraseña solo es obligatoria al crear (no en edición)
+    applyWhen(schema, () => !this.id(), (s) => {
+      required(s.password,     { message: 'La contraseña es requerida.' });
+      minLength(s.password, 6, { message: 'La contraseña debe tener al menos 6 caracteres.' });
+    });
+  });
+
+  // El rol se gestiona fuera del signal form: p-select (CVA de PrimeNG)
+  // no es compatible con la directiva [formField]
+  protected readonly rolId = signal('');
+  protected readonly rolTouched = signal(false);
+
+  /** Slug del rol del usuario en edición (se resuelve a rolId cuando cargan los roles). */
+  protected readonly rolSlugEdicion = signal<string | null>(null);
 
   constructor() {
-    this.inicializarFormulario();
-  }
-
-  ngOnInit(): void {
-    this.service.cargarRoles();
-    const userId = this.id();
-    if (userId) {
-      // Edit Mode
-      const user = this.service.getUsuarioById(userId);
-      if (user) {
-        // Map slug to rolId
-        const rolMap: Record<string, string> = {
-          'admin-sistema':   'rol-001',
-          'admin-general':   'rol-002',
-          'supervisor-area': 'rol-003'
-        };
-        this.form.patchValue({
-          nombre: user.nombre,
-          email: user.email,
-          rolId: rolMap[user.rol] ?? ''
-        });
-        this.selectedRemotes = [...user.subsistemas];
-      } else {
-        // User not found
-        this.router.navigate(['/admin/accesos/usuarios']);
+    effect(() => {
+      const slug = this.rolSlugEdicion();
+      const roles = this.service.roles();
+      if (slug && roles.length > 0 && !this.rolId()) {
+        const rol = roles.find(r => r.slug === slug);
+        if (rol) this.rolId.set(rol.id);
       }
-    }
-  }
-
-  private inicializarFormulario(): void {
-    this.form = this.fb.group({
-      nombre: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      rolId: ['', [Validators.required]],
-      password: ['']
     });
   }
 
-  protected onRolChange(rolId: string): void {
-    // Si cambia de rol, podemos inicializar los remotos predeterminados de ese rol
-    const rol = this.service.getRolById(rolId);
-    if (rol) {
-      this.selectedRemotes = [...rol.subsistemas];
+  // Opciones dinámicas desde la API (roles y sistemas registrados)
+  protected readonly rolesOptions = computed(() =>
+    this.service.roles().map(r => ({ label: r.nombre, value: r.id }))
+  );
+
+  protected readonly remotesOptions = computed(() =>
+    this.sistemasService.sistemas().map(s => ({ label: s.nombre, value: s.slug }))
+  );
+
+  // Signal: en Zoneless, un array plano actualizado tras un await no re-renderiza
+  protected readonly selectedRemotes = signal<string[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    this.service.cargarRoles();
+    this.sistemasService.cargarSistemas();
+
+    const userId = this.id();
+    if (!userId) return;
+
+    // Modo edición: cargar el usuario y resolver su rolId por slug
+    try {
+      const user = await this.service.obtenerUsuario(userId);
+      this.usuarioModel.update(m => ({
+        ...m,
+        nombre: user.nombre,
+        email: user.email,
+      }));
+      this.rolSlugEdicion.set(user.rol);
+      this.selectedRemotes.set([...user.subsistemas]);
+    } catch {
+      this.router.navigate(['/admin/accesos/usuarios']);
+    }
+  }
+
+  protected async onRolChange(rolId: string): Promise<void> {
+    this.rolId.set(rolId);
+    this.rolTouched.set(true);
+
+    // Al cambiar de rol, precargar los subsistemas predeterminados de ese rol
+    try {
+      const rol = await this.service.obtenerRol(rolId);
+      this.selectedRemotes.set([...rol.subsistemas]);
+    } catch {
+      // El rol no existe en la API: mantener la selección actual
     }
   }
 
   protected isSubscribed(sub: string): boolean {
-    return this.selectedRemotes.includes(sub);
+    return this.selectedRemotes().includes(sub);
   }
 
   protected onCheckboxChange(event: Event, value: string): void {
     const isChecked = (event.target as HTMLInputElement).checked;
-    if (isChecked) {
-      this.selectedRemotes = [...this.selectedRemotes, value];
-    } else {
-      this.selectedRemotes = this.selectedRemotes.filter(sub => sub !== value);
-    }
+    this.selectedRemotes.update(list =>
+      isChecked ? [...list, value] : list.filter(sub => sub !== value)
+    );
   }
 
-  protected async guardar(): Promise<void> {
-    if (this.form.invalid) return;
+  protected async guardar(event: Event): Promise<void> {
+    event.preventDefault();
+    this.rolTouched.set(true);
+    if (this.usuarioForm().invalid() || !this.rolId()) return;
 
     this.cargando.set(true);
-    const formVal = this.form.value;
+    this.errorMsg.set(null);
+
+    const { nombre, email, password } = this.usuarioModel();
     const payload = {
-      nombre: formVal.nombre.trim(),
-      email: formVal.email.trim(),
-      rolId: formVal.rolId,
-      subsistemas: this.selectedRemotes,
-      ...(formVal.password ? { password: formVal.password } : {})
+      nombre: nombre.trim(),
+      email: email.trim(),
+      rolId: this.rolId(),
+      subsistemas: this.selectedRemotes(),
+      ...(password ? { password } : {})
     };
 
     const userId = this.id();
@@ -135,8 +163,8 @@ export class UsuarioFormComponent implements OnInit {
         await this.service.crearUsuario(payload);
       }
       this.router.navigate(['/admin/accesos/usuarios']);
-    } catch (e) {
-      console.error(e);
+    } catch (err: any) {
+      this.errorMsg.set(err?.error?.message ?? 'No se pudo guardar el usuario. Inténtalo de nuevo.');
     } finally {
       this.cargando.set(false);
     }

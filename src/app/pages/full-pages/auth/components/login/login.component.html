@@ -4,73 +4,75 @@
     <div class="bg-gradient-circle bg-circle-2 absolute rounded-full blur-[120px] z-1 opacity-55"></div>
 
     <!-- Main login card container -->
-    <div class="login-card-container w-full max-w-[860px] bg-white border border-[var(--mis-border)] rounded-[20px] shadow-[0_30px_60px_rgba(0,0,0,0.15)] z-10 overflow-hidden">
-        <!-- 2-column grid -->
-        <div class="grid grid-cols-1 md:grid-cols-[1.15fr_0.85fr]">
-            
-            <!-- Left Column: Login Form -->
-            <div class="p-6 md:p-10 flex flex-col gap-4">
-                <header class="flex flex-col gap-1 mb-2">
-                    <div class="self-start text-[18px] font-bold text-[var(--mis-primary)] tracking-[0.5px] bg-[var(--mis-primary-light)] px-3 py-1 rounded-[6px] mb-1">MIS</div>
-                </header>
+    <p-card styleClass="login-card-container w-full max-w-[860px] border border-[var(--mis-border)] rounded-[20px] shadow-[0_30px_60px_rgba(0,0,0,0.15)] z-10 overflow-hidden">
+        <ng-template pTemplate="content">
+            <!-- 2-column grid -->
+            <div class="grid grid-cols-1 md:grid-cols-[1.15fr_0.85fr]">
+                
+                <!-- Left Column: Login Form -->
+                <div class="p-6 md:p-10 flex flex-col gap-4 bg-white">
+                    <header class="flex flex-col gap-1 mb-2">
+                        <div class="self-start text-[18px] font-bold text-[var(--mis-primary)] tracking-[0.5px] bg-[var(--mis-primary-light)] px-3 py-1 rounded-[6px] mb-1">MIS</div>
+                    </header>
 
-                @if (errorMsg()) {
-                <div class="bg-[var(--mis-danger-light)] border border-[rgba(255,59,48,0.15)] rounded-[10px] text-[var(--mis-danger)] text-sm p-3 flex items-center gap-2" role="alert">
-                    <ng-icon name="lucideAlertCircle" size="16" />
-                    <span>{{ errorMsg() }}</span>
-                </div>
-                }
-
-                <form (submit)="onSubmit($event)" class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-1">
-                        <label for="email" class="text-sm font-semibold text-[var(--mis-text-primary)]">Correo electrónico</label>
-                        <input id="email" type="email" pInputText [formField]="loginForm.email" placeholder="nombre&#64;confianza.pe" class="w-full" />
-                        @if (loginForm.email().invalid() && loginForm.email().touched()) {
-                        @for (error of loginForm.email().errors(); track error) {
-                        <small class="text-xs text-[var(--mis-danger)] block">{{ error.message }}</small>
-                        }
-                        }
+                    @if (errorMsg()) {
+                    <div class="bg-[var(--mis-danger-light)] border border-[rgba(255,59,48,0.15)] rounded-[10px] text-[var(--mis-danger)] text-sm p-3 flex items-center gap-2" role="alert">
+                        <ng-icon name="lucideAlertCircle" size="16" />
+                        <span>{{ errorMsg() }}</span>
                     </div>
+                    }
 
-                    <div class="flex flex-col gap-1">
-                        <div class="flex items-center justify-between">
-                            <label for="password" class="text-sm font-semibold text-[var(--mis-text-primary)]">Contraseña</label>
-                            <a href="#" class="text-xs text-[var(--mis-accent)] hover:underline">¿Olvidaste tu contraseña?</a>
+                    <form (submit)="onSubmit($event)" class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-1">
+                            <label for="email" class="text-sm font-semibold text-[var(--mis-text-primary)]">Correo electrónico</label>
+                            <input id="email" type="email" autocomplete="username" pInputText [formField]="loginForm.email" placeholder="nombre&#64;confianza.pe" class="w-full" />
+                            @if (loginForm.email().invalid() && loginForm.email().touched()) {
+                            @for (error of loginForm.email().errors(); track error) {
+                            <small class="text-xs text-[var(--mis-danger)] block">{{ error.message }}</small>
+                            }
+                            }
                         </div>
-                        <p-password id="password" [formField]="$any(loginForm.password)" [toggleMask]="true" [feedback]="false"
-                            placeholder="••••••••" fluid styleClass="w-full" inputStyleClass="w-full" />
-                        @if (loginForm.password().invalid() && loginForm.password().touched()) {
-                        @for (error of loginForm.password().errors(); track error) {
-                        <small class="text-xs text-[var(--mis-danger)] block">{{ error.message }}</small>
-                        }
-                        }
+
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center justify-between">
+                                <label for="password" class="text-sm font-semibold text-[var(--mis-text-primary)]">Contraseña</label>
+                                <a href="#" class="text-xs text-[var(--mis-accent)] hover:underline">¿Olvidaste tu contraseña?</a>
+                            </div>
+                            <p-password id="password" autocomplete="current-password" [formField]="$any(loginForm.password)" [toggleMask]="true" [feedback]="false"
+                                placeholder="••••••••" fluid styleClass="w-full" inputStyleClass="w-full" />
+                            @if (loginForm.password().invalid() && loginForm.password().touched()) {
+                            @for (error of loginForm.password().errors(); track error) {
+                            <small class="text-xs text-[var(--mis-danger)] block">{{ error.message }}</small>
+                            }
+                            }
+                        </div>
+
+                        <p-button label="Acceder" type="submit" [disabled]="loginForm().invalid() || cargando()" [loading]="cargando()"
+                            styleClass="w-full mt-2" />
+                    </form>
+
+                    <div class="flex flex-col gap-2 border-t border-dashed border-[var(--mis-border)] pt-4 mt-2">
+                        <span class="text-xs font-semibold text-[var(--mis-text-secondary)] uppercase tracking-[0.5px]">Cuentas demo de prueba:</span>
+                        <ul class="m-0 pl-4 text-xs text-[var(--mis-text-secondary)] flex flex-col gap-[3px]">
+                            <li><strong>Admin Sistema:</strong> <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">admin&#64;confianza.pe</code> / <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">admin123</code></li>
+                            <li><strong>Admin General:</strong> <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">general&#64;confianza.pe</code> / <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">general123</code></li>
+                            <li><strong>Supervisor:</strong> <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">supervisor&#64;confianza.pe</code> / <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">supervisor123</code></li>
+                        </ul>
                     </div>
-
-                    <p-button label="Acceder" type="submit" [disabled]="loginForm().invalid() || cargando()" [loading]="cargando()"
-                        styleClass="w-full mt-2" />
-                </form>
-
-                <div class="flex flex-col gap-2 border-t border-dashed border-[var(--mis-border)] pt-4 mt-2">
-                    <span class="text-xs font-semibold text-[var(--mis-text-secondary)] uppercase tracking-[0.5px]">Cuentas demo de prueba:</span>
-                    <ul class="m-0 pl-4 text-xs text-[var(--mis-text-secondary)] flex flex-col gap-[3px]">
-                        <li><strong>Admin Sistema:</strong> <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">admin&#64;confianza.pe</code> / <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">admin123</code></li>
-                        <li><strong>Admin General:</strong> <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">general&#64;confianza.pe</code> / <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">general123</code></li>
-                        <li><strong>Supervisor:</strong> <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">supervisor&#64;confianza.pe</code> / <code class="bg-[var(--mis-primary-light)] text-[var(--mis-primary)] px-[3px] py-[1px] rounded-[3px] font-mono">supervisor123</code></li>
-                    </ul>
                 </div>
-            </div>
-            
-            <!-- Right Column: Banner Image -->
-            <div class="relative hidden md:block overflow-hidden">
-                <img src="assets/login_banner.png" alt="Dashboard Illustration" class="w-full h-full object-cover block" />
-                <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[rgba(5,11,24,0.95)] via-[rgba(5,11,24,0.4)] to-transparent flex flex-col gap-1">
-                    <span class="text-[20px] font-bold text-white tracking-[0.5px]">MIS Confianza</span>
-                    <span class="text-sm text-white/70">Management Information System</span>
+                
+                <!-- Right Column: Banner Image -->
+                <div class="relative hidden md:block overflow-hidden">
+                    <img src="assets/login_banner.png" alt="Dashboard Illustration" class="w-full h-full object-cover block" />
+                    <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[rgba(5,11,24,0.95)] via-[rgba(5,11,24,0.4)] to-transparent flex flex-col gap-1">
+                        <span class="text-[20px] font-bold text-white tracking-[0.5px]">MIS Confianza</span>
+                        <span class="text-sm text-white/70">Management Information System</span>
+                    </div>
                 </div>
+                
             </div>
-            
-        </div>
-    </div>
+        </ng-template>
+    </p-card>
 
     <!-- Bottom Footer (Outside Card) -->
     <footer class="mt-6 text-[11px] text-[var(--mis-text-tertiary)] text-center max-w-[450px] leading-normal z-10">

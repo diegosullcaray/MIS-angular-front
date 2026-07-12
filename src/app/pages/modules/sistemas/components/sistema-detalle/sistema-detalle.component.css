@@ -1,0 +1,225 @@
+/* ─── Badges de estado ─── */
+.badge {
+  font-size: 11px;
+  font-weight: var(--mis-font-semibold);
+  padding: 2px var(--mis-space-2);
+  border-radius: var(--mis-radius-full);
+  white-space: nowrap;
+}
+.badge--success { background: var(--mis-success-light); color: var(--mis-success); }
+.badge--warn    { background: var(--mis-warning-light); color: var(--mis-warning); }
+.badge--danger  { background: var(--mis-danger-light);  color: var(--mis-danger); }
+
+/* ─── Tab bar minimalista ─── */
+.tab-bar {
+  display: flex;
+  gap: var(--mis-space-1);
+  border-bottom: 1px solid var(--mis-border);
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--mis-space-2) var(--mis-space-4);
+  border: none;
+  background: transparent;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-medium);
+  color: var(--mis-text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all var(--mis-transition-fast);
+}
+
+.tab-btn:hover { color: var(--mis-primary); }
+
+.tab-btn--active {
+  color: var(--mis-primary);
+  font-weight: var(--mis-font-semibold);
+  border-bottom-color: var(--mis-secondary);
+}
+
+/* ─── Paneles ─── */
+.panel {
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  box-shadow: var(--mis-shadow-sm);
+  padding: var(--mis-space-4) var(--mis-space-5);
+}
+
+.panel-title {
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mis-text-tertiary);
+  margin: 0 0 var(--mis-space-3);
+}
+
+/* ─── Datos (dl) ─── */
+.dato-label {
+  font-size: var(--mis-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mis-text-tertiary);
+  margin-bottom: 2px;
+}
+
+.dato-valor {
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-primary);
+  margin: 0;
+}
+
+/* ─── Stats ─── */
+.stat { display: flex; flex-direction: column; }
+.stat-valor {
+  font-size: var(--mis-text-xl);
+  font-weight: var(--mis-font-bold);
+  color: var(--mis-primary);
+  line-height: var(--mis-leading-tight);
+}
+.stat-label {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+  text-transform: uppercase;
+}
+
+/* ─── Editor de estructura ─── */
+.input-titulo {
+  font-size: var(--mis-text-base);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+  border: 1px solid transparent;
+  border-radius: var(--mis-radius-sm);
+  padding: 4px 8px;
+  background: transparent;
+  min-width: 260px;
+  transition: border-color var(--mis-transition-fast);
+}
+
+.input-titulo:hover  { border-color: var(--mis-border); }
+.input-titulo:focus  { outline: none; border-color: var(--mis-secondary); background: var(--mis-surface); }
+
+.input-inline {
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-primary);
+  border: 1px dashed var(--mis-border);
+  border-radius: var(--mis-radius-sm);
+  padding: 4px 10px;
+  background: transparent;
+  width: 130px;
+  transition: all var(--mis-transition-fast);
+}
+
+.input-inline::placeholder { color: var(--mis-text-tertiary); }
+.input-inline:focus {
+  outline: none;
+  border-style: solid;
+  border-color: var(--mis-secondary);
+  background: var(--mis-surface);
+  width: 190px;
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--mis-text-xs);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: var(--mis-radius-sm);
+  transition: background var(--mis-transition-fast);
+}
+.btn-add:hover { background: var(--mis-secondary-light); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: var(--mis-font-medium);
+  color: var(--mis-primary);
+  background: var(--mis-primary-light);
+  border-radius: var(--mis-radius-full);
+  padding: 3px 6px 3px 10px;
+}
+
+.chip-x {
+  border: none;
+  background: transparent;
+  color: var(--mis-text-tertiary);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  border-radius: var(--mis-radius-full);
+}
+.chip-x:hover { color: var(--mis-danger); }
+
+/* ─── Botones de fila ─── */
+.row-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--mis-radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--mis-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--mis-transition-fast);
+}
+.row-btn:hover { background: var(--mis-primary-light); color: var(--mis-primary); }
+.row-btn--danger:hover { background: var(--mis-danger-light); color: var(--mis-danger); }
+
+/* ─── Pills de rol ─── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-medium);
+  color: var(--mis-text-secondary);
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-full);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all var(--mis-transition-fast);
+}
+
+.pill:hover { border-color: var(--mis-secondary); color: var(--mis-primary); }
+
+.pill--active {
+  background: var(--mis-primary);
+  border-color: var(--mis-primary);
+  color: var(--mis-text-on-primary);
+  font-weight: var(--mis-font-semibold);
+}
+
+.pill-hint { color: var(--mis-warning); font-weight: 800; }
+
+/* ─── Mensajes ─── */
+.msg {
+  margin: 0;
+  font-size: var(--mis-text-xs);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-danger);
+  background: var(--mis-danger-light);
+  border-radius: var(--mis-radius-sm);
+  padding: var(--mis-space-2) var(--mis-space-3);
+}
+
+.msg--ok {
+  color: var(--mis-success);
+  background: var(--mis-success-light);
+}

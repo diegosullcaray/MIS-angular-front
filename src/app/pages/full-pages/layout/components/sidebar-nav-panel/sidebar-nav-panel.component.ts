@@ -3,7 +3,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideHome, lucideChevronRight, lucideLayoutDashboard,
-  lucideFolder, lucideUsers, lucideShield, lucideExternalLink
+  lucideFolder, lucideUsers, lucideShield, lucideExternalLink,
+  lucideGrid, lucideActivity, lucideBoxes
 } from '@ng-icons/lucide';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import type { SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sidebar.model';
@@ -14,7 +15,8 @@ import type { SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sid
   imports: [RouterLink, RouterLinkActive, NgIconComponent],
   viewProviders: [provideIcons({
     lucideHome, lucideChevronRight, lucideLayoutDashboard,
-    lucideFolder, lucideUsers, lucideShield, lucideExternalLink
+    lucideFolder, lucideUsers, lucideShield, lucideExternalLink,
+    lucideGrid, lucideActivity, lucideBoxes
   })],
   templateUrl: './sidebar-nav-panel.component.html',
   styleUrl: './sidebar-nav-panel.component.css',

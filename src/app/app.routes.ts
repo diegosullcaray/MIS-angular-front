@@ -50,6 +50,14 @@ export const APP_ROUTES: Routes = [
           )
       },
       {
+        path: 'sistemas',
+        canActivate: [roleGuard('admin-sistema')], // Gestión de sistemas registrados
+        loadChildren: () =>
+          import('./pages/modules/sistemas/sistemas.routes').then(
+            (m) => m.SISTEMAS_ROUTES
+          )
+      },
+      {
         path: ':remoteName',
         loadComponent: () =>
           import('./core/federation/remote-wrapper/remote-wrapper.component').then(
@@ -66,5 +74,6 @@ export const APP_ROUTES: Routes = [
       )
   }
 ];
+
 
 

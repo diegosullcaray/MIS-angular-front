@@ -16,6 +16,11 @@
 
 > ⚠️ **Regla de Aislamiento:** Los Remotes **nunca** llaman APIs del Host ni viceversa. La única comunicación entre ellos es a través del `ShellStateService` vía Signals.
 
+> 🧪 **Modo desarrollo (Fake API):** mientras el backend real no exista, todos los endpoints `/api/v1/*`
+> son atendidos por `fakeApiInterceptor` (`src/app/core/fake-api/`) con una base de datos en memoria
+> que implementa este contrato (incluye latencia simulada y validación de rol por token).
+> Para conectar el backend real basta con retirar el interceptor de `app.config.ts`.
+
 ---
 
 ## 2. Endpoints del Host — Catálogos
@@ -195,6 +200,102 @@ Mismo body que POST (sin `password` si no cambia).
 
 **Response `204 No Content`.**  
 > Solo si no tiene usuarios asignados; de lo contrario devuelve `409 Conflict`.
+
+---
+
+## 3B. Endpoints del Host — Sistemas Registrados
+
+> El MIS es un **centralizador de sistemas**: cada Remote se registra como un `Sistema` con una
+> estructura jerárquica `Sistema → Secciones → Subsecciones → Módulos`. Los permisos de los roles
+> se controlan **a nivel de módulo**. Los endpoints de escritura requieren rol `admin-sistema`.
+
+### 3B.1 `GET /api/v1/sistemas`
+
+Listado resumido de sistemas registrados.
+
+**Response `200 OK`:**
+```json
+[
+  {
+    "id": "sis-001", "nombre": "Contabilidad", "slug": "subsistema-contabilidad",
+    "descripcion": "Gestión contable y tesorería", "icono": "pi pi-chart-bar",
+    "version": "1.4.2", "estado": "activo",
+    "totalSecciones": 3, "totalModulos": 9, "rolesAsignados": 2,
+    "actualizadoEn": "2026-07-01T00:00:00Z"
+  }
+]
+```
+
+### 3B.2 `GET /api/v1/sistemas/:id`
+
+Detalle completo (acepta `id` o `slug`). Incluye el árbol `secciones[] → subsecciones[] → modulos[]`.
+
+### 3B.3 `POST /api/v1/sistemas` / `PUT /api/v1/sistemas/:id`
+
+Crea/actualiza la **información general** del sistema (no la estructura).
+
+```json
+{
+  "nombre": "string", "slug": "string", "descripcion": "string",
+  "icono": "pi pi-*", "url": "http://host/remoteEntry.json",
+  "version": "string", "estado": "activo | mantenimiento | inactivo"
+}
+```
+> `slug` es inmutable tras la creación (identifica al Remote en `federation.manifest.json`).
+> `POST` responde `409 Conflict` si el slug ya existe.
+
+### 3B.4 `PUT /api/v1/sistemas/:id/estructura`
+
+Reemplaza el árbol completo de secciones del sistema.
+
+**Request Body:** `Seccion[]` — cada sección con sus `subsecciones[]` y `modulos[]`.
+**Response `200 OK`:** `Sistema` actualizado.
+> Los permisos que referencien módulos eliminados se depuran automáticamente.
+
+### 3B.5 `DELETE /api/v1/sistemas/:id`
+
+**Response `204 No Content`.**
+> `409 Conflict` si el sistema está asignado a algún rol.
+
+### 3B.6 Permisos por rol (a nivel de módulo)
+
+| Endpoint | Descripción |
+|---|---|
+| `GET /api/v1/sistemas/:id/permisos` | `PermisoRolSistema[]` de todos los roles en ese sistema |
+| `PUT /api/v1/sistemas/:id/permisos/:rolId` | Body `{ "modulos": ["mod-001", ...] }` — reemplaza los módulos permitidos del rol |
+| `GET /api/v1/roles/:id/permisos` | Permisos del rol en **todos** los sistemas (para el detalle de rol) |
+| `GET /api/v1/roles/:id/usuarios` | Usuarios que tienen asignado el rol (para el detalle de rol) |
+
+### 3B.7 Modelo jerárquico (`src/app/pages/modules/sistemas/models/sistema.model.ts`)
+
+```typescript
+export type SistemaEstado = 'activo' | 'mantenimiento' | 'inactivo';
+
+export interface Modulo     { id: string; nombre: string; slug: string; activo: boolean; }
+export interface Subseccion { id: string; nombre: string; slug: string; modulos: Modulo[]; }
+export interface Seccion    { id: string; nombre: string; slug: string; subsecciones: Subseccion[]; }
+
+export interface Sistema {
+  id: string;
+  nombre: string;
+  slug: string;            // nombre del Remote en federation.manifest.json
+  descripcion: string;
+  icono: string;           // clase PrimeIcons
+  url: string;             // remoteEntry.json
+  version: string;
+  estado: SistemaEstado;
+  secciones: Seccion[];
+  creadoEn: string;        // ISO 8601
+  actualizadoEn: string;   // ISO 8601
+}
+
+/** Permiso de un rol sobre los módulos de un sistema. */
+export interface PermisoRolSistema {
+  rolId: string;
+  sistemaId: string;
+  modulos: string[];       // IDs de módulos habilitados
+}
+```
 
 ---
 

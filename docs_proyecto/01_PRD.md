@@ -49,6 +49,7 @@ El sistema **Host administra la estructura principal y los catálogos**, mientra
 - **Estado compartido mínimo**: servicio Singleton con Signals de solo lectura para comunicar Host ↔ Remote.
 - **Estados de UI**: loading skeletons (`@defer`), estado de error elegante cuando un Remote no está disponible.
 - **Gestión de Accesos (IAM)**: módulo administrativo para crear/editar/desactivar usuarios, definir roles y asignar permisos de acceso a subsistemas (Remotes) por rol.
+- **Gestión de Sistemas**: módulo administrativo para registrar los sistemas embebibles (Remotes), definir su **estructura jerárquica** (`Sistema → Secciones → Subsecciones → Módulos`) y configurar los **permisos de cada rol a nivel de módulo**. La gestión se presenta por partes (detalle con pestañas: Información | Estructura | Permisos), no como un formulario todo-en-uno.
 
 ### ❌ Fuera del Alcance (MVP)
 
@@ -72,6 +73,7 @@ El sistema **Host administra la estructura principal y los catálogos**, mientra
 |---|:---:|:---:|:---:|
 | Gestión de Usuarios | ✅ CRUD | ❌ | ❌ |
 | Gestión de Roles | ✅ CRUD | ❌ | ❌ |
+| Gestión de Sistemas (registro, estructura y permisos) | ✅ CRUD | ❌ | ❌ |
 | Asignación de Acceso a Subsistemas | ✅ | ❌ | ❌ |
 | Catálogos del Host | ✅ CRUD | ✅ CRUD | 👁 Lectura |
 | Dashboard del Host | ✅ | ✅ | ✅ |

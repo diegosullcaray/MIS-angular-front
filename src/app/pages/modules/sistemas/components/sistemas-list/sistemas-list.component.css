@@ -1,0 +1,35 @@
+.badge {
+  font-size: 11px;
+  font-weight: var(--mis-font-semibold);
+  padding: 2px var(--mis-space-2);
+  border-radius: var(--mis-radius-full);
+  white-space: nowrap;
+}
+
+.badge--success { background: var(--mis-success-light); color: var(--mis-success); }
+.badge--warn    { background: var(--mis-warning-light, #FEF3C7); color: var(--mis-warning, #B45309); }
+.badge--danger  { background: var(--mis-danger-light); color: var(--mis-danger); }
+
+.row-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--mis-radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--mis-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--mis-transition-fast);
+}
+
+.row-btn:hover {
+  background: var(--mis-primary-light);
+  color: var(--mis-primary);
+}
+
+.row-btn--danger:hover {
+  background: var(--mis-danger-light);
+  color: var(--mis-danger);
+}

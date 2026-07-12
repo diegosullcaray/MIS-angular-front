@@ -5,111 +5,198 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MIS · Figma UX Kit — Financiera Confianza</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* ═══════════════════════════════════════════════════
+     RESET & BASE
+  ════════════════════════════════════════════════════ */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    --mis-primary:        #1D396E;
-    --mis-primary-hover:  #162D58;
-    --mis-secondary:      #42ADE0;
-    --mis-accent:         #42ADE0;
-    --mis-bg:             #F4F6F9;
-    --mis-surface:        #FFFFFF;
-    --mis-sidebar-bg:     #1D396E;
-    --mis-panel-bg:       #F8FAFC;
-    --mis-border:         rgba(29,57,110,0.10);
-    --mis-text-primary:   #1D396E;
-    --mis-text-secondary: #5A6A85;
-    --mis-text-tertiary:  #94A3B8;
+    /* ── Brand Tokens ────────────────────────────── */
+    --mis-primary:          #1D396E;
+    --mis-primary-hover:    #162D58;
+    --mis-primary-light:    #E8EDF5;
+    --mis-secondary:        #42ADE0;
+    --mis-secondary-hover:  #2F9FD4;
+    --mis-secondary-light:  #E8F6FC;
+    --mis-accent:           #42ADE0;
+    --mis-accent-amber:     #D97706;
+
+    /* ── Surface Tokens ──────────────────────────── */
+    --mis-bg:               #F4F6F9;
+    --mis-surface:          #FFFFFF;
+    --mis-sidebar-bg:       #1D396E;
+    --mis-panel-bg:         #F8FAFC;
+    --mis-panel-bg-hover:   #EFF2F7;
+    --mis-code-bg:          #0F172A;
+
+    /* ── Text Tokens ─────────────────────────────── */
+    --mis-text-primary:     #1D396E;
+    --mis-text-secondary:   #5A6A85;
+    --mis-text-tertiary:    #94A3B8;
+    --mis-text-inverse:     #FFFFFF;
+
+    /* ── Border Tokens ───────────────────────────── */
+    --mis-border:           rgba(29,57,110,0.10);
+    --mis-border-strong:    rgba(29,57,110,0.20);
+
+    /* ── State Tokens ────────────────────────────── */
+    --mis-success:          #22C55E;
+    --mis-success-bg:       #DCFCE7;
+    --mis-success-text:     #166534;
+    --mis-warning:          #F59E0B;
+    --mis-warning-bg:       #FEF9C3;
+    --mis-warning-text:     #854D0E;
+    --mis-danger:           #EF4444;
+    --mis-danger-bg:        #FEE2E2;
+    --mis-danger-text:      #991B1B;
+    --mis-neutral:          #94A3B8;
+    --mis-neutral-bg:       #F1F5F9;
+    --mis-neutral-text:     #475569;
+
+    /* ── Shadow Tokens ───────────────────────────── */
+    --mis-shadow-xs:  0 1px 2px rgba(0,0,0,0.04);
     --mis-shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
     --mis-shadow-md:  0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
     --mis-shadow-lg:  0 8px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+    --mis-shadow-xl:  0 16px 48px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.08);
+    --mis-shadow-focus: 0 0 0 3px rgba(66,173,224,0.35);
+    --mis-shadow-focus-danger: 0 0 0 3px rgba(239,68,68,0.30);
+
+    /* ── Radius Tokens ───────────────────────────── */
+    --mis-radius-xs:  4px;
     --mis-radius-sm:  6px;
     --mis-radius-md:  10px;
     --mis-radius-lg:  14px;
-  }
-  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0F172A; color: #E2E8F0; min-height: 100vh; }
+    --mis-radius-xl:  20px;
+    --mis-radius-full: 9999px;
 
-  /* ── Icon system ─────────────────────────────── */
+    /* ── Spacing Scale (4px base) ────────────────── */
+    --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+    --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+    --sp-12: 48px; --sp-16: 64px;
+
+    /* ── Typography Scale ────────────────────────── */
+    --text-xs:   11px; --text-sm: 13px; --text-base: 15px;
+    --text-lg:   17px; --text-xl: 22px; --text-2xl:  28px;
+    --text-3xl:  36px;
+
+    /* ── Z-index Scale ───────────────────────────── */
+    --z-base: 0; --z-dropdown: 100; --z-modal: 200; --z-toast: 300;
+
+    /* ── Transition Tokens ───────────────────────── */
+    --transition-fast: 120ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 350ms ease;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--mis-primary);
+    color: #E2E8F0;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ── Icon System ─────────────────────────────────── */
   .ico { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .ico svg { display: block; }
 
-  /* ── Top nav ─────────────────────────────────── */
+  /* ═══════════════════════════════════════════════════
+     KIT TOP NAV
+  ════════════════════════════════════════════════════ */
   .kit-topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(15,23,42,0.94); backdrop-filter: blur(16px);
+    position: sticky; top: 0; z-index: var(--z-toast);
+    background: rgba(10,15,30,0.96); backdrop-filter: blur(20px) saturate(1.4);
     border-bottom: 1px solid rgba(66,173,224,0.14);
     padding: 0 32px; display: flex; align-items: center; height: 52px; gap: 0;
   }
-  .kit-logo { font-size: 15px; font-weight: 700; color: #42ADE0; letter-spacing: -0.3px; margin-right: 32px; white-space: nowrap; }
-  .kit-logo span { color: #fff; }
-  .kit-nav { display: flex; gap: 2px; overflow-x: auto; flex: 1; }
-  .kit-nav a { padding: 6px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 500; color: #94A3B8; text-decoration: none; white-space: nowrap; transition: all .15s; }
-  .kit-nav a:hover { background: rgba(66,173,224,0.1); color: #42ADE0; }
-  .kit-nav a.active { background: rgba(66,173,224,0.15); color: #42ADE0; }
-  .kit-badge { padding: 3px 10px; background: rgba(66,173,224,0.15); color: #42ADE0; border-radius: 99px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+  .kit-logo { font-size: 14px; font-weight: 700; color: #42ADE0; letter-spacing: -0.3px; margin-right: 28px; white-space: nowrap; font-family: 'Fira Code', monospace; }
+  .kit-logo span { color: rgba(255,255,255,0.7); font-weight: 400; }
+  .kit-nav { display: flex; gap: 2px; overflow-x: auto; flex: 1; scrollbar-width: none; }
+  .kit-nav::-webkit-scrollbar { display: none; }
+  .kit-nav a { padding: 6px 12px; border-radius: var(--mis-radius-sm); font-size: 12px; font-weight: 500; color: #64748B; text-decoration: none; white-space: nowrap; transition: all var(--transition-fast); }
+  .kit-nav a:hover { background: rgba(66,173,224,0.10); color: #42ADE0; }
+  .kit-nav a.active { background: rgba(66,173,224,0.16); color: #42ADE0; }
+  .kit-badge { padding: 3px 10px; background: rgba(66,173,224,0.15); color: #42ADE0; border-radius: var(--mis-radius-full); font-size: 10px; font-weight: 700; white-space: nowrap; letter-spacing: 0.3px; border: 1px solid rgba(66,173,224,0.25); }
+  .kit-badge-new { padding: 3px 8px; background: rgba(245,158,11,0.15); color: #F59E0B; border-radius: var(--mis-radius-full); font-size: 9px; font-weight: 700; margin-left: 4px; border: 1px solid rgba(245,158,11,0.25); }
 
-  /* ── Section ─────────────────────────────────── */
+  /* ═══════════════════════════════════════════════════
+     SECTION WRAPPERS
+  ════════════════════════════════════════════════════ */
   .section { padding: 64px 48px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .section-label { font-size: 11px; font-weight: 600; color: #42ADE0; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
-  .section-title { font-size: 30px; font-weight: 700; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
-  .section-desc { font-size: 14px; color: #94A3B8; max-width: 600px; line-height: 1.6; margin-bottom: 36px; }
+  .section-label { font-size: 11px; font-weight: 600; color: #42ADE0; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; font-family: 'Fira Code', monospace; }
+  .section-title { font-size: 30px; font-weight: 700; color: #fff; letter-spacing: -0.6px; margin-bottom: 8px; font-family: 'Fira Sans', sans-serif; }
+  .section-desc { font-size: 14px; color: #94A3B8; max-width: 640px; line-height: 1.7; margin-bottom: 36px; }
+  .section-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; background: rgba(34,197,94,0.1); color: #22C55E; border-radius: var(--mis-radius-full); font-size: 10px; font-weight: 700; border: 1px solid rgba(34,197,94,0.2); margin-left: 10px; vertical-align: middle; }
+
   .grid { display: grid; gap: 24px; }
   .grid-2 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(3, 1fr); }
   .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-5 { grid-template-columns: repeat(5, 1fr); }
 
-  /* ── Frame wrapper ───────────────────────────── */
+  /* ── Frame Wrappers ──────────────────────────────── */
   .frame-wrapper { display: flex; flex-direction: column; gap: 10px; }
-  .frame-label { font-size: 10px; font-weight: 600; color: #64748B; letter-spacing: .8px; text-transform: uppercase; }
+  .frame-label { font-size: 10px; font-weight: 700; color: #42ADE0; letter-spacing: 1px; text-transform: uppercase; font-family: 'Fira Code', monospace; }
   .frame-title { font-size: 14px; font-weight: 600; color: #CBD5E1; }
-  .frame-desc  { font-size: 12px; color: #64748B; margin-top: 2px; }
-  .frame { background: var(--mis-bg); border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.06), var(--mis-shadow-lg); }
+  .frame-desc  { font-size: 12px; color: #64748B; margin-top: 2px; line-height: 1.5; }
+  .frame { background: var(--mis-bg); border-radius: var(--mis-radius-lg); overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.06), var(--mis-shadow-xl); }
 
   /* macOS window chrome */
-  .frame-chrome { background: #E8ECF0; height: 36px; display: flex; align-items: center; padding: 0 14px; gap: 6px; border-bottom: 1px solid rgba(0,0,0,0.08); }
-  .dot { width: 11px; height: 11px; border-radius: 50%; }
-  .dot.r { background: #FF5F57; } .dot.y { background: #FFBD2E; } .dot.g { background: #28C840; }
-  .url-bar { margin-left: 10px; font-size: 10px; color: #6B7280; font-family: 'SF Mono', monospace; background: rgba(255,255,255,0.7); padding: 3px 10px; border-radius: 5px; flex: 1; max-width: 360px; }
+  .frame-chrome { background: #E5E9EF; height: 36px; display: flex; align-items: center; padding: 0 14px; gap: 6px; border-bottom: 1px solid rgba(0,0,0,0.08); flex-shrink: 0; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+  .dot.r { background: #FF5F57; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.1); }
+  .dot.y { background: #FFBD2E; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.1); }
+  .dot.g { background: #28C840; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.1); }
+  .url-bar { margin-left: 10px; font-size: 10px; color: #6B7280; font-family: 'Fira Code', monospace; background: rgba(255,255,255,0.7); padding: 3px 10px; border-radius: var(--mis-radius-sm); flex: 1; max-width: 380px; }
 
-  /* ══ APP SHELL — 3 Columnas macOS ══════════════ */
-  .app-shell { display: flex; height: 530px; }
+  /* ══════════════════════════════════════════════════
+     APP SHELL — 3 columnas macOS
+     Col1 (56px navy) + Col2 (220px panel) + Main
+  ═════════════════════════════════════════════════════ */
+  .app-shell { display: flex; height: 540px; }
 
   /* Col 1 — Tira de íconos (56px fija, Navy) */
   .app-col1 {
-    width: 56px;
-    background: var(--mis-sidebar-bg);
+    width: 56px; background: var(--mis-sidebar-bg);
     display: flex; flex-direction: column; align-items: center;
-    padding: 12px 0 12px;
-    gap: 2px; flex-shrink: 0;
+    padding: 12px 0 12px; gap: 2px; flex-shrink: 0;
   }
   .col1-logo {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: rgba(66,173,224,0.2);
+    width: 32px; height: 32px; border-radius: 9px;
+    background: rgba(66,173,224,0.22);
     display: flex; align-items: center; justify-content: center;
-    margin-bottom: 8px;
+    margin-bottom: 10px; flex-shrink: 0;
+    box-shadow: 0 0 0 1px rgba(66,173,224,0.3);
   }
   .col1-logo svg { display: block; }
-  .col1-sep { width: 28px; height: 1px; background: rgba(255,255,255,0.1); margin: 4px 0; }
+  .col1-sep { width: 28px; height: 1px; background: rgba(255,255,255,0.10); margin: 4px 0; }
   .col1-spacer { flex: 1; }
 
   /* Ícono de sistema en Col 1 */
   .sb-icon {
-    width: 40px; height: 40px; border-radius: 10px;
+    width: 42px; height: 42px; border-radius: 11px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    cursor: pointer; gap: 3px; transition: background .12s;
+    cursor: pointer; gap: 3px; transition: background var(--transition-fast), transform var(--transition-fast);
+    position: relative;
   }
-  .sb-icon:hover { background: rgba(255,255,255,0.09); }
-  .sb-icon.active { background: rgba(66,173,224,0.22); }
-  .sb-icon .sb-ico svg { color: rgba(255,255,255,0.60); width: 18px; height: 18px; }
-  .sb-icon .sb-lbl { font-size: 8.5px; color: rgba(255,255,255,0.50); font-weight: 500; letter-spacing: 0.2px; }
+  .sb-icon:hover { background: rgba(255,255,255,0.09); transform: scale(1.04); }
+  .sb-icon.active { background: rgba(66,173,224,0.22); box-shadow: 0 0 0 1px rgba(66,173,224,0.3); }
+  .sb-icon .sb-ico svg { color: rgba(255,255,255,0.55); width: 18px; height: 18px; transition: color var(--transition-fast); }
+  .sb-icon .sb-lbl { font-size: 8px; color: rgba(255,255,255,0.45); font-weight: 600; letter-spacing: 0.2px; font-family: 'Fira Sans', sans-serif; }
   .sb-icon.active .sb-ico svg { color: #42ADE0; }
   .sb-icon.active .sb-lbl { color: #42ADE0; }
+  /* Indicador activo en borde izquierdo */
+  .sb-icon.active::before {
+    content: ''; position: absolute; left: -1px; top: 50%;
+    transform: translateY(-50%); width: 3px; height: 20px;
+    background: #42ADE0; border-radius: 0 3px 3px 0;
+  }
 
   /* Col 2 — Panel de navegación (220px) */
   .app-col2 {
-    width: 220px;
-    background: var(--mis-panel-bg);
+    width: 220px; background: var(--mis-panel-bg);
     border-right: 1px solid var(--mis-border);
     flex-shrink: 0; overflow-y: auto; padding: 0;
   }
@@ -120,19 +207,20 @@
     margin-bottom: 4px;
   }
   .nav-panel-header svg { width: 14px; height: 14px; color: var(--mis-text-secondary); flex-shrink: 0; }
-  .nav-panel-header .ph-title { font-size: 12px; font-weight: 600; color: var(--mis-text-primary); }
+  .nav-panel-header .ph-title { font-size: 12px; font-weight: 700; color: var(--mis-text-primary); }
   .nav-section { padding: 4px 0 6px; }
   .nav-section-title {
-    font-size: 9px; font-weight: 600; color: var(--mis-text-tertiary);
-    letter-spacing: 0.8px; text-transform: uppercase;
-    padding: 8px 14px 3px;
+    font-size: 9px; font-weight: 700; color: var(--mis-text-tertiary);
+    letter-spacing: 0.9px; text-transform: uppercase;
+    padding: 8px 14px 4px; font-family: 'Fira Code', monospace;
   }
   .nav-item {
     display: flex; align-items: center; gap: 7px;
     padding: 6px 14px;
     font-size: 12px; color: var(--mis-text-secondary);
-    cursor: pointer; border-right: 2px solid transparent;
-    transition: all .12s;
+    cursor: pointer; border-right: 2.5px solid transparent;
+    transition: all var(--transition-fast); border-radius: 0;
+    font-family: 'Fira Sans', sans-serif;
   }
   .nav-item svg { width: 13px; height: 13px; flex-shrink: 0; }
   .nav-item:hover { background: rgba(29,57,110,0.05); color: var(--mis-text-primary); }
@@ -142,53 +230,60 @@
     border-right-color: var(--mis-accent);
   }
   .nav-item.active svg { color: var(--mis-accent); }
+  .nav-item .nav-badge {
+    margin-left: auto; font-size: 8px; font-weight: 700;
+    padding: 1px 5px; border-radius: var(--mis-radius-full);
+    background: rgba(29,57,110,0.12); color: var(--mis-primary);
+  }
 
   /* Zona principal */
   .app-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
   /* Header — glass, altura 44px macOS */
   .app-header {
-    height: 44px;
-    background: rgba(255,255,255,0.88);
-    backdrop-filter: blur(12px);
+    height: 44px; background: rgba(255,255,255,0.90);
+    backdrop-filter: blur(16px) saturate(1.2);
     border-bottom: 1px solid var(--mis-border);
     display: flex; align-items: center; padding: 0 18px; gap: 10px; flex-shrink: 0;
   }
-  .header-wordmark { font-size: 12.5px; font-weight: 700; color: var(--mis-primary); letter-spacing: -0.2px; }
+  .header-wordmark { font-size: 13px; font-weight: 800; color: var(--mis-primary); letter-spacing: -0.3px; font-family: 'Fira Code', monospace; }
   .header-sep { width: 1px; height: 16px; background: var(--mis-border); }
   .header-breadcrumb { font-size: 12px; color: var(--mis-text-secondary); flex: 1; }
+  .header-breadcrumb strong { color: var(--mis-text-primary); font-weight: 500; }
 
-  /* User pill en header — contiene avatar + nombre + menú desplegable */
+  /* User pill en header */
   .header-user-btn {
     display: flex; align-items: center; gap: 6px;
     padding: 4px 8px 4px 4px; border-radius: 8px;
-    cursor: pointer; transition: background .12s;
+    cursor: pointer; transition: background var(--transition-fast);
     border: none; background: transparent; font-family: inherit;
   }
   .header-user-btn:hover { background: rgba(29,57,110,0.07); }
   .avatar-sm {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--mis-primary);
+    width: 27px; height: 27px; border-radius: 50%;
+    background: linear-gradient(135deg, #1D396E, #42ADE0);
     display: flex; align-items: center; justify-content: center;
-    font-size: 9.5px; color: #fff; font-weight: 700; flex-shrink: 0;
+    font-size: 9.5px; color: #fff; font-weight: 800; flex-shrink: 0;
+    font-family: 'Fira Sans', sans-serif;
   }
   .header-user-name { font-size: 12px; font-weight: 500; color: var(--mis-text-primary); }
   .header-user-caret svg { width: 12px; height: 12px; color: var(--mis-text-tertiary); }
 
-  /* User dropdown que se muestra bajo el avatar */
+  /* User dropdown */
   .user-dropdown {
-    background: #fff; border-radius: 10px;
+    background: #fff; border-radius: var(--mis-radius-md);
     border: 1px solid var(--mis-border);
-    box-shadow: var(--mis-shadow-lg);
-    overflow: hidden; min-width: 180px;
+    box-shadow: var(--mis-shadow-xl);
+    overflow: hidden; min-width: 200px;
   }
   .user-dropdown-header { padding: 12px 14px; border-bottom: 1px solid var(--mis-border); }
-  .user-dropdown-header .u-name { font-size: 12px; font-weight: 600; color: var(--mis-text-primary); }
-  .user-dropdown-header .u-email { font-size: 10px; color: var(--mis-text-tertiary); margin-top: 1px; }
+  .user-dropdown-header .u-name { font-size: 12px; font-weight: 700; color: var(--mis-text-primary); }
+  .user-dropdown-header .u-email { font-size: 10px; color: var(--mis-text-tertiary); margin-top: 2px; }
+  .user-dropdown-header .u-role { display: inline-flex; margin-top: 5px; font-size: 9px; font-weight: 700; padding: 1px 7px; background: rgba(29,57,110,0.10); color: var(--mis-primary); border-radius: var(--mis-radius-full); }
   .dropdown-item {
     display: flex; align-items: center; gap: 8px;
     padding: 9px 14px; font-size: 12px; color: var(--mis-text-secondary);
-    cursor: pointer; transition: background .1s;
+    cursor: pointer; transition: background var(--transition-fast);
   }
   .dropdown-item svg { width: 14px; height: 14px; flex-shrink: 0; }
   .dropdown-item:hover { background: var(--mis-panel-bg); color: var(--mis-text-primary); }
@@ -197,61 +292,87 @@
   .dropdown-sep { height: 1px; background: var(--mis-border); margin: 2px 0; }
 
   /* Content area */
-  .app-content { flex: 1; padding: 18px; overflow-y: auto; background: var(--mis-bg); }
+  .app-content { flex: 1; padding: 16px; overflow-y: auto; background: var(--mis-bg); }
 
-  /* ── Color swatches ───────────────────────────── */
-  .color-swatch { border-radius: 10px; overflow: hidden; box-shadow: var(--mis-shadow-sm); }
+  /* ═══════════════════════════════════════════════════
+     DESIGN TOKENS DISPLAY
+  ════════════════════════════════════════════════════ */
+  .color-swatch { border-radius: var(--mis-radius-md); overflow: hidden; box-shadow: var(--mis-shadow-sm); }
   .swatch-color { height: 72px; }
-  .swatch-info { background: #1E293B; padding: 10px 12px; }
-  .swatch-name { font-size: 11px; font-weight: 600; color: #CBD5E1; }
-  .swatch-hex  { font-size: 10px; color: #64748B; font-family: 'SF Mono', monospace; margin-top: 2px; }
-  .swatch-desc { font-size: 10px; color: #475569; margin-top: 2px; }
+  .swatch-info { background: #1A2235; padding: 10px 12px; }
+  .swatch-name { font-size: 11px; font-weight: 700; color: #CBD5E1; }
+  .swatch-hex  { font-size: 10px; color: #64748B; font-family: 'Fira Code', monospace; margin-top: 2px; }
+  .swatch-desc { font-size: 10px; color: #475569; margin-top: 2px; line-height: 1.4; }
 
-  /* ── KPI ─────────────────────────────────────── */
+  .token-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 11px; }
+  .token-row:last-child { border-bottom: none; }
+  .token-name { font-family: 'Fira Code', monospace; color: #A5F3FC; width: 220px; flex-shrink: 0; }
+  .token-value { font-family: 'Fira Code', monospace; color: #FCA5A5; flex: 1; }
+  .token-preview { width: 40px; height: 24px; border-radius: var(--mis-radius-xs); flex-shrink: 0; border: 1px solid rgba(255,255,255,0.08); }
+
+  /* ═══════════════════════════════════════════════════
+     KPI CARDS
+  ════════════════════════════════════════════════════ */
   .kpi-card {
-    background: #fff; border-radius: 10px; padding: 12px 14px;
+    background: #fff; border-radius: var(--mis-radius-md); padding: 12px 14px;
     box-shadow: var(--mis-shadow-sm); border: 1px solid var(--mis-border);
     display: flex; align-items: flex-start; justify-content: space-between;
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
   }
-  .kpi-label { font-size: 9.5px; color: var(--mis-text-tertiary); font-weight: 500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .6px; }
-  .kpi-value { font-size: 20px; font-weight: 700; color: var(--mis-text-primary); letter-spacing: -0.5px; }
-  .kpi-change { font-size: 9.5px; color: #22C55E; font-weight: 600; margin-top: 3px; }
-  .kpi-icon-wrap { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .kpi-card:hover { box-shadow: var(--mis-shadow-md); transform: translateY(-1px); }
+  .kpi-label { font-size: 9.5px; color: var(--mis-text-tertiary); font-weight: 600; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .6px; font-family: 'Fira Code', monospace; }
+  .kpi-value { font-size: 20px; font-weight: 700; color: var(--mis-text-primary); letter-spacing: -0.5px; line-height: 1; }
+  .kpi-change { font-size: 9.5px; font-weight: 600; margin-top: 4px; }
+  .kpi-change.up { color: var(--mis-success); }
+  .kpi-change.neutral { color: var(--mis-text-tertiary); }
+  .kpi-change.down { color: var(--mis-danger); }
+  .kpi-icon-wrap { width: 34px; height: 34px; border-radius: var(--mis-radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .kpi-icon-wrap svg { width: 16px; height: 16px; }
 
-  /* ── Components panel ────────────────────────── */
-  .comp-card { background: #1E293B; border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.06); }
-  .comp-title { font-size: 13px; font-weight: 600; color: #CBD5E1; margin-bottom: 16px; }
+  /* Mini bar chart inside KPI */
+  .kpi-chart { display: flex; align-items: flex-end; gap: 2px; height: 20px; margin-top: 6px; }
+  .kpi-bar { width: 4px; border-radius: 2px 2px 0 0; background: var(--mis-secondary); opacity: 0.5; transition: opacity var(--transition-base); }
+  .kpi-bar:last-child { opacity: 1; }
 
-  /* ── Buttons ─────────────────────────────────── */
-  .btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; transition: opacity .12s; }
+  /* ═══════════════════════════════════════════════════
+     COMPONENTS PANEL
+  ════════════════════════════════════════════════════ */
+  .comp-card { background: #141B2D; border-radius: var(--mis-radius-md); padding: 20px; border: 1px solid rgba(255,255,255,0.06); }
+  .comp-title { font-size: 13px; font-weight: 700; color: #CBD5E1; margin-bottom: 16px; font-family: 'Fira Sans', sans-serif; }
+
+  /* ── Buttons ─────────────────────────────────────── */
+  .btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: var(--mis-radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; border: none; font-family: 'Fira Sans', 'Inter', sans-serif; transition: all var(--transition-fast); }
   .btn svg { width: 14px; height: 14px; }
   .btn-primary   { background: var(--mis-primary); color: #fff; }
-  .btn-primary:hover { background: var(--mis-primary-hover); }
+  .btn-primary:hover { background: var(--mis-primary-hover); transform: translateY(-1px); box-shadow: var(--mis-shadow-sm); }
   .btn-secondary { background: var(--mis-secondary); color: #fff; }
-  .btn-ghost     { background: transparent; color: var(--mis-primary); border: 1px solid var(--mis-border); }
-  .btn-ghost:hover { background: rgba(29,57,110,0.05); }
-  .btn-danger    { background: #EF4444; color: #fff; }
-  .btn-sm { padding: 4px 10px; font-size: 11.5px; border-radius: 6px; }
+  .btn-secondary:hover { background: var(--mis-secondary-hover); }
+  .btn-ghost     { background: transparent; color: var(--mis-primary); border: 1px solid var(--mis-border-strong); }
+  .btn-ghost:hover { background: rgba(29,57,110,0.06); }
+  .btn-danger    { background: var(--mis-danger); color: #fff; }
+  .btn-danger:hover { background: #DC2626; }
+  .btn-sm { padding: 4px 10px; font-size: 11.5px; border-radius: var(--mis-radius-xs); }
+  .btn-icon { padding: 6px; border-radius: var(--mis-radius-sm); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
 
-  /* ── Badges ──────────────────────────────────── */
-  .badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
-  .badge-primary   { background: rgba(29,57,110,0.10); color: var(--mis-primary); }
-  .badge-secondary { background: rgba(66,173,224,0.15); color: #1E6FA0; }
-  .badge-success   { background: #DCFCE7; color: #166534; }
-  .badge-warning   { background: #FEF9C3; color: #854D0E; }
-  .badge-danger    { background: #FEE2E2; color: #991B1B; }
-  .badge-neutral   { background: #F1F5F9; color: #475569; }
+  /* ── Badges ──────────────────────────────────────── */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: var(--mis-radius-full); font-size: 11px; font-weight: 600; line-height: 1.4; }
+  .badge-primary   { background: var(--mis-primary-light); color: var(--mis-primary); }
+  .badge-secondary { background: var(--mis-secondary-light); color: #1E6FA0; }
+  .badge-success   { background: var(--mis-success-bg); color: var(--mis-success-text); }
+  .badge-warning   { background: var(--mis-warning-bg); color: var(--mis-warning-text); }
+  .badge-danger    { background: var(--mis-danger-bg); color: var(--mis-danger-text); }
+  .badge-neutral   { background: var(--mis-neutral-bg); color: var(--mis-neutral-text); }
+  .badge svg { width: 10px; height: 10px; }
 
-  /* ── Inputs ──────────────────────────────────── */
-  .inp { height: 36px; border-radius: 7px; border: 1px solid rgba(29,57,110,0.20); background: #fff; padding: 0 11px; font-size: 13px; font-family: inherit; color: var(--mis-text-primary); outline: none; width: 100%; }
-  .inp:focus { border-color: var(--mis-accent); box-shadow: 0 0 0 3px rgba(66,173,224,0.18); }
-  .inp-error { border-color: #EF4444; }
+  /* ── Inputs ──────────────────────────────────────── */
+  .inp { height: 36px; border-radius: var(--mis-radius-sm); border: 1px solid var(--mis-border-strong); background: #fff; padding: 0 11px; font-size: 13px; font-family: 'Fira Sans', 'Inter', sans-serif; color: var(--mis-text-primary); outline: none; width: 100%; transition: border-color var(--transition-fast), box-shadow var(--transition-fast); }
+  .inp:focus { border-color: var(--mis-accent); box-shadow: var(--mis-shadow-focus); }
+  .inp-error { border-color: var(--mis-danger) !important; }
+  .inp-error:focus { box-shadow: var(--mis-shadow-focus-danger); }
   .input-group { display: flex; flex-direction: column; gap: 4px; }
-  .input-label { font-size: 10px; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: .8px; }
+  .input-label { font-size: 10px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: .8px; font-family: 'Fira Code', monospace; }
   .inp-helper { font-size: 11px; color: #64748B; }
-  .inp-helper.err { color: #EF4444; }
-
   /* ── Chip checkboxes ─────────────────────────── */
   .chip-check { padding: 5px 12px; border-radius: 99px; border: 1.5px solid var(--mis-border); font-size: 11px; font-weight: 500; color: var(--mis-text-secondary); cursor: pointer; display: inline-block; transition: all .12s; }
   .chip-check.checked { background: rgba(29,57,110,0.08); border-color: var(--mis-primary); color: var(--mis-primary); }
@@ -326,7 +447,7 @@
 
   /* ── Typography ──────────────────────────────── */
   .typo-row { display: flex; align-items: baseline; gap: 20px; padding: 14px 0; border-bottom: 1px solid rgba(29,57,110,0.06); }
-  .typo-meta { width: 80px; flex-shrink: 0; font-size: 10px; color: #64748B; font-family: 'SF Mono', monospace; }
+  .typo-meta { width: 80px; flex-shrink: 0; font-size: 10px; color: #64748B; font-family: 'Fira Code', monospace; }
   .typo-desc { font-size: 11px; color: #64748B; }
 
   /* ── Activity row ────────────────────────────── */
@@ -352,18 +473,18 @@
 <nav class="kit-topbar">
   <div class="kit-logo">MIS <span>/ UX Kit</span></div>
   <div class="kit-nav">
-    <a href="#branding"     class="active">Branding</a>
-    <a href="#typography">Tipografía</a>
+    <a href="#branding" class="active">Branding <span class="kit-badge-new">UPDATED</span></a>
+    <a href="#typography">Tipografía <span class="kit-badge-new">NEW</span></a>
     <a href="#spacing">Espaciado</a>
     <a href="#screens">Pantallas</a>
-    <a href="#components">Componentes</a>
+    <a href="#components">Componentes <span class="kit-badge-new">UPDATED</span></a>
     <a href="#messages">Mensajes</a>
     <a href="#notifications">Notificaciones</a>
     <a href="#states">Estados</a>
     <a href="#iam">IAM</a>
     <a href="#remotes">Embebidos</a>
   </div>
-  <span class="kit-badge">Figma Kit v2.0</span>
+  <span class="kit-badge">Figma Kit v3.0</span>
 </nav>
 
 <!-- ═══════════════════════════════════════════════════
@@ -417,7 +538,7 @@
 
   <div class="comp-card" style="margin-bottom:20px;">
     <div class="comp-title">Font Family</div>
-    <div style="font-size:11px;color:#64748B;font-family:'SF Mono',monospace;margin-bottom:12px;">-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif</div>
+    <div style="font-size:11px;color:#64748B;font-family:'Fira Code',monospace;margin-bottom:12px;">'Inter', 'Fira Sans', sans-serif</div>
     <div style="font-size:26px;font-weight:700;color:#1D396E;margin-bottom:4px;">Management Information System</div>
     <div style="font-size:14px;color:#5A6A85;">Financiera Confianza · Panel Administrador Centralizador</div>
   </div>
@@ -1173,7 +1294,7 @@
           <button class="btn btn-primary btn-sm">Reintentar</button>
           <button class="btn btn-ghost btn-sm">← Dashboard</button>
         </div>
-        <div style="font-size:9px;color:#94A3B8;font-family:'SF Mono',monospace;">localhost:4201 · timeout 30s</div>
+        <div style="font-size:9px;color:#94A3B8;font-family:'Fira Code',monospace;">localhost:4201 · timeout 30s</div>
       </div>
     </div>
   </div>
@@ -1360,21 +1481,21 @@
       <div style="background:#1D396E;border-radius:10px;padding:16px;color:#fff;">
         <div style="font-size:12px;font-weight:700;color:#42ADE0;margin-bottom:10px;">HOST — MIS Shell</div>
         <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:5px;text-transform:uppercase;">Signals privados (SET aquí)</div>
-        <div style="font-family:'SF Mono',monospace;font-size:10px;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;line-height:1.7;color:#A5F3FC;">_usuarioActivo = signal(null)<br>_menuItemActivo = signal(null)<br>_catalogoActivo = signal(null)</div>
+        <div style="font-family:'Fira Code',monospace;font-size:10px;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;line-height:1.7;color:#A5F3FC;">_usuarioActivo = signal(null)<br>_menuItemActivo = signal(null)<br>_catalogoActivo = signal(null)</div>
         <div style="font-size:9px;color:rgba(255,255,255,0.4);margin:8px 0 5px;text-transform:uppercase;">Métodos exclusivos del Host</div>
-        <div style="font-family:'SF Mono',monospace;font-size:10px;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;line-height:1.7;color:#FCA5A5;">setUsuarioActivo(u: U)<br>setMenuItemActivo(m: M)<br>setCatalogoActivo(slug)</div>
+        <div style="font-family:'Fira Code',monospace;font-size:10px;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;line-height:1.7;color:#FCA5A5;">setUsuarioActivo(u: U)<br>setMenuItemActivo(m: M)<br>setCatalogoActivo(slug)</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:30px;">
         <div style="font-size:10px;font-weight:700;color:#42ADE0;">READ-ONLY</div>
         <div style="font-size:24px;color:#42ADE0;">→</div>
-        <div style="font-size:9px;color:#64748B;font-family:'SF Mono',monospace;">asReadonly()</div>
+        <div style="font-size:9px;color:#64748B;font-family:'Fira Code',monospace;">asReadonly()</div>
       </div>
       <div style="background:#0F4C75;border-radius:10px;padding:16px;color:#fff;">
         <div style="font-size:12px;font-weight:700;color:#5BBDE8;margin-bottom:10px;">REMOTE — Subsistema</div>
         <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:5px;text-transform:uppercase;">inject(ShellStateService) — solo lectura</div>
-        <div style="font-family:'SF Mono',monospace;font-size:10px;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;line-height:1.7;color:#A5F3FC;">usuarioActivo() ← read<br>catalogoActivo() ← read<br>esAdmin() ← computed</div>
+        <div style="font-family:'Fira Code',monospace;font-size:10px;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;line-height:1.7;color:#A5F3FC;">usuarioActivo() ← read<br>catalogoActivo() ← read<br>esAdmin() ← computed</div>
         <div style="font-size:9px;color:rgba(239,68,68,0.7);margin:8px 0 5px;text-transform:uppercase;">PROHIBIDO</div>
-        <div style="font-family:'SF Mono',monospace;font-size:10px;background:rgba(239,68,68,0.08);padding:8px;border-radius:6px;line-height:1.7;color:#FCA5A5;">setUsuarioActivo() // Error<br>setCatalogoActivo() // Error</div>
+        <div style="font-family:'Fira Code',monospace;font-size:10px;background:rgba(239,68,68,0.08);padding:8px;border-radius:6px;line-height:1.7;color:#FCA5A5;">setUsuarioActivo() // Error<br>setCatalogoActivo() // Error</div>
       </div>
     </div>
   </div>
@@ -1432,7 +1553,7 @@
 <!-- FOOTER -->
 <footer style="padding:28px 48px;border-top:1px solid rgba(255,255,255,0.04);text-align:center;">
   <div style="font-size:12px;color:#475569;">
-    <strong style="color:#42ADE0;">MIS · UX Figma Kit v2.0</strong> — Financiera Confianza · Management Information System<br>
+    <strong style="color:#42ADE0;">MIS · UX Figma Kit v3.0</strong> — Financiera Confianza · Management Information System<br>
     <span style="font-size:10px;color:#334155;margin-top:4px;display:block;">Angular 22 · PrimeNG 19+ · Tailwind CSS v4 · Native Federation · Zoneless · Design System macOS · Figma Ready</span>
     <span style="font-size:10px;color:#334155;display:block;margin-top:2px;">Sidebar: solo íconos de sistemas — Perfil &amp; Cerrar sesión en menú de usuario del header</span>
   </div>

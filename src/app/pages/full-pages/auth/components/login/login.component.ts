@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { form, FormField, required, email } from '@angular/forms/signals';
+import { AuthService } from '../../service/auth.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
@@ -33,6 +34,7 @@ import { Router } from '@angular/router';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
+  private readonly auth = inject(AuthService);
   private readonly shell = inject(ShellStateService);
   private readonly router = inject(Router);
 
@@ -47,54 +49,22 @@ export class LoginComponent {
     required(schema.password, { message: 'La contraseña es requerida.' });
   });
 
-  protected onSubmit(event: Event): void {
+  protected async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
     if (this.loginForm().invalid()) return;
 
     this.cargando.set(true);
     this.errorMsg.set(null);
 
-    const { email, password } = this.loginModel();
-
-    // Simular retraso de validación de red
-    setTimeout(() => {
-      let mockUser = null;
-
-      // Cuentas demo preconfiguradas
-      if (email === 'admin@confianza.pe' && password === 'admin123') {
-        mockUser = {
-          id: 'usr-001',
-          nombre: 'Diego Sullcarayra',
-          email: 'admin@confianza.pe',
-          rol: 'admin-sistema' as const,
-          subsistemas: ['subsistema-contabilidad', 'subsistema-rrhh', 'subsistema-ventas'],
-        };
-      } else if (email === 'general@confianza.pe' && password === 'general123') {
-        mockUser = {
-          id: 'usr-002',
-          nombre: 'Ana García',
-          email: 'general@confianza.pe',
-          rol: 'admin-general' as const,
-          subsistemas: ['subsistema-contabilidad', 'subsistema-rrhh'],
-        };
-      } else if (email === 'supervisor@confianza.pe' && password === 'supervisor123') {
-        mockUser = {
-          id: 'usr-003',
-          nombre: 'Carlos Mendoza',
-          email: 'supervisor@confianza.pe',
-          rol: 'supervisor-area' as const,
-          subsistemas: ['subsistema-rrhh'],
-        };
-      }
-
-      if (mockUser) {
-        this.shell.setUsuarioActivo(mockUser);
-        this.shell.setSidebarIconActivo('host-inicio');
-        this.router.navigate(['/admin/dashboard']);
-      } else {
-        this.errorMsg.set('Correo electrónico o contraseña incorrectos.');
-      }
+    try {
+      // Autenticación vía POST /api/v1/auth/login (Fake API en desarrollo)
+      await this.auth.login(this.loginModel());
+      this.shell.setSidebarIconActivo('host-inicio');
+      this.router.navigate(['/admin/dashboard']);
+    } catch (err) {
+      this.errorMsg.set(err instanceof Error ? err.message : 'Error de autenticación.');
+    } finally {
       this.cargando.set(false);
-    }, 800);
+    }
   }
 }

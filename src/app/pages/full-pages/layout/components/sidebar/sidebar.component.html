@@ -7,7 +7,7 @@
     aria-label="Alternar menú lateral"
     title="Alternar menú"
   >
-    <ng-icon name="lucideMenu" size="20" />
+    <i class="pi pi-bars text-[20px]"></i>
   </button>
 
   <div class="w-7 h-[1px] bg-white/12 my-1 shrink-0"></div>
@@ -23,7 +23,7 @@
         [attr.aria-label]="icon.etiqueta"
         [attr.aria-current]="iconActivoId() === icon.id ? 'page' : null"
       >
-        <ng-icon [name]="icon.icono" size="20" />
+        <i [class]="icon.icono + ' text-[20px]'"></i>
         <span class="text-[9px] font-medium text-center leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]">{{ icon.etiqueta }}</span>
       </button>
     }

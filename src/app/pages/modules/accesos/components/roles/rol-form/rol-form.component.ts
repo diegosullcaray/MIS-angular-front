@@ -1,7 +1,8 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { form, FormField, required, pattern, disabled } from '@angular/forms/signals';
 import { AccesosService } from '../../../services/accesos.service';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { SistemasService } from '../../../../sistemas/services/sistemas.service';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -15,7 +16,7 @@ import { CommonModule } from '@angular/common';
   imports: [
     CommonModule,
     RouterLink,
-    ReactiveFormsModule,
+    FormField,
     CardModule,
     InputTextModule,
     ButtonModule,
@@ -27,87 +28,88 @@ import { CommonModule } from '@angular/common';
 })
 export class RolFormComponent implements OnInit {
   protected readonly service = inject(AccesosService);
-  private readonly fb        = inject(FormBuilder);
+  private readonly sistemasService = inject(SistemasService);
   private readonly router    = inject(Router);
 
   // Input bound from route parameter :id
   readonly id = input<string>();
 
-  protected form!: FormGroup;
   protected readonly cargando = signal(false);
+  protected readonly errorMsg = signal<string | null>(null);
 
-  protected readonly remotesOptions = [
-    { label: 'Contabilidad', value: 'subsistema-contabilidad' },
-    { label: 'RRHH',         value: 'subsistema-rrhh' },
-    { label: 'Ventas',       value: 'subsistema-ventas' },
-    { label: 'Logística',    value: 'subsistema-logistica' }
-  ];
+  // ─── Signal Form (TRD §6.1) ──────────────────────────────────────────────
 
-  protected selectedRemotes: string[] = [];
+  protected readonly rolModel = signal({ nombre: '', slug: '' });
 
-  constructor() {
-    this.inicializarFormulario();
-  }
+  protected readonly rolForm = form(this.rolModel, (schema) => {
+    required(schema.nombre, { message: 'El nombre es requerido.' });
+    required(schema.slug,   { message: 'El slug es requerido.' });
+    pattern(schema.slug, /^[a-z0-9-]+$/, {
+      message: 'El slug debe ser en minúsculas, sin espacios (solo letras, números y guiones).',
+    });
+    // El slug es la clave del rol: no se edita en modo edición
+    disabled(schema.slug, () => !!this.id());
+  });
 
-  ngOnInit(): void {
+  // Opciones dinámicas: sistemas registrados en el módulo Sistemas
+  protected readonly remotesOptions = computed(() =>
+    this.sistemasService.sistemas().map(s => ({ label: s.nombre, value: s.slug }))
+  );
+
+  // Signal: en Zoneless, un array plano actualizado tras un await no re-renderiza
+  protected readonly selectedRemotes = signal<string[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    this.sistemasService.cargarSistemas();
+
     const rolId = this.id();
-    if (rolId) {
-      // Edit Mode
-      const rol = this.service.getRolById(rolId);
-      if (rol) {
-        this.form.patchValue({
-          nombre: rol.nombre,
-          slug: rol.slug
-        });
-        this.form.get('slug')?.disable(); // Can't edit slug key
-        this.selectedRemotes = [...rol.subsistemas];
-      } else {
-        this.router.navigate(['/admin/accesos/roles']);
-      }
+    if (!rolId) return;
+
+    // Modo edición: cargar el rol desde la API
+    try {
+      const rol = await this.service.obtenerRol(rolId);
+      this.rolModel.set({ nombre: rol.nombre, slug: rol.slug });
+      this.selectedRemotes.set([...rol.subsistemas]);
+    } catch {
+      this.router.navigate(['/admin/accesos/roles']);
     }
   }
 
-  private inicializarFormulario(): void {
-    this.form = this.fb.group({
-      nombre: ['', [Validators.required]],
-      slug: ['', [Validators.required, Validators.pattern('^[a-z0-9-]+$')]]
-    });
-  }
+  protected onNombreInput(event: Event): void {
+    if (this.id()) return; // No auto-generar slug al editar
 
-  protected onNombreInput(): void {
-    if (this.id()) return; // Don't auto-slug on edit
-
-    const nombreVal = this.form.get('nombre')?.value || '';
-    const slugVal = nombreVal
+    const nombre = (event.target as HTMLInputElement).value;
+    const slug = nombre
       .toLowerCase()
       .trim()
-      .replace(/[^a-z0-9\s-]/g, '') // remove specials
-      .replace(/\s+/g, '-');       // space to dash
-    this.form.patchValue({ slug: slugVal });
+      .replace(/[^a-z0-9\s-]/g, '') // quitar caracteres especiales
+      .replace(/\s+/g, '-');        // espacios a guiones
+    this.rolModel.update(m => ({ ...m, slug }));
   }
 
   protected isSubscribed(sub: string): boolean {
-    return this.selectedRemotes.includes(sub);
+    return this.selectedRemotes().includes(sub);
   }
 
   protected onCheckboxChange(event: Event, value: string): void {
     const isChecked = (event.target as HTMLInputElement).checked;
-    if (isChecked) {
-      this.selectedRemotes = [...this.selectedRemotes, value];
-    } else {
-      this.selectedRemotes = this.selectedRemotes.filter(sub => sub !== value);
-    }
+    this.selectedRemotes.update(list =>
+      isChecked ? [...list, value] : list.filter(sub => sub !== value)
+    );
   }
 
-  protected async guardar(): Promise<void> {
-    if (this.form.invalid) return;
+  protected async guardar(event: Event): Promise<void> {
+    event.preventDefault();
+    if (this.rolForm().invalid()) return;
 
     this.cargando.set(true);
-    const formVal = this.form.getRawValue();
+    this.errorMsg.set(null);
+
+    const { nombre, slug } = this.rolModel();
     const payload = {
-      nombre: formVal.nombre.trim(),
-      slug: formVal.slug.trim(),
-      subsistemas: this.selectedRemotes
+      nombre: nombre.trim(),
+      slug: slug.trim(),
+      subsistemas: this.selectedRemotes()
     };
 
     const rolId = this.id();
@@ -118,8 +120,8 @@ export class RolFormComponent implements OnInit {
         await this.service.crearRol(payload);
       }
       this.router.navigate(['/admin/accesos/roles']);
-    } catch (e) {
-      console.error(e);
+    } catch (err: any) {
+      this.errorMsg.set(err?.error?.message ?? 'No se pudo guardar el rol. Inténtalo de nuevo.');
     } finally {
       this.cargando.set(false);
     }

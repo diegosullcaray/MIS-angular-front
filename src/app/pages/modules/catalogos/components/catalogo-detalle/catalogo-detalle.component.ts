@@ -6,7 +6,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { form, FormField, required, maxLength, disabled } from '@angular/forms/signals';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideArrowLeft, lucidePlus, lucideEdit2, lucideTrash2,
@@ -26,8 +26,7 @@ import { CommonModule } from '@angular/common';
     ButtonModule,
     DialogModule,
     InputTextModule,
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     NgIconComponent,
     ListSkeletonComponent,
     EmptyStateComponent
@@ -142,19 +141,18 @@ import { CommonModule } from '@angular/common';
         [draggable]="false"
         [resizable]="false"
       >
-        <form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid">
+        <form (submit)="guardar($event)" class="form-grid">
           <div class="form-field">
             <label for="codigo" class="form-label">Código</label>
             <input
               id="codigo"
               type="text"
               pInputText
-              formControlName="codigo"
+              [formField]="itemForm.codigo"
               placeholder="Ej. BCP, USD"
               class="w-full"
-              [attr.disabled]="editandoId() ? true : null"
             />
-            @if (form.get('codigo')?.invalid && form.get('codigo')?.touched) {
+            @if (itemForm.codigo().invalid() && itemForm.codigo().touched()) {
               <small class="text-danger">El código es requerido (máx. 10 caracteres).</small>
             }
           </div>
@@ -165,21 +163,25 @@ import { CommonModule } from '@angular/common';
               id="descripcion"
               type="text"
               pInputText
-              formControlName="descripcion"
+              [formField]="itemForm.descripcion"
               placeholder="Ej. Banco de Crédito del Perú"
               class="w-full"
             />
-            @if (form.get('descripcion')?.invalid && form.get('descripcion')?.touched) {
+            @if (itemForm.descripcion().invalid() && itemForm.descripcion().touched()) {
               <small class="text-danger">La descripción es requerida.</small>
             }
           </div>
 
           <div class="form-field-checkbox">
             <label class="checkbox-container">
-              <input type="checkbox" formControlName="activo" />
+              <input type="checkbox" [formField]="itemForm.activo" />
               <span class="checkbox-label">Registro activo</span>
             </label>
           </div>
+
+          @if (errorGuardar()) {
+            <small class="text-danger">{{ errorGuardar() }}</small>
+          }
 
           <div class="dialog-footer">
             <p-button
@@ -192,7 +194,7 @@ import { CommonModule } from '@angular/common';
             <p-button
               [label]="editandoId() ? 'Guardar' : 'Crear'"
               type="submit"
-              [disabled]="form.invalid"
+              [disabled]="itemForm().invalid()"
             />
           </div>
         </form>
@@ -422,25 +424,31 @@ import { CommonModule } from '@angular/common';
 export class CatalogoDetalleComponent implements OnInit {
   protected readonly service = inject(CatalogosService);
   protected readonly shell = inject(ShellStateService);
-  private readonly fb = inject(FormBuilder);
 
   // Input bound directly from route param :tipo
   readonly tipo = input.required<string>();
 
-  // Reactive Forms
-  protected form!: FormGroup;
+  // ─── Signal Form (TRD §6.1) ────────────────────────────────────────────
+  protected readonly itemModel = signal({ codigo: '', descripcion: '', activo: true });
+
+  protected readonly itemForm = form(this.itemModel, (schema) => {
+    required(schema.codigo,      { message: 'El código es requerido.' });
+    maxLength(schema.codigo, 10, { message: 'El código admite máximo 10 caracteres.' });
+    required(schema.descripcion, { message: 'La descripción es requerida.' });
+    // El código es la clave del registro: no se edita en modo edición
+    disabled(schema.codigo, () => this.editandoId() !== null);
+  });
 
   // Dialog signals
   protected readonly dialogoOpen = signal(false);
   protected readonly editandoId = signal<string | null>(null);
+  protected readonly errorGuardar = signal<string | null>(null);
 
   // Delete confirmations
   protected readonly confirmDeleteOpen = signal(false);
   protected readonly itemAEliminar = signal<any | null>(null);
 
   constructor() {
-    this.inicializarFormulario();
-
     // Reload catalog items if 'tipo' param changes
     effect(() => {
       const currentTipo = this.tipo();
@@ -463,14 +471,6 @@ export class CatalogoDetalleComponent implements OnInit {
     return labels[this.tipo()] ?? this.tipo();
   }
 
-  private inicializarFormulario(): void {
-    this.form = this.fb.group({
-      codigo: ['', [Validators.required, Validators.maxLength(10)]],
-      descripcion: ['', [Validators.required]],
-      activo: [true]
-    });
-  }
-
   protected onSearch(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.service.cargarItems(this.tipo(), 1, 20, value);
@@ -478,41 +478,46 @@ export class CatalogoDetalleComponent implements OnInit {
 
   protected abrirDialogoCrear(): void {
     this.editandoId.set(null);
-    this.form.reset({ activo: true });
-    this.form.get('codigo')?.enable();
+    this.errorGuardar.set(null);
+    this.itemModel.set({ codigo: '', descripcion: '', activo: true });
     this.dialogoOpen.set(true);
   }
 
   protected abrirDialogoEditar(item: any): void {
-    this.editandoId.set(item.id);
-    this.form.patchValue({
+    this.editandoId.set(item.id); // disabled() del schema bloquea el código
+    this.errorGuardar.set(null);
+    this.itemModel.set({
       codigo: item.codigo,
       descripcion: item.descripcion,
       activo: item.activo
     });
-    this.form.get('codigo')?.disable(); // Can't edit code key
     this.dialogoOpen.set(true);
   }
 
-  protected async guardar(): Promise<void> {
-    if (this.form.invalid) return;
+  protected async guardar(event: Event): Promise<void> {
+    event.preventDefault();
+    if (this.itemForm().invalid()) return;
 
-    const formVal = this.form.getRawValue();
+    const { codigo, descripcion, activo } = this.itemModel();
     const payload = {
-      codigo: formVal.codigo.toUpperCase().trim(),
-      descripcion: formVal.descripcion.trim(),
-      activo: formVal.activo
+      codigo: codigo.toUpperCase().trim(),
+      descripcion: descripcion.trim(),
+      activo
     };
 
     const id = this.editandoId();
-    if (id) {
-      await this.service.actualizarItem(this.tipo(), id, payload);
-    } else {
-      await this.service.crearItem(this.tipo(), payload);
+    try {
+      if (id) {
+        await this.service.actualizarItem(this.tipo(), id, payload);
+      } else {
+        await this.service.crearItem(this.tipo(), payload);
+      }
+      this.dialogoOpen.set(false);
+      this.service.cargarItems(this.tipo()); // Refresh list
+    } catch (err: any) {
+      // Ej. 409: código duplicado (validación de la API)
+      this.errorGuardar.set(err?.error?.message ?? 'No se pudo guardar el registro.');
     }
-
-    this.dialogoOpen.set(false);
-    this.service.cargarItems(this.tipo()); // Refresh list
   }
 
   protected confirmarEliminar(item: any): void {
@@ -522,8 +527,11 @@ export class CatalogoDetalleComponent implements OnInit {
 
   protected async eliminar(): Promise<void> {
     const item = this.itemAEliminar();
-    if (item) {
+    if (!item) return;
+
+    try {
       await this.service.eliminarItem(this.tipo(), item.id);
+    } finally {
       this.confirmDeleteOpen.set(false);
       this.itemAEliminar.set(null);
       this.service.cargarItems(this.tipo()); // Refresh list

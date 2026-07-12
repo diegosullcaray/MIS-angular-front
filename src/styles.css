@@ -4,12 +4,20 @@
 
 /* Tailwind v4 — base utilities */
 @import "tailwindcss";
+@import "primeicons/primeicons.css";
+
 
 /* MIS Design System Tokens */
 @import "./app/core/design-system/tokens.css";
 
 @source "./app/**/*.html";
 @source "./app/**/*.ts";
+@source "./src/app/**/*.html";
+@source "./src/app/**/*.ts";
+@source "../src/app/**/*.html";
+@source "../src/app/**/*.ts";
+@source "./src/**/*.html";
+@source "./src/**/*.ts";
 
 /* ── Base Resets ──────────────────────────────────────────── */
 *, *::before, *::after {

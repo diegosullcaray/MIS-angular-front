@@ -5,6 +5,7 @@ import {
   lucideLogOut, lucideBell, lucideSearch
 } from '@ng-icons/lucide';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import { AuthService } from '../../../auth/service/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -19,6 +20,7 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 })
 export class HeaderComponent {
   protected readonly shell = inject(ShellStateService);
+  private readonly auth = inject(AuthService);
   protected readonly dropdownOpen = signal(false);
 
   protected readonly rolLabel = computed(() => {
@@ -35,7 +37,8 @@ export class HeaderComponent {
   }
 
   protected cerrarSesion(): void {
-    this.shell.cerrarSesion();
+    // Limpia estado + sessionStorage y redirige al login
+    this.auth.cerrarSesion();
     this.dropdownOpen.set(false);
   }
 }

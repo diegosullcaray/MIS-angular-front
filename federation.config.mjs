@@ -28,6 +28,7 @@ export default withNativeFederation({
     'rxjs/testing',
     'rxjs/webSocket',
     '@primeuix/themes',
+    '@primeng/themes',
     // Add further packages you don't need at runtime
   ],
 

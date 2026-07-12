@@ -44,7 +44,15 @@ export const ACCESOS_ROUTES: Routes = [
       )
   },
   {
+    // Detalle del rol: pestañas Detalle | Sistemas | Usuarios
     path: 'roles/:id',
+    loadComponent: () =>
+      import('./components/roles/rol-detalle/rol-detalle.component').then(
+        (m) => m.RolDetalleComponent
+      )
+  },
+  {
+    path: 'roles/:id/editar',
     loadComponent: () =>
       import('./components/roles/rol-form/rol-form.component').then(
         (m) => m.RolFormComponent

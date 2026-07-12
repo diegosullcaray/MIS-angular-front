@@ -1,0 +1,136 @@
+<div class="flex flex-col gap-6">
+  <!-- Header -->
+  <header class="flex justify-between items-end mb-2">
+    <div>
+      <h1 class="text-2xl font-bold text-[var(--mis-primary)] m-0 mb-1">Sistemas</h1>
+      <p class="text-base text-[var(--mis-text-secondary)] m-0">Registra los sistemas embebidos (Remotes), define su estructura y controla los permisos por rol.</p>
+    </div>
+
+    <p-button
+      label="Nuevo Sistema"
+      icon="pi pi-plus"
+      routerLink="/admin/sistemas/nuevo"
+    />
+  </header>
+
+  @if (service.error()) {
+    <app-inline-error
+      titulo="Error al cargar los sistemas"
+      [detalle]="service.error() ?? undefined"
+      (reintentar)="service.cargarSistemas()"
+    />
+  }
+
+  <!-- Table Section -->
+  <div class="bg-[var(--mis-surface)] border border-[var(--mis-border)] rounded-[10px] shadow-sm overflow-hidden pt-4">
+    @if (service.isLoading()) {
+      <app-list-skeleton [rows]="[1,2,3,4]" [cols]="[1,2,3,4,5]" />
+    } @else {
+      @if (service.sistemas().length === 0) {
+        <app-empty-state
+          titulo="No hay sistemas registrados"
+          descripcion="Registra tu primer sistema para empezar a definir su estructura y permisos."
+          accionLabel="Registrar sistema"
+          routerLink="/admin/sistemas/nuevo"
+        />
+      } @else {
+        <p-table [value]="service.sistemas()" responsiveLayout="scroll" class="mis-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Sistema</th>
+              <th>Estructura</th>
+              <th>Roles</th>
+              <th>Versión</th>
+              <th>Estado</th>
+              <th>Actualizado</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-sistema>
+            <tr>
+              <td>
+                <a [routerLink]="['/admin/sistemas', sistema.id]" class="flex items-center gap-3 no-underline group">
+                  <span class="w-9 h-9 rounded-[8px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] flex items-center justify-center shrink-0">
+                    <i [class]="sistema.icono" style="font-size: 0.9rem"></i>
+                  </span>
+                  <span class="flex flex-col">
+                    <span class="font-semibold text-[var(--mis-text-primary)] group-hover:text-[var(--mis-secondary)] transition-colors">{{ sistema.nombre }}</span>
+                    <code class="text-[11px] text-[var(--mis-text-tertiary)]">{{ sistema.slug }}</code>
+                  </span>
+                </a>
+              </td>
+              <td>
+                <span class="text-sm text-[var(--mis-text-secondary)]">
+                  {{ sistema.totalSecciones }} secciones · {{ sistema.totalModulos }} módulos
+                </span>
+              </td>
+              <td>
+                <span class="text-sm text-[var(--mis-text-secondary)]">{{ sistema.rolesAsignados }}</span>
+              </td>
+              <td><code class="text-xs text-[var(--mis-text-secondary)]">v{{ sistema.version }}</code></td>
+              <td>
+                <span class="badge" [class]="estadoClase(sistema.estado)">{{ estadoLabel(sistema.estado) }}</span>
+              </td>
+              <td class="text-sm text-[var(--mis-text-secondary)]">{{ formatFecha(sistema.actualizadoEn) }}</td>
+              <td class="text-right">
+                <div class="inline-flex gap-1 justify-end">
+                  <button
+                    class="row-btn"
+                    [routerLink]="['/admin/sistemas', sistema.id]"
+                    title="Ver detalle"
+                  >
+                    <ng-icon name="lucideEye" size="13" />
+                  </button>
+                  <button
+                    class="row-btn"
+                    [routerLink]="['/admin/sistemas', sistema.id, 'editar']"
+                    title="Editar"
+                  >
+                    <ng-icon name="lucideEdit2" size="13" />
+                  </button>
+                  <button
+                    class="row-btn row-btn--danger"
+                    (click)="confirmarEliminar(sistema)"
+                    title="Eliminar"
+                  >
+                    <ng-icon name="lucideTrash2" size="13" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    }
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <p-dialog
+    header="Confirmar eliminación"
+    [(visible)]="confirmDeleteOpen"
+    [modal]="true"
+    [style]="{ width: '380px' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <div class="flex gap-4 items-start pt-2">
+      <div class="w-11 h-11 rounded-full bg-[var(--mis-danger-light)] flex items-center justify-center shrink-0">
+        <ng-icon name="lucideAlertTriangle" size="24" class="text-[var(--mis-danger)]" />
+      </div>
+      <div class="flex flex-col gap-2">
+        <p class="m-0 text-sm text-[var(--mis-text-secondary)] leading-normal">
+          ¿Eliminar el sistema <strong>{{ sistemaAEliminar()?.nombre }}</strong>? Se perderá su estructura y los permisos configurados.
+        </p>
+        @if (errorEliminar()) {
+          <p class="m-0 text-xs font-semibold text-[var(--mis-danger)] bg-[var(--mis-danger-light)] rounded-[6px] px-2 py-1.5">
+            {{ errorEliminar() }}
+          </p>
+        }
+      </div>
+    </div>
+    <div class="flex justify-end gap-2 mt-4">
+      <p-button label="Cancelar" [text]="true" severity="secondary" (click)="confirmDeleteOpen.set(false)" />
+      <p-button label="Eliminar" severity="danger" (click)="eliminar()" />
+    </div>
+  </p-dialog>
+</div>

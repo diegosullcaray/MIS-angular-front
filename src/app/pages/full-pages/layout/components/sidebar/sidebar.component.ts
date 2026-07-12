@@ -1,27 +1,25 @@
 import { Component, inject, computed, signal } from '@angular/core';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import {
-  lucideHome, lucideBarChart2, lucideUsers,
-  lucideTruck, lucideActivity, lucideGrid, lucideMenu,
-} from '@ng-icons/lucide';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import { SistemasService } from '../../../../modules/sistemas/services/sistemas.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
 import type { SidebarIcon, SidebarNavPanelConfig } from '../../interfaces/sidebar.model';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [NgIconComponent, SidebarNavPanelComponent],
-  viewProviders: [provideIcons({
-    lucideHome, lucideBarChart2, lucideUsers,
-    lucideTruck, lucideActivity, lucideGrid, lucideMenu,
-  })],
+  imports: [SidebarNavPanelComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
   protected readonly shell = inject(ShellStateService);
+  private readonly sistemasService = inject(SistemasService);
   protected readonly isNavPanelCollapsed = signal<boolean>(false);
+
+  constructor() {
+    // El registro de sistemas alimenta etiquetas e íconos de los remotes
+    this.sistemasService.cargarSistemas();
+  }
 
   protected toggleNavPanel(): void {
     this.isNavPanelCollapsed.update(collapsed => !collapsed);
@@ -36,7 +34,7 @@ export class SidebarComponent {
       {
         id: 'host-inicio',
         tipo: 'host-inicio',
-        icono: 'lucideHome',
+        icono: 'pi pi-home',
         etiqueta: 'Inicio',
         tienePanel: true,
       },
@@ -87,6 +85,7 @@ export class SidebarComponent {
           titulo: 'Administración',
           rutas: [
             { etiqueta: 'Catálogos', ruta: '/admin/catalogos', icono: 'lucideGrid', soloAdmin: true },
+            { etiqueta: 'Sistemas',  ruta: '/admin/sistemas',  icono: 'lucideBoxes', soloAdminSistema: true },
           ],
         },
         {
@@ -123,22 +122,12 @@ export class SidebarComponent {
   }
 
   private getRemoteLabel(slug: string): string {
-    const labels: Record<string, string> = {
-      'subsistema-contabilidad': 'Contabilidad',
-      'subsistema-rrhh':         'RRHH',
-      'subsistema-ventas':       'Ventas',
-      'subsistema-logistica':    'Logística',
-    };
-    return labels[slug] ?? slug.replace('subsistema-', '');
+    const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
+    return sistema?.nombre ?? slug.replace('subsistema-', '');
   }
 
   private getRemoteIcono(slug: string): string {
-    const iconos: Record<string, string> = {
-      'subsistema-contabilidad': 'lucideBarChart2',
-      'subsistema-rrhh':         'lucideUsers',
-      'subsistema-ventas':       'lucideActivity',
-      'subsistema-logistica':    'lucideTruck',
-    };
-    return iconos[slug] ?? 'lucideGrid';
+    const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
+    return sistema?.icono ?? 'pi pi-th-large';
   }
 }

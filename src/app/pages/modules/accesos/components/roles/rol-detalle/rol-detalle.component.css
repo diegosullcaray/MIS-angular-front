@@ -1,0 +1,84 @@
+/* ─── Tab bar minimalista (mismo patrón que sistema-detalle) ─── */
+.tab-bar {
+  display: flex;
+  gap: var(--mis-space-1);
+  border-bottom: 1px solid var(--mis-border);
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--mis-space-2) var(--mis-space-4);
+  border: none;
+  background: transparent;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-medium);
+  color: var(--mis-text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all var(--mis-transition-fast);
+}
+
+.tab-btn:hover { color: var(--mis-primary); }
+
+.tab-btn--active {
+  color: var(--mis-primary);
+  font-weight: var(--mis-font-semibold);
+  border-bottom-color: var(--mis-secondary);
+}
+
+/* ─── Paneles ─── */
+.panel {
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  box-shadow: var(--mis-shadow-sm);
+  padding: var(--mis-space-4) var(--mis-space-5);
+}
+
+.panel-title {
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mis-text-tertiary);
+  margin: 0 0 var(--mis-space-3);
+}
+
+.dato-label {
+  font-size: var(--mis-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mis-text-tertiary);
+  margin-bottom: 2px;
+}
+
+.dato-valor {
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-primary);
+  margin: 0;
+}
+
+.stat { display: flex; flex-direction: column; }
+.stat-valor {
+  font-size: var(--mis-text-xl);
+  font-weight: var(--mis-font-bold);
+  color: var(--mis-primary);
+  line-height: var(--mis-leading-tight);
+}
+.stat-label {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+  text-transform: uppercase;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: var(--mis-font-semibold);
+  padding: 2px var(--mis-space-2);
+  border-radius: var(--mis-radius-full);
+}
+.badge--success { background: var(--mis-success-light); color: var(--mis-success); }
+.badge--danger  { background: var(--mis-danger-light);  color: var(--mis-danger); }

@@ -1,3 +1,9 @@
+:host {
+    display: block;
+    width: 100%;
+    min-height: 100vh;
+}
+
 .login-wrapper {
     background: radial-gradient(circle at top right, var(--mis-primary) 0%, #0A1630 60%, #050B18 100%);
     font-family: var(--mis-font-family);
@@ -33,4 +39,8 @@
 :host ::ng-deep .p-password-input {
     display: block !important;
     width: 100% !important;
+}
+:host ::ng-deep .login-card-container .p-card-body,
+:host ::ng-deep .login-card-container .p-card-content {
+    padding: 0 !important;
 }
