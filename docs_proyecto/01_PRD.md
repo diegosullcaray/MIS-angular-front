@@ -1,8 +1,8 @@
 # 01 — Product Requirements Document (PRD)
 > **Proyecto:** MIS - Management Information System  
-> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/06_FIGMA_UX_KIT.html)  
+> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT_GUIDE](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/FIGMA/06_FIGMA_UX_KIT_GUIDE.md) | [07_DATABASE_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/07_DATABASE_SCHEMA.sql) | [08_GUIA_SISTEMAS_HIJOS](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/08_GUIA_SISTEMAS_HIJOS.md)  
 > **Tipo:** Panel Administrador Centralizador (Micro-Frontend Host + Remotes)  
-> **Versión:** 1.1.0  
+> **Versión:** 1.2.0  
 > **Fecha:** 2026-07-12  
 
 ---
@@ -125,6 +125,24 @@ El sistema **Host administra la estructura principal y seguridad**, mientras **e
 
 - **Angular 21/22** como framework base (última versión estable disponible).
 - **`@angular-architects/native-federation`** como mecanismo de federación (sin Webpack).
-- Modo **Zoneless** obligatorio (`provideExperimentalZonelessChangeDetection`).
+- Modo **Zoneless** obligatorio (`provideZonelessChangeDetection`).
+- **Spring Boot 3 + PostgreSQL 16** para el backend del Host (ver [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/04_BACKEND_SCHEMA.md)); cada Remote lleva su backend propio (ver [08_GUIA_SISTEMAS_HIJOS](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/08_GUIA_SISTEMAS_HIJOS.md)).
 - Cada subsistema se desplegará en su propia **imagen Docker** en un registry privado.
 - Orquestación de contenedores vía **Dokploy** o **Coolify**.
+
+---
+
+## 9. Estado de Implementación (2026-07-12)
+
+| Alcance del MVP | Estado | Notas |
+|---|:---:|---|
+| Shell Host de 3 columnas (sidebar navy + panel + contenido) | ✅ | `pages/full-pages/layout/` — breadcrumb PrimeNG en el header |
+| Autenticación con MFA (login + OTP 6 dígitos) | ✅ | 2 pasos en `LoginComponent`; OTP demo Fake API: `123456` |
+| Gestión de Accesos IAM (usuarios, roles) | ✅ | CRUD completo con Signal Forms, protegido por `roleGuard('admin-sistema')` |
+| Gestión de Sistemas (registro, estructura, permisos) | ✅ | Detalle con pestañas Información / Estructura / Permisos |
+| Carga dinámica de Remotes + estados loading/error | ✅ | `RemoteWrapperComponent`; soporta deep-linking `/admin/{slug}/**` |
+| Diseño segmentado (SelectButton) y vistas en cards | ✅ | Todas las gestiones en `p-card` (header + body) a ancho completo |
+| Backend real (Spring Boot) + BD PostgreSQL | 📄 Especificado | Docs 04 y 07 listos para construir; hoy la Fake API sirve el contrato 1:1 |
+| Dockerización y CI/CD | ⏳ Pendiente | FASE 6 del plan |
+
+> Fuera de alcance (confirmado): módulo de Catálogos (retirado del producto), SSO externo, modo oscuro.

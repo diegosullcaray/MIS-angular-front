@@ -1,9 +1,9 @@
 # 03 — Technical Requirements Document (TRD)
 > **Proyecto:** MIS - Management Information System  
-> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/docs_proyecto/06_FIGMA_UX_KIT.html)  
-> **Versión:** 1.0.0  
-> **Fecha:** 2026-07-09  
-> **Estado:** 🟡 En revisión
+> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT_GUIDE](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/FIGMA/06_FIGMA_UX_KIT_GUIDE.md) | [08_GUIA_SISTEMAS_HIJOS](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/08_GUIA_SISTEMAS_HIJOS.md)  
+> **Versión:** 1.1.0  
+> **Fecha:** 2026-07-12  
+> **Estado:** 🟢 Alineado a la implementación
 
 ---
 
@@ -39,6 +39,10 @@ npm install primeicons
 
 # Tailwind CSS v4 (IMPORTANTE: v4, no v3)
 npm install tailwindcss @tailwindcss/vite
+
+# Íconos SVG estilo Lucide (usados en vistas del Host; PrimeIcons queda para
+# el sidebar y los botones de PrimeNG)
+npm install @ng-icons/core @ng-icons/lucide
 
 # Utilidades de Angular
 npm install @angular/cdk
@@ -123,24 +127,34 @@ module.exports = withNativeFederation({
 ## 4. Configuración de la Aplicación (`app.config.ts`)
 
 ```typescript
-import { ApplicationConfig, provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
-import { MisTheme } from './core/design-system/mis-theme';  // Tema personalizado
+import { MessageService } from 'primeng/api';
+import { MisTheme } from './core/design-system/mis-theme';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { fakeApiInterceptor } from './core/fake-api/fake-api.interceptor';
+import { AuthService } from './pages/full-pages/auth/service/auth.service';
 import { APP_ROUTES } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     // ✅ OBLIGATORIO: Modo Zoneless
-    provideExperimentalZonelessChangeDetection(),
+    provideZonelessChangeDetection(),
 
     // ✅ Router con binding de inputs de componentes
     provideRouter(APP_ROUTES, withComponentInputBinding()),
 
-    // ✅ HttpClient con Fetch API (sin zone.js)
-    provideHttpClient(withFetch()),
+    // ✅ HttpClient con Fetch API + interceptores.
+    //    fakeApiInterceptor simula el backend REST (/api/v1/*) en memoria:
+    //    quitarlo de esta lista al conectar el backend real (doc 04 §8).
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, fakeApiInterceptor])),
+
+    // ✅ Restaura la sesión persistida (sessionStorage 'mis.sesion') antes de
+    //    renderizar, para que authGuard no expulse al usuario al refrescar.
+    provideAppInitializer(() => inject(AuthService).restaurarSesion()),
 
     // ✅ Animaciones async (requerido por PrimeNG)
     provideAnimationsAsync(),
@@ -150,15 +164,15 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: MisTheme,
         options: {
-          darkModeSelector: '.dark',  // Clase CSS para dark mode
-          cssLayer: {
-            name: 'primeng',
-            order: 'tailwind-base, primeng, tailwind-utilities'
-          }
+          darkModeSelector: '.dark',
+          cssLayer: { name: 'primeng', order: 'theme, base, primeng, utilities' }
         }
       },
       ripple: false,  // Sin ripple — estilo macOS no usa ripple
     }),
+
+    // ✅ Toasts globales (consumidos vía ToastService + <p-toast> en el root)
+    MessageService,
   ]
 };
 ```
@@ -173,12 +187,16 @@ export const appConfig: ApplicationConfig = {
 
 ```
 ✅ PERMITIDO:
-  features/catalogos/services/catalogos.service.ts  →  core/services/shell-state.service.ts
-  features/catalogos/components/...                  →  shared/ui/...
+  pages/modules/accesos/services/accesos.service.ts  →  core/services/shell-state.service.ts
+  pages/modules/sistemas/components/...              →  shared/ui/...
 
 ❌ PROHIBIDO:
-  features/catalogos/...  →  features/remotes/...  (import directo entre features)
-  features/remotes/...    →  features/catalogos/...
+  pages/modules/accesos/...   →  pages/modules/dashboard/...  (import directo entre módulos)
+  pages/full-pages/auth/...   →  pages/modules/...
+
+⚠️ Excepción documentada: el layout (sidebar/header) y el dashboard LEEN los
+   services públicos de `sistemas` y `accesos` para pintar menús y KPIs —
+   solo la capa service, nunca componentes de otro módulo.
 ```
 
 ### 5.2 Convenciones de Naming
@@ -203,13 +221,17 @@ src/
 │   ├── core/
 │   │   ├── design-system/          ← Tema y tokens macOS
 │   │   │   ├── mis-theme.ts          ← Preset PrimeNG personalizado
-│   │   │   ├── tokens.css            ← CSS custom properties (colores, tipografía, spacing)
-│   │   │   └── index.css             ← Estilos base globales
+│   │   │   └── tokens.css            ← CSS custom properties (light + .dark)
+│   │   ├── fake-api/               ← Backend simulado (contrato 1:1 con doc 04)
+│   │   │   ├── fake-db.ts            ← Seeds en memoria (usuarios, roles, sistemas)
+│   │   │   └── fake-api.interceptor.ts
 │   │   ├── federation/
-│   │   │   └── remote-wrapper/       ← RemoteWrapperComponent (Standalone)
+│   │   │   └── remote-wrapper/       ← RemoteWrapperComponent (effect sobre remoteName)
 │   │   ├── guards/
 │   │   │   ├── auth.guard.ts
-│   │   │   └── role.guard.ts
+│   │   │   └── role.guard.ts         ← jerarquía de roles + toast de acceso denegado
+│   │   ├── interceptors/
+│   │   │   └── auth.interceptor.ts   ← adjunta Authorization + X-User-Role
 │   │   └── services/
 │   │       └── shell-state.service.ts
 │   │
@@ -230,7 +252,7 @@ src/
 │           ├── empty-state/
 │           ├── inline-error/
 │           ├── list-skeleton/
-│           ├── toast/
+│           ├── toast/                ← ToastService (fachada sobre MessageService de PrimeNG)
 │           └── access-denied/
 │
 ├── public/
@@ -346,6 +368,10 @@ El sistema de diseño sigue la estética **macOS / Apple HIG**: limpio, espacios
 | `--mis-text-tertiary` | `#94A3B8` | `#64748B` | Texto deshabilitado / placeholders |
 | `--mis-text-on-primary` | `#FFFFFF` | `#FFFFFF` | Texto sobre fondo primario |
 | `--mis-text-on-secondary` | `#FFFFFF` | `#0F1E2E` | Texto sobre fondo secundario |
+| `--mis-border-strong` | `rgba(29,57,110,0.20)` | `rgba(66,173,224,0.25)` | Bordes de inputs y elementos interactivos |
+| `--mis-success` / `--mis-success-light` | `#16A34A` / `#E7F6EC` | `#4ADE80` / `#12331E` | Estados positivos (badges ONLINE, toasts success) |
+| `--mis-warning` / `--mis-warning-light` | `#B45309` / `#FEF3C7` | `#FBBF24` / `#3A2E10` | Advertencias (MANTENIMIENTO, acceso denegado) |
+| `--mis-danger` / `--mis-danger-light` | `#DC2626` / `#FDECEC` | `#F87171` / `#3B1A1A` | Errores y acciones destructivas |
 
 ### 9.2 Tipografía
 
@@ -459,4 +485,7 @@ El sistema de diseño sigue la estética **macOS / Apple HIG**: limpio, espacios
 | **PG-04** | Usar **Tailwind v4** para layout, spacing y responsive. Usar **PrimeNG** para componentes complejos (Table, Dialog, Menu, Toast, Calendar, etc.). No duplicar responsabilidades. |
 | **PG-05** | Los estilos de PrimeNG van en el `cssLayer` con orden: `tailwind-base → primeng → tailwind-utilities`. Esto permite que Tailwind sobrescriba estilos de PrimeNG cuando sea necesario. |
 | **PG-06** | Los Remotes (micro-frontends) también instalan PrimeNG y usan **el mismo preset** `MisTheme`. El preset se comparte automáticamente via `shareAll` de Native Federation (singleton). |
-| **PG-07** | Los íconos del sidebar (Col 1) usan **PrimeIcons** (`pi pi-home`, `pi pi-chart-line`, etc.) para consistencia. |
+| **PG-07** | Los íconos del sidebar (Col 1) usan **PrimeIcons** (`pi pi-home`, `pi pi-chart-line`, etc.); las vistas del Host usan **ng-icons/Lucide** (SVG stroke) para el resto de iconografía. |
+| **PG-08** | El breadcrumb de navegación es **`p-breadcrumb`** y vive únicamente en el header del layout (regla HD-01 del doc 02). Ninguna vista implementa breadcrumbs propios. |
+| **PG-09** | La mensajería efímera es **`p-toast`** global (root) alimentado por `MessageService` a través de la fachada `ToastService` — no se crean componentes de toast propios. |
+| **PG-10** | Toda vista de gestión se encapsula en **`p-card`** con `pTemplate="header"` (título + acción) y body, usando la clase global `.mis-card` (styles.css). |

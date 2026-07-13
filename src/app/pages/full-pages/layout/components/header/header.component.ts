@@ -69,20 +69,26 @@ export class HeaderComponent {
     let rutaAcumulada = '/admin';
 
     const resto = segmentos.slice(1);
+    // Si el primer segmento no es una ruta propia del Host, es un remote:
+    // sus subsegmentos son rutas internas del subsistema, no vistas del Host.
+    const esRemote = !(resto[0] in SEGMENTO_LABELS);
+
     for (let i = 0; i < resto.length; i++) {
       const seg = resto[i];
       rutaAcumulada += `/${seg}`;
 
-      let label = SEGMENTO_LABELS[seg];
+      let label: string | undefined;
 
-      if (!label) {
-        if (i === 0) {
-          // /admin/:remoteName → nombre del sistema embebido
-          label = this.labelDeRemote(seg);
-        } else if (resto[i + 1] === 'editar') {
-          // Un :id seguido de /editar no aporta al breadcrumb
-          continue;
-        } else {
+      if (esRemote) {
+        label = i === 0 ? this.labelDeRemote(seg) : this.prettify(seg);
+      } else {
+        label = SEGMENTO_LABELS[seg];
+
+        if (!label) {
+          if (resto[i + 1] === 'editar') {
+            // Un :id seguido de /editar no aporta al breadcrumb
+            continue;
+          }
           // /usuarios/:id es edición; /roles/:id y /sistemas/:id son detalle
           label = resto[i - 1] === 'usuarios' ? 'Editar' : 'Detalle';
         }
@@ -116,8 +122,12 @@ export class HeaderComponent {
 
   private labelDeRemote(slug: string): string {
     const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
-    if (sistema) return sistema.nombre;
-    const limpio = slug.replace('subsistema-', '');
-    return limpio.charAt(0).toUpperCase() + limpio.slice(1);
+    return sistema?.nombre ?? this.prettify(slug.replace('subsistema-', ''));
+  }
+
+  /** kebab-case → texto legible: 'reportes-operativos' → 'Reportes operativos' */
+  private prettify(seg: string): string {
+    const texto = seg.replace(/-/g, ' ');
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
   }
 }

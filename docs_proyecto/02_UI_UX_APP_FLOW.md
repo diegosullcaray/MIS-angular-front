@@ -1,9 +1,9 @@
 # 02 — UI/UX App Flow (Frontend y Componentes)
 > **Proyecto:** MIS - Management Information System  
-> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/06_FIGMA_UX_KIT.html)  
-> **Versión:** 1.4.0  
+> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT_GUIDE](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/FIGMA/06_FIGMA_UX_KIT_GUIDE.md) | [08_GUIA_SISTEMAS_HIJOS](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/08_GUIA_SISTEMAS_HIJOS.md)  
+> **Versión:** 1.5.0  
 > **Fecha:** 2026-07-12  
-> **Estado:** 🟢 Aprobado
+> **Estado:** 🟢 Aprobado — alineado a la implementación
 
 ---
 
@@ -28,7 +28,7 @@ La arquitectura del Host se organiza en exactamente **3 áreas o módulos funcio
 
 | Ruta | Componente Cargado | Lazy Load | Guard | Acceso / Propósito |
 |---|---|---|---|---|
-| `/login` | `LoginComponent` | ✅ | — | Inicio de sesión con paso MFA |
+| `/login` | `LoginComponent` | ✅ | — | Autenticación en **2 pasos dentro del mismo componente**: credenciales (Signal Forms) → verificación OTP de 6 dígitos con expiración 03:00 |
 | `/admin` | Redirect → `/admin/dashboard` | — | `authGuard` | Todos |
 | `/admin/dashboard` | `DashboardComponent` | ✅ | `authGuard` | Todos (Etiqueta: "Mi espacio") |
 | `/admin/accesos` | `AccesosShellComponent` | ✅ | `authGuard` + `roleGuard('admin-sistema')` | Admin Sistema (Menú de IAM) |
@@ -43,7 +43,7 @@ La arquitectura del Host se organiza en exactamente **3 áreas o módulos funcio
 | `/admin/sistemas/nuevo` | `SistemaFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
 | `/admin/sistemas/:id` | `SistemaDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
 | `/admin/sistemas/:id/editar` | `SistemaFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/:remoteName` | `RemoteWrapperComponent` | ✅ | `authGuard` | Carga de Sistemas Embebidos |
+| `/admin/:remoteName/**` | `RemoteWrapperComponent` | ✅ | `authGuard` | Carga de Sistemas Embebidos con **deep-linking**: la ruta es componentless con hijo comodín, cualquier subruta del slug carga el remote (que lee la URL para su vista inicial) |
 | `**` | `NotFoundComponent` | ✅ | — | 404 Not Found |
 
 ---
@@ -54,9 +54,10 @@ La arquitectura del Host se organiza en exactamente **3 áreas o módulos funcio
 
 ```
 AppComponent (root — Standalone, Zoneless)
-├── LoginComponent (Standalone) ← Autenticación básica y pantalla MFA en secuencia limpia
+├── <p-toast position="top-right"> ← Mensajería global PrimeNG (publicada vía ToastService)
+├── LoginComponent (Standalone) ← Paso credenciales + paso OTP MFA en el mismo componente
 └── ShellLayoutComponent (Standalone) ← 100% responsable del marco visual de 3 columnas
-    ├── HeaderComponent (Standalone, Dumb)
+    ├── HeaderComponent (Standalone, Smart — wordmark "MIS |" + p-breadcrumb derivado de la URL + pill de usuario con dropdown)
     ├── SidebarComponent (Standalone, Smart — Col 1: Tira de sistemas en barra azul con etiquetas cortas)
     └── SidebarNavPanelComponent (Standalone, Smart — Col 2: Menú persistente según sistema activo)
         └── <router-outlet>
@@ -80,9 +81,14 @@ AppComponent (root — Standalone, Zoneless)
 
 ---
 
-## 4. Estructura y Detalles de los Componentes (SelectButton)
+## 4. Estructura y Detalles de los Componentes (Cards + SelectButton)
 
-Para evitar drawers colapsables y layouts sobrecargados, todos los formularios y vistas detalladas de gestión se muestran a ancho completo y utilizan el control segmentado `<p-selectButton>` de PrimeNG para togglear entre subsecciones de datos:
+Para evitar drawers colapsables y layouts sobrecargados, **toda vista de gestión se encapsula en una `p-card` a ancho completo** con dos zonas obligatorias:
+
+- **Header de card** (`pTemplate="header"`): título + descripción a la izquierda y el botón de acción principal a la derecha (Nuevo Usuario / Nuevo Rol / Nuevo Sistema / Editar).
+- **Body de card**: buscadores, tablas `p-table`, formularios o pestañas.
+
+Las vistas **no llevan títulos de página ni enlaces "Volver" propios** — el contexto de navegación lo da exclusivamente el breadcrumb del header (regla HD-01, §6). Los formularios y detalles usan el control segmentado `<p-selectButton>` para togglear entre subsecciones de datos:
 
 ### 4.1 Gestión de Usuarios: `UsuarioFormComponent`
 - **Uso de Formulario:** Permite crear o editar un usuario.
@@ -132,5 +138,17 @@ Para evitar drawers colapsables y layouts sobrecargados, todos los formularios y
 | **SB-01** | El primer icono de la barra azul es siempre el sistema de **Inicio** (Host Principal). |
 | **SB-02** | Todos los sistemas remotos (remotes) configurados aparecen directamente como iconos con sus etiquetas de texto correspondientes en la barra azul. |
 | **SB-03** | La Columna 2 (menú del sistema) es persistente y nunca colapsa. Su contenido se modula al cambiar de sistema. |
-| **SB-04** | El Host maneja en su menú las opciones de administración `Gestión de usuarios`, `Gestión de roles` y `Gestión de sistemas` bajo la sección **Accesos [Admin]**. |
+| **SB-04** | El Host maneja en su menú las opciones de administración `Gestión de usuarios`, `Gestión de roles` y `Gestión de sistemas` bajo la sección **Accesos [Admin]**; el acceso directo se etiqueta `Mi espacio` y el panel del Host se titula `Host Principal`. |
 | **SB-05** | Las acciones de usuario (Perfil y Salir) residen exclusivamente en el dropdown del header en el extremo derecho. |
+
+---
+
+## 6. Reglas de Header y Mensajería
+
+| Regla | Descripción |
+|---|---|
+| **HD-01** | El **breadcrumb vive únicamente en el header** del layout (`p-breadcrumb` de PrimeNG junto al wordmark `MIS \|`). Se deriva automáticamente de la URL activa; los tramos intermedios son navegables y el ícono 🏠 lleva a `/admin/dashboard`. Ninguna vista renderiza breadcrumbs, títulos de página ni enlaces "Volver" propios. |
+| **HD-02** | Para rutas de remotes (`/admin/{slug}/...`), el breadcrumb muestra el **nombre registrado del sistema** y formatea los subsegmentos internos de kebab-case a texto legible (`🏠 / Reportes / Reportes operativos`). |
+| **MSG-01** | Toda notificación efímera usa el **Toast de PrimeNG** (`<p-toast position="top-right">` montado una sola vez en el root) publicado a través de `ToastService` (fachada sobre `MessageService`) con severidades `success/info/warn/error` y auto-cierre a los 4.5 s. |
+| **MSG-02** | El `roleGuard` emite un toast de severidad `warn` ("Acceso denegado") al redirigir a un usuario sin permisos hacia `/admin/dashboard`. |
+| **MSG-03** | Los errores de API dentro de una vista usan `InlineErrorComponent` (con botón Reintentar); los estados vacíos usan `EmptyStateComponent`. Las confirmaciones destructivas usan `p-dialog` modal. |

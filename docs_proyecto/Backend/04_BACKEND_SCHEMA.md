@@ -1,6 +1,6 @@
 # 04 — Backend Schema (Spring Boot — API, Arquitectura y Datos)
 > **Proyecto:** MIS - Management Information System
-> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [07_DATABASE_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/07_DATABASE_SCHEMA.sql)
+> **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [07_DATABASE_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/07_DATABASE_SCHEMA.sql)
 > **Versión:** 2.0.0
 > **Fecha:** 2026-07-12
 > **Estado:** 🟢 Alineado al frontend actual (la Fake API implementa este contrato)
@@ -15,7 +15,7 @@
 | Framework | **Spring Boot** | 3.3+ | starters: web, validation, actuator |
 | Seguridad | Spring Security | 6.x | JWT stateless + MFA OTP (CA-07) |
 | Persistencia | Spring Data JPA (Hibernate) | — | Un repositorio por agregado |
-| Base de datos | **PostgreSQL** | 16+ | DDL en [07_DATABASE_SCHEMA.sql](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/07_DATABASE_SCHEMA.sql) |
+| Base de datos | **PostgreSQL** | 16+ | DDL en [07_DATABASE_SCHEMA.sql](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/07_DATABASE_SCHEMA.sql) |
 | Migraciones | Flyway | — | `db/migration/V1__baseline.sql` = script 07 |
 | Mapeo DTO | MapStruct | — | Entity ↔ DTO en compile-time |
 | Documentación | springdoc-openapi | — | Swagger UI solo en perfil `dev` |
@@ -171,48 +171,65 @@ Fechas siempre **ISO-8601 UTC** (`Instant` + Jackson).
 
 ---
 
-## 5. Modelo de Datos
+## 5. Modelo de Datos (v2.0)
 
-El DDL completo (PostgreSQL) vive en **[07_DATABASE_SCHEMA.sql](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/07_DATABASE_SCHEMA.sql)** — es también la migración baseline de Flyway.
+El DDL completo (PostgreSQL 16) vive en **[07_DATABASE_SCHEMA.sql](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/07_DATABASE_SCHEMA.sql)** — es también la migración baseline de Flyway. La BD se organiza en **4 esquemas** que espejan los módulos del backend (§2): `iam`, `sistemas`, `auth` y `auditoria` — cada esquema es la costura natural si un módulo se extrae a microservicio.
 
 ```
-roles ─────────────< usuarios                    usuarios >───── auth_otp
-  │                     │
-  │ (rol_sistema)       │ (usuario_sistema)
-  ▼                     ▼
-sistemas ────< secciones ────< subsecciones ────< modulos
-  ▲                                                  ▲
-  └────────────── permiso_rol_modulo >───────────────┘
-                         │
-                       roles
+┌── iam ─────────────────────────┐   ┌── sistemas ───────────────────────────┐
+│ roles ────< usuarios           │   │ sistemas ─< secciones ─< subsecciones │
+│   │            │ 1:1           │   │                              │        │
+│   │            └─ credenciales │   │                           modulos     │
+│   ├─(rol_sistema)──────────────┼───►  ▲                            ▲       │
+│   │  usuarios                  │   │  │                            │       │
+│   │    └─(usuario_sistema)─────┼───┼──┘                            │       │
+│   └─(permiso_rol_modulo)───────┼───┼───────────────────────────────┘       │
+└────────────────────────────────┘   └────────────────────────────────────────┘
+┌── auth ────────────────────────┐   ┌── auditoria (append-only, RLS) ───────┐
+│ otp_desafios · sesiones (jti)  │   │ eventos (particionada/mes) · accesos  │
+└────────────────────────────────┘   └────────────────────────────────────────┘
 ```
 
-| Tabla | Propósito |
+| Esquema.Tabla | Propósito |
 |---|---|
-| `roles` | Perfiles (`admin-sistema`, `admin-general`, `supervisor-area` + personalizados). |
-| `usuarios` | Cuentas con `password_hash` (BCrypt), FK a rol, flag `activo`. |
-| `sistemas` | Remotes registrados (slug = nombre en `federation.manifest.json`). |
-| `secciones` / `subsecciones` / `modulos` | Árbol jerárquico del sistema (cascada al eliminar). |
-| `rol_sistema` | Subsistemas habilitados por rol (campo `subsistemas` del `Rol`). |
-| `usuario_sistema` | Override de subsistemas por usuario (campo `subsistemas` del `Usuario`). |
-| `permiso_rol_modulo` | Permisos a nivel de módulo; `PermisoRolSistema` se deriva agrupando por sistema. |
-| `auth_otp` | Desafíos MFA: hash del código, expiración, contador de intentos, marca de uso. |
+| `iam.roles` | Perfiles (`admin-sistema`, `admin-general`, `supervisor-area` + personalizados). |
+| `iam.usuarios` | Perfil de la cuenta (email `citext` único, FK a rol, flag `activo`). **Sin secretos.** |
+| `iam.credenciales` | 1:1 con usuario: `password_hash`, lockout (`intentos_fallidos`, `bloqueada_hasta`), rotación. |
+| `sistemas.sistemas` | Remotes registrados (slug = nombre en `federation.manifest.json`, estado como ENUM). |
+| `sistemas.secciones/subsecciones/modulos` | Árbol jerárquico (cascada al eliminar, orden explícito). |
+| `iam.rol_sistema` / `iam.usuario_sistema` | Subsistemas habilitados por rol / override por usuario. |
+| `iam.permiso_rol_modulo` | Permisos a nivel de módulo; `PermisoRolSistema` se deriva agrupando por sistema. |
+| `auth.otp_desafios` | Desafíos MFA: hash del código, TTL 3 min, máx. 5 intentos, un solo uso. |
+| `auth.sesiones` | JWTs emitidos (claim `jti`) → revocación inmediata sin esperar expiración. |
+| `auditoria.eventos` | Trail de cambios (JSONB antes/después, actor, trace_id), **particionada por mes**, índices BRIN. |
+| `auditoria.accesos` | Bitácora de seguridad: logins, OTP, denegaciones, revocaciones (con IP y user-agent). |
+
+### 5.1 Patrón de seguridad de la BD
+
+- **Mínimo privilegio**: roles `mis_owner` (solo Flyway/DDL), `mis_app` (DML de negocio) y `mis_auditor` (solo lectura de auditoría). `REVOKE ALL ... FROM PUBLIC`.
+- **Auditoría infalsificable**: los triggers de auditoría son `SECURITY DEFINER` (la app no tiene INSERT directo en `auditoria.eventos`) y las tablas tienen **Row Level Security sin políticas de UPDATE/DELETE** → append-only real. Los secretos (`password_hash`, `codigo_hash`) se excluyen del JSONB auditado.
+- **Contexto de actor por transacción**: Spring setea `SET LOCAL app.usuario_id / app.trace_id`; los triggers lo leen con `current_setting()` para correlacionar cada cambio con el usuario y la petición HTTP.
+- **Cuenta con lockout**: `iam.credenciales` acumula `intentos_fallidos` y bloquea con `bloqueada_hasta` — el backend registra cada intento en `auditoria.accesos`.
+- **Sin redundancias**: dominios `dom_slug` / `dom_email` (una sola definición de formato), un único trigger de `actualizado_en`, vistas sin subconsultas correlacionadas (`sistemas.v_sistemas_resumen`, `iam.v_usuarios`).
 
 ---
 
 ## 6. Flujo MFA (secuencia)
 
 ```
-Angular Host                 Spring Boot                      PostgreSQL
-    │  POST /auth/login           │                                │
-    ├─────────────────────────────►  valida credenciales (BCrypt)  │
-    │                             ├──── INSERT auth_otp ───────────►
-    │  ◄── { mfaToken, email } ───┤     (codigo_hash, expira +3m)  │
-    │                             │                                │
-    │  POST /auth/verificar-otp   │                                │
-    ├─────────────────────────────►  valida otp + intentos ≤ 5     │
-    │                             ├──── UPDATE usado_en ───────────►
-    │  ◄── { token(JWT), usuario }┤                                │
+Angular Host                 Spring Boot                       PostgreSQL
+    │  POST /auth/login           │                                 │
+    ├─────────────────────────────►  valida credenciales + lockout  │
+    │                             ├── INSERT auth.otp_desafios ─────►
+    │                             ├── INSERT auditoria.accesos ─────►  (login_ok / login_fallido)
+    │  ◄── { mfaToken, email } ───┤                                 │
+    │                             │                                 │
+    │  POST /auth/verificar-otp   │                                 │
+    ├─────────────────────────────►  valida otp + intentos ≤ 5      │
+    │                             ├── UPDATE usado_en ──────────────►
+    │                             ├── INSERT auth.sesiones (jti) ───►
+    │                             ├── INSERT auditoria.accesos ─────►  (otp_ok / otp_fallido)
+    │  ◄── { token(JWT), usuario }┤                                 │
 ```
 
 - En `dev`, el OTP se escribe en el log del servidor (paridad con el `123456` de la Fake API).

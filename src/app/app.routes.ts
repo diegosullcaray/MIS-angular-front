@@ -50,11 +50,19 @@ export const APP_ROUTES: Routes = [
           )
       },
       {
+        // Ruta componentless + comodín: soporta URLs profundas del remote
+        // (/admin/:remoteName/lo-que-sea). Al no tener component, el hijo '**'
+        // hereda el parámetro :remoteName (paramsInheritanceStrategy 'emptyOnly').
         path: ':remoteName',
-        loadComponent: () =>
-          import('./core/federation/remote-wrapper/remote-wrapper.component').then(
-            (m) => m.RemoteWrapperComponent
-          )
+        children: [
+          {
+            path: '**',
+            loadComponent: () =>
+              import('./core/federation/remote-wrapper/remote-wrapper.component').then(
+                (m) => m.RemoteWrapperComponent
+              )
+          }
+        ]
       }
     ]
   },

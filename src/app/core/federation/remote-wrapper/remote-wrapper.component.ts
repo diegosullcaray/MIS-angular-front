@@ -1,4 +1,4 @@
-import { Component, input, signal, OnInit } from '@angular/core';
+import { Component, effect, input, signal, untracked } from '@angular/core';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 import { RemoteSkeletonComponent } from '../../../shared/ui/remote-skeleton/remote-skeleton.component';
 import { RemoteErrorComponent } from '../../../shared/ui/remote-error/remote-error.component';
@@ -43,19 +43,26 @@ type LoadState = 'loading' | 'loaded' | 'error';
     }
   `,
 })
-export class RemoteWrapperComponent implements OnInit {
-  /** Slug del remote (del path param :subsistema en app.routes.ts) */
+export class RemoteWrapperComponent {
+  /** Slug del remote (del path param :remoteName en app.routes.ts) */
   readonly remoteName = input.required<string>();
 
   protected readonly estado         = signal<LoadState>('loading');
   protected readonly remoteComponent = signal<any>(null);
   protected readonly errorMsg        = signal<string | undefined>(undefined);
 
-  ngOnInit(): void {
-    this.cargarRemote();
+  constructor() {
+    // Recarga al cambiar de remote: el Router reutiliza esta instancia al
+    // navegar /admin/a → /admin/b (mismo route config), así que un ngOnInit
+    // solo cargaría el primero. El effect reacciona a cada cambio del slug.
+    effect(() => {
+      this.remoteName();
+      untracked(() => this.cargarRemote());
+    });
   }
 
   protected async cargarRemote(): Promise<void> {
+    const remote = this.remoteName();
     this.estado.set('loading');
     this.errorMsg.set(undefined);
     this.remoteComponent.set(null);
@@ -63,9 +70,12 @@ export class RemoteWrapperComponent implements OnInit {
     try {
       // Intenta cargar el módulo remoto del manifest
       const m = await loadRemoteModule({
-        remoteName:     this.remoteName(),
+        remoteName:     remote,
         exposedModule:  './Component',
       });
+
+      // Si el usuario ya navegó a otro remote, descarta esta respuesta tardía
+      if (remote !== this.remoteName()) return;
 
       // El Remote debe exportar un componente por defecto o 'AppComponent'
       const comp = m?.default ?? m?.AppComponent ?? m?.RemoteRootComponent;
@@ -78,10 +88,12 @@ export class RemoteWrapperComponent implements OnInit {
       this.estado.set('loaded');
 
     } catch (err: unknown) {
+      if (remote !== this.remoteName()) return;
+
       const message = err instanceof Error ? err.message : 'Error de red desconocido.';
       this.errorMsg.set(message);
       this.estado.set('error');
-      console.warn(`[RemoteWrapper] Error cargando '${this.remoteName()}':`, err);
+      console.warn(`[RemoteWrapper] Error cargando '${remote}':`, err);
     }
   }
 }
