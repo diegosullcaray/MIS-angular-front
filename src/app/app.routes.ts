@@ -24,13 +24,13 @@ export const APP_ROUTES: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'dashboard'
+        redirectTo: 'inicio'
       },
       {
-        path: 'dashboard',
-        loadComponent: () =>
-          import('./pages/modules/dashboard/dashboard.component').then(
-            (m) => m.DashboardComponent
+        path: 'admin',
+        loadChildren: () =>
+          import('./pages/modules/inicio/inicio.routes').then(
+            (m) => m.INICIO_ROUTES
           )
       },
       {

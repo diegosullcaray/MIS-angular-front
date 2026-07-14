@@ -1,0 +1,109 @@
+<div class="dashboard-container">
+    <!-- Welcome Header -->
+    <header class="dashboard-header">
+        <h1 class="welcome-title">¡Hola, {{ primerNombre() }}!</h1>
+        <p class="welcome-subtitle">
+            Bienvenido al centro de control del Sistema de Información Gerencial (MIS).
+        </p>
+    </header>
+
+    <!-- KPI Row (Figma: kpi-row) -->
+    <section class="kpi-grid">
+        <p-card class="kpi-card">
+            <div class="kpi-content">
+                <div class="kpi-details">
+                    <span class="kpi-label">Sistemas</span>
+                    <span class="kpi-value">{{ sistemasService.totalActivos() }} Activos</span>
+                </div>
+                <div class="kpi-icon kpi-icon--sky">
+                    <ng-icon name="lucideGrid" size="18" />
+                </div>
+            </div>
+        </p-card>
+
+        @if (shell.esAdminSistema()) {
+        <p-card class="kpi-card">
+            <div class="kpi-content">
+                <div class="kpi-details">
+                    <span class="kpi-label">Usuarios</span>
+                    <span class="kpi-value">{{ accesosService.totalUsuariosActivos() }}</span>
+                </div>
+                <div class="kpi-icon kpi-icon--navy">
+                    <ng-icon name="lucideUsers" size="18" />
+                </div>
+            </div>
+        </p-card>
+
+        <p-card class="kpi-card">
+            <div class="kpi-content">
+                <div class="kpi-details">
+                    <span class="kpi-label">Roles</span>
+                    <span class="kpi-value">{{ accesosService.totalRoles() }}</span>
+                </div>
+                <div class="kpi-icon kpi-icon--amber">
+                    <ng-icon name="lucideActivity" size="18" />
+                </div>
+            </div>
+        </p-card>
+        }
+
+        <p-card class="kpi-card">
+            <div class="kpi-content">
+                <div class="kpi-details">
+                    <span class="kpi-label">Servidores</span>
+                    <span class="kpi-value">Dokploy</span>
+                </div>
+                <div class="kpi-icon kpi-icon--green">
+                    <ng-icon name="lucideServer" size="18" />
+                </div>
+            </div>
+        </p-card>
+    </section>
+
+    <!-- Estado de Microfrontends Remotos (Figma: table-card) -->
+    <section class="table-card">
+        <div class="table-header-box">Estado de Microfrontends Remotos</div>
+
+        @if (sistemasService.isLoading()) {
+        <div class="table-padding">
+            <app-list-skeleton [rows]="[1, 2, 3]" />
+        </div>
+        } @else if (sistemasService.error()) {
+        <div class="table-padding">
+            <app-inline-error titulo="No se pudo cargar el estado de los sistemas" [detalle]="sistemasService.error()!"
+                (reintentar)="sistemasService.cargarSistemas()" />
+        </div>
+        } @else {
+        <table class="grid-table">
+            <thead>
+                <tr>
+                    <th>Slug</th>
+                    <th>Módulo / Remote</th>
+                    <th>Versión</th>
+                    <th>Módulos</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (sistema of sistemasService.sistemas(); track sistema.id) {
+                <tr>
+                    <td>{{ sistema.slug.replace('subsistema-', '') }}</td>
+                    <td>{{ sistema.nombre }}</td>
+                    <td><code>v{{ sistema.version }}</code></td>
+                    <td>{{ sistema.totalModulos }}</td>
+                    <td>
+                        <span class="status-badge" [class]="'status-badge--' + sistema.estado">
+                            {{ etiquetaEstado(sistema.estado) }}
+                        </span>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="5" class="empty-row">No hay sistemas registrados.</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+    </section>
+</div>
