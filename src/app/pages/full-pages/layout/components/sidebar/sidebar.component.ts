@@ -1,6 +1,6 @@
 import { Component, inject, computed, signal } from '@angular/core';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { SistemasService } from '../../../../modules/sistemas/services/sistemas.service';
+import { SistemasService } from '../../../../modules/admin/services/sistemas.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
 import type { SidebarIcon, SidebarNavPanelConfig } from '../../interfaces/sidebar.model';
 
@@ -85,10 +85,9 @@ export class SidebarComponent {
         {
           titulo: 'Accesos [Admin]',
           rutas: [
-            { etiqueta: 'Gestión de usuarios', ruta: 'admin/usuarios/lista-usuarios', icono: 'lucideUsers',    soloAdminSistema: true },
-            { etiqueta: 'Gestión de roles',    ruta: 'admin/roles/lista-roles',    icono: 'lucideActivity', soloAdminSistema: true },
-            { etiqueta: 'Gestión de sistemas', ruta: 'admin/sistemas/lista-sistemas', icono: 'lucideBoxes',    soloAdminSistema: true },
-
+            { etiqueta: 'Gestión de usuarios', ruta: '/admin/usuarios', icono: 'lucideUsers',    soloAdminSistema: true },
+            { etiqueta: 'Gestión de roles',    ruta: '/admin/roles',    icono: 'lucideActivity', soloAdminSistema: true },
+            { etiqueta: 'Gestión de sistemas', ruta: '/admin/sistemas', icono: 'lucideBoxes',    soloAdminSistema: true },
           ],
         },
       ],
@@ -104,13 +103,13 @@ export class SidebarComponent {
         {
           titulo: 'Acceso directo',
           rutas: [
-            { etiqueta: 'Dashboard', ruta: `/admin/${slug}/dashboard`, icono: 'lucideGrid' },
+            { etiqueta: 'Dashboard', ruta: `/${slug}/dashboard`, icono: 'lucideGrid' },
           ],
         },
         {
           titulo: this.getRemoteLabel(slug),
           rutas: [
-            { etiqueta: 'Módulo principal', ruta: `/admin/${slug}`, icono: 'lucideActivity' },
+            { etiqueta: 'Módulo principal', ruta: `/${slug}`, icono: 'lucideActivity' },
           ],
         },
       ],

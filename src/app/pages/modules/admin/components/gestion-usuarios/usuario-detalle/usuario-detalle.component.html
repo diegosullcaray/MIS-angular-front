@@ -1,0 +1,133 @@
+<div class="flex flex-col gap-5">
+  @if (cargando()) {
+    <app-list-skeleton [rows]="[1,2,3]" [cols]="[1,2,3]" />
+  } @else if (!usuario()) {
+    <div class="text-center py-12 text-[var(--mis-text-secondary)]">
+      El usuario solicitado no existe.
+      <a routerLink="/admin/usuarios" class="text-[var(--mis-secondary)]">Volver a Usuarios</a>
+    </div>
+  } @else {
+    <p-card styleClass="mis-card">
+      <!-- Card Header -->
+      <ng-template pTemplate="header">
+        <div class="flex justify-between items-center gap-4 px-5 py-4 border-b border-[var(--mis-border)]">
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">{{ usuario()!.nombre }}</h2>
+              @if (usuario()!.activo) {
+                <span class="badge badge--success">Activo</span>
+              } @else {
+                <span class="badge badge--danger">Inactivo</span>
+              }
+            </div>
+            <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">{{ usuario()!.email }}</p>
+          </div>
+
+          <p-button label="Editar" icon="pi pi-pencil" [text]="true" [routerLink]="['/admin/usuarios', usuario()!.id, 'editar']" />
+        </div>
+      </ng-template>
+
+      <!-- Card Body -->
+      <div class="flex flex-col gap-5">
+        <!-- Tabs with PrimeNG SelectButton -->
+        <div class="flex justify-center">
+          <p-selectButton
+            [options]="tabOptions"
+            [ngModel]="tab()"
+            (ngModelChange)="tab.set($event)"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+
+        <!-- ═══ TAB: Información General ═══ -->
+        @if (tab() === 'info') {
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div class="panel lg:col-span-2">
+              <h3 class="panel-title">Información general</h3>
+              <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 m-0">
+                <div>
+                  <dt class="dato-label">Nombre completo</dt>
+                  <dd class="dato-valor">{{ usuario()!.nombre }}</dd>
+                </div>
+                <div>
+                  <dt class="dato-label">Correo electrónico</dt>
+                  <dd class="dato-valor">{{ usuario()!.email }}</dd>
+                </div>
+                <div>
+                  <dt class="dato-label">Estado</dt>
+                  <dd class="dato-valor">
+                    @if (usuario()!.activo) {
+                      <span class="badge badge--success">Activo</span>
+                    } @else {
+                      <span class="badge badge--danger">Inactivo</span>
+                    }
+                  </dd>
+                </div>
+                <div>
+                  <dt class="dato-label">Fecha de creación</dt>
+                  <dd class="dato-valor">{{ formatFecha(usuario()!.creadoEn) }}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="panel">
+              <h3 class="panel-title">Resumen</h3>
+              <div class="flex gap-6">
+                <div class="stat">
+                  <span class="stat-valor">1</span>
+                  <span class="stat-label">Rol</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-valor">{{ usuario()!.subsistemas.length }}</span>
+                  <span class="stat-label">Sistemas</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- ═══ TAB: Roles ═══ -->
+        @if (tab() === 'roles') {
+          <div class="flex flex-col gap-5">
+            <div class="panel">
+              <h3 class="panel-title">Rol asignado</h3>
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                  <span class="w-9 h-9 rounded-[8px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] flex items-center justify-center shrink-0">
+                    <ng-icon name="lucideShield" size="16" />
+                  </span>
+                  <div>
+                    <span class="block font-semibold text-sm text-[var(--mis-text-primary)]">{{ rolLabel(usuario()!.rol) }}</span>
+                    <code class="text-xs bg-[var(--mis-primary-light)] text-[var(--mis-primary)] font-semibold px-2 py-0.5 rounded-[4px]">{{ usuario()!.rol }}</code>
+                  </div>
+                </div>
+
+                @if (rolAsignado(); as rol) {
+                  <a [routerLink]="['/admin/roles', rol.id]"
+                     class="inline-flex items-center gap-1 text-xs font-semibold text-[var(--mis-secondary)] no-underline hover:underline">
+                    Ver detalle del rol
+                    <ng-icon name="lucideChevronRight" size="14" />
+                  </a>
+                }
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3 class="panel-title">Sistemas habilitados</h3>
+              <p class="text-sm text-[var(--mis-text-secondary)] m-0 mb-3">
+                Sistemas a los que este usuario puede acceder (pueden sobrescribir a los del rol).
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                @for (s of sistemasHabilitados(); track s.id) {
+                  <span class="text-[11px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] font-medium px-2 py-0.5 rounded-[6px]">{{ s.nombre }}</span>
+                } @empty {
+                  <span class="text-sm text-[var(--mis-text-tertiary)]">Ningún sistema habilitado.</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </p-card>
+  }
+</div>

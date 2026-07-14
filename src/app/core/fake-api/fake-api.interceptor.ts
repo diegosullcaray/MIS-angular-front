@@ -15,14 +15,14 @@ import type {
   RolSlug,
   Usuario,
   UsuarioRequest,
-} from '../../pages/modules/accesos/models/acceso.model';
+} from '../../pages/modules/admin/models/acceso.model';
 import type {
   PermisoRolSistema,
   Seccion,
   Sistema,
   SistemaRequest,
   SistemaResumen,
-} from '../../pages/modules/sistemas/models/sistema.model';
+} from '../../pages/modules/admin/models/sistema.model';
 
 /**
  * Fake API — Interceptor HTTP que simula el backend REST del Host

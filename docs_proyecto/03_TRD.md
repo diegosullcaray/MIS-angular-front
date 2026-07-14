@@ -1,8 +1,8 @@
 # 03 — Technical Requirements Document (TRD)
 > **Proyecto:** MIS - Management Information System  
 > **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT_GUIDE](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/FIGMA/06_FIGMA_UX_KIT_GUIDE.md) | [08_GUIA_SISTEMAS_HIJOS](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/08_GUIA_SISTEMAS_HIJOS.md)  
-> **Versión:** 1.1.0  
-> **Fecha:** 2026-07-12  
+> **Versión:** 1.2.0  
+> **Fecha:** 2026-07-14  
 > **Estado:** 🟢 Alineado a la implementación
 
 ---
@@ -187,16 +187,16 @@ export const appConfig: ApplicationConfig = {
 
 ```
 ✅ PERMITIDO:
-  pages/modules/accesos/services/accesos.service.ts  →  core/services/shell-state.service.ts
-  pages/modules/sistemas/components/...              →  shared/ui/...
+  pages/modules/admin/services/accesos.service.ts  →  core/services/shell-state.service.ts
+  pages/modules/admin/components/...               →  shared/ui/...
 
 ❌ PROHIBIDO:
-  pages/modules/accesos/...   →  pages/modules/dashboard/...  (import directo entre módulos)
-  pages/full-pages/auth/...   →  pages/modules/...
+  pages/modules/admin/...     →  pages/modules/inicio/...  (import directo entre módulos)
+  pages/full-pages/auth/...   →  pages/modules/... (componentes)
 
-⚠️ Excepción documentada: el layout (sidebar/header) y el dashboard LEEN los
-   services públicos de `sistemas` y `accesos` para pintar menús y KPIs —
-   solo la capa service, nunca componentes de otro módulo.
+⚠️ Excepción documentada: el layout (sidebar/header) y el módulo `inicio` LEEN los
+   services públicos del módulo `admin` (`sistemas.service`, `accesos.service`)
+   para pintar menús y KPIs — solo la capa service, nunca componentes de otro módulo.
 ```
 
 ### 5.2 Convenciones de Naming
@@ -240,10 +240,18 @@ src/
 │   │   │   ├── auth/                 ← LoginComponent y flujo MFA
 │   │   │   ├── error/                ← NotFoundComponent
 │   │   │   └── layout/               ← ShellLayout, Header y Sidebar
-│   │   └── modules/
-│   │       ├── accesos/              ← Gestión de Accesos (Usuarios, Roles y sistemas)
-│   │       ├── dashboard/            ← Mi espacio (Dashboard del Host)
-│   │       └── sistemas/             ← Gestión de Sistemas (Configuración de MFEs)
+│   │   └── modules/                  ← Solo 2 módulos: inicio y admin
+│   │       ├── inicio/               ← Módulo Inicio (dashboard "Mi espacio")
+│   │       │   ├── inicio.routes.ts
+│   │       │   └── components/inicio/
+│   │       └── admin/                ← Módulo Admin (exclusivo admin-sistema)
+│   │           ├── admin.routes.ts
+│   │           ├── models/             ← sistema.model.ts · acceso.model.ts
+│   │           ├── services/           ← sistemas.service.ts · accesos.service.ts
+│   │           └── components/
+│   │               ├── gestion-sistemas/   ← sistemas-list · sistema-detalle (Detalle General|Estructura|Roles) · sistema-form
+│   │               ├── gestion-roles/      ← roles-list · rol-detalle (Detalle General|Usuarios) · rol-form
+│   │               └── gestion-usuarios/   ← usuarios-list · usuario-detalle (Información General|Roles) · usuario-form
 │   │
 │   └── shared/
 │       └── ui/

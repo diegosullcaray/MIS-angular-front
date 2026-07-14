@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ShellStateService, UsuarioActivo } from '../../../../core/services/shell-state.service';
-import type { Usuario } from '../../../modules/accesos/models/acceso.model';
+import type { Usuario } from '../../../modules/admin/models/acceso.model';
 
 // ─── Contratos del endpoint de autenticación ──────────────────────────────────
 

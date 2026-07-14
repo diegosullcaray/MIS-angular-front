@@ -1,0 +1,315 @@
+<div class="flex flex-col gap-5">
+  @if (cargando()) {
+    <app-list-skeleton [rows]="[1,2,3]" [cols]="[1,2,3]" />
+  } @else if (!sistema()) {
+    <div class="text-center py-12 text-[var(--mis-text-secondary)]">
+      El sistema solicitado no existe.
+      <a routerLink="/admin/sistemas" class="text-[var(--mis-secondary)]">Volver a Sistemas</a>
+    </div>
+  } @else {
+    <p-card styleClass="mis-card">
+    <!-- Card Header -->
+    <ng-template pTemplate="header">
+      <div class="flex justify-between items-center gap-4 px-5 py-4 border-b border-[var(--mis-border)]">
+        <div class="flex items-center gap-3">
+          <span class="w-11 h-11 rounded-[10px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] flex items-center justify-center shrink-0">
+            <i [class]="sistema()!.icono" style="font-size: 1.1rem"></i>
+          </span>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">{{ sistema()!.nombre }}</h2>
+              <span class="badge" [class]="estadoClase(sistema()!.estado)">{{ estadoLabels[sistema()!.estado] }}</span>
+            </div>
+            <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">
+              <code class="text-xs">{{ sistema()!.slug }}</code> · v{{ sistema()!.version }}
+            </p>
+          </div>
+        </div>
+
+        <p-button label="Editar" icon="pi pi-pencil" [text]="true" [routerLink]="['/admin/sistemas', sistema()!.id, 'editar']" />
+      </div>
+    </ng-template>
+
+    <!-- Card Body -->
+    <div class="flex flex-col gap-5">
+    <!-- Tabs with PrimeNG SelectButton -->
+    <div class="flex justify-center">
+      <p-selectButton
+        [options]="tabOptions"
+        [ngModel]="tab()"
+        (ngModelChange)="tab.set($event)"
+        [ngModelOptions]="{ standalone: true }"
+      />
+    </div>
+
+    <!-- ═══ TAB: Información ═══ -->
+    @if (tab() === 'info') {
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Datos generales -->
+        <div class="panel lg:col-span-2">
+          <h3 class="panel-title">Datos generales</h3>
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 m-0">
+            <div class="sm:col-span-2">
+              <dt class="dato-label">Descripción</dt>
+              <dd class="dato-valor">{{ sistema()!.descripcion || '—' }}</dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="dato-label">URL del Remote</dt>
+              <dd class="dato-valor"><code class="text-xs">{{ sistema()!.url || '—' }}</code></dd>
+            </div>
+            <div>
+              <dt class="dato-label">Registrado</dt>
+              <dd class="dato-valor">{{ formatFecha(sistema()!.creadoEn) }}</dd>
+            </div>
+            <div>
+              <dt class="dato-label">Última actualización</dt>
+              <dd class="dato-valor">{{ formatFecha(sistema()!.actualizadoEn) }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Resumen -->
+        <div class="flex flex-col gap-5">
+          <div class="panel">
+            <h3 class="panel-title">Estructura</h3>
+            <div class="flex gap-6">
+              <div class="stat">
+                <span class="stat-valor">{{ sistema()!.secciones.length }}</span>
+                <span class="stat-label">Secciones</span>
+              </div>
+              <div class="stat">
+                <span class="stat-valor">{{ totalSubsecciones() }}</span>
+                <span class="stat-label">Subsecciones</span>
+              </div>
+              <div class="stat">
+                <span class="stat-valor">{{ totalModulos() }}</span>
+                <span class="stat-label">Módulos</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3 class="panel-title">Roles con acceso</h3>
+            @if (rolesConSistema().length === 0) {
+              <p class="text-sm text-[var(--mis-text-tertiary)] m-0">Ningún rol tiene asignado este sistema.</p>
+            } @else {
+              <ul class="flex flex-col gap-2 m-0 p-0 list-none">
+                @for (rol of rolesConSistema(); track rol.id) {
+                  <li>
+                    <a [routerLink]="['/admin/roles', rol.id]"
+                       class="flex items-center justify-between text-sm no-underline text-[var(--mis-text-primary)] hover:text-[var(--mis-secondary)] transition-colors">
+                      {{ rol.nombre }}
+                      <ng-icon name="lucideChevronRight" size="14" class="text-[var(--mis-text-tertiary)]" />
+                    </a>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ═══ TAB: Estructura ═══ -->
+    @if (tab() === 'estructura') {
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-[var(--mis-text-secondary)] m-0">
+            Define la jerarquía del sistema: <strong>Secciones → Subsecciones → Módulos</strong>. Los permisos se asignan a nivel de módulo.
+          </p>
+          <div class="flex items-center gap-2">
+            @if (estructuraDirty()) {
+              <p-button label="Descartar" [text]="true" severity="secondary" size="small" (click)="descartarEstructura()" />
+            }
+            <p-button
+              label="Guardar estructura"
+              icon="pi pi-check"
+              size="small"
+              [disabled]="!estructuraDirty() || guardandoEstructura()"
+              (click)="guardarEstructura()"
+            />
+          </div>
+        </div>
+
+        @if (msgEstructura()) {
+          <p class="msg" [class.msg--ok]="!estructuraDirty()">{{ msgEstructura() }}</p>
+        }
+
+        <!-- Secciones -->
+        @for (sec of estructura(); track sec.id) {
+          <div class="panel">
+            <div class="flex items-center justify-between mb-3">
+              <input
+                class="input-titulo"
+                [value]="sec.nombre"
+                (change)="renombrarSeccion(sec.id, $event)"
+                title="Nombre de la sección"
+              />
+              <button class="row-btn row-btn--danger" (click)="eliminarSeccion(sec.id)" title="Eliminar sección">
+                <ng-icon name="lucideTrash2" size="13" />
+              </button>
+            </div>
+
+            <!-- Subsecciones -->
+            <div class="flex flex-col gap-3 pl-4 border-l-2 border-[var(--mis-border)]">
+              @for (sub of sec.subsecciones; track sub.id) {
+                <div class="bg-[var(--mis-panel-bg)] rounded-[8px] px-3 py-2.5">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-semibold text-[var(--mis-text-primary)]">{{ sub.nombre }}</span>
+                    <button class="row-btn row-btn--danger" (click)="eliminarSubseccion(sec.id, sub.id)" title="Eliminar subsección">
+                      <ng-icon name="lucideTrash2" size="12" />
+                    </button>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    @for (mod of sub.modulos; track mod.id) {
+                      <span class="chip">
+                        {{ mod.nombre }}
+                        <button class="chip-x" (click)="eliminarModulo(sub.id, mod.id)" title="Quitar módulo">×</button>
+                      </span>
+                    }
+                    <span class="inline-flex items-center gap-1">
+                      <input
+                        #nuevoModulo
+                        class="input-inline"
+                        placeholder="+ módulo"
+                        (keyup.enter)="agregarModulo(sub.id, nuevoModulo)"
+                      />
+                    </span>
+                  </div>
+                </div>
+              }
+
+              <!-- Agregar subsección -->
+              <div class="flex items-center gap-2">
+                <input
+                  #nuevaSubseccion
+                  class="input-inline flex-none w-64"
+                  placeholder="Nueva subsección…"
+                  (keyup.enter)="agregarSubseccion(sec.id, nuevaSubseccion)"
+                />
+                <button class="btn-add" (click)="agregarSubseccion(sec.id, nuevaSubseccion)">
+                  <ng-icon name="lucidePlus" size="12" /> Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="panel text-center py-8">
+            <p class="text-sm text-[var(--mis-text-tertiary)] m-0">Este sistema aún no tiene estructura definida.</p>
+          </div>
+        }
+
+        <!-- Agregar sección -->
+        <div class="panel flex items-center gap-2 py-3">
+          <input
+            #nuevaSeccion
+            class="input-inline flex-none w-72"
+            placeholder="Nueva sección…"
+            (keyup.enter)="agregarSeccion(nuevaSeccion)"
+          />
+          <button class="btn-add" (click)="agregarSeccion(nuevaSeccion)">
+            <ng-icon name="lucidePlus" size="12" /> Agregar sección
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ═══ TAB: Permisos ═══ -->
+    @if (tab() === 'roles') {
+      <div class="flex flex-col gap-4">
+        <p class="text-sm text-[var(--mis-text-secondary)] m-0">
+          Selecciona un rol y marca los <strong>módulos</strong> que puede usar en este sistema.
+        </p>
+
+        <!-- Selector de rol -->
+        <div class="flex flex-wrap gap-2">
+          @for (rol of accesos.roles(); track rol.id) {
+            <button
+              class="pill"
+              [class.pill--active]="rolSeleccionado()?.id === rol.id"
+              (click)="seleccionarRol(rol)"
+            >
+              {{ rol.nombre }}
+              @if (!rol.subsistemas.includes(sistema()!.slug)) {
+                <span class="pill-hint" title="Este rol no tiene el sistema asignado">·</span>
+              }
+            </button>
+          }
+        </div>
+
+        @if (!rolSeleccionado()) {
+          <div class="panel text-center py-8">
+            <p class="text-sm text-[var(--mis-text-tertiary)] m-0">Selecciona un rol para configurar sus permisos.</p>
+          </div>
+        } @else {
+          @if (!rolSeleccionado()!.subsistemas.includes(sistema()!.slug)) {
+            <p class="msg">
+              El rol <strong>{{ rolSeleccionado()!.nombre }}</strong> no tiene este sistema asignado. Asígnalo desde
+              <a [routerLink]="['/admin/roles', rolSeleccionado()!.id]" class="text-[var(--mis-secondary)]">el detalle del rol</a>
+              para que los permisos tengan efecto.
+            </p>
+          }
+
+          <!-- Árbol de permisos -->
+          @for (sec of sistema()!.secciones; track sec.id) {
+            <div class="panel">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="panel-title m-0">{{ sec.nombre }}</h3>
+                <span class="text-xs text-[var(--mis-text-tertiary)]">
+                  {{ modulosMarcadosEnSeccion(sec) }} / {{ modulosTotalesEnSeccion(sec) }} módulos
+                </span>
+              </div>
+
+              <div class="flex flex-col gap-3 pl-4 border-l-2 border-[var(--mis-border)]">
+                @for (sub of sec.subsecciones; track sub.id) {
+                  <div class="bg-[var(--mis-panel-bg)] rounded-[8px] px-3 py-2.5">
+                    <label class="flex items-center gap-2 cursor-pointer select-none mb-2">
+                      <input
+                        type="checkbox"
+                        [checked]="subseccionCompleta(sec.id, sub.id)"
+                        (change)="toggleSubseccion(sec.id, sub.id)"
+                      />
+                      <span class="text-sm font-semibold text-[var(--mis-text-primary)]">{{ sub.nombre }}</span>
+                    </label>
+                    <div class="flex flex-wrap gap-x-5 gap-y-2 pl-6">
+                      @for (mod of sub.modulos; track mod.id) {
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            [checked]="moduloPermitido(mod.id)"
+                            (change)="toggleModulo(mod.id)"
+                          />
+                          <span class="text-sm text-[var(--mis-text-secondary)]" [class.line-through]="!mod.activo">{{ mod.nombre }}</span>
+                        </label>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          } @empty {
+            <div class="panel text-center py-8">
+              <p class="text-sm text-[var(--mis-text-tertiary)] m-0">Define primero la estructura del sistema en la pestaña Estructura.</p>
+            </div>
+          }
+
+          @if (msgPermisos()) {
+            <p class="msg" [class.msg--ok]="!permisosDirty()">{{ msgPermisos() }}</p>
+          }
+
+          <div class="flex justify-end">
+            <p-button
+              label="Guardar permisos"
+              icon="pi pi-check"
+              size="small"
+              [disabled]="!permisosDirty() || guardandoPermisos()"
+              (click)="guardarPermisos()"
+            />
+          </div>
+        }
+      </div>
+    }
+    </div>
+    </p-card>
+  }
+</div>

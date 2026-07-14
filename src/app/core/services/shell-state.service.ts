@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import type { RolSlug } from '../../pages/modules/accesos/models/acceso.model';
+import type { RolSlug } from '../../pages/modules/admin/models/acceso.model';
 
 // ─── Tipos del estado global ──────────────────────────────────────────────────
 

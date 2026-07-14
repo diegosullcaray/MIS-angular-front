@@ -3,12 +3,16 @@ import { ShellLayoutComponent } from './pages/full-pages/layout/components/shell
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
+/**
+ * Rutas raíz del Host.
+ *
+ * Solo existen 2 módulos funcionales dentro del shell:
+ *  - /inicio → módulo Inicio (dashboard "Mi espacio")
+ *  - /admin  → módulo Admin (gestión de sistemas, roles y usuarios)
+ * Cualquier otro primer segmento se interpreta como el slug de un
+ * sistema embebido (Remote) y lo resuelve RemoteWrapperComponent.
+ */
 export const APP_ROUTES: Routes = [
-  {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'inicio/dashboard'
-  },
   {
     path: 'login',
     loadComponent: () =>
@@ -17,14 +21,14 @@ export const APP_ROUTES: Routes = [
       )
   },
   {
-    path: 'inicio',
+    path: '',
     component: ShellLayoutComponent,
     canActivate: [authGuard],
     children: [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'inicio'
+        redirectTo: 'inicio/dashboard'
       },
       {
         path: 'inicio',
@@ -41,11 +45,9 @@ export const APP_ROUTES: Routes = [
             (m) => m.ADMIN_ROUTES
           )
       },
-
-
       {
         // Ruta componentless + comodín: soporta URLs profundas del remote
-        // (/admin/:remoteName/lo-que-sea). Al no tener component, el hijo '**'
+        // (/:remoteName/lo-que-sea). Al no tener component, el hijo '**'
         // hereda el parámetro :remoteName (paramsInheritanceStrategy 'emptyOnly').
         path: ':remoteName',
         children: [
@@ -68,6 +70,3 @@ export const APP_ROUTES: Routes = [
       )
   }
 ];
-
-
-

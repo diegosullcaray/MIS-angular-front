@@ -5,8 +5,8 @@ import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/li
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { lucideActivity, lucideGrid, lucideUsers } from '@ng-icons/lucide';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { SistemasService } from '../../../sistemas/services/sistemas.service';
-import { AccesosService } from '../../../accesos/services/accesos.service';
+import { SistemasService } from '../../../admin/services/sistemas.service';
+import { AccesosService } from '../../../admin/services/accesos.service';
 
 @Component({
   selector: 'app-inicio',

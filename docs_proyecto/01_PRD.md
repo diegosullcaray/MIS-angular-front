@@ -47,8 +47,11 @@ El sistema **Host administra la estructura principal y seguridad**, mientras **e
 - **Estado compartido mínimo**: servicio Singleton con Signals de solo lectura para comunicar Host ↔ Remote.
 - **Estados de UI**: loading skeletons (`@defer`), estado de error elegante cuando un Remote no está disponible.
 - **Autenticación con MFA**: formulario de login con contraseña seguido de un paso de verificación de identidad OTP de 6 dígitos.
-- **Gestión de Accesos (IAM)**: módulo administrativo para crear/editar/desactivar usuarios, definir roles y asignar permisos de acceso a subsistemas (Remotes) por rol.
-- **Gestión de Sistemas**: módulo administrativo para registrar los sistemas embebibles (Remotes), definir su **estructura jerárquica** (`Sistema → Secciones → Subsecciones → Módulos`) y configurar los **permisos de cada rol a nivel de módulo**.
+- **Módulo Admin (`/admin`)**: módulo administrativo único (exclusivo `admin-sistema`) que agrupa 3 gestiones, cada una con **Lista y Detalle**:
+  - **Gestión de Usuarios**: crear/editar/desactivar usuarios; detalle con ítems `Información General` / `Roles`.
+  - **Gestión de Roles**: definir roles y asignar sistemas; detalle con ítems `Detalle General` / `Usuarios`.
+  - **Gestión de Sistemas**: registrar los sistemas embebibles (Remotes), definir su **estructura jerárquica** (`Sistema → Secciones → Subsecciones → Módulos`) y configurar los **permisos de cada rol a nivel de módulo**; detalle con ítems `Detalle General` / `Estructura` / `Roles`.
+- **Módulo Inicio (`/inicio`)**: dashboard "Mi espacio" del Host con KPIs y estado de los remotes.
 - **Diseño Segmentado (SelectButton)**: pantallas de edición y detalle subdivididas en paneles lógicos mediante el control segmentado de PrimeNG para evitar la saturación visual.
 
 ### ❌ Fuera del Alcance (MVP)
@@ -140,7 +143,7 @@ El sistema **Host administra la estructura principal y seguridad**, mientras **e
 | Autenticación con MFA (login + OTP 6 dígitos) | ✅ | 2 pasos en `LoginComponent`; OTP demo Fake API: `123456` |
 | Gestión de Accesos IAM (usuarios, roles) | ✅ | CRUD completo con Signal Forms, protegido por `roleGuard('admin-sistema')` |
 | Gestión de Sistemas (registro, estructura, permisos) | ✅ | Detalle con pestañas Información / Estructura / Permisos |
-| Carga dinámica de Remotes + estados loading/error | ✅ | `RemoteWrapperComponent`; soporta deep-linking `/admin/{slug}/**` |
+| Carga dinámica de Remotes + estados loading/error | ✅ | `RemoteWrapperComponent`; soporta deep-linking `/{slug}/**` |
 | Diseño segmentado (SelectButton) y vistas en cards | ✅ | Todas las gestiones en `p-card` (header + body) a ancho completo |
 | Backend real (Spring Boot) + BD PostgreSQL | 📄 Especificado | Docs 04 y 07 listos para construir; hoy la Fake API sirve el contrato 1:1 |
 | Dockerización y CI/CD | ⏳ Pendiente | FASE 6 del plan |

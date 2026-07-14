@@ -1,6 +1,6 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import type { RolSlug } from '../../pages/modules/accesos/models/acceso.model';
+import type { RolSlug } from '../../pages/modules/admin/models/acceso.model';
 import { ShellStateService } from '../services/shell-state.service';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 
@@ -12,7 +12,7 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
  * canActivate: [roleGuard('admin-sistema')]
  * ```
  *
- * Si el rol del usuario no coincide, redirige a /admin/dashboard.
+ * Si el rol del usuario no coincide, redirige a /inicio/dashboard.
  * Regla: un rol más permisivo incluye los roles menos permisivos.
  * Jerarquía: admin-sistema > admin-general > supervisor-area
  */

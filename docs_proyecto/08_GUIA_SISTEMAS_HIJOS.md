@@ -22,7 +22,7 @@ despliegue y base de datos propios) que el Host embebe en tiempo de ejecución m
                     ┌────────────────────── MIS HOST (shell) ──────────────────────┐
  Navegador ────────►│  Sidebar (Col 1/2) · Header+Breadcrumb · Auth MFA · IAM      │
                     │                                                              │
-                    │  /admin/subsistema-reportes                                  │
+                    │  /subsistema-reportes                                  │
                     │  └── RemoteWrapperComponent ── loadRemoteModule ─────────────┼──► remoteEntry.json
                     └──────────────────────────────────────────────────────────────┘         │
                                                                                              ▼
@@ -113,7 +113,7 @@ mis-remote-reportes/
 | **Reportes (ejemplo)** | `subsistema-reportes` | **4205** | **8085** |
 
 > El **slug es el identificador universal**: nombre del remote en el manifest, ruta
-> `/admin/{slug}`, registro en Gestión de Sistemas y claim de permisos en el JWT.
+> `/{slug}`, registro en Gestión de Sistemas y claim de permisos en el JWT.
 > Formato: `subsistema-<dominio>` en kebab-case.
 
 ---
@@ -185,8 +185,8 @@ export default class RemoteRootComponent {
 }
 ```
 
-**Navegación interna:** el Host enruta `/admin/{slug}/**` (ruta comodín) al wrapper, así
-que **las URLs profundas están soportadas**: `/admin/subsistema-reportes/operativos`
+**Navegación interna:** el Host enruta `/{slug}/**` (ruta comodín) al wrapper, así
+que **las URLs profundas están soportadas**: `/subsistema-reportes/operativos`
 carga el mismo componente raíz del remote. El remote decide su vista inicial leyendo la
 URL (`inject(Router).url`) y navega internamente con estado propio (signals) o con
 `router.navigate` a subrutas del mismo slug — el breadcrumb del Host las muestra
@@ -373,7 +373,7 @@ Reportes
 
 1. **Pestaña Permisos** del sistema: marcar los módulos permitidos por rol
    (p. ej. `supervisor-area` → solo Reportes Operativos/Diarios).
-2. **Rol** (`/admin/accesos/roles/:id/editar`): habilitar `subsistema-reportes` en
+2. **Rol** (`/admin/roles/:id/editar`): habilitar `subsistema-reportes` en
    "Sistemas Embebidos" → alimenta el claim `subsistemas` del JWT.
 3. **Usuario** (opcional): override individual en su formulario.
 

@@ -11,12 +11,11 @@ import { BreadcrumbModule } from 'primeng/breadcrumb';
 import type { MenuItem } from 'primeng/api';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AuthService } from '../../../auth/service/auth.service';
-import { SistemasService } from '../../../../modules/sistemas/services/sistemas.service';
+import { SistemasService } from '../../../../modules/admin/services/sistemas.service';
 
 /** Etiquetas de los segmentos de ruta conocidos del Host. */
 const SEGMENTO_LABELS: Record<string, string> = {
-  dashboard: 'Mi espacio',
-  accesos:   'Accesos',
+  admin:     'Administración',
   usuarios:  'Usuarios',
   roles:     'Roles',
   sistemas:  'Sistemas',
@@ -62,19 +61,20 @@ export class HeaderComponent {
     const url = this.urlActual().split('?')[0].split('#')[0];
     const segmentos = url.split('/').filter(Boolean);
 
-    // Solo rutas del shell: /admin/...
-    if (segmentos[0] !== 'admin') return [];
+    if (segmentos.length === 0) return [];
+
+    // /inicio/... es el dashboard: basta el ícono 🏠 del breadcrumb
+    if (segmentos[0] === 'inicio' || segmentos[0] === 'login') return [];
+
+    // Si el primer segmento no es 'admin', es el slug de un remote:
+    // sus subsegmentos son rutas internas del subsistema, no vistas del Host.
+    const esRemote = segmentos[0] !== 'admin';
 
     const items: MenuItem[] = [];
-    let rutaAcumulada = '/admin';
+    let rutaAcumulada = '';
 
-    const resto = segmentos.slice(1);
-    // Si el primer segmento no es una ruta propia del Host, es un remote:
-    // sus subsegmentos son rutas internas del subsistema, no vistas del Host.
-    const esRemote = !(resto[0] in SEGMENTO_LABELS);
-
-    for (let i = 0; i < resto.length; i++) {
-      const seg = resto[i];
+    for (let i = 0; i < segmentos.length; i++) {
+      const seg = segmentos[i];
       rutaAcumulada += `/${seg}`;
 
       let label: string | undefined;
@@ -85,16 +85,16 @@ export class HeaderComponent {
         label = SEGMENTO_LABELS[seg];
 
         if (!label) {
-          if (resto[i + 1] === 'editar') {
+          if (segmentos[i + 1] === 'editar') {
             // Un :id seguido de /editar no aporta al breadcrumb
             continue;
           }
-          // /usuarios/:id es edición; /roles/:id y /sistemas/:id son detalle
-          label = resto[i - 1] === 'usuarios' ? 'Editar' : 'Detalle';
+          // /sistemas/:id, /roles/:id y /usuarios/:id son vistas de detalle
+          label = 'Detalle';
         }
       }
 
-      const esUltimo = i === resto.length - 1;
+      const esUltimo = i === segmentos.length - 1;
       items.push(esUltimo ? { label } : { label, routerLink: rutaAcumulada });
     }
 

@@ -1,24 +1,24 @@
 # 02 — UI/UX App Flow (Frontend y Componentes)
 > **Proyecto:** MIS - Management Information System  
 > **Documentación Activa:** [01_PRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/01_PRD.md) | [02_UI_UX_APP_FLOW](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/02_UI_UX_APP_FLOW.md) | [03_TRD](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/03_TRD.md) | [04_BACKEND_SCHEMA](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/Backend/04_BACKEND_SCHEMA.md) | [05_IMPLEMENTATION_PLAN](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/05_IMPLEMENTATION_PLAN.md) | [06_FIGMA_UX_KIT_GUIDE](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/FIGMA/06_FIGMA_UX_KIT_GUIDE.md) | [08_GUIA_SISTEMAS_HIJOS](file:///f:/FINACIERA%20CONFIANZA/DESARROLLO/mis-host/docs_proyecto/08_GUIA_SISTEMAS_HIJOS.md)  
-> **Versión:** 1.5.0  
-> **Fecha:** 2026-07-12  
+> **Versión:** 2.0.0  
+> **Fecha:** 2026-07-14  
 > **Estado:** 🟢 Aprobado — alineado a la implementación
 
 ---
 
 ## 1. Estructura de Módulos del Host
 
-La arquitectura del Host se organiza en exactamente **3 áreas o módulos funcionales**:
+La arquitectura del Host se segmenta en exactamente **2 módulos funcionales** dentro del shell:
 
-1. **Mi espacio / Dashboard (`/admin/dashboard`)**:
-   * Panel principal del Host.
-2. **Gestión de Accesos (Usuarios, Roles y sistemas — `/admin/accesos`)**:
-   * Módulo unificado para administrar el personal, definir roles y asignar accesos.
-3. **Gestión de Sistemas (Configuración de MFEs — `/admin/sistemas`)**:
-   * Registro y configuración de los microfrontends remotos.
-4. **Gestión de Sistemas Embebidos (`/admin/:remoteName`)**:
-   * Envoltorio y cargador dinámico (`RemoteWrapperComponent`) en `core/federation/` que inyecta en tiempo de ejecución los microfrontends remotos (Contabilidad, RRHH, Ventas, Logística).
+1. **Módulo Inicio (`/inicio`)**:
+   * Panel principal del Host ("Mi espacio" / Dashboard en `/inicio/dashboard`).
+2. **Módulo Admin (`/admin` — exclusivo `admin-sistema`)**: agrupa los 3 componentes de gestión, **cada uno con Lista y Detalle**:
+   * **Gestión de Sistemas (`/admin/sistemas`)**: registro y configuración de los microfrontends remotos. El detalle tiene los ítems **Detalle General | Estructura | Roles**.
+   * **Gestión de Roles (`/admin/roles`)**: definición de perfiles y asignación de sistemas. El detalle tiene los ítems **Detalle General | Usuarios**.
+   * **Gestión de Usuarios (`/admin/usuarios`)**: administración de cuentas de la plataforma. El detalle tiene los ítems **Información General | Roles**.
+
+Adicionalmente, fuera de estos 2 módulos, el shell resuelve los **Sistemas Embebidos (`/:remoteName`)**: envoltorio y cargador dinámico (`RemoteWrapperComponent`) en `core/federation/` que inyecta en tiempo de ejecución los microfrontends remotos (Contabilidad, RRHH, Ventas, Logística).
 
 ---
 
@@ -29,21 +29,23 @@ La arquitectura del Host se organiza en exactamente **3 áreas o módulos funcio
 | Ruta | Componente Cargado | Lazy Load | Guard | Acceso / Propósito |
 |---|---|---|---|---|
 | `/login` | `LoginComponent` | ✅ | — | Autenticación en **2 pasos dentro del mismo componente**: credenciales (Signal Forms) → verificación OTP de 6 dígitos con expiración 03:00 |
-| `/admin` | Redirect → `/admin/dashboard` | — | `authGuard` | Todos |
-| `/admin/dashboard` | `DashboardComponent` | ✅ | `authGuard` | Todos (Etiqueta: "Mi espacio") |
-| `/admin/accesos` | `AccesosShellComponent` | ✅ | `authGuard` + `roleGuard('admin-sistema')` | Admin Sistema (Menú de IAM) |
-| `/admin/accesos/usuarios` | `UsuariosListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/usuarios/nuevo` | `UsuarioFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/usuarios/:id` | `UsuarioFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/roles` | `RolesListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/roles/nuevo` | `RolFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/roles/:id` | `RolDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/roles/:id/editar` | `RolFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/sistemas` | `SistemasListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema (Gestión de Sistemas) |
+| `/` | Redirect → `/inicio/dashboard` | — | `authGuard` | Todos |
+| `/inicio` | Redirect → `/inicio/dashboard` | — | `authGuard` | Todos |
+| `/inicio/dashboard` | `InicioComponent` | ✅ | `authGuard` | Todos (Etiqueta: "Mi espacio") |
+| `/admin` | Redirect → `/admin/sistemas` | — | `authGuard` + `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/sistemas` | `SistemasListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema (lista de Gestión de Sistemas) |
 | `/admin/sistemas/nuevo` | `SistemaFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/sistemas/:id` | `SistemaDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/sistemas/:id` | `SistemaDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema (detalle: Detalle General / Estructura / Roles) |
 | `/admin/sistemas/:id/editar` | `SistemaFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/:remoteName/**` | `RemoteWrapperComponent` | ✅ | `authGuard` | Carga de Sistemas Embebidos con **deep-linking**: la ruta es componentless con hijo comodín, cualquier subruta del slug carga el remote (que lee la URL para su vista inicial) |
+| `/admin/roles` | `RolesListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema (lista de Gestión de Roles) |
+| `/admin/roles/nuevo` | `RolFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/roles/:id` | `RolDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema (detalle: Detalle General / Usuarios) |
+| `/admin/roles/:id/editar` | `RolFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/usuarios` | `UsuariosListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema (lista de Gestión de Usuarios) |
+| `/admin/usuarios/nuevo` | `UsuarioFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/usuarios/:id` | `UsuarioDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema (detalle: Información General / Roles) |
+| `/admin/usuarios/:id/editar` | `UsuarioFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/:remoteName/**` | `RemoteWrapperComponent` | ✅ | `authGuard` | Carga de Sistemas Embebidos con **deep-linking**: la ruta es componentless con hijo comodín, cualquier subruta del slug carga el remote (que lee la URL para su vista inicial) |
 | `**` | `NotFoundComponent` | ✅ | — | 404 Not Found |
 
 ---
@@ -61,18 +63,22 @@ AppComponent (root — Standalone, Zoneless)
     ├── SidebarComponent (Standalone, Smart — Col 1: Tira de sistemas en barra azul con etiquetas cortas)
     └── SidebarNavPanelComponent (Standalone, Smart — Col 2: Menú persistente según sistema activo)
         └── <router-outlet>
-            ├── [Área 1: Mi espacio]
-            │   └── DashboardComponent (Standalone, Smart)
-            ├── [Área 2: Gestión (Usuarios, Roles y Registro de Sistemas)]
-            │   ├── UsuariosListComponent (Standalone, Smart)
-            │   ├── UsuarioFormComponent (Standalone, Smart)
-            │   ├── RolesListComponent (Standalone, Smart)
-            │   ├── RolFormComponent (Standalone, Smart)
-            │   ├── RolDetalleComponent (Standalone, Smart)
-            │   ├── SistemasListComponent (Standalone, Smart)
-            │   ├── SistemaFormComponent (Standalone, Smart)
-            │   └── SistemaDetalleComponent (Standalone, Smart)
-            └── [Área 3: Sistemas Embebidos (Remotes)]
+            ├── [Módulo Inicio (/inicio)]
+            │   └── InicioComponent (Standalone, Smart — dashboard "Mi espacio")
+            ├── [Módulo Admin (/admin) — 3 gestiones, cada una con Lista y Detalle]
+            │   ├── gestion-sistemas/
+            │   │   ├── SistemasListComponent (Standalone, Smart)
+            │   │   ├── SistemaDetalleComponent (Standalone, Smart — Detalle General | Estructura | Roles)
+            │   │   └── SistemaFormComponent (Standalone, Smart)
+            │   ├── gestion-roles/
+            │   │   ├── RolesListComponent (Standalone, Smart)
+            │   │   ├── RolDetalleComponent (Standalone, Smart — Detalle General | Usuarios)
+            │   │   └── RolFormComponent (Standalone, Smart)
+            │   └── gestion-usuarios/
+            │       ├── UsuariosListComponent (Standalone, Smart)
+            │       ├── UsuarioDetalleComponent (Standalone, Smart — Información General | Roles)
+            │       └── UsuarioFormComponent (Standalone, Smart)
+            └── [Sistemas Embebidos (/:remoteName)]
                 └── RemoteWrapperComponent (Standalone, Smart)
                     ├── @defer (loading) → RemoteSkeletonComponent
                     ├── @defer (error)   → RemoteErrorComponent
@@ -90,44 +96,27 @@ Para evitar drawers colapsables y layouts sobrecargados, **toda vista de gestió
 
 Las vistas **no llevan títulos de página ni enlaces "Volver" propios** — el contexto de navegación lo da exclusivamente el breadcrumb del header (regla HD-01, §6). Los formularios y detalles usan el control segmentado `<p-selectButton>` para togglear entre subsecciones de datos:
 
-### 4.1 Gestión de Usuarios: `UsuarioFormComponent`
-- **Uso de Formulario:** Permite crear o editar un usuario.
-- **Toggles segmentados (`activeTab`):**
-  1. **`Información General`**:
-     * Código Personal (Sólo lectura si es edición).
-     * Nro. Documento (DNI).
-     * Nombre Completo.
-     * Correo Electrónico (Trabajo).
-     * Puesto / Cargo.
-     * Unidad / Área.
-     * Estado Laboral.
-  2. **`Roles y Sistemas`**:
-     * Rol del Sistema (dropdown de selección de rol: admin-sistema, supervisor-ventas, etc.).
-     * Sistemas Habilitados (check list de remotes en el manifest).
-     * Switch de Estado de Acceso (Habilitado/Deshabilitado).
+### 4.1 Gestión de Sistemas: `SistemaDetalleComponent` (+ `SistemasListComponent` / `SistemaFormComponent`)
+- **Lista (`SistemasListComponent`):** tabla de sistemas registrados con acciones Ver detalle / Editar / Eliminar.
+- **Detalle (`SistemaDetalleComponent`)** — ítems segmentados (`tab`):
+  1. **`Detalle General`**: datos generales del sistema (slug, URL del remoteEntry, versión, estado de red) y resumen de estructura.
+  2. **`Estructura`**: árbol jerárquico editable de Secciones, Subsecciones y Módulos.
+  3. **`Roles`**: asignación de accesos por Rol para cada Módulo del sistema (permisos a nivel de módulo).
+- **Formulario (`SistemaFormComponent`):** pestañas `Identificación` / `Despliegue` para crear o editar el registro.
 
-### 4.2 Gestión de Roles: `RolDetalleComponent`
-- **Uso de Detalle:** Muestra la configuración completa del rol seleccionado.
-- **Toggles segmentados (`tab`):**
-  1. **`Información del Rol`**:
-     * Código identificador (slug) y Nombre del Rol.
-     * Descripción de Funciones.
-     * Nivel de Seguridad (dropdown: Nivel 1 Super, Nivel 2 Medio, Nivel 3 Básico).
-  2. **`Permisos Asignados`**:
-     * Grid de tarjetas de permisos por subsistema (matriz CRUD de microfrontends). Cada tarjeta muestra contadores semánticos individuales de permisos para: *Crear*, *Leer*, *Actualizar* y *Eliminar*.
-  3. **`Usuarios Vinculados`**:
-     * Tabla con las columnas: *Código Personal*, *Documento*, *Nombre Completo*, *Email*, *Puesto* y *Área*.
+### 4.2 Gestión de Roles: `RolDetalleComponent` (+ `RolesListComponent` / `RolFormComponent`)
+- **Lista (`RolesListComponent`):** tabla de roles con acceso al detalle y edición.
+- **Detalle (`RolDetalleComponent`)** — ítems segmentados (`tab`):
+  1. **`Detalle General`**: código identificador (slug), nombre del rol, resumen (sistemas/usuarios) y la lista de **sistemas con acceso** (los permisos por módulo se configuran en el detalle de cada sistema).
+  2. **`Usuarios`**: tabla de usuarios vinculados al rol (*Nombre*, *Correo*, *Estado*, *Creado*) con enlace al detalle de cada usuario.
+- **Formulario (`RolFormComponent`):** nombre, slug auto-generado y checklist de sistemas asignados.
 
-### 4.3 Gestión de Sistemas (MFEs): `SistemaDetalleComponent` y `SistemaFormComponent`
-- **Uso de Formulario (`SistemaFormComponent`):**
-  * Toggles segmentados (`activeTab`):
-    1. **`Información de Registro`**: Nombre del Módulo, Ruta Slug (read-only si es edición), y URL del Manifest (remoteEntry).
-    2. **`Configuración de Despliegue`**: Proveedor de Infraestructura, Puerto de ejecución local, y Switch de Estado (Online/Offline).
-- **Uso de Detalle (`SistemaDetalleComponent`):**
-  * Toggles segmentados (`tab`):
-    1. **`Información`**: Datos generales del sistema y estado de red.
-    2. **`Estructura`**: Árbol jerárquico de Secciones, Subsecciones y Módulos.
-    3. **`Permisos`**: Tabla de asignación de accesos por Rol para cada Módulo.
+### 4.3 Gestión de Usuarios: `UsuarioDetalleComponent` (+ `UsuariosListComponent` / `UsuarioFormComponent`)
+- **Lista (`UsuariosListComponent`):** búsqueda, paginación, toggle de estado y acciones Ver detalle / Editar.
+- **Detalle (`UsuarioDetalleComponent`)** — ítems segmentados (`tab`):
+  1. **`Información General`**: nombre completo, correo, estado y fecha de creación.
+  2. **`Roles`**: rol asignado (con enlace al detalle del rol) y sistemas habilitados para el usuario.
+- **Formulario (`UsuarioFormComponent`):** pestañas `Información General` / `Roles y Sistemas` para crear o editar la cuenta.
 
 ---
 
@@ -147,8 +136,8 @@ Las vistas **no llevan títulos de página ni enlaces "Volver" propios** — el 
 
 | Regla | Descripción |
 |---|---|
-| **HD-01** | El **breadcrumb vive únicamente en el header** del layout (`p-breadcrumb` de PrimeNG junto al wordmark `MIS \|`). Se deriva automáticamente de la URL activa; los tramos intermedios son navegables y el ícono 🏠 lleva a `/admin/dashboard`. Ninguna vista renderiza breadcrumbs, títulos de página ni enlaces "Volver" propios. |
-| **HD-02** | Para rutas de remotes (`/admin/{slug}/...`), el breadcrumb muestra el **nombre registrado del sistema** y formatea los subsegmentos internos de kebab-case a texto legible (`🏠 / Reportes / Reportes operativos`). |
+| **HD-01** | El **breadcrumb vive únicamente en el header** del layout (`p-breadcrumb` de PrimeNG junto al wordmark `MIS \|`). Se deriva automáticamente de la URL activa; los tramos intermedios son navegables y el ícono 🏠 lleva a `/inicio/dashboard`. Ninguna vista renderiza breadcrumbs, títulos de página ni enlaces "Volver" propios. |
+| **HD-02** | Para rutas de remotes (`/{slug}/...`), el breadcrumb muestra el **nombre registrado del sistema** y formatea los subsegmentos internos de kebab-case a texto legible (`🏠 / Reportes / Reportes operativos`). |
 | **MSG-01** | Toda notificación efímera usa el **Toast de PrimeNG** (`<p-toast position="top-right">` montado una sola vez en el root) publicado a través de `ToastService` (fachada sobre `MessageService`) con severidades `success/info/warn/error` y auto-cierre a los 4.5 s. |
-| **MSG-02** | El `roleGuard` emite un toast de severidad `warn` ("Acceso denegado") al redirigir a un usuario sin permisos hacia `/admin/dashboard`. |
+| **MSG-02** | El `roleGuard` emite un toast de severidad `warn` ("Acceso denegado") al redirigir a un usuario sin permisos hacia `/inicio/dashboard`. |
 | **MSG-03** | Los errores de API dentro de una vista usan `InlineErrorComponent` (con botón Reintentar); los estados vacíos usan `EmptyStateComponent`. Las confirmaciones destructivas usan `p-dialog` modal. |
