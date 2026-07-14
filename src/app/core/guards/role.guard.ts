@@ -47,6 +47,6 @@ export function roleGuard(rolRequerido: RolSlug): CanActivateFn {
       'Acceso denegado',
       'No tienes permisos para acceder a esta sección.'
     );
-    return router.createUrlTree(['/admin/inicio']);
+    return router.createUrlTree(['/inicio/dashboard']);
   };
 }

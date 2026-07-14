@@ -7,7 +7,7 @@ export const APP_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'admin/dashboard'
+    redirectTo: 'inicio/dashboard'
   },
   {
     path: 'login',
@@ -17,7 +17,7 @@ export const APP_ROUTES: Routes = [
       )
   },
   {
-    path: 'admin',
+    path: 'inicio',
     component: ShellLayoutComponent,
     canActivate: [authGuard],
     children: [
@@ -27,28 +27,22 @@ export const APP_ROUTES: Routes = [
         redirectTo: 'inicio'
       },
       {
-        path: 'admin',
+        path: 'inicio',
         loadChildren: () =>
           import('./pages/modules/inicio/inicio.routes').then(
             (m) => m.INICIO_ROUTES
           )
       },
       {
-        path: 'accesos',
+        path: 'admin',
         canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
         loadChildren: () =>
-          import('./pages/modules/accesos/accesos.routes').then(
-            (m) => m.ACCESOS_ROUTES
+          import('./pages/modules/admin/admin.routes').then(
+            (m) => m.ADMIN_ROUTES
           )
       },
-      {
-        path: 'sistemas',
-        canActivate: [roleGuard('admin-sistema')], // Gestión de sistemas registrados
-        loadChildren: () =>
-          import('./pages/modules/sistemas/sistemas.routes').then(
-            (m) => m.SISTEMAS_ROUTES
-          )
-      },
+
+
       {
         // Ruta componentless + comodín: soporta URLs profundas del remote
         // (/admin/:remoteName/lo-que-sea). Al no tener component, el hijo '**'

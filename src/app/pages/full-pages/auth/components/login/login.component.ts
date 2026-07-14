@@ -181,7 +181,7 @@ export class LoginComponent {
       await this.auth.verificarOtp(this.otpDigitos().join(''));
       this.detenerTimer();
       this.shell.setSidebarIconActivo('host-inicio');
-      this.router.navigate(['/admin/dashboard']);
+      this.router.navigate(['/inicio/dashboard']);
     } catch (err) {
       this.errorMsg.set(err instanceof Error ? err.message : 'Error de verificación.');
       this.otpDigitos.set(Array(OTP_LARGO).fill(''));

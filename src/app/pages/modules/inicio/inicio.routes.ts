@@ -9,7 +9,7 @@ export const INICIO_ROUTES: Routes = [
             )
     },
     {
-        path: 'inicio',
+        path: 'dashboard',
         loadComponent: () =>
             import('./components/inicio/inicio.component').then(
                 (m) => m.InicioComponent

@@ -78,16 +78,17 @@ export class SidebarComponent {
         {
           titulo: 'Acceso directo',
           rutas: [
-            { etiqueta: 'Mi espacio', ruta: '/admin/dashboard', icono: 'lucideGrid' },
+            { etiqueta: 'Mi espacio', ruta: '/inicio/dashboard', icono: 'lucideGrid' },
           ],
         },
         // SB-04: opciones de administración bajo la sección "Accesos [Admin]"
         {
           titulo: 'Accesos [Admin]',
           rutas: [
-            { etiqueta: 'Gestión de usuarios', ruta: '/admin/accesos/usuarios', icono: 'lucideUsers',    soloAdminSistema: true },
-            { etiqueta: 'Gestión de roles',    ruta: '/admin/accesos/roles',    icono: 'lucideActivity', soloAdminSistema: true },
-            { etiqueta: 'Gestión de sistemas', ruta: '/admin/sistemas',         icono: 'lucideBoxes',    soloAdminSistema: true },
+            { etiqueta: 'Gestión de usuarios', ruta: 'admin/usuarios/lista-usuarios', icono: 'lucideUsers',    soloAdminSistema: true },
+            { etiqueta: 'Gestión de roles',    ruta: 'admin/roles/lista-roles',    icono: 'lucideActivity', soloAdminSistema: true },
+            { etiqueta: 'Gestión de sistemas', ruta: 'admin/sistemas/lista-sistemas', icono: 'lucideBoxes',    soloAdminSistema: true },
+
           ],
         },
       ],
