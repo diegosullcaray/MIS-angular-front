@@ -1,7 +1,8 @@
-<nav class="flex flex-col h-full overflow-y-auto" aria-label="Navegación del sistema">
+<nav class="flex flex-col overflow-y-auto" aria-label="Navegación del sistema">
   <!-- Encabezado del panel -->
   <div class="flex items-center gap-3 p-2 border-b border-[var(--mis-border)] shrink-0">
-    <div class="w-7 h-7 rounded-[6px] bg-[var(--mis-primary-light)] flex items-center justify-center color-[var(--mis-primary)] shrink-0">
+    <div
+      class="w-7 h-7 rounded-[6px] bg-[var(--mis-primary-light)] flex items-center justify-center color-[var(--mis-primary)] shrink-0">
       <ng-icon [name]="panelConfig()?.icono || 'lucideHome'" size="16" />
     </div>
     <div class="text-sm font-semibold text-[var(--mis-text-primary)] leading-tight">
@@ -11,35 +12,34 @@
 
   <!-- Secciones de navegación -->
   @if (panelConfig(); as cfg) {
-    @for (seccion of cfg.secciones; track seccion.titulo) {
-      <!-- Título de sección -->
-      @if (seccion.titulo) {
-        <div class="p-4 pb-1 text-xs font-semibold text-[var(--mis-text-tertiary)] uppercase tracking-[0.6px]">
-          {{ seccion.titulo }}
-        </div>
-      }
+  @for (seccion of cfg.secciones; track seccion.titulo) {
+  <!-- Título de sección -->
+  @if (seccion.titulo) {
+  <div class="p-4 pb-1 text-xs font-semibold text-[var(--mis-text-tertiary)] uppercase tracking-[0.6px]">
+    {{ seccion.titulo }}
+  </div>
+  }
 
-      <!-- Rutas de la sección -->
-      @for (ruta of seccionRutasVisibles(seccion); track ruta.ruta) {
-        <a
-          [routerLink]="ruta.ruta"
-          routerLinkActive="nav-link--active"
-          class="nav-link flex items-center gap-3 p-2 px-4 mx-2 my-[1px] rounded-[6px] no-underline text-sm text-[var(--mis-text-secondary)] cursor-pointer transition-all duration-150"
-          (click)="rutaSeleccionada.emit(ruta.ruta)"
-        >
-          @if (ruta.icono) {
-            <ng-icon [name]="ruta.icono" size="14" class="nav-link-icon text-[var(--mis-text-tertiary)] shrink-0 transition-colors duration-150" />
-          } @else {
-            <span class="nav-link-dot w-[5px] h-[5px] rounded-full bg-[var(--mis-text-tertiary)] shrink-0 ml-1 transition-colors duration-150"></span>
-          }
-          <span class="flex-1 whitespace-nowrap overflow-hidden text-ellipsis">{{ ruta.etiqueta }}</span>
-        </a>
-      }
+  <!-- Rutas de la sección -->
+  @for (ruta of seccionRutasVisibles(seccion); track ruta.ruta) {
+  <a [routerLink]="ruta.ruta" routerLinkActive="nav-link--active"
+    class="nav-link flex items-center gap-3 p-2 px-4 mx-2 my-[1px] rounded-[6px] no-underline text-sm text-[var(--mis-text-secondary)] cursor-pointer transition-all duration-150"
+    (click)="rutaSeleccionada.emit(ruta.ruta)">
+    @if (ruta.icono) {
+    <ng-icon [name]="ruta.icono" size="14"
+      class="nav-link-icon text-[var(--mis-text-tertiary)] shrink-0 transition-colors duration-150" />
+    } @else {
+    <span
+      class="nav-link-dot w-[5px] h-[5px] rounded-full bg-[var(--mis-text-tertiary)] shrink-0 ml-1 transition-colors duration-150"></span>
     }
+    <span class="flex-1 whitespace-nowrap overflow-hidden text-ellipsis">{{ ruta.etiqueta }}</span>
+  </a>
+  }
+  }
   } @else {
-    <!-- Panel vacío / sin configuración -->
-    <div class="flex-1 flex items-center justify-center text-sm text-[var(--mis-text-tertiary)] p-8">
-      <span>Selecciona un sistema</span>
-    </div>
+  <!-- Panel vacío / sin configuración -->
+  <div class="flex-1 flex items-center justify-center text-sm text-[var(--mis-text-tertiary)] p-8">
+    <span>Selecciona un sistema</span>
+  </div>
   }
 </nav>

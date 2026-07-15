@@ -11,6 +11,8 @@ import { ListSkeletonComponent } from '../../../../../../shared/ui/list-skeleton
 import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/empty-state.component';
 import { CommonModule } from '@angular/common';
 import { ROL_LABELS, type RolSlug } from '../../../models/acceso.model';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
 @Component({
   selector: 'app-usuarios-list',
@@ -24,7 +26,9 @@ import { ROL_LABELS, type RolSlug } from '../../../models/acceso.model';
     CardModule,
     NgIconComponent,
     ListSkeletonComponent,
-    EmptyStateComponent
+    EmptyStateComponent,
+    InputGroupModule,
+    InputGroupAddonModule
   ],
   viewProviders: [provideIcons({
     lucidePlus, lucideEdit2, lucideEye, lucideTrash2, lucideSearch, lucideCheck, lucideX
@@ -50,8 +54,8 @@ export class UsuariosListComponent implements OnInit {
 
   protected getRolClass(rol: string): string {
     const classes: Record<string, string> = {
-      'admin-sistema':   'bg-[var(--mis-danger-light)] text-[var(--mis-danger)]',
-      'admin-general':   'bg-[var(--mis-warning-light)] text-[var(--mis-warning)]',
+      'admin-sistema': 'bg-[var(--mis-danger-light)] text-[var(--mis-danger)]',
+      'admin-general': 'bg-[var(--mis-warning-light)] text-[var(--mis-warning)]',
       'supervisor-area': 'bg-[var(--mis-info-light)] text-[var(--mis-info)]',
     };
     return classes[rol] ?? '';
@@ -60,9 +64,9 @@ export class UsuariosListComponent implements OnInit {
   protected formatRemoteLabel(slug: string): string {
     const labels: Record<string, string> = {
       'subsistema-contabilidad': 'Contabilidad',
-      'subsistema-rrhh':         'RRHH',
-      'subsistema-ventas':       'Ventas',
-      'subsistema-logistica':    'Logística',
+      'subsistema-rrhh': 'RRHH',
+      'subsistema-ventas': 'Ventas',
+      'subsistema-logistica': 'Logística',
     };
     return labels[slug] ?? slug.replace('subsistema-', '');
   }
