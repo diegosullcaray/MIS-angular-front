@@ -1,0 +1,18 @@
+/* ============================================================
+   MIS Remote (plantilla) — Global Styles Entry Point
+   Mismo pipeline que el Host: Tailwind v4 + tokens --mis-*
+   ============================================================ */
+
+/* Tailwind v4 — base utilities */
+@import "tailwindcss";
+@import "primeicons/primeicons.css";
+
+/* MIS Design System Tokens (copia del Host — mantener sincronizada) */
+@import "./app/core/design-system/tokens.css";
+
+@source "./app/**/*.html";
+@source "./app/**/*.ts";
+@source "./src/app/**/*.html";
+@source "./src/app/**/*.ts";
+@source "../src/app/**/*.html";
+@source "../src/app/**/*.ts";

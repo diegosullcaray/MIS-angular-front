@@ -1,0 +1,123 @@
+/* src/app/core/design-system/tokens.css */
+:root {
+  /* Fuente principal: stack macOS con fallback Inter */
+  --mis-font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+
+  /* Escala tipográfica */
+  --mis-text-xs:   11px;   /* Labels de íconos en Col 1 del sidebar */
+  --mis-text-sm:   13px;   /* Texto secundario, metadatos */
+  --mis-text-base: 15px;   /* Texto base del body */
+  --mis-text-lg:   17px;   /* Títulos de sección en Col 2 */
+  --mis-text-xl:   22px;   /* Títulos de vista */
+  --mis-text-2xl:  28px;   /* Títulos principales */
+
+  /* Peso */
+  --mis-font-normal:   400;
+  --mis-font-medium:   500;
+  --mis-font-semibold: 600;
+
+  /* Line height */
+  --mis-leading-tight:  1.2;
+  --mis-leading-normal: 1.5;
+
+  /* ------------------------------------- */
+  /* Paleta de Colores (macOS Minimalist) */
+  /* ------------------------------------- */
+  --mis-bg: #F4F6F9;
+  --mis-surface: #FFFFFF;
+  --mis-sidebar-bg: #1D396E;
+  --mis-panel-bg: #F8FAFC;
+  --mis-border: rgba(29,57,110,0.10);
+  --mis-border-strong: rgba(29,57,110,0.20);
+
+  /* Primario: Navy */
+  --mis-primary: #1D396E;
+  --mis-primary-hover: #162D58;
+  --mis-primary-light: #E8EDF5;
+
+  /* Secundario: Sky Blue */
+  --mis-secondary: #42ADE0;
+  --mis-secondary-hover: #2F9FD4;
+  --mis-secondary-light: #E8F6FC;
+
+  /* Acento */
+  --mis-accent: #42ADE0;
+
+  /* Semánticos (estados) */
+  --mis-success:        #16A34A;
+  --mis-success-light:  #E7F6EC;
+  --mis-warning:        #B45309;
+  --mis-warning-light:  #FEF3C7;
+  --mis-danger:         #DC2626;
+  --mis-danger-light:   #FDECEC;
+
+  /* Textos */
+  --mis-text-primary: #1D396E;
+  --mis-text-secondary: #5A6A85;
+  --mis-text-tertiary: #94A3B8;
+  --mis-text-on-primary: #FFFFFF;
+  --mis-text-on-secondary: #FFFFFF;
+
+  /* ------------------------------------- */
+  /* Espaciado base y bordes             */
+  /* ------------------------------------- */
+  --mis-space-1:  4px;
+  --mis-space-2:  8px;
+  --mis-space-3:  12px;
+  --mis-space-4:  16px;
+  --mis-space-5:  20px;
+  --mis-space-6:  24px;
+  --mis-space-8:  32px;
+  --mis-space-12: 48px;
+
+  --mis-radius-sm:   6px;
+  --mis-radius-md:   10px;
+  --mis-radius-lg:   14px;
+  --mis-radius-xl:   20px;
+  --mis-radius-full: 9999px;
+
+  /* Sombras muy sutiles (estilo macOS) */
+  --mis-shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --mis-shadow-md:    0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --mis-shadow-lg:    0 8px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+  --mis-shadow-focus: 0 0 0 3px rgba(66, 173, 224, 0.35);
+
+  --mis-transition-fast: 0.15s ease-in-out;
+  --mis-transition-base: 0.2s ease-in-out;
+
+  --mis-radius-xs: 4px;
+  --mis-font-bold: 700;
+}
+
+/* Dark Mode Tokens */
+.dark {
+  --mis-bg: #111827;
+  --mis-surface: #1F2937;
+  --mis-sidebar-bg: #162D58;
+  --mis-panel-bg: #1A2740;
+  --mis-border: rgba(66,173,224,0.12);
+  --mis-border-strong: rgba(66,173,224,0.25);
+
+  --mis-primary: #2A4E8F;
+  --mis-primary-hover: #1D396E;
+  --mis-primary-light: #1D2D45;
+
+  --mis-secondary: #5BBDE8;
+  --mis-secondary-hover: #42ADE0;
+  --mis-secondary-light: #1A3A4D;
+
+  --mis-accent: #5BBDE8;
+
+  --mis-success:        #4ADE80;
+  --mis-success-light:  #12331E;
+  --mis-warning:        #FBBF24;
+  --mis-warning-light:  #3A2E10;
+  --mis-danger:         #F87171;
+  --mis-danger-light:   #3B1A1A;
+
+  --mis-text-primary: #F0F4FF;
+  --mis-text-secondary: #94A3B8;
+  --mis-text-tertiary: #64748B;
+  --mis-text-on-primary: #FFFFFF;
+  --mis-text-on-secondary: #0F1E2E;
+}

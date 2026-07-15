@@ -1,0 +1,40 @@
+/* Paneles y datos — mismo patrón visual que las vistas de detalle del Host */
+.panel {
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  box-shadow: var(--mis-shadow-sm);
+  padding: var(--mis-space-4) var(--mis-space-5);
+}
+
+.panel-title {
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mis-text-tertiary);
+  margin: 0 0 var(--mis-space-3);
+}
+
+.dato-label {
+  font-size: var(--mis-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mis-text-tertiary);
+  margin-bottom: 2px;
+}
+
+.dato-valor {
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-primary);
+  margin: 0;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: var(--mis-font-semibold);
+  padding: 2px var(--mis-space-2);
+  border-radius: var(--mis-radius-full);
+}
+.badge--success { background: var(--mis-success-light); color: var(--mis-success); }
+.badge--danger  { background: var(--mis-danger-light);  color: var(--mis-danger); }

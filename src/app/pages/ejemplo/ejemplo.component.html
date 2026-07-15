@@ -1,0 +1,59 @@
+<div class="flex flex-col gap-6 w-full">
+  <p-card styleClass="mis-card">
+    <ng-template pTemplate="header">
+      <div class="flex justify-between items-center gap-4 px-5 py-4 border-b border-[var(--mis-border)]">
+        <div>
+          <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">Vista de ejemplo</h2>
+          <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">
+            Tabla + Signal Form con los patrones obligatorios del MIS.
+          </p>
+        </div>
+        <p-button label="Volver" icon="pi pi-arrow-left" [text]="true" (onClick)="volver.emit()" />
+      </div>
+    </ng-template>
+
+    <div class="flex flex-col gap-5">
+      <!-- Signal Form demo (ReactiveFormsModule prohibido) -->
+      <form class="flex items-start gap-3" (submit)="agregar($event)">
+        <div class="flex flex-col gap-1">
+          <input
+            class="border border-[var(--mis-border-strong)] rounded-[6px] px-3 py-2 text-sm bg-[var(--mis-surface)] text-[var(--mis-text-primary)] w-72"
+            type="text"
+            placeholder="Nombre del registro..."
+            [formField]="demoForm.nombre"
+          />
+          @if (demoForm.nombre().invalid() && demoForm.nombre().touched()) {
+            @for (error of demoForm.nombre().errors(); track error) {
+              <span class="text-xs text-[var(--mis-danger)]">{{ error.message }}</span>
+            }
+          }
+        </div>
+        <p-button label="Agregar" icon="pi pi-plus" type="submit" />
+      </form>
+
+      <!-- Tabla demo -->
+      <p-table [value]="filas()" responsiveLayout="scroll" class="mis-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-fila>
+          <tr>
+            <td class="text-sm text-[var(--mis-text-secondary)]">{{ fila.id }}</td>
+            <td class="font-semibold text-[var(--mis-text-primary)]">{{ fila.nombre }}</td>
+            <td>
+              @if (fila.estado === 'activo') {
+                <span class="badge badge--success">Activo</span>
+              } @else {
+                <span class="badge badge--danger">Inactivo</span>
+              }
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-card>
+</div>

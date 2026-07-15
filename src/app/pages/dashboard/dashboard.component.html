@@ -1,0 +1,87 @@
+<div class="flex flex-col gap-6 w-full">
+  <p-card styleClass="mis-card">
+    <!-- Card Header: título + acción principal (patrón del doc 02 §4 del Host) -->
+    <ng-template pTemplate="header">
+      <div class="flex justify-between items-center gap-4 px-5 py-4 border-b border-[var(--mis-border)]">
+        <div>
+          <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">Plantilla de Sistema Hijo</h2>
+          <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">
+            Área de contenido embebida en el MIS Host — reemplaza esta vista por el dashboard de tu dominio.
+          </p>
+        </div>
+        <p-button label="Vista de ejemplo" icon="pi pi-arrow-right" iconPos="right" (onClick)="irA.emit('ejemplo')" />
+      </div>
+    </ng-template>
+
+    <!-- Card Body -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- Panel: contrato de la shell -->
+      <div class="panel lg:col-span-2">
+        <h3 class="panel-title">Contrato de la shell (solo lectura — RN-03)</h3>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 m-0">
+          <div>
+            <dt class="dato-label">Usuario activo</dt>
+            <dd class="dato-valor">
+              @if (shell.usuarioActivo(); as u) {
+                {{ u.nombre }} <span class="text-[var(--mis-text-tertiary)]">({{ u.email }})</span>
+              } @else {
+                <span class="text-[var(--mis-text-tertiary)]">Sin sesión (desarrollo aislado)</span>
+              }
+            </dd>
+          </div>
+          <div>
+            <dt class="dato-label">Rol</dt>
+            <dd class="dato-valor">
+              @if (shell.usuarioActivo(); as u) {
+                <code class="text-xs bg-[var(--mis-primary-light)] text-[var(--mis-primary)] font-semibold px-2 py-0.5 rounded-[4px]">{{ u.rol }}</code>
+              } @else {
+                <span class="text-[var(--mis-text-tertiary)]">—</span>
+              }
+            </dd>
+          </div>
+          <div>
+            <dt class="dato-label">Acceso a este subsistema</dt>
+            <dd class="dato-valor">
+              @if (shell.tieneAccesoPropio()) {
+                <span class="badge badge--success">Habilitado</span>
+              } @else {
+                <span class="badge badge--danger">No habilitado</span>
+              }
+            </dd>
+          </div>
+          <div>
+            <dt class="dato-label">Subsistemas del usuario</dt>
+            <dd class="dato-valor">
+              <div class="flex flex-wrap gap-1.5 mt-1">
+                @for (s of shell.subsistemas(); track s) {
+                  <span class="text-[11px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] font-medium px-2 py-0.5 rounded-[6px]">{{ s }}</span>
+                } @empty {
+                  <span class="text-[var(--mis-text-tertiary)]">Ninguno</span>
+                }
+              </div>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Panel: recordatorio de reglas -->
+      <div class="panel">
+        <h3 class="panel-title">Reglas del remote</h3>
+        <ul class="m-0 pl-0 list-none flex flex-col gap-2 text-sm text-[var(--mis-text-secondary)]">
+          <li class="flex items-start gap-2">
+            <ng-icon name="lucideGrid" size="14" class="mt-0.5 text-[var(--mis-secondary)]" />
+            Sin header ni sidebar propios (RN-01)
+          </li>
+          <li class="flex items-start gap-2">
+            <ng-icon name="lucideUser" size="14" class="mt-0.5 text-[var(--mis-secondary)]" />
+            Solo lectura del estado del Host (RN-03)
+          </li>
+          <li class="flex items-start gap-2">
+            <ng-icon name="lucideShieldCheck" size="14" class="mt-0.5 text-[var(--mis-secondary)]" />
+            HTTP solo al backend propio con el JWT del Host (RN-02)
+          </li>
+        </ul>
+      </div>
+    </div>
+  </p-card>
+</div>
