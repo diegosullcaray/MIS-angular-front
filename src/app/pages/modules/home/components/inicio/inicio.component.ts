@@ -3,17 +3,17 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { CardModule } from 'primeng/card';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
-import { lucideActivity, lucideGrid, lucideUsers } from '@ng-icons/lucide';
+import { lucideActivity, lucideGrid, lucideUsers, lucideServer } from '@ng-icons/lucide';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { SistemasService } from '../../../sistemas/services/sistemas.service';
-import { AccesosService } from '../../../accesos/services/accesos.service';
+import { SistemasService } from '../../../admin/services/sistemas.service';
+import { AccesosService } from '../../../admin/services/accesos.service';
 
 @Component({
   selector: 'app-inicio',
   imports: [CardModule , ListSkeletonComponent, InlineErrorComponent, NgIconComponent],
   standalone: true,
   viewProviders: [provideIcons({
-    lucideGrid, lucideUsers, lucideActivity
+    lucideGrid, lucideUsers, lucideActivity, lucideServer
   })],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.css',
@@ -43,7 +43,4 @@ export class InicioComponent {
       default: return 'OFFLINE';
     }
   }
-
-
-
 }

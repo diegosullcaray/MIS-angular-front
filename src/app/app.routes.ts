@@ -29,15 +29,15 @@ export const APP_ROUTES: Routes = [
       {
         path: 'dashboard',
         loadChildren: () =>
-          import('./pages/modules/inicio/inicio.routes').then(
-            (m) => m.INICIO_ROUTES
+          import('./pages/modules/home/home.routes').then(
+            (m) => m.HOME_ROUTES
           )
       },
       {
         path: 'accesos',
         canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
         loadChildren: () =>
-          import('./pages/modules/accesos/accesos.routes').then(
+          import('./pages/modules/admin/accesos.routes').then(
             (m) => m.ACCESOS_ROUTES
           )
       },
@@ -45,8 +45,16 @@ export const APP_ROUTES: Routes = [
         path: 'sistemas',
         canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
         loadChildren: () =>
-          import('./pages/modules/sistemas/sistemas.routes').then(
+          import('./pages/modules/admin/sistemas.routes').then(
             (m) => m.SISTEMAS_ROUTES
+          )
+      },
+      {
+        // Ayuda: disponible para cualquier usuario autenticado, sin roleGuard.
+        path: 'help',
+        loadChildren: () =>
+          import('./pages/modules/help/help.routes').then(
+            (m) => m.HELP_ROUTES
           )
       },
       {

@@ -64,6 +64,8 @@ docs/
 | [`2026-07-26-hu00-hu01-ejecucion.md`](./04-bitacora/2026-07-26-hu00-hu01-ejecucion.md) | Ejecución de HU-00 (elimina duplicado `admin/`, absorbe HU-02) y HU-01 (primeros tests, 24 en verde) |
 | [`2026-07-26-vision-producto-canon.md`](./04-bitacora/2026-07-26-vision-producto-canon.md) | Se agrega `00-vision-producto.md` al canon: router de MFEs + usabilidad macOS, y su traducción a Angular/PrimeNG |
 | [`2026-07-26-login-loadspinner-ui.md`](./04-bitacora/2026-07-26-login-loadspinner-ui.md) | Rediseño del login (branding, layout, errores solo por toast, bug del botón trabado corregido), MFA deshabilitado temporalmente en la UI, y `LoadSpinnerComponent` nuevo |
+| [`2026-07-26-migracion-admin-home.md`](./04-bitacora/2026-07-26-migracion-admin-home.md) | `accesos/`+`sistemas/` fusionados en `admin/`, `inicio/` renombrado a `home/`, `help/` planeado (vacío) |
+| [`2026-07-26-modulo-help.md`](./04-bitacora/2026-07-26-modulo-help.md) | `help/` construido: `FaqComponent`, `GuiasComponent`, `ContactoComponent` en `/admin/help/*`, sin `roleGuard` |
 
 ### `05-referencia/` — volcados crudos
 

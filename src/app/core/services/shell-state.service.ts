@@ -22,6 +22,7 @@ export class ShellStateService {
 
   private readonly _menuItemActivo = signal<MenuItemActivo | null>(null);
   private readonly _sidebarIconActivo = signal<string>('host-inicio');
+  private readonly _cerrandoSesion = signal(false);
 
   // ─── Signals de solo lectura (expuestos — Remotes solo leen) ────────────
 
@@ -33,6 +34,13 @@ export class ShellStateService {
 
   /** ID del ícono activo en la Col 1 del sidebar. */
   readonly sidebarIconActivo = this._sidebarIconActivo.asReadonly();
+
+  /**
+   * True mientras se muestra la pantalla de carga de "Cerrando sesión…".
+   * Se lee desde `AppComponent` (raíz) para renderizar el overlay fuera de
+   * cualquier ancestro con `backdrop-filter`/`transform` (rompen `position: fixed`).
+   */
+  readonly cerrandoSesion = this._cerrandoSesion.asReadonly();
 
   // ─── Computed ────────────────────────────────────────────────────────────
 
@@ -80,8 +88,13 @@ export class ShellStateService {
     this._sidebarIconActivo.set(iconId);
   }
 
+  setCerrandoSesion(valor: boolean): void {
+    this._cerrandoSesion.set(valor);
+  }
+
   cerrarSesion(): void {
     this._usuarioActivo.set(null);
     this._menuItemActivo.set(null);
+    this._cerrandoSesion.set(false);
   }
 }

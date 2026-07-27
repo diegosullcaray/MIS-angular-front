@@ -151,10 +151,11 @@ El sistema **Host administra la estructura principal y seguridad**, mientras **e
 | Diseño del login (branding + layout 2 columnas) | ✅ | `LoginComponent` rediseñado: columna con foto de oficina + logo `mis.png`/"Sistema de Información" en esquina superior izquierda del panel blanco; errores solo por `toast` (sin banner inline); versión (`src/global.ts`) debajo del botón "Acceder" |
 | Pantalla de carga tras login (`LoadSpinnerComponent`) | ✅ | `auth/components/load-spinner/` — mascota + `p-progressSpinner` con colores del tema; visible mínimo 5s antes de navegar a `/admin/dashboard` |
 | Autenticación con MFA (login + OTP 6 dígitos) | 🟡 UI deshabilitada temporalmente | `LoginComponent` completa el desafío OTP internamente con el código demo de la Fake API (`123456`) sin mostrar el paso de verificación — decisión de producto "por ahora no se usará". `AuthService.verificarOtp()`, el guard de roles y el contrato del backend (CA-07) no se tocaron; reactivar la UI es cuestión de volver a mostrarla en `LoginComponent` |
-| Gestión de Accesos IAM (usuarios, roles) | ✅ | `pages/modules/accesos/` enrutado en `/admin/accesos/...` con `roleGuard('admin-sistema')` (HU-00) |
-| Gestión de Sistemas (registro, estructura, permisos) | ✅ | `pages/modules/sistemas/` enrutado en `/admin/sistemas/...` con `roleGuard('admin-sistema')` (HU-00) |
+| Gestión de Accesos IAM (usuarios, roles) | ✅ | `pages/modules/admin/` (antes `accesos/`, fusionado 2026-07-26) enrutado en `/admin/accesos/...` con `roleGuard('admin-sistema')` |
+| Gestión de Sistemas (registro, estructura, permisos) | ✅ | `pages/modules/admin/` (antes `sistemas/`, fusionado 2026-07-26) enrutado en `/admin/sistemas/...` con `roleGuard('admin-sistema')` |
 | Carga dinámica de Remotes + estados loading/error | ✅ | `RemoteWrapperComponent` en `/admin/:remoteName/**`, prefijo alineado con esta doc (HU-02) |
-| Diseño segmentado (SelectButton) y vistas en cards | ✅ | Verificado en los componentes de `accesos/` y `sistemas/` |
+| Diseño segmentado (SelectButton) y vistas en cards | ✅ | Verificado en los componentes de `admin/` |
+| Ayuda (FAQ, guías de uso, contacto a soporte) | ✅ (fuera del alcance original del MVP) | `pages/modules/help/` — `/admin/help/{faq,guias,contacto}`, sin `roleGuard` (disponible a todo usuario autenticado); enlace "Ayuda" en el sidebar |
 | Red de pruebas | 🟡 Inicial | 24 tests / 5 specs sobre estado, guards, `RemoteWrapperComponent` y `AuthService` (HU-01); falta cobertura del resto de componentes |
 | Backend real (Spring Boot) + BD PostgreSQL | 📄 Especificado | Docs de arquitectura listos para construir; hoy la Fake API sirve el contrato 1:1 — ver HU-04/HU-05 |
 | Dockerización y CI/CD | ⏳ Pendiente | Ver HU-03 |

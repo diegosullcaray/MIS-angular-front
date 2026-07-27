@@ -1,0 +1,22 @@
+<div class="flex flex-col gap-6 w-full">
+  <header class="flex items-center gap-3">
+    <div class="w-11 h-11 rounded-[10px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] flex items-center justify-center shrink-0">
+      <ng-icon name="lucideHelpCircle" size="20" />
+    </div>
+    <div>
+      <h1 class="text-lg font-bold text-[var(--mis-text-primary)] m-0">Preguntas frecuentes</h1>
+      <p class="text-sm text-[var(--mis-text-secondary)] m-0">Respuestas rápidas a las dudas más comunes sobre el MIS.</p>
+    </div>
+  </header>
+
+  <p-accordion [value]="0" styleClass="w-full">
+    @for (item of preguntas; track item.pregunta; let i = $index) {
+      <p-accordion-panel [value]="i">
+        <p-accordion-header>{{ item.pregunta }}</p-accordion-header>
+        <p-accordion-content>
+          <p class="text-sm text-[var(--mis-text-secondary)] m-0 leading-normal">{{ item.respuesta }}</p>
+        </p-accordion-content>
+      </p-accordion-panel>
+    }
+  </p-accordion>
+</div>

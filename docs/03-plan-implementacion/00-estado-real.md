@@ -132,3 +132,45 @@ corregido también al ejecutar HU-01 — y el mismatch de peer dependencies
 que obligó a instalar con `--legacy-peer-deps`. Este último no se tocó: es una decisión
 de versiones que requiere confirmar con quien mantiene el `package.json` si se sube
 `primeng` o se fija `@angular/cdk` a la misma major.
+
+---
+
+## Actualización 2026-07-26 (misma fecha) — reorganización de módulos
+
+Se recreó `admin/` con los mismos 3 scaffolds vacíos que HU-00 había eliminado
+(`gestion-usuarios`, `gestion-roles`, `gestion-sistemas`) — esta vez **a propósito**:
+confirmada la intención de que `admin/` absorba la gestión de usuarios/roles y de
+sistemas, se migró de inmediato: se movió el código real de `accesos/` y `sistemas/`
+dentro de `admin/` (modelos, servicios y componentes, conservando sus nombres
+originales — `accesos-shell`, `roles/`, `usuarios/`, `sistemas-list`, `sistema-form`,
+`sistema-detalle` — no los stubs `gestion-*`, que se descartaron por estar vacíos), se
+corrigieron los ~15 imports que cruzaban entre los dos módulos originales o que los
+referenciaban desde fuera (`fake-db.ts`, `fake-api.interceptor.ts`, `role.guard.ts`,
+`auth.service.ts`, `header.component.ts`, `sidebar.component.ts`,
+`home/.../inicio.component.ts`, `shell-state.model.ts`), se reenrutó `app.routes.ts` a
+`./pages/modules/admin/accesos.routes` y `.../admin/sistemas.routes`, y solo entonces
+se borraron las carpetas `accesos/` y `sistemas/`. La app nunca quedó en un estado roto
+intermedio — se verificó `tsc`/`build`/`test` en verde antes de cada borrado.
+
+Efecto colateral positivo: `accesos/` y `sistemas/` ya se importaban directamente entre
+sí (p. ej. `rol-detalle.component.ts` usaba `SistemasService`) — una violación de la
+regla de aislamiento del TRD §5.1. Al fusionarlos en un solo módulo, esos imports pasan
+a ser intra-módulo y la regla deja de estar violada.
+
+También se migró `pages/modules/inicio/` → `pages/modules/home/` (mismo componente
+`InicioComponent`, mismo rol de dashboard en `/admin/dashboard`, sin cambios de
+comportamiento). De paso se corrigió un bug menor encontrado al portar el código:
+`lucideServer` se usaba en el template pero no estaba registrado en `provideIcons()`
+del componente original.
+
+Más tarde, el mismo día, se construyó `help/` con sus 3 componentes (`FaqComponent`,
+`GuiasComponent`, `ContactoComponent`) enrutados en `/admin/help/{faq,guias,contacto}`
+— sin `roleGuard`, disponible para cualquier usuario autenticado — y un enlace "Ayuda"
+en la sección "Acceso directo" del sidebar. Ver
+[`../04-bitacora/2026-07-26-modulo-help.md`](../04-bitacora/2026-07-26-modulo-help.md).
+
+| Hallazgo | Severidad | Estado |
+|---|---|---|
+| `admin/` reemplaza a `accesos/`+`sistemas/` (fusionados, mismas URLs) | 🟢 Resuelto | ✅ Migrado 2026-07-26 |
+| `help/` (FAQ, guías, contacto) | 🟢 Resuelto | ✅ Construido 2026-07-26 |
+| `inicio/` → `home/` (rename, sin cambio de comportamiento) | 🟢 Trivial | ✅ Migrado 2026-07-26 |

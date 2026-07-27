@@ -187,11 +187,11 @@ export const appConfig: ApplicationConfig = {
 
 ```
 ✅ PERMITIDO:
-  pages/modules/accesos/services/accesos.service.ts  →  core/services/shell-state.service.ts
-  pages/modules/sistemas/components/...              →  shared/ui/...
+  pages/modules/admin/services/accesos.service.ts     →  core/services/shell-state.service.ts
+  pages/modules/admin/components/...                  →  shared/ui/...
 
 ❌ PROHIBIDO:
-  pages/modules/accesos/...   →  pages/modules/dashboard/...  (import directo entre módulos)
+  pages/modules/admin/...     →  pages/modules/home/...  (import directo entre módulos)
   pages/full-pages/auth/...   →  pages/modules/...
 
 ⚠️ Excepción documentada: el layout (sidebar/header) y el dashboard LEEN los
@@ -241,20 +241,21 @@ src/
 │   │   │   ├── error/                ← NotFoundComponent
 │   │   │   └── layout/               ← ShellLayout, Header y Sidebar
 │   │   └── modules/
-│   │       ├── accesos/              ← Gestión de Accesos (Usuarios, Roles y sistemas)
-│   │       ├── dashboard/            ← Mi espacio (Dashboard del Host)
-│   │       └── sistemas/             ← Gestión de Sistemas (Configuración de MFEs)
+│   │       ├── admin/                ← Gestión de Accesos (Usuarios, Roles) y de Sistemas (MFEs) — antes `accesos/`+`sistemas/`, unificados 2026-07-26
+│   │       ├── help/                 ← Ayuda: FAQ, guías de uso y contacto a soporte (`/admin/help/*`, sin roleGuard)
+│   │       └── home/                 ← Mi espacio (Dashboard del Host) — antes `inicio/`, migrado 2026-07-26
 │   │
 │   └── shared/
-│       └── ui/
-│           ├── remote-skeleton/
-│           ├── remote-error/
-│           ├── empty-state/
-│           ├── inline-error/
-│           ├── list-skeleton/
-│           ├── toast/                ← ToastService (fachada sobre MessageService de PrimeNG)
-│           └── access-denied/
-│
+│       ├── ui/
+│       │   ├── remote-skeleton/
+│       │   ├── remote-error/
+│       │   ├── empty-state/
+│       │   ├── inline-error/
+│       │   ├── list-skeleton/
+│       │   └── access-denied/
+│       ├── services/
+│       │   └── toast.service.ts      ← Fachada sobre MessageService de PrimeNG (no es un componente, vive fuera de ui/)
+│       └── constants/
 ├── assets/                        ← Imágenes y estáticos del Host (servidos en runtime bajo /assets/)
 │   └── images/fc/                   logos, avatares, fondos — organizados por uso
 │
@@ -272,6 +273,14 @@ src/
 > favicon, `federation.manifest.json`) y `src/assets` → salida `assets` (imágenes). Ambas
 > terminan sirviéndose bajo `/assets/...` en runtime, pero **no se duplican archivos entre
 > las dos carpetas**: cada imagen vive una sola vez, en `src/assets/`.
+
+> ✅ **Migración de módulos completada (2026-07-26):** `accesos/` y `sistemas/` se
+> fusionaron en `admin/` — mismos componentes, servicios y modelos, sin cambios de
+> comportamiento ni de URL (`/admin/accesos/...`, `/admin/sistemas/...` siguen igual).
+> Las carpetas `accesos/` y `sistemas/` ya no existen. `help/` (FAQ, guías, contacto)
+> se construyó el mismo día. `inicio/` se renombró a `home/` (mismo contenido, mismo rol
+> de dashboard en `/admin/dashboard`). Detalle en
+> [`../04-bitacora/2026-07-26-migracion-admin-home.md`](../04-bitacora/2026-07-26-migracion-admin-home.md).
 
 ---
 

@@ -48,6 +48,10 @@ La arquitectura del Host se organiza en exactamente **3 áreas o módulos funcio
 | `/admin/sistemas/nuevo` | `SistemaFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
 | `/admin/sistemas/:id` | `SistemaDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
 | `/admin/sistemas/:id/editar` | `SistemaFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/help` | Redirect → `/admin/help/faq` | ✅ | `authGuard` | Todos |
+| `/admin/help/faq` | `FaqComponent` | ✅ | `authGuard` | Todos — `p-accordion` con preguntas frecuentes |
+| `/admin/help/guias` | `GuiasComponent` | ✅ | `authGuard` | Todos — cards con guías de uso rápidas |
+| `/admin/help/contacto` | `ContactoComponent` | ✅ | `authGuard` | Todos — correo, teléfono y horario de soporte |
 | `/admin/:remoteName/**` | `RemoteWrapperComponent` | ✅ | `authGuard` | Carga de Sistemas Embebidos con **deep-linking**: la ruta es componentless con hijo comodín, cualquier subruta del slug carga el remote (que lee la URL para su vista inicial) |
 | `**` | `NotFoundComponent` | ✅ | — | 404 Not Found |
 

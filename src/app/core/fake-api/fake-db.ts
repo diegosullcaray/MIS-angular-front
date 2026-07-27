@@ -1,12 +1,12 @@
 import type {
   Rol,
   Usuario,
-} from '../../pages/modules/accesos/models/acceso.model';
+} from '../../pages/modules/admin/models/acceso.model';
 import type {
   PermisoRolSistema,
   Seccion,
   Sistema,
-} from '../../pages/modules/sistemas/models/sistema.model';
+} from '../../pages/modules/admin/models/sistema.model';
 
 /**
  * Base de datos en memoria de la Fake API.

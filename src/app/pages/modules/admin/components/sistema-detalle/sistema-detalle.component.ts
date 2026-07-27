@@ -10,14 +10,14 @@ import {
   lucidePlus, lucideTrash2, lucideChevronRight, lucideCheck, lucideLayers
 } from '@ng-icons/lucide';
 import { SistemasService } from '../../services/sistemas.service';
-import { AccesosService } from '../../../accesos/services/accesos.service';
+import { AccesosService } from '../../services/accesos.service';
 import {
   SISTEMA_ESTADO_LABELS,
   type Seccion,
   type Sistema,
   type SistemaEstado,
 } from '../../models/sistema.model';
-import type { Rol } from '../../../accesos/models/acceso.model';
+import type { Rol } from '../../models/acceso.model';
 import { FormsModule } from '@angular/forms';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 

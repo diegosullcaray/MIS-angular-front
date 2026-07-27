@@ -10,10 +10,10 @@ import {
   lucideInfo, lucideBoxes, lucideUsers, lucideChevronRight
 } from '@ng-icons/lucide';
 import { AccesosService } from '../../../services/accesos.service';
-import { SistemasService } from '../../../../sistemas/services/sistemas.service';
+import { SistemasService } from '../../../services/sistemas.service';
 import { FormsModule } from '@angular/forms';
 import { ROL_LABELS, type Rol, type Usuario } from '../../../models/acceso.model';
-import type { PermisoRolSistema } from '../../../../sistemas/models/sistema.model';
+import type { PermisoRolSistema } from '../../../models/sistema.model';
 import { ListSkeletonComponent } from '../../../../../../shared/ui/list-skeleton/list-skeleton.component';
 
 type Tab = 'detalle' | 'sistemas' | 'usuarios';

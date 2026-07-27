@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
-import type { Usuario } from '../../../modules/accesos/models/acceso.model';
+import type { Usuario } from '../../../modules/admin/models/acceso.model';
 
 // ─── Contratos del endpoint de autenticación ──────────────────────────────────
 

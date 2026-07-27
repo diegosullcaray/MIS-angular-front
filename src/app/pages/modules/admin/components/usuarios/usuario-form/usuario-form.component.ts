@@ -3,7 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { form, FormField, required, email, minLength, applyWhen } from '@angular/forms/signals';
 import { AccesosService } from '../../../services/accesos.service';
-import { SistemasService } from '../../../../sistemas/services/sistemas.service';
+import { SistemasService } from '../../../services/sistemas.service';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';

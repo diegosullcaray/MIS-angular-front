@@ -5,13 +5,15 @@ import { filter, map } from 'rxjs';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideChevronDown, lucideUser, lucideSettings,
-  lucideLogOut, lucideBell, lucideSearch
+  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle
 } from '@ng-icons/lucide';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 import type { MenuItem } from 'primeng/api';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AuthService } from '../../../auth/service/auth.service';
-import { SistemasService } from '../../../../modules/sistemas/services/sistemas.service';
+import { SistemasService } from '../../../../modules/admin/services/sistemas.service';
 
 /** Etiquetas de los segmentos de ruta conocidos del Host. */
 const SEGMENTO_LABELS: Record<string, string> = {
@@ -20,6 +22,10 @@ const SEGMENTO_LABELS: Record<string, string> = {
   usuarios:  'Usuarios',
   roles:     'Roles',
   sistemas:  'Sistemas',
+  help:      'Ayuda',
+  faq:       'Preguntas frecuentes',
+  guias:     'Guías de uso',
+  contacto:  'Contacto',
   nuevo:     'Nuevo',
   editar:    'Editar',
 };
@@ -27,10 +33,10 @@ const SEGMENTO_LABELS: Record<string, string> = {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgIconComponent, BreadcrumbModule],
+  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule],
   viewProviders: [provideIcons({
     lucideChevronDown, lucideUser, lucideSettings,
-    lucideLogOut, lucideBell, lucideSearch,
+    lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
   })],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
@@ -41,6 +47,7 @@ export class HeaderComponent {
   private readonly router = inject(Router);
   private readonly sistemasService = inject(SistemasService);
   protected readonly dropdownOpen = signal(false);
+  protected readonly confirmarSalirOpen = signal(false);
 
   /** URL actual como signal (zoneless-friendly). */
   private readonly urlActual = toSignal(
@@ -114,10 +121,19 @@ export class HeaderComponent {
     this.dropdownOpen.update(v => !v);
   }
 
-  protected cerrarSesion(): void {
-    // Limpia estado + sessionStorage y redirige al login
-    this.auth.cerrarSesion();
+  protected pedirConfirmacionSalir(): void {
     this.dropdownOpen.set(false);
+    this.confirmarSalirOpen.set(true);
+  }
+
+  protected async confirmarCerrarSesion(): Promise<void> {
+    this.confirmarSalirOpen.set(false);
+    // El overlay se pinta desde AppComponent (raíz) para no quedar atrapado
+    // dentro del contenedor del header, que tiene backdrop-blur y por lo
+    // tanto rompe el "position: fixed" del spinner (crea un containing block).
+    this.shell.setCerrandoSesion(true);
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    this.auth.cerrarSesion();
   }
 
   private labelDeRemote(slug: string): string {

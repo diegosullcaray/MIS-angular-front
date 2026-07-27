@@ -1,6 +1,6 @@
 import { Component, inject, computed, signal } from '@angular/core';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { SistemasService } from '../../../../modules/sistemas/services/sistemas.service';
+import { SistemasService } from '../../../../modules/admin/services/sistemas.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
 import type { SidebarIcon, SidebarNavPanelConfig } from '../../interfaces/sidebar.model';
 
@@ -79,6 +79,7 @@ export class SidebarComponent {
           titulo: 'Acceso directo',
           rutas: [
             { etiqueta: 'Mi espacio', ruta: '/admin/dashboard', icono: 'lucideGrid' },
+            { etiqueta: 'Ayuda', ruta: '/admin/help', icono: 'lucideHelpCircle' },
           ],
         },
         // SB-04: opciones de administración bajo la sección "Accesos [Admin]"

@@ -4,7 +4,7 @@ import { provideHttpClientTesting, HttpTestingController } from '@angular/common
 import { provideRouter } from '@angular/router';
 import { AuthService, LoginResponse, MfaChallengeResponse } from './auth.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type { Usuario } from '../../../modules/accesos/models/acceso.model';
+import type { Usuario } from '../../../modules/admin/models/acceso.model';
 
 const USUARIO: Usuario = {
   id: 'u-1',

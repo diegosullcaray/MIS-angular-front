@@ -4,7 +4,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideHome, lucideChevronRight, lucideLayoutDashboard,
   lucideFolder, lucideUsers, lucideShield, lucideExternalLink,
-  lucideGrid, lucideActivity, lucideBoxes
+  lucideGrid, lucideActivity, lucideBoxes, lucideHelpCircle
 } from '@ng-icons/lucide';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import type { SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sidebar.model';
@@ -16,7 +16,7 @@ import type { SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sid
   viewProviders: [provideIcons({
     lucideHome, lucideChevronRight, lucideLayoutDashboard,
     lucideFolder, lucideUsers, lucideShield, lucideExternalLink,
-    lucideGrid, lucideActivity, lucideBoxes
+    lucideGrid, lucideActivity, lucideBoxes, lucideHelpCircle
   })],
   templateUrl: './sidebar-nav-panel.component.html',
   styleUrl: './sidebar-nav-panel.component.css',

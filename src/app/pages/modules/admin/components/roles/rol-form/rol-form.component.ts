@@ -2,7 +2,7 @@ import { Component, computed, inject, input, OnInit, signal } from '@angular/cor
 import { Router, RouterLink } from '@angular/router';
 import { form, FormField, required, pattern, disabled } from '@angular/forms/signals';
 import { AccesosService } from '../../../services/accesos.service';
-import { SistemasService } from '../../../../sistemas/services/sistemas.service';
+import { SistemasService } from '../../../services/sistemas.service';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
