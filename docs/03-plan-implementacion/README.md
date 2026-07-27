@@ -75,7 +75,7 @@ que ya existe, después completar lo que falta.
 | [HU-02](./historias/HU-02-alinear-rutas-admin-vs-inicio.md) | Decidir y alinear el prefijo de rutas (`/admin` doc vs `/inicio` código) | S | Bloquea que la doc 02 y el código dejen de contradecirse; afecta a toda HU que use rutas de ejemplo | ✅ Cerrada junto con HU-00 |
 | [HU-03](./historias/HU-03-dockerizacion.md) | Dockerización del Host | M | Prerrequisito de desplegar el Host de forma independiente de cualquier Remote | ⏳ Pendiente |
 | [HU-04](./historias/HU-04-backend-auth.md) | Backend real — módulo `auth` (login + OTP + JWT) | L | Primer módulo backend real; desbloquea retirar la Fake API en autenticación | ⏳ Pendiente |
-| [HU-05](./historias/HU-05-backend-iam-sistemas.md) | Backend real — módulos `accesos` (IAM) y `sistemas` | L | Completa el backend real del Host | ⏳ Pendiente |
+| [HU-05](./historias/HU-05-backend-iam-sistemas.md) | Backend real — módulos `usuarios`, `roles` y `sistemas` | L | Completa el backend real del Host | ⏳ Pendiente |
 | [HU-06](./historias/HU-06-conectar-backend-real.md) | Conectar el Host al backend real y retirar `fakeApiInterceptor` | M | Cierre del backend real | ⏳ Pendiente |
 | [HU-07](./historias/HU-07-primer-sistema-hijo.md) | Primer sistema hijo real (`mis-remote-reportes`) end-to-end | L | Valida CA-01..CA-05 con un Remote real, no con la Fake API | ⏳ Pendiente |
 

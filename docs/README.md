@@ -42,7 +42,7 @@ docs/
 
 | Documento | Contenido |
 |---|---|
-| [`01-backend-schema.md`](./02-arquitectura/01-backend-schema.md) | Backend Spring Boot: monolito modular (`auth`/`accesos`/`sistemas`), contrato `/api/v1` |
+| [`01-backend-schema.md`](./02-arquitectura/01-backend-schema.md) | Backend Spring Boot: monolito modular (`auth`/`usuarios`/`roles`/`sistemas`), contrato `/api/v1` |
 | [`02-database-schema.sql`](./02-arquitectura/02-database-schema.sql) | DDL PostgreSQL (baseline de Flyway) |
 | [`03-guia-sistemas-hijos.md`](./02-arquitectura/03-guia-sistemas-hijos.md) | Cómo construir e integrar un Remote (ejemplo: `mis-remote-reportes`) |
 | [`04-design-system-figma-guide.md`](./02-arquitectura/04-design-system-figma-guide.md) | Guía de importación a Figma y especificación de UX/UI |

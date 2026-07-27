@@ -1,9 +1,19 @@
 # 04 — Backend Schema (Spring Boot — API, Arquitectura y Datos)
 > **Proyecto:** MIS - Management Information System
 > **Documentacion:** [Indice](../README.md) | [00 Vision](../01-canon/00-vision-producto.md) | [01 PRD](../01-canon/01-prd.md) | [02 UX/App Flow](../01-canon/02-ux-app-flow.md) | [03 TRD](../01-canon/03-trd.md) | [Backend Schema](../02-arquitectura/01-backend-schema.md) | [DB Schema](../02-arquitectura/02-database-schema.sql) | [Guia Sistemas Hijos](../02-arquitectura/03-guia-sistemas-hijos.md) | [Figma Guide](../02-arquitectura/04-design-system-figma-guide.md) | [Plan de implementacion (HU)](../03-plan-implementacion/README.md)
-> **Versión:** 2.0.0
-> **Fecha:** 2026-07-12
+> **Versión:** 2.1.0
+> **Fecha:** 2026-07-26
 > **Estado:** 🟢 Alineado al frontend actual (la Fake API implementa este contrato)
+
+> **Cambios v2.1.0 (2026-07-26):** el frontend dividió su antiguo módulo `admin/`
+> (accesos+sistemas fusionados) en 3 submódulos independientes —
+> `usuarios/`, `roles/`, `sistemas/` — cada uno con su propio servicio Angular
+> (ver [`04-bitacora/2026-07-26-submodulos-admin.md`](../04-bitacora/2026-07-26-submodulos-admin.md)).
+> Este documento y el DDL adoptan la misma división en el backend: el bounded
+> context `accesos` se reemplaza por dos módulos independientes, `usuarios` y
+> `roles`, con paridad 1:1 frontend↔backend. El esquema de BD (`iam`) **no**
+> se divide — ver la nota de versión en
+> [`02-database-schema.sql`](./02-database-schema.sql).
 
 ---
 
@@ -33,11 +43,13 @@
 
 ## 2. Arquitectura — Monolito Modular (escalable, robusto, extraíble a microservicios)
 
-Un **monolito modular** organizado por *bounded contexts*: `auth`, `accesos` (IAM) y
+Un **monolito modular** organizado por *bounded contexts*: `auth`, `usuarios`, `roles` y
 `sistemas`. Cada módulo es autocontenido — API, aplicación, dominio e infraestructura
 propias — y solo se comunica con otros módulos a través de sus servicios públicos, nunca
 tocando repositorios ajenos. Así, cualquier módulo puede extraerse a microservicio sin
-reescritura (el mismo criterio de independencia que los Remotes del frontend).
+reescritura (el mismo criterio de independencia que los Remotes del frontend, y la misma
+división 1:1 que adoptó el frontend el 2026-07-26 al dividir `admin/` en
+`usuarios/`/`roles/`/`sistemas/`).
 
 ```
 mis-backend/
@@ -57,11 +69,19 @@ mis-backend/
 │   │   ├── domain/         OtpChallenge · OtpChallengeRepository
 │   │   └── infrastructure/ JwtProvider, BCryptPasswordEncoder, OtpSender (log|email|SMS)
 │   │
-│   ├── accesos/                         ← Módulo: IAM (Usuarios y Roles)
-│   │   ├── api/            UsuarioController, RolController · dto/ · mapper/
-│   │   ├── application/    UsuarioService, RolService
-│   │   ├── domain/         Usuario, Rol · UsuarioRepository, RolRepository
+│   ├── usuarios/                        ← Módulo: gestión de cuentas de usuario
+│   │   ├── api/            UsuarioController · dto/ · mapper/
+│   │   ├── application/    UsuarioService (expone `obtenerUsuariosPorRol` como API pública
+│   │   │                                   para que `roles` la consuma sin tocar el repo)
+│   │   ├── domain/         Usuario · UsuarioRepository
 │   │   └── infrastructure/ Specifications de búsqueda/paginación
+│   │
+│   ├── roles/                           ← Módulo: definición de roles y permisos por rol
+│   │   ├── api/            RolController · dto/ · mapper/
+│   │   ├── application/    RolService (consume `UsuarioService.obtenerUsuariosPorRol` y
+│   │   │                               `SistemaService` públicos — nunca sus repos)
+│   │   ├── domain/         Rol · RolRepository
+│   │   └── infrastructure/
 │   │
 │   └── sistemas/                        ← Módulo: Registro de MFEs + Estructura + Permisos
 │       ├── api/            SistemaController · dto: SistemaResumen, SistemaDetalle,
@@ -77,11 +97,18 @@ mis-backend/
 └── pom.xml
 ```
 
+> ⚠️ **Excepción documentada (paridad con TRD §5.1 del frontend):** `usuarios` y `roles`
+> comparten el esquema de BD `iam` (tablas relacionadas por FK, ver
+> [`02-database-schema.sql`](./02-database-schema.sql)) y sí se llaman entre sí a nivel de
+> `application/` — nunca de `domain/`/`infrastructure/` (BE-01 sigue aplicando). Es el
+> mismo patrón de dependencia cruzada legítima que ya documenta el frontend entre sus 3
+> submódulos de `admin/`.
+
 ### Reglas de modularidad (no negociables)
 
 | # | Regla |
 |---|---|
-| BE-01 | Un módulo **no importa** `domain/` ni `infrastructure/` de otro módulo; solo su capa `application/` (interfaz pública). Verificable con ArchUnit. |
+| BE-01 | Un módulo **no importa** `domain/` ni `infrastructure/` de otro módulo; solo su capa `application/` (interfaz pública). Verificable con ArchUnit. La única excepción son las llamadas `usuarios`↔`roles`↔`sistemas` documentadas arriba, siempre vía `application/`. |
 | BE-02 | Los controllers solo orquestan: `@Valid` + delegar al service + mapear DTO. Cero lógica de negocio. |
 | BE-03 | Las entidades JPA **nunca** cruzan la frontera del módulo: todo intercambio usa DTOs (MapStruct). |
 | BE-04 | Errores de negocio → excepciones propias (`NotFoundException`, `ConflictException`, `ValidationException`) traducidas por `GlobalExceptionHandler` al formato `ApiError` (§3.1). |
@@ -99,7 +126,7 @@ mis-backend/
 { "status": 409, "message": "No se puede eliminar: el rol 'X' tiene usuarios asignados.", "timestamp": "2026-07-12T10:00:00Z" }
 ```
 
-### 3.2 Paginación (`PageResponse<T>`) — coincide con `acceso.model.ts`
+### 3.2 Paginación (`PageResponse<T>`) — coincide con `usuario.model.ts`
 
 ```json
 { "page": 1, "pageSize": 20, "total": 57, "items": [ ... ] }
@@ -117,7 +144,8 @@ mis-backend/
 ## 4. Contrato de Endpoints
 
 > Contrato 1:1 con la Fake API actual. Los códigos de error indicados ya se manejan
-> en los servicios Angular (`AuthService`, `AccesosService`, `SistemasService`).
+> en los servicios Angular (`AuthService`, `UsuariosService`, `RolesService`,
+> `SistemasService`).
 
 ### 4.1 Módulo `auth`
 
@@ -126,7 +154,7 @@ mis-backend/
 | `POST /api/v1/auth/login` | público | Valida credenciales. **No emite token de sesión**: genera OTP (TTL 3 min) y responde `{ mfaRequerido: true, mfaToken, email }`. Errores: `401` credenciales inválidas · `403` usuario desactivado. |
 | `POST /api/v1/auth/verificar-otp` | público | Body `{ mfaToken, otp }`. Valida el código de 6 dígitos (máx. 5 intentos). Responde `{ token, usuario }`. Errores: `401` OTP incorrecto o desafío expirado. |
 
-### 4.2 Módulo `accesos` — Usuarios
+### 4.2 Módulo `usuarios`
 
 | Método y ruta | Rol mínimo | Descripción |
 |---|---|---|
@@ -136,7 +164,7 @@ mis-backend/
 | `PUT /api/v1/usuarios/{id}` | admin-sistema | Actualiza nombre/email/rol/subsistemas; `password` opcional. |
 | `PATCH /api/v1/usuarios/{id}/estado` | admin-sistema | Body `{ activo: boolean }`. Activa/desactiva la cuenta. |
 
-### 4.3 Módulo `accesos` — Roles
+### 4.3 Módulo `roles`
 
 | Método y ruta | Rol mínimo | Descripción |
 |---|---|---|
@@ -163,17 +191,20 @@ mis-backend/
 
 ### 4.5 DTOs de referencia
 
-Los DTOs Java replican los modelos del frontend (fuente de verdad del contrato):
-`Usuario`, `UsuarioRequest`, `Rol`, `RolRequest`, `PageResponse<T>` (en
-`acceso.model.ts`) y `Sistema`, `SistemaResumen`, `SistemaRequest`, `Seccion`,
-`Subseccion`, `Modulo`, `PermisoRolSistema` (en `sistema.model.ts`).
+Los DTOs Java replican los modelos del frontend (fuente de verdad del contrato), que
+están divididos en 3 archivos de modelo espejando los 3 módulos:
+`Usuario`, `UsuarioRequest`, `PageResponse<T>` (en `admin/usuarios/models/usuario.model.ts`),
+`Rol`, `RolSlug`, `RolRequest`, `ROL_LABELS`, `ROL_SEVERITY` (en
+`admin/roles/models/rol.model.ts`) y `Sistema`, `SistemaResumen`, `SistemaRequest`,
+`Seccion`, `Subseccion`, `Modulo`, `PermisoRolSistema` (en
+`admin/sistemas/models/sistema.model.ts`).
 Fechas siempre **ISO-8601 UTC** (`Instant` + Jackson).
 
 ---
 
-## 5. Modelo de Datos (v2.0)
+## 5. Modelo de Datos (v2.1)
 
-El DDL completo (PostgreSQL 16) vive en **[02-database-schema.sql](./02-database-schema.sql)** — es también la migración baseline de Flyway. La BD se organiza en **4 esquemas** que espejan los módulos del backend (§2): `iam`, `sistemas`, `auth` y `auditoria` — cada esquema es la costura natural si un módulo se extrae a microservicio.
+El DDL completo (PostgreSQL 16) vive en **[02-database-schema.sql](./02-database-schema.sql)** — es también la migración baseline de Flyway. La BD se organiza en **4 esquemas** — `iam`, `sistemas`, `auth` y `auditoria` — que casi espejan los 4 módulos del backend (§2), con una excepción intencional: `iam` es compartido por los módulos `usuarios` y `roles` (sus tablas están relacionadas por FK, ver la nota de versión en el DDL) en vez de dividirse en dos esquemas — cada esquema sigue siendo la costura natural si un módulo se extrae a microservicio.
 
 ```
 ┌── iam ─────────────────────────┐   ┌── sistemas ───────────────────────────┐

@@ -1,9 +1,9 @@
 -- ============================================================================
 -- 07 — DATABASE SCHEMA · MIS Host (PostgreSQL 16+)
 -- Proyecto : MIS - Management Information System (Financiera Confianza)
--- Versión  : 2.0.0 (2026-07-12)
+-- Versión  : 2.1.0 (2026-07-26)
 -- Uso      : Migración baseline de Flyway (db/migration/V1__baseline.sql)
---            Contrato documentado en 04_BACKEND_SCHEMA.md §5
+--            Contrato documentado en 01-backend-schema.md §5
 --
 -- Principios de diseño (v2.0):
 --   · ESQUEMAS por bounded context (iam / sistemas / auth / auditoria) —
@@ -16,6 +16,15 @@
 --     por mes + bitácora de accesos (login/OTP/denegaciones).
 --   · SIN redundancias: dominios reutilizables (slug, email), un solo trigger
 --     de `actualizado_en`, extensiones declaradas antes de usarse.
+--
+-- Cambios v2.1.0 (2026-07-26): el backend pasó de 3 a 4 módulos de negocio —
+-- el bounded context `accesos` se dividió en `usuarios` y `roles` (paridad
+-- 1:1 con el frontend, ver 01-backend-schema.md §2). El ESQUEMA de BD sigue
+-- siendo uno solo (`iam`): las tablas `roles`/`usuarios`/`credenciales` están
+-- relacionadas por FK y viven en el mismo bounded context de datos aunque el
+-- código Java que las usa esté en dos módulos distintos — dividir el esquema
+-- físicamente habría forzado FKs entre esquemas sin beneficio real hasta que
+-- exista un motivo concreto para extraer uno de los dos a microservicio.
 --
 -- Contexto de actor (lo setea Spring en cada transacción, p. ej. con un
 -- interceptor de Hibernate):
@@ -31,7 +40,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;   -- gen_random_uuid()
 CREATE EXTENSION IF NOT EXISTS pg_trgm;    -- búsqueda difusa (GET /usuarios?q=)
 CREATE EXTENSION IF NOT EXISTS citext;     -- email case-insensitive sin lower() manual
 
-CREATE SCHEMA iam;         -- usuarios, roles, asignaciones y permisos (módulo `accesos`)
+CREATE SCHEMA iam;         -- usuarios, roles, asignaciones y permisos (módulos `usuarios` + `roles`)
 CREATE SCHEMA sistemas;    -- remotes registrados y su jerarquía (módulo `sistemas`)
 CREATE SCHEMA auth;        -- desafíos MFA y sesiones emitidas (módulo `auth`)
 CREATE SCHEMA auditoria;   -- trail de cambios y bitácora de accesos (append-only)
@@ -61,6 +70,9 @@ CREATE TYPE auditoria.tipo_acceso   AS ENUM
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 1. IAM — Roles y Usuarios
+--    `iam.roles` pertenece al módulo backend `roles`; `iam.usuarios` e
+--    `iam.credenciales` pertenecen al módulo backend `usuarios` — dos módulos
+--    Java distintos leyendo el mismo esquema de BD (ver nota v2.1.0 arriba).
 -- ─────────────────────────────────────────────────────────────────────────────
 
 CREATE TABLE iam.roles (
@@ -154,8 +166,9 @@ CREATE INDEX idx_subsecciones_seccion ON sistemas.subsecciones (seccion_id, orde
 CREATE INDEX idx_modulos_subseccion   ON sistemas.modulos      (subseccion_id, orden);
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- 3. Asignaciones y permisos (pertenecen a IAM; referencian a `sistemas` —
---    esta FK cruzada es la costura a cortar si IAM se extrae a microservicio)
+-- 3. Asignaciones y permisos (pertenecen a los módulos `roles`/`usuarios`;
+--    referencian a `sistemas` — esta FK cruzada es la costura a cortar si
+--    IAM se extrae a microservicio)
 -- ─────────────────────────────────────────────────────────────────────────────
 
 -- Subsistemas habilitados por ROL (campo `subsistemas` del modelo Rol)
@@ -269,7 +282,7 @@ CREATE TABLE auditoria.accesos (
     email       VARCHAR(160),                      -- lo que se intentó (para forense)
     ip_origen   INET,
     user_agent  VARCHAR(300),
-    detalle     VARCHAR(300)                       -- ej. 'intento 3/5', 'rol sin permiso a /admin/accesos'
+    detalle     VARCHAR(300)                       -- ej. 'intento 3/5', 'rol sin permiso a /admin/roles'
 );
 
 CREATE INDEX idx_accesos_tiempo  ON auditoria.accesos USING brin (ocurrido_en);
