@@ -77,6 +77,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "styles": [
@@ -123,6 +128,13 @@
           "defaultConfiguration": "development",
           "options": {
             "port": 4201
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "mis-host:esbuild:development",
+            "tsConfig": "tsconfig.spec.json"
           }
         }
       }

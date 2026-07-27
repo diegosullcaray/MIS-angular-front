@@ -1,0 +1,20 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.load-spinner-wrapper {
+    background: radial-gradient(circle at top right, var(--mis-primary) 0%, #0A1630 60%, #050B18 100%);
+    font-family: var(--mis-font-family);
+    animation: spinnerFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes spinnerFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+:host ::ng-deep .mis-spinner .p-progressspinner-circle {
+    stroke: var(--mis-secondary);
+    animation-duration: 1.6s;
+}

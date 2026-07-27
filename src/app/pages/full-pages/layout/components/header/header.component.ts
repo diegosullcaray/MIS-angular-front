@@ -54,7 +54,7 @@ export class HeaderComponent {
   /** Ítem raíz del breadcrumb (Host). */
   protected readonly breadcrumbHome: MenuItem = {
     icon: 'pi pi-home',
-    routerLink: '/inicio/dashboard',
+    routerLink: '/admin/dashboard',
   };
 
   /** Modelo del p-breadcrumb derivado de la ruta activa. */

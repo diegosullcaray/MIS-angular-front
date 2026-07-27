@@ -26,7 +26,7 @@ import type {
 
 /**
  * Fake API — Interceptor HTTP que simula el backend REST del Host
- * según el contrato definido en `docs_proyecto/04_BACKEND_SCHEMA.md`.
+ * según el contrato definido en `docs/02-arquitectura/01-backend-schema.md`.
  *
  * Atiende todas las rutas bajo `/api/v1/*` con una base de datos en memoria
  * y una latencia simulada. Cualquier otra petición pasa al backend real.

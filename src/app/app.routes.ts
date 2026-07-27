@@ -7,7 +7,7 @@ export const APP_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'inicio/dashboard'
+    redirectTo: 'admin/dashboard'
   },
   {
     path: 'login',
@@ -17,36 +17,43 @@ export const APP_ROUTES: Routes = [
       )
   },
   {
-    path: 'inicio',
+    path: 'admin',
     component: ShellLayoutComponent,
     canActivate: [authGuard],
     children: [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'inicio'
+        redirectTo: 'dashboard'
       },
       {
-        path: 'inicio',
+        path: 'dashboard',
         loadChildren: () =>
           import('./pages/modules/inicio/inicio.routes').then(
             (m) => m.INICIO_ROUTES
           )
       },
       {
-        path: 'admin',
+        path: 'accesos',
         canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
         loadChildren: () =>
-          import('./pages/modules/admin/admin.routes').then(
-            (m) => m.ADMIN_ROUTES
+          import('./pages/modules/accesos/accesos.routes').then(
+            (m) => m.ACCESOS_ROUTES
           )
       },
-
-
+      {
+        path: 'sistemas',
+        canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
+        loadChildren: () =>
+          import('./pages/modules/sistemas/sistemas.routes').then(
+            (m) => m.SISTEMAS_ROUTES
+          )
+      },
       {
         // Ruta componentless + comodín: soporta URLs profundas del remote
         // (/admin/:remoteName/lo-que-sea). Al no tener component, el hijo '**'
         // hereda el parámetro :remoteName (paramsInheritanceStrategy 'emptyOnly').
+        // Debe ir al final: es la única ruta que hace match de cualquier segmento.
         path: ':remoteName',
         children: [
           {
@@ -68,6 +75,3 @@ export const APP_ROUTES: Routes = [
       )
   }
 ];
-
-
-

@@ -5,27 +5,7 @@
 }
 
 .login-wrapper {
-    background: radial-gradient(circle at top right, var(--mis-primary) 0%, #0A1630 60%, #050B18 100%);
     font-family: var(--mis-font-family);
-}
-
-.bg-circle-1 {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, var(--mis-secondary) 0%, rgba(66, 173, 224, 0) 70%);
-    top: -100px;
-    right: -100px;
-}
-
-.bg-circle-2 {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, var(--mis-primary) 0%, rgba(29, 57, 110, 0) 70%);
-    bottom: -150px;
-    left: -150px;
-}
-
-.login-card-container {
     animation: loginFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -40,34 +20,33 @@
     display: block !important;
     width: 100% !important;
 }
-:host ::ng-deep .login-card-container .p-card-body,
-:host ::ng-deep .login-card-container .p-card-content {
-    padding: 0 !important;
+
+/* Inputs del formulario de credenciales (paso 1) — usan los tokens del sistema */
+.login-light-input,
+:host ::ng-deep .login-light-input {
+    background: var(--mis-bg) !important;
+    border: 1px solid var(--mis-border) !important;
+    color: var(--mis-text-primary) !important;
 }
 
-/* Celdas del código OTP (paso MFA) — según Figma login.html */
-.otp-cell {
-    height: 40px;
-    width: 100%;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--mis-primary);
-    border: 1px solid var(--mis-border-strong, rgba(29, 57, 110, 0.2));
-    border-radius: 6px;
-    outline: none;
-    background: #FFFFFF;
-    font-family: 'Fira Code', ui-monospace, monospace;
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.otp-cell:focus {
-    border-color: var(--mis-secondary);
-    box-shadow: var(--mis-shadow-focus);
-}
-
-.otp-cell:disabled {
-    background: var(--mis-bg);
+.login-light-input::placeholder,
+:host ::ng-deep .login-light-input::placeholder {
     color: var(--mis-text-tertiary);
-    cursor: not-allowed;
+}
+
+.login-light-input:focus,
+:host ::ng-deep .login-light-input:focus {
+    border-color: var(--mis-secondary) !important;
+    box-shadow: var(--mis-shadow-focus) !important;
+}
+
+:host ::ng-deep .login-btn-dark.p-button {
+    background: var(--mis-text-primary) !important;
+    border-color: var(--mis-text-primary) !important;
+    color: var(--mis-text-on-primary) !important;
+}
+
+:host ::ng-deep .login-btn-dark.p-button:not(:disabled):hover {
+    background: var(--mis-primary-hover) !important;
+    border-color: var(--mis-primary-hover) !important;
 }

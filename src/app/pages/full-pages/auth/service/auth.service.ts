@@ -2,7 +2,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { ShellStateService, UsuarioActivo } from '../../../../core/services/shell-state.service';
+import { ShellStateService } from '../../../../core/services/shell-state.service';
+import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
 import type { Usuario } from '../../../modules/accesos/models/acceso.model';
 
 // ─── Contratos del endpoint de autenticación ──────────────────────────────────

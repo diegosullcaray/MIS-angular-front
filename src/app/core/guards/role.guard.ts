@@ -2,7 +2,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import type { RolSlug } from '../../pages/modules/accesos/models/acceso.model';
 import { ShellStateService } from '../services/shell-state.service';
-import { ToastService } from '../../shared/ui/toast/toast.service';
+import { ToastService } from '../../shared/services/toast.service';
 
 /**
  * Guard funcional de fábrica para control de roles.
@@ -47,6 +47,6 @@ export function roleGuard(rolRequerido: RolSlug): CanActivateFn {
       'Acceso denegado',
       'No tienes permisos para acceder a esta sección.'
     );
-    return router.createUrlTree(['/inicio/dashboard']);
+    return router.createUrlTree(['/admin/dashboard']);
   };
 }
