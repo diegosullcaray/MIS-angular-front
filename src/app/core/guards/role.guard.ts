@@ -1,6 +1,6 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import type { RolSlug } from '../../pages/modules/admin/models/acceso.model';
+import type { RolSlug } from '../../pages/modules/admin/roles/models/rol.model';
 import { ShellStateService } from '../services/shell-state.service';
 import { ToastService } from '../../shared/services/toast.service';
 

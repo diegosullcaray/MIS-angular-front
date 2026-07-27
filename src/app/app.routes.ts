@@ -34,18 +34,26 @@ export const APP_ROUTES: Routes = [
           )
       },
       {
-        path: 'accesos',
+        path: 'usuarios',
         canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
         loadChildren: () =>
-          import('./pages/modules/admin/accesos.routes').then(
-            (m) => m.ACCESOS_ROUTES
+          import('./pages/modules/admin/usuarios/usuarios.routes').then(
+            (m) => m.USUARIOS_ROUTES
+          )
+      },
+      {
+        path: 'roles',
+        canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
+        loadChildren: () =>
+          import('./pages/modules/admin/roles/roles.routes').then(
+            (m) => m.ROLES_ROUTES
           )
       },
       {
         path: 'sistemas',
         canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
         loadChildren: () =>
-          import('./pages/modules/admin/sistemas.routes').then(
+          import('./pages/modules/admin/sistemas/sistemas.routes').then(
             (m) => m.SISTEMAS_ROUTES
           )
       },

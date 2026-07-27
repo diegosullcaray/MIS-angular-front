@@ -174,3 +174,64 @@ en la sección "Acceso directo" del sidebar. Ver
 | `admin/` reemplaza a `accesos/`+`sistemas/` (fusionados, mismas URLs) | 🟢 Resuelto | ✅ Migrado 2026-07-26 |
 | `help/` (FAQ, guías, contacto) | 🟢 Resuelto | ✅ Construido 2026-07-26 |
 | `inicio/` → `home/` (rename, sin cambio de comportamiento) | 🟢 Trivial | ✅ Migrado 2026-07-26 |
+
+---
+
+## Actualización 2026-07-26 (mismo día, horas después) — `admin/` se divide en 3 submódulos
+
+La fusión anterior había resuelto la duplicación, pero dejó `admin/` como un módulo único
+con dos responsabilidades de negocio distintas (IAM de usuarios/roles, y registro de
+sistemas/Remotes) y un único `AccesosService` monolítico. A pedido explícito, se dividió
+en **3 submódulos independientes**, cada uno con su propio `services/`, `models/` y
+archivo de rutas:
+
+- `admin/usuarios/` — `UsuariosService`, `usuario.model.ts` (`Usuario`, `UsuarioRequest`,
+  `PageResponse<T>`), `usuarios.routes.ts` (`USUARIOS_ROUTES`).
+- `admin/roles/` — `RolesService`, `rol.model.ts` (`Rol`, `RolSlug`, `RolRequest`,
+  `ROL_LABELS`, `ROL_SEVERITY`), `roles.routes.ts` (`ROLES_ROUTES`).
+- `admin/sistemas/` — sin cambios de fondo, solo reubicado como submódulo hermano
+  (`SistemasService`, `sistema.model.ts`, `sistemas.routes.ts`).
+
+`AccesosService` se eliminó — se dividió en `UsuariosService` y `RolesService` (decisión
+confirmada explícitamente, no una interpretación). Se eliminó también
+`AccesosShellComponent` (la landing combinada con KPIs de usuarios+roles): ya no hay una
+página que una ambas cosas, cada submódulo es una URL independiente.
+
+**Cambio de URLs** (el único cambio de contrato de esta actualización):
+
+| Antes | Ahora |
+|---|---|
+| `/admin/accesos` (`AccesosShellComponent`) | *(eliminada, sin reemplazo)* |
+| `/admin/accesos/usuarios/...` | `/admin/usuarios/...` |
+| `/admin/accesos/roles/...` | `/admin/roles/...` |
+| `/admin/sistemas/...` | sin cambio |
+
+`app.routes.ts` pasó de una única entrada `admin/accesos.routes` a tres entradas
+paralelas (`usuarios`, `roles`, `sistemas`), cada una con su propio `roleGuard('admin-sistema')`.
+
+**Dependencias cruzadas legítimas descubiertas y formalizadas** (ver excepción en
+[`03-trd.md` §5.1](../01-canon/03-trd.md)): `usuarios/` y `roles/` no son 100% aislados
+entre sí ni de `sistemas/` porque la UI necesita mostrar datos combinados — `UsuarioFormComponent`
+lee `RolesService` (dropdown de rol), `RolFormComponent` y `RolDetalleComponent` leen
+`SistemasService` (subsistemas asignables a un rol), y `SistemaDetalleComponent` lee
+`RolesService` (roles con acceso a ese sistema). Es la misma clase de excepción que ya
+aplicaba al layout leyendo services de otros módulos: solo capa `services/`+`models/`,
+nunca componentes.
+
+**Bug encontrado y corregido durante la migración**: al anidar los componentes de
+`sistemas` un nivel más profundo (`admin/sistemas/components/X/` en vez de
+`admin/components/X/`), los imports relativos a `shared/ui/*` en `sistemas-list.component.ts`
+y `sistema-detalle.component.ts` quedaron cortos por un `../` — detectado por `tsc`, no
+por inspección manual, y confirmado con `grep` antes de dar el fix por bueno.
+
+Verificado en verde tras la migración: `tsc --noEmit` sin salida, `ng build` sin errores
+nuevos (persiste una advertencia de presupuesto CSS preexistente en
+`sistema-detalle.component.css`, no introducida por este cambio), `ng test --watch=false`
+con 6 archivos / 25 tests en verde. Detalle completo en
+[`../04-bitacora/2026-07-26-submodulos-admin.md`](../04-bitacora/2026-07-26-submodulos-admin.md).
+
+| Hallazgo | Severidad | Estado |
+|---|---|---|
+| `admin/` se divide en `usuarios/`+`roles/`+`sistemas/`, `AccesosService` se divide en 2 | 🟢 Resuelto | ✅ Migrado 2026-07-26 |
+| `AccesosShellComponent` retirado (sin landing combinada) | 🟢 Trivial | ✅ Eliminado 2026-07-26 |
+| Import relativo a `shared/ui/*` corto en 2 componentes de `sistemas/` | 🟢 Trivial | ✅ Corregido 2026-07-26 |

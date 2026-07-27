@@ -1,6 +1,6 @@
 import { Component, inject, computed, signal } from '@angular/core';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { SistemasService } from '../../../../modules/admin/services/sistemas.service';
+import { SistemasService } from '../../../../modules/admin/sistemas/services/sistemas.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
 import type { SidebarIcon, SidebarNavPanelConfig } from '../../interfaces/sidebar.model';
 
@@ -86,8 +86,8 @@ export class SidebarComponent {
         {
           titulo: 'Accesos [Admin]',
           rutas: [
-            { etiqueta: 'Gestión de usuarios', ruta: '/admin/accesos/usuarios', icono: 'lucideUsers',    soloAdminSistema: true },
-            { etiqueta: 'Gestión de roles',    ruta: '/admin/accesos/roles',    icono: 'lucideActivity', soloAdminSistema: true },
+            { etiqueta: 'Gestión de usuarios', ruta: '/admin/usuarios', icono: 'lucideUsers',    soloAdminSistema: true },
+            { etiqueta: 'Gestión de roles',    ruta: '/admin/roles',    icono: 'lucideActivity', soloAdminSistema: true },
             { etiqueta: 'Gestión de sistemas', ruta: '/admin/sistemas', icono: 'lucideBoxes',    soloAdminSistema: true },
 
           ],

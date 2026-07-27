@@ -14,16 +14,25 @@
 
 ## 1. Estructura de Módulos del Host
 
-La arquitectura del Host se organiza en exactamente **3 áreas o módulos funcionales**:
+La arquitectura del Host se organiza en **5 áreas o módulos funcionales**. Desde el
+2026-07-26, `admin/` ya no es un módulo único: es un contenedor de **3 submódulos
+independientes** (`usuarios/`, `roles/`, `sistemas/`), cada uno con su propio servicio,
+modelo y rutas — ver [`03-trd.md` §5.1](./03-trd.md) para la regla de aislamiento y sus
+excepciones documentadas.
 
 1. **Mi espacio / Dashboard (`/admin/dashboard`)**:
    * Panel principal del Host.
-2. **Gestión de Accesos (Usuarios, Roles y sistemas — `/admin/accesos`)**:
-   * Módulo unificado para administrar el personal, definir roles y asignar accesos.
-3. **Gestión de Sistemas (Configuración de MFEs — `/admin/sistemas`)**:
+2. **Gestión de Usuarios (`/admin/usuarios`)**:
+   * Submódulo para administrar el personal: alta, edición y cambio de estado.
+3. **Gestión de Roles (`/admin/roles`)**:
+   * Submódulo para definir roles y asignar permisos de acceso a subsistemas.
+4. **Gestión de Sistemas (Configuración de MFEs — `/admin/sistemas`)**:
    * Registro y configuración de los microfrontends remotos.
-4. **Gestión de Sistemas Embebidos (`/admin/:remoteName`)**:
+5. **Gestión de Sistemas Embebidos (`/admin/:remoteName`)**:
    * Envoltorio y cargador dinámico (`RemoteWrapperComponent`) en `core/federation/` que inyecta en tiempo de ejecución los microfrontends remotos (Contabilidad, RRHH, Ventas, Logística).
+
+> Adicionalmente, `/admin/help` (FAQ, guías, contacto) está disponible para cualquier
+> usuario autenticado, sin `roleGuard` — no es un módulo de administración IAM.
 
 ---
 
@@ -35,15 +44,14 @@ La arquitectura del Host se organiza en exactamente **3 áreas o módulos funcio
 |---|---|---|---|---|
 | `/login` | `LoginComponent` | ✅ | — | Credenciales (Signal Forms). ⚠️ **MFA temporalmente deshabilitado en la UI** (ver PRD §9) — el paso de verificación OTP no se muestra; `AuthService.verificarOtp()` y el contrato del backend (CA-07) siguen intactos |
 | `/admin` | Redirect → `/admin/dashboard` | — | `authGuard` | Todos |
-| `/admin/dashboard` | `DashboardComponent` | ✅ | `authGuard` | Todos (Etiqueta: "Mi espacio") |
-| `/admin/accesos` | `AccesosShellComponent` | ✅ | `authGuard` + `roleGuard('admin-sistema')` | Admin Sistema (Menú de IAM) |
-| `/admin/accesos/usuarios` | `UsuariosListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/usuarios/nuevo` | `UsuarioFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/usuarios/:id` | `UsuarioFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/roles` | `RolesListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/roles/nuevo` | `RolFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/roles/:id` | `RolDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
-| `/admin/accesos/roles/:id/editar` | `RolFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/dashboard` | `InicioComponent` | ✅ | `authGuard` | Todos (Etiqueta: "Mi espacio") |
+| `/admin/usuarios` | `UsuariosListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/usuarios/nuevo` | `UsuarioFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/usuarios/:id` | `UsuarioFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/roles` | `RolesListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/roles/nuevo` | `RolFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/roles/:id` | `RolDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
+| `/admin/roles/:id/editar` | `RolFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
 | `/admin/sistemas` | `SistemasListComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema (Gestión de Sistemas) |
 | `/admin/sistemas/nuevo` | `SistemaFormComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |
 | `/admin/sistemas/:id` | `SistemaDetalleComponent` | ✅ | `roleGuard('admin-sistema')` | Admin Sistema |

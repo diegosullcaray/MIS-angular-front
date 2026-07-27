@@ -1,4 +1,4 @@
-import type { RolSlug } from '../../pages/modules/admin/models/acceso.model';
+import type { RolSlug } from '../../pages/modules/admin/roles/models/rol.model';
 
 export interface UsuarioActivo {
   id: string;

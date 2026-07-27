@@ -187,16 +187,25 @@ export const appConfig: ApplicationConfig = {
 
 ```
 ✅ PERMITIDO:
-  pages/modules/admin/services/accesos.service.ts     →  core/services/shell-state.service.ts
-  pages/modules/admin/components/...                  →  shared/ui/...
+  pages/modules/admin/usuarios/services/usuarios.service.ts  →  core/services/shell-state.service.ts
+  pages/modules/admin/sistemas/components/...                →  shared/ui/...
 
 ❌ PROHIBIDO:
   pages/modules/admin/...     →  pages/modules/home/...  (import directo entre módulos)
   pages/full-pages/auth/...   →  pages/modules/...
 
 ⚠️ Excepción documentada: el layout (sidebar/header) y el dashboard LEEN los
-   services públicos de `sistemas` y `accesos` para pintar menús y KPIs —
+   services públicos de `sistemas`, `roles` y `usuarios` para pintar menús y KPIs —
    solo la capa service, nunca componentes de otro módulo.
+
+⚠️ Excepción documentada 2 (dentro de `admin/`): `usuarios/`, `roles/` y `sistemas/`
+   son submódulos independientes pero conceptualmente relacionados (IAM), y sí se
+   importan servicios/modelos entre sí donde hace falta mostrar datos combinados:
+   `UsuarioFormComponent` lee `RolesService` (dropdown de rol), `RolFormComponent` y
+   `RolDetalleComponent` leen `SistemasService` (subsistemas asignables) y
+   `RolesService` lee `Usuario`/`SistemaDetalleComponent` lee `RolesService`
+   (roles asignados a un sistema). Es la misma excepción que ya aplica al layout: solo
+   capa `services/`+`models/`, nunca componentes de otro submódulo.
 ```
 
 ### 5.2 Convenciones de Naming
@@ -241,7 +250,10 @@ src/
 │   │   │   ├── error/                ← NotFoundComponent
 │   │   │   └── layout/               ← ShellLayout, Header y Sidebar
 │   │   └── modules/
-│   │       ├── admin/                ← Gestión de Accesos (Usuarios, Roles) y de Sistemas (MFEs) — antes `accesos/`+`sistemas/`, unificados 2026-07-26
+│   │       ├── admin/                ← Contenedor de 3 submódulos independientes (ver abajo)
+│   │       │   ├── usuarios/           `/admin/usuarios/*` — UsuariosService, usuario.model.ts
+│   │       │   ├── roles/              `/admin/roles/*` — RolesService, rol.model.ts (incl. RolSlug)
+│   │       │   └── sistemas/           `/admin/sistemas/*` — SistemasService, sistema.model.ts
 │   │       ├── help/                 ← Ayuda: FAQ, guías de uso y contacto a soporte (`/admin/help/*`, sin roleGuard)
 │   │       └── home/                 ← Mi espacio (Dashboard del Host) — antes `inicio/`, migrado 2026-07-26
 │   │
@@ -274,13 +286,18 @@ src/
 > terminan sirviéndose bajo `/assets/...` en runtime, pero **no se duplican archivos entre
 > las dos carpetas**: cada imagen vive una sola vez, en `src/assets/`.
 
-> ✅ **Migración de módulos completada (2026-07-26):** `accesos/` y `sistemas/` se
-> fusionaron en `admin/` — mismos componentes, servicios y modelos, sin cambios de
-> comportamiento ni de URL (`/admin/accesos/...`, `/admin/sistemas/...` siguen igual).
-> Las carpetas `accesos/` y `sistemas/` ya no existen. `help/` (FAQ, guías, contacto)
-> se construyó el mismo día. `inicio/` se renombró a `home/` (mismo contenido, mismo rol
-> de dashboard en `/admin/dashboard`). Detalle en
-> [`../04-bitacora/2026-07-26-migracion-admin-home.md`](../04-bitacora/2026-07-26-migracion-admin-home.md).
+> ✅ **Historial de reorganización de `admin/` (2026-07-26, mismo día, 2 pasos):**
+> primero `accesos/` y `sistemas/` se fusionaron en un único `admin/` plano (para
+> resolver el duplicado de HU-00); horas después `admin/` se subdividió en 3
+> submódulos independientes — `usuarios/`, `roles/`, `sistemas/` — cada uno con su
+> propio servicio, modelo y rutas. **Las URLs cambiaron** en este segundo paso:
+> `/admin/accesos/usuarios/...` → `/admin/usuarios/...` y `/admin/accesos/roles/...` →
+> `/admin/roles/...` (`/admin/sistemas/...` no cambió). Se retiró `AccesosShellComponent`
+> (la página que unía KPIs de usuarios y roles) — ya no hay una landing combinada.
+> `help/` (FAQ, guías, contacto) se construyó el mismo día. `inicio/` se renombró a
+> `home/` (mismo contenido, mismo rol de dashboard en `/admin/dashboard`). Detalle en
+> [`../04-bitacora/2026-07-26-migracion-admin-home.md`](../04-bitacora/2026-07-26-migracion-admin-home.md)
+> y [`../04-bitacora/2026-07-26-submodulos-admin.md`](../04-bitacora/2026-07-26-submodulos-admin.md).
 
 ---
 

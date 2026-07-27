@@ -66,6 +66,7 @@ docs/
 | [`2026-07-26-login-loadspinner-ui.md`](./04-bitacora/2026-07-26-login-loadspinner-ui.md) | Rediseño del login (branding, layout, errores solo por toast, bug del botón trabado corregido), MFA deshabilitado temporalmente en la UI, y `LoadSpinnerComponent` nuevo |
 | [`2026-07-26-migracion-admin-home.md`](./04-bitacora/2026-07-26-migracion-admin-home.md) | `accesos/`+`sistemas/` fusionados en `admin/`, `inicio/` renombrado a `home/`, `help/` planeado (vacío) |
 | [`2026-07-26-modulo-help.md`](./04-bitacora/2026-07-26-modulo-help.md) | `help/` construido: `FaqComponent`, `GuiasComponent`, `ContactoComponent` en `/admin/help/*`, sin `roleGuard` |
+| [`2026-07-26-submodulos-admin.md`](./04-bitacora/2026-07-26-submodulos-admin.md) | `admin/` dividido en 3 submódulos independientes (`usuarios/`, `roles/`, `sistemas/`), `AccesosService` dividido en `UsuariosService`+`RolesService`, `AccesosShellComponent` retirado, URLs `/admin/usuarios` y `/admin/roles` |
 
 ### `05-referencia/` — volcados crudos
 
@@ -88,7 +89,8 @@ plan de HU de este proyecto. Ver su propio índice en
 ## Resumen ejecutivo
 
 El **MIS Host** es un router de sistemas: un shell administrador Angular que centraliza
-navegación, autenticación MFA e IAM, y enruta en tiempo de ejecución hacia subsistemas de
+navegación, autenticación (MFA especificado, UI del OTP deshabilitada temporalmente — ver
+PRD §9) e IAM (usuarios/roles), y enruta en tiempo de ejecución hacia subsistemas de
 negocio (Remotes) vía Native Federation — nunca iframes — con una identidad de
 interacción inspirada en macOS (ver [`00-vision-producto.md`](./01-canon/00-vision-producto.md)).
 El frontend del Host está mayormente construido contra una Fake API que implementa 1:1 el

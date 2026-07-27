@@ -13,12 +13,11 @@ import { ButtonModule } from 'primeng/button';
 import type { MenuItem } from 'primeng/api';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AuthService } from '../../../auth/service/auth.service';
-import { SistemasService } from '../../../../modules/admin/services/sistemas.service';
+import { SistemasService } from '../../../../modules/admin/sistemas/services/sistemas.service';
 
 /** Etiquetas de los segmentos de ruta conocidos del Host. */
 const SEGMENTO_LABELS: Record<string, string> = {
   dashboard: 'Mi espacio',
-  accesos:   'Accesos',
   usuarios:  'Usuarios',
   roles:     'Roles',
   sistemas:  'Sistemas',

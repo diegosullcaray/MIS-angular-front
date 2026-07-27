@@ -1,6 +1,6 @@
 # Guía de Importación y Especificación UX/UI para Figma (MIS - Financiera Confianza)
 > **Documentacion:** [Indice](../README.md) | [00 Vision](../01-canon/00-vision-producto.md) | [01 PRD](../01-canon/01-prd.md) | [02 UX/App Flow](../01-canon/02-ux-app-flow.md) | [03 TRD](../01-canon/03-trd.md) | [Backend Schema](../02-arquitectura/01-backend-schema.md) | [DB Schema](../02-arquitectura/02-database-schema.sql) | [Guia Sistemas Hijos](../02-arquitectura/03-guia-sistemas-hijos.md) | [Figma Guide](../02-arquitectura/04-design-system-figma-guide.md) | [Plan de implementacion (HU)](../03-plan-implementacion/README.md)
-> **Kit:** v3.1 (2026-07-12) — plantillas en `../05-referencia/figma/` (login.html · dashboard_interaccion.html · gestion_iam.html)
+> **Kit:** v3.1 (2026-07-12) — plantillas en `../05-referencia/figma/` (login.html · dashboard-interaccion.html · gestion-iam.html)
 
 Este documento sirve como guía para importar las plantillas interactivas de `../05-referencia/figma/` a Figma, y detalla la especificación técnica de arquitectura de información y UX.
 
@@ -8,8 +8,9 @@ Este documento sirve como guía para importar las plantillas interactivas de `..
 - **Breadcrumb SOLO en el header:** el header glass muestra `MIS | [🏠 / sección / vista]` con `p-breadcrumb` de PrimeNG. Las vistas de gestión **no** llevan títulos de página ni enlaces "Volver" propios.
 - **Gestión encapsulada en cards:** cada vista de gestión (listas, formularios, detalles) es una **card a ancho completo** con *header de card* (título + descripción + botón de acción a la derecha) y *body* (tablas, formularios, pestañas SelectButton).
 - **Mensajes:** toasts de PrimeNG (`p-toast`) en la esquina superior derecha, severidades success/info/warn/error. El aviso de "Acceso denegado" del roleGuard usa severidad warn.
-- **Rutas corregidas** en las URL-bars de las plantillas: `/admin/dashboard` (antes `mi-espacio`), `/admin/sistemas/...` (antes `accesos/sistemas/...`), `/admin/accesos/usuarios/:id` y `/admin/accesos/roles/:id` (antes con `/detalle/`), y `/login` para ambas pantallas de autenticación.
+- **Rutas corregidas** en las URL-bars de las plantillas: `/admin/dashboard` (antes `mi-espacio`), `/admin/sistemas/...` (antes `accesos/sistemas/...`), `/admin/usuarios/:id` y `/admin/roles/:id` (antes con `/detalle/`), y `/login` para ambas pantallas de autenticación.
 - **Sin catálogos:** el módulo Catálogos se retiró del alcance (PRD v1.1 / UI-UX v1.4); ninguna pantalla debe referenciarlo.
+- **Nota 2026-07-26:** `gestion_iam.html` documentaba un único módulo de "Accesos" (usuarios+roles). El frontend real dividió esa gestión en 2 submódulos independientes — `/admin/usuarios/*` y `/admin/roles/*`, sin landing combinada — ver [`03-trd.md` §5.1](../01-canon/03-trd.md) y [`04-bitacora/2026-07-26-submodulos-admin.md`](../04-bitacora/2026-07-26-submodulos-admin.md). El frame sigue siendo válido como referencia visual de cada pantalla individual.
 
 ### Cambios v3.0
 - **Sin emojis:** todos los íconos de navegación son SVG inline estilo Lucide (stroke, sin relleno, color via CSS)
@@ -26,15 +27,15 @@ Este documento sirve como guía para importar las plantillas interactivas de `..
 | Archivo | Frames | Ruta real |
 |---|---|---|
 | `login.html` | Login (credenciales) · Verificación MFA (OTP 6 dígitos, expira 03:00) | `/login` |
-| `dashboard_interaccion.html` | Mi espacio (KPIs + tabla de MFEs) · Remote cargando (skeleton) · Remote cargado · Remote en error | `/admin/dashboard`, `/admin/:remote` |
-| `gestion_iam.html` | Usuarios (lista) · Usuario editar (2 pestañas) · Roles (lista) · Rol detalle (3 pestañas) · Sistemas (lista) · Sistema detalle (2 frames) | `/admin/accesos/*`, `/admin/sistemas/*` |
+| `dashboard-interaccion.html` | Mi espacio (KPIs + tabla de MFEs) · Remote cargando (skeleton) · Remote cargado · Remote en error | `/admin/dashboard`, `/admin/:remote` |
+| `gestion-iam.html` | Usuarios (lista) · Usuario editar (2 pestañas) · Roles (lista) · Rol detalle (3 pestañas) · Sistemas (lista) · Sistema detalle (2 frames) | `/admin/usuarios/*`, `/admin/roles/*`, `/admin/sistemas/*` |
 
 ### ⏳ Diseños pendientes de crear
 
 | Frame | Ruta | Notas |
 |---|---|---|
-| Formulario **Nuevo Usuario** | `/admin/accesos/usuarios/nuevo` | Card con pestañas `Información General` / `Roles y Sistemas` (SelectButton) |
-| Formulario **Nuevo/Editar Rol** | `/admin/accesos/roles/nuevo` · `roles/:id/editar` | Card única: Detalles del Rol + Accesos Predeterminados |
+| Formulario **Nuevo Usuario** | `/admin/usuarios/nuevo` | Card con pestañas `Información General` / `Roles y Sistemas` (SelectButton) |
+| Formulario **Nuevo/Editar Rol** | `/admin/roles/nuevo` · `/admin/roles/:id/editar` | Card única: Detalles del Rol + Accesos Predeterminados |
 | Formulario **Registrar/Editar Sistema** | `/admin/sistemas/nuevo` · `:id/editar` | Card con pestañas `Identificación` / `Despliegue` |
 | Pestaña **Estructura** del sistema | `/admin/sistemas/:id` (tab 2) | Editor del árbol Secciones → Subsecciones → chips de Módulos |
 | **Acceso denegado** | vista compartida | Ícono escudo + mensaje + botón "Volver a Mi espacio" |
@@ -48,7 +49,7 @@ Este documento sirve como guía para importar las plantillas interactivas de `..
 Para convertir el archivo interactivo en capas editables y componentes nativos de Figma (incluyendo Auto Layout, colores y textos), siga estos pasos:
 
 1. **Abra el archivo en su navegador**:
-   - Localice las plantillas en `../05-referencia/figma/` (`login.html`, `dashboard_interaccion.html`, `gestion_iam.html`).
+   - Localice las plantillas en `../05-referencia/figma/` (`login.html`, `dashboard-interaccion.html`, `gestion-iam.html`).
    - Ábralas en Google Chrome o su navegador preferido.
 
 2. **Instale el plugin "html.to.design" en Figma**:

@@ -5,8 +5,9 @@ import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/li
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { lucideActivity, lucideGrid, lucideUsers, lucideServer } from '@ng-icons/lucide';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { SistemasService } from '../../../admin/services/sistemas.service';
-import { AccesosService } from '../../../admin/services/accesos.service';
+import { SistemasService } from '../../../admin/sistemas/services/sistemas.service';
+import { UsuariosService } from '../../../admin/usuarios/services/usuarios.service';
+import { RolesService } from '../../../admin/roles/services/roles.service';
 
 @Component({
   selector: 'app-inicio',
@@ -21,13 +22,14 @@ import { AccesosService } from '../../../admin/services/accesos.service';
 export class InicioComponent {
   protected readonly shell = inject(ShellStateService);
   protected readonly sistemasService = inject(SistemasService);
-  protected readonly accesosService = inject(AccesosService);
+  protected readonly usuariosService = inject(UsuariosService);
+  protected readonly rolesService = inject(RolesService);
 
   constructor() {
     this.sistemasService.cargarSistemas();
     if (this.shell.esAdminSistema()) {
-      this.accesosService.cargarUsuarios();
-      this.accesosService.cargarRoles();
+      this.usuariosService.cargarUsuarios();
+      this.rolesService.cargarRoles();
     }
   }
 

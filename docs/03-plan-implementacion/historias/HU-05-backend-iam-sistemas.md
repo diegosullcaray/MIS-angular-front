@@ -12,9 +12,15 @@ a un reinicio y varios administradores compartan el mismo estado.
 
 Segunda mitad de la antigua Fase 7. El contrato de endpoints ya está en
 [`01-backend-schema.md` §4](../../02-arquitectura/01-backend-schema.md) y los esquemas
-`iam`/`sistemas` en el DDL. El frontend (`accesos.service.ts`, `sistemas.service.ts`) ya
-consume exactamente esta forma de datos contra la Fake API — este backend solo tiene que
-cumplir el mismo contrato para que el Host no necesite cambios al conectarse (HU-06).
+`iam`/`sistemas` en el DDL. El frontend consume exactamente esta forma de datos contra la
+Fake API desde 3 servicios independientes (`admin/usuarios/services/usuarios.service.ts`,
+`admin/roles/services/roles.service.ts`, `admin/sistemas/services/sistemas.service.ts` —
+ver [`04-bitacora/2026-07-26-submodulos-admin.md`](../../04-bitacora/2026-07-26-submodulos-admin.md)
+para el porqué de la división) — este backend solo tiene que cumplir el mismo contrato
+`iam`/`sistemas` para que el Host no necesite cambios al conectarse (HU-06); la división
+en 3 servicios en el frontend es una decisión de organización de código, no cambia el
+contrato de API ni implica dividir el backend en más de los 2 bounded contexts ya
+definidos (`accesos`, `sistemas`).
 
 ## Alcance
 

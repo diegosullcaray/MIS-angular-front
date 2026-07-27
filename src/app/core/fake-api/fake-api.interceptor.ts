@@ -8,21 +8,19 @@ import {
 } from '@angular/common/http';
 import { Observable, delay, dematerialize, materialize, of, throwError } from 'rxjs';
 import { fakeDb, FAKE_CREDENCIALES } from './fake-db';
+import type { Rol, RolRequest, RolSlug } from '../../pages/modules/admin/roles/models/rol.model';
 import type {
   PageResponse,
-  Rol,
-  RolRequest,
-  RolSlug,
   Usuario,
   UsuarioRequest,
-} from '../../pages/modules/admin/models/acceso.model';
+} from '../../pages/modules/admin/usuarios/models/usuario.model';
 import type {
   PermisoRolSistema,
   Seccion,
   Sistema,
   SistemaRequest,
   SistemaResumen,
-} from '../../pages/modules/admin/models/sistema.model';
+} from '../../pages/modules/admin/sistemas/models/sistema.model';
 
 /**
  * Fake API — Interceptor HTTP que simula el backend REST del Host

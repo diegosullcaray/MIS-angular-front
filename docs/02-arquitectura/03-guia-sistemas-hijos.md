@@ -373,7 +373,7 @@ Reportes
 
 1. **Pestaña Permisos** del sistema: marcar los módulos permitidos por rol
    (p. ej. `supervisor-area` → solo Reportes Operativos/Diarios).
-2. **Rol** (`/admin/accesos/roles/:id/editar`): habilitar `subsistema-reportes` en
+2. **Rol** (`/admin/roles/:id/editar`): habilitar `subsistema-reportes` en
    "Sistemas Embebidos" → alimenta el claim `subsistemas` del JWT.
 3. **Usuario** (opcional): override individual en su formulario.
 

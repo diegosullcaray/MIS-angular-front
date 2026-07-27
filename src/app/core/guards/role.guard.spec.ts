@@ -5,7 +5,7 @@ import { roleGuard } from './role.guard';
 import { ShellStateService } from '../services/shell-state.service';
 import type { UsuarioActivo } from '../interfaces/shell-state.model';
 import { ToastService } from '../../shared/services/toast.service';
-import type { RolSlug } from '../../pages/modules/admin/models/acceso.model';
+import type { RolSlug } from '../../pages/modules/admin/roles/models/rol.model';
 
 function usuario(rol: RolSlug): UsuarioActivo {
   return {
