@@ -12,14 +12,14 @@ import { environment } from '../../../environments/environment';
  * - **Rutas del backend Ant** (`requestConfigRootURL`, ej: `/cores2/ant`):
  *   NO llevan `Authorization: Bearer` — el protocolo Winder maneja su propia
  *   autenticación cifrada internamente. Se aplica un timeout de 30 s.
- * - **Rutas de la Fake API / backend REST del Host** (`/api/v1/*`):
+ * - **Rutas del backend REST del Host** (`/api/v1/*`):
  *   Adjuntan el token Bearer y el rol del usuario activo.
  * - **Rutas de login** (`/auth/`): no llevan token.
  * - Ante un 401 del backend Host cierra la sesión y redirige al login.
  *
  * Registrado en app.config.ts:
  * ```typescript
- * provideHttpClient(withInterceptors([authInterceptor, fakeApiInterceptor]))
+ * provideHttpClient(withInterceptors([authInterceptor]))
  * ```
  */
 
@@ -49,7 +49,7 @@ export const authInterceptor: HttpInterceptorFn = (
     return next(req);
   }
 
-  // ── Rutas del Host/Fake API (/api/v1/*) ──────────────────────────────────
+  // ── Rutas del backend REST del Host (/api/v1/*) ──────────────────────────
   const token = auth.token();
   const usuario = shell.usuarioActivo();
 
