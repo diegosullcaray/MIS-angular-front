@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AntService } from '../ant-service.class';
 import { Strand } from '../strand.class';
-import { environment } from '../../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder.interface';
 
 /**

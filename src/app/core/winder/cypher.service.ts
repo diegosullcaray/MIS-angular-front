@@ -268,16 +268,16 @@ export class CypherService {
     const keyHex = secretHex ?? this.secret;
     const key = this.hexToBytes(keyHex);
     const w = this.keyExpansion(key);
-    const iv = new Uint8Array(16) as Uint8Array<ArrayBuffer>; // todo ceros
+    const iv = new Uint8Array(16); // todo ceros
 
     const data = new TextEncoder().encode(plainText);
     const padded = this.pkcs7Pad(data);
     const cipher = new Uint8Array(padded.length);
 
-    let prev: Uint8Array<ArrayBuffer> = iv;
+    let prev: Uint8Array = iv;
     for (let i = 0; i < padded.length; i += 16) {
       // XOR con el bloque anterior (CBC)
-      const xored = new Uint8Array(16) as Uint8Array<ArrayBuffer>;
+      const xored = new Uint8Array(16);
       for (let j = 0; j < 16; j++) xored[j] = (padded[i + j] ?? 0) ^ prev[j];
       const enc = this.aesEncryptBlock(xored, w);
       cipher.set(enc, i);
@@ -293,14 +293,14 @@ export class CypherService {
     const keyHex = secretHex ?? this.secret;
     const key = this.hexToBytes(keyHex);
     const w = this.keyExpansion(key);
-    const iv = new Uint8Array(16) as Uint8Array<ArrayBuffer>;
+    const iv = new Uint8Array(16);
 
     const cipher = this.base64ToBytes(cipherText);
     const plain = new Uint8Array(cipher.length);
 
-    let prev: Uint8Array<ArrayBuffer> = iv;
+    let prev: Uint8Array = iv;
     for (let i = 0; i < cipher.length; i += 16) {
-      const block = new Uint8Array(16) as Uint8Array<ArrayBuffer>;
+      const block = new Uint8Array(16);
       for (let j = 0; j < 16; j++) block[j] = cipher[i + j] ?? 0;
       const dec = this.aesDecryptBlock(block, w);
       const xored = new Uint8Array(16);

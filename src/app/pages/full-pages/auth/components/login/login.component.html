@@ -58,27 +58,7 @@
             }
           </div>
 
-          <div class="flex flex-col gap-1">
-            <label for="password" class="text-sm font-semibold text-[var(--mis-text-primary)]"
-              >Contraseña</label
-            >
-            <p-password
-              id="password"
-              autocomplete="current-password"
-              [formField]="$any(loginForm.password)"
-              [toggleMask]="true"
-              [feedback]="false"
-              placeholder="••••••••"
-              fluid
-              styleClass="w-full"
-              inputStyleClass="w-full login-light-input"
-            />
-            @if (loginForm.password().touched() && loginForm.password().invalid()) {
-              @for (error of loginForm.password().errors(); track error) {
-                <small class="text-xs text-[var(--mis-danger)] block">{{ error.message }}</small>
-              }
-            }
-          </div>
+
 
           <p-button
             label="Acceder"

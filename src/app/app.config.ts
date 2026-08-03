@@ -13,7 +13,6 @@ import { MessageService } from 'primeng/api';
 import { APP_ROUTES } from './app.routes';
 import { MisTheme } from './core/design-system/mis-theme';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { fakeApiInterceptor } from './core/fake-api/fake-api.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
 
 export const appConfig: ApplicationConfig = {
@@ -25,9 +24,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(APP_ROUTES, withComponentInputBinding()),
 
     // HttpClient con interceptores y Fetch API nativa (compatible con Zoneless)
-    // ⚠️ fakeApiInterceptor simula el backend REST (/api/v1/*) en memoria.
-    //    Quitarlo de esta lista cuando el backend real esté disponible.
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, fakeApiInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
 
     // Restaura la sesión persistida (sessionStorage) antes de renderizar,
     // para que authGuard no expulse al usuario al refrescar la página.

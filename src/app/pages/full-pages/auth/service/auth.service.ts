@@ -1,111 +1,73 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
+import { ModSysLoginService } from '../../../../core/winder/instances/mod-sys-login.service';
 import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
-import type { Usuario } from '../../../modules/admin/usuarios/models/usuario.model';
-
-// ─── Contratos del endpoint de autenticación ──────────────────────────────────
+import type { IWinderResponse } from '../../../../core/winder/winder.interface';
 
 export interface LoginRequest {
   email: string;
-  password: string;
-}
-
-/** Respuesta del primer paso: credenciales válidas → desafío MFA (CA-07). */
-export interface MfaChallengeResponse {
-  mfaRequerido: boolean;
-  mfaToken: string;
-  email: string;
-}
-
-/** Respuesta del segundo paso: OTP válido → sesión emitida. */
-export interface LoginResponse {
-  token: string;
-  usuario: Usuario;
 }
 
 const SESSION_KEY = 'mis.sesion';
 
 interface SesionPersistida {
-  token: string;
+  token: string; // The session_id or token from Winder
   usuario: UsuarioActivo;
 }
 
 /**
- * Servicio de autenticación del Host — flujo MFA en dos pasos (CA-07).
+ * Servicio de autenticación del Host — Integrado con Winder.
  *
- * 1. `login()` → `POST /api/v1/auth/login`: valida credenciales y devuelve
- *    un desafío MFA (`mfaToken`). Todavía NO hay sesión.
- * 2. `verificarOtp()` → `POST /api/v1/auth/verificar-otp`: valida el código
- *    de 6 dígitos, emite el token de sesión y publica el usuario en el
- *    ShellStateService.
+ * 1. `login()` → Utiliza ModSysLoginService para validar el correo y
+ *    obtener la sesión desde el backend Ant (STG).
  *
  * - La sesión se persiste en `sessionStorage` para sobrevivir al refresh (F5).
- * - `restaurarSesion()` se ejecuta al arrancar la app (ver app.config.ts).
+ * - `restaurarSesion()` se ejecuta al arrancar la app.
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly http = inject(HttpClient);
   private readonly shell = inject(ShellStateService);
   private readonly router = inject(Router);
-
-  private readonly baseUrl = '/api/v1/auth';
+  private readonly modSysLoginService = inject(ModSysLoginService);
 
   private readonly _token = signal<string | null>(null);
-  private mfaToken: string | null = null;
 
-  /** Token de sesión actual (lo consume el authInterceptor). */
+  /** Token de sesión actual */
   readonly token = this._token.asReadonly();
 
   // ─── Ciclo de vida de la sesión ──────────────────────────────────────────
 
-  /** Paso 1: valida credenciales y devuelve el desafío MFA (sin sesión aún). */
-  async login(credenciales: LoginRequest): Promise<MfaChallengeResponse> {
-    try {
-      const desafio = await firstValueFrom(
-        this.http.post<MfaChallengeResponse>(`${this.baseUrl}/login`, credenciales)
-      );
-      this.mfaToken = desafio.mfaToken;
-      return desafio;
-    } catch (err) {
-      throw new Error(this.mensajeDeError(err));
-    }
-  }
-
-  /** Paso 2: verifica el código OTP de 6 dígitos y establece la sesión. */
-  async verificarOtp(otp: string): Promise<UsuarioActivo> {
+  /** Valida credenciales contra backend Ant y establece sesión. */
+  async login(credenciales: LoginRequest): Promise<UsuarioActivo> {
     try {
       const respuesta = await firstValueFrom(
-        this.http.post<LoginResponse>(`${this.baseUrl}/verificar-otp`, {
-          mfaToken: this.mfaToken,
-          otp,
-        })
+        this.modSysLoginService.login(credenciales.email)
       );
-
+      
+      // Mapear respuesta de Winder (STG pattern) a UsuarioActivo
+      // Ajusta las propiedades de "body" de acuerdo a lo que devuelve el backend real
+      const body = respuesta.body as any;
+      
       const usuarioActivo: UsuarioActivo = {
-        id: respuesta.usuario.id,
-        nombre: respuesta.usuario.nombre,
-        email: respuesta.usuario.email,
-        rol: respuesta.usuario.rol,
-        subsistemas: respuesta.usuario.subsistemas,
+        id: body.id || credenciales.email,
+        nombre: body.name || body.nombre || credenciales.email.split('@')[0],
+        email: credenciales.email,
+        rol: body.role || 'admin-sistema', // Default role if not provided
+        subsistemas: body.systems || [],
       };
 
-      this.mfaToken = null;
-      this._token.set(respuesta.token);
+      const sessionToken = body.session_id || 'winder-session-token';
+
+      this._token.set(sessionToken);
       this.shell.setUsuarioActivo(usuarioActivo);
-      this.persistir({ token: respuesta.token, usuario: usuarioActivo });
+      this.persistir({ token: sessionToken, usuario: usuarioActivo });
 
       return usuarioActivo;
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(this.mensajeDeError(err));
     }
-  }
-
-  /** Cancela un desafío MFA en curso (volver al paso de credenciales). */
-  cancelarMfa(): void {
-    this.mfaToken = null;
   }
 
   /** Restaura la sesión persistida al recargar la página. */
@@ -139,13 +101,11 @@ export class AuthService {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(sesion));
   }
 
-  private mensajeDeError(err: unknown): string {
-    if (err instanceof HttpErrorResponse) {
-      if (err.status === 0) {
-        return 'No se pudo conectar con el servidor. Inténtalo de nuevo.';
-      }
-      return (err.error?.message as string) ?? 'Error de autenticación.';
+  private mensajeDeError(err: any): string {
+    if (err?.message) {
+      return err.message;
     }
     return 'Ocurrió un error inesperado al iniciar sesión.';
   }
 }
+
