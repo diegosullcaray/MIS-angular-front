@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AntService } from '../ant-service.class';
-import { Strand } from '../strand.class';
+import { AntService } from '../ant/ant-service.class';
+import { Strand } from '../winder/strand.class';
 import { environment } from '../../../../environments/environment';
-import type { IWinderResponse } from '../winder.interface';
+import type { IWinderResponse } from '../winder/winder.interface';
 
 /**
  * ModSysLoginService — Módulo de Sesión/Login del backend Ant.

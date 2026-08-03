@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Strand } from './strand.class';
-import { CypherService } from './cypher.service';
-import { RESTService } from './rest.service';
-import { RESTPacket } from './rest-packet.class';
+import { CypherService } from '../../services/cypher.service';
+import { RESTService } from '../rest/rest.service';
+import { RESTPacket } from '../rest/rest-packet.class';
 import type { IWinderConnectionConf, IWinderRequestConfig, IWinderResponse } from './winder.interface';
 
 /**

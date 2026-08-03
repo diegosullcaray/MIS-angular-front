@@ -42,6 +42,13 @@ export const authInterceptor: HttpInterceptorFn = (
     return next(req).pipe(timeout(ANT_TIMEOUT_MS));
   }
 
+  // ── ¿Es una petición del cliente OAuth (Google)? ─────────────────────────
+  // angular-oauth2-oidc también usa HttpClient (discovery document, etc.):
+  // no debe llevar nuestro Bearer del Host ni disparar cerrarSesion() en un 401.
+  if (req.url.startsWith('https://accounts.google.com')) {
+    return next(req);
+  }
+
   // ── Rutas del Host/Fake API (/api/v1/*) ──────────────────────────────────
   const token = auth.token();
   const usuario = shell.usuarioActivo();

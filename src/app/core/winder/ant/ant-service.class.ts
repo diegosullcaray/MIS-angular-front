@@ -1,9 +1,9 @@
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { Strand } from './strand.class';
-import { WinderService } from './winder.service';
-import type { IWinderConnectionConf, IWinderRequestConfig, IWinderResponse } from './winder.interface';
+import { Strand } from '../winder/strand.class';
+import { WinderService } from '../winder/winder.service';
+import type { IWinderConnectionConf, IWinderRequestConfig, IWinderResponse } from '../winder/winder.interface';
 
 /**
  * AntService — Clase base para los módulos de negocio del backend Ant.

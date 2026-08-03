@@ -1,61 +1,104 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { OAuthService } from 'angular-oauth2-oidc';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { ModSysLoginService } from '../../../../core/winder/instances/mod-sys-login.service';
 import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
-import type { IWinderResponse } from '../../../../core/winder/winder.interface';
-
-export interface LoginRequest {
-  email: string;
-}
+import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
+import { environment } from '../../../../../environments/environment';
+import { googleAuthConfig } from './google-auth.config';
 
 const SESSION_KEY = 'mis.sesion';
 
 interface SesionPersistida {
-  token: string; // The session_id or token from Winder
+  token: string; // El session_id o token devuelto por Winder
   usuario: UsuarioActivo;
 }
 
+interface ClaimsGoogle {
+  email: string;
+  name?: string;
+  picture?: string;
+}
+
 /**
- * Servicio de autenticación del Host — Integrado con Winder.
+ * Servicio de autenticación del Host — Google Sign-In + Winder (STG).
  *
- * 1. `login()` → Utiliza ModSysLoginService para validar el correo y
- *    obtener la sesión desde el backend Ant (STG).
+ * 1. `iniciarLoginGoogle()` redirige a Google (Implicit Flow, igual que STG).
+ * 2. `completarLoginGoogle()` corre al volver del redirect: valida el
+ *    `id_token` recibido y autentica el email contra el backend Ant.
+ * 3. Fuera de producción, el email autenticado se reemplaza por
+ *    `environment.devUser` — el mismo mecanismo que `UserService` aplica en
+ *    STG para que el equipo de desarrollo no dependa de una cuenta Google
+ *    real ni de tipear nada a mano.
  *
- * - La sesión se persiste en `sessionStorage` para sobrevivir al refresh (F5).
- * - `restaurarSesion()` se ejecuta al arrancar la app.
+ * La sesión resultante se persiste en `sessionStorage` para sobrevivir al
+ * refresh (F5).
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly shell = inject(ShellStateService);
   private readonly router = inject(Router);
   private readonly modSysLoginService = inject(ModSysLoginService);
+  private readonly oauthService = inject(OAuthService);
 
   private readonly _token = signal<string | null>(null);
 
   /** Token de sesión actual */
   readonly token = this._token.asReadonly();
 
+  constructor() {
+    this.oauthService.configure(googleAuthConfig);
+  }
+
+  // ─── Google Sign-In ──────────────────────────────────────────────────────
+
+  /** Redirige al usuario a Google para iniciar el flujo de autenticación. */
+  iniciarLoginGoogle(): void {
+    this.oauthService.initImplicitFlow();
+  }
+
+  /**
+   * Completa el flujo de Google tras el redirect: carga el discovery
+   * document, procesa el hash de la URL y, si hay un `id_token` válido,
+   * autentica contra el backend Ant.
+   *
+   * Devuelve `null` cuando todavía no hay sesión de Google (primera visita
+   * a `/login`, antes de que el usuario elija iniciar sesión).
+   */
+  async completarLoginGoogle(): Promise<UsuarioActivo | null> {
+    await this.oauthService.loadDiscoveryDocument();
+    await this.oauthService.tryLogin();
+
+    if (!this.oauthService.hasValidIdToken()) {
+      return null;
+    }
+
+    const claims = this.oauthService.getIdentityClaims() as ClaimsGoogle;
+    const email = !environment.production && environment.devUser ? environment.devUser : claims.email;
+
+    return this.autenticar({ email, nombre: claims.name, avatarUrl: claims.picture });
+  }
+
   // ─── Ciclo de vida de la sesión ──────────────────────────────────────────
 
-  /** Valida credenciales contra backend Ant y establece sesión. */
-  async login(credenciales: LoginRequest): Promise<UsuarioActivo> {
+  /** Valida el email contra el backend Ant y establece la sesión. */
+  private async autenticar(datos: { email: string; nombre?: string; avatarUrl?: string }): Promise<UsuarioActivo> {
     try {
-      const respuesta = await firstValueFrom(
-        this.modSysLoginService.login(credenciales.email)
-      );
-      
+      const respuesta = await firstValueFrom<IWinderResponse>(this.modSysLoginService.login(datos.email));
+
       // Mapear respuesta de Winder (STG pattern) a UsuarioActivo
       // Ajusta las propiedades de "body" de acuerdo a lo que devuelve el backend real
       const body = respuesta.body as any;
-      
+
       const usuarioActivo: UsuarioActivo = {
-        id: body.id || credenciales.email,
-        nombre: body.name || body.nombre || credenciales.email.split('@')[0],
-        email: credenciales.email,
+        id: body.id || datos.email,
+        nombre: body.name || body.nombre || datos.nombre || datos.email.split('@')[0],
+        email: datos.email,
         rol: body.role || 'admin-sistema', // Default role if not provided
         subsistemas: body.systems || [],
+        avatarUrl: datos.avatarUrl,
       };
 
       const sessionToken = body.session_id || 'winder-session-token';
@@ -87,6 +130,7 @@ export class AuthService {
   }
 
   cerrarSesion(redirigir = true): void {
+    this.oauthService.logOut();
     this._token.set(null);
     this.shell.cerrarSesion();
     sessionStorage.removeItem(SESSION_KEY);
@@ -108,4 +152,3 @@ export class AuthService {
     return 'Ocurrió un error inesperado al iniciar sesión.';
   }
 }
-

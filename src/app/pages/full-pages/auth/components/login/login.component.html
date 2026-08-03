@@ -1,85 +1,61 @@
-@if (paso() === 'cargando') {
-  <app-load-spinner />
-} @else {
-  <div class="login-wrapper min-h-screen w-full grid grid-cols-1 md:grid-cols-2 overflow-hidden">
-    <!-- Left Column: Banner Image -->
-    <div class="relative hidden md:flex md:flex-col overflow-hidden">
-      <img
-        src="assets/images/fc/fondos/images.jpg"
-        alt="Atención en oficina Financiera Confianza"
-        class="absolute inset-0 w-full h-full object-cover block"
-      />
-      <div
-        class="absolute inset-0 bg-gradient-to-t from-[rgba(5,11,24,0.9)] via-[rgba(5,11,24,0.15)] to-transparent"
-      ></div>
-      <div class="relative mt-auto p-8 md:p-12 flex flex-col items-center gap-2">
+@switch (paso()) {
+  @case ('cargando') {
+    <app-load-spinner />
+  }
+  @case ('verificando') {
+    <app-load-spinner mensaje="Verificando tu sesión…" />
+  }
+  @default {
+    <div class="login-wrapper min-h-screen w-full grid grid-cols-1 md:grid-cols-2 overflow-hidden">
+      <!-- Left Column: Banner Image -->
+      <div class="relative hidden md:flex md:flex-col overflow-hidden">
         <img
-          src="assets/images/fc/logos/fc_blank.png"
-          alt="MIS — Sistema de Información"
-          class="h-12 w-auto"
+          src="assets/images/fc/fondos/images.jpg"
+          alt="Atención en oficina Financiera Confianza"
+          class="absolute inset-0 w-full h-full object-cover block"
         />
+        <div
+          class="absolute inset-0 bg-gradient-to-t from-[rgba(5,11,24,0.9)] via-[rgba(5,11,24,0.15)] to-transparent"
+        ></div>
+        <div class="relative mt-auto p-8 md:p-12 flex flex-col items-center gap-2">
+          <img
+            src="assets/images/fc/logos/fc_blank.png"
+            alt="MIS — Sistema de Información"
+            class="h-12 w-auto"
+          />
+        </div>
       </div>
-    </div>
 
-    <!-- Right Column: Login Form / MFA -->
-    <div
-      class="relative flex flex-col justify-center items-center bg-[var(--mis-surface)] p-6 md:p-16"
-    >
-      <!-- Marca MIS, esquina superior izquierda del panel -->
-      <div class="absolute top-6 left-6 flex items-center gap-2">
-        <img src="assets/images/fc/logos/mis.png" alt="MIS" class="h-9 w-auto" />
-        <span class="text-lg font-bold text-[var(--mis-primary)]">Sistema de Información</span>
-      </div>
-
-      <div class="w-full max-w-[380px] flex flex-col gap-4">
-        <div class="flex flex-col items-center gap-1 mb-2">
-          <h1 class="text-xl font-bold text-[var(--mis-primary)] m-0">Inicio de sesión</h1>
+      <!-- Right Column: Google Sign-In -->
+      <div
+        class="relative flex flex-col justify-center items-center bg-[var(--mis-surface)] p-6 md:p-16"
+      >
+        <!-- Marca MIS, esquina superior izquierda del panel -->
+        <div class="absolute top-6 left-6 flex items-center gap-2">
+          <img src="assets/images/fc/logos/mis.png" alt="MIS" class="h-9 w-auto" />
+          <span class="text-lg font-bold text-[var(--mis-primary)]">Sistema de Información</span>
         </div>
 
-        <!-- Credenciales (MFA temporalmente deshabilitado, ver login.component.ts) -->
-        <form (submit)="onSubmit($event)" class="flex flex-col gap-4" novalidate>
-          <div class="flex flex-col gap-1">
-            <label for="email" class="text-sm font-semibold text-[var(--mis-text-primary)]"
-              >Correo electrónico</label
-            >
-            <input
-              id="email"
-              type="email"
-              autocomplete="username"
-              pInputText
-              [formField]="loginForm.email"
-              placeholder="nombre&#64;confianza.pe"
-              class="w-full login-light-input"
-            />
-            @if (loginForm.email().touched() && loginForm.email().invalid()) {
-              @for (error of loginForm.email().errors(); track error) {
-                <small class="text-xs text-[var(--mis-danger)] block">{{ error.message }}</small>
-              }
-            }
+        <div class="w-full max-w-[380px] flex flex-col gap-4">
+          <div class="flex flex-col items-center gap-1 mb-2">
+            <h1 class="text-xl font-bold text-[var(--mis-primary)] m-0">Inicio de sesión</h1>
+            <p class="text-sm text-[var(--mis-text-secondary)] text-center m-0">
+              Ingresa con tu cuenta corporativa de Google.
+            </p>
           </div>
-
-
 
           <p-button
-            label="Acceder"
-            type="submit"
-            [disabled]="loginForm().invalid() || cargando()"
+            label="Continuar con Google"
+            icon="pi pi-google"
+            (onClick)="onGoogleLogin()"
             styleClass="w-full login-btn-dark mt-1"
           />
-
-          <div class="flex justify-end">
-            <a
-              href="#"
-              class="text-xs text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] hover:underline"
-              >¿Olvidaste tu contraseña?</a
-            >
-          </div>
 
           <span class="text-xs text-[var(--mis-text-tertiary)] text-center">{{
             appVersion
           }}</span>
-        </form>
+        </div>
       </div>
     </div>
-  </div>
+  }
 }

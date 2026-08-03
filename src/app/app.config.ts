@@ -9,6 +9,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
+import { provideOAuthClient } from 'angular-oauth2-oidc';
 
 import { APP_ROUTES } from './app.routes';
 import { MisTheme } from './core/design-system/mis-theme';
@@ -25,6 +26,9 @@ export const appConfig: ApplicationConfig = {
 
     // HttpClient con interceptores y Fetch API nativa (compatible con Zoneless)
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+
+    // Cliente OAuth (Google Sign-In) usado por AuthService
+    provideOAuthClient(),
 
     // Restaura la sesión persistida (sessionStorage) antes de renderizar,
     // para que authGuard no expulse al usuario al refrescar la página.

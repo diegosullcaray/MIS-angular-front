@@ -1,98 +1,130 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { AuthService, LoginResponse, MfaChallengeResponse } from './auth.service';
+import { of, throwError } from 'rxjs';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { AuthService } from './auth.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type { Usuario } from '../../../modules/admin/usuarios/models/usuario.model';
+import { ModSysLoginService } from '../../../../core/winder/instances/mod-sys-login.service';
+import { environment } from '../../../../../environments/environment';
+import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
 
-const USUARIO: Usuario = {
-  id: 'u-1',
-  nombre: 'Ana Torres',
-  email: 'ana.torres@confianza.pe',
-  rol: 'admin-sistema',
-  subsistemas: ['subsistema-reportes'],
-  activo: true,
-  creadoEn: '2026-01-01T00:00:00Z',
+const RESPUESTA_LOGIN: IWinderResponse = {
+  code: '0',
+  headers: {},
+  body: {
+    id: 'u-1',
+    name: 'Ana Torres',
+    role: 'admin-sistema',
+    systems: ['subsistema-reportes'],
+    session_id: 'winder-sid-1',
+  },
 };
+
+function crearOAuthServiceFalso(overrides: Partial<Record<keyof OAuthService, unknown>> = {}) {
+  return {
+    configure: vi.fn(),
+    initImplicitFlow: vi.fn(),
+    loadDiscoveryDocument: vi.fn().mockResolvedValue(undefined),
+    tryLogin: vi.fn().mockResolvedValue(true),
+    hasValidIdToken: vi.fn().mockReturnValue(false),
+    getIdentityClaims: vi.fn().mockReturnValue({}),
+    logOut: vi.fn(),
+    ...overrides,
+  } as unknown as OAuthService;
+}
 
 describe('AuthService', () => {
   let service: AuthService;
   let shell: ShellStateService;
-  let httpMock: HttpTestingController;
+  let modSysLoginService: { login: ReturnType<typeof vi.fn> };
+  let oauthServiceFalso: ReturnType<typeof crearOAuthServiceFalso>;
 
-  beforeEach(() => {
-    sessionStorage.clear();
+  function configurar(oauthOverrides: Partial<Record<keyof OAuthService, unknown>> = {}) {
+    modSysLoginService = { login: vi.fn().mockReturnValue(of(RESPUESTA_LOGIN)) };
+    oauthServiceFalso = crearOAuthServiceFalso(oauthOverrides);
+
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: ModSysLoginService, useValue: modSysLoginService },
+        { provide: OAuthService, useValue: oauthServiceFalso },
+      ],
     });
     service = TestBed.inject(AuthService);
     shell = TestBed.inject(ShellStateService);
-    httpMock = TestBed.inject(HttpTestingController);
+  }
+
+  beforeEach(() => {
+    sessionStorage.clear();
   });
 
-  afterEach(() => {
-    httpMock.verify();
-  });
+  it('completarLoginGoogle() devuelve null si todavía no hay un id_token válido de Google', async () => {
+    configurar({ hasValidIdToken: vi.fn().mockReturnValue(false) });
 
-  it('login() envía credenciales y devuelve el desafío MFA sin abrir sesión', async () => {
-    const desafio: MfaChallengeResponse = { mfaRequerido: true, mfaToken: 'mfa-123', email: USUARIO.email };
+    const resultado = await service.completarLoginGoogle();
 
-    const promesa = service.login({ email: USUARIO.email, password: 'secreta' });
-    const req = httpMock.expectOne('/api/v1/auth/login');
-    expect(req.request.method).toBe('POST');
-    req.flush(desafio);
-
-    const resultado = await promesa;
-
-    expect(resultado).toEqual(desafio);
+    expect(resultado).toBeNull();
+    expect(modSysLoginService.login).not.toHaveBeenCalled();
     expect(shell.usuarioActivo()).toBeNull();
   });
 
-  it('login() traduce un error HTTP en un mensaje legible', async () => {
-    const promesa = service.login({ email: USUARIO.email, password: 'mala' });
-    const req = httpMock.expectOne('/api/v1/auth/login');
-    req.flush({ message: 'Credenciales inválidas' }, { status: 401, statusText: 'Unauthorized' });
+  it('completarLoginGoogle() autentica contra Winder y publica el usuario en ShellStateService', async () => {
+    configurar({
+      hasValidIdToken: vi.fn().mockReturnValue(true),
+      getIdentityClaims: vi.fn().mockReturnValue({ email: 'ana.torres@confianza.pe', name: 'Ana Torres' }),
+    });
 
-    await expect(promesa).rejects.toThrow('Credenciales inválidas');
+    const usuario = await service.completarLoginGoogle();
+
+    // Fuera de producción, environment.devUser reemplaza al email real de
+    // Google — el mismo mecanismo "login hardcodeado para desarrollo" que
+    // usa UserService en STG, para no depender de una cuenta Google real.
+    expect(environment.production).toBe(false);
+    expect(environment.devUser).toBeTruthy();
+    expect(modSysLoginService.login).toHaveBeenCalledWith(environment.devUser);
+
+    expect(usuario?.id).toBe('u-1');
+    expect(usuario?.email).toBe(environment.devUser);
+    expect(shell.usuarioActivo()?.id).toBe('u-1');
+    expect(service.token()).toBe('winder-sid-1');
+    expect(sessionStorage.getItem('mis.sesion')).toContain('winder-sid-1');
   });
 
-  it('verificarOtp() válido publica el usuario en ShellStateService y persiste la sesión', async () => {
-    const loginPromesa = service.login({ email: USUARIO.email, password: 'secreta' });
-    httpMock.expectOne('/api/v1/auth/login').flush({
-      mfaRequerido: true, mfaToken: 'mfa-123', email: USUARIO.email,
-    } as MfaChallengeResponse);
-    await loginPromesa;
+  it('completarLoginGoogle() traduce un error del backend Ant en un mensaje legible', async () => {
+    configurar({
+      hasValidIdToken: vi.fn().mockReturnValue(true),
+      getIdentityClaims: vi.fn().mockReturnValue({ email: 'ana.torres@confianza.pe' }),
+    });
+    modSysLoginService.login.mockReturnValue(throwError(() => new Error('Backend no disponible')));
 
-    const otpPromesa = service.verificarOtp('123456');
-    const req = httpMock.expectOne('/api/v1/auth/verificar-otp');
-    expect(req.request.body).toEqual({ mfaToken: 'mfa-123', otp: '123456' });
-    req.flush({ token: 'jwt-abc', usuario: USUARIO } as LoginResponse);
-
-    const usuarioActivo = await otpPromesa;
-
-    expect(usuarioActivo.id).toBe(USUARIO.id);
-    expect(shell.usuarioActivo()?.id).toBe(USUARIO.id);
-    expect(service.token()).toBe('jwt-abc');
-    expect(sessionStorage.getItem('mis.sesion')).toContain('jwt-abc');
+    await expect(service.completarLoginGoogle()).rejects.toThrow('Backend no disponible');
+    expect(shell.usuarioActivo()).toBeNull();
   });
 
   it('restaurarSesion() recupera la sesión persistida en sessionStorage', () => {
-    sessionStorage.setItem('mis.sesion', JSON.stringify({
-      token: 'jwt-persistido',
-      usuario: {
-        id: USUARIO.id, nombre: USUARIO.nombre, email: USUARIO.email,
-        rol: USUARIO.rol, subsistemas: USUARIO.subsistemas,
-      },
-    }));
+    configurar();
+    sessionStorage.setItem(
+      'mis.sesion',
+      JSON.stringify({
+        token: 'jwt-persistido',
+        usuario: {
+          id: 'u-1',
+          nombre: 'Ana Torres',
+          email: 'ana.torres@confianza.pe',
+          rol: 'admin-sistema',
+          subsistemas: ['subsistema-reportes'],
+        },
+      })
+    );
 
     service.restaurarSesion();
 
     expect(service.token()).toBe('jwt-persistido');
-    expect(shell.usuarioActivo()?.id).toBe(USUARIO.id);
+    expect(shell.usuarioActivo()?.id).toBe('u-1');
   });
 
   it('restaurarSesion() ignora datos corruptos sin lanzar error', () => {
+    configurar();
     sessionStorage.setItem('mis.sesion', '{ esto no es json');
 
     expect(() => service.restaurarSesion()).not.toThrow();
@@ -100,13 +132,16 @@ describe('AuthService', () => {
     expect(sessionStorage.getItem('mis.sesion')).toBeNull();
   });
 
-  it('cerrarSesion() limpia token, estado y sessionStorage', async () => {
-    const otpPromesa = service.verificarOtp('123456');
-    httpMock.expectOne('/api/v1/auth/verificar-otp').flush({ token: 'jwt-abc', usuario: USUARIO } as LoginResponse);
-    await otpPromesa;
+  it('cerrarSesion() cierra la sesión de Google, limpia el token, el estado y sessionStorage', async () => {
+    configurar({
+      hasValidIdToken: vi.fn().mockReturnValue(true),
+      getIdentityClaims: vi.fn().mockReturnValue({ email: 'ana.torres@confianza.pe' }),
+    });
+    await service.completarLoginGoogle();
 
     service.cerrarSesion(false);
 
+    expect(oauthServiceFalso.logOut).toHaveBeenCalled();
     expect(service.token()).toBeNull();
     expect(shell.usuarioActivo()).toBeNull();
     expect(sessionStorage.getItem('mis.sesion')).toBeNull();
