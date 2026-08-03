@@ -51,8 +51,6 @@ export const appConfig: ApplicationConfig = {
       },
       ripple: false, // Sin ripple — estilo macOS
     }),
-
-    // Toasts globales de PrimeNG (consumido vía ToastService + <p-toast> en el root)
     MessageService,
   ],
 };

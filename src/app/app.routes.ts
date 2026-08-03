@@ -66,10 +66,6 @@ export const APP_ROUTES: Routes = [
           )
       },
       {
-        // Ruta componentless + comodín: soporta URLs profundas del remote
-        // (/admin/:remoteName/lo-que-sea). Al no tener component, el hijo '**'
-        // hereda el parámetro :remoteName (paramsInheritanceStrategy 'emptyOnly').
-        // Debe ir al final: es la única ruta que hace match de cualquier segmento.
         path: ':remoteName',
         children: [
           {

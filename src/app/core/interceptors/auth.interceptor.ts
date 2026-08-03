@@ -1,20 +1,31 @@
 import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError, Observable } from 'rxjs';
+import { catchError, throwError, Observable, timeout } from 'rxjs';
 import { ShellStateService } from '../services/shell-state.service';
 import { AuthService } from '../../pages/full-pages/auth/service/auth.service';
+import { environment } from '../../../environments/environment';
 
 /**
  * Interceptor funcional de Autenticación.
  *
- * - Adjunta el token Bearer y el rol del usuario activo a cada petición.
- * - Ante un 401 del backend cierra la sesión y redirige al login.
+ * ## Reglas
+ * - **Rutas del backend Ant** (`requestConfigRootURL`, ej: `/cores2/ant`):
+ *   NO llevan `Authorization: Bearer` — el protocolo Winder maneja su propia
+ *   autenticación cifrada internamente. Se aplica un timeout de 30 s.
+ * - **Rutas de la Fake API / backend REST del Host** (`/api/v1/*`):
+ *   Adjuntan el token Bearer y el rol del usuario activo.
+ * - **Rutas de login** (`/auth/`): no llevan token.
+ * - Ante un 401 del backend Host cierra la sesión y redirige al login.
  *
  * Registrado en app.config.ts:
  * ```typescript
  * provideHttpClient(withInterceptors([authInterceptor, fakeApiInterceptor]))
  * ```
  */
+
+/** Timeout en ms para requests al backend Ant (igual que el STG). */
+const ANT_TIMEOUT_MS = 30_000;
+
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
@@ -22,13 +33,23 @@ export const authInterceptor: HttpInterceptorFn = (
   const auth = inject(AuthService);
   const shell = inject(ShellStateService);
 
+  // ── ¿Es una petición al backend Ant? ─────────────────────────────────────
+  const esRutaAnt = req.url.startsWith(environment.requestConfigRootURL);
+  if (esRutaAnt) {
+    // El protocolo Winder maneja su propia autenticación cifrada.
+    // Solo aplicamos el timeout para evitar que un backend colgado
+    // deje la UI esperando indefinidamente (igual que el STG).
+    return next(req).pipe(timeout(ANT_TIMEOUT_MS));
+  }
+
+  // ── Rutas del Host/Fake API (/api/v1/*) ──────────────────────────────────
   const token = auth.token();
   const usuario = shell.usuarioActivo();
-  let authReq = req;
 
   // Los endpoints de login no llevan token
   const esLogin = req.url.includes('/auth/');
 
+  let authReq = req;
   if (token && usuario && !esLogin) {
     authReq = req.clone({
       setHeaders: {
