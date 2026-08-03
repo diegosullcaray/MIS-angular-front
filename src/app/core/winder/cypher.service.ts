@@ -206,11 +206,11 @@ export class CypherService {
 
   /** Cifra un bloque de 16 bytes con AES-128 (ECB). */
   private aesEncryptBlock(block: Uint8Array, w: Uint32Array): Uint8Array {
-    // Convertir de row-major a column-major
+    // El layout column-major del state (state[col*4+row]) coincide con el
+    // orden natural de bytes de entrada (in[r+4c] === in[c*4+r]), por lo
+    // que no se requiere ninguna transposición al copiar el bloque.
     const state = new Uint8Array(16);
-    for (let r = 0; r < 4; r++)
-      for (let c = 0; c < 4; c++)
-        state[c * 4 + r] = block[r * 4 + c];
+    state.set(block);
 
     const nr = 10; // AES-128
     this.addRoundKey(state, w, 0);
@@ -224,20 +224,15 @@ export class CypherService {
     this.shiftRows(state);
     this.addRoundKey(state, w, nr);
 
-    // Convertir de column-major a row-major
     const out = new Uint8Array(16);
-    for (let r = 0; r < 4; r++)
-      for (let c = 0; c < 4; c++)
-        out[r * 4 + c] = state[c * 4 + r];
+    out.set(state);
     return out;
   }
 
   /** Descifra un bloque de 16 bytes con AES-128 (ECB). */
   private aesDecryptBlock(block: Uint8Array, w: Uint32Array): Uint8Array {
     const state = new Uint8Array(16);
-    for (let r = 0; r < 4; r++)
-      for (let c = 0; c < 4; c++)
-        state[c * 4 + r] = block[r * 4 + c];
+    state.set(block);
 
     const nr = 10;
     this.addRoundKey(state, w, nr);
@@ -252,9 +247,7 @@ export class CypherService {
     this.addRoundKey(state, w, 0);
 
     const out = new Uint8Array(16);
-    for (let r = 0; r < 4; r++)
-      for (let c = 0; c < 4; c++)
-        out[r * 4 + c] = state[c * 4 + r];
+    out.set(state);
     return out;
   }
 
