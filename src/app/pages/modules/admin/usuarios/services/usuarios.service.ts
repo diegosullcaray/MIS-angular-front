@@ -9,8 +9,8 @@ import type {
 
 /**
  * Servicio de Gestión de Usuarios (04_BACKEND_SCHEMA §3) con Signals + HttpClient.
- * Solo accesible para el rol `admin-sistema`; el backend (o la Fake API)
- * valida el token y el rol en cada petición.
+ * Solo accesible para el rol `admin-sistema`; el backend valida el token y
+ * el rol en cada petición.
  */
 @Injectable({ providedIn: 'root' })
 export class UsuariosService {

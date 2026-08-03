@@ -1,80 +1,65 @@
-import { Component, inject, signal } from '@angular/core';
-import { form, FormField, required, email, applyWhen, submit } from '@angular/forms/signals';
-import { AuthService } from '../../service/auth.service';
-import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { AuthService } from '../../service/auth.service';
+import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { LoadSpinnerComponent } from '../load-spinner/load-spinner.component';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { version } from '../../../../../../global';
 
 /**
- * Login del Host — Integrado con Winder.
+ * Login del Host — Google Sign-In + Winder.
+ *
+ * `/login` cumple doble función, igual que en STG: es la pantalla que
+ * ofrece el botón "Continuar con Google" y también el `redirectUri` al que
+ * Google devuelve al usuario tras autenticarse.
  */
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormField,
-    InputTextModule,
-    ButtonModule,
-    LoadSpinnerComponent
-  ],
+  imports: [CommonModule, ButtonModule, LoadSpinnerComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly shell = inject(ShellStateService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
-  protected cargando = signal(false);
   protected readonly appVersion = version;
 
-  protected paso = signal<'credenciales' | 'cargando'>('credenciales');
+  /**
+   * `verificando`: revisando si venimos de un redirect de Google.
+   * `inicial`: sin sesión de Google — se muestra el botón de acceso.
+   * `cargando`: login OK — pantalla de carga branded antes de navegar.
+   */
+  protected paso = signal<'verificando' | 'inicial' | 'cargando'>('verificando');
 
-  protected loginModel = signal({ email: '' });
-
-  protected loginForm = form(this.loginModel, (schema) => {
-    applyWhen(schema.email, ({ stateOf }) => stateOf(schema.email).touched(), (emailField) => {
-      required(emailField, { message: 'Introduce un correo electrónico válido.' });
-      email(emailField, { message: 'Introduce un correo electrónico válido.' });
-    });
-  });
-
-  constructor() {
-    console.log(
-      '%cCuentas demo de prueba:',
-      'font-weight: bold;',
-      '\nUsa un correo válido corporativo para STG.'
-    );
+  async ngOnInit(): Promise<void> {
+    try {
+      const usuario = await this.auth.completarLoginGoogle();
+      if (usuario) {
+        await this.entrarAlDashboard();
+        return;
+      }
+    } catch (err) {
+      const mensaje = err instanceof Error ? err.message : 'Error de autenticación.';
+      this.toast.error('No se pudo iniciar sesión', mensaje);
+    }
+    this.paso.set('inicial');
   }
 
-  protected async onSubmit(event: Event): Promise<void> {
-    event.preventDefault();
+  protected onGoogleLogin(): void {
+    this.auth.iniciarLoginGoogle();
+  }
 
-    await submit(this.loginForm, async () => {
-      this.cargando.set(true);
-
-      try {
-        await this.auth.login({ email: this.loginModel().email });
-        
-        this.shell.setSidebarIconActivo('host-inicio');
-        this.paso.set('cargando');
-        // Mantiene visible la pantalla de carga branded al menos 5s antes de navegar.
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        await this.router.navigate(['/admin/dashboard']);
-      } catch (err) {
-        const mensaje = err instanceof Error ? err.message : 'Error de autenticación.';
-        this.toast.error('No se pudo iniciar sesión', mensaje);
-      } finally {
-        this.cargando.set(false);
-      }
-    });
+  private async entrarAlDashboard(): Promise<void> {
+    this.shell.setSidebarIconActivo('host-inicio');
+    this.paso.set('cargando');
+    // Mantiene visible la pantalla de carga branded al menos 5s antes de navegar.
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await this.router.navigate(['/admin/dashboard']);
   }
 }
-

@@ -1,4 +1,4 @@
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 /**
  * RESTPacket — Construye la URL y opciones para una petición al backend Ant.

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RESTPacket } from './rest-packet.class';
-import type { IWinderResponse } from './winder.interface';
+import type { IWinderResponse } from '../winder/winder.interface';
 
 /**
  * RESTService — Capa HTTP de bajo nivel que ejecuta las peticiones al backend Ant.
