@@ -57,5 +57,15 @@
     "esbuild@0.27.7": true,
     "lmdb@3.5.4": true,
     "msgpackr-extract@3.0.4": true
+  },
+  "overrides": {
+    "primeng": {
+      "@angular/core": "$@angular/core",
+      "@angular/common": "$@angular/common",
+      "@angular/forms": "$@angular/forms",
+      "@angular/cdk": "$@angular/cdk",
+      "@angular/router": "$@angular/router",
+      "@angular/platform-browser": "$@angular/platform-browser"
+    }
   }
 }
