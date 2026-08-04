@@ -1,0 +1,49 @@
+<div class="flex flex-col gap-6 w-full">
+  <div class="flex items-center gap-3">
+    <ng-icon name="lucideTrophy" size="24" class="text-[var(--mis-warning)]" />
+    <h1 class="text-[var(--mis-text-xl)] font-semibold text-[var(--mis-text-primary)] m-0">Ranking Kaypacha</h1>
+  </div>
+
+  <div class="mis-card">
+    <div class="px-5 py-4 border-b border-[var(--mis-border)]">
+      <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">Categorías</h2>
+      <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">
+        Elige una categoría aquí o desde el panel lateral para ver su ranking desglosado.
+      </p>
+    </div>
+
+    @if (kaypacha.cargando()) {
+      <div class="p-5">
+        <app-list-skeleton [rows]="[1, 2, 3]" [cols]="[1, 2]" />
+      </div>
+    } @else if (kaypacha.error()) {
+      <div class="p-5">
+        <app-inline-error
+          titulo="No se pudo cargar el ranking"
+          [detalle]="kaypacha.error()!"
+          (reintentar)="kaypacha.recargarCategorias()"
+        />
+      </div>
+    } @else if (kaypacha.categorias().length === 0) {
+      <app-empty-state titulo="Sin categorías" descripcion="Todavía no hay categorías de ranking disponibles." />
+    } @else {
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] text-xs uppercase">
+            <th class="text-left px-5 py-2 font-semibold">Categoría</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (categoria of kaypacha.categorias(); track categoria.rdestip) {
+            <tr
+              class="border-b border-[var(--mis-border)] cursor-pointer hover:bg-[var(--mis-panel-bg)] last:border-b-0"
+              (click)="abrirCategoria(categoria)"
+            >
+              <td class="px-5 py-3 text-sm text-[var(--mis-text-primary)] font-medium">{{ categoria.name }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

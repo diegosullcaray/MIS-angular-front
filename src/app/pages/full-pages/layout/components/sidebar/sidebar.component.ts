@@ -1,10 +1,10 @@
 import { Component, inject, computed, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { SistemasService } from '../../../../modules/admin/sistemas/services/sistemas.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuStgService } from '../../services/menu-stg.service';
+import { KaypachaService } from '../../../../modules/kaypacha/services/kaypacha.service';
 import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavSeccion } from '../../interfaces/sidebar.model';
 
 @Component({
@@ -16,14 +16,14 @@ import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavSeccion } from '../.
 })
 export class SidebarComponent implements OnInit {
   protected readonly shell = inject(ShellStateService);
-  private readonly sistemasService = inject(SistemasService);
   private readonly menuStg = inject(MenuStgService);
+  private readonly kaypacha = inject(KaypachaService);
   private readonly router = inject(Router);
   protected readonly isNavPanelCollapsed = signal<boolean>(false);
 
   constructor() {
-    // El registro de sistemas alimenta etiquetas e íconos de los remotes
-    this.sistemasService.cargarSistemas();
+    // Categorías del ranking, para la sección "Categoría" del panel de Kaypacha.
+    this.kaypacha.cargarCategorias();
   }
 
   ngOnInit() {
@@ -48,28 +48,22 @@ export class SidebarComponent implements OnInit {
         etiqueta: 'Inicio',
         tienePanel: true,
       },
+      {
+        id: 'kaypacha',
+        tipo: 'host-modulo',
+        icono: 'pi pi-trophy',
+        etiqueta: 'Kaypacha',
+        tienePanel: true,
+      },
     ];
 
+    // Sistemas de STG (backend Ant) que todavía no se migraron a un módulo
+    // propio del Host — mientras eso pasa, siguen apareciendo aquí igual
+    // que antes (MenuStgService), aunque su navegación puede no resolver
+    // hasta que se migren (ver HU de migración incremental).
     const sistemasStg = this.menuStg.sistemas();
-    const idsStg = new Set(sistemasStg.map(s => s.id));
 
-    // Remotes registrados en /api/v1/sistemas que todavía no vinieron por STG
-    // (evita duplicar un mismo sistema si aparece en ambas fuentes). No hay
-    // fuente de nodos para ellos (list_sec es exclusivo de STG), así que no
-    // tienen panel — el ícono navega directo al remote, igual que un sistema
-    // de STG sin hijos (ver MenuStgService.cargar).
-    const remotesRegistrados: SidebarIcon[] = this.shell.subsistemas()
-      .filter(slug => !idsStg.has(slug))
-      .map(slug => ({
-        id:         slug,
-        tipo:       'remote' as const,
-        icono:      this.getRemoteIcono(slug),
-        etiqueta:   this.getRemoteLabel(slug),
-        ruta:       `/admin/${slug}`,
-        tienePanel: false,
-      }));
-
-    return [...base, ...sistemasStg, ...remotesRegistrados];
+    return [...base, ...sistemasStg];
   });
 
   /** `null` cuando el sistema activo no tiene panel — Col 2 se oculta por completo (ver template). */
@@ -80,10 +74,14 @@ export class SidebarComponent implements OnInit {
       return this.getPanelHost();
     }
 
+    if (id === 'kaypacha') {
+      return this.getPanelKaypacha();
+    }
+
     const icono = this.iconos().find(i => i.id === id);
     if (!icono?.tienePanel) return null;
 
-    return this.getPanelRemote(id);
+    return this.getPanelStg(id);
   });
 
   protected seleccionarIcono(icon: SidebarIcon): void {
@@ -106,15 +104,6 @@ export class SidebarComponent implements OnInit {
         titulo: 'Acceso directo',
         rutas: [
           { etiqueta: 'Mi espacio', ruta: '/admin/dashboard', icono: 'lucideGrid' },
-          { etiqueta: 'Ayuda', ruta: '/admin/help', icono: 'lucideHelpCircle' },
-        ],
-      },
-      {
-        titulo: 'Accesos [Admin]',
-        rutas: [
-          { etiqueta: 'Gestión de usuarios', ruta: '/admin/usuarios', icono: 'lucideUsers',    soloAdminSistema: true },
-          { etiqueta: 'Gestión de roles',    ruta: '/admin/roles',    icono: 'lucideActivity', soloAdminSistema: true },
-          { etiqueta: 'Gestión de sistemas', ruta: '/admin/sistemas', icono: 'lucideBoxes',    soloAdminSistema: true },
         ],
       },
     ];
@@ -127,36 +116,41 @@ export class SidebarComponent implements OnInit {
     };
   }
 
-  /**
-   * Solo se llama para sistemas con `tienePanel: true`, es decir, sistemas
-   * de STG con nodos reales en `list_sec` (ver `iconos` y `MenuStgService`).
-   * Los sistemas sin nodos navegan directo y nunca activan un panel.
-   */
-  private getPanelRemote(slug: string): SidebarNavPanelConfig {
-    const hijosStg = this.menuStg.hijosPorSistema()[slug] ?? [];
-    const secciones: SidebarNavSeccion[] = [{ titulo: this.getRemoteLabel(slug), rutas: hijosStg }];
+  /** Panel de Kaypacha — Col 2 empieza con la sección "Categoría" (datos del ranking). */
+  private getPanelKaypacha(): SidebarNavPanelConfig {
+    const secciones: SidebarNavSeccion[] = [
+      {
+        titulo: 'Categoría',
+        rutas: this.kaypacha.categorias().map(categoria => ({
+          etiqueta: categoria.name,
+          ruta: `/admin/kaypacha/categoria/${categoria.rdestip}`,
+        })),
+      },
+    ];
 
     return {
-      tipo:   'remote',
-      titulo: this.getRemoteLabel(slug),
-      icono:  this.getRemoteIcono(slug),
+      tipo:   'host-admin',
+      titulo: 'Kaypacha',
+      icono:  'pi pi-trophy',
       secciones,
     };
   }
 
-  private getRemoteLabel(slug: string): string {
+  /**
+   * Solo se llama para sistemas con `tienePanel: true` que vienen de STG
+   * (list_sec), es decir, todavía no migrados a un módulo propio del Host.
+   */
+  private getPanelStg(slug: string): SidebarNavPanelConfig {
+    const hijosStg = this.menuStg.hijosPorSistema()[slug] ?? [];
     const stg = this.menuStg.sistemas().find(s => s.id === slug);
-    if (stg) return stg.etiqueta;
+    const titulo = stg?.etiqueta ?? slug;
+    const secciones: SidebarNavSeccion[] = [{ titulo, rutas: hijosStg }];
 
-    const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
-    return sistema?.nombre ?? slug.replace('subsistema-', '');
-  }
-
-  private getRemoteIcono(slug: string): string {
-    const stg = this.menuStg.sistemas().find(s => s.id === slug);
-    if (stg) return stg.icono;
-
-    const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
-    return sistema?.icono ?? 'pi pi-th-large';
+    return {
+      tipo:   'remote',
+      titulo,
+      icono:  stg?.icono ?? 'pi pi-th-large',
+      secciones,
+    };
   }
 }

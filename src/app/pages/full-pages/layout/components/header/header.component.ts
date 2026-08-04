@@ -13,21 +13,14 @@ import { ButtonModule } from 'primeng/button';
 import type { MenuItem } from 'primeng/api';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AuthService } from '../../../auth/service/auth.service';
-import { SistemasService } from '../../../../modules/admin/sistemas/services/sistemas.service';
 import { MenuStgService } from '../../services/menu-stg.service';
+import { KaypachaService } from '../../../../modules/kaypacha/services/kaypacha.service';
 
 /** Etiquetas de los segmentos de ruta conocidos del Host. */
 const SEGMENTO_LABELS: Record<string, string> = {
   dashboard: 'Mi espacio',
-  usuarios:  'Usuarios',
-  roles:     'Roles',
-  sistemas:  'Sistemas',
-  help:      'Ayuda',
-  faq:       'Preguntas frecuentes',
-  guias:     'Guías de uso',
-  contacto:  'Contacto',
-  nuevo:     'Nuevo',
-  editar:    'Editar',
+  kaypacha:  'Kaypacha',
+  categoria: 'Categoría',
 };
 
 @Component({
@@ -45,8 +38,8 @@ export class HeaderComponent {
   protected readonly shell = inject(ShellStateService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly sistemasService = inject(SistemasService);
   private readonly menuStg = inject(MenuStgService);
+  private readonly kaypacha = inject(KaypachaService);
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
 
@@ -94,13 +87,13 @@ export class HeaderComponent {
 
       let label = SEGMENTO_LABELS[seg];
 
+      if (!label && resto[i - 1] === 'categoria') {
+        // El segmento es el :id (rdestip) de la categoría de Kaypacha.
+        label = this.kaypacha.buscarCategoria(seg)?.name ?? 'Detalle';
+      }
+
       if (!label) {
-        if (resto[i + 1] === 'editar') {
-          // Un :id seguido de /editar no aporta al breadcrumb
-          continue;
-        }
-        // /usuarios/:id es edición; /roles/:id y /sistemas/:id son detalle
-        label = resto[i - 1] === 'usuarios' ? 'Editar' : 'Detalle';
+        label = 'Detalle';
       }
 
       const esUltimo = i === resto.length - 1;
@@ -111,14 +104,13 @@ export class HeaderComponent {
   }
 
   /**
-   * Breadcrumb de un sistema remoto (STG). El remote de Module Federation
-   * se llama siempre "app" (ver RemoteWrapperComponent) y el resto de la
-   * URL es la ruta interna (`act_sec`) de la hoja activa — el slug real del
-   * sistema (`cod_sec`) no aparece como segmento propio, va embebido ahí.
-   * Por eso no se puede leer el sistema de `resto[0]`: se busca la hoja
-   * completa en el árbol de STG (`MenuStgService`, a través de todos los
-   * sistemas) y de ahí salen tanto el sistema real como las etiquetas de
-   * sus ancestros.
+   * Breadcrumb de un sistema de STG (backend Ant) todavía no migrado a un
+   * módulo propio del Host. El resto de la URL es la ruta interna
+   * (`act_sec`) de la hoja activa — el slug real del sistema (`cod_sec`) no
+   * aparece como segmento propio, va embebido ahí. Por eso no se puede leer
+   * el sistema de `resto[0]`: se busca la hoja completa en el árbol de STG
+   * (`MenuStgService`, a través de todos los sistemas) y de ahí salen tanto
+   * el sistema real como las etiquetas de sus ancestros.
    */
   private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
     const hallazgo = this.menuStg.buscarPorRuta(url);
@@ -168,10 +160,7 @@ export class HeaderComponent {
 
   private labelDeRemote(slug: string): string {
     const stg = this.menuStg.sistemas().find(s => s.id === slug);
-    if (stg) return stg.etiqueta;
-
-    const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
-    return sistema?.nombre ?? this.prettify(slug.replace('subsistema-', ''));
+    return stg?.etiqueta ?? this.prettify(slug.replace('subsistema-', ''));
   }
 
   /** kebab-case → texto legible: 'reportes-operativos' → 'Reportes operativos' */
