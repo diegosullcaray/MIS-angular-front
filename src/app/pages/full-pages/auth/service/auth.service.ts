@@ -23,6 +23,30 @@ interface ClaimsGoogle {
 }
 
 /**
+ * Forma real de la respuesta del backend Ant para `login` (módulo
+ * `session`, ver `ModSysLoginService`) — migrada tal cual del STG
+ * (`login.service.ts` → `processLogin`). El backend NUNCA devuelve campos
+ * planos (`id`/`name`/`role`) en la raíz del body: todo vive anidado bajo
+ * `login_response.profile`.
+ */
+interface LoginResponseBody {
+  login_response?: {
+    profile?: {
+      email?: string;
+      nombre?: string;
+      /** Código de negocio/agencia — lo requieren varios módulos de STG (ej. Kaypacha). */
+      cod_bt?: string;
+      /** Tipo de usuario: 0 = administrador. STG no tiene una jerarquía de 3 niveles. */
+      tip_use?: number;
+      pic_url?: string;
+    };
+    /** Token/ID de sesión que Winder emite tras un login exitoso. */
+    sid?: string;
+    token?: string;
+  };
+}
+
+/**
  * Servicio de autenticación del Host — Google Sign-In + Winder (STG).
  *
  * 1. `iniciarLoginGoogle()` redirige a Google (Implicit Flow, igual que STG).
@@ -88,20 +112,28 @@ export class AuthService {
     try {
       const respuesta = await firstValueFrom<IWinderResponse>(this.modSysLoginService.login(datos.email));
 
-      // Mapear respuesta de Winder (STG pattern) a UsuarioActivo
-      // Ajusta las propiedades de "body" de acuerdo a lo que devuelve el backend real
-      const body = respuesta.body as any;
+      const body = respuesta.body as LoginResponseBody;
+      const lr = body.login_response;
+      const profile = lr?.profile;
+
+      if (!profile) {
+        throw new Error('El backend no devolvió un perfil de usuario válido.');
+      }
 
       const usuarioActivo: UsuarioActivo = {
-        id: body.id || datos.email,
-        nombre: body.name || body.nombre || datos.nombre || datos.email.split('@')[0],
-        email: datos.email,
-        rol: body.role || 'admin-sistema', // Default role if not provided
-        subsistemas: body.systems || [],
-        avatarUrl: datos.avatarUrl,
+        id: profile.email || datos.email,
+        nombre: profile.nombre || datos.nombre || datos.email.split('@')[0],
+        email: profile.email || datos.email,
+        // STG solo distingue administrador (tip_use === 0) del resto — no
+        // tiene la jerarquía de 3 niveles de este Host. Se mapea al nivel
+        // más conservador (supervisor-area) para cualquier no-administrador.
+        rol: profile.tip_use === 0 ? 'admin-sistema' : 'supervisor-area',
+        subsistemas: [],
+        avatarUrl: datos.avatarUrl || profile.pic_url,
+        codBt: profile.cod_bt,
       };
 
-      const sessionToken = body.session_id || 'winder-session-token';
+      const sessionToken = lr?.sid || lr?.token || 'winder-session-token';
 
       this._token.set(sessionToken);
       this.shell.setUsuarioActivo(usuarioActivo);
