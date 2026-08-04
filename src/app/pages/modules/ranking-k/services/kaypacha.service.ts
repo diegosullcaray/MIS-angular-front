@@ -108,9 +108,13 @@ export class KaypachaService {
     this.cargarCategorias();
   }
 
-  /** Busca una categoría ya cargada por su `rdestip` (para mostrar su nombre en el detalle). */
+  /**
+   * Busca una categoría ya cargada por su `rdestip` (para mostrar su nombre
+   * en el detalle). Compara como string: el route param siempre llega como
+   * string, pero `rdestip` puede llegar como number desde el JSON del backend.
+   */
   buscarCategoria(rdestip: string): CategoriaRanking | undefined {
-    return this.categorias().find((c) => c.rdestip === rdestip);
+    return this.categorias().find((c) => String(c.rdestip) === rdestip);
   }
 
   /** Desglose del ranking de una categoría puntual. */
