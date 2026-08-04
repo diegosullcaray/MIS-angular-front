@@ -54,7 +54,10 @@ export class SidebarComponent implements OnInit {
     const idsStg = new Set(sistemasStg.map(s => s.id));
 
     // Remotes registrados en /api/v1/sistemas que todavía no vinieron por STG
-    // (evita duplicar un mismo sistema si aparece en ambas fuentes).
+    // (evita duplicar un mismo sistema si aparece en ambas fuentes). No hay
+    // fuente de nodos para ellos (list_sec es exclusivo de STG), así que no
+    // tienen panel — el ícono navega directo al remote, igual que un sistema
+    // de STG sin hijos (ver MenuStgService.cargar).
     const remotesRegistrados: SidebarIcon[] = this.shell.subsistemas()
       .filter(slug => !idsStg.has(slug))
       .map(slug => ({
@@ -62,12 +65,14 @@ export class SidebarComponent implements OnInit {
         tipo:       'remote' as const,
         icono:      this.getRemoteIcono(slug),
         etiqueta:   this.getRemoteLabel(slug),
-        tienePanel: true,
+        ruta:       `/admin/${slug}`,
+        tienePanel: false,
       }));
 
     return [...base, ...sistemasStg, ...remotesRegistrados];
   });
 
+  /** `null` cuando el sistema activo no tiene panel — Col 2 se oculta por completo (ver template). */
   protected readonly panelActivo = computed<SidebarNavPanelConfig | null>(() => {
     const id = this.shell.sidebarIconActivo();
 
@@ -75,15 +80,20 @@ export class SidebarComponent implements OnInit {
       return this.getPanelHost();
     }
 
+    const icono = this.iconos().find(i => i.id === id);
+    if (!icono?.tienePanel) return null;
+
     return this.getPanelRemote(id);
   });
 
   protected seleccionarIcono(icon: SidebarIcon): void {
+    // Siempre se marca activo el ícono clickeado, tenga panel o no: así Col 1
+    // resalta el sistema correcto y `panelActivo` oculta Col 2 si no aplica.
+    this.shell.setSidebarIconActivo(icon.id);
+
     if (!icon.tienePanel && icon.ruta) {
       this.router.navigateByUrl(icon.ruta);
-      return;
     }
-    this.shell.setSidebarIconActivo(icon.id);
   }
 
   protected onRutaSeleccionada(ruta: string): void {
@@ -117,27 +127,14 @@ export class SidebarComponent implements OnInit {
     };
   }
 
+  /**
+   * Solo se llama para sistemas con `tienePanel: true`, es decir, sistemas
+   * de STG con nodos reales en `list_sec` (ver `iconos` y `MenuStgService`).
+   * Los sistemas sin nodos navegan directo y nunca activan un panel.
+   */
   private getPanelRemote(slug: string): SidebarNavPanelConfig {
-    const hijosStg = this.menuStg.hijosPorSistema()[slug];
-
-    // Sistema de STG con nodos de segundo nivel reales (list_sec) — se
-    // muestran tal cual los trae el backend, en vez del stub genérico.
-    const secciones: SidebarNavSeccion[] = hijosStg
-      ? [{ titulo: this.getRemoteLabel(slug), rutas: hijosStg }]
-      : [
-          {
-            titulo: 'Acceso directo',
-            rutas: [
-              { etiqueta: 'Dashboard', ruta: `/admin/${slug}/dashboard`, icono: 'lucideGrid' },
-            ],
-          },
-          {
-            titulo: this.getRemoteLabel(slug),
-            rutas: [
-              { etiqueta: 'Módulo principal', ruta: `/admin/${slug}`, icono: 'lucideActivity' },
-            ],
-          },
-        ];
+    const hijosStg = this.menuStg.hijosPorSistema()[slug] ?? [];
+    const secciones: SidebarNavSeccion[] = [{ titulo: this.getRemoteLabel(slug), rutas: hijosStg }];
 
     return {
       tipo:   'remote',

@@ -17,7 +17,8 @@ import type { SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sid
 export class SidebarNavPanelComponent {
   private readonly shell = inject(ShellStateService);
 
-  readonly panelConfig    = input<SidebarNavPanelConfig | null>(null);
+  /** El padre solo renderiza este componente cuando hay un panel activo. */
+  readonly panelConfig    = input.required<SidebarNavPanelConfig>();
   readonly rutaSeleccionada = output<string>();
 
   /** Un solo nodo expandido por nivel de profundidad — ver sidebar-nav-item. */
@@ -33,7 +34,6 @@ export class SidebarNavPanelComponent {
 
   protected readonly secciones = computed(() => {
     const cfg = this.panelConfig();
-    if (!cfg) return [];
 
     return cfg.secciones.map((seccion) => ({
       titulo: seccion.titulo,

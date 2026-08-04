@@ -30,10 +30,10 @@
   </div>
 </aside>
 
-<!-- Col 2: Panel de navegación -->
-@if (!isNavPanelCollapsed()) {
+<!-- Col 2: Panel de navegación (oculto si el usuario la colapsó, o si el sistema activo no tiene panel) -->
+@if (!isNavPanelCollapsed() && panelActivo(); as panel) {
   <app-sidebar-nav-panel
-    [panelConfig]="panelActivo()"
+    [panelConfig]="panel"
     (rutaSeleccionada)="onRutaSeleccionada($event)"
   />
 }

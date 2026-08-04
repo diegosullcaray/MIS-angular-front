@@ -2,16 +2,15 @@
   <!-- Encabezado del panel: sistema activo -->
   <div class="flex items-center gap-3 p-2 border-b border-[var(--mis-border)] shrink-0">
     <div class="w-7 h-7 rounded-[6px] bg-[var(--mis-primary-light)] flex items-center justify-center text-[var(--mis-primary)] shrink-0">
-      <i [class]="(panelConfig()?.icono || 'pi pi-home') + ' text-[16px]'"></i>
+      <i [class]="panelConfig().icono + ' text-[16px]'"></i>
     </div>
     <div class="text-sm font-semibold text-[var(--mis-primary)] leading-tight">
-      {{ panelConfig()?.titulo || 'Sistema Principal' }}
+      {{ panelConfig().titulo }}
     </div>
   </div>
 
   <!-- Secciones de navegación (colapsables) -->
-  @if (panelConfig()) {
-    @for (seccion of secciones(); track seccion.titulo) {
+  @for (seccion of secciones(); track seccion.titulo) {
       <div class="pt-2">
         @if (seccion.esArbol) {
           <!-- Árbol de STG (list_sec), profundidad arbitraria -->
@@ -50,10 +49,4 @@
         }
       </div>
     }
-  } @else {
-    <!-- Panel vacío / sin configuración -->
-    <div class="flex-1 flex items-center justify-center text-sm text-[var(--mis-text-tertiary)] p-8">
-      <span>Selecciona un sistema</span>
-    </div>
-  }
 </nav>
