@@ -4,12 +4,16 @@ import { ModKaypachaService } from '../../../../core/winder/instances/mod-kaypac
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type { CategoriaRanking, FilaDetalleRanking } from '../models/kaypacha.model';
 
-interface ListRankingBody {
-  list?: Array<{ JSONLIST: string }>;
-}
-
-interface DetalleRankingBody {
-  list?: Array<{ JSONLIST: string }>;
+/**
+ * Forma real de `response.body` para las rutas `kaypacha.*` — el backend
+ * siempre envuelve el payload bajo la clave del `responseName` del Strand
+ * ("resultado", ver `ModKaypachaService`), igual que el legado STG
+ * (`principal.component.ts`: `let r = x.body.resultado`).
+ */
+interface KaypachaResponseBody {
+  resultado?: {
+    list?: Array<{ JSONLIST: string }>;
+  };
 }
 
 /**
@@ -49,8 +53,8 @@ export class KaypachaService {
 
     this.ant.getListRanking(codBt).subscribe({
       next: (response) => {
-        const body = response.body as ListRankingBody | null;
-        const json = body?.list?.[0]?.JSONLIST;
+        const body = response.body as KaypachaResponseBody | null;
+        const json = body?.resultado?.list?.[0]?.JSONLIST;
         this.categorias.set(json ? (JSON.parse(json) as CategoriaRanking[]) : []);
         this.cargando.set(false);
       },
@@ -78,8 +82,8 @@ export class KaypachaService {
   obtenerDetalle(rdestip: string): Observable<FilaDetalleRanking[]> {
     return this.ant.getDetalleRanking(rdestip).pipe(
       map((response) => {
-        const body = response.body as DetalleRankingBody | null;
-        const json = body?.list?.[0]?.JSONLIST;
+        const body = response.body as KaypachaResponseBody | null;
+        const json = body?.resultado?.list?.[0]?.JSONLIST;
         return json ? (JSON.parse(json) as FilaDetalleRanking[]) : [];
       })
     );

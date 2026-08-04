@@ -1,18 +1,16 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideTrophy } from '@ng-icons/lucide';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { KaypachaService } from '../../services/kaypacha.service';
-import type { CategoriaRanking } from '../../models/kaypacha.model';
 
 /**
- * Landing de Kaypacha (`/app/ranking-k`) — lista las categorías del ranking.
- * La navegación principal vive en el panel Col 2 del sidebar (sección
- * "Categoría"); esta vista es el resumen que se ve al entrar al sistema o
- * en pantallas donde el panel está colapsado.
+ * Landing de Kaypacha (`/app/ranking-k`) — la navegación por categoría vive
+ * en el panel Col 2 del sidebar (sección "Categoría", ver
+ * `sidebar.component.ts`); esta vista es solo el estado inicial al entrar
+ * al sistema (o el feedback de carga/error de esas mismas categorías).
  */
 @Component({
   selector: 'app-kaypacha-home',
@@ -24,13 +22,8 @@ import type { CategoriaRanking } from '../../models/kaypacha.model';
 })
 export class KaypachaHomeComponent {
   protected readonly kaypacha = inject(KaypachaService);
-  private readonly router = inject(Router);
 
   constructor() {
     this.kaypacha.cargarCategorias();
-  }
-
-  protected abrirCategoria(categoria: CategoriaRanking): void {
-    this.router.navigate(['/app/ranking-k/categoria', categoria.rdestip]);
   }
 }
