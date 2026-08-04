@@ -54,14 +54,9 @@ export class SidebarComponent implements OnInit {
     ];
 
     // Sistemas de STG (backend Ant) que todavía no se migraron a un módulo
-    // propio del Host — mientras eso pasa, siguen apareciendo aquí igual
-    // que antes (MenuStgService), aunque su navegación puede no resolver
-    // hasta que se migren (ver HU de migración incremental). Si STG trae un
-    // ítem cuyo id choca con uno del Host ya migrado (ej. el sistema
-    // "Kaypacha" individual, distinto y aún sin migrar), se descarta acá:
-    // el módulo del Host manda sobre el ítem de STG con el mismo id.
-    const idsHost = new Set(base.map(icon => icon.id));
-    const sistemasStg = this.menuStg.sistemas().filter(s => !idsHost.has(s.id));
+    // propio del Host — se muestran tal cual los devuelve el backend
+    // (MenuStgService), sin filtrar ni modificar nada acá.
+    const sistemasStg = this.menuStg.sistemas();
 
     return [...base, ...sistemasStg];
   });
