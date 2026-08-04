@@ -22,7 +22,7 @@ export class SidebarComponent implements OnInit {
   protected readonly isNavPanelCollapsed = signal<boolean>(false);
 
   constructor() {
-    // Categorías del ranking, para la sección "Categoría" del panel de Kaypacha.
+    // Categorías del ranking, para la sección "Categoría" del panel de ranking-k.
     this.kaypacha.cargarCategorias();
   }
 
@@ -48,25 +48,17 @@ export class SidebarComponent implements OnInit {
         etiqueta: 'Inicio',
         tienePanel: true,
       },
-      {
-        // 'ranking-k': id propio del Host, distinto de cualquier `cod_sec`
-        // que pueda venir de STG (list_sec puede traer su propio ítem
-        // "Kaypacha" para el sistema viejo aún no migrado — con ids iguales,
-        // el panel de acá se le adelantaba y contestaba por los dos).
-        id: 'ranking-k',
-        tipo: 'host-modulo',
-        icono: 'pi pi-trophy',
-        etiqueta: 'Ranking Kaypacha',
-        tienePanel: true,
-      },
+      // Cada módulo del Host ya migrado aporta su propio ícono — el sidebar
+      // no conoce nada específico de ellos, solo los agrega a la lista.
+      this.kaypacha.icon,
     ];
 
     // Sistemas de STG (backend Ant) que todavía no se migraron a un módulo
     // propio del Host — mientras eso pasa, siguen apareciendo aquí igual
     // que antes (MenuStgService), aunque su navegación puede no resolver
     // hasta que se migren (ver HU de migración incremental). Si STG trae un
-    // ítem cuyo id choca con uno del Host ya migrado (ej. un 'ranking-k'
-    // viejo o el sistema "Kaypacha" individual sin migrar), se descarta acá:
+    // ítem cuyo id choca con uno del Host ya migrado (ej. el sistema
+    // "Kaypacha" individual, distinto y aún sin migrar), se descarta acá:
     // el módulo del Host manda sobre el ítem de STG con el mismo id.
     const idsHost = new Set(base.map(icon => icon.id));
     const sistemasStg = this.menuStg.sistemas().filter(s => !idsHost.has(s.id));
@@ -82,8 +74,8 @@ export class SidebarComponent implements OnInit {
       return this.getPanelHost();
     }
 
-    if (id === 'ranking-k') {
-      return this.getPanelKaypacha();
+    if (id === this.kaypacha.icon.id) {
+      return this.kaypacha.panel();
     }
 
     const icono = this.iconos().find(i => i.id === id);
@@ -121,26 +113,6 @@ export class SidebarComponent implements OnInit {
       titulo: 'Host Principal',
       icono:  'pi pi-home',
       secciones: secciones
-    };
-  }
-
-  /** Panel de Kaypacha — Col 2 empieza con la sección "Categoría" (datos del ranking). */
-  private getPanelKaypacha(): SidebarNavPanelConfig {
-    const secciones: SidebarNavSeccion[] = [
-      {
-        titulo: 'Categoría',
-        rutas: this.kaypacha.categorias().map(categoria => ({
-          etiqueta: categoria.name,
-          ruta: `/app/ranking-k/categoria/${categoria.rdestip}`,
-        })),
-      },
-    ];
-
-    return {
-      tipo:   'host-admin',
-      titulo: 'Ranking Kaypacha',
-      icono:  'pi pi-trophy',
-      secciones,
     };
   }
 
