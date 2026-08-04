@@ -1,0 +1,46 @@
+<div class="flex flex-col gap-6 w-full">
+  <div class="flex items-center gap-3">
+    <a routerLink="/admin/kaypacha" class="flex items-center justify-center w-8 h-8 rounded-full bg-transparent text-[var(--mis-text-secondary)] no-underline hover:bg-[var(--mis-panel-bg)] hover:text-[var(--mis-text-primary)]">
+      <ng-icon name="lucideArrowLeft" size="16" />
+    </a>
+    <ng-icon name="lucideTrophy" size="24" class="text-[var(--mis-warning)]" />
+    <h1 class="text-[var(--mis-text-xl)] font-semibold text-[var(--mis-text-primary)] m-0">
+      Ranking Kaypacha — Categoría: {{ categoria()?.name ?? id() }}
+    </h1>
+  </div>
+
+  <div class="mis-card">
+    @if (cargando()) {
+      <div class="p-5">
+        <app-list-skeleton [rows]="[1, 2, 3, 4]" [cols]="[1, 2, 3, 4]" />
+      </div>
+    } @else if (error()) {
+      <div class="p-5">
+        <app-inline-error titulo="No se pudo cargar el detalle" [detalle]="error()!" (reintentar)="cargarDetalle()" />
+      </div>
+    } @else if (filas().length === 0) {
+      <app-empty-state titulo="Sin datos" descripcion="Esta categoría todavía no tiene información de ranking." />
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] text-xs uppercase">
+              @for (columna of columnas(); track columna) {
+                <th class="text-left px-5 py-2 font-semibold whitespace-nowrap">{{ columna }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (fila of filas(); track $index) {
+              <tr class="border-b border-[var(--mis-border)] last:border-b-0 hover:bg-[var(--mis-panel-bg)]">
+                @for (columna of columnas(); track columna) {
+                  <td class="px-5 py-3 text-sm text-[var(--mis-text-primary)] whitespace-nowrap">{{ fila[columna] }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

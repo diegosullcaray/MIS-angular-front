@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { ShellLayoutComponent } from './pages/full-pages/layout/components/shell-layout/shell-layout.component';
 import { authGuard } from './core/guards/auth.guard';
-import { roleGuard } from './core/guards/role.guard';
 
 export const APP_ROUTES: Routes = [
   {
@@ -42,48 +41,11 @@ export const APP_ROUTES: Routes = [
           )
       },
       {
-        path: 'usuarios',
-        canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
+        path: 'kaypacha',
         loadChildren: () =>
-          import('./pages/modules/admin/usuarios/usuarios.routes').then(
-            (m) => m.USUARIOS_ROUTES
+          import('./pages/modules/kaypacha/kaypacha.routes').then(
+            (m) => m.KAYPACHA_ROUTES
           )
-      },
-      {
-        path: 'roles',
-        canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
-        loadChildren: () =>
-          import('./pages/modules/admin/roles/roles.routes').then(
-            (m) => m.ROLES_ROUTES
-          )
-      },
-      {
-        path: 'sistemas',
-        canActivate: [roleGuard('admin-sistema')], // Exclusivo admin-sistema
-        loadChildren: () =>
-          import('./pages/modules/admin/sistemas/sistemas.routes').then(
-            (m) => m.SISTEMAS_ROUTES
-          )
-      },
-      {
-        // Ayuda: disponible para cualquier usuario autenticado, sin roleGuard.
-        path: 'help',
-        loadChildren: () =>
-          import('./pages/modules/help/help.routes').then(
-            (m) => m.HELP_ROUTES
-          )
-      },
-      {
-        path: ':remoteName',
-        children: [
-          {
-            path: '**',
-            loadComponent: () =>
-              import('./core/federation/remote-wrapper/remote-wrapper.component').then(
-                (m) => m.RemoteWrapperComponent
-              )
-          }
-        ]
       }
     ]
   },

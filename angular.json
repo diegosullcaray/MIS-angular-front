@@ -42,33 +42,6 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-architects/native-federation:build",
-          "options": {
-            "cacheExternalArtifacts": true
-          },
-          "configurations": {
-            "production": {
-              "target": "mis-host:esbuild:production"
-            },
-            "development": {
-              "target": "mis-host:esbuild:development",
-              "dev": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular-architects/native-federation:build",
-          "options": {
-            "target": "mis-host:serve-original:development",
-            "rebuildDelay": 500,
-            "cacheExternalArtifacts": true,
-            "dev": true,
-            "devServer": true,
-            "port": 4200
-          }
-        },
-        "esbuild": {
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
@@ -86,9 +59,6 @@
             ],
             "styles": [
               "src/styles.css"
-            ],
-            "polyfills": [
-              "es-module-shims"
             ]
           },
           "configurations": {
@@ -115,25 +85,25 @@
           },
           "defaultConfiguration": "production"
         },
-        "serve-original": {
+        "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "mis-host:esbuild:production"
+              "buildTarget": "mis-host:build:production"
             },
             "development": {
-              "buildTarget": "mis-host:esbuild:development"
+              "buildTarget": "mis-host:build:development"
             }
           },
           "defaultConfiguration": "development",
           "options": {
-            "port": 4201
+            "port": 4200
           }
         },
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "buildTarget": "mis-host:esbuild:development",
+            "buildTarget": "mis-host:build:development",
             "tsConfig": "tsconfig.spec.json"
           }
         }
