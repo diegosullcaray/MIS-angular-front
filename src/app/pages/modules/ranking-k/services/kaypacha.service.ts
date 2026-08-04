@@ -3,17 +3,22 @@ import { Observable, map } from 'rxjs';
 import { ModKaypachaService } from '../../../../core/winder/instances/mod-kaypacha.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type { SidebarNavPanelConfig } from '../../../full-pages/layout/interfaces/sidebar.model';
-import type { CategoriaRanking, FilaDetalleRanking } from '../models/kaypacha.model';
+import type { CategoriaRanking, DetalleRanking, FilaDetalleRanking } from '../models/kaypacha.model';
 
 /**
  * Forma real de `response.body` para las rutas `kaypacha.*` — el backend
  * siempre envuelve el payload bajo la clave del `responseName` del Strand
  * ("resultado", ver `ModKaypachaService`), igual que el legado STG
  * (`principal.component.ts`: `let r = x.body.resultado`).
+ *
+ * `datTable` es la fecha de corte de la data (`detallek.component.ts`:
+ * `this.fechaMax = r.datTable[0].fechaMax`) — opcional y defensivo porque el
+ * legado la trata de forma inconsistente (a veces string, a veces array).
  */
 interface KaypachaResponseBody {
   resultado?: {
     list?: Array<{ JSONLIST: string }>;
+    datTable?: Array<{ fechaMax?: string }> | string;
   };
 }
 
@@ -109,12 +114,17 @@ export class KaypachaService {
   }
 
   /** Desglose del ranking de una categoría puntual. */
-  obtenerDetalle(rdestip: string): Observable<FilaDetalleRanking[]> {
+  obtenerDetalle(rdestip: string): Observable<DetalleRanking> {
     return this.ant.getDetalleRanking(rdestip).pipe(
       map((response) => {
         const body = response.body as KaypachaResponseBody | null;
         const json = body?.resultado?.list?.[0]?.JSONLIST;
-        return json ? (JSON.parse(json) as FilaDetalleRanking[]) : [];
+        const filas = json ? (JSON.parse(json) as FilaDetalleRanking[]) : [];
+
+        const datTable = body?.resultado?.datTable;
+        const fechaActualizacion = Array.isArray(datTable) ? datTable[0]?.fechaMax ?? null : null;
+
+        return { filas, fechaActualizacion };
       })
     );
   }

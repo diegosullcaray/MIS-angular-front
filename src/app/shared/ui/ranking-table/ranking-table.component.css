@@ -2,21 +2,18 @@
   display: block;
 }
 
-/* Resalta el primer lugar del grupo, igual que el legado (#A9EFFD). */
-:host ::ng-deep .ranking-table-row--top {
-  background: #A9EFFD !important;
-  font-weight: var(--mis-font-semibold);
-}
-
-:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-  background: var(--mis-panel-bg);
-  color: var(--mis-text-secondary);
-  font-size: 11px;
-  text-transform: uppercase;
+/*
+ * Los estilos de encabezado/resaltado se aplican como clases Tailwind
+ * directamente en las celdas propias dentro de los `ng-template` (ver el
+ * .html) — son nodos DOM que sí renderizamos nosotros, así que la capa
+ * `utilities` del cssLayer los aplica de forma confiable, a diferencia de
+ * `::ng-deep` intentando adivinar los nombres de clase internos de PrimeNG.
+ */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th,
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
   padding: 6px 10px;
 }
 
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
   font-size: 13px;
-  padding: 6px 10px;
 }

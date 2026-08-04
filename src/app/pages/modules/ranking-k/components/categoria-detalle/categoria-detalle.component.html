@@ -1,12 +1,14 @@
 <div class="flex flex-col gap-6 w-full">
-  <div class="flex items-center gap-3">
-    <a routerLink="/app/ranking-k" class="flex items-center justify-center w-8 h-8 rounded-full bg-transparent text-[var(--mis-text-secondary)] no-underline hover:bg-[var(--mis-panel-bg)] hover:text-[var(--mis-text-primary)]">
-      <ng-icon name="lucideArrowLeft" size="16" />
-    </a>
-    <ng-icon name="lucideTrophy" size="24" class="text-[var(--mis-warning)]" />
-    <h1 class="text-[var(--mis-text-xl)] font-semibold text-[var(--mis-text-primary)] m-0">
-      Ranking Kaypacha — Categoría: {{ categoria()?.name ?? id() }}
-    </h1>
+  <div class="flex items-center justify-between gap-3 flex-wrap">
+    <div class="flex items-center gap-3">
+      <ng-icon name="lucideTrophy" size="24" class="text-[var(--mis-warning)]" />
+      <h1 class="text-[var(--mis-text-xl)] font-semibold text-[var(--mis-text-primary)] m-0">
+        {{ categoria()?.name ?? id() }}
+      </h1>
+    </div>
+    @if (fechaActualizacion()) {
+      <span class="text-[13px] text-[var(--mis-text-tertiary)]">Data actualizada al: {{ fechaActualizacion() }}</span>
+    }
   </div>
 
   @if (cargando()) {

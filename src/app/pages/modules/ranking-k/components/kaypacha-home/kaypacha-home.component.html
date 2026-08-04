@@ -20,10 +20,9 @@
     } @else if (kaypacha.categorias().length === 0) {
       <app-empty-state titulo="Sin categorías" descripcion="Todavía no hay categorías de ranking disponibles." />
     } @else {
-      <app-empty-state
-        titulo="Elige una categoría"
-        descripcion="Selecciona una categoría en el panel lateral (sección 'Categoría') para ver su ranking desglosado."
-      />
+      <div class="p-5">
+        <app-list-skeleton [rows]="[1, 2]" [cols]="[1]" />
+      </div>
     }
   </div>
 </div>

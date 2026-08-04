@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideTrophy } from '@ng-icons/lucide';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
@@ -7,10 +8,10 @@ import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-
 import { KaypachaService } from '../../services/kaypacha.service';
 
 /**
- * Landing de Kaypacha (`/app/ranking-k`) — la navegación por categoría vive
- * en el panel Col 2 del sidebar (sección "Categoría", ver
- * `sidebar.component.ts`); esta vista es solo el estado inicial al entrar
- * al sistema (o el feedback de carga/error de esas mismas categorías).
+ * Landing de Kaypacha (`/app/ranking-k`) — en cuanto las categorías cargan,
+ * navega directo a la primera (ya no se le pide al usuario que "elija una
+ * categoría"); esta vista solo se ve brevemente mientras carga, o si hay
+ * error / no hay categorías.
  */
 @Component({
   selector: 'app-kaypacha-home',
@@ -22,8 +23,16 @@ import { KaypachaService } from '../../services/kaypacha.service';
 })
 export class KaypachaHomeComponent {
   protected readonly kaypacha = inject(KaypachaService);
+  private readonly router = inject(Router);
 
   constructor() {
     this.kaypacha.cargarCategorias();
+
+    effect(() => {
+      const primera = this.kaypacha.categorias()[0];
+      if (primera) {
+        this.router.navigate([this.kaypacha.ruta, 'categoria', primera.rdestip], { replaceUrl: true });
+      }
+    });
   }
 }

@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucideTrophy } from '@ng-icons/lucide';
+import { lucideTrophy } from '@ng-icons/lucide';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -26,8 +25,8 @@ interface GrupoRanking {
 @Component({
   selector: 'app-categoria-detalle',
   standalone: true,
-  imports: [RouterLink, NgIconComponent, ListSkeletonComponent, InlineErrorComponent, EmptyStateComponent, RankingTableComponent],
-  viewProviders: [provideIcons({ lucideArrowLeft, lucideTrophy })],
+  imports: [NgIconComponent, ListSkeletonComponent, InlineErrorComponent, EmptyStateComponent, RankingTableComponent],
+  viewProviders: [provideIcons({ lucideTrophy })],
   templateUrl: './categoria-detalle.component.html',
   styleUrl: './categoria-detalle.component.css',
 })
@@ -39,6 +38,7 @@ export class CategoriaDetalleComponent {
 
   protected readonly categoria = computed(() => this.kaypacha.buscarCategoria(this.id()));
   protected readonly filas = signal<FilaDetalleRanking[]>([]);
+  protected readonly fechaActualizacion = signal<string | null>(null);
   protected readonly cargando = signal(false);
   protected readonly error = signal<string | null>(null);
 
@@ -75,8 +75,9 @@ export class CategoriaDetalleComponent {
     this.error.set(null);
 
     this.kaypacha.obtenerDetalle(this.id()).subscribe({
-      next: (filas) => {
+      next: ({ filas, fechaActualizacion }) => {
         this.filas.set(filas);
+        this.fechaActualizacion.set(fechaActualizacion);
         this.cargando.set(false);
       },
       error: (err) => {
