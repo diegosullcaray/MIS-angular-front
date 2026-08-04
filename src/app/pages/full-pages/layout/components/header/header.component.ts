@@ -14,7 +14,7 @@ import type { MenuItem } from 'primeng/api';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AuthService } from '../../../auth/service/auth.service';
 import { MenuStgService } from '../../services/menu-stg.service';
-import { KaypachaService } from '../../../../modules/kaypacha/services/kaypacha.service';
+import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 
 /** Etiquetas de los segmentos de ruta conocidos del Host. */
 const SEGMENTO_LABELS: Record<string, string> = {

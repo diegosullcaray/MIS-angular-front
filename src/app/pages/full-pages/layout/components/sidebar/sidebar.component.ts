@@ -4,7 +4,7 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuStgService } from '../../services/menu-stg.service';
-import { KaypachaService } from '../../../../modules/kaypacha/services/kaypacha.service';
+import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavSeccion } from '../../interfaces/sidebar.model';
 
 @Component({
