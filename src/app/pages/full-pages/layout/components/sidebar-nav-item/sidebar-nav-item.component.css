@@ -18,7 +18,7 @@
   box-shadow: 0 2px 10px rgba(29, 57, 110, 0.25);
 }
 
-.nav-item-link--active i {
+.nav-item-link--active ng-icon {
   transform: scale(1.1);
 }
 

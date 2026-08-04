@@ -17,6 +17,14 @@ export const APP_ROUTES: Routes = [
       )
   },
   {
+    // Página de error HTTP genérica — ver httpErrorInterceptor (core/interceptors).
+    path: 'error/:code',
+    loadComponent: () =>
+      import('./pages/full-pages/error/components/error-page/error-page.component').then(
+        (m) => m.ErrorPageComponent
+      )
+  },
+  {
     path: 'admin',
     component: ShellLayoutComponent,
     canActivate: [authGuard],

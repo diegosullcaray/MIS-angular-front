@@ -1,16 +1,12 @@
 import { Component, inject, signal, computed } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
-  lucideChevronDown, lucideUser, lucideSettings,
-  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle
+  lucideChevronDown, lucideChevronRight, lucideUser, lucideSettings,
+  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle, lucideHome,
 } from '@ng-icons/lucide';
-import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
-import type { MenuItem } from 'primeng/api';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AuthService } from '../../../auth/service/auth.service';
 import { SistemasService } from '../../../../modules/admin/sistemas/services/sistemas.service';
@@ -30,13 +26,20 @@ const SEGMENTO_LABELS: Record<string, string> = {
   editar:    'Editar',
 };
 
+/** Ítem de breadcrumb — reemplaza a `MenuItem` de `primeng/api`. */
+interface BreadcrumbItem {
+  label: string;
+  routerLink?: string;
+  icon?: string;
+}
+
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule],
+  imports: [NgIconComponent, RouterLink],
   viewProviders: [provideIcons({
-    lucideChevronDown, lucideUser, lucideSettings,
-    lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
+    lucideChevronDown, lucideChevronRight, lucideUser, lucideSettings,
+    lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle, lucideHome,
   })],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
@@ -60,13 +63,14 @@ export class HeaderComponent {
   );
 
   /** Ítem raíz del breadcrumb (Host). */
-  protected readonly breadcrumbHome: MenuItem = {
-    icon: 'pi pi-home',
+  protected readonly breadcrumbHome: BreadcrumbItem = {
+    label: 'Inicio',
+    icon: 'lucideHome',
     routerLink: '/admin/dashboard',
   };
 
-  /** Modelo del p-breadcrumb derivado de la ruta activa. */
-  protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
+  /** Modelo del breadcrumb derivado de la ruta activa. */
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const url = this.urlActual().split('?')[0].split('#')[0];
     const segmentos = url.split('/').filter(Boolean);
 
@@ -84,8 +88,8 @@ export class HeaderComponent {
   });
 
   /** Breadcrumb de las rutas propias del Host, a partir de `SEGMENTO_LABELS`. */
-  private breadcrumbHost(resto: string[]): MenuItem[] {
-    const items: MenuItem[] = [];
+  private breadcrumbHost(resto: string[]): BreadcrumbItem[] {
+    const items: BreadcrumbItem[] = [];
     let rutaAcumulada = '/admin';
 
     for (let i = 0; i < resto.length; i++) {
@@ -120,18 +124,18 @@ export class HeaderComponent {
    * sistemas) y de ahí salen tanto el sistema real como las etiquetas de
    * sus ancestros.
    */
-  private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
+  private breadcrumbRemote(resto: string[], url: string): BreadcrumbItem[] {
     const hallazgo = this.menuStg.buscarPorRuta(url);
 
     if (hallazgo) {
-      const items: MenuItem[] = [{ label: this.labelDeRemote(hallazgo.sistemaId) }];
+      const items: BreadcrumbItem[] = [{ label: this.labelDeRemote(hallazgo.sistemaId) }];
       hallazgo.etiquetas.forEach((label) => items.push({ label }));
       return items;
     }
 
     // El árbol de STG todavía no cargó o no encontró la hoja: se muestra
     // igual el último segmento (mejor que nada), legible en vez de crudo.
-    const items: MenuItem[] = [{ label: this.labelDeRemote(resto[0]) }];
+    const items: BreadcrumbItem[] = [{ label: this.labelDeRemote(resto[0]) }];
     if (resto.length > 1) {
       items.push({ label: this.prettify(resto[resto.length - 1]) });
     }

@@ -3,11 +3,8 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { form, FormField, required, pattern, disabled } from '@angular/forms/signals';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { SelectModule } from 'primeng/select';
-import { SelectButtonModule } from 'primeng/selectbutton';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { MIS_ICON_PROVIDERS, MIS_ICON_FALLBACK, MIS_ICON_OPTIONS } from '../../../../../../shared/constants/mis-icons.constants';
 import { SistemasService } from '../../services/sistemas.service';
 import { SISTEMA_ESTADO_LABELS, type SistemaEstado } from '../../models/sistema.model';
 
@@ -19,12 +16,9 @@ import { SISTEMA_ESTADO_LABELS, type SistemaEstado } from '../../models/sistema.
     RouterLink,
     FormField,
     FormsModule,
-    CardModule,
-    InputTextModule,
-    ButtonModule,
-    SelectModule,
-    SelectButtonModule
+    NgIconComponent
   ],
+  viewProviders: [provideIcons({ ...MIS_ICON_PROVIDERS })],
   templateUrl: './sistema-form.component.html',
   styleUrl: './sistema-form.component.css',
 })
@@ -38,6 +32,9 @@ export class SistemaFormComponent implements OnInit {
   protected readonly activeTab = signal<'identificacion' | 'despliegue'>('identificacion');
   protected readonly cargando = signal(false);
   protected readonly errorMsg = signal<string | null>(null);
+
+  protected readonly iconFallback = MIS_ICON_FALLBACK;
+  protected readonly iconOptions = MIS_ICON_OPTIONS;
 
   protected readonly tabOptions = [
     { label: 'Información de Registro', value: 'identificacion' },

@@ -4,8 +4,6 @@
 
 /* Tailwind v4 — base utilities */
 @import "tailwindcss";
-@import "primeicons/primeicons.css";
-
 
 /* MIS Design System Tokens */
 @import "./app/theme/tokens.css";
@@ -91,18 +89,12 @@ html, body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Cards de gestión (p-card con header/body) ────────────── */
+/* ── Cards de gestión ──────────────────────────────────────── */
 .mis-card {
   border: 1px solid var(--mis-border);
   border-radius: var(--mis-radius-md);
   box-shadow: var(--mis-shadow-sm);
   overflow: hidden;
   width: 100%;
-}
-
-.mis-card .p-card-body {
-  padding: var(--mis-space-4) var(--mis-space-6);
-}
-
-/* ── PrimeNG cssLayer ordering ────────────────────────────── */
-@layer theme, base, primeng, utilities;
+  background: var(--mis-surface);
+}

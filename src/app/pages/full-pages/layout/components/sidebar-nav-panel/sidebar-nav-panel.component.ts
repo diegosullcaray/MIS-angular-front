@@ -1,16 +1,16 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideGrid, lucideUsers, lucideActivity, lucideBoxes, lucideHelpCircle } from '@ng-icons/lucide';
 import { SidebarNavItemComponent } from '../sidebar-nav-item/sidebar-nav-item.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import { MIS_ICON_PROVIDERS } from '../../../../../shared/constants/mis-icons.constants';
 import type { SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sidebar.model';
 
 @Component({
   selector: 'app-sidebar-nav-panel',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, NgIconComponent, SidebarNavItemComponent],
-  viewProviders: [provideIcons({ lucideGrid, lucideUsers, lucideActivity, lucideBoxes, lucideHelpCircle })],
+  viewProviders: [provideIcons({ ...MIS_ICON_PROVIDERS })],
   templateUrl: './sidebar-nav-panel.component.html',
   styleUrl: './sidebar-nav-panel.component.css',
 })

@@ -39,7 +39,7 @@ export interface Sistema {
   /** Slug único — coincide con el nombre del Remote en federation.manifest.json */
   slug: string;
   descripcion: string;
-  /** Clase PrimeIcons para el sidebar (ej. `pi pi-chart-bar`) */
+  /** Nombre de ícono Lucide para el sidebar (ej. `lucideChartBar`) — ver MIS_ICON_PROVIDERS. */
   icono: string;
   /** URL del remoteEntry.json del micro-frontend */
   url: string;

@@ -1,5 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { MIS_ICON_PROVIDERS } from '../../../../../shared/constants/mis-icons.constants';
 import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
 
 /**
@@ -16,7 +18,8 @@ import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
 @Component({
   selector: 'app-sidebar-nav-item',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, SidebarNavItemComponent],
+  imports: [RouterLink, RouterLinkActive, SidebarNavItemComponent, NgIconComponent],
+  viewProviders: [provideIcons({ ...MIS_ICON_PROVIDERS })],
   templateUrl: './sidebar-nav-item.component.html',
   styleUrl: './sidebar-nav-item.component.css',
 })

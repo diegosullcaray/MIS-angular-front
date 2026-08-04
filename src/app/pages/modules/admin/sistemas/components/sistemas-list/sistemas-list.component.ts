@@ -1,15 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { CardModule } from 'primeng/card';
-import { TooltipModule } from 'primeng/tooltip';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import {
-  lucideBoxes, lucideEye, lucideEdit2, lucideTrash2, lucideAlertTriangle, lucideLayers
-} from '@ng-icons/lucide';
+import { lucideEye, lucidePencil, lucideTrash2, lucideAlertTriangle } from '@ng-icons/lucide';
+import { MIS_ICON_PROVIDERS, MIS_ICON_FALLBACK } from '../../../../../../shared/constants/mis-icons.constants';
 import { SistemasService } from '../../services/sistemas.service';
 import { SISTEMA_ESTADO_LABELS, type SistemaEstado, type SistemaResumen } from '../../models/sistema.model';
 import { ListSkeletonComponent } from '../../../../../../shared/ui/list-skeleton/list-skeleton.component';
@@ -22,18 +16,13 @@ import { InlineErrorComponent } from '../../../../../../shared/ui/inline-error/i
   imports: [
     CommonModule,
     RouterLink,
-    TableModule,
-    ButtonModule,
-    DialogModule,
-    CardModule,
-    TooltipModule,
     NgIconComponent,
     ListSkeletonComponent,
     EmptyStateComponent,
     InlineErrorComponent
   ],
   viewProviders: [provideIcons({
-    lucideBoxes, lucideEye, lucideEdit2, lucideTrash2, lucideAlertTriangle, lucideLayers
+    ...MIS_ICON_PROVIDERS, lucideEye, lucidePencil, lucideTrash2, lucideAlertTriangle
   })],
   templateUrl: './sistemas-list.component.html',
   styleUrl: './sistemas-list.component.css',
@@ -42,6 +31,7 @@ export class SistemasListComponent implements OnInit {
   protected readonly service = inject(SistemasService);
 
   protected readonly estadoLabels = SISTEMA_ESTADO_LABELS;
+  protected readonly iconFallback = MIS_ICON_FALLBACK;
 
   protected readonly confirmDeleteOpen = signal(false);
   protected readonly sistemaAEliminar = signal<SistemaResumen | null>(null);
