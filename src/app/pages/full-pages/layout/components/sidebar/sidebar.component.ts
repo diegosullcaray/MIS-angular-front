@@ -123,7 +123,7 @@ export class SidebarComponent implements OnInit {
         titulo: 'Categoría',
         rutas: this.kaypacha.categorias().map(categoria => ({
           etiqueta: categoria.name,
-          ruta: `/admin/kaypacha/categoria/${categoria.rdestip}`,
+          ruta: `/admin/ranking-k/categoria/${categoria.rdestip}`,
         })),
       },
     ];

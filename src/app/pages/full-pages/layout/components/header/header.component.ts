@@ -18,9 +18,9 @@ import { KaypachaService } from '../../../../modules/kaypacha/services/kaypacha.
 
 /** Etiquetas de los segmentos de ruta conocidos del Host. */
 const SEGMENTO_LABELS: Record<string, string> = {
-  dashboard: 'Mi espacio',
-  kaypacha:  'Kaypacha',
-  categoria: 'Categoría',
+  dashboard:    'Mi espacio',
+  'ranking-k':  'Kaypacha',
+  categoria:    'Categoría',
 };
 
 @Component({

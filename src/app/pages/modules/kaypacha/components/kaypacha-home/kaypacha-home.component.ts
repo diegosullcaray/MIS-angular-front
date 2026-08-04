@@ -9,7 +9,7 @@ import { KaypachaService } from '../../services/kaypacha.service';
 import type { CategoriaRanking } from '../../models/kaypacha.model';
 
 /**
- * Landing de Kaypacha (`/admin/kaypacha`) — lista las categorías del ranking.
+ * Landing de Kaypacha (`/admin/ranking-k`) — lista las categorías del ranking.
  * La navegación principal vive en el panel Col 2 del sidebar (sección
  * "Categoría"); esta vista es el resumen que se ve al entrar al sistema o
  * en pantallas donde el panel está colapsado.
@@ -31,6 +31,6 @@ export class KaypachaHomeComponent {
   }
 
   protected abrirCategoria(categoria: CategoriaRanking): void {
-    this.router.navigate(['/admin/kaypacha/categoria', categoria.rdestip]);
+    this.router.navigate(['/admin/ranking-k/categoria', categoria.rdestip]);
   }
 }

@@ -41,7 +41,10 @@ export const APP_ROUTES: Routes = [
           )
       },
       {
-        path: 'kaypacha',
+        // 'ranking-k' — debe coincidir exactamente con el segmento que usaba
+        // el sistema legado STG (app/ranking-k, ver app-routing.module.ts) y
+        // con el `act_sec` que devuelve list_sec para este ítem del menú.
+        path: 'ranking-k',
         loadChildren: () =>
           import('./pages/modules/kaypacha/kaypacha.routes').then(
             (m) => m.KAYPACHA_ROUTES
