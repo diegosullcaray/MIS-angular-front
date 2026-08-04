@@ -1,18 +1,16 @@
 import { Component, inject, computed, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { SistemasService } from '../../../../modules/admin/sistemas/services/sistemas.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
+import { TooltipModule } from 'primeng/tooltip';
 import { MenuStgService } from '../../services/menu-stg.service';
-import { MIS_ICON_PROVIDERS, MIS_ICON_FALLBACK } from '../../../../../shared/constants/mis-icons.constants';
 import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavSeccion } from '../../interfaces/sidebar.model';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [SidebarNavPanelComponent, NgIconComponent],
-  viewProviders: [provideIcons({ ...MIS_ICON_PROVIDERS })],
+  imports: [SidebarNavPanelComponent, TooltipModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
@@ -46,7 +44,7 @@ export class SidebarComponent implements OnInit {
       {
         id: 'host-inicio',
         tipo: 'host-inicio',
-        icono: 'lucideHome',
+        icono: 'pi pi-home',
         etiqueta: 'Inicio',
         tienePanel: true,
       },
@@ -124,7 +122,7 @@ export class SidebarComponent implements OnInit {
     return {
       tipo:   'host-admin',
       titulo: 'Host Principal',
-      icono:  'lucideHome',
+      icono:  'pi pi-home',
       secciones: secciones
     };
   }
@@ -159,6 +157,6 @@ export class SidebarComponent implements OnInit {
     if (stg) return stg.icono;
 
     const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
-    return sistema?.icono ?? MIS_ICON_FALLBACK;
+    return sistema?.icono ?? 'pi pi-th-large';
   }
 }

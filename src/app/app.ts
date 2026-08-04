@@ -1,15 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
 import { ShellStateService } from './core/services/shell-state.service';
 import { LoadSpinnerComponent } from './pages/full-pages/auth/components/load-spinner/load-spinner.component';
-import { ToastComponent } from './shared/ui/toast/toast.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastComponent, LoadSpinnerComponent],
+  imports: [RouterOutlet, ToastModule, LoadSpinnerComponent],
   template: `
     <router-outlet />
-    <app-toast />
+    <p-toast position="top-right" />
     @if (shell.cerrandoSesion()) {
       <app-load-spinner mensaje="Cerrando sesión…" />
     }

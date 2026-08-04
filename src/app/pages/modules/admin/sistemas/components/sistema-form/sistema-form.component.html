@@ -1,28 +1,24 @@
 <div class="flex flex-col gap-6 w-full">
-  <div class="mis-card bg-[var(--mis-surface)]">
+  <p-card styleClass="mis-card">
     <!-- Card Header -->
-    <div class="px-5 py-4 border-b border-[var(--mis-border)]">
-      <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">{{ id() ? 'Editar Sistema' : 'Registrar Sistema' }}</h2>
-      <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">Información general del sistema embebido. La estructura y los permisos se gestionan desde su detalle.</p>
-    </div>
+    <ng-template pTemplate="header">
+      <div class="px-5 py-4 border-b border-[var(--mis-border)]">
+        <h2 class="text-lg font-semibold text-[var(--mis-primary)] m-0">{{ id() ? 'Editar Sistema' : 'Registrar Sistema' }}</h2>
+        <p class="text-sm text-[var(--mis-text-secondary)] m-0 mt-0.5">Información general del sistema embebido. La estructura y los permisos se gestionan desde su detalle.</p>
+      </div>
+    </ng-template>
 
     <!-- Card Body -->
-    <form (submit)="guardar($event)" class="flex flex-col gap-6 px-5 py-4">
-
+    <form (submit)="guardar($event)" class="flex flex-col gap-6">
+      
       <!-- Tab Selector -->
       <div class="flex justify-center mb-2">
-        <div class="tab-bar">
-          @for (opt of tabOptions; track opt.value) {
-            <button
-              type="button"
-              class="tab-btn"
-              [class.tab-btn--active]="activeTab() === opt.value"
-              (click)="activeTab.set($any(opt.value))"
-            >
-              {{ opt.label }}
-            </button>
-          }
-        </div>
+        <p-select-button
+          [options]="tabOptions"
+          [ngModel]="activeTab()"
+          (ngModelChange)="activeTab.set($event)"
+          [ngModelOptions]="{ standalone: true }"
+        />
       </div>
 
       <!-- Identificación -->
@@ -32,7 +28,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="flex flex-col gap-2">
               <label for="nombre" class="text-sm font-semibold text-[var(--mis-text-primary)]">Nombre</label>
-              <input id="nombre" type="text" class="mis-input" [formField]="sistemaForm.nombre"
+              <input id="nombre" type="text" pInputText [formField]="sistemaForm.nombre"
                      placeholder="Ej. Contabilidad" (input)="onNombreInput($event)" />
               @if (sistemaForm.nombre().invalid() && sistemaForm.nombre().touched()) {
                 <small class="text-xs text-[var(--mis-danger)]">El nombre es requerido.</small>
@@ -41,7 +37,7 @@
 
             <div class="flex flex-col gap-2">
               <label for="slug" class="text-sm font-semibold text-[var(--mis-text-primary)]">Identificador (Slug)</label>
-              <input id="slug" type="text" class="mis-input" [formField]="sistemaForm.slug"
+              <input id="slug" type="text" pInputText [formField]="sistemaForm.slug"
                      placeholder="Ej. subsistema-contabilidad" />
               <small class="text-xs text-[var(--mis-text-tertiary)]">Debe coincidir con el nombre del Remote en federation.manifest.json.</small>
               @if (sistemaForm.slug().invalid() && sistemaForm.slug().touched()) {
@@ -51,7 +47,7 @@
 
             <div class="flex flex-col gap-2 sm:col-span-2">
               <label for="descripcion" class="text-sm font-semibold text-[var(--mis-text-primary)]">Descripción</label>
-              <input id="descripcion" type="text" class="mis-input" [formField]="sistemaForm.descripcion"
+              <input id="descripcion" type="text" pInputText [formField]="sistemaForm.descripcion"
                      placeholder="Breve descripción del dominio que cubre este sistema" />
             </div>
           </div>
@@ -65,40 +61,36 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="flex flex-col gap-2 sm:col-span-2">
               <label for="url" class="text-sm font-semibold text-[var(--mis-text-primary)]">URL del Remote</label>
-              <input id="url" type="text" class="mis-input" [formField]="sistemaForm.url"
+              <input id="url" type="text" pInputText [formField]="sistemaForm.url"
                      placeholder="Ej. http://localhost:4201/remoteEntry.json" />
             </div>
 
             <div class="flex flex-col gap-2">
               <label for="version" class="text-sm font-semibold text-[var(--mis-text-primary)]">Versión</label>
-              <input id="version" type="text" class="mis-input" [formField]="sistemaForm.version" placeholder="Ej. 1.0.0" />
+              <input id="version" type="text" pInputText [formField]="sistemaForm.version" placeholder="Ej. 1.0.0" />
             </div>
 
             <div class="flex flex-col gap-2">
               <label for="estado" class="text-sm font-semibold text-[var(--mis-text-primary)]">Estado</label>
-              <select
+              <p-select
                 id="estado"
-                class="mis-input"
+                [options]="estadosOptions"
                 [ngModel]="estado()"
                 [ngModelOptions]="{ standalone: true }"
-                (ngModelChange)="estado.set($event)"
-              >
-                @for (opt of estadosOptions; track opt.value) {
-                  <option [value]="opt.value">{{ opt.label }}</option>
-                }
-              </select>
+                optionLabel="label"
+                optionValue="value"
+                styleClass="w-full"
+                (onChange)="estado.set($event.value)"
+              />
             </div>
 
             <div class="flex flex-col gap-2">
-              <label for="icono" class="text-sm font-semibold text-[var(--mis-text-primary)]">Ícono</label>
+              <label for="icono" class="text-sm font-semibold text-[var(--mis-text-primary)]">Ícono (PrimeIcons)</label>
               <div class="flex items-center gap-2">
-                <select id="icono" class="mis-input flex-1" [formField]="sistemaForm.icono">
-                  @for (opt of iconOptions; track opt.value) {
-                    <option [value]="opt.value">{{ opt.label }}</option>
-                  }
-                </select>
+                <input id="icono" type="text" pInputText [formField]="sistemaForm.icono"
+                       placeholder="Ej. pi pi-chart-bar" class="flex-1" />
                 <span class="w-9 h-9 rounded-[8px] bg-[var(--mis-primary-light)] text-[var(--mis-primary)] flex items-center justify-center shrink-0">
-                  <ng-icon [name]="sistemaModel().icono || iconFallback" size="16" />
+                  <i [class]="sistemaModel().icono || 'pi pi-th-large'" style="font-size: 0.9rem"></i>
                 </span>
               </div>
             </div>
@@ -113,21 +105,13 @@
       }
 
       <div class="flex justify-end gap-2 border-t border-[var(--mis-border)] pt-4">
-        <button
-          type="button"
-          class="px-5 py-2 rounded-[6px] bg-transparent text-[var(--mis-text-secondary)] border-0 text-sm font-medium cursor-pointer hover:text-[var(--mis-text-primary)]"
-          routerLink="/admin/sistemas"
-        >
-          Cancelar
-        </button>
-        <button
+        <p-button label="Cancelar" [text]="true" severity="secondary" routerLink="/admin/sistemas" type="button" />
+        <p-button
+          [label]="id() ? 'Guardar Cambios' : 'Registrar Sistema'"
           type="submit"
-          class="px-5 py-2 rounded-[6px] bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] border-0 text-sm font-medium cursor-pointer hover:bg-[var(--mis-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
           [disabled]="sistemaForm().invalid() || cargando()"
-        >
-          {{ id() ? 'Guardar Cambios' : 'Registrar Sistema' }}
-        </button>
+        />
       </div>
     </form>
-  </div>
+  </p-card>
 </div>

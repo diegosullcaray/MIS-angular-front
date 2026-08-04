@@ -8,13 +8,13 @@
     [style.paddingLeft.px]="8 + depth() * 14"
   >
     @if (ruta().icono) {
-      <ng-icon [name]="ruta().icono!" size="13" class="shrink-0" />
+      <i [class]="ruta().icono + ' text-[13px] shrink-0'"></i>
     } @else {
       <span class="nav-item-dot w-[5px] h-[5px] rounded-full shrink-0 ml-1"></span>
     }
     <span class="flex-1 whitespace-nowrap overflow-hidden text-ellipsis">{{ ruta().etiqueta }}</span>
     @if (esGrupo) {
-      <ng-icon name="lucideChevronDown" size="11" class="nav-item-chevron shrink-0" [class.nav-item-chevron--open]="expanded()" />
+      <i class="pi pi-chevron-down nav-item-chevron text-[11px] shrink-0" [class.nav-item-chevron--open]="expanded()"></i>
     }
   </a>
 

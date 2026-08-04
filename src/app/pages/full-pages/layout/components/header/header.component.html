@@ -3,19 +3,11 @@
   <div class="flex items-center gap-3 shrink-0 min-w-0">
     <img src="assets/images/fc/logos/mis.png" alt="MIS" class="h-7 w-auto shrink-0" />
     <span class="text-[var(--mis-border-strong)] text-[var(--mis-text-lg)] font-thin">|</span>
-    <nav class="flex items-center gap-1.5 text-sm min-w-0" aria-label="Breadcrumb">
-      <a [routerLink]="breadcrumbHome.routerLink" class="flex items-center text-[var(--mis-text-secondary)] hover:text-[var(--mis-primary)] no-underline shrink-0">
-        <ng-icon name="lucideHome" size="14" />
-      </a>
-      @for (item of breadcrumbItems(); track $index) {
-        <ng-icon name="lucideChevronRight" size="12" class="text-[var(--mis-text-tertiary)] shrink-0" />
-        @if (item.routerLink) {
-          <a [routerLink]="item.routerLink" class="text-[var(--mis-text-secondary)] hover:text-[var(--mis-primary)] no-underline whitespace-nowrap overflow-hidden text-ellipsis">{{ item.label }}</a>
-        } @else {
-          <span class="text-[var(--mis-text-primary)] font-medium whitespace-nowrap overflow-hidden text-ellipsis">{{ item.label }}</span>
-        }
-      }
-    </nav>
+    <p-breadcrumb
+      class="header-breadcrumb"
+      [model]="breadcrumbItems()"
+      [home]="breadcrumbHome"
+    />
   </div>
 
   <!-- Spacer -->

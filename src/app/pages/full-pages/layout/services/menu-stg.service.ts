@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
-import { mapMaterialIconToLucide } from '../utils/material-to-lucide.util';
+import { mapMaterialIconToPrimeIcons } from '../utils/material-to-primeicons.util';
 import type { SidebarIcon, SidebarNavRuta } from '../interfaces/sidebar.model';
 
 /**
@@ -73,8 +73,8 @@ export class MenuStgService {
             id: item.cod_sec,
             tipo: 'remote' as const,
             // STG usa nombres de Material Icons (icon_sec); se traduce al
-            // equivalente más parecido en Lucide (ver material-to-lucide.util).
-            icono: mapMaterialIconToLucide(item.icon_sec),
+            // equivalente más parecido en PrimeIcons (ver material-to-primeicons.util).
+            icono: mapMaterialIconToPrimeIcons(item.icon_sec),
             etiqueta: item.desc_sec,
             // Sin hijos en list_sec: no hay nada que mostrar en el panel,
             // así que el ícono navega directo a su propia ruta.
