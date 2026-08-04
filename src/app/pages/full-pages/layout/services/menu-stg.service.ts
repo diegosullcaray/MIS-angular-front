@@ -132,11 +132,10 @@ export class MenuStgService {
    * vez de los segmentos crudos de la URL.
    *
    * No se puede inferir el sistema a partir de la posición del segmento en
-   * la URL: el remote de Module Federation se llama siempre "app" (ver
-   * RemoteWrapperComponent) y el slug real del sistema (`cod_sec`) no
-   * aparece en ningún segmento propio — va embebido dentro de `act_sec`,
-   * ya consumido en la `ruta` completa de cada hoja. Por eso se recorren
-   * todos los árboles hasta encontrar la hoja exacta.
+   * la URL: el slug real del sistema (`cod_sec`) no aparece en ningún
+   * segmento propio — va embebido dentro de `act_sec`, ya consumido en la
+   * `ruta` completa de cada hoja. Por eso se recorren todos los árboles
+   * hasta encontrar la hoja exacta.
    *
    * Devuelve `null` si el árbol aún no cargó o la ruta no corresponde a
    * ninguna hoja conocida (el llamador decide el fallback).

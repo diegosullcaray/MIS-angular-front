@@ -1,4 +1,4 @@
-export type SidebarIconType = 'host-inicio' | 'remote';
+export type SidebarIconType = 'host-inicio' | 'host-modulo' | 'remote';
 
 /** Ícono de la Col 1 (rail angosto) — selecciona qué panel mostrar en la Col 2. */
 export interface SidebarIcon {
