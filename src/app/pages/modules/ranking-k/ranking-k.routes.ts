@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const KAYPACHA_ROUTES: Routes = [
+export const RANKING_K_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () =>

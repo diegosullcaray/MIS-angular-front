@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideTrophy } from '@ng-icons/lucide';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { KaypachaService } from '../../../kaypacha/services/kaypacha.service';
+import { KaypachaService } from '../../../ranking-k/services/kaypacha.service';
 
 @Component({
   selector: 'app-inicio',

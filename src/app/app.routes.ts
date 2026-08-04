@@ -48,8 +48,8 @@ export const APP_ROUTES: Routes = [
         // con el `act_sec` que devuelve list_sec para este ítem del menú.
         path: 'ranking-k',
         loadChildren: () =>
-          import('./pages/modules/kaypacha/kaypacha.routes').then(
-            (m) => m.KAYPACHA_ROUTES
+          import('./pages/modules/ranking-k/ranking-k.routes').then(
+            (m) => m.RANKING_K_ROUTES
           )
       }
     ]
