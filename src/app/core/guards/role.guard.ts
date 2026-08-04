@@ -12,7 +12,7 @@ import { ToastService } from '../../shared/services/toast.service';
  * canActivate: [roleGuard('admin-sistema')]
  * ```
  *
- * Si el rol del usuario no coincide, redirige a /admin/dashboard.
+ * Si el rol del usuario no coincide, redirige a /app/dashboard.
  * Regla: un rol más permisivo incluye los roles menos permisivos.
  * Jerarquía: admin-sistema > admin-general > supervisor-area
  */
@@ -47,6 +47,6 @@ export function roleGuard(rolRequerido: RolSlug): CanActivateFn {
       'Acceso denegado',
       'No tienes permisos para acceder a esta sección.'
     );
-    return router.createUrlTree(['/admin/dashboard']);
+    return router.createUrlTree(['/app/dashboard']);
   };
 }

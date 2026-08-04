@@ -103,7 +103,7 @@ export class SidebarComponent implements OnInit {
       {
         titulo: 'Acceso directo',
         rutas: [
-          { etiqueta: 'Mi espacio', ruta: '/admin/dashboard', icono: 'lucideGrid' },
+          { etiqueta: 'Mi espacio', ruta: '/app/dashboard', icono: 'lucideGrid' },
         ],
       },
     ];
@@ -123,7 +123,7 @@ export class SidebarComponent implements OnInit {
         titulo: 'Categoría',
         rutas: this.kaypacha.categorias().map(categoria => ({
           etiqueta: categoria.name,
-          ruta: `/admin/ranking-k/categoria/${categoria.rdestip}`,
+          ruta: `/app/ranking-k/categoria/${categoria.rdestip}`,
         })),
       },
     ];

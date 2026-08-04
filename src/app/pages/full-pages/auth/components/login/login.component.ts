@@ -60,6 +60,6 @@ export class LoginComponent implements OnInit {
     this.paso.set('cargando');
     // Mantiene visible la pantalla de carga branded al menos 5s antes de navegar.
     await new Promise((resolve) => setTimeout(resolve, 5000));
-    await this.router.navigate(['/admin/dashboard']);
+    await this.router.navigate(['/app/dashboard']);
   }
 }
