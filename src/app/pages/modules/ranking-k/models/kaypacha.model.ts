@@ -6,5 +6,15 @@ export interface CategoriaRanking {
   rdestip: string;
 }
 
-/** Fila del desglose de una categoría — el legado no fija un esquema único, así que queda abierto. */
-export type FilaDetalleRanking = Record<string, string | number>;
+/**
+ * Fila del desglose de una categoría (`detallek.component.ts`/`.util.ts` del
+ * legado): posición (`ROWNUMBER`), nombre (`HCOLNOM`) y puntaje
+ * (`TOTAL_MES`), agrupada por `hdester` (territorio/zona) — el legado
+ * agrupa por `hdester` y muestra una tabla separada por cada grupo.
+ */
+export interface FilaDetalleRanking {
+  ROWNUMBER: number;
+  HCOLNOM: string;
+  TOTAL_MES: number;
+  hdester: string;
+}

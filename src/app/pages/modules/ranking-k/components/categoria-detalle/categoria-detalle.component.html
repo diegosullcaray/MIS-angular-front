@@ -9,38 +9,24 @@
     </h1>
   </div>
 
-  <div class="mis-card">
-    @if (cargando()) {
-      <div class="p-5">
-        <app-list-skeleton [rows]="[1, 2, 3, 4]" [cols]="[1, 2, 3, 4]" />
-      </div>
-    } @else if (error()) {
-      <div class="p-5">
-        <app-inline-error titulo="No se pudo cargar el detalle" [detalle]="error()!" (reintentar)="cargarDetalle()" />
-      </div>
-    } @else if (filas().length === 0) {
+  @if (cargando()) {
+    <div class="mis-card p-5">
+      <app-list-skeleton [rows]="[1, 2, 3, 4]" [cols]="[1, 2, 3]" />
+    </div>
+  } @else if (error()) {
+    <div class="mis-card p-5">
+      <app-inline-error titulo="No se pudo cargar el detalle" [detalle]="error()!" (reintentar)="cargarDetalle()" />
+    </div>
+  } @else if (grupos().length === 0) {
+    <div class="mis-card">
       <app-empty-state titulo="Sin datos" descripcion="Esta categoría todavía no tiene información de ranking." />
-    } @else {
-      <div class="overflow-x-auto">
-        <table class="w-full border-collapse">
-          <thead>
-            <tr class="bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] text-xs uppercase">
-              @for (columna of columnas(); track columna) {
-                <th class="text-left px-5 py-2 font-semibold whitespace-nowrap">{{ columna }}</th>
-              }
-            </tr>
-          </thead>
-          <tbody>
-            @for (fila of filas(); track $index) {
-              <tr class="border-b border-[var(--mis-border)] last:border-b-0 hover:bg-[var(--mis-panel-bg)]">
-                @for (columna of columnas(); track columna) {
-                  <td class="px-5 py-3 text-sm text-[var(--mis-text-primary)] whitespace-nowrap">{{ fila[columna] }}</td>
-                }
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
-  </div>
+    </div>
+  } @else {
+    <!-- Una tarjeta con su propia tabla por cada grupo (hdester), igual que el legado -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      @for (grupo of grupos(); track grupo.hdester) {
+        <app-ranking-table [titulo]="grupo.hdester" [filas]="grupo.filas" valorLabel="Puntos" />
+      }
+    </div>
+  }
 </div>
