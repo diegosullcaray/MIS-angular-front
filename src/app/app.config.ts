@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
@@ -35,8 +34,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => inject(AuthService).restaurarSesion()),
 
 
-    // Animaciones async (requerido por PrimeNG)
-    provideAnimationsAsync(),
+
 
     // PrimeNG con tema personalizado macOS
     providePrimeNG({
