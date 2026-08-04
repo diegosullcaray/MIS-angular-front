@@ -116,14 +116,21 @@ export const HTTP_ERROR_MESSAGES: Record<KnownHttpErrorCode, HttpErrorInfo> = {
   },
 };
 
-/** Fallback para códigos HTTP no mapeados explícitamente (ej. 502 con variantes, 5xx desconocidos). */
+/**
+ * Fallback para códigos HTTP no mapeados explícitamente. `esFatal: false`
+ * a propósito: un status fuera de la tabla (ej. un 200 con body no
+ * parseable como JSON, que Angular reporta como `HttpErrorResponse` con
+ * status 200 pese a no ser un error real del servidor) nunca debe mandar
+ * al usuario a la página de error global — solo los códigos explícitamente
+ * listados arriba con `esFatal: true` lo hacen.
+ */
 export const HTTP_ERROR_FALLBACK: HttpErrorInfo = {
   code: 500,
   titulo: 'Algo salió mal',
   mensaje: 'Ocurrió un error inesperado. Inténtalo de nuevo más tarde.',
   icono: 'lucideCircleAlert',
   accion: 'retry',
-  esFatal: true,
+  esFatal: false,
 };
 
 /** Rutas que nunca deben ser interceptadas globalmente (login, backend Ant/Winder). */

@@ -44,10 +44,16 @@ export const httpErrorInterceptor: HttpInterceptorFn = (
   return next(req).pipe(
     catchError((error: unknown) => {
       const status = httpErrorService.statusDe(error);
+
+      // Un status 2xx en catchError no es un error del servidor — es
+      // Angular fallando al parsear el body (ej. JSON inválido/vacío).
+      // Nunca redirige: no hay nada que un error 200 le explique al usuario.
+      const esStatusDeExito = status >= 200 && status < 300;
+
       const info = httpErrorService.resolver(status);
 
       // 401 ya lo maneja authInterceptor (cierra sesión + redirige a /login).
-      if (info.esFatal && status !== 401) {
+      if (!esStatusDeExito && info.esFatal && status !== 401) {
         void router.navigate(['/error', status || 0]);
       }
 
