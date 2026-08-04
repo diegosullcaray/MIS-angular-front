@@ -13,6 +13,7 @@ import { provideOAuthClient } from 'angular-oauth2-oidc';
 import { APP_ROUTES } from './app.routes';
 import { MisTheme } from './theme/mis-theme';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
 
 export const appConfig: ApplicationConfig = {
@@ -24,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(APP_ROUTES, withComponentInputBinding()),
 
     // HttpClient con interceptores y Fetch API nativa (compatible con Zoneless)
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, httpErrorInterceptor])),
 
     // Cliente OAuth (Google Sign-In) usado por AuthService
     provideOAuthClient(),
@@ -32,9 +33,6 @@ export const appConfig: ApplicationConfig = {
     // Restaura la sesión persistida (sessionStorage) antes de renderizar,
     // para que authGuard no expulse al usuario al refrescar la página.
     provideAppInitializer(() => inject(AuthService).restaurarSesion()),
-
-
-
 
     // PrimeNG con tema personalizado macOS
     providePrimeNG({
@@ -53,4 +51,3 @@ export const appConfig: ApplicationConfig = {
     MessageService,
   ],
 };
-
