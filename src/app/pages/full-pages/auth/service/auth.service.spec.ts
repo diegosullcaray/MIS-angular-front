@@ -12,11 +12,15 @@ const RESPUESTA_LOGIN: IWinderResponse = {
   code: '0',
   headers: {},
   body: {
-    id: 'u-1',
-    name: 'Ana Torres',
-    role: 'admin-sistema',
-    systems: ['subsistema-reportes'],
-    session_id: 'winder-sid-1',
+    login_response: {
+      profile: {
+        email: environment.devUser,
+        nombre: 'Ana Torres',
+        cod_bt: 'BT-001',
+        tip_use: 0,
+      },
+      sid: 'winder-sid-1',
+    },
   },
 };
 
@@ -83,9 +87,10 @@ describe('AuthService', () => {
     expect(environment.devUser).toBeTruthy();
     expect(modSysLoginService.login).toHaveBeenCalledWith(environment.devUser);
 
-    expect(usuario?.id).toBe('u-1');
+    expect(usuario?.id).toBe(environment.devUser);
     expect(usuario?.email).toBe(environment.devUser);
-    expect(shell.usuarioActivo()?.id).toBe('u-1');
+    expect(usuario?.codBt).toBe('BT-001');
+    expect(shell.usuarioActivo()?.id).toBe(environment.devUser);
     expect(service.token()).toBe('winder-sid-1');
     expect(sessionStorage.getItem('mis.sesion')).toContain('winder-sid-1');
   });

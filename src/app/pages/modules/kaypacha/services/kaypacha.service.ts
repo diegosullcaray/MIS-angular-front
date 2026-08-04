@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ModKaypachaService } from '../../../../core/winder/instances/mod-kaypacha.service';
+import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type { CategoriaRanking, FilaDetalleRanking } from '../models/kaypacha.model';
 
 interface ListRankingBody {
@@ -19,6 +20,7 @@ interface DetalleRankingBody {
 @Injectable({ providedIn: 'root' })
 export class KaypachaService {
   private readonly ant = inject(ModKaypachaService);
+  private readonly shell = inject(ShellStateService);
 
   readonly categorias = signal<CategoriaRanking[]>([]);
   readonly cargando = signal(false);
@@ -33,7 +35,19 @@ export class KaypachaService {
     this.cargando.set(true);
     this.error.set(null);
 
-    this.ant.getListRanking().subscribe({
+    const codBt = this.shell.usuarioActivo()?.codBt;
+
+    if (!codBt) {
+      // Sin cod_bt el backend Ant responde 500 (lo requiere igual que el
+      // legado STG) — se corta acá para no disparar una petición condenada.
+      console.error('No se puede cargar el ranking Kaypacha: el usuario activo no tiene cod_bt.');
+      this.error.set('No se pudo determinar tu código de negocio/agencia.');
+      this.cargando.set(false);
+      this.cargado = false;
+      return;
+    }
+
+    this.ant.getListRanking(codBt).subscribe({
       next: (response) => {
         const body = response.body as ListRankingBody | null;
         const json = body?.list?.[0]?.JSONLIST;
