@@ -49,10 +49,14 @@ export class SidebarComponent implements OnInit {
         tienePanel: true,
       },
       {
-        id: 'kaypacha',
+        // 'ranking-k': id propio del Host, distinto de cualquier `cod_sec`
+        // que pueda venir de STG (list_sec puede traer su propio ítem
+        // "Kaypacha" para el sistema viejo aún no migrado — con ids iguales,
+        // el panel de acá se le adelantaba y contestaba por los dos).
+        id: 'ranking-k',
         tipo: 'host-modulo',
         icono: 'pi pi-trophy',
-        etiqueta: 'Kaypacha',
+        etiqueta: 'Ranking Kaypacha',
         tienePanel: true,
       },
     ];
@@ -60,8 +64,12 @@ export class SidebarComponent implements OnInit {
     // Sistemas de STG (backend Ant) que todavía no se migraron a un módulo
     // propio del Host — mientras eso pasa, siguen apareciendo aquí igual
     // que antes (MenuStgService), aunque su navegación puede no resolver
-    // hasta que se migren (ver HU de migración incremental).
-    const sistemasStg = this.menuStg.sistemas();
+    // hasta que se migren (ver HU de migración incremental). Si STG trae un
+    // ítem cuyo id choca con uno del Host ya migrado (ej. un 'ranking-k'
+    // viejo o el sistema "Kaypacha" individual sin migrar), se descarta acá:
+    // el módulo del Host manda sobre el ítem de STG con el mismo id.
+    const idsHost = new Set(base.map(icon => icon.id));
+    const sistemasStg = this.menuStg.sistemas().filter(s => !idsHost.has(s.id));
 
     return [...base, ...sistemasStg];
   });
@@ -74,7 +82,7 @@ export class SidebarComponent implements OnInit {
       return this.getPanelHost();
     }
 
-    if (id === 'kaypacha') {
+    if (id === 'ranking-k') {
       return this.getPanelKaypacha();
     }
 
@@ -130,7 +138,7 @@ export class SidebarComponent implements OnInit {
 
     return {
       tipo:   'host-admin',
-      titulo: 'Kaypacha',
+      titulo: 'Ranking Kaypacha',
       icono:  'pi pi-trophy',
       secciones,
     };
