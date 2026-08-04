@@ -29,4 +29,9 @@ export class RankingTableComponent {
   readonly filas = input.required<RankingTableFila[]>();
   /** Encabezado de la columna de valor (ej. "Puntos", "Monto"). */
   readonly valorLabel = input('Puntos');
+
+  /** Resalta el primer lugar, igual que el legado (`#A9EFFD`) — coerciona a número porque `posicion` puede llegar como string desde el JSON del backend. */
+  protected esPrimerPuesto(fila: RankingTableFila): boolean {
+    return Number(fila.posicion) === 1;
+  }
 }

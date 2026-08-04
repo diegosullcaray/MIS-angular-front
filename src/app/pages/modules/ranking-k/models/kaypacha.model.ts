@@ -18,3 +18,12 @@ export interface FilaDetalleRanking {
   TOTAL_MES: number;
   hdester: string;
 }
+
+/**
+ * Desglose de una categoría: filas + fecha de corte de la data (`fechaMax`
+ * del legado, `detallek.component.ts`: `this.fechaMax = r.datTable[0].fechaMax`).
+ */
+export interface DetalleRanking {
+  filas: FilaDetalleRanking[];
+  fechaActualizacion: string | null;
+}
