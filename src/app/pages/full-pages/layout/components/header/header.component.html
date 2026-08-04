@@ -12,14 +12,8 @@
 
   <!-- Spacer -->
   <div class="flex-1"></div>
-
   <!-- Acciones de cabecera -->
   <div class="flex items-center gap-2 relative">
-    <!-- Notificaciones -->
-    <button class="w-8 h-8 rounded-[6px] border-0 bg-transparent text-[var(--mis-text-secondary)] flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-[var(--mis-primary-light)] hover:text-[var(--mis-primary)]" aria-label="Notificaciones">
-      <ng-icon name="lucideBell" size="16" />
-    </button>
-
     <!-- Pill de usuario -->
     <div class="flex items-center gap-2 p-1 pr-2 rounded-full border-1.5 border-[var(--mis-border-strong)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-primary-light)] hover:border-[var(--mis-primary)]"
          (click)="toggleDropdown()" (keydown.enter)="toggleDropdown()" tabindex="0" role="button" aria-haspopup="true" [attr.aria-expanded]="dropdownOpen()">

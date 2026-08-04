@@ -34,7 +34,7 @@
     <div class="flex flex-col gap-5">
     <!-- Tabs with PrimeNG SelectButton -->
     <div class="flex justify-center">
-      <p-selectButton
+      <p-select-button
         [options]="tabOptions"
         [ngModel]="tab()"
         (ngModelChange)="tab.set($event)"
@@ -143,9 +143,9 @@
                 class="input-titulo"
                 [value]="sec.nombre"
                 (change)="renombrarSeccion(sec.id, $event)"
-                title="Nombre de la sección"
+                pTooltip="Nombre de la sección"
               />
-              <button class="row-btn row-btn--danger" (click)="eliminarSeccion(sec.id)" title="Eliminar sección">
+              <button class="row-btn row-btn--danger" (click)="eliminarSeccion(sec.id)" pTooltip="Eliminar sección">
                 <ng-icon name="lucideTrash2" size="13" />
               </button>
             </div>
@@ -156,7 +156,7 @@
                 <div class="bg-[var(--mis-panel-bg)] rounded-[8px] px-3 py-2.5">
                   <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-semibold text-[var(--mis-text-primary)]">{{ sub.nombre }}</span>
-                    <button class="row-btn row-btn--danger" (click)="eliminarSubseccion(sec.id, sub.id)" title="Eliminar subsección">
+                    <button class="row-btn row-btn--danger" (click)="eliminarSubseccion(sec.id, sub.id)" pTooltip="Eliminar subsección">
                       <ng-icon name="lucideTrash2" size="12" />
                     </button>
                   </div>
@@ -164,7 +164,7 @@
                     @for (mod of sub.modulos; track mod.id) {
                       <span class="chip">
                         {{ mod.nombre }}
-                        <button class="chip-x" (click)="eliminarModulo(sub.id, mod.id)" title="Quitar módulo">×</button>
+                        <button class="chip-x" (click)="eliminarModulo(sub.id, mod.id)" pTooltip="Quitar módulo">×</button>
                       </span>
                     }
                     <span class="inline-flex items-center gap-1">
@@ -231,7 +231,7 @@
             >
               {{ rol.nombre }}
               @if (!rol.subsistemas.includes(sistema()!.slug)) {
-                <span class="pill-hint" title="Este rol no tiene el sistema asignado">·</span>
+                <span class="pill-hint" pTooltip="Este rol no tiene el sistema asignado">·</span>
               }
             </button>
           }

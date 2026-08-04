@@ -12,7 +12,7 @@ import { MessageService } from 'primeng/api';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
 
 import { APP_ROUTES } from './app.routes';
-import { MisTheme } from './core/design-system/mis-theme';
+import { MisTheme } from './theme/mis-theme';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
 

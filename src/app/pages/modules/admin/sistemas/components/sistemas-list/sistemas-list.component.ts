@@ -5,6 +5,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { CardModule } from 'primeng/card';
+import { TooltipModule } from 'primeng/tooltip';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideBoxes, lucideEye, lucideEdit2, lucideTrash2, lucideAlertTriangle, lucideLayers
@@ -25,6 +26,7 @@ import { InlineErrorComponent } from '../../../../../../shared/ui/inline-error/i
     ButtonModule,
     DialogModule,
     CardModule,
+    TooltipModule,
     NgIconComponent,
     ListSkeletonComponent,
     EmptyStateComponent,

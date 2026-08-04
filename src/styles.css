@@ -8,7 +8,7 @@
 
 
 /* MIS Design System Tokens */
-@import "./app/core/design-system/tokens.css";
+@import "./app/theme/tokens.css";
 
 @source "./app/**/*.html";
 @source "./app/**/*.ts";
