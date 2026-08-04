@@ -48,15 +48,15 @@ export class SidebarComponent implements OnInit {
         etiqueta: 'Inicio',
         tienePanel: true,
       },
-      // Cada módulo del Host ya migrado aporta su propio ícono — el sidebar
-      // no conoce nada específico de ellos, solo los agrega a la lista.
-      this.kaypacha.icon,
     ];
 
-    // Sistemas de STG (backend Ant) que todavía no se migraron a un módulo
-    // propio del Host — se muestran tal cual los devuelve el backend
-    // (MenuStgService), sin filtrar ni modificar nada acá.
-    const sistemasStg = this.menuStg.sistemas();
+    // Sistemas de STG (backend Ant), tal cual los devuelve el backend — sin
+    // filtrar ni hardcodear ninguno. Si un ítem apunta a la ruta de un
+    // módulo ya migrado del Host (ej. ranking-k), se le habilita panel
+    // propio (sección "Categoría") en vez de navegar directo a la ruta.
+    const sistemasStg = this.menuStg.sistemas().map((sistema) =>
+      sistema.ruta === this.kaypacha.ruta ? { ...sistema, tienePanel: true } : sistema
+    );
 
     return [...base, ...sistemasStg];
   });
@@ -69,12 +69,12 @@ export class SidebarComponent implements OnInit {
       return this.getPanelHost();
     }
 
-    if (id === this.kaypacha.icon.id) {
-      return this.kaypacha.panel();
-    }
-
     const icono = this.iconos().find(i => i.id === id);
     if (!icono?.tienePanel) return null;
+
+    if (icono.ruta === this.kaypacha.ruta) {
+      return this.kaypacha.panelPara(icono.etiqueta, icono.icono);
+    }
 
     return this.getPanelStg(id);
   });
