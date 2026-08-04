@@ -92,10 +92,17 @@ export class MenuStgService {
     });
   }
 
-  /** Ruta absoluta del Host para un nodo del menú de STG (padre o hijo). */
+  /**
+   * Ruta absoluta del Host para un nodo del menú de STG (padre o hijo).
+   *
+   * `act_sec` ya viene con la ruta completa desde el root (ej. `app/ranking-k`)
+   * — el legado solo le anteponía la barra (`sidenav.template.html`:
+   * `[routerLink]="'/' + item.state"`), nunca un prefijo `/app/` adicional.
+   * Anteponerlo acá duplicaba el segmento (`/app/app/ranking-k`).
+   */
   private rutaDeAntItem(item: AntMenuItem): string {
     const ruta = (item.act_sec ?? item.cod_sec ?? '').replace(/^\/+/, '');
-    return `/app/${ruta}`;
+    return `/${ruta}`;
   }
 
   /**
