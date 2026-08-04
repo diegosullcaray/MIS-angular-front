@@ -12,30 +12,30 @@ export class FullscreenService implements OnDestroy {
 
   constructor(private ngZone: NgZone) {
     document.onfullscreenchange = () => {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         const state = this.getFullscreenState();
         this.ngZone.run(() => {
           this.isFullscreenSubject.next(state);
         });
-      }, 50);
+      });
     };
 
     (document as any).onwebkitfullscreenchange = () => {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         const state = this.getFullscreenState();
         this.ngZone.run(() => {
           this.isFullscreenSubject.next(state);
         });
-      }, 50);
+      });
     };
 
     this.resizeHandler = () => {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         const state = this.getFullscreenState();
         this.ngZone.run(() => {
           this.isFullscreenSubject.next(state);
         });
-      }, 50);
+      });
     };
     window.addEventListener('resize', this.resizeHandler, true);
   }

@@ -1,6 +1,3 @@
-/* ============================================================
-   MIS — Global Styles Entry Point
-   ============================================================ */
 
 /* Tailwind v4 — base utilities */
 @import "tailwindcss";
@@ -105,4 +102,4 @@ html, body {
 }
 
 /* ── PrimeNG cssLayer ordering ────────────────────────────── */
-@layer theme, base, primeng, utilities;
+@layer theme, base, primeng, utilities;
