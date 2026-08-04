@@ -64,7 +64,7 @@ export class ErrorPageComponent {
         this.router.navigateByUrl('/login');
         break;
       case 'home':
-        this.router.navigateByUrl('/admin/dashboard');
+        this.router.navigateByUrl('/app/dashboard');
         break;
       case 'back':
         this.location.back();

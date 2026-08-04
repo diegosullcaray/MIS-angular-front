@@ -55,7 +55,7 @@ export class HeaderComponent {
   /** Ítem raíz del breadcrumb (Host). */
   protected readonly breadcrumbHome: MenuItem = {
     icon: 'pi pi-home',
-    routerLink: '/admin/dashboard',
+    routerLink: '/app/dashboard',
   };
 
   /** Modelo del p-breadcrumb derivado de la ruta activa. */
@@ -63,8 +63,8 @@ export class HeaderComponent {
     const url = this.urlActual().split('?')[0].split('#')[0];
     const segmentos = url.split('/').filter(Boolean);
 
-    // Solo rutas del shell: /admin/...
-    if (segmentos[0] !== 'admin') return [];
+    // Solo rutas del shell: /app/...
+    if (segmentos[0] !== 'app') return [];
 
     const resto = segmentos.slice(1);
     if (resto.length === 0) return [];
@@ -79,7 +79,7 @@ export class HeaderComponent {
   /** Breadcrumb de las rutas propias del Host, a partir de `SEGMENTO_LABELS`. */
   private breadcrumbHost(resto: string[]): MenuItem[] {
     const items: MenuItem[] = [];
-    let rutaAcumulada = '/admin';
+    let rutaAcumulada = '/app';
 
     for (let i = 0; i < resto.length; i++) {
       const seg = resto[i];

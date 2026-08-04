@@ -56,7 +56,7 @@ describe('ShellStateService', () => {
 
   it('cerrarSesion limpia usuario y menú activo', () => {
     service.setUsuarioActivo(usuario());
-    service.setMenuItemActivo({ ruta: '/admin/sistemas', etiqueta: 'Sistemas' });
+    service.setMenuItemActivo({ ruta: '/app/ranking-k', etiqueta: 'Sistemas' });
 
     service.cerrarSesion();
 

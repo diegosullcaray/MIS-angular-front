@@ -57,7 +57,7 @@ describe('roleGuard', () => {
 
     const resultado = ejecutarGuard('admin-sistema') as UrlTree;
 
-    expect(router.serializeUrl(resultado)).toBe('/admin/dashboard');
+    expect(router.serializeUrl(resultado)).toBe('/app/dashboard');
   });
 
   it('emite un toast de advertencia al denegar el acceso', () => {
@@ -78,6 +78,6 @@ describe('roleGuard', () => {
     shell.setUsuarioActivo(usuario('supervisor-area'));
     const resultado = ejecutarGuard('admin-sistema') as UrlTree;
     expect(resultado).not.toBe(true);
-    expect(router.serializeUrl(resultado)).toBe('/admin/dashboard');
+    expect(router.serializeUrl(resultado)).toBe('/app/dashboard');
   });
 });

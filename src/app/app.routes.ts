@@ -6,7 +6,7 @@ export const APP_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'admin/dashboard'
+    redirectTo: 'app/dashboard'
   },
   {
     path: 'login',
@@ -24,7 +24,9 @@ export const APP_ROUTES: Routes = [
       )
   },
   {
-    path: 'admin',
+    // 'app' — igual que el sistema legado STG (AdminLayoutComponent montado
+    // en `path: 'app'`, ver app-routing.module.ts), no 'admin'.
+    path: 'app',
     component: ShellLayoutComponent,
     canActivate: [authGuard],
     children: [

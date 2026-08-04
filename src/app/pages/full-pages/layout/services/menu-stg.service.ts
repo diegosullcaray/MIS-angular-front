@@ -95,7 +95,7 @@ export class MenuStgService {
   /** Ruta absoluta del Host para un nodo del menú de STG (padre o hijo). */
   private rutaDeAntItem(item: AntMenuItem): string {
     const ruta = (item.act_sec ?? item.cod_sec ?? '').replace(/^\/+/, '');
-    return `/admin/${ruta}`;
+    return `/app/${ruta}`;
   }
 
   /**
