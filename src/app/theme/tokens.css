@@ -35,13 +35,13 @@
   --mis-primary-hover: #162D58;
   --mis-primary-light: #E8EDF5;
 
-  /* Secundario: Sky Blue */
-  --mis-secondary: #42ADE0;
-  --mis-secondary-hover: #2F9FD4;
-  --mis-secondary-light: #E8F6FC;
+  /* Secundario: Sky Blue (tomado del hover real del árbol de navegación STG) */
+  --mis-secondary: #00A2FF;
+  --mis-secondary-hover: #0090E0;
+  --mis-secondary-light: #E5F6FF;
 
   /* Acento */
-  --mis-accent: #42ADE0;
+  --mis-accent: #00A2FF;
 
   /* Semánticos (estados) */
   --mis-success:        #16A34A;
@@ -51,8 +51,8 @@
   --mis-danger:         #DC2626;
   --mis-danger-light:   #FDECEC;
 
-  /* Textos */
-  --mis-text-primary: #1D396E;
+  /* Textos (color de cuerpo real del sistema: #304156, no el navy de marca) */
+  --mis-text-primary: #304156;
   --mis-text-secondary: #5A6A85;
   --mis-text-tertiary: #94A3B8;
   --mis-text-on-primary: #FFFFFF;
@@ -80,7 +80,7 @@
   --mis-shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --mis-shadow-md:    0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
   --mis-shadow-lg:    0 8px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
-  --mis-shadow-focus: 0 0 0 3px rgba(66, 173, 224, 0.35);
+  --mis-shadow-focus: 0 0 0 3px rgba(0, 162, 255, 0.35);
 
   --mis-transition-fast: 0.15s ease-in-out;
   --mis-transition-base: 0.2s ease-in-out;
@@ -95,18 +95,18 @@
   --mis-surface: #1F2937;
   --mis-sidebar-bg: #162D58;
   --mis-panel-bg: #1A2740;
-  --mis-border: rgba(66,173,224,0.12);
-  --mis-border-strong: rgba(66,173,224,0.25);
+  --mis-border: rgba(0,162,255,0.12);
+  --mis-border-strong: rgba(0,162,255,0.25);
 
   --mis-primary: #2A4E8F;
   --mis-primary-hover: #1D396E;
   --mis-primary-light: #1D2D45;
 
-  --mis-secondary: #5BBDE8;
-  --mis-secondary-hover: #42ADE0;
+  --mis-secondary: #4DC3FF;
+  --mis-secondary-hover: #00A2FF;
   --mis-secondary-light: #1A3A4D;
 
-  --mis-accent: #5BBDE8;
+  --mis-accent: #4DC3FF;
 
   --mis-success:        #4ADE80;
   --mis-success-light:  #12331E;
