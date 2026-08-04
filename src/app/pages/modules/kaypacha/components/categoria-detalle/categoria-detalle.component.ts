@@ -8,7 +8,7 @@ import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-
 import { KaypachaService } from '../../services/kaypacha.service';
 import type { FilaDetalleRanking } from '../../models/kaypacha.model';
 
-/** Desglose del ranking de una categoría (`/admin/kaypacha/categoria/:id`). */
+/** Desglose del ranking de una categoría (`/admin/ranking-k/categoria/:id`). */
 @Component({
   selector: 'app-categoria-detalle',
   standalone: true,
