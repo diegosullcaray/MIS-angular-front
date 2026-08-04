@@ -63,14 +63,14 @@
                   <button
                     class="w-7 h-7 rounded-[6px] border-0 bg-transparent text-[var(--mis-text-secondary)] flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-[var(--mis-primary-light)] hover:text-[var(--mis-primary)]"
                     [routerLink]="['/admin/roles', rol.id, 'editar']"
-                    title="Editar"
+                    pTooltip="Editar"
                   >
                     <ng-icon name="lucideEdit2" size="13" />
                   </button>
                   <button
                     class="w-7 h-7 rounded-[6px] border-0 bg-transparent text-[var(--mis-text-secondary)] flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-[var(--mis-danger-light)] hover:text-[var(--mis-danger)]"
                     (click)="confirmarEliminar(rol)"
-                    title="Eliminar"
+                    pTooltip="Eliminar"
                   >
                     <ng-icon name="lucideTrash2" size="13" />
                   </button>

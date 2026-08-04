@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
+import { TooltipModule } from 'primeng/tooltip';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideInfo, lucideNetwork, lucideShieldCheck,
@@ -26,7 +27,7 @@ type Tab = 'info' | 'estructura' | 'permisos';
 @Component({
   selector: 'app-sistema-detalle',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ButtonModule, SelectButtonModule, CardModule, NgIconComponent, ListSkeletonComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ButtonModule, SelectButtonModule, CardModule, TooltipModule, NgIconComponent, ListSkeletonComponent],
   viewProviders: [provideIcons({
     lucideInfo, lucideNetwork, lucideShieldCheck,
     lucidePlus, lucideTrash2, lucideChevronRight, lucideCheck, lucideLayers

@@ -83,7 +83,7 @@
                       ? 'bg-[var(--mis-success-light)] text-[var(--mis-success)] border-[rgba(52,199,89,0.2)]'
                       : 'bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] border-[var(--mis-border-strong)]'"
                     (click)="toggleStatus(user)"
-                    [title]="user.activo ? 'Desactivar usuario' : 'Activar usuario'"
+                    [pTooltip]="user.activo ? 'Desactivar usuario' : 'Activar usuario'"
                   >
                     <span class="w-1.5 h-1.5 rounded-full transition-colors duration-150"
                           [class]="user.activo ? 'bg-[var(--mis-success)]' : 'bg-[var(--mis-text-tertiary)]'"></span>
@@ -95,7 +95,7 @@
                     <button
                       class="w-7 h-7 rounded-[6px] border-0 bg-transparent text-[var(--mis-text-secondary)] flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-[var(--mis-primary-light)] hover:text-[var(--mis-primary)]"
                       [routerLink]="['/admin/usuarios', user.id]"
-                      title="Editar"
+                      pTooltip="Editar"
                     >
                       <ng-icon name="lucideEdit2" size="13" />
                     </button>

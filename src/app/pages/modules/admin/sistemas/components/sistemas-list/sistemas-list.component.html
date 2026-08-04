@@ -76,21 +76,21 @@
                   <button
                     class="row-btn"
                     [routerLink]="['/admin/sistemas', sistema.id]"
-                    title="Ver detalle"
+                    pTooltip="Ver detalle"
                   >
                     <ng-icon name="lucideEye" size="13" />
                   </button>
                   <button
                     class="row-btn"
                     [routerLink]="['/admin/sistemas', sistema.id, 'editar']"
-                    title="Editar"
+                    pTooltip="Editar"
                   >
                     <ng-icon name="lucideEdit2" size="13" />
                   </button>
                   <button
                     class="row-btn row-btn--danger"
                     (click)="confirmarEliminar(sistema)"
-                    title="Eliminar"
+                    pTooltip="Eliminar"
                   >
                     <ng-icon name="lucideTrash2" size="13" />
                   </button>

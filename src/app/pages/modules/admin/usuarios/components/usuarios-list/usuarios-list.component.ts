@@ -5,6 +5,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
+import { TooltipModule } from 'primeng/tooltip';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucidePlus, lucideEdit2, lucideTrash2, lucideSearch, lucideCheck, lucideX } from '@ng-icons/lucide';
 import { ListSkeletonComponent } from '../../../../../../shared/ui/list-skeleton/list-skeleton.component';
@@ -22,6 +23,7 @@ import { ROL_LABELS, type RolSlug } from '../../../roles/models/rol.model';
     ButtonModule,
     InputTextModule,
     CardModule,
+    TooltipModule,
     NgIconComponent,
     ListSkeletonComponent,
     EmptyStateComponent

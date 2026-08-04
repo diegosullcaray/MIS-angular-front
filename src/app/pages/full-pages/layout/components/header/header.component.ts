@@ -14,6 +14,7 @@ import type { MenuItem } from 'primeng/api';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AuthService } from '../../../auth/service/auth.service';
 import { SistemasService } from '../../../../modules/admin/sistemas/services/sistemas.service';
+import { MenuStgService } from '../../services/menu-stg.service';
 
 /** Etiquetas de los segmentos de ruta conocidos del Host. */
 const SEGMENTO_LABELS: Record<string, string> = {
@@ -45,6 +46,7 @@ export class HeaderComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly sistemasService = inject(SistemasService);
+  private readonly menuStg = inject(MenuStgService);
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
 
@@ -71,33 +73,34 @@ export class HeaderComponent {
     // Solo rutas del shell: /admin/...
     if (segmentos[0] !== 'admin') return [];
 
-    const items: MenuItem[] = [];
-    let rutaAcumulada = '/admin';
-
     const resto = segmentos.slice(1);
+    if (resto.length === 0) return [];
+
     // Si el primer segmento no es una ruta propia del Host, es un remote:
     // sus subsegmentos son rutas internas del subsistema, no vistas del Host.
     const esRemote = !(resto[0] in SEGMENTO_LABELS);
+
+    return esRemote ? this.breadcrumbRemote(resto, url) : this.breadcrumbHost(resto);
+  });
+
+  /** Breadcrumb de las rutas propias del Host, a partir de `SEGMENTO_LABELS`. */
+  private breadcrumbHost(resto: string[]): MenuItem[] {
+    const items: MenuItem[] = [];
+    let rutaAcumulada = '/admin';
 
     for (let i = 0; i < resto.length; i++) {
       const seg = resto[i];
       rutaAcumulada += `/${seg}`;
 
-      let label: string | undefined;
+      let label = SEGMENTO_LABELS[seg];
 
-      if (esRemote) {
-        label = i === 0 ? this.labelDeRemote(seg) : this.prettify(seg);
-      } else {
-        label = SEGMENTO_LABELS[seg];
-
-        if (!label) {
-          if (resto[i + 1] === 'editar') {
-            // Un :id seguido de /editar no aporta al breadcrumb
-            continue;
-          }
-          // /usuarios/:id es edición; /roles/:id y /sistemas/:id son detalle
-          label = resto[i - 1] === 'usuarios' ? 'Editar' : 'Detalle';
+      if (!label) {
+        if (resto[i + 1] === 'editar') {
+          // Un :id seguido de /editar no aporta al breadcrumb
+          continue;
         }
+        // /usuarios/:id es edición; /roles/:id y /sistemas/:id son detalle
+        label = resto[i - 1] === 'usuarios' ? 'Editar' : 'Detalle';
       }
 
       const esUltimo = i === resto.length - 1;
@@ -105,7 +108,35 @@ export class HeaderComponent {
     }
 
     return items;
-  });
+  }
+
+  /**
+   * Breadcrumb de un sistema remoto (STG). El remote de Module Federation
+   * se llama siempre "app" (ver RemoteWrapperComponent) y el resto de la
+   * URL es la ruta interna (`act_sec`) de la hoja activa — el slug real del
+   * sistema (`cod_sec`) no aparece como segmento propio, va embebido ahí.
+   * Por eso no se puede leer el sistema de `resto[0]`: se busca la hoja
+   * completa en el árbol de STG (`MenuStgService`, a través de todos los
+   * sistemas) y de ahí salen tanto el sistema real como las etiquetas de
+   * sus ancestros.
+   */
+  private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
+    const hallazgo = this.menuStg.buscarPorRuta(url);
+
+    if (hallazgo) {
+      const items: MenuItem[] = [{ label: this.labelDeRemote(hallazgo.sistemaId) }];
+      hallazgo.etiquetas.forEach((label) => items.push({ label }));
+      return items;
+    }
+
+    // El árbol de STG todavía no cargó o no encontró la hoja: se muestra
+    // igual el último segmento (mejor que nada), legible en vez de crudo.
+    const items: MenuItem[] = [{ label: this.labelDeRemote(resto[0]) }];
+    if (resto.length > 1) {
+      items.push({ label: this.prettify(resto[resto.length - 1]) });
+    }
+    return items;
+  }
 
   protected readonly rolLabel = computed(() => {
     const labels: Record<string, string> = {
@@ -136,6 +167,9 @@ export class HeaderComponent {
   }
 
   private labelDeRemote(slug: string): string {
+    const stg = this.menuStg.sistemas().find(s => s.id === slug);
+    if (stg) return stg.etiqueta;
+
     const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
     return sistema?.nombre ?? this.prettify(slug.replace('subsistema-', ''));
   }

@@ -1,43 +1,25 @@
 import { Component, inject, computed, signal, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { SistemasService } from '../../../../modules/admin/sistemas/services/sistemas.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
-import { ModSysAdminService } from '../../../../../core/winder/instances/mod-sys-admin.service';
+import { TooltipModule } from 'primeng/tooltip';
+import { MenuStgService } from '../../services/menu-stg.service';
 import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavSeccion } from '../../interfaces/sidebar.model';
-
-/**
- * Ítem crudo del árbol de menú del backend Ant (`list_sec` / `menu_response`).
- *
- * Nombres de campo tal cual los devuelve STG — ver
- * stg-app-mis-r22/src/app/pages/full-pages/layout/services/navigation.service.ts.
- */
-interface AntMenuItem {
-  cod_sec: string;
-  cod_par?: string | null;
-  desc_sec: string;
-  /** Ruta del sistema en el backend (ej: "comercial/dashboard"). */
-  act_sec?: string;
-  icon_sec?: string;
-  order_sec?: number;
-}
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [SidebarNavPanelComponent],
+  imports: [SidebarNavPanelComponent, TooltipModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent implements OnInit {
   protected readonly shell = inject(ShellStateService);
   private readonly sistemasService = inject(SistemasService);
-  private readonly modSysAdminService = inject(ModSysAdminService);
+  private readonly menuStg = inject(MenuStgService);
+  private readonly router = inject(Router);
   protected readonly isNavPanelCollapsed = signal<boolean>(false);
-
-  // Sistemas de primer nivel del backend Ant (STG) — mismos datos que STG
-  // muestra en el module-switcher de su header, ahora como íconos del
-  // sidebar lateral azul (Col 1).
-  private readonly sistemasStg = signal<SidebarIcon[]>([]);
 
   constructor() {
     // El registro de sistemas alimenta etiquetas e íconos de los remotes
@@ -45,49 +27,10 @@ export class SidebarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cargarMenuStg();
-  }
-
-  private cargarMenuStg(): void {
     const usuario = this.shell.usuarioActivo();
-    if (!usuario?.email) return;
-
-    this.modSysAdminService.getMenuItems(usuario.email).subscribe({
-      next: (response) => {
-        const body = response.body as { menu_response?: AntMenuItem[] } | null;
-        const items = body?.menu_response ?? [];
-
-        const sistemas: SidebarIcon[] = items
-          .filter((item) => !item.cod_par)
-          .sort((a, b) => (a.order_sec ?? 0) - (b.order_sec ?? 0))
-          .map((item) => ({
-            id: this.remoteSlug(item),
-            tipo: 'remote' as const,
-            // STG usa nombres de Material Icons (icon_sec); no hay mapeo 1:1
-            // a PrimeIcons/Lucide, así que se usa el mismo ícono genérico
-            // que el resto de los remotes sin ícono propio (getRemoteIcono).
-            icono: 'pi pi-th-large',
-            etiqueta: item.desc_sec,
-            tienePanel: true,
-          }));
-
-        this.sistemasStg.set(sistemas);
-      },
-      error: (err) => {
-        console.error('Error al cargar el menú de sistemas (STG):', err);
-      },
-    });
-  }
-
-  /**
-   * El slug usado como `:remoteName` del router de microfrontends del Host
-   * es el primer segmento de la ruta que entrega el backend (`act_sec`) —
-   * así el sistema hijo, cuando esté federado, coincide exactamente con la
-   * ruta que trae Ant.
-   */
-  private remoteSlug(item: AntMenuItem): string {
-    const ruta = (item.act_sec ?? item.cod_sec ?? '').replace(/^\/+/, '');
-    return ruta.split('/')[0] || item.cod_sec;
+    if (usuario?.email) {
+      this.menuStg.cargar(usuario.email);
+    }
   }
 
   protected toggleNavPanel(): void {
@@ -107,11 +50,14 @@ export class SidebarComponent implements OnInit {
       },
     ];
 
-    const sistemasStg = this.sistemasStg();
+    const sistemasStg = this.menuStg.sistemas();
     const idsStg = new Set(sistemasStg.map(s => s.id));
 
     // Remotes registrados en /api/v1/sistemas que todavía no vinieron por STG
-    // (evita duplicar un mismo sistema si aparece en ambas fuentes).
+    // (evita duplicar un mismo sistema si aparece en ambas fuentes). No hay
+    // fuente de nodos para ellos (list_sec es exclusivo de STG), así que no
+    // tienen panel — el ícono navega directo al remote, igual que un sistema
+    // de STG sin hijos (ver MenuStgService.cargar).
     const remotesRegistrados: SidebarIcon[] = this.shell.subsistemas()
       .filter(slug => !idsStg.has(slug))
       .map(slug => ({
@@ -119,12 +65,14 @@ export class SidebarComponent implements OnInit {
         tipo:       'remote' as const,
         icono:      this.getRemoteIcono(slug),
         etiqueta:   this.getRemoteLabel(slug),
-        tienePanel: true,
+        ruta:       `/admin/${slug}`,
+        tienePanel: false,
       }));
 
     return [...base, ...sistemasStg, ...remotesRegistrados];
   });
 
+  /** `null` cuando el sistema activo no tiene panel — Col 2 se oculta por completo (ver template). */
   protected readonly panelActivo = computed<SidebarNavPanelConfig | null>(() => {
     const id = this.shell.sidebarIconActivo();
 
@@ -132,11 +80,20 @@ export class SidebarComponent implements OnInit {
       return this.getPanelHost();
     }
 
+    const icono = this.iconos().find(i => i.id === id);
+    if (!icono?.tienePanel) return null;
+
     return this.getPanelRemote(id);
   });
 
   protected seleccionarIcono(icon: SidebarIcon): void {
+    // Siempre se marca activo el ícono clickeado, tenga panel o no: así Col 1
+    // resalta el sistema correcto y `panelActivo` oculta Col 2 si no aplica.
     this.shell.setSidebarIconActivo(icon.id);
+
+    if (!icon.tienePanel && icon.ruta) {
+      this.router.navigateByUrl(icon.ruta);
+    }
   }
 
   protected onRutaSeleccionada(ruta: string): void {
@@ -165,35 +122,30 @@ export class SidebarComponent implements OnInit {
     return {
       tipo:   'host-admin',
       titulo: 'Host Principal',
-      icono:  'lucideHome',
+      icono:  'pi pi-home',
       secciones: secciones
     };
   }
 
+  /**
+   * Solo se llama para sistemas con `tienePanel: true`, es decir, sistemas
+   * de STG con nodos reales en `list_sec` (ver `iconos` y `MenuStgService`).
+   * Los sistemas sin nodos navegan directo y nunca activan un panel.
+   */
   private getPanelRemote(slug: string): SidebarNavPanelConfig {
+    const hijosStg = this.menuStg.hijosPorSistema()[slug] ?? [];
+    const secciones: SidebarNavSeccion[] = [{ titulo: this.getRemoteLabel(slug), rutas: hijosStg }];
+
     return {
       tipo:   'remote',
       titulo: this.getRemoteLabel(slug),
       icono:  this.getRemoteIcono(slug),
-      secciones: [
-        {
-          titulo: 'Acceso directo',
-          rutas: [
-            { etiqueta: 'Dashboard', ruta: `/admin/${slug}/dashboard`, icono: 'lucideGrid' },
-          ],
-        },
-        {
-          titulo: this.getRemoteLabel(slug),
-          rutas: [
-            { etiqueta: 'Módulo principal', ruta: `/admin/${slug}`, icono: 'lucideActivity' },
-          ],
-        },
-      ],
+      secciones,
     };
   }
 
   private getRemoteLabel(slug: string): string {
-    const stg = this.sistemasStg().find(s => s.id === slug);
+    const stg = this.menuStg.sistemas().find(s => s.id === slug);
     if (stg) return stg.etiqueta;
 
     const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
@@ -201,7 +153,7 @@ export class SidebarComponent implements OnInit {
   }
 
   private getRemoteIcono(slug: string): string {
-    const stg = this.sistemasStg().find(s => s.id === slug);
+    const stg = this.menuStg.sistemas().find(s => s.id === slug);
     if (stg) return stg.icono;
 
     const sistema = this.sistemasService.sistemas().find(s => s.slug === slug);
