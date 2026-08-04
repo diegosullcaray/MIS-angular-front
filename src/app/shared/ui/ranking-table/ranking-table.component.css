@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+/* Resalta el primer lugar del grupo, igual que el legado (#A9EFFD). */
+:host ::ng-deep .ranking-table-row--top {
+  background: #A9EFFD !important;
+  font-weight: var(--mis-font-semibold);
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background: var(--mis-panel-bg);
+  color: var(--mis-text-secondary);
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 6px 10px;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  font-size: 13px;
+  padding: 6px 10px;
+}
