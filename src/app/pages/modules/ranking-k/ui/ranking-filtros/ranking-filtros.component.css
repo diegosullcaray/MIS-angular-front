@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+
+/*
+ * `animate.enter`/`animate.leave` (Angular nativo, sin @angular/animations)
+ * se enlazan desde el padre (`categoria-detalle`) sobre este mismo elemento
+ * host — al ser reglas `:host`, el encapsulamiento de este componente sigue
+ * aplicándolas aunque la clase la agregue el padre.
+ */
+:host.mis-fade-in {
+  animation: mis-fade-in 180ms ease-out;
+}
+
+:host.mis-fade-out {
+  animation: mis-fade-out 150ms ease-in;
+}
+
+@keyframes mis-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mis-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}

@@ -1,0 +1,39 @@
+<div class="mis-card ranking-table-card">
+  <div class="px-4 py-3 border-b border-[var(--mis-border)]">
+    @if (cargando()) {
+      <p-skeleton width="60%" height="1rem" />
+    } @else {
+      <h3 class="text-sm font-semibold text-[var(--mis-primary)] m-0 truncate" [pTooltip]="titulo()" tooltipPosition="top">{{ titulo() }}</h3>
+    }
+  </div>
+
+  @if (cargando()) {
+    <div class="p-3 flex flex-col gap-2">
+      @for (fila of filasSkeleton(); track $index) {
+        <p-skeleton height="1.25rem" />
+      }
+    </div>
+  } @else {
+    <p-table [value]="filasVisibles()" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="w-10 text-center text-[11px] uppercase whitespace-nowrap" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">N°</th>
+          <th class="text-[11px] uppercase whitespace-nowrap" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">Usuario</th>
+          <th class="text-center text-[11px] uppercase whitespace-nowrap" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">{{ valorLabel() }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-fila>
+        <tr [style.background-color]="esPrimerPuesto(fila) ? '#A9EFFD' : null" [style.font-weight]="esPrimerPuesto(fila) ? 600 : null">
+          <td class="text-center font-semibold whitespace-nowrap">{{ fila.posicion }}</td>
+          <td class="max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap" [pTooltip]="fila.etiqueta" tooltipPosition="top">{{ fila.etiqueta }}</td>
+          <td class="text-center whitespace-nowrap">{{ fila.valor }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-4">Sin datos</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</div>

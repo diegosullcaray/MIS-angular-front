@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+/*
+ * El color de encabezado y el resaltado del primer puesto se aplican como
+ * `[style]` inline directamente en las celdas propias (ver el .html): un
+ * estilo inline gana sobre cualquier regla de hoja de estilo no marcada
+ * `!important` (PrimeNG incluido), sin depender del orden de cascade layers
+ * ni de adivinar nombres de clase internos con `::ng-deep`.
+ */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th,
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 6px 10px;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  font-size: 13px;
+}
