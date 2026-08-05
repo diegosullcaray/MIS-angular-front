@@ -54,7 +54,7 @@ test.describe('Presupuesto — smoke de las 7 pantallas migradas', () => {
     await page.goto('/app/presupuesto/gestion/sistema/resp');
 
     await expect(page.getByText('Correo')).toBeVisible();
-    await expect(page.getByText('Elemento')).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Elemento' })).toBeVisible();
   });
 
   test('Tablero de Verificación muestra los 2 selectores de jerarquía', async ({ page }) => {
