@@ -105,6 +105,10 @@ export class ShellStateService {
     this._navPanelColapsado.update((colapsado) => !colapsado);
   }
 
+  setNavPanelColapsado(valor: boolean): void {
+    this._navPanelColapsado.set(valor);
+  }
+
   cerrarSesion(): void {
     this._usuarioActivo.set(null);
     this._menuItemActivo.set(null);

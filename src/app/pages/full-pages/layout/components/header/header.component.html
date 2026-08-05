@@ -23,15 +23,15 @@
   <div class="flex-1"></div>
   <!-- Acciones de cabecera -->
   <div class="flex items-center gap-2 relative">
-    <!-- Pill de usuario -->
-    <div class="flex items-center gap-2 p-1 pr-2 rounded-full border-1.5 border-[var(--mis-border-strong)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-primary-light)] hover:border-[var(--mis-primary)]"
+    <!-- Pill de usuario — en mobile solo se ve el círculo del avatar; nombre, rol y flecha se ocultan -->
+    <div class="flex items-center gap-2 p-1 pr-1 sm:pr-2 rounded-full border-1.5 border-[var(--mis-border-strong)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-primary-light)] hover:border-[var(--mis-primary)]"
          (click)="toggleDropdown()" (keydown.enter)="toggleDropdown()" tabindex="0" role="button" aria-haspopup="true" [attr.aria-expanded]="dropdownOpen()">
       <div class="w-7 h-7 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-xs font-semibold shrink-0">{{ shell.inicialesUsuario() }}</div>
-      <div class="flex flex-col">
+      <div class="hidden sm:flex flex-col">
         <span class="text-sm font-medium text-[var(--mis-text-primary)] leading-tight">{{ shell.usuarioActivo()?.nombre }}</span>
         <span class="text-[10px] text-[var(--mis-text-tertiary)] leading-none">{{ rolLabel() }}</span>
       </div>
-      <ng-icon name="lucideChevronDown" size="14" class="text-[var(--mis-text-tertiary)] transition-transform duration-150" [class.rotate-180]="dropdownOpen()" />
+      <ng-icon name="lucideChevronDown" size="14" class="hidden sm:block text-[var(--mis-text-tertiary)] transition-transform duration-150" [class.rotate-180]="dropdownOpen()" />
     </div>
 
     <!-- Dropdown del usuario -->

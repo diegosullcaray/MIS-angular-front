@@ -74,4 +74,15 @@ describe('ShellStateService', () => {
     service.toggleNavPanel();
     expect(service.navPanelColapsado()).toBe(false);
   });
+
+  it('setNavPanelColapsado() fuerza el valor sin importar el estado previo', () => {
+    service.setNavPanelColapsado(true);
+    expect(service.navPanelColapsado()).toBe(true);
+
+    service.setNavPanelColapsado(true); // repetir el mismo valor no debe alternar
+    expect(service.navPanelColapsado()).toBe(true);
+
+    service.setNavPanelColapsado(false);
+    expect(service.navPanelColapsado()).toBe(false);
+  });
 });
