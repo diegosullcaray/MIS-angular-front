@@ -1,0 +1,35 @@
+<div class="mis-card overflow-hidden">
+  @if (cargando()) {
+    <div class="p-4 flex flex-col gap-2">
+      @for (i of [1, 2, 3, 4, 5]; track i) {
+        <p-skeleton height="1.5rem" />
+      }
+    </div>
+  } @else {
+    <p-table [value]="filas()" [scrollable]="true" scrollHeight="420px" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          @for (col of columnas(); track col.key) {
+            <th class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+              {{ col.label }}
+            </th>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-fila>
+        <tr>
+          @for (col of columnas(); track col.key) {
+            <td class="whitespace-nowrap text-[13px]">{{ fila[col.key] }}</td>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="columnas().length || 1" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
+            Sin resultados para este cliente.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</div>

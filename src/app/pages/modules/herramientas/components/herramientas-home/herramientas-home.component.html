@@ -1,0 +1,35 @@
+<div class="flex flex-col gap-6 w-full">
+  <div class="flex items-center justify-between gap-3 flex-wrap">
+    <div class="flex items-center gap-3">
+      <ng-icon name="lucideShieldAlert" size="24" class="text-[var(--mis-danger)]" />
+      <h1 class="text-[var(--mis-text-xl)] font-semibold text-[var(--mis-text-primary)] m-0">
+        Consulta Base Negativa
+        @if (clienteActual()) {
+          <span class="text-[var(--mis-text-secondary)] font-normal"> — {{ clienteActual()!.HDESCLI }}</span>
+        }
+      </h1>
+    </div>
+
+    @if (clienteActual()) {
+      <p-button label="Nueva búsqueda" icon="pi pi-search" [outlined]="true" size="small" (click)="nuevaBusqueda()" />
+    }
+  </div>
+
+  @if (service.error()) {
+    <div class="mis-card p-5">
+      <app-inline-error titulo="No se pudo cargar la consulta" [detalle]="service.error()!" (reintentar)="onClienteSeleccionado(clienteActual()!)" />
+    </div>
+  } @else if (!clienteActual()) {
+    <div class="mis-card">
+      <app-empty-state titulo="Sin cliente seleccionado" descripcion="Usa el buscador para consultar un cliente en la base de riesgos." />
+    </div>
+  } @else {
+    <app-resultado-table [columnas]="service.headers()" [filas]="service.resultados()" [cargando]="service.cargando()" />
+  }
+</div>
+
+<app-consulta-riesgo-dialog
+  [visible]="mostrarBuscador()"
+  (visibleChange)="onBuscadorVisibleChange($event)"
+  (clienteSeleccionado)="onClienteSeleccionado($event)"
+/>
