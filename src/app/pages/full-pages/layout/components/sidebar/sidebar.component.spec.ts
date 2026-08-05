@@ -170,6 +170,45 @@ describe('SidebarComponent', () => {
     expect(navSpy).not.toHaveBeenCalled();
   });
 
+  it('seleccionarIcono() muestra el panel por defecto al cambiar de sistema, aunque estuviera colapsado del sistema anterior', () => {
+    vi.useFakeTimers();
+    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true }]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });
+    const fixture = crear();
+    shell.setNavPanelColapsado(true); // quedó colapsado del sistema anterior
+
+    fixture.componentInstance['seleccionarIcono']({ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true });
+
+    expect(shell.navPanelColapsado()).toBe(false);
+    vi.useRealTimers();
+  });
+
+  it('seleccionarIcono() activa un esqueleto de transición al cambiar a otro sistema, y lo apaga tras 300ms', () => {
+    vi.useFakeTimers();
+    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true }]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });
+    const fixture = crear();
+    const instancia = fixture.componentInstance;
+
+    instancia['seleccionarIcono']({ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true });
+
+    expect(instancia['cambiandoPanel']()).toBe(true);
+
+    vi.advanceTimersByTime(300);
+    expect(instancia['cambiandoPanel']()).toBe(false);
+    vi.useRealTimers();
+  });
+
+  it('seleccionarIcono() no dispara el esqueleto al re-elegir el mismo sistema ya activo con el panel ya abierto', () => {
+    const fixture = crear();
+    const instancia = fixture.componentInstance;
+    const icono: SidebarIcon = { id: 'host-inicio', tipo: 'host-inicio', icono: 'pi', etiqueta: 'Inicio', tienePanel: true };
+
+    instancia['seleccionarIcono'](icono); // host-inicio ya es el activo por defecto, con el panel abierto
+
+    expect(instancia['cambiandoPanel']()).toBe(false);
+  });
+
   it('seleccionarIcono() de un enlace externo (Jira/Imparables/Helpdesk) dispara el overlay en vez de navegar', () => {
     const navSpy = vi.spyOn(router, 'navigateByUrl');
     const fixture = crear();
@@ -238,6 +277,17 @@ describe('SidebarComponent', () => {
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).querySelector('[aria-hidden="true"]')).toBeNull();
+  });
+
+  it('mientras cambiandoPanel está activo, muestra el esqueleto en vez del panel real (y también el fondo oscuro)', () => {
+    const fixture = crear();
+    fixture.componentInstance['cambiandoPanel'].set(true);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('[aria-label="Cargando navegación del sistema"]')).not.toBeNull();
+    expect(el.querySelector('app-sidebar-nav-panel')).toBeNull();
+    expect(el.querySelector('[aria-hidden="true"]')).not.toBeNull();
   });
 
   it('el botón para alternar el panel usa el estado compartido de ShellStateService (Col 2 se oculta al colapsar)', () => {
