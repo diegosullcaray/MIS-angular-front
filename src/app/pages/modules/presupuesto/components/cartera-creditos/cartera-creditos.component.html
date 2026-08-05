@@ -1,0 +1,46 @@
+<div class="flex flex-col gap-3">
+  <div class="mis-card flex flex-wrap items-center gap-3 p-3">
+    <app-hier-selector [paramsHier]="paramsHier" (nodoSeleccionado)="onNivelSeleccionado($event)" />
+
+    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cartera de Créditos</h2>
+
+    <div class="flex-1"></div>
+
+    @if (puedeGuardar()) {
+      <p-button label="Reiniciar" severity="secondary" [text]="true" size="small" (onClick)="reiniciar()" />
+      <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
+    }
+    @if (puedeVerificar()) {
+      <p-button label="Verificar" severity="success" size="small" [loading]="verificando()" (onClick)="verificar()" />
+    }
+  </div>
+
+  <p-tabs [(value)]="tabActiva">
+    <p-tablist>
+      <p-tab value="variables">Variables</p-tab>
+      <p-tab value="monto">Comp. Prod. Monto</p-tab>
+      <p-tab value="ratio">Comp. Prod. Ratio</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="variables">
+        <app-editable-table
+          [columnas]="columnasVariables"
+          [filas]="filas()"
+          [cargando]="cargando()"
+          [esEditable]="esEditable"
+          (celdaEditada)="onCeldaEditada($event)"
+        />
+      </p-tabpanel>
+      <p-tabpanel value="monto">
+        <app-editable-table [columnas]="columnasMonto" [filas]="filasComposicion()" [cargando]="cargando()" [esEditable]="soloLectura" />
+      </p-tabpanel>
+      <p-tabpanel value="ratio">
+        <app-editable-table [columnas]="columnasRatio" [filas]="filasComposicion()" [cargando]="cargando()" [esEditable]="soloLectura" />
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+
+  <p class="text-[11px] text-[var(--mis-text-tertiary)] px-1">
+    Los datos mostrados están construidos para generar un histórico en función de los últimos responsables vigentes.
+  </p>
+</div>

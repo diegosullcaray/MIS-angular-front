@@ -1,0 +1,64 @@
+<div class="flex flex-col gap-3">
+  <div class="mis-card flex flex-wrap items-center gap-3 p-3">
+    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir línea" (nodoSeleccionado)="onLineaSeleccionada($event)" />
+    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir segundo nivel" (nodoSeleccionado)="onSegundoNivelSeleccionado($event)" />
+
+    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Tablero de Verificación</h2>
+
+    <div class="flex-1"></div>
+
+    <input
+      pInputText
+      type="text"
+      placeholder="Buscar elemento…"
+      class="text-[13px]"
+      [ngModel]="filtro()"
+      (ngModelChange)="filtro.set($event)"
+    />
+  </div>
+
+  <div class="mis-card overflow-hidden">
+    @if (cargando()) {
+      <div class="p-4 flex flex-col gap-2">
+        @for (i of [1, 2, 3, 4, 5]; track i) {
+          <p-skeleton height="1.5rem" />
+        }
+      </div>
+    } @else {
+      <p-table [value]="filasFiltradas()" [scrollable]="true" scrollHeight="480px" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th rowspan="2" class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+              Elemento
+            </th>
+            <th colspan="3" class="text-center text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+              Verificación
+            </th>
+          </tr>
+          <tr>
+            <th class="whitespace-nowrap text-[11px]" style="background-color: var(--mis-primary-light);">Estado</th>
+            <th class="whitespace-nowrap text-[11px]" style="background-color: var(--mis-primary-light);">Usuario</th>
+            <th class="whitespace-nowrap text-[11px]" style="background-color: var(--mis-primary-light);">Hora</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-fila>
+          <tr>
+            <td class="text-[13px]">{{ fila.des_rel }}</td>
+            <td class="text-[13px]">
+              <i [class]="estadoIcono(fila.cod_est).icono" [style.color]="estadoIcono(fila.cod_est).color" [title]="estadoIcono(fila.cod_est).titulo"></i>
+            </td>
+            <td class="text-[13px]">{{ fila.usu_log }}</td>
+            <td class="text-[13px]">{{ fila.tim_log }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
+              Elige una línea y un segundo nivel para ver el histórico de verificaciones.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </div>
+</div>

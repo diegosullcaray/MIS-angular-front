@@ -70,6 +70,17 @@ describe('HeaderComponent', () => {
     expect(fixture.componentInstance['breadcrumbItems']()).toEqual([{ label: 'Mi espacio' }]);
   });
 
+  it('breadcrumb de una ruta anidada de Presupuesto usa las etiquetas legibles de cada segmento', async () => {
+    const fixture = await crear('/app/presupuesto/lineas/pasivos-patrimonio/car-dep-bp');
+
+    expect(fixture.componentInstance['breadcrumbItems']()).toEqual([
+      { label: 'Presupuesto', routerLink: '/app/presupuesto' },
+      { label: 'Líneas', routerLink: '/app/presupuesto/lineas' },
+      { label: 'Pasivos y Patrimonio', routerLink: '/app/presupuesto/lineas/pasivos-patrimonio' },
+      { label: 'Depósitos Banca Preferente' },
+    ]);
+  });
+
   it('breadcrumb de categoria-detalle usa el nombre real de la categoría (KaypachaService)', async () => {
     kaypachaFalso.buscarCategoria.mockReturnValue({ name: 'Zona Norte', reportType: 'Medal', rdestip: 'cat-1' });
 
