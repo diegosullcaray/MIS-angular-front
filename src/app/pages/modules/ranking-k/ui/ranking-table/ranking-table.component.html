@@ -17,7 +17,7 @@
       }
     </div>
   } @else {
-    <p-table [value]="filasVisibles()" [scrollable]="true" scrollHeight="360px" styleClass="p-datatable-sm ranking-custom-table">
+    <p-table [value]="filasVisibles()" [scrollable]="true" [scrollHeight]="scrollHeight()" styleClass="p-datatable-sm ranking-custom-table">
       <ng-template pTemplate="header">
         <tr>
           <th class="w-12 text-center text-[12px] font-bold uppercase whitespace-nowrap border-r border-white/30" style="background-color: var(--mis-ranking-subheader-bg); color: #ffffff;">N°</th>

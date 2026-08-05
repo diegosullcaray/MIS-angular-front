@@ -26,6 +26,8 @@ export class RankingTableComponent {
   readonly valorLabel = input('Puntos');
   /** Máximo de filas a mostrar (0 = mostrar todas las posiciones). */
   readonly limite = input(LIMITE_DEFECTO);
+  /** Altura del scrollable de la tabla (por defecto 360px para ~10 filas, 520px para ~20 filas). */
+  readonly scrollHeight = input('360px');
   /** Muestra el esqueleto de carga en vez de la tabla real. */
   readonly cargando = input(false);
 

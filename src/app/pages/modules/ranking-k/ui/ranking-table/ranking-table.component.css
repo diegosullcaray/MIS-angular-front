@@ -2,13 +2,6 @@
   display: block;
 }
 
-/*
- * El color de encabezado y el resaltado del primer puesto se aplican como
- * `[style]` inline directamente en las celdas propias (ver el .html): un
- * estilo inline gana sobre cualquier regla de hoja de estilo no marcada
- * `!important` (PrimeNG incluido), sin depender del orden de cascade layers
- * ni de adivinar nombres de clase internos con `::ng-deep`.
- */
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th,
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
   padding: 6px 10px;
@@ -16,4 +9,32 @@
 
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
   font-size: 13px;
+}
+
+/* Forzar scrollbar visible en contenedores de tabla PrimeNG */
+:host ::ng-deep .p-datatable-table-container,
+:host ::ng-deep .p-datatable-scrollable-body {
+  overflow-y: auto !important;
+}
+
+:host ::ng-deep .p-datatable-table-container::-webkit-scrollbar,
+:host ::ng-deep .p-datatable-scrollable-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+:host ::ng-deep .p-datatable-table-container::-webkit-scrollbar-track,
+:host ::ng-deep .p-datatable-scrollable-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+:host ::ng-deep .p-datatable-table-container::-webkit-scrollbar-thumb,
+:host ::ng-deep .p-datatable-scrollable-body::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+:host ::ng-deep .p-datatable-table-container::-webkit-scrollbar-thumb:hover,
+:host ::ng-deep .p-datatable-scrollable-body::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
 }

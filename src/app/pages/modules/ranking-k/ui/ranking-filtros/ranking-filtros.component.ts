@@ -41,7 +41,7 @@ export class RankingFiltrosComponent {
     usuario: '',
     lugares: [],
     rangoPuntos: [0, 100],
-    limitePosiciones: 10,
+    limitePosiciones: 0,
   });
 
   protected readonly filtrosForm = form(this.model);
@@ -90,7 +90,7 @@ export class RankingFiltrosComponent {
       usuario: '',
       rangoPuntos: [this.puntosMinDisponible(), this.puntosMaxDisponible()],
       lugares: [...this.lugaresDisponibles()],
-      limitePosiciones: 10,
+      limitePosiciones: 0,
     });
     const val = this.model();
     this.aplicarFiltros.emit({
