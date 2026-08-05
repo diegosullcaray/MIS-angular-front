@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
+import { normalizarTexto } from '../../../utils/texto.util';
 import type { ColumnaTabla, NivelJerarquiaFijo, ResponsableFila } from '../../../models';
 
 const NIVELES: NivelJerarquiaFijo[] = [
@@ -53,9 +54,9 @@ export class ResponsablesComponent implements OnInit {
   private filasOriginales: ResponsableFila[] = [];
 
   protected readonly filasFiltradas = computed(() => {
-    const termino = this.filtro().trim().toLowerCase();
+    const termino = normalizarTexto(this.filtro().trim());
     if (!termino) return this.filas();
-    return this.filas().filter((f) => f.des_rel.toLowerCase().includes(termino));
+    return this.filas().filter((f) => normalizarTexto(f.des_rel).includes(termino));
   });
 
   protected readonly esEditable = (_fila: ResponsableFila, key: string): boolean => key === 'cod_res';

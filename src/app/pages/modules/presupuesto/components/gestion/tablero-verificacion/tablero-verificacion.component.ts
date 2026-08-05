@@ -6,6 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import { normalizarTexto } from '../../../utils/texto.util';
 import type { HierarquiaNodo, LogVerificacionFila, ParamsJerarquia } from '../../../models';
 
 /**
@@ -46,9 +47,9 @@ export class TableroVerificacionComponent {
   protected readonly filtro = signal('');
 
   protected readonly filasFiltradas = computed(() => {
-    const termino = this.filtro().trim().toLowerCase();
+    const termino = normalizarTexto(this.filtro().trim());
     if (!termino) return this.filas();
-    return this.filas().filter((f) => f.des_rel.toLowerCase().includes(termino));
+    return this.filas().filter((f) => normalizarTexto(f.des_rel).includes(termino));
   });
 
   protected onLineaSeleccionada(nodo: HierarquiaNodo): void {
