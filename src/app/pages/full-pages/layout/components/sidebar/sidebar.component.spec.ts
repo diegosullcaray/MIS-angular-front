@@ -318,4 +318,30 @@ describe('SidebarComponent', () => {
 
     expect(shell.sidebarTienePanel()).toBe(false);
   });
+
+  it('el botón de hamburguesa del rail (Col 1) queda oculto en mobile — en mobile ese botón vive en el header', () => {
+    const fixture = crear();
+
+    const boton = (fixture.nativeElement as HTMLElement).querySelector('#tour-sidebar-icons button[aria-label="Alternar menú lateral"]') as HTMLButtonElement;
+
+    expect(boton).not.toBeNull();
+    expect(boton.classList.contains('hidden')).toBe(true);
+    expect(boton.classList.contains('sm:flex')).toBe(true);
+  });
+
+  it('los botones de íconos de la barra inferior en mobile son cuadrados (mismo ancho y alto), no rectángulos', () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: false, ruta: '/reportes' }]);
+    const fixture = crear();
+
+    const botones = (fixture.nativeElement as HTMLElement).querySelectorAll('.sidebar-icon-btn');
+    expect(botones.length).toBeGreaterThan(0);
+    botones.forEach((boton) => {
+      expect(boton.classList.contains('w-12')).toBe(true);
+      expect(boton.classList.contains('h-12')).toBe(true);
+    });
+
+    const contenedor = (fixture.nativeElement as HTMLElement).querySelector('#tour-sidebar-icons > div:last-child') as HTMLElement;
+    expect(contenedor.classList.contains('items-stretch')).toBe(false);
+    expect(contenedor.classList.contains('items-center')).toBe(true);
+  });
 });
