@@ -36,6 +36,13 @@
 
 <!-- Col 2: Panel de navegación (se mantiene igual — oculto si el usuario la colapsó, o si el sistema activo no tiene panel) -->
 @if (!shell.navPanelColapsado() && panelActivo(); as panel) {
+  <!-- Fondo oscuro que bloquea el layout mientras el panel está abierto — solo en mobile, donde el panel flota sobre el contenido en vez de compartir el ancho -->
+  <div
+    class="sm:hidden fixed inset-0 bottom-16 z-40 bg-black/50"
+    (click)="shell.setNavPanelColapsado(true)"
+    aria-hidden="true"
+  ></div>
+
   <app-sidebar-nav-panel
     [panelConfig]="panel"
     (rutaSeleccionada)="onRutaSeleccionada($event)"

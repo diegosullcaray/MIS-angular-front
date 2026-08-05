@@ -189,6 +189,57 @@ describe('SidebarComponent', () => {
     expect(shell.menuItemActivo()).toEqual({ ruta: '/app/ranking-k/categoria/cat-1', etiqueta: 'cat-1' });
   });
 
+  function mockMatchMedia(matches: boolean): void {
+    vi.spyOn(window, 'matchMedia').mockReturnValue({ matches } as MediaQueryList);
+  }
+
+  it('onRutaSeleccionada() colapsa el panel automáticamente en mobile (flota sobre el contenido)', () => {
+    mockMatchMedia(true);
+    shell.setNavPanelColapsado(false);
+    const fixture = crear();
+
+    fixture.componentInstance['onRutaSeleccionada']('/app/ranking-k/categoria/cat-1');
+
+    expect(shell.navPanelColapsado()).toBe(true);
+  });
+
+  it('onRutaSeleccionada() no colapsa el panel en desktop (se queda fijo al costado)', () => {
+    mockMatchMedia(false);
+    shell.setNavPanelColapsado(false);
+    const fixture = crear();
+
+    fixture.componentInstance['onRutaSeleccionada']('/app/ranking-k/categoria/cat-1');
+
+    expect(shell.navPanelColapsado()).toBe(false);
+  });
+
+  it('muestra un fondo oscuro que bloquea el layout mientras el panel está abierto, y lo cierra al hacer clic', () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true }]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });
+    const fixture = crear();
+    shell.setSidebarIconActivo('sist-1');
+    fixture.detectChanges();
+
+    const fondo = (fixture.nativeElement as HTMLElement).querySelector('[aria-hidden="true"]') as HTMLElement;
+    expect(fondo).not.toBeNull();
+
+    fondo.click();
+    fixture.detectChanges();
+
+    expect(shell.navPanelColapsado()).toBe(true);
+  });
+
+  it('no muestra el fondo oscuro cuando el panel está colapsado', () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true }]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });
+    const fixture = crear();
+    shell.setSidebarIconActivo('sist-1');
+    shell.setNavPanelColapsado(true);
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).querySelector('[aria-hidden="true"]')).toBeNull();
+  });
+
   it('el botón para alternar el panel usa el estado compartido de ShellStateService (Col 2 se oculta al colapsar)', () => {
     menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true }]);
     menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });

@@ -99,6 +99,19 @@ export class SidebarComponent implements OnInit {
 
   protected onRutaSeleccionada(ruta: string): void {
     this.shell.setMenuItemActivo({ ruta, etiqueta: ruta.split('/').pop() ?? '' });
+
+    // En mobile el panel flota sobre el contenido (con fondo oscuro bloqueando
+    // el layout, ver template) — al elegir una ruta se oculta solo ahí, para
+    // dejar ver la pantalla que recién cargó. En desktop el panel es fijo al
+    // costado y debe quedarse abierto para seguir navegando dentro de él.
+    if (this.esMobil()) {
+      this.shell.setNavPanelColapsado(true);
+    }
+  }
+
+  /** Breakpoint `sm` de Tailwind (640px) — mismo corte usado en las clases responsive del layout. */
+  private esMobil(): boolean {
+    return typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches;
   }
 
   private getPanelHost(): SidebarNavPanelConfig {
