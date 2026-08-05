@@ -14,15 +14,28 @@
   color: #fff !important;
 }
 
+/* Mobile (barra inferior): indicador como barra superior del botón activo. */
 .sidebar-icon-btn--active::before {
   content: '';
   position: absolute;
-  left: -4px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 20px;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
   background: var(--mis-secondary);
-  border-radius: 0 var(--mis-radius-xs) var(--mis-radius-xs) 0;
+  border-radius: 0 0 var(--mis-radius-xs) var(--mis-radius-xs);
+}
+
+/* Desktop (rail vertical, desde sm:): indicador como barra al borde izquierdo. */
+@media (min-width: 640px) {
+  .sidebar-icon-btn--active::before {
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    border-radius: 0 var(--mis-radius-xs) var(--mis-radius-xs) 0;
+  }
 }
 
