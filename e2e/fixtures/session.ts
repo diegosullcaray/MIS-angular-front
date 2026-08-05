@@ -11,6 +11,7 @@ export interface UsuarioDePrueba {
   email: string;
   rol: string;
   subsistemas: string[];
+  codBt: string;
 }
 
 export const USUARIO_DE_PRUEBA: UsuarioDePrueba = {
@@ -19,6 +20,11 @@ export const USUARIO_DE_PRUEBA: UsuarioDePrueba = {
   email: 'e2e.playwright@confianza.pe',
   rol: 'admin-sistema',
   subsistemas: [],
+  // Con codBt, KaypachaService.cargarCategorias() (se dispara siempre desde el
+  // constructor de SidebarComponent, en cualquier página autenticada) no cae en
+  // su rama de error por falta de cod_bt — evita ruido de consola irrelevante
+  // en specs que no tienen nada que ver con ranking-k.
+  codBt: 'BT-001',
 };
 
 /**

@@ -80,6 +80,14 @@ export const APP_ROUTES: Routes = [
             (m) => m.HERRAMIENTAS_ROUTES
           )
       },
+      {
+        // 'presupuesto' — coincide con el act_sec del backend para el módulo A_MOD_PRES.
+        path: 'presupuesto',
+        loadChildren: () =>
+          import('./pages/modules/presupuesto/presupuesto.routes').then(
+            (m) => m.PRESUPUESTO_ROUTES
+          )
+      },
     ]
   },
   {

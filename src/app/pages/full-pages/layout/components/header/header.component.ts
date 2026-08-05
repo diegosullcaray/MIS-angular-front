@@ -26,6 +26,20 @@ const SEGMENTO_LABELS: Record<string, string> = {
   'dest-credito': 'Destino de Crédito',
   'reg-prosp-corr': 'Prospectos Corresponsal',
   'regprosp-corr': 'Transacciones Corresponsal',
+  presupuesto: 'Presupuesto',
+  lineas: 'Líneas',
+  gestion: 'Gestión',
+  activos: 'Activos',
+  'pasivos-patrimonio': 'Pasivos y Patrimonio',
+  sistema: 'Sistema',
+  seguimiento: 'Seguimiento',
+  'car-cre': 'Cartera de Créditos',
+  'car-dep-bp': 'Depósitos Banca Preferente',
+  'car-dep-red': 'Depósitos Red',
+  'seg-com': 'Seguros Comercial',
+  'seg-ope': 'Seguros Operaciones',
+  resp: 'Responsables',
+  'tbl-ver': 'Tablero de Verificación',
 };
 
 @Component({
