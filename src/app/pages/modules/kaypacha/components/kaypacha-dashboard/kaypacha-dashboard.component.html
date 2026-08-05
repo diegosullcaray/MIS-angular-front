@@ -1,0 +1,297 @@
+<div
+  class="mis-card p-3.5 sm:p-5 flex flex-col gap-5 w-full min-h-[calc(100vh-130px)] bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg flex-1">
+  @if (service.loading()) {
+  <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200/80">
+    <app-list-skeleton [rows]="[1, 2, 3, 4, 5, 6]" />
+  </div>
+  } @else if (service.error()) {
+  <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200/80">
+    <app-inline-error [titulo]="'Error al cargar Kaypacha'" [detalle]="service.error()!"
+      (reintentar)="service.cargarDatos()" />
+  </div>
+  } @else {
+  <!-- Header Banner: Logo Kaypacha a la Izquierda y Botones de Acción a la Derecha -->
+  <header id="tour-kaypacha-header"
+    class="bg-white rounded-xl p-2.5 sm:p-3 shadow-xs border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-3 relative overflow-hidden">
+    <!-- Glow decorativo superior -->
+    <div class="absolute -top-12 -left-12 w-48 h-48 bg-[#035096]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Izquierda: Logo Kaypacha -->
+    <div class="flex items-center gap-3 z-10">
+      <img src="assets/images/fc/modules/kaypacha/logo.png" alt="Logo Kaypacha"
+        class="max-h-10 sm:max-h-12 w-auto object-contain transition-transform hover:scale-105" />
+    </div>
+
+    <!-- Derecha: Botones de acción auxiliares (Limpiar Todo, Tour Guiado) -->
+    <div class="z-10 flex items-center justify-end gap-2">
+      <!-- Botón Limpiar Todo (Solo Ícono) -->
+      <p-button id="tour-kaypacha-limpiar-btn" icon="pi pi-refresh" [rounded]="true" [outlined]="true"
+        severity="secondary" size="small" pTooltip="Limpiar todo / Restablecer" tooltipPosition="bottom"
+        (onClick)="limpiarTodo()"></p-button>
+
+      <!-- Botón Tour Guiado Driver.js (Solo Ícono) -->
+      <p-button id="tour-kaypacha-tour-btn" icon="pi pi-question-circle" [rounded]="true" [outlined]="true"
+        severity="help" size="small" pTooltip="Iniciar tour guiado interactivo" tooltipPosition="bottom"
+        (onClick)="iniciarTour()"></p-button>
+    </div>
+  </header>
+
+  <!-- Ficha Asesor, Cargo, Medalla al costado y Tarjetas KPI compactas con PrimeNG -->
+  <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+      <!-- Bloque Izquierdo: Asesor y Cargo (Col 1-5) -->
+      <div id="tour-kaypacha-asesor-info" class="lg:col-span-5 flex flex-col gap-3">
+        <!-- Etiqueta Asesor con Botón Cambiar Colaborador al costado -->
+        <div class="flex items-center gap-2">
+          <span
+            class="inline-flex items-center justify-center px-3 py-1 rounded bg-[#035096] text-white font-bold text-xs sm:text-sm tracking-wide shrink-0 w-24 text-center border border-[#035096]">
+            ASESOR:
+          </span>
+          <input
+            type="text"
+            pInputText
+            readonly
+            [value]="service.nombreUsuario()"
+            placeholder="Seleccione un colaborador..."
+            class="flex-1 w-full bg-white border border-[#035096] rounded px-3 py-1.5 text-slate-900 font-bold text-xs sm:text-sm truncate shadow-xs focus:outline-none"
+          />
+          @if (service.permitirBusqueda()) {
+          <p-button
+            id="tour-kaypacha-cambiar-btn"
+            icon="pi pi-user-edit"
+            [rounded]="true"
+            [outlined]="true"
+            severity="primary"
+            size="small"
+            pTooltip="Buscar y seleccionar otro colaborador"
+            tooltipPosition="bottom"
+            (onClick)="abrirBuscador()"
+          ></p-button>
+          }
+        </div>
+
+        <!-- Etiqueta Cargo -->
+        <div class="flex items-center gap-2">
+          <span
+            class="inline-flex items-center justify-center px-3 py-1 rounded bg-[#035096] text-white font-bold text-xs sm:text-sm tracking-wide shrink-0 w-24 text-center border border-[#035096]">
+            CARGO:
+          </span>
+          <input
+            type="text"
+            pInputText
+            readonly
+            [value]="service.cargo()"
+            placeholder="Sin Cargo"
+            class="flex-1 w-full bg-white border border-[#035096] rounded px-3 py-1.5 text-slate-900 font-bold text-xs sm:text-sm truncate shadow-xs focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <!-- Bloque Centro: Imagen Medalla AL COSTADO de Asesor/Cargo (Col 6-7) -->
+      <div class="lg:col-span-2 flex items-center justify-center py-1">
+        <img [src]="imagenMedalla" alt="Plataforma de Desempeño"
+          class="max-h-24 sm:max-h-28 w-auto object-contain filter drop-shadow-sm hover:scale-105 transition-transform" />
+      </div>
+
+      <!-- Bloque Derecho: Tarjetas KPI con PrimeNG p-card (Col 8-12) -->
+      <div id="tour-kaypacha-kpi-cards" class="lg:col-span-5 grid grid-cols-2 gap-3">
+        <!-- Tarjeta Puntaje Promedio Final con PrimeNG p-card -->
+        <p-card
+          styleClass="bg-[#efb810] text-slate-900 rounded-xl p-0 shadow-xs border border-amber-400/50 h-24 flex flex-col justify-center items-center text-center overflow-hidden">
+          <div class="flex flex-col justify-center items-center text-center w-full">
+            <span class="text-[11px] uppercase tracking-wider font-bold text-slate-900/90 leading-tight">
+              Puntaje Promedio Final
+            </span>
+            <span class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+              {{ service.puntajeFinal() }}
+            </span>
+          </div>
+        </p-card>
+
+        <!-- Tarjeta Posición con PrimeNG p-card -->
+        <p-card
+          styleClass="bg-gradient-to-br from-[#035096] to-[#1D396E] text-white rounded-xl p-0 shadow-xs border border-blue-400/20 h-24 flex flex-col justify-center items-center text-center overflow-hidden">
+          <div class="flex flex-col justify-center items-center text-center w-full">
+            <span class="text-[11px] uppercase tracking-wider font-bold text-blue-100 leading-tight">
+              Posición
+            </span>
+            <span class="text-2xl sm:text-3xl font-extrabold text-white mt-1">
+              {{ service.posicion() }}
+            </span>
+          </div>
+        </p-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bloque 1: Puntos Acumulados -->
+  <section id="tour-kaypacha-puntos-acumulados"
+    class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+    <!-- Window Header Bar (Legacy rgb(3, 80, 150)) -->
+    <div class="kaypacha-window-bar px-5 py-2.5 flex items-center justify-between border-b border-blue-900/30">
+      <div class="flex items-center gap-2.5">
+        <i class="pi pi-star-fill text-amber-300 text-base"></i>
+        <h2 class="text-sm sm:text-base font-bold tracking-wide m-0 text-white">Puntos Acumulados</h2>
+      </div>
+      <p-tag value="Detalle por Métricas" severity="info"
+        styleClass="bg-white/20 text-white font-medium border-0 text-[11px]"></p-tag>
+    </div>
+
+    <!-- Content Grid: 2 tablas gemelas lado a lado con PrimeNG p-table -->
+    <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-slate-50/60">
+      <!-- Tabla 1 Izquierda -->
+      <div class="kaypacha-table-wrapper border border-slate-300 rounded-xl shadow-xs bg-white">
+        <p-table [value]="service.dataSources1()"
+          styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
+          responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              @for (col of service.headers1(); track col.key) {
+              <th [ngStyle]="col.style || {}">
+                {{ col.label }}
+              </th>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              @for (col of service.headers1(); track col.key) {
+              <td>
+                {{ row[col.key] }}
+              </td>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="service.headers1().length || 1" class="text-center py-6 text-slate-400 text-xs">
+                Sin datos registrados en esta sección
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <!-- Tabla 1 Derecha -->
+      <div class="kaypacha-table-wrapper border border-slate-300 rounded-xl shadow-xs bg-white">
+        <p-table [value]="service.dataSources1()"
+          styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
+          responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              @for (col of service.headers1_1(); track col.key) {
+              <th [ngStyle]="col.style || {}">
+                {{ col.label }}
+              </th>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              @for (col of service.headers1_1(); track col.key) {
+              <td>
+                {{ row[col.key] }}
+              </td>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="service.headers1_1().length || 1" class="text-center py-6 text-slate-400 text-xs">
+                Sin datos registrados en esta sección
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bloque 2: Variables Históricas -->
+  <section id="tour-kaypacha-variables-historicas"
+    class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+    <!-- Window Header Bar (Legacy rgb(3, 80, 150)) -->
+    <div class="kaypacha-window-bar px-5 py-2.5 flex items-center justify-between border-b border-blue-900/30">
+      <div class="flex items-center gap-2.5">
+        <i class="pi pi-history text-blue-100 text-base"></i>
+        <h2 class="text-sm sm:text-base font-bold tracking-wide m-0 text-white">Variables Históricas</h2>
+      </div>
+      <p-tag value="Evolución Temporal" severity="info"
+        styleClass="bg-white/20 text-white font-medium border-0 text-[11px]"></p-tag>
+    </div>
+
+    <!-- Content Grid: 2 tablas gemelas lado a lado con PrimeNG p-table -->
+    <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-slate-50/60">
+      <!-- Tabla 2 Izquierda -->
+      <div class="kaypacha-table-wrapper border border-slate-300 rounded-xl shadow-xs bg-white">
+        <p-table [value]="service.dataSources2()" [scrollable]="true" scrollHeight="200px"
+          styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
+          responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              @for (col of service.headers2(); track col.key) {
+              <th [ngStyle]="col.style || {}">
+                {{ col.label }}
+              </th>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              @for (col of service.headers2(); track col.key) {
+              <td>
+                {{ row[col.key] }}
+              </td>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="service.headers2().length || 1" class="text-center py-6 text-slate-400 text-xs">
+                Sin datos históricos disponibles
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <!-- Tabla 2 Derecha -->
+      <div class="kaypacha-table-wrapper border border-slate-300 rounded-xl shadow-xs bg-white">
+        <p-table [value]="service.dataSources2()" [scrollable]="true" scrollHeight="200px"
+          styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
+          responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              @for (col of service.headers2_2(); track col.key) {
+              <th [ngStyle]="col.style || {}">
+                {{ col.label }}
+              </th>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              @for (col of service.headers2_2(); track col.key) {
+              <td>
+                {{ row[col.key] }}
+              </td>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="service.headers2_2().length || 1" class="text-center py-6 text-slate-400 text-xs">
+                Sin datos históricos disponibles
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </section>
+  }
+
+  <!-- Modal Dialog Buscador Colaborador -->
+  <app-buscador-colaborador-dialog [(visible)]="mostrarDialogBuscador"
+    (colaboradorSeleccionado)="onColaboradorSeleccionado($event)" />
+</div>

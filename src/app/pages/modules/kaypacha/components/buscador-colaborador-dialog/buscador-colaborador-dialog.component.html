@@ -1,0 +1,116 @@
+<p-dialog
+  [visible]="visible"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '92vw', maxWidth: '850px' }"
+  [draggable]="false"
+  [resizable]="false"
+  header="Seleccionar Colaborador"
+  class="kaypacha-dialog"
+  appendTo="body"
+>
+  <div class="flex flex-col gap-4 py-1">
+    <!-- Buscador Input con PrimeNG IconField, InputIcon & InputText -->
+    <div class="w-full">
+      <p-iconfield iconPosition="left" class="w-full">
+        <p-inputicon class="pi pi-search text-[var(--mis-text-tertiary)]"></p-inputicon>
+        <input
+          type="text"
+          pInputText
+          placeholder="Buscar por Nombre, Cargo, Código BT o Documento..."
+          class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--mis-border-strong)] focus:border-[var(--mis-primary)] focus:ring-2 focus:ring-[var(--mis-primary)]/20 transition-all text-sm text-[var(--mis-text-primary)] bg-[var(--mis-surface)]"
+          [value]="filtroTexto()"
+          (input)="onFilterInput($event)"
+        />
+      </p-iconfield>
+    </div>
+
+    <!-- Tabla con PrimeNG p-table -->
+    <div class="border border-[var(--mis-border)] rounded-xl overflow-hidden shadow-xs bg-[var(--mis-surface)]">
+      <p-table
+        [value]="colaboradoresFiltrados()"
+        [paginator]="true"
+        [rows]="8"
+        [rowsPerPageOptions]="[8, 15, 25]"
+        [loading]="service.cargandoColaboradores()"
+        selectionMode="single"
+        [selection]="itemSeleccionado()"
+        (onRowSelect)="onRowSelect($event.data)"
+        dataKey="cod_bt"
+        styleClass="p-datatable-sm p-datatable-striped"
+      >
+        <ng-template pTemplate="header">
+          <tr class="bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] text-xs font-semibold uppercase tracking-wider">
+            <th class="py-3 px-4 text-[var(--mis-text-on-primary)] bg-[var(--mis-primary)]">Código BT</th>
+            <th class="py-3 px-4 text-[var(--mis-text-on-primary)] bg-[var(--mis-primary)]">Nombre Colaborador</th>
+            <th class="py-3 px-4 text-[var(--mis-text-on-primary)] bg-[var(--mis-primary)]">Cargo</th>
+            <th class="py-3 px-4 text-[var(--mis-text-on-primary)] bg-[var(--mis-primary)] text-center">Tipo</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+          <tr
+            [pSelectableRow]="item"
+            class="hover:bg-[var(--mis-primary-light)]/60 cursor-pointer transition-colors text-sm border-b border-[var(--mis-border)]"
+            [class.bg-[var(--mis-primary-light)]]="itemSeleccionado()?.cod_bt === item.cod_bt"
+            [class.font-semibold]="itemSeleccionado()?.cod_bt === item.cod_bt"
+          >
+            <td class="py-2.5 px-4 font-mono font-medium text-[var(--mis-text-primary)]">
+              {{ item.cod_bt }}
+            </td>
+            <td class="py-2.5 px-4 font-medium text-[var(--mis-text-primary)]">
+              {{ item.des_col }}
+            </td>
+            <td class="py-2.5 px-4 text-[var(--mis-text-secondary)]">
+              {{ item.HCOLCAR }}
+            </td>
+            <td class="py-2.5 px-4 text-center">
+              <p-tag
+                [value]="item.RCODCOL || 'Puma'"
+                severity="info"
+                [rounded]="true"
+              ></p-tag>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center py-8 text-[var(--mis-text-secondary)] text-sm">
+              @if (service.cargandoColaboradores()) {
+                <div class="flex items-center justify-center gap-2">
+                  <i class="pi pi-spin pi-spinner text-[var(--mis-primary)]"></i>
+                  <span>Cargando lista de colaboradores...</span>
+                </div>
+              } @else {
+                <span>No se encontraron colaboradores que coincidan con la búsqueda.</span>
+              }
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-end gap-3">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        [outlined]="true"
+        severity="secondary"
+        size="small"
+        (click)="cerrar()"
+      ></p-button>
+
+      <p-button
+        label="Seleccionar"
+        icon="pi pi-check"
+        severity="primary"
+        size="small"
+        [disabled]="!itemSeleccionado()"
+        (click)="seleccionarYCerrar()"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

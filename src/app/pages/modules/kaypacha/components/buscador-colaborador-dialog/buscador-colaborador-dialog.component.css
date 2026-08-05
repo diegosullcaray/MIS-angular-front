@@ -1,0 +1,46 @@
+:host ::ng-deep .kaypacha-dialog .p-dialog-header {
+  background: var(--mis-primary);
+  color: var(--mis-text-on-primary);
+  border-bottom: 1px solid var(--mis-border);
+  padding: 1rem 1.25rem;
+  border-top-left-radius: var(--mis-radius-md);
+  border-top-right-radius: var(--mis-radius-md);
+}
+
+:host ::ng-deep .kaypacha-dialog .p-dialog-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--mis-text-on-primary);
+}
+
+:host ::ng-deep .kaypacha-dialog .p-dialog-header-close-icon {
+  color: var(--mis-text-on-primary);
+}
+
+:host ::ng-deep .kaypacha-dialog .p-dialog-header-close-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+:host ::ng-deep .kaypacha-dialog .p-dialog-content {
+  padding: 1.25rem;
+  background: var(--mis-surface);
+  color: var(--mis-text-primary);
+}
+
+:host ::ng-deep .kaypacha-dialog .p-dialog-footer {
+  background: var(--mis-bg);
+  border-top: 1px solid var(--mis-border);
+  padding: 0.875rem 1.25rem;
+  border-bottom-left-radius: var(--mis-radius-md);
+  border-bottom-right-radius: var(--mis-radius-md);
+}
+
+:host ::ng-deep .kaypacha-dialog .p-button-primary {
+  background: var(--mis-primary) !important;
+  border-color: var(--mis-primary) !important;
+}
+
+:host ::ng-deep .kaypacha-dialog .p-button-primary:hover {
+  background: var(--mis-primary-hover) !important;
+  border-color: var(--mis-primary-hover) !important;
+}

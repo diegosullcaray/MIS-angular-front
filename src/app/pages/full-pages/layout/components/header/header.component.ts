@@ -18,9 +18,10 @@ import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha
 
 /** Etiquetas de los segmentos de ruta conocidos del Host. */
 const SEGMENTO_LABELS: Record<string, string> = {
-  dashboard:    'Mi espacio',
-  'ranking-k':  'Kaypacha',
-  categoria:    'Categoría',
+  dashboard: 'Mi espacio',
+  'ranking-k': 'Ranking Kaypacha',
+  'Kaypacha__': 'Kaypacha',
+  categoria: 'Categoría',
 };
 
 @Component({
@@ -132,8 +133,8 @@ export class HeaderComponent {
 
   protected readonly rolLabel = computed(() => {
     const labels: Record<string, string> = {
-      'admin-sistema':   'Admin Sistema',
-      'admin-general':   'Admin General',
+      'admin-sistema': 'Admin Sistema',
+      'admin-general': 'Admin General',
       'supervisor-area': 'Supervisor',
     };
     return labels[this.shell.usuarioActivo()?.rol ?? ''] ?? '';

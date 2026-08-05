@@ -51,7 +51,14 @@ export const APP_ROUTES: Routes = [
           import('./pages/modules/ranking-k/ranking-k.routes').then(
             (m) => m.RANKING_K_ROUTES
           )
-      }
+      },
+      {
+        path: 'Kaypacha__',
+        loadChildren: () =>
+          import('./pages/modules/kaypacha/kaypacha.routes').then(
+            (m) => m.KAYPACHA_ROUTES
+          )
+      },
     ]
   },
   {

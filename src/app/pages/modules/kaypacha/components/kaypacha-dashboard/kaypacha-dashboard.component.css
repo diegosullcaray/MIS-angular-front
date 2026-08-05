@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.kaypacha-container {
+  font-family: var(--mis-font-family);
+  max-width: 100%;
+}
+
+/* Estilos exactos del legado Kaypacha3 para cabecera de ventana y tablas */
+:host ::ng-deep .kaypacha-window-bar {
+  background-color: rgb(3, 80, 150) !important;
+  color: #ffffff !important;
+}
+
+/* Permitir que col.style de JSONNHEAD1 controle los colores dinámicos de las cabeceras (cyan, rosa, oliva, etc.) */
+:host ::ng-deep .kaypacha-table .p-datatable-thead > tr > th {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 10px;
+  text-align: center;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .kaypacha-table .p-datatable-tbody > tr > td {
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #1e293b;
+  border: 1px solid #e2e8f0 !important;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .kaypacha-table .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+:host ::ng-deep .kaypacha-table .p-datatable-tbody > tr:hover {
+  background-color: #e0f2fe !important;
+}
+
+/* Ajuste de contenedor de tabla para scroll horizontal limpio solo en la tabla */
+:host ::ng-deep .kaypacha-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
