@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { CarteraCreditosComponent } from './cartera-creditos.component';
-import { PresupuestoService } from '../../services/presupuesto.service';
-import { ToastService } from '../../../../../shared/services/toast.service';
-import type { CeldaEditadaEvent } from '../../ui/editable-table/editable-table.component';
-import type { FilaLineaSimple, HierarquiaNodo, ResumenCarteraCreditos, ResumenMetadata } from '../../models';
+import { PresupuestoService } from '../../../services/presupuesto.service';
+import { ToastService } from '../../../../../../shared/services/toast.service';
+import type { CeldaEditadaEvent } from '../../../ui/editable-table/editable-table.component';
+import type { FilaCarteraCreditosVariables, HierarquiaNodo, ResumenCarteraCreditos, ResumenMetadata } from '../../../models';
 
 function metadata(overrides: Partial<ResumenMetadata> = {}): ResumenMetadata {
   return { tip_cod_edi: 4, ord_ini_edi: 1, act_res: true, cod_sec: 'SEC-1', ...overrides };
@@ -12,6 +12,10 @@ function metadata(overrides: Partial<ResumenMetadata> = {}): ResumenMetadata {
 
 function nodo(overrides: Partial<HierarquiaNodo> = {}): HierarquiaNodo {
   return { tip_cod: 4, cod_rel: 'A1', des_rel: 'Admin Comercial 1', ...overrides };
+}
+
+function filaVariables(overrides: Partial<FilaCarteraCreditosVariables> = {}): FilaCarteraCreditosVariables {
+  return { ord: 1, a1: 0, a2: 0, a3: 0, b1: 0, b2: 0, b3: 0, b4: 0, b5: 0, b6: 0, c1: 0, c2: 0, ...overrides };
 }
 
 describe('CarteraCreditosComponent', () => {
@@ -43,7 +47,7 @@ describe('CarteraCreditosComponent', () => {
 
   it('onNivelSeleccionado() carga variables (ws) y composición (cs) por separado, con sus propios snapshots', () => {
     const resumen: ResumenCarteraCreditos = {
-      ws: [{ ord: 1, a1: 100 }],
+      ws: [filaVariables({ a1: 100 })],
       cs: [{ ord: 1, g_1: 0.1 }],
       bp: metadata(),
     };
@@ -53,7 +57,7 @@ describe('CarteraCreditosComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](nodo());
 
     expect(presupuestoFalso.obtenerResumenCarteraCreditos).toHaveBeenCalledWith(4, 'A1');
-    expect(fixture.componentInstance['filas']()).toEqual([{ ord: 1, a1: 100 }]);
+    expect(fixture.componentInstance['filas']()).toEqual([filaVariables({ a1: 100 })]);
     expect(fixture.componentInstance['filasComposicion']()).toEqual([{ ord: 1, g_1: 0.1 }]);
   });
 
@@ -71,9 +75,9 @@ describe('CarteraCreditosComponent', () => {
   it('onCeldaEditada() aplica primero la cascada de asesores y luego recalcula desde el índice que ésta indique', () => {
     const resumen: ResumenCarteraCreditos = {
       ws: [
-        { ord: 1, b1: 10, b2: 0, b3: 1, b5: 0, c1: 0, a1: 0, a2: 0 },
-        { ord: 2, b1: 0, b2: 5, b3: 1, b5: 0, c1: 0, a1: 0, a2: 0 },
-        { ord: 3, b1: 0, b2: 0, b3: 1, b5: 0, c1: 0, a1: 0, a2: 0 },
+        filaVariables({ ord: 1, b1: 10, b2: 0, b3: 1 }),
+        filaVariables({ ord: 2, b1: 0, b2: 5, b3: 1 }),
+        filaVariables({ ord: 3, b3: 1 }),
       ],
       cs: [{ ord: 1 }, { ord: 2 }, { ord: 3 }],
       bp: metadata(),
@@ -83,7 +87,7 @@ describe('CarteraCreditosComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](nodo());
 
     const filas = fixture.componentInstance['filas']();
-    const evento: CeldaEditadaEvent<FilaLineaSimple> = { fila: filas[0], key: 'b1', valor: 10 };
+    const evento: CeldaEditadaEvent<FilaCarteraCreditosVariables> = { fila: filas[0], key: 'b1', valor: 10 };
     fixture.componentInstance['onCeldaEditada'](evento);
 
     // b1 editado en idx 0 → cascada de asesores actualiza b2 desde idx 2 (b2[2] = b1[0] + b2[1] = 10 + 5 = 15)
@@ -94,7 +98,7 @@ describe('CarteraCreditosComponent', () => {
 
   it('reiniciar() restaura tanto las filas de variables como las de composición', () => {
     const resumen: ResumenCarteraCreditos = {
-      ws: [{ ord: 1, a1: 100 }],
+      ws: [filaVariables({ a1: 100 })],
       cs: [{ ord: 1, g_1: 0.5 }],
       bp: metadata(),
     };
@@ -102,17 +106,17 @@ describe('CarteraCreditosComponent', () => {
     const fixture = crear();
     fixture.componentInstance['onNivelSeleccionado'](nodo());
 
-    fixture.componentInstance['filas']()[0]['a1'] = 999;
+    fixture.componentInstance['filas']()[0].a1 = 999;
     fixture.componentInstance['filasComposicion']()[0]['g_1'] = 999;
     fixture.componentInstance['reiniciar']();
 
-    expect(fixture.componentInstance['filas']()).toEqual([{ ord: 1, a1: 100 }]);
+    expect(fixture.componentInstance['filas']()).toEqual([filaVariables({ a1: 100 })]);
     expect(fixture.componentInstance['filasComposicion']()).toEqual([{ ord: 1, g_1: 0.5 }]);
   });
 
   it('guardar() solo envía las filas de variables con ord >= ord_ini_edi (no reenvía la composición)', () => {
     const resumen: ResumenCarteraCreditos = {
-      ws: [{ ord: 1, a1: 1 }, { ord: 2, a1: 2 }],
+      ws: [filaVariables({ ord: 1, a1: 1 }), filaVariables({ ord: 2, a1: 2 })],
       cs: [{ ord: 1 }, { ord: 2 }],
       bp: metadata({ ord_ini_edi: 2 }),
     };
@@ -122,7 +126,7 @@ describe('CarteraCreditosComponent', () => {
 
     fixture.componentInstance['guardar']();
 
-    expect(presupuestoFalso.guardarResumenCarteraCreditos).toHaveBeenCalledWith(4, 'A1', [{ ord: 2, a1: 2 }]);
+    expect(presupuestoFalso.guardarResumenCarteraCreditos).toHaveBeenCalledWith(4, 'A1', [filaVariables({ ord: 2, a1: 2 })]);
   });
 
   it('verificar() llama a PresupuestoService.verificar() con el nivel y cod_sec activos', () => {

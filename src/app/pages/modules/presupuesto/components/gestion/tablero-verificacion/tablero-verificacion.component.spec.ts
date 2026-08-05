@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { TableroVerificacionComponent } from './tablero-verificacion.component';
-import { PresupuestoService } from '../../services/presupuesto.service';
-import { ToastService } from '../../../../../shared/services/toast.service';
-import type { HierarquiaNodo, LogVerificacionFila } from '../../models';
+import { PresupuestoService } from '../../../services/presupuesto.service';
+import { ToastService } from '../../../../../../shared/services/toast.service';
+import type { HierarquiaNodo, LogVerificacionFila } from '../../../models';
 
 function nodo(overrides: Partial<HierarquiaNodo> = {}): HierarquiaNodo {
   return { tip_cod: 7, cod_rel: '231', des_rel: 'Financiera Confianza', ...overrides };

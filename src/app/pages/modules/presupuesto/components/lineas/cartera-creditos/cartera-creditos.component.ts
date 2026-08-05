@@ -1,13 +1,21 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
-import { PresupuestoService } from '../../services/presupuesto.service';
-import { ToastService } from '../../../../../shared/services/toast.service';
-import { HierSelectorComponent } from '../../ui/hier-selector/hier-selector.component';
-import { EditableTableComponent, type CeldaEditadaEvent } from '../../ui/editable-table/editable-table.component';
-import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../utils/linea-simple-reglas.util';
-import { aplicarCascadaAsesores, calcularFilaCarteraCreditos, PRODUCTOS_COMPOSICION } from '../../utils/cartera-creditos-calculo.util';
-import type { ColumnaTabla, FilaLineaSimple, HierarquiaNodo, ParamsJerarquia, ResumenMetadata, TipoColumna } from '../../models';
+import { PresupuestoService } from '../../../services/presupuesto.service';
+import { ToastService } from '../../../../../../shared/services/toast.service';
+import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import { EditableTableComponent, type CeldaEditadaEvent } from '../../../ui/editable-table/editable-table.component';
+import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
+import { aplicarCascadaAsesores, calcularFilaCarteraCreditos, PRODUCTOS_COMPOSICION } from '../../../utils/cartera-creditos-calculo.util';
+import type {
+  ColumnaTabla,
+  FilaCarteraCreditosComposicion,
+  FilaCarteraCreditosVariables,
+  HierarquiaNodo,
+  ParamsJerarquia,
+  ResumenMetadata,
+  TipoColumna,
+} from '../../../models';
 
 const INPUT_COLS = ['b1', 'b3', 'b5', 'b2'];
 
@@ -77,12 +85,12 @@ export class CarteraCreditosComponent {
   protected readonly cargando = signal(false);
   protected readonly guardando = signal(false);
   protected readonly verificando = signal(false);
-  protected readonly filas = signal<FilaLineaSimple[]>([]);
-  protected readonly filasComposicion = signal<FilaLineaSimple[]>([]);
+  protected readonly filas = signal<FilaCarteraCreditosVariables[]>([]);
+  protected readonly filasComposicion = signal<FilaCarteraCreditosComposicion[]>([]);
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   private readonly metadata = signal<ResumenMetadata | null>(null);
-  private filasOriginales: FilaLineaSimple[] = [];
-  private filasComposicionOriginales: FilaLineaSimple[] = [];
+  private filasOriginales: FilaCarteraCreditosVariables[] = [];
+  private filasComposicionOriginales: FilaCarteraCreditosComposicion[] = [];
 
   protected readonly puedeGuardar = computed(() =>
     calcularPuedeGuardar(this.metadata(), this.nivelActual(), this.presupuesto.esAdmin())
@@ -92,7 +100,7 @@ export class CarteraCreditosComponent {
     calcularPuedeVerificar(this.metadata(), this.nivelActual(), this.presupuesto.esAdmin())
   );
 
-  protected readonly esEditable = (fila: FilaLineaSimple, key: string): boolean =>
+  protected readonly esEditable = (fila: FilaCarteraCreditosVariables, key: string): boolean =>
     esCeldaEditable(fila, key, INPUT_COLS, this.metadata(), this.nivelActual(), this.presupuesto.esAdmin());
 
   protected readonly soloLectura = (): boolean => false;
@@ -120,7 +128,7 @@ export class CarteraCreditosComponent {
     });
   }
 
-  protected onCeldaEditada(evento: CeldaEditadaEvent<FilaLineaSimple>): void {
+  protected onCeldaEditada(evento: CeldaEditadaEvent<FilaCarteraCreditosVariables>): void {
     const filas = this.filas();
     const composicion = this.filasComposicion();
     const idx = filas.indexOf(evento.fila);

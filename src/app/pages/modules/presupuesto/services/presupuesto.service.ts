@@ -4,6 +4,10 @@ import { ModPresupuestoService } from '../../../../core/winder/instances/mod-pre
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type {
+  FilaCarteraCreditosVariables,
+  FilaDeposito,
+  FilaSegurosComercial,
+  FilaSegurosOperaciones,
   HierarquiaNodo,
   LogVerificacionFila,
   ResponsableFila,
@@ -145,41 +149,48 @@ export class PresupuestoService {
       .pipe(map((r) => this.parseResumen<ResumenCarteraCreditos>(r.body)));
   }
 
-  guardarResumenCarteraCreditos(tipCod: number, codRel: string, filas: unknown[]): Observable<unknown> {
+  guardarResumenCarteraCreditos(
+    tipCod: number,
+    codRel: string,
+    filas: FilaCarteraCreditosVariables[]
+  ): Observable<unknown> {
     return this.ant.postResCarCreditos(this.codBt, tipCod, codRel, filas);
   }
 
   // ─── Depósitos / Seguros ("línea simple") ────────────────────────────────────
 
-  obtenerResumenDepBP(tipCod: number, codRel: string): Observable<ResumenLineaSimple> {
+  obtenerResumenDepBP(tipCod: number, codRel: string): Observable<ResumenLineaSimple<FilaDeposito>> {
     return this.ant.getResDepBP(this.email, tipCod, codRel).pipe(map((r) => this.parseResumen(r.body)));
   }
 
-  guardarResumenDepBP(tipCod: number, codRel: string, filas: unknown[]): Observable<unknown> {
+  guardarResumenDepBP(tipCod: number, codRel: string, filas: FilaDeposito[]): Observable<unknown> {
     return this.ant.postResDepBP(this.codBt, tipCod, codRel, filas);
   }
 
-  obtenerResumenDepRed(tipCod: number, codRel: string): Observable<ResumenLineaSimple> {
+  obtenerResumenDepRed(tipCod: number, codRel: string): Observable<ResumenLineaSimple<FilaDeposito>> {
     return this.ant.getResDepRed(this.email, tipCod, codRel).pipe(map((r) => this.parseResumen(r.body)));
   }
 
-  guardarResumenDepRed(tipCod: number, codRel: string, filas: unknown[]): Observable<unknown> {
+  guardarResumenDepRed(tipCod: number, codRel: string, filas: FilaDeposito[]): Observable<unknown> {
     return this.ant.postResDepRed(this.codBt, tipCod, codRel, filas);
   }
 
-  obtenerResumenSegComercial(tipCod: number, codRel: string): Observable<ResumenLineaSimple> {
+  obtenerResumenSegComercial(tipCod: number, codRel: string): Observable<ResumenLineaSimple<FilaSegurosComercial>> {
     return this.ant.getResSegComercial(this.email, tipCod, codRel).pipe(map((r) => this.parseResumen(r.body)));
   }
 
-  guardarResumenSegComercial(tipCod: number, codRel: string, filas: unknown[]): Observable<unknown> {
+  guardarResumenSegComercial(tipCod: number, codRel: string, filas: FilaSegurosComercial[]): Observable<unknown> {
     return this.ant.postResSegComercial(this.codBt, tipCod, codRel, filas);
   }
 
-  obtenerResumenSegOperaciones(tipCod: number, codRel: string): Observable<ResumenLineaSimple> {
+  obtenerResumenSegOperaciones(
+    tipCod: number,
+    codRel: string
+  ): Observable<ResumenLineaSimple<FilaSegurosOperaciones>> {
     return this.ant.getResSegOperaciones(this.email, tipCod, codRel).pipe(map((r) => this.parseResumen(r.body)));
   }
 
-  guardarResumenSegOperaciones(tipCod: number, codRel: string, filas: unknown[]): Observable<unknown> {
+  guardarResumenSegOperaciones(tipCod: number, codRel: string, filas: FilaSegurosOperaciones[]): Observable<unknown> {
     return this.ant.postResSegOperaciones(this.codBt, tipCod, codRel, filas);
   }
 

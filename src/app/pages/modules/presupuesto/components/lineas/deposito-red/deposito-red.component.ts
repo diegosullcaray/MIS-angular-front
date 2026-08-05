@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { LineaSimpleComponent } from '../linea-simple/linea-simple.component';
-import { PresupuestoService } from '../../services/presupuesto.service';
-import { calcularFilaDeposito } from '../../utils/deposito-calculo.util';
-import type { ColumnaTabla, LineaSimpleConfig } from '../../models';
+import { PresupuestoService } from '../../../services/presupuesto.service';
+import { calcularFilaDeposito } from '../../../utils/deposito-calculo.util';
+import type { ColumnaTabla, FilaDeposito, LineaSimpleConfig } from '../../../models';
 
 const COLUMNAS: ColumnaTabla[] = [
   { label: 'Fecha', key: 'fec_pro', tipo: 'text' },
@@ -47,7 +47,7 @@ const COLUMNAS: ColumnaTabla[] = [
 export class DepositoRedComponent {
   private readonly presupuesto = inject(PresupuestoService);
 
-  protected readonly config: LineaSimpleConfig = {
+  protected readonly config: LineaSimpleConfig<FilaDeposito> = {
     mainTitle: 'Depósitos Red',
     columnas: COLUMNAS,
     paramsHier: { code: 2, maxLvl: 4, dlgTitulo: 'JERARQUIA AGENCIA DEP.' },
