@@ -3,10 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
-import { PresupuestoService } from '../../services/presupuesto.service';
-import { ToastService } from '../../../../../shared/services/toast.service';
-import { HierSelectorComponent } from '../../ui/hier-selector/hier-selector.component';
-import type { HierarquiaNodo, LogVerificacionFila, ParamsJerarquia } from '../../models';
+import { PresupuestoService } from '../../../services/presupuesto.service';
+import { ToastService } from '../../../../../../shared/services/toast.service';
+import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import type { HierarquiaNodo, LogVerificacionFila, ParamsJerarquia } from '../../../models';
 
 /**
  * Tablero de Verificación (`/app/presupuesto/gestion/seguimiento/tbl-ver`) —

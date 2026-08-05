@@ -41,7 +41,7 @@ export interface ResumenMetadata {
   cod_sec: string;
 }
 
-/** Fila de la tabla de una pantalla "línea simple" — columnas dinámicas según la pantalla. */
+/** Fila base de una pantalla "línea simple" — toda fila concreta la extiende con sus propias columnas. */
 export interface FilaLineaSimple {
   /** Orden del periodo — determina la ventana editable y la cascada de cálculo. */
   ord: number;
@@ -49,15 +49,80 @@ export interface FilaLineaSimple {
   [key: string]: unknown;
 }
 
-/** Respuesta de `getRes*` para las pantallas "línea simple" (BP, Red, Seguros, Créditos). */
-export interface ResumenLineaSimple {
-  ws: FilaLineaSimple[];
+/**
+ * Fila de Depósitos (BP y Red comparten exactamente esta forma — 3 productos:
+ * Ahorros (`a*`), CTS (`b*`), Plazo Fijo (`c*`), cada uno con Saldo Inicial /
+ * Variación (editable) / Saldo Final).
+ */
+export interface FilaDeposito extends FilaLineaSimple {
+  a1: number;
+  a2: number;
+  a3: number;
+  b1: number;
+  b2: number;
+  b3: number;
+  c1: number;
+  c2: number;
+  c3: number;
+}
+
+/** Fila de Seguros Comercial — 6 columnas independientes, todas potencialmente editables (`inputCols: 'all'`). */
+export interface FilaSegurosComercial extends FilaLineaSimple {
+  a1: number; // Multiriesgo
+  a2: number; // Multicrédito
+  a3: number; // Protección Cuotas
+  a4: number; // Agrícola
+  a5: number; // OncoCréditos
+  a6: number; // Protección Total
+}
+
+/** Fila de Seguros Operaciones — claves de negocio propias (no siguen el patrón a1/a2/...). */
+export interface FilaSegurosOperaciones extends FilaLineaSimple {
+  seg_ope_mul_ah: number; // Multiahorro
+  seg_ope_pro_tar: number; // Protección Tarjetas
+  seg_ope_soat: number; // SOAT
+  seg_ope_pro_total: number; // Protección Total
+  seg_ope_onco_ahorros: number; // OncoAhorros
+}
+
+/** Fila de la tab "Variables" de Cartera Créditos. */
+export interface FilaCarteraCreditosVariables extends FilaLineaSimple {
+  a1: number; // Saldo Inicial
+  a2: number; // Saldo Castigado
+  a3: number; // Saldo Cierre (calculado)
+  b1: number; // Asesores Nuevos
+  b2: number; // Asesores en Producción
+  b3: number; // Productividad por Asesor
+  b4: number; // Operaciones Desembolsadas (calculado)
+  b5: number; // Ticket Promedio
+  b6: number; // Monto Desembolsado (calculado)
+  c1: number; // Ratio Cancelación
+  c2: number; // Monto Cancelado (calculado)
+}
+
+/** Ids de negocio de los 11 productos de la composición por producto — no son consecutivos (`18`/`99`). */
+export type IdProductoComposicion = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '18' | '99';
+
+/**
+ * Fila de las tabs "Comp. Prod. Monto"/"Comp. Prod. Ratio" de Cartera Créditos —
+ * `d_<id>` (monto, calculado) y `g_<id>` (ratio, dato de entrada) por cada
+ * producto de `IdProductoComposicion`.
+ */
+export type FilaCarteraCreditosComposicion = FilaLineaSimple &
+  { [K in IdProductoComposicion as `d_${K}`]?: number } &
+  { [K in IdProductoComposicion as `g_${K}`]?: number };
+
+/** Respuesta de `getRes*` para las pantallas "línea simple" genéricas (BP, Red, Seguros). */
+export interface ResumenLineaSimple<F extends FilaLineaSimple = FilaLineaSimple> {
+  ws: F[];
   bp: ResumenMetadata;
 }
 
-/** Respuesta de Cartera Créditos — además de `ws`/`bp`, trae la composición por producto. */
-export interface ResumenCarteraCreditos extends ResumenLineaSimple {
-  cs: FilaLineaSimple[];
+/** Respuesta de Cartera Créditos — además de `ws`/`bp`, trae la composición por producto (`cs`). */
+export interface ResumenCarteraCreditos {
+  ws: FilaCarteraCreditosVariables[];
+  cs: FilaCarteraCreditosComposicion[];
+  bp: ResumenMetadata;
 }
 
 /** Fila de la tabla de Tablero de Verificación. */
@@ -101,18 +166,18 @@ export interface ColumnaTabla {
 }
 
 /** Config de las pantallas "línea simple" genéricas (Depósitos BP/Red, Seguros Comercial/Operaciones). */
-export interface LineaSimpleConfig {
+export interface LineaSimpleConfig<F extends FilaLineaSimple = FilaLineaSimple> {
   mainTitle: string;
   columnas: ColumnaTabla[];
   paramsHier: ParamsJerarquia;
   /** Columnas potencialmente editables — `'all'` habilita todas (Seguros), o una lista puntual de `key`s (Depósitos). */
   inputCols: string[] | 'all';
-  obtenerResumen(tipCod: number, codRel: string): Observable<ResumenLineaSimple>;
-  guardarResumen(tipCod: number, codRel: string, filas: FilaLineaSimple[]): Observable<unknown>;
+  obtenerResumen(tipCod: number, codRel: string): Observable<ResumenLineaSimple<F>>;
+  guardarResumen(tipCod: number, codRel: string, filas: F[]): Observable<unknown>;
   /**
    * Fórmula de cascada al editar una celda (`calculateRow` del legado) — recibe
    * el array completo de filas (para leer periodos vecinos) y muta la fila en
    * `idx` in-place. Ausente en Seguros (no hay fórmula derivada, cada celda es independiente).
    */
-  calcularFila?(filas: FilaLineaSimple[], idx: number): void;
+  calcularFila?(filas: F[], idx: number): void;
 }

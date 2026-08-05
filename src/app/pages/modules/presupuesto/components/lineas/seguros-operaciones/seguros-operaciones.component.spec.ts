@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { SegurosOperacionesComponent } from './seguros-operaciones.component';
-import { PresupuestoService } from '../../services/presupuesto.service';
+import { PresupuestoService } from '../../../services/presupuesto.service';
 
 describe('SegurosOperacionesComponent', () => {
   let presupuestoFalso: {

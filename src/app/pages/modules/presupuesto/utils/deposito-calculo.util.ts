@@ -1,4 +1,4 @@
-import type { FilaLineaSimple } from '../models';
+import type { FilaDeposito } from '../models';
 
 /**
  * Fórmula de cascada de Depósitos BP/Red (`calculateRow` del legado) — idéntica
@@ -7,7 +7,7 @@ import type { FilaLineaSimple } from '../models';
  * `Saldo Final = Saldo Inicial + Variación`, y el saldo de cierre pasa a ser
  * el saldo inicial del periodo siguiente (arrastre).
  */
-export function calcularFilaDeposito(filas: FilaLineaSimple[], idx: number): void {
+export function calcularFilaDeposito(filas: FilaDeposito[], idx: number): void {
   for (const prefijo of ['a', 'b', 'c'] as const) {
     const claveInicial = `${prefijo}1`;
     const claveVariacion = `${prefijo}2`;

@@ -1,11 +1,11 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { PresupuestoService } from '../../services/presupuesto.service';
-import { ToastService } from '../../../../../shared/services/toast.service';
-import { HierSelectorComponent } from '../../ui/hier-selector/hier-selector.component';
-import { EditableTableComponent, type CeldaEditadaEvent } from '../../ui/editable-table/editable-table.component';
-import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../utils/linea-simple-reglas.util';
-import type { FilaLineaSimple, HierarquiaNodo, LineaSimpleConfig, ResumenMetadata } from '../../models';
+import { PresupuestoService } from '../../../services/presupuesto.service';
+import { ToastService } from '../../../../../../shared/services/toast.service';
+import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import { EditableTableComponent, type CeldaEditadaEvent } from '../../../ui/editable-table/editable-table.component';
+import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
+import type { FilaLineaSimple, HierarquiaNodo, LineaSimpleConfig, ResumenMetadata } from '../../../models';
 
 /**
  * Pantalla genérica "línea simple" — reemplaza a `PreLineaSimpleComponent`
@@ -24,19 +24,19 @@ import type { FilaLineaSimple, HierarquiaNodo, LineaSimpleConfig, ResumenMetadat
   templateUrl: './linea-simple.component.html',
   styleUrl: './linea-simple.component.css',
 })
-export class LineaSimpleComponent {
+export class LineaSimpleComponent<F extends FilaLineaSimple = FilaLineaSimple> {
   private readonly presupuesto = inject(PresupuestoService);
   private readonly toast = inject(ToastService);
 
-  readonly config = input.required<LineaSimpleConfig>();
+  readonly config = input.required<LineaSimpleConfig<F>>();
 
   protected readonly cargando = signal(false);
   protected readonly guardando = signal(false);
   protected readonly verificando = signal(false);
-  protected readonly filas = signal<FilaLineaSimple[]>([]);
+  protected readonly filas = signal<F[]>([]);
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   private readonly metadata = signal<ResumenMetadata | null>(null);
-  private filasOriginales: FilaLineaSimple[] = [];
+  private filasOriginales: F[] = [];
 
   protected readonly puedeGuardar = computed(() =>
     calcularPuedeGuardar(this.metadata(), this.nivelActual(), this.presupuesto.esAdmin())
@@ -46,7 +46,7 @@ export class LineaSimpleComponent {
     calcularPuedeVerificar(this.metadata(), this.nivelActual(), this.presupuesto.esAdmin())
   );
 
-  protected readonly esEditable = (fila: FilaLineaSimple, key: string): boolean =>
+  protected readonly esEditable = (fila: F, key: string): boolean =>
     esCeldaEditable(fila, key, this.config().inputCols, this.metadata(), this.nivelActual(), this.presupuesto.esAdmin());
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
@@ -71,7 +71,7 @@ export class LineaSimpleComponent {
       });
   }
 
-  protected onCeldaEditada(evento: CeldaEditadaEvent<FilaLineaSimple>): void {
+  protected onCeldaEditada(evento: CeldaEditadaEvent<F>): void {
     const filas = this.filas();
     const idx = filas.indexOf(evento.fila);
     if (idx === -1) return;

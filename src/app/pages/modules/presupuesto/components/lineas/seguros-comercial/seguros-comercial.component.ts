@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { LineaSimpleComponent } from '../linea-simple/linea-simple.component';
-import { PresupuestoService } from '../../services/presupuesto.service';
-import type { ColumnaTabla, LineaSimpleConfig } from '../../models';
+import { PresupuestoService } from '../../../services/presupuesto.service';
+import type { ColumnaTabla, FilaSegurosComercial, LineaSimpleConfig } from '../../../models';
 
 const COLUMNAS: ColumnaTabla[] = [
   { label: 'Fecha', key: 'fec_pro', tipo: 'text' },
@@ -27,7 +27,7 @@ const COLUMNAS: ColumnaTabla[] = [
 export class SegurosComercialComponent {
   private readonly presupuesto = inject(PresupuestoService);
 
-  protected readonly config: LineaSimpleConfig = {
+  protected readonly config: LineaSimpleConfig<FilaSegurosComercial> = {
     mainTitle: 'Seguros Comercial',
     columnas: COLUMNAS,
     paramsHier: { code: 9, maxLvl: 5, dlgTitulo: 'JERARQUIA ADMIN. COMER.' },

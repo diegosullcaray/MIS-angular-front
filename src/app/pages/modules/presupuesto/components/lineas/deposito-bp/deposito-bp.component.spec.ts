@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { DepositoBpComponent } from './deposito-bp.component';
-import { PresupuestoService } from '../../services/presupuesto.service';
-import { calcularFilaDeposito } from '../../utils/deposito-calculo.util';
+import { PresupuestoService } from '../../../services/presupuesto.service';
+import { calcularFilaDeposito } from '../../../utils/deposito-calculo.util';
 
 describe('DepositoBpComponent', () => {
   let presupuestoFalso: {

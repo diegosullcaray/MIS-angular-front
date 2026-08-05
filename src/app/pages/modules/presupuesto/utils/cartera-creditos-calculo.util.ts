@@ -1,4 +1,4 @@
-import type { FilaLineaSimple } from '../models';
+import type { FilaCarteraCreditosComposicion, FilaCarteraCreditosVariables, IdProductoComposicion } from '../models';
 
 /**
  * Ids de negocio de los 11 productos de la composición por producto (tabs
@@ -9,7 +9,7 @@ import type { FilaLineaSimple } from '../models';
  * de verificarla 1:1 contra el código fuente real (no estaba en el volcado
  * de referencia) — ajustar si el backend real no calza.
  */
-export const PRODUCTOS_COMPOSICION: ReadonlyArray<{ id: string; label: string }> = [
+export const PRODUCTOS_COMPOSICION: ReadonlyArray<{ id: IdProductoComposicion; label: string }> = [
   { id: '1', label: 'Agropecuario' },
   { id: '2', label: 'Construyendo Confianza' },
   { id: '3', label: 'Crédito Educativo' },
@@ -33,7 +33,11 @@ export const PRODUCTOS_COMPOSICION: ReadonlyArray<{ id: string; label: string }>
  * (`calcularFilaCarteraCreditos`) — distinto según la columna editada, igual
  * que `this.calculate(...)` en el legado.
  */
-export function aplicarCascadaAsesores(filas: FilaLineaSimple[], idxEditado: number, key: string): number {
+export function aplicarCascadaAsesores(
+  filas: FilaCarteraCreditosVariables[],
+  idxEditado: number,
+  key: string
+): number {
   if (key === 'b1') {
     for (let i = idxEditado + 2; i < filas.length; i++) {
       const aseNuevos = Number(filas[i - 2]['b1'] ?? 0);
@@ -61,8 +65,8 @@ export function aplicarCascadaAsesores(filas: FilaLineaSimple[], idxEditado: num
  * Variables y, con el mismo monto desembolsado, la composición por producto.
  */
 export function calcularFilaCarteraCreditos(
-  filasVariables: FilaLineaSimple[],
-  filasComposicion: FilaLineaSimple[],
+  filasVariables: FilaCarteraCreditosVariables[],
+  filasComposicion: FilaCarteraCreditosComposicion[],
   idx: number
 ): void {
   const fila = filasVariables[idx];

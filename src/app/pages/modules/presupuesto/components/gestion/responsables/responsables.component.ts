@@ -3,10 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { PresupuestoService } from '../../services/presupuesto.service';
-import { ToastService } from '../../../../../shared/services/toast.service';
-import { EditableTableComponent } from '../../ui/editable-table/editable-table.component';
-import type { ColumnaTabla, NivelJerarquiaFijo, ResponsableFila } from '../../models';
+import { PresupuestoService } from '../../../services/presupuesto.service';
+import { ToastService } from '../../../../../../shared/services/toast.service';
+import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
+import type { ColumnaTabla, NivelJerarquiaFijo, ResponsableFila } from '../../../models';
 
 const NIVELES: NivelJerarquiaFijo[] = [
   { tip_cod: 7, des_lvl: 'Financiera' },
