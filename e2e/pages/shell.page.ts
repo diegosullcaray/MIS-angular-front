@@ -32,4 +32,14 @@ export class ShellPage {
   get panelNavegacion() {
     return this.page.locator('#tour-sidebar-panel');
   }
+
+  /** Contenedor raíz del shell (ver `shell-layout.component.html`) — el selector usa solo clases simples, no las de fondo (que traen paréntesis/comillas). */
+  get raiz() {
+    return this.page.locator('div.h-screen.flex.overflow-hidden');
+  }
+
+  /** URL del wallpaper actualmente aplicado (mobile: wallpaper_cell.png, desktop: wallpaper.png — ver clases responsive de la raíz). */
+  async wallpaperAplicado(): Promise<string> {
+    return this.raiz.evaluate((el) => getComputedStyle(el).backgroundImage);
+  }
 }

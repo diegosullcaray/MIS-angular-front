@@ -38,4 +38,13 @@ describe('ShellLayoutComponent', () => {
     expect(el.querySelector('app-header')).not.toBeNull();
     expect(el.querySelector('app-redirect-overlay')).not.toBeNull();
   });
+
+  it('usa el wallpaper de mobile (wallpaper_cell.png) por defecto, y el de escritorio (wallpaper.png) desde sm:', () => {
+    const fixture = TestBed.createComponent(ShellLayoutComponent);
+    fixture.detectChanges();
+
+    const raiz = (fixture.nativeElement as HTMLElement).firstElementChild as HTMLElement;
+    expect(raiz.className).toContain("bg-[url('/assets/images/fc/fondos/wallpaper_cell.png')]");
+    expect(raiz.className).toContain("sm:bg-[url('/assets/images/fc/fondos/wallpaper.png')]");
+  });
 });

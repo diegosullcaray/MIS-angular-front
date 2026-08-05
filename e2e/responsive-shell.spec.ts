@@ -46,6 +46,13 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     await expect(shell.botonHamburguesaDelHeader).toBeVisible();
     await expect(shell.botonHamburguesaDelRail).toBeHidden();
   });
+
+  test('usa el wallpaper de mobile (wallpaper_cell.png)', async ({ page }) => {
+    const shell = new ShellPage(page);
+    await shell.ir();
+
+    expect(await shell.wallpaperAplicado()).toContain('wallpaper_cell.png');
+  });
 });
 
 test.describe('Shell responsive — desktop (>= 640px)', () => {
@@ -82,5 +89,14 @@ test.describe('Shell responsive — desktop (>= 640px)', () => {
 
     await expect(shell.botonHamburguesaDelRail).toBeVisible();
     await expect(shell.botonHamburguesaDelHeader).toBeHidden();
+  });
+
+  test('usa el wallpaper de escritorio (wallpaper.png), no el de mobile', async ({ page }) => {
+    const shell = new ShellPage(page);
+    await shell.ir();
+
+    const wallpaper = await shell.wallpaperAplicado();
+    expect(wallpaper).toContain('wallpaper.png');
+    expect(wallpaper).not.toContain('wallpaper_cell.png');
   });
 });
