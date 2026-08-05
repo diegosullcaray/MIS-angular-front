@@ -22,6 +22,10 @@ const SEGMENTO_LABELS: Record<string, string> = {
   'ranking-k': 'Ranking Kaypacha',
   'Kaypacha__': 'Kaypacha',
   categoria: 'Categoría',
+  actividades: 'Actividades',
+  'dest-credito': 'Destino de Crédito',
+  'reg-prosp-corr': 'Prospectos Corresponsal',
+  'regprosp-corr': 'Transacciones Corresponsal',
 };
 
 @Component({

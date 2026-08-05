@@ -89,8 +89,8 @@ export class SidebarComponent implements OnInit {
     const key = (icon.etiqueta || icon.id || '').toLowerCase();
     const ruta = icon.ruta || '';
 
-    // Si el sistema clickeado es un enlace externo (Jira, Imparables, o URL con http)
-    if (key.includes('jira') || key.includes('imparable') || ruta.startsWith('http')) {
+    // Si el sistema clickeado es un enlace externo (Jira, Imparables, Helpdesk, o URL con http)
+    if (key.includes('jira') || key.includes('imparable') || key.includes('helpdesk') || ruta.startsWith('http')) {
       this.redirect.redirigir(icon.etiqueta || icon.id, ruta.startsWith('http') ? ruta : undefined);
       return;
     }

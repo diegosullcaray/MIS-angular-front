@@ -1,0 +1,26 @@
+/* actividades-home.component.css */
+
+/* Animación entrada de cards */
+:host .group {
+  animation: fade-in-up 0.3s ease both;
+}
+
+:host .group:nth-child(1) { animation-delay: 0.05s; }
+:host .group:nth-child(2) { animation-delay: 0.10s; }
+:host .group:nth-child(3) { animation-delay: 0.15s; }
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover scale suave en cards */
+:host .group:hover {
+  transform: translateY(-2px);
+}

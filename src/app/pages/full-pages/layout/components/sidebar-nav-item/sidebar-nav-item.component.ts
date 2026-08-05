@@ -39,8 +39,8 @@ export class SidebarNavItemComponent {
     const etiqueta = (this.ruta().etiqueta || '').toLowerCase();
     const ruta = this.ruta().ruta || '';
 
-    // Si es un enlace externo (Imparables, Jira, o URL http)
-    if (etiqueta.includes('imparable') || etiqueta.includes('jira') || ruta.startsWith('http')) {
+    // Si es un enlace externo (Imparables, Jira, Helpdesk, o URL http)
+    if (etiqueta.includes('imparable') || etiqueta.includes('jira') || etiqueta.includes('helpdesk') || ruta.startsWith('http')) {
       event.preventDefault();
       this.redirect.redirigir(this.ruta().etiqueta, ruta.startsWith('http') ? ruta : undefined);
       return;

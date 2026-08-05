@@ -1,0 +1,96 @@
+<div class="flex flex-col gap-5 p-2 sm:p-4">
+  <!-- Encabezado -->
+  <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl shadow-xs border border-slate-200">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-emerald-600/10 text-emerald-700 flex items-center justify-center text-xl">
+        <i class="pi pi-bolt"></i>
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold text-slate-800 m-0">Transacciones de Corresponsal</h1>
+        <p class="text-xs text-slate-500 m-0">Consulta de transacciones y referencias del corresponsal</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <p-iconfield iconPosition="left" styleClass="w-full sm:w-72">
+        <p-inputicon styleClass="pi pi-search"></p-inputicon>
+        <input type="text" pInputText placeholder="Buscar por nombre, DNI o consulta RCC..." (input)="onSearchInput($event)" class="w-full text-xs py-1.5" />
+      </p-iconfield>
+      <p-button icon="pi pi-refresh" [rounded]="true" [outlined]="true" severity="secondary" size="small" pTooltip="Actualizar" (onClick)="cargarDatos()"></p-button>
+    </div>
+  </header>
+
+  <!-- Estado de carga / error -->
+  @if (loading()) {
+    <app-list-skeleton />
+  } @else if (error()) {
+    <app-inline-error [detalle]="error()!" (reintentar)="cargarDatos()" />
+  } @else {
+    <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+      <p-table
+        [value]="filteredData()"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+        styleClass="p-datatable-sm p-datatable-gridlines text-xs"
+        [scrollable]="true"
+        scrollHeight="520px"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="!bg-emerald-700 !text-white font-semibold text-[11px]">Fecha</th>
+            <th class="!bg-emerald-700 !text-white font-semibold text-[11px]">Nombre Cliente</th>
+            <th class="!bg-emerald-700 !text-white font-semibold text-[11px] text-center">DNI</th>
+            <th class="!bg-emerald-700 !text-white font-semibold text-[11px] text-center">Consulta RUC</th>
+            <th class="!bg-emerald-700 !text-white font-semibold text-[11px] text-center">Consulta RCC</th>
+            <th class="!bg-emerald-700 !text-white font-semibold text-[11px] text-center">Consulta Listas Negras</th>
+            <th class="!bg-emerald-700 !text-white font-semibold text-[11px] text-center">Foto Negocio</th>
+            <th class="!bg-emerald-700 !text-white font-semibold text-[11px] text-center">Lic. Funcionamiento</th>
+            <th class="!bg-emerald-700 !text-white font-semibold text-[11px] text-center">Tiempo Apertura Cta</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="text-slate-600">{{ item.HFECPRO || '-' }}</td>
+            <td class="font-semibold text-slate-800">{{ item.HAPENOMB }}</td>
+            <td class="text-center font-mono text-slate-700">{{ item.HNUMDOC }}</td>
+            <td class="text-center">
+              @if (item.HCONSRUC) {
+                <p-tag [value]="item.HCONSRUC" severity="info" styleClass="text-[10px]"></p-tag>
+              } @else { <span class="text-slate-400">-</span> }
+            </td>
+            <td class="text-center">
+              @if (item.HCONSRCC) {
+                <p-tag [value]="item.HCONSRCC" severity="info" styleClass="text-[10px]"></p-tag>
+              } @else { <span class="text-slate-400">-</span> }
+            </td>
+            <td class="text-center">
+              @if (item.HCONSLNE) {
+                <p-tag [value]="item.HCONSLNE" [severity]="item.HCONSLNE === 'SI' ? 'danger' : 'success'" styleClass="text-[10px]"></p-tag>
+              } @else { <span class="text-slate-400">-</span> }
+            </td>
+            <td class="text-center">
+              @if (item.HFOTNEGO) {
+                <p-tag [value]="item.HFOTNEGO" severity="secondary" styleClass="text-[10px]"></p-tag>
+              } @else { <span class="text-slate-400">-</span> }
+            </td>
+            <td class="text-center">
+              @if (item.HLICFUNCI) {
+                <p-tag [value]="item.HLICFUNCI" [severity]="item.HLICFUNCI === 'SI' ? 'success' : 'warn'" styleClass="text-[10px]"></p-tag>
+              } @else { <span class="text-slate-400">-</span> }
+            </td>
+            <td class="text-center text-slate-700">{{ item.HTAPERCC || '-' }}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="9" class="text-center py-6 text-slate-400">No se encontraron transacciones de corresponsal.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+</div>

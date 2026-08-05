@@ -1,0 +1,24 @@
+/* prospectos-corresponsal.component.css */
+
+/* Sticky header para la tabla */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Hover suave en filas */
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Modal scroll */
+:host ::ng-deep .p-dialog .p-dialog-content {
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+/* Inputs de error con borde rojo sutil */
+:host ::ng-deep input.ng-invalid.ng-touched {
+  border-color: #ef4444;
+}

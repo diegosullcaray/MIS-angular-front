@@ -1,0 +1,24 @@
+/* destino-credito.component.css */
+
+/* Sticky header para la tabla */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Hover suave en filas */
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Montos en negrita */
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td.text-right {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Color marca para el header de la tabla */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th.header-branded {
+  background-color: #035096 !important;
+  color: #fff !important;
+}

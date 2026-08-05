@@ -1,0 +1,204 @@
+<div class="flex flex-col gap-5 p-2 sm:p-4">
+  <!-- Encabezado -->
+  <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl shadow-xs border border-slate-200">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-[#9C3B47]/10 text-[#9C3B47] flex items-center justify-center text-xl">
+        <i class="pi pi-users"></i>
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold text-slate-800 m-0">Registro de Prospectos Corresponsal</h1>
+        <p class="text-xs text-slate-500 m-0">Gestión y seguimiento de prospectos del sistema corresponsal</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <p-iconfield iconPosition="left" styleClass="w-full sm:w-72">
+        <p-inputicon styleClass="pi pi-search"></p-inputicon>
+        <input type="text" pInputText placeholder="Buscar por nombre o DNI..." (input)="onSearchInput($event)" class="w-full text-xs py-1.5" />
+      </p-iconfield>
+      <p-button icon="pi pi-refresh" [rounded]="true" [outlined]="true" severity="secondary" size="small" pTooltip="Actualizar" (onClick)="cargarDatos()"></p-button>
+      <p-button icon="pi pi-plus" label="Nuevo" severity="primary" size="small" (onClick)="abrirNuevoRegistro()"></p-button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <app-list-skeleton />
+  } @else if (error()) {
+    <app-inline-error [detalle]="error()!" (reintentar)="cargarDatos()" />
+  } @else {
+    <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+      <p-table
+        [value]="filteredData()"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+        styleClass="p-datatable-sm p-datatable-gridlines text-xs"
+        [scrollable]="true"
+        scrollHeight="520px"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="!bg-[#9C3B47] !text-white font-semibold text-[11px]">Fecha</th>
+            <th class="!bg-[#9C3B47] !text-white font-semibold text-[11px]">Nombre Cliente</th>
+            <th class="!bg-[#9C3B47] !text-white font-semibold text-[11px]">DNI</th>
+            <th class="!bg-[#9C3B47] !text-white font-semibold text-[11px]">RUC</th>
+            <th class="!bg-[#9C3B47] !text-white font-semibold text-[11px]">Celular</th>
+            <th class="!bg-[#9C3B47] !text-white font-semibold text-[11px]">Agencia</th>
+            <th class="!bg-[#9C3B47] !text-white font-semibold text-[11px]">Tipo Agente</th>
+            <th class="!bg-[#9C3B47] !text-white font-semibold text-[11px] text-center">Instalado</th>
+            <th class="!bg-[#9C3B47] !text-white font-semibold text-[11px]">Zona</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="text-slate-600">{{ item.HFECPRO || '-' }}</td>
+            <td class="font-semibold text-slate-800">{{ item.HAPENOMB }}</td>
+            <td class="font-mono text-slate-700">{{ item.HNUMDOC }}</td>
+            <td class="font-mono text-slate-600">{{ item.HNUMRUC || '-' }}</td>
+            <td class="text-slate-700">{{ item.HCELULAR }}</td>
+            <td class="text-slate-700">{{ item.HDESAGE || '-' }}</td>
+            <td>
+              @if (item.HTIPAGENT) {
+                <p-tag [value]="item.HTIPAGENT" severity="info" styleClass="text-[10px]"></p-tag>
+              } @else { <span class="text-slate-400">-</span> }
+            </td>
+            <td class="text-center">
+              @if (item.HINSTALAD === 'SI') {
+                <p-tag value="SI" severity="success" styleClass="text-[10px]"></p-tag>
+              } @else {
+                <p-tag value="NO" severity="secondary" styleClass="text-[10px]"></p-tag>
+              }
+            </td>
+            <td class="text-slate-600">{{ item.HZONA || '-' }}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="9" class="text-center py-6 text-slate-400">No se encontraron registros de prospectos.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+
+  <!-- Modal Nuevo Registro -->
+  <p-dialog
+    header="Nuevo Prospecto Corresponsal"
+    [(visible)]="modalVisible"
+    [modal]="true"
+    appendTo="body"
+    [style]="{ width: '95vw', maxWidth: '760px' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-3">
+
+      <div class="flex flex-col gap-1 sm:col-span-2">
+        <label class="text-xs font-semibold text-slate-700">Apellidos y Nombres / Razón Social *</label>
+        <input pInputText [(ngModel)]="nuevo.HAPENOMB" placeholder="Ej: PÉREZ LÓPEZ, JUAN" class="text-xs" />
+        @if (formErrors['HAPENOMB']) {
+          <small class="text-red-500 text-[10px]">{{ formErrors['HAPENOMB'] }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">DNI *</label>
+        <input pInputText [(ngModel)]="nuevo.HNUMDOC" placeholder="DNI del prospecto" class="text-xs" maxlength="8" />
+        @if (formErrors['HNUMDOC']) {
+          <small class="text-red-500 text-[10px]">{{ formErrors['HNUMDOC'] }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">RUC</label>
+        <input pInputText [(ngModel)]="nuevo.HNUMRUC" placeholder="Número de RUC" class="text-xs" maxlength="11" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Celular *</label>
+        <input pInputText [(ngModel)]="nuevo.HCELULAR" placeholder="Ej: 999888777" class="text-xs" maxlength="9" />
+        @if (formErrors['HCELULAR']) {
+          <small class="text-red-500 text-[10px]">{{ formErrors['HCELULAR'] }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1 sm:col-span-2">
+        <label class="text-xs font-semibold text-slate-700">Dirección *</label>
+        <input pInputText [(ngModel)]="nuevo.HDIREC" placeholder="Dirección completa del negocio" class="text-xs" />
+        @if (formErrors['HDIREC']) {
+          <small class="text-red-500 text-[10px]">{{ formErrors['HDIREC'] }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Nombre Comercial</label>
+        <input pInputText [(ngModel)]="nuevo.HNOMCOM" placeholder="Nombre del negocio" class="text-xs" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Tipo de Agente</label>
+        <p-select [(ngModel)]="nuevo.HTIPAGENT" [options]="opcionesTipoAgente" optionLabel="label" optionValue="value" placeholder="Seleccione" styleClass="w-full text-xs"></p-select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Canal de Captación</label>
+        <p-select [(ngModel)]="nuevo.HCANACAP" [options]="opcionesCanalCaptacion" optionLabel="label" optionValue="value" placeholder="Seleccione" styleClass="w-full text-xs"></p-select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Zona</label>
+        <p-select [(ngModel)]="nuevo.HZONA" [options]="opcionesZona" optionLabel="label" optionValue="value" placeholder="Seleccione" styleClass="w-full text-xs"></p-select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Prospecto</label>
+        <p-select [(ngModel)]="nuevo.HPROSPEC" [options]="opcionesProspecto" optionLabel="label" optionValue="value" placeholder="Seleccione" styleClass="w-full text-xs"></p-select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Instalado</label>
+        <p-select [(ngModel)]="nuevo.HINSTALAD" [options]="opcionesSiNo" optionLabel="label" optionValue="value" placeholder="Seleccione" styleClass="w-full text-xs"></p-select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Apertura de Cuenta</label>
+        <p-select [(ngModel)]="nuevo.HAPERTCTA" [options]="opcionesSiNo" optionLabel="label" optionValue="value" placeholder="Seleccione" styleClass="w-full text-xs"></p-select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Cta. Lic. Funcionamiento</label>
+        <p-select [(ngModel)]="nuevo.HCTALICEF" [options]="opcionesSiNo" optionLabel="label" optionValue="value" placeholder="Seleccione" styleClass="w-full text-xs"></p-select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Vínculo Familiar</label>
+        <p-select [(ngModel)]="nuevo.HVINFAMI" [options]="opcionesSiNo" optionLabel="label" optionValue="value" placeholder="Seleccione" styleClass="w-full text-xs"></p-select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Tipo de Vínculo</label>
+        <p-select [(ngModel)]="nuevo.HTIPVINC" [options]="opcionesTipoVinculo" optionLabel="label" optionValue="value" placeholder="Seleccione" styleClass="w-full text-xs"></p-select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Latitud</label>
+        <input pInputText [(ngModel)]="nuevo.HGEOLATI" placeholder="-12.0453" class="text-xs" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-700">Longitud</label>
+        <input pInputText [(ngModel)]="nuevo.HGEOLON" placeholder="-77.0311" class="text-xs" />
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end gap-2 pt-1">
+        <p-button label="Cancelar" severity="secondary" [text]="true" size="small" (onClick)="modalVisible.set(false)"></p-button>
+        <p-button label="Registrar Prospecto" icon="pi pi-check" severity="primary" size="small" [loading]="guardando()" (onClick)="guardarRegistro()"></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>

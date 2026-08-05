@@ -1,0 +1,63 @@
+<div class="flex flex-col gap-6 p-4 sm:p-6 min-h-[60vh]">
+  <!-- Banner del módulo -->
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#035096] via-[#0466c8] to-[#0353a4] p-6 sm:p-8 text-white shadow-lg">
+    <div class="relative z-10">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+          <i class="pi pi-calendar-clock text-2xl text-white"></i>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold m-0 leading-tight">Módulo de Actividades</h1>
+          <p class="text-sm text-blue-100 m-0">Gestión integral de actividades y seguimiento comercial</p>
+        </div>
+      </div>
+      <p class="text-sm text-blue-100 m-0 mt-3 max-w-xl">
+        Acceda a las herramientas de seguimiento de destino de crédito, registro de prospectos
+        y monitoreo de transacciones del sistema corresponsal.
+      </p>
+    </div>
+    <!-- Decoración de fondo -->
+    <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white/5"></div>
+    <div class="absolute -right-4 bottom-0 w-28 h-28 rounded-full bg-white/5"></div>
+  </div>
+
+  <!-- Cards de navegación -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    @for (card of cards; track card.ruta) {
+      <a
+        [routerLink]="card.ruta"
+        class="nav-card group flex flex-col bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md hover:border-slate-300 transition-all duration-200 cursor-pointer no-underline overflow-hidden"
+      >
+        <!-- Top bar de color -->
+        <div class="h-1.5 w-full" [style.background]="card.colorIcon"></div>
+
+        <div class="p-5 flex flex-col gap-3 flex-1">
+          <!-- Icono + Badge -->
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" [style.background]="card.colorBg">
+              <i [class]="card.icono" [style.color]="card.colorIcon"></i>
+            </div>
+            @if (card.badge) {
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-[#035096]">{{ card.badge }}</span>
+            }
+          </div>
+
+          <!-- Texto -->
+          <div>
+            <h2 class="text-sm font-bold text-slate-800 m-0 leading-tight group-hover:text-[#035096] transition-colors duration-150">
+              {{ card.titulo }}
+            </h2>
+            <p class="text-xs text-slate-500 m-0 mt-1 leading-relaxed">{{ card.descripcion }}</p>
+          </div>
+
+          <!-- Acción -->
+          <div class="flex items-center justify-end mt-auto pt-2 border-t border-slate-100">
+            <span class="text-xs text-[#035096] font-semibold flex items-center gap-1 group-hover:gap-2 transition-all duration-150">
+              Acceder <i class="pi pi-arrow-right text-[10px]"></i>
+            </span>
+          </div>
+        </div>
+      </a>
+    }
+  </div>
+</div>

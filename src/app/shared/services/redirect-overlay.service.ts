@@ -36,6 +36,8 @@ export class RedirectOverlayService {
         targetUrl = externalMap['imparables'];
       } else if (key.includes('jira')) {
         targetUrl = externalMap['jira'];
+      } else if (key.includes('helpdesk')) {
+        targetUrl = externalMap['helpdesk'];
       } else {
         targetUrl = externalMap['imparables'] || 'https://stg.confianza.pe';
       }
@@ -44,6 +46,8 @@ export class RedirectOverlayService {
     // Nombre amigable para mostrar en el subtítulo del loader
     const nombre = key.includes('jira')
       ? 'Mesa de Ayuda Jira'
+      : key.includes('helpdesk')
+      ? 'Portal Helpdesk Confianza'
       : key.includes('imparable')
       ? 'Portal Imparables'
       : destino;

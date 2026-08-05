@@ -59,6 +59,14 @@ export const APP_ROUTES: Routes = [
             (m) => m.KAYPACHA_ROUTES
           )
       },
+      {
+        // 'actividades' — coincide con el act_sec del backend para el módulo A_MOD_TAR
+        path: 'actividades',
+        loadChildren: () =>
+          import('./pages/modules/actividades/actividades.routes').then(
+            (m) => m.ACTIVIDADES_ROUTES
+          )
+      },
     ]
   },
   {

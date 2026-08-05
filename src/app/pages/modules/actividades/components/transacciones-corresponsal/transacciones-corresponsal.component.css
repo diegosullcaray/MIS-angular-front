@@ -1,0 +1,19 @@
+/* transacciones-corresponsal.component.css */
+
+/* Sticky header para la tabla */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Hover suave en filas */
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Valores numéricos tabulares */
+:host ::ng-deep .p-datatable .font-mono {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
