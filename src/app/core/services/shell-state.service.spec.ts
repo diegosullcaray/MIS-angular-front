@@ -64,4 +64,14 @@ describe('ShellStateService', () => {
     expect(service.menuItemActivo()).toBeNull();
     expect(service.esAdmin()).toBe(false);
   });
+
+  it('navPanelColapsado empieza en false y toggleNavPanel() lo alterna', () => {
+    expect(service.navPanelColapsado()).toBe(false);
+
+    service.toggleNavPanel();
+    expect(service.navPanelColapsado()).toBe(true);
+
+    service.toggleNavPanel();
+    expect(service.navPanelColapsado()).toBe(false);
+  });
 });

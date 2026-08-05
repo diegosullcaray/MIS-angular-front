@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal, OnInit } from '@angular/core';
+import { Component, inject, computed, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
@@ -21,7 +21,6 @@ export class SidebarComponent implements OnInit {
   private readonly kaypacha = inject(KaypachaService);
   private readonly redirect = inject(RedirectOverlayService);
   private readonly router = inject(Router);
-  protected readonly isNavPanelCollapsed = signal<boolean>(false);
 
   constructor() {
     // Categorías del ranking, para la sección "Categoría" del panel de ranking-k.
@@ -33,10 +32,6 @@ export class SidebarComponent implements OnInit {
     if (usuario?.email) {
       this.menuStg.cargar(usuario.email);
     }
-  }
-
-  protected toggleNavPanel(): void {
-    this.isNavPanelCollapsed.update(collapsed => !collapsed);
   }
 
   protected readonly iconActivoId = this.shell.sidebarIconActivo;
