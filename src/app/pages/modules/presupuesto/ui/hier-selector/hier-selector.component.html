@@ -1,0 +1,31 @@
+<p-button
+  [label]="etiquetaActual() ?? placeholder()"
+  icon="pi pi-sitemap"
+  [text]="true"
+  size="small"
+  (onClick)="abrir()"
+/>
+
+<p-dialog
+  [header]="paramsHier().dlgTitulo"
+  [(visible)]="dialogAbierto"
+  [modal]="true"
+  [style]="{ width: '420px' }"
+  [draggable]="false"
+>
+  @if (cargandoRaiz()) {
+    <div class="flex flex-col gap-2 p-2">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <p-skeleton height="1.5rem" />
+      }
+    </div>
+  } @else {
+    <p-tree
+      [value]="nodos()"
+      selectionMode="single"
+      emptyMessage="Sin niveles disponibles."
+      (onNodeExpand)="onExpandir($event)"
+      (onNodeSelect)="onSeleccionar($event)"
+    />
+  }
+</p-dialog>
