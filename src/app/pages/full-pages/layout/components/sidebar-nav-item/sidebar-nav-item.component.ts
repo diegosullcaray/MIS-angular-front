@@ -1,17 +1,10 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
+import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
 
 /**
  * Nodo recursivo del árbol de navegación de STG (Col 2 del sidebar).
- *
- * Estructurado como el ejemplo de referencia en `docs/recursos/sidebar-item`:
- * un componente standalone que se importa a sí mismo para renderizar
- * profundidad arbitraria, con expand/collapse de un solo nodo por nivel
- * (`currentExpandedIndex[depth]`), delegado al padre para que todo el árbol
- * comparta un único estado. El resaltado sigue el mismo criterio que la
- * referencia: solo el ítem realmente activo (`routerLinkActive`) se destaca;
- * los grupos ancestro no llevan un estado visual propio.
  */
 @Component({
   selector: 'app-sidebar-nav-item',
@@ -21,6 +14,8 @@ import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
   styleUrl: './sidebar-nav-item.component.css',
 })
 export class SidebarNavItemComponent {
+  private readonly redirect = inject(RedirectOverlayService);
+
   readonly ruta                 = input.required<SidebarNavRuta>();
   readonly depth                = input<number>(0);
   readonly index                = input<number>(0);
@@ -40,7 +35,17 @@ export class SidebarNavItemComponent {
       this.expandChange.emit({ depth: this.depth(), index: this.index() });
       return;
     }
-    const ruta = this.ruta().ruta;
+
+    const etiqueta = (this.ruta().etiqueta || '').toLowerCase();
+    const ruta = this.ruta().ruta || '';
+
+    // Si es un enlace externo (Imparables, Jira, o URL http)
+    if (etiqueta.includes('imparable') || etiqueta.includes('jira') || ruta.startsWith('http')) {
+      event.preventDefault();
+      this.redirect.redirigir(this.ruta().etiqueta, ruta.startsWith('http') ? ruta : undefined);
+      return;
+    }
+
     if (ruta) this.rutaSeleccionada.emit(ruta);
   }
 

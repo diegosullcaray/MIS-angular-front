@@ -1,0 +1,18 @@
+/* ── Custom Fonts ──────────────────────────────────────────── */
+@font-face {
+  font-family: 'Anek Latin';
+  src: url('/assets/fonts/AnekLatin-VariableFont_wdth,wght.ttf') format('truetype-variations'),
+       url('/assets/fonts/AnekLatin-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-stretch: 75% 125%;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anek Devanagari';
+  src: url('/assets/fonts/AnekDevanagari-VariableFont_wdth,wght.ttf') format('truetype-variations'),
+       url('/assets/fonts/AnekDevanagari-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-stretch: 75% 125%;
+  font-display: swap;
+}

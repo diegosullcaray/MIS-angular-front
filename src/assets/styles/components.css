@@ -1,0 +1,25 @@
+/* ── Skeleton Component ───────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--mis-border) 25%,
+    rgba(29, 57, 110, 0.04) 50%,
+    var(--mis-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+  border-radius: var(--mis-radius-sm);
+}
+
+/* ── Cards de gestión (p-card con header/body) ────────────── */
+.mis-card {
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  box-shadow: var(--mis-shadow-sm);
+  overflow: hidden;
+  width: 100%;
+}
+
+.mis-card .p-card-body {
+  padding: var(--mis-space-4) var(--mis-space-6);
+}

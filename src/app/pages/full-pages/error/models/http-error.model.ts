@@ -24,7 +24,7 @@ export interface HttpErrorInfo {
   titulo: string;
   /** Mensaje explicativo en lenguaje de negocio (nunca el mensaje crudo del backend). */
   mensaje: string;
-  /** Nombre de ícono registrado en `@ng-icons/lucide` (ver `provideIcons` en `error-page.component.ts`). */
+  /** Nombre de ícono registrado en `@ng-icons/lucide`. */
   icono: string;
   /** Acción principal ofrecida al usuario. */
   accion: HttpErrorAction;

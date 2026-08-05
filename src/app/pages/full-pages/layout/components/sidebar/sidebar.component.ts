@@ -5,6 +5,7 @@ import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
+import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
 import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavSeccion } from '../../interfaces/sidebar.model';
 
 @Component({
@@ -18,6 +19,7 @@ export class SidebarComponent implements OnInit {
   protected readonly shell = inject(ShellStateService);
   private readonly menuStg = inject(MenuStgService);
   private readonly kaypacha = inject(KaypachaService);
+  private readonly redirect = inject(RedirectOverlayService);
   private readonly router = inject(Router);
   protected readonly isNavPanelCollapsed = signal<boolean>(false);
 
@@ -84,8 +86,19 @@ export class SidebarComponent implements OnInit {
     // resalta el sistema correcto y `panelActivo` oculta Col 2 si no aplica.
     this.shell.setSidebarIconActivo(icon.id);
 
-    if (!icon.tienePanel && icon.ruta) {
-      this.router.navigateByUrl(icon.ruta);
+    const key = (icon.etiqueta || icon.id || '').toLowerCase();
+    const ruta = icon.ruta || '';
+
+    // Si el sistema clickeado es un enlace externo (Jira, Imparables, o URL con http)
+    if (key.includes('jira') || key.includes('imparable') || ruta.startsWith('http')) {
+      this.redirect.redirigir(icon.etiqueta || icon.id, ruta.startsWith('http') ? ruta : undefined);
+      return;
+    }
+
+    if (!icon.tienePanel && ruta) {
+      this.router.navigateByUrl(ruta).catch(() => {
+        console.warn(`Ruta local no encontrada: ${ruta}`);
+      });
     }
   }
 

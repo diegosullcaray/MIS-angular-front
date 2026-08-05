@@ -2,14 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HTTP_ERROR_FALLBACK, HTTP_ERROR_MESSAGES } from '../constants/http-error.constants';
-import type { HttpErrorInfo, KnownHttpErrorCode } from '../interfaces/http-error.model';
+import type { HttpErrorInfo, KnownHttpErrorCode } from '../models/http-error.model';
 
 /**
  * Punto único de traducción de errores HTTP → `HttpErrorInfo` mapeado.
- *
- * La usan tanto `httpErrorInterceptor` (para decidir si redirige a la
- * página de error de fullpages) como cualquier componente que prefiera
- * mostrar el error localmente (p. ej. con `InlineErrorComponent`).
+ * Centralizado dentro del módulo de errores (`pages/full-pages/error`).
  */
 @Injectable({ providedIn: 'root' })
 export class HttpErrorService {

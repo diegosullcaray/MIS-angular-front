@@ -1,13 +1,8 @@
-import type { HttpErrorInfo, KnownHttpErrorCode } from '../interfaces/http-error.model';
+import type { HttpErrorInfo, KnownHttpErrorCode } from '../models/http-error.model';
 
 /**
  * Mapeo único de errores HTTP conocidos → cómo se muestran en el Host.
- *
- * `esFatal: true` marca errores de infraestructura (backend caído, timeout,
- * sin red) para los que `httpErrorInterceptor` redirige a la página de error
- * de `pages/full-pages/error`. El resto (`esFatal: false`) son errores de
- * negocio/validación que cada componente maneja localmente (p. ej. con
- * `InlineErrorComponent` o un toast) — el interceptor no los intercepta.
+ * Centralizado dentro del módulo de errores.
  */
 export const HTTP_ERROR_MESSAGES: Record<KnownHttpErrorCode, HttpErrorInfo> = {
   0: {
@@ -117,12 +112,7 @@ export const HTTP_ERROR_MESSAGES: Record<KnownHttpErrorCode, HttpErrorInfo> = {
 };
 
 /**
- * Fallback para códigos HTTP no mapeados explícitamente. `esFatal: false`
- * a propósito: un status fuera de la tabla (ej. un 200 con body no
- * parseable como JSON, que Angular reporta como `HttpErrorResponse` con
- * status 200 pese a no ser un error real del servidor) nunca debe mandar
- * al usuario a la página de error global — solo los códigos explícitamente
- * listados arriba con `esFatal: true` lo hacen.
+ * Fallback para códigos HTTP no mapeados explícitamente.
  */
 export const HTTP_ERROR_FALLBACK: HttpErrorInfo = {
   code: 500,

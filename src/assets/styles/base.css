@@ -1,0 +1,39 @@
+/* ── Base Resets ──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--mis-font-family);
+  font-size: var(--mis-text-base);
+  color: var(--mis-text-primary);
+  background: url('/assets/images/fc/fondos/wallpaper.png') no-repeat center center fixed;
+  background-size: cover;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar macOS minimalista ──────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(29, 57, 110, 0.20);
+  border-radius: var(--mis-radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(29, 57, 110, 0.35);
+}
+
+/* ── Focus visible ring (accesibilidad) ───────────────────── */
+:focus-visible {
+  outline: 2px solid var(--mis-accent);
+  outline-offset: 2px;
+}

@@ -1,0 +1,9 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.not-found-wrapper {
+  background: radial-gradient(circle at top right, var(--mis-primary, #1D396E) 0%, #0A1630 60%, #050B18 100%);
+  font-family: var(--mis-font-family);
+}

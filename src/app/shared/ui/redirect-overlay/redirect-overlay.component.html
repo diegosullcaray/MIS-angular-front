@@ -1,0 +1,23 @@
+@if (redirect.state().visible) {
+  <div class="redirect-overlay-wrapper fixed inset-0 z-[9999] min-h-screen flex flex-col items-center justify-center gap-6 p-4">
+    <div class="relative flex items-center justify-center">
+      <p-progress-spinner
+        styleClass="mis-spinner"
+        strokeWidth="3"
+        fill="transparent"
+        [style]="{ width: '180px', height: '180px' }"
+      />
+      <img
+        src="assets/images/fc/avatars/mis_wait.png"
+        alt="Avatar MIS"
+        class="absolute w-[130px] h-[130px] rounded-full object-contain"
+      />
+    </div>
+
+    <div class="flex flex-col items-center gap-1 text-center">
+      <span class="text-xl font-bold text-white tracking-[0.2px]">{{ redirect.state().titulo }}</span>
+      <span class="text-sm text-white/80 font-medium">{{ redirect.state().subtitulo }}</span>
+      <span class="text-xs text-white/50 mt-1">MIS — Sistema de Información</span>
+    </div>
+  </div>
+}

@@ -1,4 +1,7 @@
 :root {
+  /* Layout Dimensions */
+  --mis-header-h: 56px;
+
   /* Fuente principal: Anek Latin con fallback macOS/Inter */
   --mis-font-family: 'Anek Latin', 'Anek Devanagari', -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
 

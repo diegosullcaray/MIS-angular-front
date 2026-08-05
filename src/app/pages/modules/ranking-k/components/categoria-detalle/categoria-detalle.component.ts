@@ -10,19 +10,13 @@ import { RankingTableComponent } from '../../ui/ranking-table/ranking-table.comp
 import { RankingFiltrosComponent } from '../../ui/ranking-filtros/ranking-filtros.component';
 import { RankingInfoDialogComponent } from '../../ui/ranking-info-dialog/ranking-info-dialog.component';
 import { KaypachaService } from '../../services/kaypacha.service';
+import { RankingTourService } from '../../services/ranking-tour.service';
+import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
 import type { FilaDetalleRanking, GrupoRanking, RankingFiltros, RankingTableFila } from '../../models';
 
 /** Duración de la transición "aplicando filtros" (solo UX — el filtrado en sí es síncrono). */
 const DURACION_TRANSICION_FILTROS_MS = 350;
 
-/**
- * Desglose del ranking de una categoría (`/app/ranking-k/categoria/:id`).
- *
- * El legado (`detallek.component.html`) no muestra una sola tabla grande:
- * agrupa las filas por `hdester` (territorio/zona) y renderiza una tarjeta
- * con su propia tabla por cada grupo, en una grilla — se replica ese mismo
- * diseño acá con `RankingTableComponent` (ui/).
- */
 @Component({
   selector: 'app-categoria-detalle',
   standalone: true,
@@ -33,6 +27,8 @@ const DURACION_TRANSICION_FILTROS_MS = 350;
 })
 export class CategoriaDetalleComponent {
   private readonly kaypacha = inject(KaypachaService);
+  protected readonly tour = inject(RankingTourService);
+  protected readonly redirect = inject(RedirectOverlayService);
 
   /** `rdestip` de la categoría — route param `:id` (withComponentInputBinding). */
   readonly id = input.required<string>();
@@ -112,6 +108,11 @@ export class CategoriaDetalleComponent {
   }
 
   protected cargarDetalle(): void {
+    const idStr = this.id().toLowerCase().trim();
+    if (idStr.includes('imparable') || idStr.includes('jira')) {
+      this.redirect.redirigir(this.id());
+    }
+
     this.cargando.set(true);
     this.error.set(null);
     this.filtros.set(null);

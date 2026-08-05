@@ -4,7 +4,7 @@
   <div
     class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
     <!-- Identidad de la categoría e información -->
-    <div class="flex items-center gap-2.5">
+    <div id="tour-categoria-header" class="flex items-center gap-2.5">
       <ng-icon name="lucideTrophy" size="22" class="text-[var(--mis-warning)] shrink-0" />
 
       <div class="flex flex-col gap-0.5">
@@ -12,7 +12,7 @@
           <h1 class="text-lg font-bold text-[var(--mis-text-primary)] m-0 tracking-tight">
             {{ categoria()?.name ?? id() }}
           </h1>
-          <app-ranking-info-dialog />
+          <span id="tour-info-btn"><app-ranking-info-dialog /></span>
         </div>
 
         <div class="flex items-center gap-2.5 text-xs flex-wrap">
@@ -35,7 +35,16 @@
     </div>
 
     <!-- Acciones del header -->
-    <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+    <div id="tour-filtros-btn" class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+      <p-button
+        icon="pi pi-question-circle"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        pTooltip="Ver guía interactiva"
+        tooltipPosition="bottom"
+        (click)="tour.iniciarTourGuiado()"
+      />
       <p-button [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Filtros'"
         [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
         [severity]="mostrarFiltros() ? 'primary' : 'secondary'" [outlined]="!mostrarFiltros()" size="small"
@@ -85,7 +94,7 @@
       </div>
 
       <!-- Contenedor central de la tabla de premiación con aura dorada -->
-      <div class="relative w-full max-w-lg shrink-0">
+      <div id="tour-ranking-tabla" class="relative w-full max-w-lg shrink-0">
         <!-- Aura dorada de iluminación -->
         <div class="absolute -inset-3 bg-gradient-to-r from-amber-400/30 via-yellow-300/40 to-amber-500/30 rounded-2xl blur-xl opacity-90 animate-pulse pointer-events-none"></div>
 
@@ -121,7 +130,7 @@
     </div>
   } @else {
     <!-- Múltiples tablas por cada grupo: muestran las primeras 10 filas visibles en 280px de alto y scrollbar para el resto -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+    <div id="tour-ranking-tabla" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
       @for (grupo of grupos(); track grupo.hdester) {
         <app-ranking-table
           [titulo]="grupo.hdester"

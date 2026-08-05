@@ -1,12 +1,24 @@
-<div class="flex flex-col items-center justify-center gap-4 min-h-screen p-12 text-center">
-  <div class="text-[96px] font-bold text-[var(--mis-primary-light)] leading-none tracking-[-4px]">404</div>
-  <ng-icon name="lucideCompass" size="48" class="text-[var(--mis-text-tertiary)] -mt-4" />
-  <h1 class="m-0 text-[var(--mis-text-2xl)] font-semibold text-[var(--mis-text-primary)]">Página no encontrada</h1>
-  <p class="m-0 text-[var(--mis-text-secondary)] text-[var(--mis-text-base)] max-w-[320px]">
-    La ruta que buscas no existe o fue movida.
-  </p>
-  <a routerLink="/app/dashboard" class="inline-flex items-center gap-2 mt-2 px-5 py-2 rounded-[6px] bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] no-underline text-sm font-medium transition-colors duration-150 hover:bg-[var(--mis-primary-hover)]">
-    <ng-icon name="lucideHome" size="14" />
-    Volver al inicio
-  </a>
+<div class="not-found-wrapper min-h-screen w-full flex flex-col items-center justify-center p-4">
+  <div class="mis-card bg-white/95 backdrop-blur-xl border border-white/40 shadow-2xl rounded-2xl p-8 sm:p-12 max-w-md w-full flex flex-col items-center justify-center gap-4 text-center">
+    <div class="w-16 h-16 rounded-full bg-[var(--mis-primary-light)] flex items-center justify-center shrink-0">
+      <ng-icon name="lucideCompass" size="32" class="text-[var(--mis-primary)]" />
+    </div>
+
+    <div class="text-6xl font-extrabold text-[var(--mis-primary)] leading-none tracking-tight">404</div>
+
+    <div class="flex flex-col gap-1">
+      <h1 class="m-0 text-xl font-bold text-[var(--mis-text-primary)]">Página no encontrada</h1>
+      <p class="m-0 text-xs text-[var(--mis-text-secondary)] leading-relaxed max-w-[280px]">
+        La ruta que buscas no existe o se encuentra en mantenimiento.
+      </p>
+    </div>
+
+    <a
+      routerLink="/app/dashboard"
+      class="inline-flex items-center justify-center gap-2 mt-2 px-5 py-2.5 rounded-xl bg-[var(--mis-primary)] text-white no-underline text-xs font-semibold shadow-md transition-all duration-150 hover:bg-[var(--mis-primary-hover)] hover:scale-[1.02]"
+    >
+      <ng-icon name="lucideHome" size="16" />
+      Volver al inicio
+    </a>
+  </div>
 </div>
