@@ -189,12 +189,19 @@ describe('SidebarComponent', () => {
     expect(shell.menuItemActivo()).toEqual({ ruta: '/app/ranking-k/categoria/cat-1', etiqueta: 'cat-1' });
   });
 
-  it('toggleNavPanel() alterna isNavPanelCollapsed', () => {
+  it('el botón para alternar el panel usa el estado compartido de ShellStateService (Col 2 se oculta al colapsar)', () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true }]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });
     const fixture = crear();
-    const instancia = fixture.componentInstance;
+    shell.setSidebarIconActivo('sist-1');
+    fixture.detectChanges();
 
-    expect(instancia['isNavPanelCollapsed']()).toBe(false);
-    instancia['toggleNavPanel']();
-    expect(instancia['isNavPanelCollapsed']()).toBe(true);
+    expect(fixture.componentInstance['panelActivo']()).not.toBeNull();
+
+    shell.toggleNavPanel();
+    fixture.detectChanges();
+
+    expect(shell.navPanelColapsado()).toBe(true);
+    expect((fixture.nativeElement as HTMLElement).querySelector('app-sidebar-nav-panel')).toBeNull();
   });
 });

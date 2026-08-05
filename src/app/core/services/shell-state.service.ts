@@ -23,6 +23,7 @@ export class ShellStateService {
   private readonly _menuItemActivo = signal<MenuItemActivo | null>(null);
   private readonly _sidebarIconActivo = signal<string>('host-inicio');
   private readonly _cerrandoSesion = signal(false);
+  private readonly _navPanelColapsado = signal(false);
 
   // ─── Signals de solo lectura (expuestos — Remotes solo leen) ────────────
 
@@ -41,6 +42,14 @@ export class ShellStateService {
    * cualquier ancestro con `backdrop-filter`/`transform` (rompen `position: fixed`).
    */
   readonly cerrandoSesion = this._cerrandoSesion.asReadonly();
+
+  /**
+   * True cuando el panel de navegación (Col 2 del sidebar) está colapsado.
+   * Compartido entre `SidebarComponent` (dueño del panel) y `HeaderComponent`
+   * (botón para alternarlo en mobile): ambos necesitan leer/mutar el mismo
+   * estado sin ser padre/hijo entre sí.
+   */
+  readonly navPanelColapsado = this._navPanelColapsado.asReadonly();
 
   // ─── Computed ────────────────────────────────────────────────────────────
 
@@ -90,6 +99,10 @@ export class ShellStateService {
 
   setCerrandoSesion(valor: boolean): void {
     this._cerrandoSesion.set(valor);
+  }
+
+  toggleNavPanel(): void {
+    this._navPanelColapsado.update((colapsado) => !colapsado);
   }
 
   cerrarSesion(): void {
