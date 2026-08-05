@@ -1,4 +1,4 @@
-import { Component, inject, computed, OnInit } from '@angular/core';
+import { Component, inject, computed, effect, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
@@ -25,6 +25,13 @@ export class SidebarComponent implements OnInit {
   constructor() {
     // Categorías del ranking, para la sección "Categoría" del panel de ranking-k.
     this.kaypacha.cargarCategorias();
+
+    // Header (hermano, no padre/hijo) necesita saber si el sistema activo
+    // tiene panel propio, para no mostrar el botón de alternarlo en mobile
+    // cuando no hay nada que mostrar/ocultar.
+    effect(() => {
+      this.shell.setSidebarTienePanel(this.panelActivo() !== null);
+    });
   }
 
   ngOnInit() {

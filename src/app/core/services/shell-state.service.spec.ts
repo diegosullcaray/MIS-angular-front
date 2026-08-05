@@ -85,4 +85,14 @@ describe('ShellStateService', () => {
     service.setNavPanelColapsado(false);
     expect(service.navPanelColapsado()).toBe(false);
   });
+
+  it('sidebarTienePanel empieza en false y setSidebarTienePanel() lo actualiza', () => {
+    expect(service.sidebarTienePanel()).toBe(false);
+
+    service.setSidebarTienePanel(true);
+    expect(service.sidebarTienePanel()).toBe(true);
+
+    service.setSidebarTienePanel(false);
+    expect(service.sidebarTienePanel()).toBe(false);
+  });
 });
