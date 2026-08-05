@@ -4,7 +4,7 @@ import { CarteraCreditosComponent } from './cartera-creditos.component';
 import { PresupuestoService } from '../../services/presupuesto.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import type { CeldaEditadaEvent } from '../../ui/editable-table/editable-table.component';
-import type { HierarquiaNodo, ResumenCarteraCreditos, ResumenMetadata } from '../../models';
+import type { FilaLineaSimple, HierarquiaNodo, ResumenCarteraCreditos, ResumenMetadata } from '../../models';
 
 function metadata(overrides: Partial<ResumenMetadata> = {}): ResumenMetadata {
   return { tip_cod_edi: 4, ord_ini_edi: 1, act_res: true, cod_sec: 'SEC-1', ...overrides };
@@ -83,7 +83,7 @@ describe('CarteraCreditosComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](nodo());
 
     const filas = fixture.componentInstance['filas']();
-    const evento: CeldaEditadaEvent = { fila: filas[0], key: 'b1', valor: 10 };
+    const evento: CeldaEditadaEvent<FilaLineaSimple> = { fila: filas[0], key: 'b1', valor: 10 };
     fixture.componentInstance['onCeldaEditada'](evento);
 
     // b1 editado en idx 0 → cascada de asesores actualiza b2 desde idx 2 (b2[2] = b1[0] + b2[1] = 10 + 5 = 15)

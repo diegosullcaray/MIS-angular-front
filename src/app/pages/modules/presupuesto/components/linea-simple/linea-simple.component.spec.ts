@@ -97,7 +97,7 @@ describe('LineaSimpleComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](nodo());
 
     const filas = fixture.componentInstance['filas']();
-    const evento: CeldaEditadaEvent = { fila: filas[1], key: 'a2', valor: 99 };
+    const evento: CeldaEditadaEvent<FilaLineaSimple> = { fila: filas[1], key: 'a2', valor: 99 };
     fixture.componentInstance['onCeldaEditada'](evento);
 
     expect(calcularFila).toHaveBeenCalledTimes(2); // idx 1 y 2 (no la 0, ya pasada)

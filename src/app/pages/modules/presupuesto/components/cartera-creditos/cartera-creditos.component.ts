@@ -120,7 +120,7 @@ export class CarteraCreditosComponent {
     });
   }
 
-  protected onCeldaEditada(evento: CeldaEditadaEvent): void {
+  protected onCeldaEditada(evento: CeldaEditadaEvent<FilaLineaSimple>): void {
     const filas = this.filas();
     const composicion = this.filasComposicion();
     const idx = filas.indexOf(evento.fila);

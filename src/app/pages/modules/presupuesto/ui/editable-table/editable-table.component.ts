@@ -3,11 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
-import type { ColumnaTabla, FilaLineaSimple, TipoColumna } from '../../models';
+import type { ColumnaTabla, TipoColumna } from '../../models';
+
+/** Fila genérica de la tabla — cualquier objeto plano (`FilaLineaSimple`, `ResponsableFila`, `LogVerificacionFila`...). */
+export type FilaTabla = Record<string, unknown>;
 
 /** Evento de edición de una celda — igual forma que `editCell(evt)` del legado. */
-export interface CeldaEditadaEvent {
-  fila: FilaLineaSimple;
+export interface CeldaEditadaEvent<T extends FilaTabla = FilaTabla> {
+  fila: T;
   key: string;
   valor: unknown;
 }
@@ -31,13 +34,13 @@ export interface CeldaEditadaEvent {
   templateUrl: './editable-table.component.html',
   styleUrl: './editable-table.component.css',
 })
-export class EditableTableComponent {
+export class EditableTableComponent<T extends FilaTabla = FilaTabla> {
   readonly columnas = input.required<ColumnaTabla[]>();
-  readonly filas = input<FilaLineaSimple[]>([]);
+  readonly filas = input<T[]>([]);
   readonly cargando = input(false);
   /** `() => false` (todo de solo lectura) si no se provee — ej. Comp. Prod. Monto/Ratio. */
-  readonly esEditable = input<(fila: FilaLineaSimple, key: string) => boolean>(() => false);
-  readonly celdaEditada = output<CeldaEditadaEvent>();
+  readonly esEditable = input<(fila: T, key: string) => boolean>(() => false);
+  readonly celdaEditada = output<CeldaEditadaEvent<T>>();
 
   protected readonly tieneGrupos = computed(() => this.columnas().some((c) => (c.hijos?.length ?? 0) > 0));
 
@@ -45,8 +48,8 @@ export class EditableTableComponent {
     this.columnas().flatMap((col) => (col.hijos?.length ? col.hijos : [col]))
   );
 
-  protected onCambio(fila: FilaLineaSimple, key: string, valor: unknown): void {
-    fila[key] = valor;
+  protected onCambio(fila: T, key: string, valor: unknown): void {
+    (fila as FilaTabla)[key] = valor;
     this.celdaEditada.emit({ fila, key, valor });
   }
 

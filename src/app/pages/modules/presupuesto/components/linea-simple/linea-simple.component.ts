@@ -71,7 +71,7 @@ export class LineaSimpleComponent {
       });
   }
 
-  protected onCeldaEditada(evento: CeldaEditadaEvent): void {
+  protected onCeldaEditada(evento: CeldaEditadaEvent<FilaLineaSimple>): void {
     const filas = this.filas();
     const idx = filas.indexOf(evento.fila);
     if (idx === -1) return;
