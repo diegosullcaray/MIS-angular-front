@@ -24,6 +24,7 @@ export class ShellStateService {
   private readonly _sidebarIconActivo = signal<string>('host-inicio');
   private readonly _cerrandoSesion = signal(false);
   private readonly _navPanelColapsado = signal(false);
+  private readonly _sidebarTienePanel = signal(false);
 
   // ─── Signals de solo lectura (expuestos — Remotes solo leen) ────────────
 
@@ -50,6 +51,14 @@ export class ShellStateService {
    * estado sin ser padre/hijo entre sí.
    */
   readonly navPanelColapsado = this._navPanelColapsado.asReadonly();
+
+  /**
+   * True cuando el sistema activo tiene panel de navegación propio (Col 2).
+   * `SidebarComponent` (dueño del cálculo real, `panelActivo()`) lo mantiene
+   * sincronizado acá; `HeaderComponent` lo lee para no mostrar el botón de
+   * alternar el panel en mobile si no hay nada que mostrar/ocultar.
+   */
+  readonly sidebarTienePanel = this._sidebarTienePanel.asReadonly();
 
   // ─── Computed ────────────────────────────────────────────────────────────
 
@@ -107,6 +116,10 @@ export class ShellStateService {
 
   setNavPanelColapsado(valor: boolean): void {
     this._navPanelColapsado.set(valor);
+  }
+
+  setSidebarTienePanel(valor: boolean): void {
+    this._sidebarTienePanel.set(valor);
   }
 
   cerrarSesion(): void {

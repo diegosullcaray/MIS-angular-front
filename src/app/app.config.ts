@@ -1,11 +1,13 @@
 import {
   ApplicationConfig,
   inject,
+  isDevMode,
   provideAppInitializer,
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { provideServiceWorker } from '@angular/service-worker';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
@@ -49,5 +51,15 @@ export const appConfig: ApplicationConfig = {
       ripple: false, // Sin ripple — estilo macOS
     }),
     MessageService,
+
+    // PWA: cachea el app-shell (JS/CSS/íconos) para carga instantánea e
+    // instalación en el dispositivo. Nunca cachea respuestas del backend
+    // Ant/Winder (ver ngsw-config.json) — los datos financieros siempre se
+    // piden en vivo. Deshabilitado en desarrollo (isDevMode) para no pelear
+    // con el ciclo normal de recarga de `ng serve`.
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 };

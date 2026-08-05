@@ -255,4 +255,17 @@ describe('SidebarComponent', () => {
     expect(shell.navPanelColapsado()).toBe(true);
     expect((fixture.nativeElement as HTMLElement).querySelector('app-sidebar-nav-panel')).toBeNull();
   });
+
+  it('sincroniza shell.sidebarTienePanel() con panelActivo(), para que el header sepa si mostrar su botón en mobile', () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Sin panel', tienePanel: false, ruta: '/algo' }]);
+    const fixture = crear();
+
+    // "Inicio" (host-inicio) siempre tiene panel propio (Mi espacio).
+    expect(shell.sidebarTienePanel()).toBe(true);
+
+    shell.setSidebarIconActivo('sist-1');
+    fixture.detectChanges();
+
+    expect(shell.sidebarTienePanel()).toBe(false);
+  });
 });
