@@ -11,9 +11,14 @@ import { googleAuthConfig } from './google-auth.config';
 
 const SESSION_KEY = 'mis.sesion';
 
+/** Vigencia de la sesión desde el login (o desde el último restore) — pasado esto, se expulsa al login con la pantalla de "Sesión expirada". */
+const DURACION_SESION_MS = 15 * 60 * 1000;
+
 interface SesionPersistida {
   token: string; // El session_id o token devuelto por Winder
   usuario: UsuarioActivo;
+  /** Epoch ms a partir del cual la sesión deja de ser válida. */
+  expiraEn: number;
 }
 
 interface ClaimsGoogle {
@@ -68,6 +73,7 @@ export class AuthService {
   private readonly oauthService = inject(OAuthService);
 
   private readonly _token = signal<string | null>(null);
+  private timerExpiracion: ReturnType<typeof setTimeout> | null = null;
 
   /** Token de sesión actual */
   readonly token = this._token.asReadonly();
@@ -145,16 +151,25 @@ export class AuthService {
     }
   }
 
-  /** Restaura la sesión persistida al recargar la página. */
+  /** Restaura la sesión persistida al recargar la página — si ya venció, la descarta y muestra la pantalla de "Sesión expirada". */
   restaurarSesion(): void {
     const crudo = sessionStorage.getItem(SESSION_KEY);
     if (!crudo) return;
 
     try {
       const sesion = JSON.parse(crudo) as SesionPersistida;
-      if (sesion?.token && sesion?.usuario?.id) {
-        this._token.set(sesion.token);
-        this.shell.setUsuarioActivo(sesion.usuario);
+      if (!sesion?.token || !sesion?.usuario?.id) return;
+
+      if (typeof sesion.expiraEn === 'number' && Date.now() >= sesion.expiraEn) {
+        sessionStorage.removeItem(SESSION_KEY);
+        this.router.navigateByUrl('/error/401');
+        return;
+      }
+
+      this._token.set(sesion.token);
+      this.shell.setUsuarioActivo(sesion.usuario);
+      if (typeof sesion.expiraEn === 'number') {
+        this.programarExpiracion(sesion.expiraEn);
       }
     } catch {
       sessionStorage.removeItem(SESSION_KEY);
@@ -163,9 +178,7 @@ export class AuthService {
 
   cerrarSesion(redirigir = true): void {
     this.oauthService.logOut();
-    this._token.set(null);
-    this.shell.cerrarSesion();
-    sessionStorage.removeItem(SESSION_KEY);
+    this.limpiarSesion();
     if (redirigir) {
       this.router.navigate(['/login']);
     }
@@ -173,8 +186,43 @@ export class AuthService {
 
   // ─── Privados ────────────────────────────────────────────────────────────
 
-  private persistir(sesion: SesionPersistida): void {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(sesion));
+  private persistir(sesion: Omit<SesionPersistida, 'expiraEn'>): void {
+    const expiraEn = Date.now() + DURACION_SESION_MS;
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ...sesion, expiraEn }));
+    this.programarExpiracion(expiraEn);
+  }
+
+  /** Programa (o reprograma) la expulsión automática cuando se cumpla `expiraEn`, aunque el usuario siga navegando sin recargar. */
+  private programarExpiracion(expiraEn: number): void {
+    this.limpiarTimerExpiracion();
+
+    const restante = expiraEn - Date.now();
+    if (restante <= 0) {
+      this.expirarPorTiempo();
+      return;
+    }
+    this.timerExpiracion = setTimeout(() => this.expirarPorTiempo(), restante);
+  }
+
+  private limpiarTimerExpiracion(): void {
+    if (this.timerExpiracion !== null) {
+      clearTimeout(this.timerExpiracion);
+      this.timerExpiracion = null;
+    }
+  }
+
+  /** Se cumplieron los 15 minutos con la sesión abierta: borra credenciales y manda a la pantalla de "Sesión expirada" (no a /login directo). */
+  private expirarPorTiempo(): void {
+    this.oauthService.logOut();
+    this.limpiarSesion();
+    this.router.navigateByUrl('/error/401');
+  }
+
+  private limpiarSesion(): void {
+    this._token.set(null);
+    this.shell.cerrarSesion();
+    sessionStorage.removeItem(SESSION_KEY);
+    this.limpiarTimerExpiracion();
   }
 
   private mensajeDeError(err: any): string {
