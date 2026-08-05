@@ -13,7 +13,8 @@
 
     <!-- Contenido de la ruta activa -->
     <main class="flex-1 overflow-y-auto bg-transparent">
-      <div class="w-full p-3 sm:p-4 shell-content-inner">
+      <!-- pb-20: reserva espacio para la barra inferior fija del sidebar en mobile (h-16 + margen) -->
+      <div class="w-full p-3 pb-20 sm:p-4 shell-content-inner">
         <router-outlet />
       </div>
     </main>
