@@ -67,6 +67,19 @@ export const APP_ROUTES: Routes = [
             (m) => m.ACTIVIDADES_ROUTES
           )
       },
+      {
+        // 'cons_base_negativa' — debe coincidir exactamente con el segmento
+        // que usaba el sistema legado STG (ver docs/07-modulos/app-routing.module.ts,
+        // módulo `basenegativa`) y con el `act_sec` real del backend para
+        // este ítem del menú. El módulo en sí se llama "herramientas" en el
+        // Host (carpeta `pages/modules/herramientas`), pero la nomenclatura
+        // de la ruta no cambia.
+        path: 'cons_base_negativa',
+        loadChildren: () =>
+          import('./pages/modules/herramientas/herramientas.routes').then(
+            (m) => m.HERRAMIENTAS_ROUTES
+          )
+      },
     ]
   },
   {
