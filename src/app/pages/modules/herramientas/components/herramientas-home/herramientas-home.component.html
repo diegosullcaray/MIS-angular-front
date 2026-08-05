@@ -1,30 +1,47 @@
-<div class="flex flex-col gap-6 w-full">
-  <div class="flex items-center justify-between gap-3 flex-wrap">
-    <div class="flex items-center gap-3">
-      <ng-icon name="lucideShieldAlert" size="24" class="text-[var(--mis-danger)]" />
-      <h1 class="text-[var(--mis-text-xl)] font-semibold text-[var(--mis-text-primary)] m-0">
-        Consulta Base Negativa
+<div
+  class="mis-card p-3.5 sm:p-5 flex flex-col justify-between min-h-[calc(100vh-130px)] gap-4 sm:gap-5 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg flex-1">
+  <!-- Cabecera principal del módulo -->
+  <div
+    class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center gap-2.5">
+      <ng-icon name="lucideShieldAlert" size="22" class="text-[var(--mis-danger)] shrink-0" />
+
+      <div class="flex flex-col gap-0.5">
+        <h1 class="text-lg font-bold text-[var(--mis-text-primary)] m-0 tracking-tight">
+          Consulta Base Negativa
+        </h1>
+
         @if (clienteActual()) {
-          <span class="text-[var(--mis-text-secondary)] font-normal"> — {{ clienteActual()!.HDESCLI }}</span>
+          <div class="flex items-center gap-2.5 text-xs flex-wrap">
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--mis-panel-bg)] border border-[var(--mis-border)] font-medium text-[var(--mis-text-secondary)] text-[11px]">
+              <i class="pi pi-user text-[10px] text-[var(--mis-primary)]"></i>
+              {{ clienteActual()!.HDESCLI }}
+            </span>
+          </div>
         }
-      </h1>
+      </div>
     </div>
 
-    @if (clienteActual()) {
-      <p-button label="Nueva búsqueda" icon="pi pi-search" [outlined]="true" size="small" (click)="nuevaBusqueda()" />
-    }
+    <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+      @if (clienteActual()) {
+        <p-button label="Nueva búsqueda" icon="pi pi-search" [outlined]="true" size="small" (click)="nuevaBusqueda()" />
+      }
+    </div>
   </div>
 
   @if (service.error()) {
-    <div class="mis-card p-5">
+    <div class="p-2 flex-1">
       <app-inline-error titulo="No se pudo cargar la consulta" [detalle]="service.error()!" (reintentar)="onClienteSeleccionado(clienteActual()!)" />
     </div>
   } @else if (!clienteActual()) {
-    <div class="mis-card">
+    <div class="flex-1 flex items-center justify-center">
       <app-empty-state titulo="Sin cliente seleccionado" descripcion="Usa el buscador para consultar un cliente en la base de riesgos." />
     </div>
   } @else {
-    <app-resultado-table [columnas]="service.headers()" [filas]="service.resultados()" [cargando]="service.cargando()" />
+    <div class="flex-1">
+      <app-resultado-table [columnas]="service.headers()" [filas]="service.resultados()" [cargando]="service.cargando()" />
+    </div>
   }
 </div>
 
