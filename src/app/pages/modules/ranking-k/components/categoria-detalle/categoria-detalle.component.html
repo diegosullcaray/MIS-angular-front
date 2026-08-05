@@ -1,67 +1,84 @@
-<div class="flex flex-col gap-6 w-full">
-  <div class="flex items-center justify-between gap-3 flex-wrap">
-    <div class="flex items-center gap-3">
-      <ng-icon name="lucideTrophy" size="24" class="text-[var(--mis-warning)]" />
-      <h1 class="text-[var(--mis-text-xl)] font-semibold text-[var(--mis-text-primary)] m-0">
-        {{ categoria()?.name ?? id() }}
-      </h1>
+<div
+  class="mis-card p-3.5 sm:p-4 flex flex-col gap-4 sm:gap-5 w-full bg-white/60 backdrop-blur-[3px] border border-white/60 rounded-xl shadow-lg">
+  <!-- Cabecera principal del módulo -->
+  <div
+    class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <!-- Identidad de la categoría e información -->
+    <div class="flex items-center gap-2.5">
+      <ng-icon name="lucideTrophy" size="22" class="text-[var(--mis-warning)] shrink-0" />
+
+      <div class="flex flex-col gap-0.5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <h1 class="text-lg font-bold text-[var(--mis-text-primary)] m-0 tracking-tight">
+            {{ categoria()?.name ?? id() }}
+          </h1>
+          <app-ranking-info-dialog />
+        </div>
+
+        <div class="flex items-center gap-2.5 text-xs flex-wrap">
+          @if (fechaActualizacion()) {
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--mis-panel-bg)] border border-[var(--mis-border)] font-medium text-[var(--mis-text-secondary)]">
+            <i class="pi pi-calendar text-[11px] text-[var(--mis-primary)]"></i>
+            Data actualizada al: {{ fechaActualizacion() }}
+          </span>
+          }
+          @if (hayFiltrosActivos()) {
+          <span
+            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[var(--mis-secondary-light)] text-[var(--mis-secondary)] font-semibold border border-[var(--mis-secondary)]/20 text-[11px]">
+            <i class="pi pi-filter-fill text-[9px]"></i>
+            Filtros activos
+          </span>
+          }
+        </div>
+      </div>
     </div>
-    <div class="flex items-center gap-2">
-      @if (fechaActualizacion()) {
-        <span class="text-[13px] text-[var(--mis-text-tertiary)]">Data actualizada al: {{ fechaActualizacion() }}</span>
-      }
-      <p-button
-        icon="pi pi-filter"
-        [text]="true"
-        [rounded]="true"
-        [severity]="mostrarFiltros() ? 'primary' : 'secondary'"
-        pTooltip="Filtros"
-        tooltipPosition="top"
-        (click)="mostrarFiltros.set(!mostrarFiltros())"
-      />
+
+    <!-- Acciones del header -->
+    <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+      <p-button [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Filtros'"
+        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+        [severity]="mostrarFiltros() ? 'primary' : 'secondary'" [outlined]="!mostrarFiltros()" size="small"
+        (click)="mostrarFiltros.set(!mostrarFiltros())" />
     </div>
   </div>
 
   @if (mostrarFiltros()) {
-    <app-ranking-filtros
-      [lugaresDisponibles]="lugaresDisponibles()"
-      [puntosMinDisponible]="puntosMinDisponible()"
-      [puntosMaxDisponible]="puntosMaxDisponible()"
-      (aplicarFiltros)="onAplicarFiltros($event)"
-      animate.enter="mis-fade-in"
-      animate.leave="mis-fade-out"
-    />
+  <app-ranking-filtros [lugaresDisponibles]="lugaresDisponibles()" [puntosMinDisponible]="puntosMinDisponible()"
+    [puntosMaxDisponible]="puntosMaxDisponible()" (aplicarFiltros)="onAplicarFiltros($event)"
+    animate.enter="mis-fade-in" animate.leave="mis-fade-out" />
   }
 
   @if (cargando()) {
-    <div class="mis-card p-5">
-      <app-list-skeleton [rows]="[1, 2, 3, 4]" [cols]="[1, 2, 3]" />
-    </div>
+  <div class="p-2">
+    <app-list-skeleton [rows]="[1, 2, 3, 4]" [cols]="[1, 2, 3]" />
+  </div>
   } @else if (error()) {
-    <div class="mis-card p-5">
-      <app-inline-error titulo="No se pudo cargar el detalle" [detalle]="error()!" (reintentar)="cargarDetalle()" />
-    </div>
+  <div class="p-2">
+    <app-inline-error titulo="No se pudo cargar el detalle" [detalle]="error()!" (reintentar)="cargarDetalle()" />
+  </div>
   } @else if (aplicandoFiltros()) {
-    <!-- Transición al aplicar filtros: mismas tarjetas, en modo esqueleto -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      @for (i of arrayDe(gruposEsqueleto()); track $index) {
-        <app-ranking-table [cargando]="true" />
-      }
-    </div>
+  <!-- Transición al aplicar filtros: mismas tarjetas, en modo esqueleto -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    @for (i of arrayDe(gruposEsqueleto()); track $index) {
+    <app-ranking-table [cargando]="true" />
+    }
+  </div>
   } @else if (grupos().length === 0) {
-    <div class="mis-card">
-      @if (filtros()) {
-        <app-empty-state titulo="Sin resultados" descripcion="Ningún registro coincide con los filtros aplicados." />
-      } @else {
-        <app-empty-state titulo="Sin datos" descripcion="Esta categoría todavía no tiene información de ranking." />
-      }
-    </div>
+  <div>
+    @if (hayFiltrosActivos()) {
+    <app-empty-state titulo="Sin resultados" descripcion="Ningún registro coincide con los filtros aplicados." />
+    } @else {
+    <app-empty-state titulo="Sin datos" descripcion="Esta categoría todavía no tiene información de ranking." />
+    }
+  </div>
   } @else {
-    <!-- Una tarjeta con su propia tabla por cada grupo (hdester), igual que el legado -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      @for (grupo of grupos(); track grupo.hdester) {
-        <app-ranking-table [titulo]="grupo.hdester" [filas]="grupo.filas" valorLabel="Puntos" />
-      }
-    </div>
+  <!-- Una tarjeta con su propia tabla por cada grupo (hdester), igual que el legado -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    @for (grupo of grupos(); track grupo.hdester) {
+    <app-ranking-table [titulo]="grupo.hdester" [filas]="grupo.filas" valorLabel="Puntos"
+      [limite]="filtros()?.limitePosiciones ?? 10" />
+    }
+  </div>
   }
 </div>

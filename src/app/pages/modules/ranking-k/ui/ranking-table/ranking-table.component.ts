@@ -2,24 +2,15 @@ import { Component, computed, input } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
-
-/** Fila genérica de un ranking/leaderboard. */
-export interface RankingTableFila {
-  /** Posición dentro del grupo (1 = primer lugar). */
-  posicion: number;
-  etiqueta: string;
-  valor: number;
-}
+import type { RankingTableFila } from '../../models';
 
 const LIMITE_DEFECTO = 10;
 
 /**
  * Tabla de ranking reutilizable — un grupo (ej. una zona/territorio) con su
  * propio encabezado y su propia tabla de posiciones, resaltando el primer
- * lugar. Migrado del patrón "una `stg-table2` por `hdester`" del sistema
- * legado (`ranking-k/detallek/detallek.component.html`): en vez de una sola
- * tabla gigante, cada grupo es una tarjeta separada — se instancia una por
- * grupo (ver `categoria-detalle.component.html`).
+ * lugar. Muestra un scrollbar para acceder a todas las filas manteniendo
+ * una altura inicial visible de ~10 filas.
  */
 @Component({
   selector: 'app-ranking-table',
@@ -33,16 +24,31 @@ export class RankingTableComponent {
   readonly filas = input<RankingTableFila[]>([]);
   /** Encabezado de la columna de valor (ej. "Puntos", "Monto"). */
   readonly valorLabel = input('Puntos');
-  /** Máximo de filas a mostrar (el legado no pagina — se limita al Top N). */
+  /** Máximo de filas a mostrar (0 = mostrar todas las posiciones). */
   readonly limite = input(LIMITE_DEFECTO);
-  /** Muestra el esqueleto de carga en vez de la tabla real (carga inicial o transición al aplicar filtros). */
+  /** Muestra el esqueleto de carga en vez de la tabla real. */
   readonly cargando = input(false);
 
-  protected readonly filasVisibles = computed(() => this.filas().slice(0, this.limite()));
-  protected readonly filasSkeleton = computed(() => Array.from({ length: Math.min(this.limite(), 5) }));
+  protected readonly filasVisibles = computed(() => {
+    const lim = this.limite();
+    return lim > 0 ? this.filas().slice(0, lim) : this.filas();
+  });
 
-  /** Resalta el primer lugar, igual que el legado (`#A9EFFD`) — coerciona a número porque `posicion` puede llegar como string desde el JSON del backend. */
+  protected readonly filasSkeleton = computed(() => {
+    const lim = this.limite();
+    const cant = lim > 0 ? Math.min(lim, 10) : 10;
+    return Array.from({ length: cant });
+  });
+
+  /** Resalta el primer lugar, igual que el legado (`#A9EFFD`). */
   protected esPrimerPuesto(fila: RankingTableFila): boolean {
     return Number(fila.posicion) === 1;
+  }
+
+  /** Formatea la posición a 2 dígitos cuando es menor a 10 (ej. 01, 02), igual que la imagen de referencia. */
+  protected formatPosicion(pos: number | string): string {
+    const num = Number(pos);
+    if (isNaN(num)) return String(pos);
+    return num < 10 ? `0${num}` : `${num}`;
   }
 }

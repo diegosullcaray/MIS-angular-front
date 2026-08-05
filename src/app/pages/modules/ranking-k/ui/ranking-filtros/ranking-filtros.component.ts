@@ -1,29 +1,22 @@
 import { Component, effect, inject, input, output, signal, untracked } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
 import { SliderModule } from 'primeng/slider';
 import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../../../../shared/services/toast.service';
-
-/** Criterio de filtrado aplicado sobre las filas de una categoría del ranking. */
-export interface RankingFiltros {
-  usuario: string;
-  puntosMin: number;
-  puntosMax: number;
-  lugares: string[];
-}
+import type { RankingFiltros, FiltrosFormModel } from '../../models';
 
 /**
  * Panel de filtros del reporte de ranking (`categoria-detalle`) — filtra por
- * usuario, rango de puntos y lugar (`hdester`). Solo se dispara al hacer
- * clic en "Aplicar filtros" (no en vivo mientras se editan los controles),
- * y notifica con un toast, igual que pide el diseño.
+ * usuario, posiciones por tabla, rango de puntos y lugar (`hdester`).
  */
 @Component({
   selector: 'app-ranking-filtros',
   standalone: true,
-  imports: [FormsModule, InputTextModule, MultiSelectModule, SliderModule, ButtonModule],
+  imports: [FormField, FormsModule, InputTextModule, MultiSelectModule, SelectModule, SliderModule, ButtonModule],
   templateUrl: './ranking-filtros.component.html',
   styleUrl: './ranking-filtros.component.css',
 })
@@ -36,39 +29,77 @@ export class RankingFiltrosComponent {
 
   readonly aplicarFiltros = output<RankingFiltros>();
 
-  protected readonly usuario = signal('');
-  protected readonly lugares = signal<string[]>([]);
-  protected readonly rangoPuntos = signal<[number, number]>([0, 100]);
+  protected readonly opcionesPosiciones = [
+    { label: 'Top 10', value: 10 },
+    { label: 'Top 20', value: 20 },
+    { label: 'Top 50', value: 50 },
+    { label: 'Top 100', value: 100 },
+    { label: 'Todas las posiciones', value: 0 },
+  ];
+
+  protected readonly model = signal<FiltrosFormModel>({
+    usuario: '',
+    lugares: [],
+    rangoPuntos: [0, 100],
+    limitePosiciones: 10,
+  });
+
+  protected readonly filtrosForm = form(this.model);
 
   constructor() {
-    // Cuando llegan/cambian los límites reales de la data, reinicia el rango
-    // y preselecciona todos los lugares — sin esto, el slider queda con los
-    // valores por defecto (0-100) que no reflejan la data real.
     effect(() => {
       const min = this.puntosMinDisponible();
       const max = this.puntosMaxDisponible();
       const lugares = this.lugaresDisponibles();
       untracked(() => {
-        this.rangoPuntos.set([min, max]);
-        this.lugares.set([...lugares]);
+        this.model.update((m) => ({
+          ...m,
+          rangoPuntos: [min, max],
+          lugares: [...lugares],
+        }));
       });
     });
   }
 
+  protected onLimitePosicionesChange(limite: number): void {
+    this.model.update((m) => ({ ...m, limitePosiciones: limite }));
+  }
+
+  protected onLugaresChange(lugares: string[]): void {
+    this.model.update((m) => ({ ...m, lugares }));
+  }
+
+  protected onRangoPuntosChange(rango: [number, number]): void {
+    this.model.update((m) => ({ ...m, rangoPuntos: rango }));
+  }
+
   protected onAplicar(): void {
+    const val = this.model();
     this.aplicarFiltros.emit({
-      usuario: this.usuario().trim(),
-      puntosMin: this.rangoPuntos()[0],
-      puntosMax: this.rangoPuntos()[1],
-      lugares: this.lugares(),
+      usuario: val.usuario.trim(),
+      puntosMin: val.rangoPuntos[0],
+      puntosMax: val.rangoPuntos[1],
+      lugares: val.lugares,
+      limitePosiciones: val.limitePosiciones,
     });
-    this.toast.exito('Filtros aplicados');
+    this.toast.exito('Mensaje de éxito', 'Los filtros fueron aplicados correctamente');
   }
 
   protected onLimpiar(): void {
-    this.usuario.set('');
-    this.rangoPuntos.set([this.puntosMinDisponible(), this.puntosMaxDisponible()]);
-    this.lugares.set([...this.lugaresDisponibles()]);
-    this.onAplicar();
+    this.model.set({
+      usuario: '',
+      rangoPuntos: [this.puntosMinDisponible(), this.puntosMaxDisponible()],
+      lugares: [...this.lugaresDisponibles()],
+      limitePosiciones: 10,
+    });
+    const val = this.model();
+    this.aplicarFiltros.emit({
+      usuario: val.usuario.trim(),
+      puntosMin: val.rangoPuntos[0],
+      puntosMax: val.rangoPuntos[1],
+      lugares: val.lugares,
+      limitePosiciones: val.limitePosiciones,
+    });
+    this.toast.info('Mensaje de información', 'Los filtros fueron restablecidos');
   }
 }

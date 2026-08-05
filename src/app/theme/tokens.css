@@ -1,7 +1,11 @@
-/* src/app/core/design-system/tokens.css */
 :root {
-  /* Fuente principal: stack macOS con fallback Inter */
-  --mis-font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  /* Fuente principal: Anek Latin con fallback macOS/Inter */
+  --mis-font-family: 'Anek Latin', 'Anek Devanagari', -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+
+  /* Paleta del Ranking (extraída de la imagen de referencia STG/legado) */
+  --mis-ranking-header-bg: #0B4F8C;
+  --mis-ranking-subheader-bg: #4A88D0;
+  --mis-ranking-row1-bg: #A9EFFD;
 
   /* Escala tipográfica */
   --mis-text-xs:   11px;   /* Labels de íconos en Col 1 del sidebar */
