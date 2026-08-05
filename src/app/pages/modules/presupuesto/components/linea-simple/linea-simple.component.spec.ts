@@ -71,84 +71,20 @@ describe('LineaSimpleComponent', () => {
     expect(fixture.componentInstance['cargando']()).toBe(false);
   });
 
-  it('puedeGuardar() es true solo si el nivel activo coincide con tip_cod_edi Y (es responsable o admin)', () => {
-    obtenerResumen.mockReturnValue(of({ ws: [], bp: metadata({ tip_cod_edi: 4, act_res: false }) }));
+  // Las reglas exhaustivas de puedeGuardar/puedeVerificar/esEditable (customComponent del
+  // legado) están cubiertas a fondo en utils/linea-simple-reglas.util.spec.ts — acá solo se
+  // confirma que el componente efectivamente delega en esas funciones con el estado correcto.
+  it('puedeGuardar()/puedeVerificar()/esEditable() delegan en las reglas compartidas con el estado cargado', () => {
+    obtenerResumen.mockReturnValue(of({ ws: [], bp: metadata({ tip_cod_edi: 4, ord_ini_edi: 3, act_res: true }) }));
     presupuestoFalso.esAdmin.mockReturnValue(false);
     const fixture = crear();
-    fixture.componentInstance['onNivelSeleccionado'](nodo({ tip_cod: 4 }));
-    expect(fixture.componentInstance['puedeGuardar']()).toBe(false); // no es responsable ni admin
-
-    obtenerResumen.mockReturnValue(of({ ws: [], bp: metadata({ tip_cod_edi: 4, act_res: true }) }));
-    fixture.componentInstance['onNivelSeleccionado'](nodo({ tip_cod: 4 }));
-    expect(fixture.componentInstance['puedeGuardar']()).toBe(true); // responsable vigente
-
-    obtenerResumen.mockReturnValue(of({ ws: [], bp: metadata({ tip_cod_edi: 5, act_res: true }) }));
-    fixture.componentInstance['onNivelSeleccionado'](nodo({ tip_cod: 4 }));
-    expect(fixture.componentInstance['puedeGuardar']()).toBe(false); // nivel activo no es el editable
-  });
-
-  it('puedeVerificar() es true cuando es admin pero el nivel activo NO es el editable', () => {
-    presupuestoFalso.esAdmin.mockReturnValue(true);
-    obtenerResumen.mockReturnValue(of({ ws: [], bp: metadata({ tip_cod_edi: 5, act_res: false }) }));
-    const fixture = crear();
 
     fixture.componentInstance['onNivelSeleccionado'](nodo({ tip_cod: 4 }));
 
-    expect(fixture.componentInstance['puedeGuardar']()).toBe(false);
-    expect(fixture.componentInstance['puedeVerificar']()).toBe(true);
-  });
-
-  describe('esEditable() — reglas de edición por celda (customComponent del legado)', () => {
-    it('columna fuera de inputCols nunca es editable', () => {
-      obtenerResumen.mockReturnValue(of({ ws: [], bp: metadata({ tip_cod_edi: 4, ord_ini_edi: 1 }) }));
-      const fixture = crear();
-      fixture.componentInstance['onNivelSeleccionado'](nodo({ tip_cod: 4 }));
-
-      expect(fixture.componentInstance['esEditable']({ ord: 5, z: 1 }, 'z')).toBe(false);
-    });
-
-    it('sin permisos de admin/responsable, ninguna columna es editable', () => {
-      presupuestoFalso.esAdmin.mockReturnValue(false);
-      obtenerResumen.mockReturnValue(of({ ws: [], bp: metadata({ tip_cod_edi: 4, ord_ini_edi: 1, act_res: false }) }));
-      const fixture = crear();
-      fixture.componentInstance['onNivelSeleccionado'](nodo({ tip_cod: 4 }));
-
-      expect(fixture.componentInstance['esEditable']({ ord: 5, a2: 1 }, 'a2')).toBe(false);
-    });
-
-    it('en el nivel editable, admin, y ord >= ord_ini_edi: la columna de inputCols es editable', () => {
-      obtenerResumen.mockReturnValue(of({ ws: [], bp: metadata({ tip_cod_edi: 4, ord_ini_edi: 3, act_res: true }) }));
-      const fixture = crear();
-      fixture.componentInstance['onNivelSeleccionado'](nodo({ tip_cod: 4 }));
-
-      expect(fixture.componentInstance['esEditable']({ ord: 5, a2: 1 }, 'a2')).toBe(true);
-      expect(fixture.componentInstance['esEditable']({ ord: 2, a2: 1 }, 'a2')).toBe(false); // antes de ord_ini_edi
-    });
-
-    it('en un nivel distinto al editable, ninguna columna es editable', () => {
-      obtenerResumen.mockReturnValue(of({ ws: [], bp: metadata({ tip_cod_edi: 4, ord_ini_edi: 1, act_res: true }) }));
-      const fixture = crear();
-      fixture.componentInstance['onNivelSeleccionado'](nodo({ tip_cod: 9 })); // nivel activo != tip_cod_edi
-
-      expect(fixture.componentInstance['esEditable']({ ord: 5, a2: 1 }, 'a2')).toBe(false);
-    });
-
-    it('Cartera Créditos: la 4ta columna de inputCols solo es editable dentro de la ventana [ord_ini_edi, ord_ini_edi_ASESPROD]', () => {
-      const cfgCC: LineaSimpleConfig = {
-        ...config,
-        inputCols: ['b1', 'b3', 'b5', 'b2'],
-      };
-      obtenerResumen.mockReturnValue(
-        of({ ws: [], bp: metadata({ tip_cod_edi: 4, ord_ini_edi: 1, ord_ini_edi_ASESPROD: 3, act_res: true }) })
-      );
-      const fixture = crear(cfgCC);
-      fixture.componentInstance['onNivelSeleccionado'](nodo({ tip_cod: 4 }));
-
-      expect(fixture.componentInstance['esEditable']({ ord: 2, b2: 1 }, 'b2')).toBe(true); // dentro de la ventana
-      expect(fixture.componentInstance['esEditable']({ ord: 5, b2: 1 }, 'b2')).toBe(false); // fuera de la ventana → solo lectura
-      expect(fixture.componentInstance['esEditable']({ ord: 2, b1: 1 }, 'b1')).toBe(false); // 1ra columna, dentro de la ventana → solo lectura
-      expect(fixture.componentInstance['esEditable']({ ord: 5, b1: 1 }, 'b1')).toBe(true); // 1ra columna, fuera de la ventana → editable
-    });
+    expect(fixture.componentInstance['puedeGuardar']()).toBe(true);
+    expect(fixture.componentInstance['puedeVerificar']()).toBe(false);
+    expect(fixture.componentInstance['esEditable']({ ord: 5, a2: 1 }, 'a2')).toBe(true);
+    expect(fixture.componentInstance['esEditable']({ ord: 5, a2: 1 }, 'otra-columna')).toBe(false);
   });
 
   it('onCeldaEditada() recalcula desde la fila editada hasta el final usando calcularFila()', () => {
