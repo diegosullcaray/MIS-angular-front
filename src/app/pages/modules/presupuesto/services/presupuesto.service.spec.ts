@@ -83,13 +83,13 @@ describe('PresupuestoService', () => {
 
   it('obtenerJerarquiaBase() pide base_hier con el email del usuario activo y devuelve base_hierarchy', async () => {
     antAdmin.getBaseHierarchy.mockReturnValue(
-      of(respuesta({ base_hierarchy: [{ tip_cod: 7, cod_rel: '231', des_rel: 'Financiera Confianza', lvl: 1 }] }))
+      of(respuesta({ base_hierarchy: [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }] }))
     );
 
     const nodos = await new Promise((resolve) => service.obtenerJerarquiaBase(9).subscribe(resolve));
 
     expect(antAdmin.getBaseHierarchy).toHaveBeenCalledWith('ana.torres@confianza.pe', 9);
-    expect(nodos).toEqual([{ tip_cod: 7, cod_rel: '231', des_rel: 'Financiera Confianza', lvl: 1 }]);
+    expect(nodos).toEqual([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }]);
   });
 
   it('obtenerJerarquiaBase() devuelve un arreglo vacío si el backend no trae base_hierarchy', async () => {
@@ -99,12 +99,12 @@ describe('PresupuestoService', () => {
   });
 
   it('obtenerJerarquiaNivel() delega en getLevelHierarchy() y devuelve level_hierarchy', async () => {
-    antAdmin.getLevelHierarchy.mockReturnValue(of(respuesta({ level_hierarchy: [{ tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1' }] })));
+    antAdmin.getLevelHierarchy.mockReturnValue(of(respuesta({ level_hierarchy: [{ tip_cod: 4, cod_rel: 'A1', desc_rel: 'Agencia 1' }] })));
 
     const nodos = await new Promise((resolve) => service.obtenerJerarquiaNivel(9, 2, 7, ['231']).subscribe(resolve));
 
     expect(antAdmin.getLevelHierarchy).toHaveBeenCalledWith(9, 2, 7, ['231'], undefined);
-    expect(nodos).toEqual([{ tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1' }]);
+    expect(nodos).toEqual([{ tip_cod: 4, cod_rel: 'A1', desc_rel: 'Agencia 1' }]);
   });
 
   it('obtenerResponsables() parsea resultado.list[0].JSONLIST (igual que kaypacha.listRanking)', async () => {

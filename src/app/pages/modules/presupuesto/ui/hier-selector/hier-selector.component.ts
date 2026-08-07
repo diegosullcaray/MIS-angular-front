@@ -96,6 +96,26 @@ export class HierSelectorComponent {
     const arbol = event.node as TreeNode<HierarquiaNodo>;
     if (!arbol.data) return;
 
+    this.confirmarSeleccion(arbol);
+  }
+
+  /**
+   * Atajo para elegir el nodo raíz completo (ej. toda la Financiera) sin
+   * navegar nivel por nivel — necesario para "Verificar", que solo se
+   * habilita en un nivel distinto al editable (ver `calcularPuedeVerificar`),
+   * típicamente uno más alto que el usuario nunca llegaría a pisar
+   * expandiendo el árbol hoja por hoja.
+   */
+  protected seleccionarRaiz(): void {
+    const raiz = this.nodos()[0];
+    if (!raiz) return;
+
+    this.confirmarSeleccion(raiz);
+  }
+
+  private confirmarSeleccion(arbol: TreeNode<HierarquiaNodo>): void {
+    if (!arbol.data) return;
+
     this.etiquetaActual.set(arbol.label ?? null);
     this.dialogAbierto.set(false);
     this.nodoSeleccionado.emit(arbol.data);
@@ -105,7 +125,7 @@ export class HierSelectorComponent {
     const nodo: HierarquiaNodo = { ...nodoCrudo, lvl: nivel };
     return {
       key: `${nivel}-${nodo.tip_cod}-${nodo.cod_rel}`,
-      label: nodo.des_rel,
+      label: nodo.desc_rel,
       data: nodo,
       leaf: nivel >= this.paramsHier().maxLvl,
     };

@@ -21,6 +21,16 @@
       }
     </div>
   } @else {
+    @if (nodos().length === 1) {
+      <p-button
+        label="Seleccionar toda la jerarquía"
+        icon="pi pi-check-square"
+        [text]="true"
+        size="small"
+        styleClass="w-full mb-2"
+        (onClick)="seleccionarRaiz()"
+      />
+    }
     <p-tree
       [value]="nodos()"
       selectionMode="single"

@@ -11,7 +11,7 @@ function metadata(overrides: Partial<ResumenMetadata> = {}): ResumenMetadata {
 }
 
 function nodo(overrides: Partial<HierarquiaNodo> = {}): HierarquiaNodo {
-  return { tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1', ...overrides };
+  return { tip_cod: 4, cod_rel: 'A1', desc_rel: 'Agencia 1', ...overrides };
 }
 
 describe('LineaSimpleComponent', () => {
