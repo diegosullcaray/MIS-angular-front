@@ -1,6 +1,8 @@
 import { Component, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -25,6 +27,7 @@ import type { ColaboradorItem, FilaLead, NodoJerarquiaAncla } from '../../models
   imports: [
     ButtonModule,
     TableModule,
+    TooltipModule,
     ListSkeletonComponent,
     InlineErrorComponent,
     EmptyStateComponent,
@@ -35,6 +38,7 @@ import type { ColaboradorItem, FilaLead, NodoJerarquiaAncla } from '../../models
 })
 export class PriorizacionLeadsComponent implements OnInit {
   private readonly analista = inject(AnalistaService);
+  private readonly router = inject(Router);
 
   protected readonly esAdmin = computed(() => this.analista.esAdmin());
   protected readonly colaborador = this.analista.colaboradorActivo;
@@ -88,6 +92,10 @@ export class PriorizacionLeadsComponent implements OnInit {
     } else {
       this.analista.usarColaboradorPropio();
     }
+  }
+
+  protected volver(): void {
+    this.router.navigate(['/app/analista/listas']);
   }
 
   protected abrirSelectorColaborador(): void {

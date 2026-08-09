@@ -1,10 +1,12 @@
 import { Component, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { TextareaModule } from 'primeng/textarea';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -36,6 +38,7 @@ import type { ColaboradorItem, FilaBeca, FilaLabelValor, NodoJerarquiaAncla } fr
     DialogModule,
     TextareaModule,
     TagModule,
+    TooltipModule,
     ListSkeletonComponent,
     InlineErrorComponent,
     EmptyStateComponent,
@@ -48,6 +51,7 @@ import type { ColaboradorItem, FilaBeca, FilaLabelValor, NodoJerarquiaAncla } fr
 export class BecasComponent implements OnInit {
   private readonly analista = inject(AnalistaService);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
   protected readonly esAdmin = computed(() => this.analista.esAdmin());
   protected readonly colaborador = this.analista.colaboradorActivo;
@@ -178,6 +182,10 @@ export class BecasComponent implements OnInit {
         this.toast.error('No se pudo prospectar', 'Inténtalo de nuevo en unos segundos.');
       },
     });
+  }
+
+  protected volver(): void {
+    this.router.navigate(['/app/analista/listas']);
   }
 
   protected abrirDetalle(): void {
