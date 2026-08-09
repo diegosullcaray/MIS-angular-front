@@ -29,6 +29,7 @@
     "@primeuix/themes": "^2.0.3",
     "@tailwindcss/vite": "^4.3.2",
     "angular-oauth2-oidc": "^22.0.2",
+    "chart.js": "^4.5.1",
     "driver.js": "^1.8.0",
     "primeicons": "^7.0.0",
     "primeng": "21.1.9",

@@ -99,6 +99,18 @@ export const APP_ROUTES: Routes = [
             (m) => m.CATEGORIZACION_ROUTES
           )
       },
+      {
+        // 'analista' — Principal (dashboard) y Listas (Priorización de
+        // Leads, Becas), migrados del módulo 'analista' legado (ver
+        // docs/07-modulos/analista/analista-routing.module.ts). No incluye
+        // 'prospecto' (excluido, se solapa con actividades/prospectos-corresponsal)
+        // ni 'detalle' (código muerto en el legado).
+        path: 'analista',
+        loadChildren: () =>
+          import('./pages/modules/analista/analista.routes').then(
+            (m) => m.ANALISTA_ROUTES
+          )
+      },
     ]
   },
   {

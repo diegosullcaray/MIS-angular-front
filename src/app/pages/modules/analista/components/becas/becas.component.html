@@ -1,0 +1,132 @@
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Becas Financiera Confianza</h2>
+
+    <div class="flex items-center gap-3 flex-wrap">
+      @if (colaborador()) {
+        <span class="text-[13px] text-[var(--mis-text-secondary)]">
+          Analista: <strong class="text-[var(--mis-text-primary)]">{{ colaborador()!.nombre }}</strong>
+        </span>
+      }
+
+      <div class="flex-1"></div>
+
+      <p-button
+        label="Detalle"
+        icon="pi pi-table"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        [disabled]="!filaSeleccionada()"
+        (onClick)="abrirDetalle()"
+      />
+      <p-button
+        label="Prospectar"
+        icon="pi pi-user-plus"
+        size="small"
+        [disabled]="!filaSeleccionada() || filaSeleccionada()!.ind_pro === 1"
+        (onClick)="abrirProspectar()"
+      />
+      @if (esAdmin()) {
+        <p-button label="Buscar colaborador" icon="pi pi-search" size="small" (onClick)="abrirSelectorColaborador()" />
+      }
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <div class="p-2">
+      <app-list-skeleton [rows]="[1, 2, 3, 4]" [cols]="[1, 2, 3, 4]" />
+    </div>
+  } @else if (error()) {
+    <app-inline-error titulo="No se pudo cargar la lista" [detalle]="error()!" (reintentar)="reintentar()" />
+  } @else if (!colaborador()) {
+    <app-empty-state titulo="Elige un colaborador" descripcion="Busca un colaborador para ver sus postulantes a becas." />
+  } @else {
+    <span class="text-[12px] text-[var(--mis-text-tertiary)]">Nro. Postulantes: {{ filas().length }}</span>
+
+    <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+      <p-table
+        [value]="filas()"
+        [scrollable]="true"
+        scrollHeight="480px"
+        [stripedRows]="true"
+        [showGridlines]="true"
+        selectionMode="single"
+        [selection]="filaSeleccionada()"
+        (onRowSelect)="seleccionarFila($event.data)"
+        dataKey="num_doc"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-[12px] uppercase text-center">Prospectado</th>
+            <th class="text-[12px] uppercase">Segmento</th>
+            <th class="text-[12px] uppercase">Nombre</th>
+            <th class="text-[12px] uppercase">Documento</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-fila>
+          <tr [pSelectableRow]="fila" class="cursor-pointer text-[13px]">
+            <td class="text-center">
+              @if (fila.ind_pro === 1) {
+                <i class="pi pi-check-circle text-[var(--mis-success)]"></i>
+              }
+            </td>
+            <td>{{ fila.seg_cli }}</td>
+            <td>{{ fila.des_cli }}</td>
+            <td>{{ fila.num_doc }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">No se encontraron registros.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+</div>
+
+<app-selector-colaborador-dialog
+  [visible]="dialogColaboradorAbierto()"
+  [colaboradores]="colaboradores()"
+  [cargando]="cargandoColaboradores()"
+  (visibleChange)="dialogColaboradorAbierto.set($event)"
+  (colaboradorSeleccionado)="onColaboradorSeleccionado($event)"
+/>
+
+<app-detalle-tabla-dialog
+  [visible]="dialogDetalleAbierto()"
+  titulo="Detalles del Prospecto"
+  [filas]="detalleFilas()"
+  (visibleChange)="dialogDetalleAbierto.set($event)"
+/>
+
+<p-dialog
+  [visible]="dialogProspectarAbierto()"
+  (visibleChange)="dialogProspectarAbierto.set($event)"
+  [modal]="true"
+  [style]="{ width: '92vw', maxWidth: '440px' }"
+  [draggable]="false"
+  header="Prospectar cliente"
+  appendTo="body"
+>
+  <div class="flex flex-col gap-3">
+    <p class="m-0 text-[13px] text-[var(--mis-text-primary)]">
+      ¿Estás seguro que deseas prospectar a <strong>{{ filaSeleccionada()?.des_cli }}</strong>?
+    </p>
+    <textarea
+      pTextarea
+      rows="3"
+      class="w-full text-[13px]"
+      placeholder="Comentario (opcional)"
+      [ngModel]="comentario()"
+      (ngModelChange)="comentario.set($event)"
+    ></textarea>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" severity="secondary" [outlined]="true" size="small" (onClick)="dialogProspectarAbierto.set(false)" />
+    <p-button label="Confirmar" size="small" [loading]="prospectando()" (onClick)="confirmarProspectar()" />
+  </ng-template>
+</p-dialog>

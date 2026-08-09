@@ -1,0 +1,29 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '92vw', maxWidth: '480px' }"
+  [draggable]="false"
+  [resizable]="false"
+  [header]="titulo()"
+  appendTo="body"
+>
+  @if (cargando()) {
+    <div class="flex flex-col gap-2">
+      @for (i of [1, 2, 3, 4, 5]; track i) {
+        <p-skeleton height="1.25rem" />
+      }
+    </div>
+  } @else if (filas().length === 0) {
+    <p class="m-0 text-[13px] text-[var(--mis-text-tertiary)] text-center py-4">Sin información para mostrar.</p>
+  } @else {
+    <dl class="flex flex-col divide-y divide-[var(--mis-border)]">
+      @for (fila of filas(); track fila.lab) {
+        <div class="flex items-center justify-between gap-3 py-2 text-[13px]">
+          <dt class="font-medium text-[var(--mis-text-secondary)]">{{ fila.lab }}</dt>
+          <dd class="m-0 text-[var(--mis-text-primary)] text-right">{{ fila.val || '—' }}</dd>
+        </div>
+      }
+    </dl>
+  }
+</p-dialog>
