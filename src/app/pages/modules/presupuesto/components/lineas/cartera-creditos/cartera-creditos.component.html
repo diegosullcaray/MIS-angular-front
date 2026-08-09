@@ -1,21 +1,19 @@
 <div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
   <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center justify-between gap-3">
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cartera de Créditos</h2>
-
-      <div class="flex items-center gap-2 shrink-0">
-        @if (puedeGuardar()) {
-          <p-button label="Reiniciar" severity="secondary" [outlined]="true" size="small" (onClick)="reiniciar()" />
-          <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
-        }
-        @if (puedeVerificar()) {
-          <p-button label="Verificar" icon="pi pi-check-circle" size="small" [loading]="verificando()" (onClick)="verificar()" />
-        }
-      </div>
-    </div>
+    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cartera de Créditos</h2>
 
     <div class="flex items-center gap-3 flex-wrap">
       <app-hier-selector [paramsHier]="paramsHier" (nodoSeleccionado)="onNivelSeleccionado($event)" />
+
+      <div class="flex-1"></div>
+
+      @if (puedeGuardar()) {
+        <p-button label="Reiniciar" severity="secondary" [outlined]="true" size="small" (onClick)="reiniciar()" />
+        <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
+      }
+      @if (puedeVerificar()) {
+        <p-button label="Verificar" icon="pi pi-check-circle" size="small" [loading]="verificando()" (onClick)="verificar()" />
+      }
     </div>
   </div>
 
