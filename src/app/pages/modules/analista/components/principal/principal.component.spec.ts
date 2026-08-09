@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { PrincipalComponent } from './principal.component';
 import { AnalistaService, type ColaboradorActivo } from '../../services/analista.service';
 import type { ColaboradorItem, NodoJerarquiaAncla, ResumenDashboard } from '../../models';
@@ -93,10 +93,26 @@ describe('PrincipalComponent', () => {
     const instancia = fixture.componentInstance;
 
     instancia['abrirSelectorColaborador']();
+    fixture.detectChanges();
 
     expect(instancia['dialogColaboradorAbierto']()).toBe(true);
     expect(analistaFalso.obtenerColaboradores).toHaveBeenCalledWith(7, '231');
     expect(instancia['colaboradores']()).toEqual(COLABORADORES);
+    expect(instancia['cargandoColaboradores']()).toBe(false);
+  });
+
+  it('abrirSelectorColaborador() muestra el spinner de carga si se hace click antes de que resuelva el nodo ancla', () => {
+    analistaFalso.esAdmin.mockReturnValue(true);
+    analistaFalso.obtenerAnclaAdmin.mockReturnValue(new Subject<NodoJerarquiaAncla | null>());
+    const fixture = crear();
+    const instancia = fixture.componentInstance;
+
+    instancia['abrirSelectorColaborador']();
+    fixture.detectChanges();
+
+    expect(instancia['dialogColaboradorAbierto']()).toBe(true);
+    expect(instancia['cargandoColaboradores']()).toBe(true);
+    expect(analistaFalso.obtenerColaboradores).not.toHaveBeenCalled();
   });
 
   it('onColaboradorSeleccionado() delega en establecerColaborador() y eso dispara la carga del dashboard', () => {
