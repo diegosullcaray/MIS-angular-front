@@ -135,4 +135,23 @@ describe('HierSelectorComponent', () => {
 
     expect(emitSpy).not.toHaveBeenCalled();
   });
+
+  it('abrir() usa raizFija sin pedirla al backend, cuando se provee (caso Tablero de Verificación)', () => {
+    const fixture = crear();
+    fixture.componentRef.setInput('raizFija', [
+      { tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' },
+    ] as HierarquiaNodo[]);
+
+    fixture.componentInstance['abrir']();
+
+    expect(presupuestoFalso.obtenerJerarquiaBase).not.toHaveBeenCalled();
+    expect(fixture.componentInstance['nodos']()).toEqual([
+      {
+        key: '1-7-231',
+        label: 'Financiera Confianza',
+        data: { tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 },
+        leaf: false,
+      },
+    ]);
+  });
 });

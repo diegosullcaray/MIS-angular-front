@@ -17,9 +17,11 @@ import type { HierarquiaNodo, LogVerificacionFila, ParamsJerarquia } from '../..
  * el histórico — es de solo lectura, sin edición ni guardado.
  *
  * El legado hardcodeaba la raíz del árbol (`roots: [{ tip_cod: 7, cod_rel:
- * '231', lvl: 1 }]`) en vez de pedirla con `getBaseHierarchy` — acá se usa
- * el mismo `HierSelectorComponent` genérico (que sí la pide al backend) para
- * ambos niveles, por consistencia con el resto del módulo.
+ * '231', lvl: 1 }]`, "Financiera Confianza") en vez de pedirla con
+ * `getBaseHierarchy` — único caso del módulo que lo hace así (el resto de
+ * pantallas sí pide la raíz al backend). Se preserva acá vía `raizFija`
+ * (ver `HierSelectorComponent`), en vez de las 2 llamadas a `base_hier` que
+ * haría el genérico por defecto.
  *
  * El orden de argumentos de `getLogVerificaciones` en el legado
  * (`tv.cod_rel, lv.cod_rel` — ambos códigos relacionales, ninguno el
@@ -39,6 +41,8 @@ export class TableroVerificacionComponent {
   private readonly toast = inject(ToastService);
 
   protected readonly paramsHier: ParamsJerarquia = { code: 9, maxLvl: 6, dlgTitulo: 'LINEAS PRESUPUESTO' };
+  /** Raíz fija del legado — ver comentario de clase. */
+  protected readonly raizFija: HierarquiaNodo[] = [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }];
 
   protected readonly cargando = signal(false);
   protected readonly nivelLinea = signal<HierarquiaNodo | null>(null);
