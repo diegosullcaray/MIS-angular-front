@@ -3,7 +3,6 @@ import { TreeModule } from 'primeng/tree';
 import type { TreeNodeExpandEvent, TreeNodeSelectEvent } from 'primeng/tree';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { SkeletonModule } from 'primeng/skeleton';
 import type { TreeNode } from 'primeng/api';
 import { PresupuestoService } from '../../services/presupuesto.service';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../models';
@@ -22,7 +21,7 @@ import type { HierarquiaNodo, ParamsJerarquia } from '../../models';
 @Component({
   selector: 'app-hier-selector',
   standalone: true,
-  imports: [TreeModule, ButtonModule, DialogModule, SkeletonModule],
+  imports: [TreeModule, ButtonModule, DialogModule],
   templateUrl: './hier-selector.component.html',
   styleUrl: './hier-selector.component.css',
 })

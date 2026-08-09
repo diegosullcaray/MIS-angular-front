@@ -14,29 +14,24 @@
   [style]="{ width: '420px' }"
   [draggable]="false"
 >
-  @if (cargandoRaiz()) {
-    <div class="flex flex-col gap-2 p-2">
-      @for (i of [1, 2, 3, 4]; track i) {
-        <p-skeleton height="1.5rem" />
-      }
-    </div>
-  } @else {
-    @if (nodos().length === 1) {
-      <p-button
-        label="Seleccionar toda la jerarquía"
-        icon="pi pi-check-square"
-        [text]="true"
-        size="small"
-        styleClass="w-full mb-2"
-        (onClick)="seleccionarRaiz()"
-      />
-    }
-    <p-tree
-      [value]="nodos()"
-      selectionMode="single"
-      emptyMessage="Sin niveles disponibles."
-      (onNodeExpand)="onExpandir($event)"
-      (onNodeSelect)="onSeleccionar($event)"
+  @if (!cargandoRaiz() && nodos().length === 1) {
+    <p-button
+      label="Seleccionar toda la jerarquía"
+      icon="pi pi-check-square"
+      [text]="true"
+      size="small"
+      styleClass="w-full mb-2"
+      (onClick)="seleccionarRaiz()"
     />
   }
+  <p-tree
+    [value]="nodos()"
+    [loading]="cargandoRaiz()"
+    selectionMode="single"
+    [filter]="true"
+    filterPlaceholder="Buscar…"
+    emptyMessage="Sin niveles disponibles."
+    (onNodeExpand)="onExpandir($event)"
+    (onNodeSelect)="onSeleccionar($event)"
+  />
 </p-dialog>
