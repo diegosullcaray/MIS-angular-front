@@ -1,0 +1,65 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '92vw', maxWidth: '640px' }"
+  [draggable]="false"
+  [resizable]="false"
+  header="Seleccionar colaborador"
+  appendTo="body"
+>
+  <div class="flex flex-col gap-3">
+    <p-iconfield iconPosition="left" class="w-full">
+      <p-inputicon class="pi pi-search text-[var(--mis-text-tertiary)]" />
+      <input
+        pInputText
+        type="text"
+        placeholder="Buscar por nombre o código…"
+        class="w-full"
+        [ngModel]="filtro()"
+        (ngModelChange)="filtro.set($event)"
+      />
+    </p-iconfield>
+
+    <p-table
+      [value]="filtrados()"
+      [loading]="cargando()"
+      [paginator]="true"
+      [rows]="8"
+      selectionMode="single"
+      [selection]="seleccionado()"
+      (onRowSelect)="onSeleccionarFila($event.data)"
+      dataKey="cod_sec"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-[12px] uppercase">Código</th>
+          <th class="text-[12px] uppercase">Colaborador</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr [pSelectableRow]="item" class="cursor-pointer text-[13px]">
+          <td class="font-mono">{{ item.cod_sec }}</td>
+          <td>{{ item.des_sec }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="2" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
+            @if (cargando()) {
+              Cargando colaboradores…
+            } @else {
+              Sin colaboradores para mostrar.
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" severity="secondary" [outlined]="true" size="small" (onClick)="cerrar()" />
+    <p-button label="Seleccionar" size="small" [disabled]="!seleccionado()" (onClick)="confirmar()" />
+  </ng-template>
+</p-dialog>

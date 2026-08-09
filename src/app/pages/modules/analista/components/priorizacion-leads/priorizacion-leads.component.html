@@ -1,0 +1,76 @@
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Priorización de Leads</h2>
+
+    <div class="flex items-center gap-3 flex-wrap">
+      @if (colaborador()) {
+        <span class="text-[13px] text-[var(--mis-text-secondary)]">
+          Analista: <strong class="text-[var(--mis-text-primary)]">{{ colaborador()!.nombre }}</strong>
+        </span>
+      }
+
+      <div class="flex-1"></div>
+
+      @if (esAdmin()) {
+        <p-button label="Buscar colaborador" icon="pi pi-search" size="small" (onClick)="abrirSelectorColaborador()" />
+      }
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <div class="p-2">
+      <app-list-skeleton [rows]="[1, 2, 3, 4]" [cols]="[1, 2, 3, 4, 5, 6, 7]" />
+    </div>
+  } @else if (error()) {
+    <app-inline-error titulo="No se pudo cargar la lista" [detalle]="error()!" (reintentar)="reintentar()" />
+  } @else if (!colaborador()) {
+    <app-empty-state titulo="Elige un colaborador" descripcion="Busca un colaborador para ver sus leads asignados." />
+  } @else {
+    <span class="text-[12px] text-[var(--mis-text-tertiary)]">Total registros: {{ filas().length }}</span>
+
+    <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+      <p-table [value]="filas()" [scrollable]="true" scrollHeight="480px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th colspan="2" class="text-[12px] uppercase text-center">Campaña</th>
+            <th colspan="3" class="text-[12px] uppercase text-center">Cliente</th>
+            <th colspan="2" class="text-[12px] uppercase text-center">Gestión</th>
+          </tr>
+          <tr>
+            <th class="text-[12px] uppercase w-[100px]">Código</th>
+            <th class="text-[12px] uppercase">Nombre</th>
+            <th class="text-[12px] uppercase w-[120px]">Tipo Doc.</th>
+            <th class="text-[12px] uppercase w-[120px]">Nro. Doc.</th>
+            <th class="text-[12px] uppercase">Nombre</th>
+            <th class="text-[12px] uppercase w-[80px]">Orden</th>
+            <th class="text-[12px] uppercase w-[120px]">Fecha</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-fila>
+          <tr class="text-[13px]">
+            <td>{{ fila.cod_evt }}</td>
+            <td>{{ fila.des_evt }}</td>
+            <td>{{ fila.tip_doc }}</td>
+            <td>{{ fila.num_doc }}</td>
+            <td>{{ fila.des_cli }}</td>
+            <td>{{ fila.ord_ges }}</td>
+            <td>{{ fila.fec_ges }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">No se encontraron registros.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+</div>
+
+<app-selector-colaborador-dialog
+  [visible]="dialogColaboradorAbierto()"
+  [colaboradores]="colaboradores()"
+  [cargando]="cargandoColaboradores()"
+  (visibleChange)="dialogColaboradorAbierto.set($event)"
+  (colaboradorSeleccionado)="onColaboradorSeleccionado($event)"
+/>

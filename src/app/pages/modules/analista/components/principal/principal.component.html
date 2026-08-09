@@ -1,0 +1,166 @@
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Analista</h2>
+
+    <div class="flex items-center gap-3 flex-wrap">
+      @if (colaborador()) {
+        <span class="text-[13px] text-[var(--mis-text-secondary)]">
+          Viendo a: <strong class="text-[var(--mis-text-primary)]">{{ colaborador()!.nombre }}</strong>
+        </span>
+      }
+
+      <div class="flex-1"></div>
+
+      <p-button label="Listas" icon="pi pi-list" severity="secondary" [outlined]="true" size="small" (onClick)="irAListas()" />
+      @if (esAdmin()) {
+        <p-button label="Buscar colaborador" icon="pi pi-search" size="small" (onClick)="abrirSelectorColaborador()" />
+      }
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <div class="p-2">
+      <app-list-skeleton [rows]="[1, 2, 3]" [cols]="[1, 2, 3, 4]" />
+    </div>
+  } @else if (error()) {
+    <app-inline-error titulo="No se pudo cargar el dashboard" [detalle]="error()!" (reintentar)="reintentar()" />
+  } @else if (!dashboard()) {
+    <app-empty-state titulo="Elige un colaborador" descripcion="Busca un colaborador para ver su dashboard." />
+  } @else {
+    <!-- KPIs -->
+    <div class="flex flex-col gap-1.5">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center gap-1 text-center">
+          <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">Saldo Cartera (Miles)</span>
+          <span class="text-[19px] font-bold text-[var(--mis-primary)]">{{ dashboard()!.data.sal_cap | number: '.0-2' }}</span>
+        </div>
+        <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center gap-1 text-center">
+          <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">Monto Desem. (Miles)</span>
+          <span class="text-[19px] font-bold text-[var(--mis-primary)]">{{ dashboard()!.data.mon_des | number: '.0-2' }}</span>
+        </div>
+        <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center gap-1 text-center">
+          <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">Mora ≥ 1 día (Miles)</span>
+          <span class="text-[19px] font-bold text-[var(--mis-warning)]">{{ dashboard()!.data.mor_1 | number: '.0-2' }}</span>
+        </div>
+        <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center gap-1 text-center">
+          <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">Mora > 30 días (Miles)</span>
+          <span class="text-[19px] font-bold text-[var(--mis-danger)]">{{ dashboard()!.data.mor_30 | number: '.0-2' }}</span>
+        </div>
+      </div>
+      <span class="text-[11px] text-[var(--mis-text-tertiary)]">Actualizado al: {{ dashboard()!.data.f4 }}</span>
+    </div>
+
+    <!-- Perfil + gráficos -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-4">
+        <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex-1">
+          <h3 class="m-0 mb-2 text-[13px] font-semibold text-[var(--mis-primary)]">Perfil</h3>
+          <dl class="flex flex-col divide-y divide-[var(--mis-border)]">
+            @for (fila of dashboard()!.prof; track fila.lab) {
+              <div class="flex items-center justify-between gap-3 py-1.5 text-[12px]">
+                <dt class="font-medium text-[var(--mis-text-secondary)]">{{ fila.lab }}</dt>
+                <dd class="m-0 text-[var(--mis-text-primary)] text-right">{{ fila.val || '—' }}</dd>
+              </div>
+            }
+          </dl>
+        </div>
+
+        <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 h-[220px] flex flex-col">
+          <h3 class="m-0 mb-2 text-[13px] font-semibold text-[var(--mis-primary)]">Comparativo Día</h3>
+          <div class="flex-1 min-h-0">
+            @if (datosComparativoDia(); as datos) {
+              <p-chart type="bar" [data]="datos" [options]="opcionesComparativoDia" height="100%" />
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 h-[220px] flex flex-col">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h3 class="m-0 text-[13px] font-semibold text-[var(--mis-primary)]">Evolutivo Mensual</h3>
+            @if (dashboard()!.h_cods.length > 1) {
+              <p-select
+                [options]="dashboard()!.h_cods"
+                optionLabel="des"
+                optionValue="cod"
+                [ngModel]="variableActual()"
+                (ngModelChange)="cambiarVariable($event)"
+                styleClass="w-40"
+                appendTo="body"
+              />
+            }
+          </div>
+          <div class="flex-1 min-h-0">
+            @if (cargandoHistorico()) {
+              <div class="h-full flex items-center justify-center">
+                <i class="pi pi-spin pi-spinner text-[var(--mis-primary)]"></i>
+              </div>
+            } @else if (datosEvolutivo(); as datos) {
+              <p-chart type="line" [data]="datos" [options]="opcionesEvolutivo" height="100%" />
+            }
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 h-[220px] flex flex-col">
+          <h3 class="m-0 mb-2 text-[13px] font-semibold text-[var(--mis-primary)]">Cartera por Tramos de Mora</h3>
+          <div class="flex-1 min-h-0">
+            @if (datosCarteraTramos(); as datos) {
+              <p-chart type="pie" [data]="datos" [options]="opcionesCarteraTramos" height="100%" />
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clientes -->
+    <div class="flex flex-col gap-2.5">
+      <h3 class="m-0 text-base font-semibold text-[var(--mis-primary)]">Clientes</h3>
+      <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+        <p-table [value]="dashboard()!.cli_cre" [scrollable]="true" scrollHeight="320px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="text-[12px] uppercase">Documento</th>
+              <th class="text-[12px] uppercase">Nombre</th>
+              <th class="text-[12px] uppercase">N° Operaciones</th>
+              <th class="text-[12px] uppercase">Saldo Capital</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-fila>
+            <tr>
+              <td class="text-[13px]">{{ fila.num_doc }}</td>
+              <td class="text-[13px]">
+                <button type="button" class="text-[var(--mis-secondary)] font-medium hover:underline cursor-pointer bg-transparent border-0 p-0" (click)="abrirDetalleCliente(fila)">
+                  {{ fila.nom }}
+                </button>
+              </td>
+              <td class="text-[13px]">{{ fila.opes }}</td>
+              <td class="text-[13px]">{{ fila.sal_cap | number: '.0-2' }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">Sin clientes para mostrar.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  }
+</div>
+
+<app-selector-colaborador-dialog
+  [visible]="dialogColaboradorAbierto()"
+  [colaboradores]="colaboradores()"
+  [cargando]="cargandoColaboradores()"
+  (visibleChange)="dialogColaboradorAbierto.set($event)"
+  (colaboradorSeleccionado)="onColaboradorSeleccionado($event)"
+/>
+
+<app-detalle-tabla-dialog
+  [visible]="dialogDetalleAbierto()"
+  titulo="Detalle Cliente"
+  [filas]="detalleCliente()"
+  [cargando]="cargandoDetalle()"
+  (visibleChange)="dialogDetalleAbierto.set($event)"
+/>
