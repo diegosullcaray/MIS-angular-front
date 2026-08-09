@@ -98,6 +98,46 @@ describe('SidebarComponent', () => {
     expect(icono?.tienePanel).toBe(true);
   });
 
+  it('iconos() habilita tienePanel para "Analista" aunque STG lo mande como hoja (sin hijos)', () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-an', tipo: 'remote', icono: 'pi pi-briefcase', etiqueta: 'Analista', tienePanel: false, ruta: '/app/analista' }]);
+    const fixture = crear();
+
+    const icono = fixture.componentInstance['iconos']().find((i) => i.id === 'sist-an');
+    expect(icono?.tienePanel).toBe(true);
+  });
+
+  it('iconos() habilita tienePanel para "Analista" cuando STG ya lo manda como grupo (con "Categorización" de hijo)', () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-an', tipo: 'remote', icono: 'pi pi-briefcase', etiqueta: 'Analista', tienePanel: true }]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-an': [{ etiqueta: 'Categorización', ruta: '/app/analista/categorizacion' }] });
+    const fixture = crear();
+
+    const icono = fixture.componentInstance['iconos']().find((i) => i.id === 'sist-an');
+    expect(icono?.tienePanel).toBe(true);
+  });
+
+  it('panelActivo() arma el panel propio de "Analista" (Principal/Categorización/Listas) en vez del panel remoto de STG', () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-an', tipo: 'remote', icono: 'pi pi-briefcase', etiqueta: 'Analista', tienePanel: true }]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-an': [{ etiqueta: 'Categorización', ruta: '/app/analista/categorizacion' }] });
+    const fixture = crear();
+    shell.setSidebarIconActivo('sist-an');
+
+    const panel = fixture.componentInstance['panelActivo']();
+
+    expect(panel?.titulo).toBe('Analista');
+    expect(panel?.secciones[0].rutas).toEqual([
+      { etiqueta: 'Principal', ruta: '/app/analista', icono: 'pi pi-home' },
+      { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
+      {
+        etiqueta: 'Listas',
+        icono: 'pi pi-list',
+        hijos: [
+          { etiqueta: 'Priorización de Leads', ruta: '/app/analista/listas/priorizacion-leads' },
+          { etiqueta: 'Becas Financiera Confianza', ruta: '/app/analista/listas/becas' },
+        ],
+      },
+    ]);
+  });
+
   it('panelActivo() para "host-inicio" es el panel fijo del Host ("Mi espacio")', () => {
     const fixture = crear();
     shell.setSidebarIconActivo('host-inicio');

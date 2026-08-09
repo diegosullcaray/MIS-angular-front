@@ -65,9 +65,15 @@ export class SidebarComponent implements OnInit {
     // filtrar ni hardcodear ninguno. Si un ítem apunta a la ruta de un
     // módulo ya migrado del Host (ej. ranking-k), se le habilita panel
     // propio (sección "Categoría") en vez de navegar directo a la ruta.
-    const sistemasStg = this.menuStg.sistemas().map((sistema) =>
-      sistema.ruta === this.kaypacha.ruta ? { ...sistema, tienePanel: true } : sistema
-    );
+    const sistemasStg = this.menuStg.sistemas().map((sistema) => {
+      if (sistema.ruta === this.kaypacha.ruta) return { ...sistema, tienePanel: true };
+      // "Analista" (Principal/Categorización/Listas) ya está migrado por
+      // completo al Host — se fuerza panel propio (ver `getPanelAnalista`)
+      // en vez de depender de qué hijos traiga `list_sec` para este ítem,
+      // que hoy en STG solo conoce "Categorización" (o ninguno).
+      if (this.esAnalista(sistema)) return { ...sistema, tienePanel: true };
+      return sistema;
+    });
 
     return [...base, ...sistemasStg];
   });
@@ -85,6 +91,10 @@ export class SidebarComponent implements OnInit {
 
     if (icono.ruta === this.kaypacha.ruta) {
       return this.kaypacha.panelPara(icono.etiqueta, icono.icono);
+    }
+
+    if (this.esAnalista(icono)) {
+      return this.getPanelAnalista(icono.etiqueta, icono.icono);
     }
 
     return this.getPanelStg(id);
@@ -156,6 +166,51 @@ export class SidebarComponent implements OnInit {
       titulo: 'Host Principal',
       icono:  'pi pi-home',
       secciones: secciones
+    };
+  }
+
+  /**
+   * "Analista" (`desc_sec` real de STG) — identifica el ítem por etiqueta,
+   * no por `ruta`: a diferencia de ranking-k, este sistema ya trae hijos
+   * propios en `list_sec` (p. ej. "Categorización"), así que `ruta` llega
+   * `undefined` desde `menuStg.sistemas()` y no sirve para matchear. Mismo
+   * estilo de comparación por palabra clave que ya usa `seleccionarIcono`
+   * para los enlaces externos (Jira/Imparables/Helpdesk).
+   */
+  private esAnalista(icono: SidebarIcon): boolean {
+    return (icono.etiqueta || '').trim().toLowerCase() === 'analista';
+  }
+
+  /**
+   * Panel de Col 2 de "Analista" — a diferencia de `getPanelStg`, no
+   * depende de qué hijos traiga `list_sec` (hoy en STG a lo sumo conoce
+   * "Categorización"): todas las pantallas del módulo ya están migradas al
+   * Host, así que se arma acá con sus rutas reales (mismo criterio que
+   * `getPanelHost`).
+   */
+  private getPanelAnalista(titulo: string, icono: string): SidebarNavPanelConfig {
+    const secciones: SidebarNavSeccion[] = [
+      {
+        rutas: [
+          { etiqueta: 'Principal', ruta: '/app/analista', icono: 'pi pi-home' },
+          { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
+          {
+            etiqueta: 'Listas',
+            icono: 'pi pi-list',
+            hijos: [
+              { etiqueta: 'Priorización de Leads', ruta: '/app/analista/listas/priorizacion-leads' },
+              { etiqueta: 'Becas Financiera Confianza', ruta: '/app/analista/listas/becas' },
+            ],
+          },
+        ],
+      },
+    ];
+
+    return {
+      tipo: 'host-admin',
+      titulo,
+      icono,
+      secciones,
     };
   }
 
