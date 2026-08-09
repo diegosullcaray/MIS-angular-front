@@ -1,18 +1,20 @@
-<div class="flex flex-col gap-3">
-  <div class="mis-card flex flex-wrap items-center gap-3 p-3 bg-white/95 backdrop-blur-[10px] border border-white/50">
-    <app-hier-selector [paramsHier]="config().paramsHier" (nodoSeleccionado)="onNivelSeleccionado($event)" />
-
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
     <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">{{ config().mainTitle }}</h2>
 
-    <div class="flex-1"></div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <app-hier-selector [paramsHier]="config().paramsHier" (nodoSeleccionado)="onNivelSeleccionado($event)" />
 
-    @if (puedeGuardar()) {
-      <p-button label="Reiniciar" severity="secondary" [text]="true" size="small" (onClick)="reiniciar()" />
-      <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
-    }
-    @if (puedeVerificar()) {
-      <p-button label="Verificar" severity="success" size="small" [loading]="verificando()" (onClick)="verificar()" />
-    }
+      <div class="flex-1"></div>
+
+      @if (puedeGuardar()) {
+        <p-button label="Reiniciar" severity="secondary" [outlined]="true" size="small" (onClick)="reiniciar()" />
+        <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
+      }
+      @if (puedeVerificar()) {
+        <p-button label="Verificar" icon="pi pi-check-circle" size="small" [loading]="verificando()" (onClick)="verificar()" />
+      }
+    </div>
   </div>
 
   <app-editable-table
@@ -23,7 +25,7 @@
     (celdaEditada)="onCeldaEditada($event)"
   />
 
-  <p class="text-[11px] text-[var(--mis-text-tertiary)] px-1">
+  <p class="text-[11px] text-[var(--mis-text-tertiary)]">
     Los datos mostrados están construidos para generar un histórico en función de los últimos responsables vigentes.
   </p>
 </div>

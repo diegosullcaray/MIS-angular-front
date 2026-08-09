@@ -1,4 +1,4 @@
-<div class="mis-card overflow-hidden bg-white/95 backdrop-blur-[10px] border border-white/50">
+<div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
   @if (cargando()) {
     <div class="p-4 flex flex-col gap-2">
       @for (i of [1, 2, 3, 4, 5]; track i) {
@@ -6,7 +6,7 @@
       }
     </div>
   } @else {
-    <p-table [value]="filas()" [scrollable]="true" scrollHeight="480px" styleClass="p-datatable-sm">
+    <p-table [value]="filas()" [scrollable]="true" scrollHeight="480px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         @if (tieneGrupos()) {
           <tr>
