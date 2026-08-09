@@ -1,6 +1,6 @@
 <div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
   <div class="flex items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Categorización</h2>
+    <h2 class="m-0 text-lg font-semibold text-[var(--mis-text-primary)]">Categorización</h2>
 
     @if (esAdmin()) {
       <p-button label="Buscar colaborador" icon="pi pi-search" size="small" (onClick)="abrirSelector()" />
@@ -16,7 +16,8 @@
   } @else if (!perfil()) {
     <app-empty-state titulo="Elige un colaborador" descripcion="Busca un colaborador para ver su categorización." />
   } @else {
-    <div class="flex flex-col lg:flex-row gap-4">
+    <!-- Fila 1: perfil + imagen, dos columnas, cada una ajustada a su propio contenido -->
+    <div class="flex flex-col lg:flex-row items-start gap-4">
       <!-- Tarjeta de perfil -->
       <div class="lg:w-[380px] shrink-0 rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-4 flex flex-col gap-4">
         <div class="flex items-center gap-3">
@@ -24,12 +25,12 @@
             <i class="pi pi-user text-2xl text-[var(--mis-primary)]"></i>
           </div>
           <div class="flex flex-col gap-0.5 min-w-0">
-            <span class="text-[17px] font-semibold text-[var(--mis-text-primary)] truncate">{{ perfil()!.nombre }}</span>
-            <span class="text-[13px] text-[var(--mis-text-secondary)] truncate">{{ perfil()!.cargo }}</span>
+            <span class="text-[19px] font-semibold text-[var(--mis-text-primary)] truncate">{{ perfil()!.nombre }}</span>
+            <span class="text-[14px] text-[var(--mis-text-secondary)] truncate">{{ perfil()!.cargo }}</span>
           </div>
         </div>
 
-        <dl class="grid grid-cols-2 gap-x-3 gap-y-2.5 text-[13px]">
+        <dl class="grid grid-cols-2 gap-x-3 gap-y-2.5 text-[14px]">
           <div class="flex flex-col gap-0.5">
             <dt class="text-[var(--mis-secondary)] font-medium">Unidad</dt>
             <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.unidad || '—' }}</dd>
@@ -53,79 +54,80 @@
         </dl>
       </div>
 
-      <!-- Requisitos + Comisión -->
-      <div class="flex-1 flex flex-col gap-5 min-w-0">
-        <div class="flex flex-col gap-2.5">
-          <h3 class="m-0 text-base font-semibold text-[var(--mis-primary)]">Estado Requisitos</h3>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            @for (r of requisitos(); track r.etiqueta) {
-              <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center gap-1.5 text-center">
-                <span class="text-[13px] font-semibold text-[var(--mis-text-primary)]">{{ r.etiqueta }}</span>
-                <span
-                  class="text-[19px] font-bold"
-                  [class.text-[var(--mis-success)]]="r.cumplido"
-                  [class.text-[var(--mis-danger)]]="!r.cumplido"
-                >
-                  {{ r.valor || '—' }}
-                </span>
-                @if (r.etiqueta === 'Formación') {
-                  <div class="flex flex-col gap-1 text-[11px] leading-snug">
-                    <span>
-                      Si no eres apto, ingresa
-                      <a
-                        href="https://mfbbva.csod.com/client/mfbbva/default.aspx"
-                        target="_blank"
-                        rel="noopener"
-                        class="font-semibold text-[var(--mis-secondary)] hover:underline"
-                      >aquí</a>
-                    </span>
-                    <span>
-                      Guía para desarrollar el catálogo:
-                      <a
-                        href="https://docs.google.com/presentation/d/1tJrj2KN3KXtQVLU0OCBS4n4NUsR1BwVykEa1SUV6kCs/edit#slide=id.p1"
-                        target="_blank"
-                        rel="noopener"
-                        class="font-semibold text-[var(--mis-secondary)] hover:underline"
-                      >Link</a>
-                    </span>
-                  </div>
-                }
-              </div>
-            }
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-2.5">
-          <div class="flex flex-col gap-0.5">
-            <h3 class="m-0 text-base font-semibold text-[var(--mis-primary)]">Resultados de Comisión</h3>
-            <p class="m-0 text-[12px] text-[var(--mis-text-tertiary)]">
-              *Las comisiones derivadas de campañas de gradualidad y/o similares no se consideran dentro del cómputo de meses necesarios para categorizar.
-            </p>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            @for (c of comisiones(); track $index) {
-              <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center gap-1.5 text-center">
-                <span class="text-[13px] font-semibold text-[var(--mis-text-primary)]">{{ c.periodo || '—' }}</span>
-                <span
-                  class="text-[17px] font-bold"
-                  [class.text-[var(--mis-success)]]="c.cumplido"
-                  [class.text-[var(--mis-danger)]]="!c.cumplido"
-                >
-                  {{ c.valor || '—' }}
-                </span>
-              </div>
-            }
-          </div>
-        </div>
+      <!-- Imagen explicativa -->
+      <div class="flex-1 min-w-0 rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2 overflow-hidden">
+        <img
+          src="/assets/images/fc/modules/categoriacion/categorizacion2.png"
+          alt="Requisitos + Desempeño = Categoriza"
+          class="w-full h-auto object-contain rounded-lg"
+        />
       </div>
     </div>
 
-    <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2 overflow-hidden">
-      <img
-        src="/assets/images/fc/modules/categoriacion/categorizacion2.png"
-        alt="Requisitos + Desempeño = Categoriza"
-        class="w-full h-auto object-contain rounded-lg"
-      />
+    <!-- Fila 2: Estado Requisitos + Resultados de Comisión, a todo lo ancho -->
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-2.5">
+        <h3 class="m-0 text-lg font-semibold text-[var(--mis-primary)]">Estado Requisitos</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          @for (r of requisitos(); track r.etiqueta) {
+            <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center gap-1.5 text-center">
+              <span class="text-[14px] font-semibold text-[var(--mis-text-primary)]">{{ r.etiqueta }}</span>
+              <span
+                class="text-[21px] font-bold"
+                [class.text-[var(--mis-success)]]="r.cumplido"
+                [class.text-[var(--mis-danger)]]="!r.cumplido"
+              >
+                {{ r.valor || '—' }}
+              </span>
+              @if (r.etiqueta === 'Formación') {
+                <div class="flex flex-col gap-1 text-[12px] leading-snug">
+                  <span>
+                    Si no eres apto, ingresa
+                    <a
+                      href="https://mfbbva.csod.com/client/mfbbva/default.aspx"
+                      target="_blank"
+                      rel="noopener"
+                      class="font-semibold text-[var(--mis-secondary)] hover:underline"
+                    >aquí</a>
+                  </span>
+                  <span>
+                    Guía para desarrollar el catálogo:
+                    <a
+                      href="https://docs.google.com/presentation/d/1tJrj2KN3KXtQVLU0OCBS4n4NUsR1BwVykEa1SUV6kCs/edit#slide=id.p1"
+                      target="_blank"
+                      rel="noopener"
+                      class="font-semibold text-[var(--mis-secondary)] hover:underline"
+                    >Link</a>
+                  </span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-0.5">
+          <h3 class="m-0 text-lg font-semibold text-[var(--mis-primary)]">Resultados de Comisión</h3>
+          <p class="m-0 text-[13px] text-[var(--mis-text-tertiary)]">
+            *Las comisiones derivadas de campañas de gradualidad y/o similares no se consideran dentro del cómputo de meses necesarios para categorizar.
+          </p>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          @for (c of comisiones(); track $index) {
+            <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center gap-1.5 text-center">
+              <span class="text-[14px] font-semibold text-[var(--mis-text-primary)]">{{ c.periodo || '—' }}</span>
+              <span
+                class="text-[19px] font-bold"
+                [class.text-[var(--mis-success)]]="c.cumplido"
+                [class.text-[var(--mis-danger)]]="!c.cumplido"
+              >
+                {{ c.valor || '—' }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
     </div>
   }
 </div>
