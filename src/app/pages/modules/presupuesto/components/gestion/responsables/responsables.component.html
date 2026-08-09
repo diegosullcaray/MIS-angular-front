@@ -1,35 +1,37 @@
-<div class="flex flex-col gap-3">
-  <div class="mis-card flex flex-wrap items-end gap-3 p-3 bg-white/95 backdrop-blur-[10px] border border-white/50">
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Nivel</label>
-      <p-select
-        [options]="niveles"
-        optionLabel="des_lvl"
-        [ngModel]="nivelActual()"
-        (ngModelChange)="onNivelCambiado($event)"
-        styleClass="w-56"
-        appendTo="body"
-      />
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-end gap-3 flex-wrap">
+      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Responsables</h2>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Nivel</label>
+        <p-select
+          [options]="niveles"
+          optionLabel="des_lvl"
+          [ngModel]="nivelActual()"
+          (ngModelChange)="onNivelCambiado($event)"
+          styleClass="w-56"
+          appendTo="body"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Buscar elemento</label>
+        <input
+          pInputText
+          type="text"
+          placeholder="Buscar por nombre…"
+          class="text-[13px]"
+          [ngModel]="filtro()"
+          (ngModelChange)="filtro.set($event)"
+        />
+      </div>
     </div>
 
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Buscar elemento</label>
-      <input
-        pInputText
-        type="text"
-        placeholder="Buscar por nombre…"
-        class="text-[13px]"
-        [ngModel]="filtro()"
-        (ngModelChange)="filtro.set($event)"
-      />
+    <div class="flex items-center gap-2 shrink-0 self-end">
+      <p-button label="Reiniciar" severity="secondary" [outlined]="true" size="small" (onClick)="reiniciar()" />
+      <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
     </div>
-
-    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Responsables</h2>
-
-    <div class="flex-1"></div>
-
-    <p-button label="Reiniciar" severity="secondary" [text]="true" size="small" (onClick)="reiniciar()" />
-    <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
   </div>
 
   <app-editable-table
