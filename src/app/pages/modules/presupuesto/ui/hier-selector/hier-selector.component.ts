@@ -31,6 +31,13 @@ export class HierSelectorComponent {
   readonly paramsHier = input.required<ParamsJerarquia>();
   /** Etiqueta del botón mientras no se eligió ningún nodo. */
   readonly placeholder = input('Elegir jerarquía');
+  /**
+   * Raíz fija opcional — replica `roots` hardcodeado en `confHier` del legado
+   * (ver `PreGesSegTableroVerificacionComponent.ngOnInit`, único caso donde
+   * el legado no pedía la raíz con `getBaseHierarchy`). Si se provee, se usa
+   * tal cual en vez de llamar al backend.
+   */
+  readonly raizFija = input<HierarquiaNodo[] | null>(null);
   readonly nodoSeleccionado = output<HierarquiaNodo>();
 
   protected readonly dialogAbierto = signal(false);
@@ -49,6 +56,13 @@ export class HierSelectorComponent {
 
   private cargarRaiz(): void {
     this.raizCargada = true;
+
+    const raizFija = this.raizFija();
+    if (raizFija) {
+      this.nodos.set(raizFija.map((nodo) => this.aNodoArbol(nodo, 1)));
+      return;
+    }
+
     this.cargandoRaiz.set(true);
 
     this.presupuesto.obtenerJerarquiaBase(this.paramsHier().code).subscribe({

@@ -3,8 +3,8 @@
     <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Tablero de Verificación</h2>
 
     <div class="flex items-end gap-3 flex-wrap">
-      <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir línea" (nodoSeleccionado)="onLineaSeleccionada($event)" />
-      <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir segundo nivel" (nodoSeleccionado)="onSegundoNivelSeleccionado($event)" />
+      <app-hier-selector [paramsHier]="paramsHier" [raizFija]="raizFija" placeholder="Elegir línea" (nodoSeleccionado)="onLineaSeleccionada($event)" />
+      <app-hier-selector [paramsHier]="paramsHier" [raizFija]="raizFija" placeholder="Elegir segundo nivel" (nodoSeleccionado)="onSegundoNivelSeleccionado($event)" />
 
       <div class="flex-1"></div>
 
