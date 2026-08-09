@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { CategorizacionDashboardComponent } from './categorizacion-dashboard.component';
 import { CategorizacionService } from '../../services/categorizacion.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
@@ -84,10 +84,26 @@ describe('CategorizacionDashboardComponent', () => {
     const instancia = fixture.componentInstance;
 
     instancia['abrirSelector']();
+    fixture.detectChanges();
 
     expect(instancia['dialogAbierto']()).toBe(true);
     expect(categorizacionFalso.obtenerSectoristas).toHaveBeenCalledWith(7, '231');
     expect(instancia['sectoristas']()).toEqual(SECTORISTAS);
+    expect(instancia['cargandoSectoristas']()).toBe(false);
+  });
+
+  it('abrirSelector() muestra el spinner de carga si se hace click antes de que resuelva el nodo ancla', () => {
+    categorizacionFalso.esAdmin.mockReturnValue(true);
+    categorizacionFalso.obtenerAnclaAdmin.mockReturnValue(new Subject<NodoJerarquiaAncla | null>());
+    const fixture = crear();
+    const instancia = fixture.componentInstance;
+
+    instancia['abrirSelector']();
+    fixture.detectChanges();
+
+    expect(instancia['dialogAbierto']()).toBe(true);
+    expect(instancia['cargandoSectoristas']()).toBe(true);
+    expect(categorizacionFalso.obtenerSectoristas).not.toHaveBeenCalled();
   });
 
   it('abrirSelector() no vuelve a pedir la lista si ya se cargó antes', () => {
@@ -96,8 +112,10 @@ describe('CategorizacionDashboardComponent', () => {
     const instancia = fixture.componentInstance;
 
     instancia['abrirSelector']();
+    fixture.detectChanges();
     instancia['dialogAbierto'].set(false);
     instancia['abrirSelector']();
+    fixture.detectChanges();
 
     expect(categorizacionFalso.obtenerSectoristas).toHaveBeenCalledTimes(1);
   });

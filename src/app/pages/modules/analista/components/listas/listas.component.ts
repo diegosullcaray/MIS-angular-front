@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface EnlaceListaAnalista {
   nombre: string;
@@ -31,10 +33,16 @@ const ENLACES: EnlaceListaAnalista[] = [
 @Component({
   selector: 'app-listas-analista',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ButtonModule, TooltipModule],
   templateUrl: './listas.component.html',
   styleUrl: './listas.component.css',
 })
 export class ListasComponent {
+  private readonly router = inject(Router);
+
   protected readonly enlaces = ENLACES;
+
+  protected volver(): void {
+    this.router.navigate(['/app/analista']);
+  }
 }

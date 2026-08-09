@@ -119,11 +119,11 @@
       <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
         <p-table [value]="dashboard()!.cli_cre" [scrollable]="true" scrollHeight="320px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
-            <tr>
-              <th class="text-[12px] uppercase">Documento</th>
-              <th class="text-[12px] uppercase">Nombre</th>
-              <th class="text-[12px] uppercase">N° Operaciones</th>
-              <th class="text-[12px] uppercase">Saldo Capital</th>
+            <tr class="bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)]">
+              <th class="py-2.5 px-3 text-[12px] uppercase text-[var(--mis-text-on-primary)] bg-[var(--mis-primary)]">Documento</th>
+              <th class="py-2.5 px-3 text-[12px] uppercase text-[var(--mis-text-on-primary)] bg-[var(--mis-primary)]">Nombre</th>
+              <th class="py-2.5 px-3 text-[12px] uppercase text-[var(--mis-text-on-primary)] bg-[var(--mis-primary)]">N° Operaciones</th>
+              <th class="py-2.5 px-3 text-[12px] uppercase text-[var(--mis-text-on-primary)] bg-[var(--mis-primary)]">Saldo Capital</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-fila>

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { BecasComponent } from './becas.component';
 import { AnalistaService, type ColaboradorActivo } from '../../services/analista.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
@@ -126,7 +126,23 @@ describe('BecasComponent', () => {
     const fixture = crear();
 
     fixture.componentInstance['abrirSelectorColaborador']();
+    fixture.detectChanges();
 
     expect(analistaFalso.obtenerColaboradores).toHaveBeenCalledWith(7, '231');
+    expect(fixture.componentInstance['cargandoColaboradores']()).toBe(false);
+  });
+
+  it('abrirSelectorColaborador() muestra el spinner de carga si se hace click antes de que resuelva el nodo ancla', () => {
+    analistaFalso.esAdmin.mockReturnValue(true);
+    analistaFalso.obtenerAnclaAdmin.mockReturnValue(new Subject<NodoJerarquiaAncla | null>());
+    const fixture = crear();
+    const instancia = fixture.componentInstance;
+
+    instancia['abrirSelectorColaborador']();
+    fixture.detectChanges();
+
+    expect(instancia['dialogColaboradorAbierto']()).toBe(true);
+    expect(instancia['cargandoColaboradores']()).toBe(true);
+    expect(analistaFalso.obtenerColaboradores).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
@@ -44,14 +44,42 @@ export class CategorizacionDashboardComponent implements OnInit {
   protected readonly sectoristas = signal<SectoristaItem[]>([]);
   protected readonly cargandoSectoristas = signal(false);
 
-  private ancla: NodoJerarquiaAncla | null = null;
+  private readonly ancla = signal<NodoJerarquiaAncla | null>(null);
+  private readonly cargandoAncla = signal(false);
   private codBtActual: string | null = null;
+
+  constructor() {
+    // Dispara la carga de sectoristas en cuanto el diálogo esté abierto Y el
+    // nodo ancla haya terminado de resolverse — antes se intentaba una sola
+    // vez al abrir el diálogo (`abrirSelector`), así que si el admin hacía
+    // click antes de que `obtenerAnclaAdmin()` respondiera, el diálogo
+    // quedaba vacío para siempre (sin spinner ni reintento).
+    effect(() => {
+      const abierto = this.dialogAbierto();
+      if (!abierto || this.sectoristas().length > 0) return;
+      if (this.cargandoAncla()) return;
+
+      const ancla = this.ancla();
+      if (!ancla) {
+        untracked(() => this.cargandoSectoristas.set(false));
+        return;
+      }
+      untracked(() => this.cargarSectoristas(ancla));
+    });
+  }
 
   ngOnInit(): void {
     if (this.esAdmin()) {
       // Solo prepara el nodo ancla — igual que el legado (`showSecPickerDialog(false)`),
       // no carga datos hasta que el admin elija un colaborador.
-      this.categorizacion.obtenerAnclaAdmin().subscribe((ancla) => (this.ancla = ancla));
+      this.cargandoAncla.set(true);
+      this.categorizacion.obtenerAnclaAdmin().subscribe({
+        next: (ancla) => {
+          this.ancla.set(ancla);
+          this.cargandoAncla.set(false);
+        },
+        error: () => this.cargandoAncla.set(false),
+      });
       return;
     }
 
@@ -61,10 +89,11 @@ export class CategorizacionDashboardComponent implements OnInit {
 
   protected abrirSelector(): void {
     this.dialogAbierto.set(true);
-    if (this.sectoristas().length > 0 || !this.ancla) return;
+    if (this.sectoristas().length === 0) this.cargandoSectoristas.set(true);
+  }
 
-    this.cargandoSectoristas.set(true);
-    this.categorizacion.obtenerSectoristas(this.ancla.tip_cod, this.ancla.cod_rel).subscribe({
+  private cargarSectoristas(ancla: NodoJerarquiaAncla): void {
+    this.categorizacion.obtenerSectoristas(ancla.tip_cod, ancla.cod_rel).subscribe({
       next: (lista) => {
         this.sectoristas.set(lista);
         this.cargandoSectoristas.set(false);

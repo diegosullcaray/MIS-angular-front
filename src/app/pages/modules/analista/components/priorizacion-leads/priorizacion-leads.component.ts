@@ -1,6 +1,8 @@
 import { Component, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -25,6 +27,7 @@ import type { ColaboradorItem, FilaLead, NodoJerarquiaAncla } from '../../models
   imports: [
     ButtonModule,
     TableModule,
+    TooltipModule,
     ListSkeletonComponent,
     InlineErrorComponent,
     EmptyStateComponent,
@@ -35,6 +38,7 @@ import type { ColaboradorItem, FilaLead, NodoJerarquiaAncla } from '../../models
 })
 export class PriorizacionLeadsComponent implements OnInit {
   private readonly analista = inject(AnalistaService);
+  private readonly router = inject(Router);
 
   protected readonly esAdmin = computed(() => this.analista.esAdmin());
   protected readonly colaborador = this.analista.colaboradorActivo;
@@ -47,29 +51,60 @@ export class PriorizacionLeadsComponent implements OnInit {
   protected readonly colaboradores = signal<ColaboradorItem[]>([]);
   protected readonly cargandoColaboradores = signal(false);
 
-  private ancla: NodoJerarquiaAncla | null = null;
+  private readonly ancla = signal<NodoJerarquiaAncla | null>(null);
+  private readonly cargandoAncla = signal(false);
 
   constructor() {
     effect(() => {
       const c = this.colaborador();
       if (c) untracked(() => this.cargar(c.codBt));
     });
+
+    // Dispara la carga de colaboradores en cuanto el diálogo esté abierto Y
+    // el nodo ancla haya terminado de resolverse — antes se intentaba una
+    // sola vez al abrir el diálogo (`abrirSelectorColaborador`), así que si
+    // el admin hacía click antes de que `obtenerAnclaAdmin()` respondiera,
+    // el diálogo quedaba vacío para siempre (sin spinner ni reintento).
+    effect(() => {
+      const abierto = this.dialogColaboradorAbierto();
+      if (!abierto || this.colaboradores().length > 0) return;
+      if (this.cargandoAncla()) return;
+
+      const ancla = this.ancla();
+      if (!ancla) {
+        untracked(() => this.cargandoColaboradores.set(false));
+        return;
+      }
+      untracked(() => this.cargarColaboradores(ancla));
+    });
   }
 
   ngOnInit(): void {
     if (this.esAdmin()) {
-      this.analista.obtenerAnclaAdmin().subscribe((ancla) => (this.ancla = ancla));
+      this.cargandoAncla.set(true);
+      this.analista.obtenerAnclaAdmin().subscribe({
+        next: (ancla) => {
+          this.ancla.set(ancla);
+          this.cargandoAncla.set(false);
+        },
+        error: () => this.cargandoAncla.set(false),
+      });
     } else {
       this.analista.usarColaboradorPropio();
     }
   }
 
+  protected volver(): void {
+    this.router.navigate(['/app/analista/listas']);
+  }
+
   protected abrirSelectorColaborador(): void {
     this.dialogColaboradorAbierto.set(true);
-    if (this.colaboradores().length > 0 || !this.ancla) return;
+    if (this.colaboradores().length === 0) this.cargandoColaboradores.set(true);
+  }
 
-    this.cargandoColaboradores.set(true);
-    this.analista.obtenerColaboradores(this.ancla.tip_cod, this.ancla.cod_rel).subscribe({
+  private cargarColaboradores(ancla: NodoJerarquiaAncla): void {
+    this.analista.obtenerColaboradores(ancla.tip_cod, ancla.cod_rel).subscribe({
       next: (lista) => {
         this.colaboradores.set(lista);
         this.cargandoColaboradores.set(false);
