@@ -88,6 +88,17 @@ export const APP_ROUTES: Routes = [
             (m) => m.PRESUPUESTO_ROUTES
           )
       },
+      {
+        // 'analista/categorizacion' — mismo segmento que usaba el legado STG
+        // (ver docs/07-modulos/analista/analista-routing.module.ts, ruta hija
+        // 'categorizacion' del módulo 'analista'). Solo se migra esta
+        // pantalla del módulo "analista" (no listas/prospecto/detalle).
+        path: 'analista/categorizacion',
+        loadChildren: () =>
+          import('./pages/modules/categorizacion/categorizacion.routes').then(
+            (m) => m.CATEGORIZACION_ROUTES
+          )
+      },
     ]
   },
   {
