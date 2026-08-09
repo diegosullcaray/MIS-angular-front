@@ -30,7 +30,7 @@
         }
       </div>
     } @else {
-      <p-table [value]="filasFiltradas()" [scrollable]="true" scrollHeight="480px" styleClass="p-datatable-sm">
+      <p-table [value]="filasFiltradas()" [scrollable]="true" scrollHeight="480px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
             <th rowspan="2" class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">

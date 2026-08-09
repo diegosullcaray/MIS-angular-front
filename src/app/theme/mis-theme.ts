@@ -74,5 +74,20 @@ export const MisTheme = definePreset(Aura, {
         }
       }
     }
+  },
+  components: {
+    // El borderColor por defecto de Aura (surface.200, #E2E8F0) es casi
+    // invisible sobre fondo blanco/translúcido — separadores de fila con
+    // más contraste (mismo tinte navy que --mis-border-strong).
+    datatable: {
+      colorScheme: {
+        light: {
+          root: { borderColor: 'rgba(29,57,110,0.18)' }
+        },
+        dark: {
+          root: { borderColor: 'rgba(0,162,255,0.20)' }
+        }
+      }
+    }
   }
 });

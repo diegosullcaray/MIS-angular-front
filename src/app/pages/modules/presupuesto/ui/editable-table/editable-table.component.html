@@ -6,7 +6,7 @@
       }
     </div>
   } @else {
-    <p-table [value]="filas()" [scrollable]="true" scrollHeight="480px" styleClass="p-datatable-sm">
+    <p-table [value]="filas()" [scrollable]="true" scrollHeight="480px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         @if (tieneGrupos()) {
           <tr>
