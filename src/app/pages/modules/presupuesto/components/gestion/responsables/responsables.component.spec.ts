@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { ResponsablesComponent } from './responsables.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
@@ -18,7 +19,7 @@ describe('ResponsablesComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [ResponsablesComponent],
-      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }],
+      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }, MessageService],
     });
   });
 
@@ -80,6 +81,10 @@ describe('ResponsablesComponent', () => {
   });
 
   it('reiniciar() restaura las filas al snapshot original', () => {
+    // El snapshot original (`filasOriginales`) se clona con `structuredClone`
+    // al cargar — por eso acá se compara contra un literal independiente en
+    // vez de reusar `filas`: mutar `filas()[0]` (misma referencia que el
+    // array del mock) también mutaría `filas`, dando un falso negativo.
     const filas: ResponsableFila[] = [{ des_rel: 'Ag. 1', cod_res: 'ana@confianza.pe', usu_log: 'x', tim_log: 'y' }];
     presupuestoFalso.obtenerResponsables.mockReturnValue(of(filas));
     const fixture = crear();
@@ -87,7 +92,9 @@ describe('ResponsablesComponent', () => {
     fixture.componentInstance['filas']()[0].cod_res = 'editado@confianza.pe';
     fixture.componentInstance['reiniciar']();
 
-    expect(fixture.componentInstance['filas']()).toEqual(filas);
+    expect(fixture.componentInstance['filas']()).toEqual([
+      { des_rel: 'Ag. 1', cod_res: 'ana@confianza.pe', usu_log: 'x', tim_log: 'y' },
+    ]);
   });
 
   it('guardar() envía todo el arreglo de filas (sin filtrar por ord, a diferencia de línea simple)', () => {

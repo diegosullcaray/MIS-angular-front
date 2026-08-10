@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError, type Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { LineaSimpleComponent } from './linea-simple.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
@@ -36,7 +37,7 @@ describe('LineaSimpleComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [LineaSimpleComponent],
-      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }],
+      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }, MessageService],
     });
   });
 

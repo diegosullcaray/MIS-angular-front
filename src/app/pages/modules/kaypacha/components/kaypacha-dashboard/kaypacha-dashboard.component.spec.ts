@@ -20,6 +20,11 @@ describe('KaypachaDashboardComponent', () => {
     headers2: ReturnType<typeof signal<unknown[]>>;
     headers2_2: ReturnType<typeof signal<unknown[]>>;
     dataSources2: ReturnType<typeof signal<unknown[]>>;
+    nombreUsuario: ReturnType<typeof signal<string>>;
+    cargo: ReturnType<typeof signal<string>>;
+    puntajeFinal: ReturnType<typeof signal<string | number>>;
+    permitirBusqueda: ReturnType<typeof signal<boolean>>;
+    colaboradores: ReturnType<typeof signal<KaypachaColaboradorItem[]>>;
   };
   let tourFalso: { iniciarTourGuiado: ReturnType<typeof vi.fn> };
 
@@ -38,6 +43,11 @@ describe('KaypachaDashboardComponent', () => {
       headers2: signal([]),
       headers2_2: signal([]),
       dataSources2: signal([]),
+      nombreUsuario: signal(''),
+      cargo: signal(''),
+      puntajeFinal: signal<string | number>('0'),
+      permitirBusqueda: signal(true),
+      colaboradores: signal<KaypachaColaboradorItem[]>([]),
     };
     tourFalso = { iniciarTourGuiado: vi.fn() };
 

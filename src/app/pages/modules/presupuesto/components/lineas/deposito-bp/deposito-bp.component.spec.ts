@@ -1,23 +1,26 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { DepositoBpComponent } from './deposito-bp.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { calcularFilaDeposito } from '../../../utils/deposito-calculo.util';
 
 describe('DepositoBpComponent', () => {
   let presupuestoFalso: {
+    esAdmin: ReturnType<typeof vi.fn>;
     obtenerResumenDepBP: ReturnType<typeof vi.fn>;
     guardarResumenDepBP: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
     presupuestoFalso = {
+      esAdmin: vi.fn().mockReturnValue(false),
       obtenerResumenDepBP: vi.fn().mockReturnValue(of({ ws: [], bp: {} })),
       guardarResumenDepBP: vi.fn().mockReturnValue(of({})),
     };
     TestBed.configureTestingModule({
       imports: [DepositoBpComponent],
-      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }],
+      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }, MessageService],
     });
   });
 

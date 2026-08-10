@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { CarteraCreditosComponent } from './cartera-creditos.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
@@ -18,6 +19,15 @@ function filaVariables(overrides: Partial<FilaCarteraCreditosVariables> = {}): F
   return { ord: 1, a1: 0, a2: 0, a3: 0, b1: 0, b2: 0, b3: 0, b4: 0, b5: 0, b6: 0, c1: 0, c2: 0, ...overrides };
 }
 
+// jsdom no implementa ResizeObserver — lo usa internamente `p-tabs` (PrimeNG) al
+// inicializar (`TabList.bindResizeObserver`), y este componente tiene tabs de
+// composición (Monto/Ratio).
+class ResizeObserverFalso {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+}
+
 describe('CarteraCreditosComponent', () => {
   let presupuestoFalso: {
     esAdmin: ReturnType<typeof vi.fn>;
@@ -27,6 +37,8 @@ describe('CarteraCreditosComponent', () => {
   };
 
   beforeEach(() => {
+    (globalThis as unknown as { ResizeObserver: typeof ResizeObserverFalso }).ResizeObserver = ResizeObserverFalso;
+
     presupuestoFalso = {
       esAdmin: vi.fn().mockReturnValue(false),
       verificar: vi.fn().mockReturnValue(of({})),
@@ -35,7 +47,7 @@ describe('CarteraCreditosComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [CarteraCreditosComponent],
-      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }],
+      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }, MessageService],
     });
   });
 

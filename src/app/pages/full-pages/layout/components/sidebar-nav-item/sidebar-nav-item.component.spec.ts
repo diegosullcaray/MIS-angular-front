@@ -1,14 +1,30 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { SidebarNavItemComponent } from './sidebar-nav-item.component';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
 import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
 
+// `new MouseEvent('click')` sin opciones no es cancelable por spec del DOM —
+// el preventDefault() interno de RouterLink es un no-op sobre un evento no
+// cancelable, así que jsdom intenta seguir el href real ("Not implemented:
+// navigation to another Document"). `{ cancelable: true }` deja que
+// RouterLink lo prevenga de verdad.
+//
+// Con `provideRouter([])` (sin rutas) el click SÍ dispara una navegación SPA
+// real vía RouterLink, que no resuelve sincrónicamente — si termina de
+// resolver después de que el siguiente test ya destruyó este TestBed
+// (`RouterLink.applicationErrorHandler`), revienta con NG0205 como rechazo
+// no manejado. Una ruta comodín (mismo patrón que `header.component.spec.ts`)
+// hace que toda navegación resuelva de inmediato contra una ruta real.
+@Component({ template: '', standalone: true })
+class BlankComponent {}
+
 describe('SidebarNavItemComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SidebarNavItemComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([{ path: '**', component: BlankComponent }])],
     });
   });
 
@@ -24,7 +40,7 @@ describe('SidebarNavItemComponent', () => {
     let emitido: string | undefined;
     fixture.componentInstance.rutaSeleccionada.subscribe((r) => (emitido = r));
 
-    (fixture.nativeElement as HTMLElement).querySelector('a')?.dispatchEvent(new MouseEvent('click'));
+    (fixture.nativeElement as HTMLElement).querySelector('a')?.dispatchEvent(new MouseEvent('click', { cancelable: true }));
 
     expect(emitido).toBe('/app/ranking-k/categoria/1');
   });
@@ -43,7 +59,7 @@ describe('SidebarNavItemComponent', () => {
     let rutaEmitida: string | undefined;
     fixture.componentInstance.rutaSeleccionada.subscribe((r) => (rutaEmitida = r));
 
-    (fixture.nativeElement as HTMLElement).querySelector('a')?.dispatchEvent(new MouseEvent('click'));
+    (fixture.nativeElement as HTMLElement).querySelector('a')?.dispatchEvent(new MouseEvent('click', { cancelable: true }));
 
     expect(recibido).toEqual({ depth: 2, index: 3 });
     expect(rutaEmitida).toBeUndefined();
@@ -57,7 +73,7 @@ describe('SidebarNavItemComponent', () => {
     let rutaEmitida: string | undefined;
     fixture.componentInstance.rutaSeleccionada.subscribe((r) => (rutaEmitida = r));
 
-    (fixture.nativeElement as HTMLElement).querySelector('a')?.dispatchEvent(new MouseEvent('click'));
+    (fixture.nativeElement as HTMLElement).querySelector('a')?.dispatchEvent(new MouseEvent('click', { cancelable: true }));
 
     expect(spy).toHaveBeenCalledWith('Jira - Mesa de ayuda', undefined);
     expect(rutaEmitida).toBeUndefined();
@@ -69,7 +85,7 @@ describe('SidebarNavItemComponent', () => {
 
     const fixture = crear({ etiqueta: 'Portal externo', ruta: 'http://ejemplo.com/portal' });
 
-    (fixture.nativeElement as HTMLElement).querySelector('a')?.dispatchEvent(new MouseEvent('click'));
+    (fixture.nativeElement as HTMLElement).querySelector('a')?.dispatchEvent(new MouseEvent('click', { cancelable: true }));
 
     expect(spy).toHaveBeenCalledWith('Portal externo', 'http://ejemplo.com/portal');
   });
@@ -94,7 +110,7 @@ describe('SidebarNavItemComponent', () => {
     fixture.componentInstance.rutaSeleccionada.subscribe((r) => (rutaEmitida = r));
 
     const hijoLink = (fixture.nativeElement as HTMLElement).querySelector('app-sidebar-nav-item a');
-    hijoLink?.dispatchEvent(new MouseEvent('click'));
+    hijoLink?.dispatchEvent(new MouseEvent('click', { cancelable: true }));
 
     expect(rutaEmitida).toBe('/hoja');
   });
