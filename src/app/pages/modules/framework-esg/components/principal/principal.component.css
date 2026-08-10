@@ -9,3 +9,33 @@
   background: linear-gradient(to left top, rgba(0, 133, 132, 1) 0%, rgba(0, 133, 132, 0.35) 45%, rgba(0, 133, 132, 0.2) 100%);
   min-height: 320px;
 }
+
+/*
+ * Encadena el alto disponible del card (min-h-[calc(100vh-130px)], ver
+ * template) hacia adentro de p-tabs/p-tabpanels/p-tabpanel — por defecto
+ * son bloques normales, así que el panel de Portada quedaba con el
+ * min-height fijo de arriba en vez de estirarse, y la imagen de fondo
+ * (background-size: cover) se recortaba en vez de mostrarse completa.
+ * Solo afecta al panel activo (p-tabpanel-active): los demás quedan
+ * [hidden] y no participan del layout.
+ */
+:host ::ng-deep .p-tabs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+:host ::ng-deep .p-tabpanels {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+:host ::ng-deep .p-tabpanel.p-tabpanel-active {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}

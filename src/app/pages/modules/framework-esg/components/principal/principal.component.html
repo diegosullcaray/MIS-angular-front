@@ -1,4 +1,4 @@
-<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
   <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
     <div class="flex items-center justify-between flex-wrap gap-3">
       <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cuadro de Mando ESG</h2>
@@ -20,10 +20,10 @@
     </p-tablist>
     <p-tabpanels>
       <p-tabpanel value="portada">
-        <div class="esg-portada-fondo rounded-lg overflow-hidden">
-          <div class="esg-portada-degradado flex flex-col sm:flex-row">
+        <div class="esg-portada-fondo rounded-lg overflow-hidden flex-1 flex flex-col">
+          <div class="esg-portada-degradado flex flex-col sm:flex-row flex-1">
             <div class="flex-1"></div>
-            <div class="w-full sm:w-3/5 p-3 sm:p-6">
+            <div class="w-full sm:w-3/5 p-3 sm:p-6 flex flex-col justify-center">
               @if (cargandoPortada()) {
                 <div class="flex flex-col gap-2">
                   @for (i of [1, 2, 3]; track i) {
