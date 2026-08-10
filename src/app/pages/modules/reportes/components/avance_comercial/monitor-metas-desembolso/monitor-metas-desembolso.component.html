@@ -1,0 +1,41 @@
+<div class="flex flex-col gap-4">
+  <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" />
+
+  @if (!nivelActual()) {
+    <p class="text-[13px] text-[var(--mis-text-tertiary)]">Elige un nivel de la jerarquía para ver el reporte.</p>
+  } @else if (cargando()) {
+    <div class="flex flex-col gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p-skeleton height="90px" />
+        <p-skeleton height="90px" />
+      </div>
+      <p-skeleton height="220px" />
+      <p-skeleton height="220px" />
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      @if (kpiOperaciones(); as kpi) {
+        <div class="mis-card p-3 flex flex-col gap-1">
+          <h3 class="m-0 text-[13px] font-semibold text-[var(--mis-text-primary)]">Operaciones Desembolsadas</h3>
+          <span class="text-[11px] text-[var(--mis-text-tertiary)]">Cumplimiento de Meta</span>
+          <span class="text-xl font-bold text-[var(--mis-primary)]">{{ kpi.cumpl_des_acum }}</span>
+          <span class="text-[10px] text-[var(--mis-text-tertiary)]">Al {{ kpi.fecha }} {{ kpi.hora }}</span>
+        </div>
+      }
+      @if (kpiMonto(); as kpi) {
+        <div class="mis-card p-3 flex flex-col gap-1">
+          <h3 class="m-0 text-[13px] font-semibold text-[var(--mis-text-primary)]">Monto Desembolsado</h3>
+          <span class="text-[11px] text-[var(--mis-text-tertiary)]">Cumplimiento de Meta</span>
+          <span class="text-xl font-bold text-[var(--mis-primary)]">{{ kpi.cumpl_ope_acum }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="mis-card p-3 overflow-x-auto">
+      <app-tabla-reporte [encabezados]="tablaOperaciones().headers" [filas]="tablaOperaciones().body" />
+    </div>
+    <div class="mis-card p-3 overflow-x-auto">
+      <app-tabla-reporte [encabezados]="tablaMontos().headers" [filas]="tablaMontos().body" />
+    </div>
+  }
+</div>

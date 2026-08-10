@@ -1,0 +1,23 @@
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-chart-line text-[var(--mis-primary)]"></i>
+      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Avance Comercial</h2>
+    </div>
+  </div>
+
+  <p-tabs [(value)]="tabActiva">
+    <p-tablist>
+      <p-tab value="mon-desem">Monitor Metas Desembolso</p-tab>
+      <p-tab value="mon-rep">Monitor Reprogramados</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="mon-desem">
+        <app-monitor-metas-desembolso />
+      </p-tabpanel>
+      <p-tabpanel value="mon-rep">
+        <app-monitor-reprogramados />
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</div>

@@ -41,4 +41,14 @@ describe('ModReportesService', () => {
     expect(strand.name).toBe('resultado');
     expect(strand.payload).toEqual({ nom: 'juan', otro: 1, cod_rep: 'RS_BASE_NEG_01' });
   });
+
+  it('getRegularData() usa el strand "regularData" con respuesta "result"', () => {
+    service.getRegularData('Monitor_Dese_01', { tip_cod: 1, cod_rel: 'BT-001', tipmet: 1 }).subscribe();
+
+    const conf = prepareSpy.mock.calls[0][1];
+    const strand = inspeccionar(conf.strands as Strand);
+    expect(strand.actionRoute).toBe('regularData');
+    expect(strand.name).toBe('result');
+    expect(strand.payload).toEqual({ tip_cod: 1, cod_rel: 'BT-001', tipmet: 1, cod_rep: 'Monitor_Dese_01' });
+  });
 });

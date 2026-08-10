@@ -1,0 +1,27 @@
+<p-button
+  [label]="etiquetaActual() ?? placeholder()"
+  icon="pi pi-sitemap"
+  [text]="true"
+  size="small"
+  (onClick)="abrir()"
+/>
+
+<p-dialog
+  [header]="paramsHier().dlgTitulo"
+  [(visible)]="dialogAbierto"
+  [modal]="true"
+  appendTo="body"
+  [style]="{ width: '420px' }"
+  [draggable]="false"
+>
+  <p-tree
+    [value]="nodos()"
+    [loading]="cargandoRaiz()"
+    selectionMode="single"
+    [filter]="true"
+    filterPlaceholder="Buscar…"
+    emptyMessage="Sin niveles disponibles."
+    (onNodeExpand)="onExpandir($event)"
+    (onNodeSelect)="onSeleccionar($event)"
+  />
+</p-dialog>
