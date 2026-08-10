@@ -88,37 +88,72 @@ describe('SelectorNivelDialogComponent', () => {
     expect(fixture.componentInstance['asesoresFiltrados']()).toEqual([{ cod_sec: 'BT-2', des_sec: 'María López' }]);
   });
 
-  it('elegirAsesor() delega en el servicio y cierra el diálogo', () => {
+  it('onFilaAsesor() solo resalta la fila, sin cerrar ni cargar datos todavía', () => {
     const fixture = crear();
     const visibleChangeSpy = vi.fn();
     fixture.componentInstance.visibleChange.subscribe(visibleChangeSpy);
     const asesor: AsesorPickItem = { cod_sec: 'BT-1', des_sec: 'Juan' };
 
-    fixture.componentInstance['elegirAsesor'](asesor);
+    fixture.componentInstance['onFilaAsesor'](asesor);
 
-    expect(incentivosFalso.seleccionarAsesor).toHaveBeenCalledWith(asesor);
-    expect(visibleChangeSpy).toHaveBeenCalledWith(false);
+    expect(fixture.componentInstance['seleccionadoAsesor']()).toEqual(asesor);
+    expect(incentivosFalso.seleccionarAsesor).not.toHaveBeenCalled();
+    expect(visibleChangeSpy).not.toHaveBeenCalled();
   });
 
-  it('elegirAsesor() ignora un arreglo (selección múltiple no soportada) o valor vacío', () => {
+  it('onFilaAsesor() ignora un arreglo (selección múltiple no soportada) o valor vacío', () => {
     const fixture = crear();
-    fixture.componentInstance['elegirAsesor']([{ cod_sec: 'BT-1', des_sec: 'Juan' }]);
-    fixture.componentInstance['elegirAsesor'](undefined);
+    fixture.componentInstance['onFilaAsesor']([{ cod_sec: 'BT-1', des_sec: 'Juan' }]);
+    fixture.componentInstance['onFilaAsesor'](undefined);
+    expect(fixture.componentInstance['seleccionadoAsesor']()).toBeNull();
+  });
+
+  it('confirmarAsesor() cierra el diálogo y RECIÉN DESPUÉS delega en el servicio, incluso si el diálogo es obligatorio', () => {
+    const fixture = crear();
+    fixture.componentRef.setInput('obligatorio', true);
+    fixture.detectChanges();
+    const orden: string[] = [];
+    const visibleChangeSpy = vi.fn(() => orden.push('cierra'));
+    fixture.componentInstance.visibleChange.subscribe(visibleChangeSpy);
+    incentivosFalso.seleccionarAsesor.mockImplementation(() => orden.push('carga'));
+    const asesor: AsesorPickItem = { cod_sec: 'BT-1', des_sec: 'Juan' };
+    fixture.componentInstance['onFilaAsesor'](asesor);
+
+    fixture.componentInstance['confirmarAsesor']();
+
+    expect(visibleChangeSpy).toHaveBeenCalledWith(false);
+    expect(incentivosFalso.seleccionarAsesor).toHaveBeenCalledWith(asesor);
+    expect(orden).toEqual(['cierra', 'carga']);
+  });
+
+  it('confirmarAsesor() no hace nada si no hay ninguna fila resaltada', () => {
+    const fixture = crear();
+    fixture.componentInstance['confirmarAsesor']();
     expect(incentivosFalso.seleccionarAsesor).not.toHaveBeenCalled();
   });
 
-  it('elegirNodo() delega en el servicio y cierra el diálogo', () => {
+  it('onFilaNodo() solo resalta la fila; confirmarNodo() cierra y recién después delega en el servicio', () => {
     const fixture = crear();
+    const visibleChangeSpy = vi.fn();
+    fixture.componentInstance.visibleChange.subscribe(visibleChangeSpy);
     const nodo: NodoJerarquiaIncentivo = { tip_cod: 18, cod_rel: 'U-01', des_rel: 'Unidad 1' };
 
-    fixture.componentInstance['elegirNodo'](nodo);
+    fixture.componentInstance['onFilaNodo'](nodo);
+    expect(incentivosFalso.seleccionarNodoJerarquia).not.toHaveBeenCalled();
 
+    fixture.componentInstance['confirmarNodo']();
+    expect(visibleChangeSpy).toHaveBeenCalledWith(false);
     expect(incentivosFalso.seleccionarNodoJerarquia).toHaveBeenCalledWith(nodo);
   });
 
-  it('elegirFinancieraConfianza() delega en el servicio con la clase de usuario elegida', () => {
+  it('elegirFinancieraConfianza() cierra el diálogo y delega en el servicio con la clase de usuario elegida', () => {
     const fixture = crear();
+    const visibleChangeSpy = vi.fn();
+    fixture.componentInstance.visibleChange.subscribe(visibleChangeSpy);
+
     fixture.componentInstance['elegirFinancieraConfianza'](2);
+
+    expect(visibleChangeSpy).toHaveBeenCalledWith(false);
     expect(incentivosFalso.seleccionarFinancieraConfianza).toHaveBeenCalledWith(2);
   });
 

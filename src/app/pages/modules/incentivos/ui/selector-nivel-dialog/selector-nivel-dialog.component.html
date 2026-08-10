@@ -66,7 +66,8 @@
           [paginator]="true"
           [rows]="8"
           selectionMode="single"
-          (onRowSelect)="elegirAsesor($event.data)"
+          [selection]="seleccionadoAsesor()"
+          (onRowSelect)="onFilaAsesor($event.data)"
           dataKey="cod_sec"
           styleClass="p-datatable-sm"
         >
@@ -95,7 +96,8 @@
           [paginator]="true"
           [rows]="8"
           selectionMode="single"
-          (onRowSelect)="elegirNodo($event.data)"
+          [selection]="seleccionadoNodo()"
+          (onRowSelect)="onFilaNodo($event.data)"
           dataKey="cod_rel"
           styleClass="p-datatable-sm"
         >
@@ -118,6 +120,14 @@
           </ng-template>
         </p-table>
       }
+
+      <div class="flex justify-end pt-1 border-t border-[var(--mis-border)]">
+        @if (vista() === 'asesores') {
+          <p-button label="Seleccionar" size="small" [disabled]="!seleccionadoAsesor()" (onClick)="confirmarAsesor()" />
+        } @else {
+          <p-button label="Seleccionar" size="small" [disabled]="!seleccionadoNodo()" (onClick)="confirmarNodo()" />
+        }
+      </div>
     </div>
   }
 </p-dialog>

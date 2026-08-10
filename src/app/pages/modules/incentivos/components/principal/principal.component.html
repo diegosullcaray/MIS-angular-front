@@ -1,43 +1,41 @@
-@if (incentivos.error()) {
-  <div class="mis-card p-4 mb-4 text-[13px] text-[var(--mis-danger)] flex items-center gap-2">
-    <i class="pi pi-exclamation-triangle"></i>
-    <span>{{ incentivos.error() }}</span>
-  </div>
-}
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  @if (incentivos.error()) {
+    <div class="mis-card p-4 text-[13px] text-[var(--mis-danger)] flex items-center gap-2">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>{{ incentivos.error() }}</span>
+    </div>
+  }
 
-@if (incentivos.cargando() && !incentivos.perfil()) {
-  <div class="flex flex-col gap-3">
-    <p-skeleton height="140px" />
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <p-skeleton height="220px" />
-      <p-skeleton height="220px" />
-    </div>
-  </div>
-} @else if (incentivos.perfil()) {
-  <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,38%)_1fr] gap-4 items-stretch">
-    <div class="flex flex-col gap-4 min-h-0">
-      <div class="mis-card p-3">
-        <app-perfil-card (abrirSelector)="abrirSelector()" (abrirCalculadora)="abrirCalculadora()" />
-      </div>
-      <div class="mis-card p-3 flex-1 min-h-[320px] hidden lg:block">
-        <app-tabla-variables />
+  @if (incentivos.cargando() && !incentivos.perfil()) {
+    <div class="flex flex-col gap-3">
+      <p-skeleton height="140px" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <p-skeleton height="220px" />
+        <p-skeleton height="220px" />
       </div>
     </div>
+  } @else if (incentivos.perfil()) {
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,73%)_1fr] gap-4 items-stretch">
+      <div class="flex flex-col gap-4 min-h-0">
+        <div class="mis-card p-3">
+          <app-perfil-card (abrirSelector)="abrirSelector()" (abrirCalculadora)="abrirCalculadora()" />
+        </div>
+        <div class="mis-card p-3 flex-1 min-h-[320px]">
+          <app-tabla-variables />
+        </div>
+      </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-0">
-      <div class="mis-card p-3 min-h-[280px]">
-        <app-avances-grid (abrirDetalle)="abrirDetalleAvance($event)" />
-      </div>
-      <div class="mis-card p-3 min-h-[280px]">
-        <app-super-plus-grid (abrirDetalle)="abrirDetalleSuperPlus($event)" />
+      <div class="flex flex-col gap-4 min-h-0">
+        <div class="mis-card p-3 min-h-[280px]">
+          <app-avances-grid (abrirDetalle)="abrirDetalleAvance($event)" />
+        </div>
+        <div class="mis-card p-3 min-h-[280px]">
+          <app-super-plus-grid (abrirDetalle)="abrirDetalleSuperPlus($event)" />
+        </div>
       </div>
     </div>
-
-    <div class="mis-card p-3 min-h-[320px] lg:hidden">
-      <app-tabla-variables />
-    </div>
-  </div>
-}
+  }
+</div>
 
 <app-selector-nivel-dialog [visible]="mostrarSelector()" [obligatorio]="incentivos.requiereSeleccionInicial()" (visibleChange)="mostrarSelector.set($event)" />
 

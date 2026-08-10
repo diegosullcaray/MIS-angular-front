@@ -35,15 +35,15 @@ describe('SuperPlusGridComponent', () => {
     return fixture;
   }
 
-  it('claseCaja() usa el estilo neutro cuando estado=0', () => {
+  it('claseCaja() usa el gris del legado cuando estado=0', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['claseCaja'](item({ estado: 0 }))).toContain('primary-light');
+    expect(fixture.componentInstance['claseCaja'](item({ estado: 0 }))).toContain('darkgrey');
   });
 
-  it('claseCaja() usa éxito para val>=0 y peligro para val<0 cuando estado=1', () => {
+  it('claseCaja() usa el azul del legado para val>=0 y el magenta para val<0 cuando estado=1', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['claseCaja'](item({ val: 5 }))).toContain('success');
-    expect(fixture.componentInstance['claseCaja'](item({ val: -5 }))).toContain('danger');
+    expect(fixture.componentInstance['claseCaja'](item({ val: 5 }))).toContain('#009fe3');
+    expect(fixture.componentInstance['claseCaja'](item({ val: -5 }))).toContain('#E3005B');
   });
 
   it('onClic() emite abrirDetalle con el codVar mapeado, solo si item.enab es true', () => {

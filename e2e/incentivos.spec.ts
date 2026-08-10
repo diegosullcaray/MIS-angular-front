@@ -46,10 +46,11 @@ test.describe('Incentivos — smoke del Cuadro de Mando', () => {
     await expect(page.locator('.p-dialog-close-button')).toHaveCount(0);
   });
 
-  test('elegir "Asesores" muestra el buscador de colaboradores', async ({ page }) => {
+  test('elegir "Asesores" muestra el buscador de colaboradores y un botón "Seleccionar" deshabilitado hasta elegir una fila', async ({ page }) => {
     await page.goto('/app/incentivos3');
     await page.getByRole('button', { name: 'Asesores' }).click();
 
     await expect(page.getByPlaceholder('Buscar asesor…')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Seleccionar' })).toBeDisabled();
   });
 });
