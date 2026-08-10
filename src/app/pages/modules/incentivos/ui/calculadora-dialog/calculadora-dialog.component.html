@@ -1,0 +1,179 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '820px' }"
+  [draggable]="false"
+  [resizable]="false"
+  header="Calculadora"
+  appendTo="body"
+>
+  <div class="flex flex-col gap-4 py-1">
+    <div class="rounded-lg border border-[var(--mis-border)] p-3 flex flex-col gap-2">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <span class="font-semibold text-[13px]">Comisión Total:</span>
+        <span class="text-[13px] font-semibold" [class]="comisionClase()">{{ comisionTexto() }}</span>
+        <span class="text-[14px] font-bold rounded px-2 py-1 bg-[var(--mis-primary-light)]">
+          S/. {{ incentivos.calculadora().bonoTotal | number: '.0-2' }}
+        </span>
+      </div>
+      <div class="grid grid-cols-3 gap-2 text-[12px]">
+        <div class="flex flex-col gap-1">
+          <span class="text-[var(--mis-text-secondary)]">Base:</span>
+          <span class="rounded px-2 py-1 bg-[var(--mis-primary-light)] font-semibold">S/. {{ incentivos.calculadora().bonoBase | number: '.0-2' }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-[var(--mis-text-secondary)]">Plus:</span>
+          <span class="rounded px-2 py-1 bg-[var(--mis-primary-light)] font-semibold">S/. {{ incentivos.calculadora().bonoPlus | number: '.0-2' }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-[var(--mis-text-secondary)]">Super Plus:</span>
+          <span class="rounded px-2 py-1 bg-[var(--mis-primary-light)] font-semibold">S/. {{ incentivos.calculadora().bonoSuperPlus | number: '.0-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    @if (errorComposicion()) {
+      <div class="text-[12px] text-[var(--mis-danger)]">La composición de "Pago Puntual" debe sumar 100% entre los 3 tramos.</div>
+    }
+
+    <div class="max-h-[50vh] overflow-y-auto flex flex-col gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        @for (item of variablesVisibles(); track item.id) {
+          <div class="rounded-lg border border-[var(--mis-border)] p-2.5 flex flex-col gap-2" [class.sm:col-span-2]="item.id === 'efec1'">
+            <div class="flex items-center gap-2">
+              <i [class]="item.icono + ' text-[var(--mis-primary)]'"></i>
+              <span class="text-[12px] font-medium">{{ item.des }}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="flex flex-col gap-1">
+                <span class="text-[10px] text-[var(--mis-text-secondary)]">Cierre:</span>
+                <p-inputnumber
+                  [ngModel]="valorMostrado(item.key, item.formato)"
+                  (ngModelChange)="actualizarDesdeInput(item.key, item.formato, $event)"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  [suffix]="item.formato === 'percent' ? '%' : ''"
+                  inputStyleClass="w-full text-[12px]"
+                />
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-[10px] text-[var(--mis-text-secondary)]">Meta:</span>
+                <span class="text-[12px] py-1.5">{{ formatear(item.met, item.formato) }}</span>
+              </div>
+
+              @if (item.id === 'efec1') {
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] text-[var(--mis-text-secondary)]">Pago Puntual:</span>
+                  <p-inputnumber
+                    [ngModel]="valorMostrado('tp1', 'percent')"
+                    (ngModelChange)="actualizarDesdeInput('tp1', 'percent', $event)"
+                    suffix="%"
+                    inputStyleClass="w-full text-[12px]"
+                    [class.p-invalid]="errorComposicion()"
+                  />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] text-[var(--mis-text-secondary)]">1 a 8 días:</span>
+                  <p-inputnumber
+                    [ngModel]="valorMostrado('tp2', 'percent')"
+                    (ngModelChange)="actualizarDesdeInput('tp2', 'percent', $event)"
+                    suffix="%"
+                    inputStyleClass="w-full text-[12px]"
+                    [class.p-invalid]="errorComposicion()"
+                  />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] text-[var(--mis-text-secondary)]">9 a más días:</span>
+                  <p-inputnumber
+                    [ngModel]="valorMostrado('tp3', 'percent')"
+                    (ngModelChange)="actualizarDesdeInput('tp3', 'percent', $event)"
+                    suffix="%"
+                    inputStyleClass="w-full text-[12px]"
+                    [class.p-invalid]="errorComposicion()"
+                  />
+                </div>
+              }
+
+              <div class="flex flex-col gap-1">
+                <span class="text-[10px] text-[var(--mis-text-secondary)]">Bono Base:</span>
+                <span class="text-[12px] font-semibold">S/. {{ item.bob | number: '.0-2' }}</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-[10px] text-[var(--mis-text-secondary)]">Bono Plus:</span>
+                <span class="text-[12px] font-semibold">S/. {{ item.bop | number: '.0-2' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        @for (item of plusVisibles(); track item.id) {
+          <div class="rounded-lg border border-[var(--mis-border)] p-2.5 flex flex-col gap-2 bg-[var(--mis-primary-light)]/30">
+            <div class="flex items-center gap-2">
+              <i [class]="item.icono + ' text-[var(--mis-primary)]'"></i>
+              <span class="text-[12px] font-medium">{{ item.des }}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="flex flex-col gap-1">
+                <span class="text-[10px] text-[var(--mis-text-secondary)]">{{ etiquetaValor(item) }}</span>
+                @if (item.id === 'clib' || !item.enab) {
+                  <span class="text-[12px] py-1.5">{{ formatear(item.val, item.formato) }}</span>
+                } @else if (item.id === 'sis') {
+                  <p-select
+                    [options]="opcionesSistematica"
+                    optionLabel="label"
+                    optionValue="value"
+                    [ngModel]="valor(item.key)"
+                    (ngModelChange)="actualizar(item.key, $event)"
+                    styleClass="text-[12px]"
+                  />
+                } @else {
+                  <p-inputnumber
+                    [ngModel]="valorMostrado(item.key, item.formato)"
+                    (ngModelChange)="actualizarDesdeInput(item.key, item.formato, $event)"
+                    [minFractionDigits]="2"
+                    [maxFractionDigits]="2"
+                    [suffix]="item.formato === 'percent' ? '%' : ''"
+                    inputStyleClass="w-full text-[12px]"
+                  />
+                }
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-[10px] text-[var(--mis-text-secondary)]">{{ etiquetaMeta(item) }}</span>
+                @if (item.id === 'prod') {
+                  <span class="text-[12px] py-1.5">{{ formatear(item.met, 'number') }}</span>
+                } @else if (item.id === 'tas') {
+                  <p-inputnumber
+                    [ngModel]="valorMostrado('p_tas2', 'percent')"
+                    (ngModelChange)="actualizarDesdeInput('p_tas2', 'percent', $event)"
+                    suffix="%"
+                    inputStyleClass="w-full text-[12px]"
+                  />
+                }
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-[10px] text-[var(--mis-text-secondary)]" [class.opacity-50]="!item.suma">Bono Super Plus:</span>
+                <span class="text-[12px] font-semibold" [class.opacity-50]="!item.suma">S/. {{ item.bos | number: '.0-2' }}</span>
+              </div>
+              @if (item.id === 'tas') {
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] text-[var(--mis-text-secondary)]">Dif. Tasa:</span>
+                  <span class="text-[12px] font-semibold">{{ diffTasaPbs() }} pbs</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-end gap-3">
+      <p-button label="Restaurar" [outlined]="true" severity="secondary" size="small" (onClick)="reiniciarValores()" />
+      <p-button label="Simular" size="small" [loading]="simulando()" (onClick)="simular()" />
+    </div>
+  </ng-template>
+</p-dialog>

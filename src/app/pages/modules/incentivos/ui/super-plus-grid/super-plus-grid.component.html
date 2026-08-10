@@ -1,0 +1,21 @@
+@if (!incentivos.cargando()) {
+  <div class="grid grid-cols-3 gap-1.5 h-full content-start">
+    @for (item of incentivos.superPlus(); track item.id) {
+      @if (item.show) {
+        <button
+          type="button"
+          class="flex flex-col items-center justify-center gap-1 rounded-lg py-2 px-1 transition-opacity"
+          [class]="claseCaja(item)"
+          [class.cursor-pointer]="item.enab"
+          [class.hover:opacity-80]="item.enab"
+          [disabled]="!item.enab"
+          (click)="onClic(item)"
+        >
+          <i [class]="item.icono + ' text-[16px]'"></i>
+          <span class="text-[9px] text-center leading-tight">{{ item.des }}</span>
+          <span class="text-[11px] font-semibold">S/. {{ item.val | number: '.0-2' }}</span>
+        </button>
+      }
+    }
+  </div>
+}

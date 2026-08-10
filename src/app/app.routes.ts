@@ -138,6 +138,21 @@ export const APP_ROUTES: Routes = [
             (m) => m.DASHBOARD_ROUTES
           )
       },
+      {
+        // 'incentivos3' — debe coincidir exactamente con el segmento que
+        // usaba el sistema legado STG (app/incentivos3, ver
+        // docs/06-legado-sistema-anterior/incentivos-auditoria.md) y con el
+        // act_sec real del backend para este ítem del menú. El módulo en sí
+        // se llama "incentivos" en el Host (carpeta pages/modules/incentivos)
+        // — solo se migra `incentivos3` (la generación vigente y más usada);
+        // `incentivos4` (maqueta sin datos reales) e `incentivos-a` (fork de
+        // `incentivos2`) quedan fuera, ver la auditoría.
+        path: 'incentivos3',
+        loadChildren: () =>
+          import('./pages/modules/incentivos/incentivos.routes').then(
+            (m) => m.INCENTIVOS_ROUTES
+          )
+      },
     ]
   },
   {
