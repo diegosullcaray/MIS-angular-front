@@ -11,14 +11,12 @@
       [scrollable]="true"
       scrollHeight="420px"
       [stripedRows]="true"
-      selectionMode="single"
       dataKey="cod_met"
-      (onRowSelect)="onSeleccionFila($event.data)"
       styleClass="p-datatable-sm"
     >
       <ng-template pTemplate="header">
         <tr>
-          <th class="whitespace-nowrap text-[12px] text-center" style="background-color: #008080; color: white; width: 50px;"></th>
+          <th class="whitespace-nowrap text-[12px] uppercase text-center" style="background-color: #008080; color: white; width: 90px;">Acciones</th>
           @for (col of columnasFijas; track col.key) {
             <th class="whitespace-nowrap text-[12px] uppercase" style="background-color: #008080; color: white;">{{ col.label }}</th>
           }
@@ -29,10 +27,31 @@
       </ng-template>
 
       <ng-template pTemplate="body" let-fila>
-        <tr [pSelectableRow]="fila" class="cursor-pointer text-[13px]">
-          <td class="text-center" style="background-color: #008080;">
-            @if (fila.is_edit === 1) {
-              <i class="pi pi-pencil" style="color: white; font-size: 14px;" title="Editable"></i>
+        <tr class="text-[13px]" [class.esg-fila-nodo]="fila.is_nod === 1">
+          <td class="text-center whitespace-nowrap">
+            @if (puedeEditar() && fila.is_edit === 1) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                ariaLabel="Editar"
+                pTooltip="Editar"
+                tooltipPosition="top"
+                (onClick)="onEditar(fila)"
+              />
+            }
+            @if (fila.is_nod !== 1) {
+              <p-button
+                icon="pi pi-table"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                ariaLabel="Ver detalle"
+                pTooltip="Ver detalle"
+                tooltipPosition="top"
+                (onClick)="onVerDetalle(fila)"
+              />
             }
           </td>
           <td>{{ fila.des_met }}</td>
