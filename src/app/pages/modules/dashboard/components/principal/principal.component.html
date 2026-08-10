@@ -7,27 +7,21 @@
       </div>
 
       <div class="flex items-center gap-2 flex-wrap">
-        <p-button label="Actualizar" icon="pi pi-cloud-download" size="small" [outlined]="true" [loading]="dashboard.cargando()" (onClick)="actualizar()" />
+        <p-button
+          icon="pi pi-refresh"
+          [text]="true"
+          [rounded]="true"
+          size="small"
+          ariaLabel="Actualizar"
+          pTooltip="Actualizar"
+          tooltipPosition="bottom"
+          [loading]="dashboard.cargando()"
+          (onClick)="actualizar()"
+        />
         @if (dashboard.moduloAdmin()) {
           <p-button label="Usuarios" icon="pi pi-users" size="small" [outlined]="true" (onClick)="mostrarDialogoUsuarios()" />
         }
       </div>
-    </div>
-
-    <div class="flex items-center justify-between flex-wrap gap-3">
-      <div class="flex items-center gap-2">
-        <p-togglebutton [(ngModel)]="filtroPowerBI" onLabel="Power BI" offLabel="Power BI" />
-        <p-togglebutton [(ngModel)]="filtroOracle" onLabel="Oracle AC" offLabel="Oracle AC" />
-      </div>
-
-      <input
-        pInputText
-        type="text"
-        class="text-[13px]"
-        placeholder="Buscar…"
-        [ngModel]="filtroTexto()"
-        (ngModelChange)="filtroTexto.set($event)"
-      />
     </div>
   </div>
 
@@ -46,7 +40,7 @@
         }
       </div>
     } @else {
-      <p-table [value]="reportesFiltrados()" [stripedRows]="true" styleClass="p-datatable-sm">
+      <p-table [value]="dashboard.reportes()" [stripedRows]="true" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
             <th style="width: 50px;"></th>

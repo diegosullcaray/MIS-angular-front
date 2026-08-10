@@ -50,6 +50,8 @@ export class SelectorNivelDialogComponent {
   protected readonly filtro = signal('');
   protected readonly asesores = signal<AsesorPickItem[]>([]);
   protected readonly nodos = signal<NodoJerarquiaIncentivo[]>([]);
+  protected readonly seleccionadoAsesor = signal<AsesorPickItem | null>(null);
+  protected readonly seleccionadoNodo = signal<NodoJerarquiaIncentivo | null>(null);
 
   protected readonly asesoresFiltrados = computed(() => {
     const termino = this.filtro().toLowerCase().trim();
@@ -68,6 +70,7 @@ export class SelectorNivelDialogComponent {
   protected abrirAsesores(): void {
     this.vista.set('asesores');
     this.filtro.set('');
+    this.seleccionadoAsesor.set(null);
     this.cargando.set(true);
     this.incentivos.obtenerAsesores().subscribe({
       next: (lista) => {
@@ -85,6 +88,7 @@ export class SelectorNivelDialogComponent {
     this.vista.set('jerarquia');
     this.nivelJerarquiaActivo.set(nivel);
     this.filtro.set('');
+    this.seleccionadoNodo.set(null);
     this.cargando.set(true);
     this.incentivos.obtenerNivelesJerarquia(nivel.tipCodListado).subscribe({
       next: (lista) => {
@@ -98,31 +102,59 @@ export class SelectorNivelDialogComponent {
     });
   }
 
-  protected elegirAsesor(item: AsesorPickItem | AsesorPickItem[] | undefined): void {
-    if (!item || Array.isArray(item)) return;
-    this.incentivos.seleccionarAsesor(item);
-    this.cerrar();
+  /** Resalta la fila (no cierra ni carga nada todavía) — la carga espera al botón "Seleccionar". */
+  protected onFilaAsesor(item: AsesorPickItem | AsesorPickItem[] | undefined): void {
+    if (item && !Array.isArray(item)) this.seleccionadoAsesor.set(item);
   }
 
-  protected elegirNodo(item: NodoJerarquiaIncentivo | NodoJerarquiaIncentivo[] | undefined): void {
-    if (!item || Array.isArray(item)) return;
-    this.incentivos.seleccionarNodoJerarquia(item);
-    this.cerrar();
+  /** Resalta la fila (no cierra ni carga nada todavía) — la carga espera al botón "Seleccionar". */
+  protected onFilaNodo(item: NodoJerarquiaIncentivo | NodoJerarquiaIncentivo[] | undefined): void {
+    if (item && !Array.isArray(item)) this.seleccionadoNodo.set(item);
+  }
+
+  protected confirmarAsesor(): void {
+    const item = this.seleccionadoAsesor();
+    if (!item) return;
+    this.confirmarYCerrar(() => this.incentivos.seleccionarAsesor(item));
+  }
+
+  protected confirmarNodo(): void {
+    const item = this.seleccionadoNodo();
+    if (!item) return;
+    this.confirmarYCerrar(() => this.incentivos.seleccionarNodoJerarquia(item));
   }
 
   protected elegirFinancieraConfianza(claUsu: 1 | 2): void {
-    this.incentivos.seleccionarFinancieraConfianza(claUsu);
-    this.cerrar();
+    this.confirmarYCerrar(() => this.incentivos.seleccionarFinancieraConfianza(claUsu));
+  }
+
+  /**
+   * Cierra el diálogo primero y recién después dispara la carga de datos.
+   * Una selección real siempre cierra, sin importar `obligatorio()`: ese input
+   * es un signal alimentado por el mismo servicio que la carga está a punto de
+   * actualizar, así que leerlo aquí (como hacía antes `cerrar()`) podía ver el
+   * valor todavía no refrescado por el ciclo de detección de cambios y dejar
+   * el diálogo trabado abierto aunque la selección ya se hubiera hecho.
+   */
+  private confirmarYCerrar(cargar: () => void): void {
+    this.vista.set('menu');
+    this.visibleChange.emit(false);
+    cargar();
   }
 
   protected volverAlMenu(): void {
     this.vista.set('menu');
     this.filtro.set('');
+    this.seleccionadoAsesor.set(null);
+    this.seleccionadoNodo.set(null);
   }
 
   protected cerrar(): void {
     if (this.obligatorio()) return;
     this.vista.set('menu');
+    this.filtro.set('');
+    this.seleccionadoAsesor.set(null);
+    this.seleccionadoNodo.set(null);
     this.visibleChange.emit(false);
   }
 }

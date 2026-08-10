@@ -4,18 +4,11 @@
  * mismo port/appId/secret que Presupuesto/ESG — ver `ModDashboardService`).
  */
 
-/** Categoría de un reporte, usada por los filtros de la lista (`typ_rep`). */
-export type TipoReporte = 1 | 2;
-
-export const TIPO_REPORTE_POWER_BI: TipoReporte = 1;
-export const TIPO_REPORTE_ORACLE_AC: TipoReporte = 2;
-
 /** Reporte integrado — fila de `reportes2.lista`. Solo `reportType==='PowerBIReport'` es embebible hoy (ver `PrincipalComponent.abrirReporte()`). */
 export interface ReporteDashboard {
   id: string;
   name: string;
   reportType: string;
-  typ_rep: TipoReporte;
   datasetId?: string;
   [key: string]: unknown;
 }

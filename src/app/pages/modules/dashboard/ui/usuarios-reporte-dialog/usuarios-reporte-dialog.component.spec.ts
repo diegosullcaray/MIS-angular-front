@@ -6,7 +6,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import type { ReporteDashboard } from '../../models';
 
-const REPORTES: ReporteDashboard[] = [{ id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport', typ_rep: 1 }];
+const REPORTES: ReporteDashboard[] = [{ id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport' }];
 
 describe('UsuariosReporteDialogComponent', () => {
   let dashboardFalso: { obtenerUsuariosReporte: ReturnType<typeof vi.fn>; guardarUsuariosPorReporte: ReturnType<typeof vi.fn> };

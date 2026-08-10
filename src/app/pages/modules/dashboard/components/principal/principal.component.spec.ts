@@ -6,8 +6,8 @@ import { PrincipalComponent } from './principal.component';
 import { DashboardService } from '../../services/dashboard.service';
 import type { ReporteDashboard } from '../../models';
 
-const POWER_BI: ReporteDashboard = { id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport', typ_rep: 1 };
-const ORACLE: ReporteDashboard = { id: 'rep-2', name: 'Cartera Oracle', reportType: 'OracleACReport', typ_rep: 2 };
+const POWER_BI: ReporteDashboard = { id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport' };
+const ORACLE: ReporteDashboard = { id: 'rep-2', name: 'Cartera Oracle', reportType: 'OracleACReport' };
 
 describe('PrincipalComponent', () => {
   let dashboardFalso: {
@@ -55,34 +55,13 @@ describe('PrincipalComponent', () => {
     expect(dashboardFalso.cargarReportes).toHaveBeenCalled();
   });
 
-  it('reportesFiltrados() sin filtros activos muestra todos los reportes', () => {
+  it('la tabla muestra dashboard.reportes() directo, sin filtros', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([POWER_BI, ORACLE]);
-  });
 
-  it('reportesFiltrados() filtra por texto (nombre, sin distinguir mayúsculas)', () => {
-    const fixture = crear();
-    fixture.componentInstance['filtroTexto'].set('ventas');
-    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([POWER_BI]);
-  });
-
-  it('reportesFiltrados() con solo Power BI activo muestra solo typ_rep=1', () => {
-    const fixture = crear();
-    fixture.componentInstance['filtroPowerBI'].set(true);
-    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([POWER_BI]);
-  });
-
-  it('reportesFiltrados() con solo Oracle AC activo muestra solo typ_rep=2', () => {
-    const fixture = crear();
-    fixture.componentInstance['filtroOracle'].set(true);
-    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([ORACLE]);
-  });
-
-  it('reportesFiltrados() con ambos filtros activos muestra todo (igual que ninguno activo)', () => {
-    const fixture = crear();
-    fixture.componentInstance['filtroPowerBI'].set(true);
-    fixture.componentInstance['filtroOracle'].set(true);
-    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([POWER_BI, ORACLE]);
+    const filas = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr');
+    expect(filas.length).toBe(2);
+    expect(fixture.nativeElement.textContent).toContain('Ventas');
+    expect(fixture.nativeElement.textContent).toContain('Cartera Oracle');
   });
 
   it('actualizar() delega en recargarReportes()', () => {
