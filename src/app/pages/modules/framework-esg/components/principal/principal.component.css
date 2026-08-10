@@ -1,0 +1,11 @@
+.esg-portada-fondo {
+  background-image: url('/assets/images/fc/modules/esg/portada.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 320px;
+}
+
+.esg-portada-degradado {
+  background: linear-gradient(to left top, rgba(0, 133, 132, 1) 0%, rgba(0, 133, 132, 0.35) 45%, rgba(0, 133, 132, 0.2) 100%);
+  min-height: 320px;
+}

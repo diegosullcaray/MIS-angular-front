@@ -1,0 +1,98 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '92vw', maxWidth: '560px' }"
+  [draggable]="false"
+  [resizable]="false"
+  [header]="titulo()"
+  appendTo="body"
+>
+  @if (fila(); as f) {
+    <div class="flex flex-col gap-4 py-1">
+      <div class="flex flex-col gap-2">
+        <div class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Nombre</div>
+        <div class="text-[14px] text-[var(--mis-text-primary)]">{{ f.des_met }}</div>
+
+        <div class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Medida</div>
+        <div class="text-[14px] text-[var(--mis-text-primary)]">{{ f.des_med }}</div>
+
+        <label class="text-[12px] font-medium" style="color: #4472c4;">¿Está Disponible?</label>
+        <input
+          pInputText
+          type="text"
+          class="w-full text-[13px]"
+          [ngModel]="desDisponible()"
+          (ngModelChange)="desDisponible.set($event)"
+          [disabled]="!modoEdicion()"
+        />
+
+        <label class="text-[12px] font-medium" style="color: #4472c4;">Situación</label>
+        <p-select
+          [options]="situaciones()"
+          optionLabel="des"
+          optionValue="cod"
+          class="w-full"
+          [ngModel]="situacion()"
+          (ngModelChange)="situacion.set($event)"
+          [disabled]="!modoEdicion()"
+        />
+      </div>
+
+      @if (columnasHistoricas().length) {
+        <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+          <div class="px-3 py-2 text-[12px] font-semibold uppercase" style="background-color: var(--mis-primary-light);">Histórico</div>
+          <table class="w-full">
+            @for (clave of columnasHistoricas(); track clave) {
+              <tr class="border-t border-[var(--mis-border)]">
+                <td class="px-3 py-2 text-[13px] w-1/2">{{ clave }}</td>
+                <td class="px-3 py-2">
+                  <input
+                    pInputText
+                    type="text"
+                    class="w-full text-[13px]"
+                    [ngModel]="historico()[clave]"
+                    (ngModelChange)="actualizarHistorico(clave, $event)"
+                    [disabled]="!modoEdicion()"
+                  />
+                </td>
+              </tr>
+            }
+          </table>
+        </div>
+      }
+
+      @if (atributos().length) {
+        <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+          <div class="px-3 py-2 text-[12px] font-semibold uppercase" style="background-color: var(--mis-primary-light);">Atributos</div>
+          <table class="w-full">
+            @for (atributo of atributos(); track atributo.key) {
+              <tr class="border-t border-[var(--mis-border)]">
+                <td class="px-3 py-2 text-[13px] w-1/2">{{ atributo.label }}</td>
+                <td class="px-3 py-2">
+                  <input
+                    pInputText
+                    type="text"
+                    class="w-full text-[13px]"
+                    [ngModel]="atributosValores()[atributo.key]"
+                    (ngModelChange)="actualizarAtributo(atributo.key, $event)"
+                    [disabled]="!modoEdicion()"
+                  />
+                </td>
+              </tr>
+            }
+          </table>
+        </div>
+      }
+    </div>
+  }
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-end gap-3">
+      <p-button label="Cerrar" [outlined]="true" severity="secondary" size="small" (click)="cerrar()" />
+      @if (modoEdicion()) {
+        <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
+      }
+    </div>
+  </ng-template>
+</p-dialog>

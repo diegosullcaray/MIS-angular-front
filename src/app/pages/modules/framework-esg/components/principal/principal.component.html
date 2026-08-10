@@ -1,0 +1,101 @@
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cuadro de Mando ESG</h2>
+
+      <div class="flex items-center gap-2 flex-wrap">
+        @if (puedeEditarModulo() || esAdmin()) {
+          <p-button label="Editar" icon="pi pi-pencil" size="small" [disabled]="disableEditar()" (onClick)="mostrarDialogoEditar()" />
+        }
+        <p-button label="Detalles" icon="pi pi-table" size="small" [outlined]="true" [disabled]="disableDetalle()" (onClick)="mostrarDialogoDetalle()" />
+        @if (esAdmin()) {
+          <p-button label="Usuarios" icon="pi pi-users" size="small" [outlined]="true" (onClick)="mostrarDialogoUsuarios()" />
+        }
+      </div>
+    </div>
+  </div>
+
+  <p-tabs [(value)]="tabActiva">
+    <p-tablist>
+      <p-tab value="portada">Portada</p-tab>
+      @for (tab of tabsCategorias; track tab.codCat) {
+        <p-tab [value]="'cat-' + tab.codCat">{{ tab.titulo }}</p-tab>
+      }
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="portada">
+        <div class="esg-portada-fondo rounded-lg overflow-hidden">
+          <div class="esg-portada-degradado flex flex-col sm:flex-row">
+            <div class="flex-1"></div>
+            <div class="w-full sm:w-3/5 p-3 sm:p-6">
+              @if (cargandoPortada()) {
+                <div class="flex flex-col gap-2">
+                  @for (i of [1, 2, 3]; track i) {
+                    <p-skeleton height="1.5rem" />
+                  }
+                </div>
+              } @else {
+                <p-table [value]="portada()" [stripedRows]="true" styleClass="p-datatable-sm">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="background-color: #5b9bd5; color: white;">Estado</th>
+                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Medio Ambiente</th>
+                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Social Empleados</th>
+                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Social Clientes</th>
+                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Gobierno</th>
+                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Total</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-fila>
+                    <tr class="text-[12px]">
+                      <td>{{ fila.des }}</td>
+                      <td>{{ fila.c1 }}</td>
+                      <td>{{ fila.c3 }}</td>
+                      <td>{{ fila.c2 }}</td>
+                      <td>{{ fila.c4 }}</td>
+                      <td class="font-bold text-center">{{ fila.c99 }}</td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td colspan="6" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">Sin información disponible.</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              }
+            </div>
+          </div>
+        </div>
+      </p-tabpanel>
+
+      @for (tab of tabsCategorias; track tab.codCat) {
+        <p-tabpanel [value]="'cat-' + tab.codCat">
+          <app-categoria-metricas-tabla
+            [columnasHistoricas]="columnasHistoricasDe(tab.codCat)"
+            [filas]="filasDe(tab.codCat)"
+            [cargando]="cargandoCategorias()[tab.codCat] ?? false"
+            (filaSeleccionada)="onFilaSeleccionada($event)"
+          />
+        </p-tabpanel>
+      }
+    </p-tabpanels>
+  </p-tabs>
+</div>
+
+<app-editar-metrica-dialog
+  [visible]="mostrarEditar()"
+  (visibleChange)="mostrarEditar.set($event)"
+  [fila]="filaSeleccionada()"
+  [modoEdicion]="modoEdicion()"
+  [situaciones]="configuracion()?.situaciones ?? []"
+  [atributos]="configuracion()?.atributos ?? []"
+  [columnasHistoricas]="filaSeleccionada() ? columnasHistoricasDe(filaSeleccionada()!.cod_cat) : []"
+  (guardado)="onMetricaGuardada()"
+/>
+
+<app-usuarios-metrica-dialog
+  [visible]="mostrarUsuarios()"
+  (visibleChange)="mostrarUsuarios.set($event)"
+  [categorias]="configuracion()?.categorias ?? []"
+  [metricasPorCategoria]="metricasPorCategoria()"
+/>
