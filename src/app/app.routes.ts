@@ -153,6 +153,17 @@ export const APP_ROUTES: Routes = [
             (m) => m.INCENTIVOS_ROUTES
           )
       },
+      {
+        // 'reportes' — mismo segmento que usaba el legado STG
+        // (app/reportes, ver app-routing.module.ts → Rep01Module). Se migra
+        // nodo por nodo (ver pages/modules/reportes/reportes.routes.ts);
+        // "Avance Comercial" es el primero.
+        path: 'reportes',
+        loadChildren: () =>
+          import('./pages/modules/reportes/reportes.routes').then(
+            (m) => m.REPORTES_ROUTE
+          )
+      },
     ]
   },
   {
