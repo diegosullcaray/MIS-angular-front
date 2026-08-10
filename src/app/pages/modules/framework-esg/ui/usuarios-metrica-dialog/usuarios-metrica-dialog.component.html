@@ -1,0 +1,79 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '92vw', maxWidth: '640px' }"
+  [draggable]="false"
+  [resizable]="false"
+  header="Administrar Usuarios"
+  appendTo="body"
+>
+  <div class="flex flex-col gap-4 py-1">
+    <div class="flex flex-col gap-2">
+      <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Categoría</label>
+      <p-select
+        [options]="categorias()"
+        optionLabel="des"
+        optionValue="cod"
+        placeholder="Elegir categoría"
+        class="w-full"
+        [ngModel]="categoriaSeleccionada()"
+        (ngModelChange)="seleccionarCategoria($event)"
+      />
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-2">
+        <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Métricas</label>
+        <p-listbox
+          [options]="metricas()"
+          optionLabel="nombre"
+          [ngModel]="metricaSeleccionada()"
+          (ngModelChange)="seleccionarMetrica($event)"
+          [style]="{ height: '220px' }"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Usuarios con Acceso</label>
+          @if (cargandoUsuarios()) {
+            <i class="pi pi-spin pi-spinner text-[11px]"></i>
+          }
+        </div>
+        <p-listbox
+          [options]="usuarios()"
+          [ngModel]="usuarioSeleccionado()"
+          (ngModelChange)="seleccionarUsuario($event)"
+          [style]="{ height: '220px' }"
+        />
+        <div class="flex items-center gap-2">
+          <p-button icon="pi pi-user-minus" [outlined]="true" size="small" [disabled]="!puedeQuitar()" (onClick)="quitarUsuario()" />
+          <p-button icon="pi pi-refresh" [outlined]="true" size="small" [disabled]="!puedeRefrescar()" (onClick)="refrescarUsuario()" />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-end gap-2">
+      <div class="flex flex-col gap-2 flex-1">
+        <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Agregar Código BT</label>
+        <input
+          pInputText
+          type="text"
+          class="w-full text-[13px]"
+          placeholder="Código BT del usuario"
+          [ngModel]="nuevoCodBt()"
+          (ngModelChange)="nuevoCodBt.set($event)"
+        />
+      </div>
+      <p-button icon="pi pi-user-plus" label="Agregar" size="small" [disabled]="!puedeAgregar()" (onClick)="agregarUsuario()" />
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-end gap-3">
+      <p-button label="Cerrar" [outlined]="true" severity="secondary" size="small" (click)="cerrar()" />
+      <p-button label="Guardar" icon="pi pi-save" size="small" [loading]="guardando()" [disabled]="!huboCambios()" (onClick)="guardarTodo()" />
+    </div>
+  </ng-template>
+</p-dialog>

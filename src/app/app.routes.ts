@@ -111,6 +111,18 @@ export const APP_ROUTES: Routes = [
             (m) => m.ANALISTA_ROUTES
           )
       },
+      {
+        // 'esg' — debe coincidir exactamente con el segmento que usaba el
+        // sistema legado STG (app/esg, ver docs/07-modulos/app-routing.module.ts,
+        // módulo framework-esg) y con el act_sec real del backend para este
+        // ítem del menú. El módulo en sí se llama "framework-esg" en el Host
+        // (carpeta pages/modules/framework-esg), igual que en el legado.
+        path: 'esg',
+        loadChildren: () =>
+          import('./pages/modules/framework-esg/framework-esg.routes').then(
+            (m) => m.FRAMEWORK_ESG_ROUTES
+          )
+      },
     ]
   },
   {

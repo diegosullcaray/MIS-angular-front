@@ -5,79 +5,70 @@ import { LoadingService } from './loading.service';
 
 describe('RequestHandlerService', () => {
   let service: RequestHandlerService;
-  let loadingService: jasmine.SpyObj<LoadingService>;
+  let loadingService: { show: ReturnType<typeof vi.fn>; hide: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    const loadingServiceSpy = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
+    loadingService = { show: vi.fn(), hide: vi.fn() };
 
     TestBed.configureTestingModule({
       providers: [
         RequestHandlerService,
-        { provide: LoadingService, useValue: loadingServiceSpy }
+        { provide: LoadingService, useValue: loadingService }
       ]
     });
 
     service = TestBed.inject(RequestHandlerService);
-    loadingService = TestBed.inject(LoadingService) as jasmine.SpyObj<LoadingService>;
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should show and hide loading during successful request', (done) => {
+  it('should show and hide loading during successful request', async () => {
     const testData = { message: 'test' };
     const mockObservable = of(testData).pipe(delay(10));
 
-    service.handle(mockObservable, 'Testing...').subscribe({
-      next: (result) => {
-        expect(result).toEqual(testData);
-        expect(loadingService.show).toHaveBeenCalledWith('Testing...');
-        expect(loadingService.hide).toHaveBeenCalled();
-        done();
-      },
-      error: done.fail
+    const result = await new Promise((resolve, reject) => {
+      service.handle(mockObservable, 'Testing...').subscribe({ next: resolve, error: reject });
     });
+
+    expect(result).toEqual(testData);
+    expect(loadingService.show).toHaveBeenCalledWith('Testing...');
+    expect(loadingService.hide).toHaveBeenCalled();
   });
 
-  it('should hide loading on error', (done) => {
+  it('should hide loading on error', async () => {
     const errorObservable = throwError(() => new Error('Test error'));
 
-    service.handle(errorObservable).subscribe({
-      next: () => done.fail('Should not succeed'),
-      error: (error) => {
-        expect(error.message).toBe('Test error');
-        expect(loadingService.show).toHaveBeenCalled();
-        expect(loadingService.hide).toHaveBeenCalledTimes(2); // Una en finalize, otra en catchError
-        done();
-      }
+    const error = await new Promise((resolve, reject) => {
+      service.handle(errorObservable).subscribe({ next: reject, error: resolve });
     });
+
+    expect((error as Error).message).toBe('Test error');
+    expect(loadingService.show).toHaveBeenCalled();
+    expect(loadingService.hide).toHaveBeenCalledTimes(2); // Una en finalize, otra en catchError
   });
 
-  it('should handle multiple requests with forkJoin', (done) => {
+  it('should handle multiple requests with forkJoin', async () => {
     const req1 = of('result1').pipe(delay(10));
     const req2 = of('result2').pipe(delay(15));
     const requests = [req1, req2];
 
-    service.handleMultiple(requests, 'Multiple requests...').subscribe({
-      next: (results) => {
-        expect(results).toEqual(['result1', 'result2']);
-        expect(loadingService.show).toHaveBeenCalledWith('Multiple requests...');
-        expect(loadingService.hide).toHaveBeenCalled();
-        done();
-      },
-      error: done.fail
+    const results = await new Promise((resolve, reject) => {
+      service.handleMultiple(requests, 'Multiple requests...').subscribe({ next: resolve, error: reject });
     });
+
+    expect(results).toEqual(['result1', 'result2']);
+    expect(loadingService.show).toHaveBeenCalledWith('Multiple requests...');
+    expect(loadingService.hide).toHaveBeenCalled();
   });
 
-  it('should handle empty request array', (done) => {
-    service.handleMultiple([], 'Empty requests').subscribe({
-      next: (results) => {
-        expect(results).toEqual([]);
-        done();
-      },
-      error: done.fail
+  it('should handle empty request array', async () => {
+    const results = await new Promise((resolve, reject) => {
+      service.handleMultiple([], 'Empty requests').subscribe({ next: resolve, error: reject });
     });
+
+    expect(results).toEqual([]);
   });
 
   it('should show loading without auto-hide for manual requests', () => {
