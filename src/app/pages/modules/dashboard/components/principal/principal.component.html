@@ -1,0 +1,82 @@
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-cloud text-[var(--mis-primary)]"></i>
+        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Dashboards Integrados</h2>
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap">
+        <p-button label="Actualizar" icon="pi pi-cloud-download" size="small" [outlined]="true" [loading]="dashboard.cargando()" (onClick)="actualizar()" />
+        @if (dashboard.moduloAdmin()) {
+          <p-button label="Usuarios" icon="pi pi-users" size="small" [outlined]="true" (onClick)="mostrarDialogoUsuarios()" />
+        }
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2">
+        <p-togglebutton [(ngModel)]="filtroPowerBI" onLabel="Power BI" offLabel="Power BI" />
+        <p-togglebutton [(ngModel)]="filtroOracle" onLabel="Oracle AC" offLabel="Oracle AC" />
+      </div>
+
+      <input
+        pInputText
+        type="text"
+        class="text-[13px]"
+        placeholder="Buscar…"
+        [ngModel]="filtroTexto()"
+        (ngModelChange)="filtroTexto.set($event)"
+      />
+    </div>
+  </div>
+
+  @if (dashboard.error()) {
+    <div class="text-[13px] text-[var(--mis-danger)] flex items-center gap-2">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>{{ dashboard.error() }}</span>
+    </div>
+  }
+
+  <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+    @if (dashboard.cargando()) {
+      <div class="p-4 flex flex-col gap-2">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <p-skeleton height="1.5rem" />
+        }
+      </div>
+    } @else {
+      <p-table [value]="reportesFiltrados()" [stripedRows]="true" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 50px;"></th>
+            <th>Nombre</th>
+            <th style="width: 160px;">Tipo</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-reporte>
+          <tr>
+            <td><i [class]="iconoTipo(reporte.reportType)" style="color: var(--mis-primary);"></i></td>
+            <td>
+              @if (reporte.reportType === 'PowerBIReport') {
+                <button type="button" class="text-[var(--mis-accent)] hover:underline text-[13px]" (click)="abrirReporte(reporte)">
+                  {{ reporte.name }}
+                </button>
+              } @else {
+                <span class="text-[13px]">{{ reporte.name }}</span>
+              }
+            </td>
+            <td class="text-[13px]">{{ reporte.reportType }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">No hay reportes disponibles.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </div>
+</div>
+
+<app-usuarios-reporte-dialog [visible]="mostrarUsuarios()" (visibleChange)="mostrarUsuarios.set($event)" [reportes]="dashboard.reportes()" />

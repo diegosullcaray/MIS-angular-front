@@ -60,7 +60,10 @@
             "styles": [
               "src/styles.css"
             ],
-            "serviceWorker": "ngsw-config.json"
+            "serviceWorker": "ngsw-config.json",
+            "allowedCommonJsDependencies": [
+              "powerbi-client"
+            ]
           },
           "configurations": {
             "production": {

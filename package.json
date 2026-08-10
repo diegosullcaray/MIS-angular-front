@@ -31,6 +31,8 @@
     "angular-oauth2-oidc": "^22.0.2",
     "chart.js": "^4.5.1",
     "driver.js": "^1.8.0",
+    "powerbi-client": "^2.24.1",
+    "powerbi-client-angular": "^6.0.3",
     "primeicons": "^7.0.0",
     "primeng": "21.1.9",
     "rxjs": "~7.8.0",

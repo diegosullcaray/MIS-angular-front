@@ -1,0 +1,16 @@
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg pbi-page">
+  <div class="flex items-center gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <p-button icon="pi pi-arrow-circle-left" [outlined]="true" size="small" (onClick)="volver()" />
+    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">{{ reporte()?.name ?? 'Reporte' }}</h2>
+  </div>
+
+  <div class="flex-1 min-h-0 rounded-lg border border-[var(--mis-border)] overflow-hidden">
+    @if (cargando()) {
+      <div class="h-full flex items-center justify-center">
+        <p-skeleton width="100%" height="100%" />
+      </div>
+    } @else if (embedConfig(); as config) {
+      <powerbi-report [embedConfig]="config" [cssClassName]="reportClass"></powerbi-report>
+    }
+  </div>
+</div>
