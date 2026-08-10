@@ -16,18 +16,24 @@
     >
       <ng-template pTemplate="header">
         <tr>
-          <th class="whitespace-nowrap text-[12px] uppercase text-center" style="background-color: #008080; color: white; width: 90px;">Acciones</th>
           @for (col of columnasFijas; track col.key) {
             <th class="whitespace-nowrap text-[12px] uppercase" style="background-color: #008080; color: white;">{{ col.label }}</th>
           }
           @for (col of columnasHistoricasCol(); track col.key) {
             <th class="whitespace-nowrap text-[11px]" style="background-color: #4472c4; color: white;">{{ col.label }}</th>
           }
+          <th class="whitespace-nowrap text-[12px] uppercase text-center" style="background-color: #008080; color: white; width: 90px;">Acciones</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-fila>
         <tr class="text-[13px]" [class.esg-fila-nodo]="fila.is_nod === 1">
+          <td>{{ fila.des_met }}</td>
+          <td>{{ fila.des_med }}</td>
+          <td>{{ fila.des_dis }}</td>
+          @for (col of columnasHistoricasCol(); track col.key) {
+            <td [title]="fila[col.key]">{{ truncar(fila[col.key]) }}</td>
+          }
           <td class="text-center whitespace-nowrap">
             @if (puedeEditar() && fila.is_edit === 1) {
               <p-button
@@ -54,12 +60,6 @@
               />
             }
           </td>
-          <td>{{ fila.des_met }}</td>
-          <td>{{ fila.des_med }}</td>
-          <td>{{ fila.des_dis }}</td>
-          @for (col of columnasHistoricasCol(); track col.key) {
-            <td [title]="fila[col.key]">{{ truncar(fila[col.key]) }}</td>
-          }
         </tr>
       </ng-template>
 

@@ -1,6 +1,13 @@
+/*
+ * background-size: contain (no cover) — la imagen se autorregula al
+ * espacio disponible: siempre se ve completa, escalada proporcionalmente
+ * según su propio aspect-ratio, sin recortarse ni deformarse aunque el
+ * panel sea mucho más alto/ancho que la foto original.
+ */
 .esg-portada-fondo {
   background-image: url('/assets/images/fc/modules/esg/portada.png');
-  background-size: cover;
+  background-size: contain;
+  background-position: center;
   background-repeat: no-repeat;
   min-height: 320px;
 }
