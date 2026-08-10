@@ -123,6 +123,21 @@ export const APP_ROUTES: Routes = [
             (m) => m.FRAMEWORK_ESG_ROUTES
           )
       },
+      {
+        // 'dashboards' — debe coincidir exactamente con el segmento que
+        // usaba el sistema legado STG (app/dashboards, ver
+        // docs/07-modulos/app-routing.module.ts, módulo reportes-e) y con
+        // el act_sec real del backend para este ítem del menú. El módulo en
+        // sí se llama "dashboard" en el Host (carpeta
+        // pages/modules/dashboard) — no confundir con 'dashboard' (singular,
+        // path del módulo "home" arriba: es "Mi espacio", un módulo
+        // distinto sin relación con este).
+        path: 'dashboards',
+        loadChildren: () =>
+          import('./pages/modules/dashboard/dashboard.routes').then(
+            (m) => m.DASHBOARD_ROUTES
+          )
+      },
     ]
   },
   {

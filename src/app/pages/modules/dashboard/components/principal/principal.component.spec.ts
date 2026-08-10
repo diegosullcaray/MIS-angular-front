@@ -1,0 +1,125 @@
+import { signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter, Router, ActivatedRoute } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { PrincipalComponent } from './principal.component';
+import { DashboardService } from '../../services/dashboard.service';
+import type { ReporteDashboard } from '../../models';
+
+const POWER_BI: ReporteDashboard = { id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport', typ_rep: 1 };
+const ORACLE: ReporteDashboard = { id: 'rep-2', name: 'Cartera Oracle', reportType: 'OracleACReport', typ_rep: 2 };
+
+describe('PrincipalComponent', () => {
+  let dashboardFalso: {
+    reportes: ReturnType<typeof signal<ReporteDashboard[]>>;
+    moduloAdmin: ReturnType<typeof signal<boolean>>;
+    cargando: ReturnType<typeof signal<boolean>>;
+    error: ReturnType<typeof signal<string | null>>;
+    cargarReportes: ReturnType<typeof vi.fn>;
+    recargarReportes: ReturnType<typeof vi.fn>;
+    seleccionarReporte: ReturnType<typeof vi.fn>;
+  };
+  let router: Router;
+
+  beforeEach(() => {
+    dashboardFalso = {
+      reportes: signal<ReporteDashboard[]>([POWER_BI, ORACLE]),
+      moduloAdmin: signal(false),
+      cargando: signal(false),
+      error: signal<string | null>(null),
+      cargarReportes: vi.fn(),
+      recargarReportes: vi.fn(),
+      seleccionarReporte: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      imports: [PrincipalComponent],
+      providers: [
+        provideRouter([]),
+        MessageService,
+        { provide: DashboardService, useValue: dashboardFalso },
+        { provide: ActivatedRoute, useValue: {} },
+      ],
+    });
+    router = TestBed.inject(Router);
+  });
+
+  function crear() {
+    const fixture = TestBed.createComponent(PrincipalComponent);
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  it('al construirse, pide la lista de reportes', () => {
+    crear();
+    expect(dashboardFalso.cargarReportes).toHaveBeenCalled();
+  });
+
+  it('reportesFiltrados() sin filtros activos muestra todos los reportes', () => {
+    const fixture = crear();
+    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([POWER_BI, ORACLE]);
+  });
+
+  it('reportesFiltrados() filtra por texto (nombre, sin distinguir mayúsculas)', () => {
+    const fixture = crear();
+    fixture.componentInstance['filtroTexto'].set('ventas');
+    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([POWER_BI]);
+  });
+
+  it('reportesFiltrados() con solo Power BI activo muestra solo typ_rep=1', () => {
+    const fixture = crear();
+    fixture.componentInstance['filtroPowerBI'].set(true);
+    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([POWER_BI]);
+  });
+
+  it('reportesFiltrados() con solo Oracle AC activo muestra solo typ_rep=2', () => {
+    const fixture = crear();
+    fixture.componentInstance['filtroOracle'].set(true);
+    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([ORACLE]);
+  });
+
+  it('reportesFiltrados() con ambos filtros activos muestra todo (igual que ninguno activo)', () => {
+    const fixture = crear();
+    fixture.componentInstance['filtroPowerBI'].set(true);
+    fixture.componentInstance['filtroOracle'].set(true);
+    expect(fixture.componentInstance['reportesFiltrados']()).toEqual([POWER_BI, ORACLE]);
+  });
+
+  it('actualizar() delega en recargarReportes()', () => {
+    const fixture = crear();
+    fixture.componentInstance['actualizar']();
+    expect(dashboardFalso.recargarReportes).toHaveBeenCalled();
+  });
+
+  it('abrirReporte() con un reporte Power BI selecciona el reporte y navega a power-bi', () => {
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const fixture = crear();
+
+    fixture.componentInstance['abrirReporte'](POWER_BI);
+
+    expect(dashboardFalso.seleccionarReporte).toHaveBeenCalledWith(POWER_BI);
+    expect(navSpy).toHaveBeenCalledWith(['power-bi'], expect.anything());
+  });
+
+  it('abrirReporte() con un reporte que no es Power BI no hace nada', () => {
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const fixture = crear();
+
+    fixture.componentInstance['abrirReporte'](ORACLE);
+
+    expect(dashboardFalso.seleccionarReporte).not.toHaveBeenCalled();
+    expect(navSpy).not.toHaveBeenCalled();
+  });
+
+  it('mostrarDialogoUsuarios() abre el diálogo de usuarios', () => {
+    const fixture = crear();
+    fixture.componentInstance['mostrarDialogoUsuarios']();
+    expect(fixture.componentInstance['mostrarUsuarios']()).toBe(true);
+  });
+
+  it('iconoTipo() distingue Power BI de otros tipos', () => {
+    const fixture = crear();
+    expect(fixture.componentInstance['iconoTipo']('PowerBIReport')).toBe('pi pi-chart-line');
+    expect(fixture.componentInstance['iconoTipo']('OracleACReport')).toBe('pi pi-database');
+  });
+});
