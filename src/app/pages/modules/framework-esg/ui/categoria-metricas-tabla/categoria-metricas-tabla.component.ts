@@ -1,6 +1,8 @@
 import { Component, computed, input, output } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import type { EsgMetricaFila } from '../../models';
 
 /** Columna fija que precede a las columnas históricas dinámicas de cada categoría. */
@@ -22,13 +24,18 @@ const COLUMNAS_FIJAS: ColumnaFija[] = [
  *
  * Columnas fijas (metrica/medida/disponibilidad) + columnas históricas
  * dinámicas que llegan por categoría (`resultado.cab.cols` de `esg.res_cat`,
- * ver `FrameworkEsgService.cargarResumenCategoria()`). Selección de una sola
- * fila — habilita los botones "Editar"/"Detalles" de `PrincipalComponent`.
+ * ver `FrameworkEsgService.cargarResumenCategoria()`) + una columna de
+ * Acciones con los botones "Editar"/"Ver detalle" por fila (antes vivían en
+ * el toolbar de `PrincipalComponent`, habilitados por selección).
+ *
+ * Las filas de agrupación (`is_nod===1`, ver `EsgMetricaFila`) se resaltan
+ * con el mismo color que usaba el legado para distinguirlas como
+ * subcabeceras de sección (`rsFn1` de `framework-esg.util.ts`).
  */
 @Component({
   selector: 'app-categoria-metricas-tabla',
   standalone: true,
-  imports: [TableModule, SkeletonModule],
+  imports: [TableModule, SkeletonModule, ButtonModule, TooltipModule],
   templateUrl: './categoria-metricas-tabla.component.html',
   styleUrl: './categoria-metricas-tabla.component.css',
 })
@@ -36,16 +43,22 @@ export class CategoriaMetricasTablaComponent {
   readonly columnasHistoricas = input<string[]>([]);
   readonly filas = input<EsgMetricaFila[]>([]);
   readonly cargando = input(false);
-  readonly filaSeleccionada = output<EsgMetricaFila>();
+  /** Admin del Host O admin/permiso propio del módulo — habilita el botón "Editar" por fila. */
+  readonly puedeEditar = input(false);
+
+  readonly editar = output<EsgMetricaFila>();
+  readonly verDetalle = output<EsgMetricaFila>();
 
   protected readonly columnasFijas = COLUMNAS_FIJAS;
 
   protected readonly columnasHistoricasCol = computed(() => this.columnasHistoricas().map((clave) => ({ key: clave, label: clave })));
 
-  protected onSeleccionFila(fila: unknown): void {
-    if (fila && !Array.isArray(fila)) {
-      this.filaSeleccionada.emit(fila as EsgMetricaFila);
-    }
+  protected onEditar(fila: EsgMetricaFila): void {
+    this.editar.emit(fila);
+  }
+
+  protected onVerDetalle(fila: EsgMetricaFila): void {
+    this.verDetalle.emit(fila);
   }
 
   /** Trunca valores largos de columnas históricas — igual que `format.type: 'truncate', params.limit: 24` del legado. */

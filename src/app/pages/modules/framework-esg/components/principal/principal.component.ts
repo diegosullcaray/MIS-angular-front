@@ -48,8 +48,13 @@ const TABS_CATEGORIAS: TabCategoria[] = [
  * El `is_admin` que viaja a `esg.res_cat` es el admin del Host
  * (`ShellStateService.esAdmin()`, equivalente al `profile.tip_use===0` del
  * legado) — el flag `mod_admin.cfg` de `esg.cfg_mod` solo controla la
- * visibilidad de los botones "Editar"/"Usuarios" en esta pantalla (ver
- * `esAdmin` computed), igual que en el legado.
+ * visibilidad del botón "Usuarios" en esta pantalla y de "Editar" por fila
+ * (ver `esAdmin` computed), igual que en el legado.
+ *
+ * Los botones "Editar"/"Detalles" vivían en el toolbar (habilitados por
+ * selección de fila, ver `disableEditMet`/`disableDetMet` del legado); acá
+ * viven como acciones por fila dentro de la propia tabla
+ * (`CategoriaMetricasTablaComponent`, columna "Acciones").
  */
 @Component({
   selector: 'app-esg-principal',
@@ -91,13 +96,6 @@ export class PrincipalComponent {
   protected readonly esAdmin = computed(() => this.esg.esAdmin(this.configuracion()));
   protected readonly puedeEditarModulo = computed(() => this.configuracion()?.puedeEditar ?? false);
 
-  protected readonly disableEditar = computed(() => this.filaSeleccionada()?.is_edit !== 1);
-  /** Deshabilitado sin selección (igual que `disableDetMet=true` inicial del legado) O si la fila es un nodo de agrupación (`is_nod===1`). */
-  protected readonly disableDetalle = computed(() => {
-    const fila = this.filaSeleccionada();
-    return !fila || fila.is_nod === 1;
-  });
-
   protected readonly metricasPorCategoria = computed<Record<number, EsgMetricaListItem[]>>(() => {
     const resultado: Record<number, EsgMetricaListItem[]> = {};
     Object.entries(this.categorias()).forEach(([cod, resumen]) => {
@@ -120,8 +118,16 @@ export class PrincipalComponent {
     return this.categorias()[codCat]?.filas ?? [];
   }
 
-  protected onFilaSeleccionada(fila: EsgMetricaFila): void {
+  /** Clic en el botón "Editar" de una fila (columna Acciones, `CategoriaMetricasTablaComponent`). */
+  protected onEditarFila(fila: EsgMetricaFila): void {
     this.filaSeleccionada.set(fila);
+    this.mostrarDialogoEditar();
+  }
+
+  /** Clic en el botón "Ver detalle" de una fila (columna Acciones, `CategoriaMetricasTablaComponent`). */
+  protected onVerDetalleFila(fila: EsgMetricaFila): void {
+    this.filaSeleccionada.set(fila);
+    this.mostrarDialogoDetalle();
   }
 
   protected mostrarDialogoEditar(): void {

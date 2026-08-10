@@ -91,39 +91,22 @@ describe('PrincipalComponent', () => {
     });
   });
 
-  it('disableEditar()/disableDetalle() empiezan deshabilitados sin selección', () => {
-    const fixture = crear();
-    expect(fixture.componentInstance['disableEditar']()).toBe(true);
-    expect(fixture.componentInstance['disableDetalle']()).toBe(true);
-  });
-
-  it('disableEditar() se habilita solo si is_edit===1', () => {
-    const fixture = crear();
-    fixture.componentInstance['onFilaSeleccionada'](metrica({ is_edit: 1 }));
-    expect(fixture.componentInstance['disableEditar']()).toBe(false);
-
-    fixture.componentInstance['onFilaSeleccionada'](metrica({ is_edit: 0 }));
-    expect(fixture.componentInstance['disableEditar']()).toBe(true);
-  });
-
-  it('disableDetalle() se deshabilita solo si is_nod===1', () => {
-    const fixture = crear();
-    fixture.componentInstance['onFilaSeleccionada'](metrica({ is_nod: 1 }));
-    expect(fixture.componentInstance['disableDetalle']()).toBe(true);
-
-    fixture.componentInstance['onFilaSeleccionada'](metrica({ is_nod: 0 }));
-    expect(fixture.componentInstance['disableDetalle']()).toBe(false);
-  });
-
-  it('mostrarDialogoEditar()/mostrarDialogoDetalle() fijan modoEdicion y abren el diálogo', () => {
+  it('onEditarFila() selecciona la fila, fija modoEdicion=true y abre el diálogo', () => {
     const fixture = crear();
 
-    fixture.componentInstance['mostrarDialogoEditar']();
+    fixture.componentInstance['onEditarFila'](metrica({ is_edit: 1 }));
+
+    expect(fixture.componentInstance['filaSeleccionada']()?.des_met).toBe('Consumo de papel');
     expect(fixture.componentInstance['modoEdicion']()).toBe(true);
     expect(fixture.componentInstance['mostrarEditar']()).toBe(true);
+  });
 
-    fixture.componentInstance['mostrarEditar'].set(false);
-    fixture.componentInstance['mostrarDialogoDetalle']();
+  it('onVerDetalleFila() selecciona la fila, fija modoEdicion=false y abre el diálogo', () => {
+    const fixture = crear();
+
+    fixture.componentInstance['onVerDetalleFila'](metrica({ cod_met: 7 }));
+
+    expect(fixture.componentInstance['filaSeleccionada']()?.cod_met).toBe(7);
     expect(fixture.componentInstance['modoEdicion']()).toBe(false);
     expect(fixture.componentInstance['mostrarEditar']()).toBe(true);
   });
@@ -137,7 +120,7 @@ describe('PrincipalComponent', () => {
   it('onMetricaGuardada() recarga la categoría de la fila seleccionada', () => {
     const fixture = crear();
     esgFalso.cargarResumenCategoria.mockClear();
-    fixture.componentInstance['onFilaSeleccionada'](metrica({ cod_cat: 3 }));
+    fixture.componentInstance['onVerDetalleFila'](metrica({ cod_cat: 3 }));
 
     fixture.componentInstance['onMetricaGuardada']();
 

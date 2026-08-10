@@ -4,10 +4,6 @@
       <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cuadro de Mando ESG</h2>
 
       <div class="flex items-center gap-2 flex-wrap">
-        @if (puedeEditarModulo() || esAdmin()) {
-          <p-button label="Editar" icon="pi pi-pencil" size="small" [disabled]="disableEditar()" (onClick)="mostrarDialogoEditar()" />
-        }
-        <p-button label="Detalles" icon="pi pi-table" size="small" [outlined]="true" [disabled]="disableDetalle()" (onClick)="mostrarDialogoDetalle()" />
         @if (esAdmin()) {
           <p-button label="Usuarios" icon="pi pi-users" size="small" [outlined]="true" (onClick)="mostrarDialogoUsuarios()" />
         }
@@ -74,7 +70,9 @@
             [columnasHistoricas]="columnasHistoricasDe(tab.codCat)"
             [filas]="filasDe(tab.codCat)"
             [cargando]="cargandoCategorias()[tab.codCat] ?? false"
-            (filaSeleccionada)="onFilaSeleccionada($event)"
+            [puedeEditar]="puedeEditarModulo() || esAdmin()"
+            (editar)="onEditarFila($event)"
+            (verDetalle)="onVerDetalleFila($event)"
           />
         </p-tabpanel>
       }
