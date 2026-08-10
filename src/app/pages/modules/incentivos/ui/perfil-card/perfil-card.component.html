@@ -1,0 +1,49 @@
+@if (!incentivos.cargando() && incentivos.perfil(); as perfil) {
+  <div class="flex flex-col gap-2 h-full">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <div class="flex items-start gap-3 flex-1 min-w-0">
+        <div class="w-14 h-14 shrink-0 rounded-full overflow-hidden bg-[var(--mis-primary-light)] flex items-center justify-center">
+          @if (perfil.imagenUrl) {
+            <img [src]="perfil.imagenUrl" alt="" class="w-full h-full object-cover" referrerpolicy="no-referrer" />
+          } @else {
+            <i class="pi pi-user text-[var(--mis-primary)] text-xl"></i>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5 min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <div class="flex flex-col min-w-0">
+              <span class="font-semibold text-[14px] truncate">{{ perfil.nombre }}</span>
+              <span class="text-[12px] text-[var(--mis-text-secondary)]">{{ perfil.nivel }}: {{ perfil.descripcionNivel }}</span>
+            </div>
+            @if (incentivos.puedeElegirNivel()) {
+              <button
+                type="button"
+                class="pi pi-search text-[14px] w-7 h-7 rounded-full flex items-center justify-center bg-[var(--mis-primary-light)] text-[var(--mis-primary)] hover:opacity-80 shrink-0"
+                title="Cambiar de nivel"
+                (click)="abrirSelector.emit()"
+              ></button>
+            }
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            @for (item of semaforoVisible(); track item.id) {
+              <div class="flex flex-col items-center gap-0.5">
+                <i [class]="item.icono + ' text-[16px] ' + claseIcono(item.val)"></i>
+                <span class="text-[9px] text-[var(--mis-text-tertiary)] text-center max-w-[60px] leading-tight">{{ item.des }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 min-w-0 border-t sm:border-t-0 sm:border-l border-[var(--mis-border)] pt-2 sm:pt-0 sm:pl-3">
+        <app-monetizado-card (abrirCalculadora)="abrirCalculadora.emit()" />
+      </div>
+    </div>
+
+    <div class="text-[9px] text-[var(--mis-text-tertiary)] mt-auto">
+      *Los cálculos son referenciales y están sujetos a variaciones al final de mes y ajustes particulares de la normativa.
+    </div>
+  </div>
+}

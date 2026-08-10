@@ -1,0 +1,117 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '620px' }"
+  [draggable]="false"
+  [resizable]="false"
+  appendTo="body"
+>
+  <ng-template pTemplate="header">
+    <div class="flex items-center gap-2">
+      @if (puedeVolver()) {
+        <p-button icon="pi pi-arrow-left" [text]="true" size="small" (onClick)="volver()" />
+      }
+      <i [class]="icono()"></i>
+      <span class="font-semibold text-[14px]">{{ titulo() }}</span>
+    </div>
+  </ng-template>
+
+  @if (cargando()) {
+    <div class="flex flex-col gap-2 py-4">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <p-skeleton height="1.5rem" />
+      }
+    </div>
+  } @else if (frameActual(); as frame) {
+    <div class="flex flex-col gap-3">
+      <div class="flex flex-col text-[12px] text-[var(--mis-text-secondary)]">
+        <span>{{ frame.desLab }}: {{ frame.desRel }}</span>
+        <span>Fecha: {{ frame.resultado.card.f2 }}</span>
+      </div>
+
+      @if (mostrarTarjetas()) {
+        <div class="grid grid-cols-3 gap-2">
+          <div class="rounded-lg border border-[var(--mis-border)] p-2 flex flex-col gap-1">
+            <span class="text-[10px] text-[var(--mis-text-secondary)]">{{ etiquetas()?.tarjetas?.[0] ?? 'Cierre' }}</span>
+            <span class="text-[13px] font-semibold">{{ formatearValorTarjeta(frame.resultado.card.cie_real) }}</span>
+          </div>
+          <div class="rounded-lg border border-[var(--mis-border)] p-2 flex flex-col gap-1">
+            <span class="text-[10px] text-[var(--mis-text-secondary)]">{{ etiquetas()?.tarjetas?.[1] ?? 'Variación' }}</span>
+            <span class="text-[13px] font-semibold">{{ formatearValorTarjeta(frame.resultado.card.var_real) }}</span>
+          </div>
+          <div class="rounded-lg border p-2 flex flex-col gap-1" [class]="frame.resultado.card.avan >= 1 ? 'border-[var(--mis-success)] bg-[var(--mis-success-light)]' : 'border-[var(--mis-border)]'">
+            <span class="text-[10px] text-[var(--mis-text-secondary)]">{{ etiquetas()?.tarjetas?.[2] ?? 'Meta' }}</span>
+            <span class="text-[13px] font-semibold">{{ formatearMeta() }}</span>
+            <span class="text-[10px]">({{ frame.resultado.card.avan * 100 | number: '.0-1' }}%)</span>
+          </div>
+        </div>
+      }
+
+      @if (muestraBotonesToggle()) {
+        <div class="flex items-center gap-2">
+          <p-button label="Indicadores" icon="pi pi-table" size="small" [outlined]="vistaTabla() !== 'vars'" (onClick)="mostrarVars()" />
+          <p-button label="Ranking" icon="pi pi-list-check" size="small" [outlined]="vistaTabla() !== 'rank'" (onClick)="mostrarRank()" />
+        </div>
+      }
+
+      <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+        @if (vistaTabla() === 'vars') {
+          <p-table [value]="varsMostradas()" styleClass="p-datatable-sm" scrollHeight="360px" [scrollable]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="text-[11px]">Variable</th>
+                <th class="text-[11px] text-right">{{ frame.resultado.card.f1 }}</th>
+                <th class="text-[11px] text-right">{{ frame.resultado.card.f2 }}</th>
+                <th class="text-[11px] text-right">Variación</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-fila>
+              <tr class="text-[12px]" [class.cursor-pointer]="fila.cod_bdd !== undefined && fila.cod_bdd !== null">
+                <td (click)="drillBloque(fila)" [class]="fila.cod_bdd !== undefined && fila.cod_bdd !== null ? 'underline text-[var(--mis-accent)]' : ''">
+                  {{ fila.des_var }}
+                </td>
+                <td class="text-right">{{ formatearCelda(fila.f1, fila.fmt) }}</td>
+                <td class="text-right">{{ formatearCelda(fila.f2, fila.fmt) }}</td>
+                <td class="text-right" [class]="(fila.diff ?? 0) < 0 ? 'text-[var(--mis-danger)]' : ''">{{ formatearCelda(fila.diff, fila.fmt) }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="4" class="text-center text-[12px] text-[var(--mis-text-tertiary)] py-4">Sin indicadores para mostrar.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        } @else {
+          <p-table [value]="frame.resultado.rank" styleClass="p-datatable-sm" scrollHeight="360px" [scrollable]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="text-[11px]">Nivel</th>
+                <th class="text-[11px] text-right">Real</th>
+                <th class="text-[11px] text-right">Meta</th>
+                <th class="text-[11px] text-right">Distancia</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-fila>
+              <tr class="text-[12px] cursor-pointer">
+                <td class="underline" (click)="drillRanking(fila)">{{ fila.des_rel }}</td>
+                <td class="text-right">{{ fila.var_real | number: '.0-0' }}</td>
+                <td class="text-right">{{ fila.met | number: '.0-0' }}</td>
+                <td class="text-right" [class]="fila.diff < 0 ? 'text-[var(--mis-danger)]' : ''">{{ fila.diff | number: '.0-0' }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="4" class="text-center text-[12px] text-[var(--mis-text-tertiary)] py-4">Sin ranking para mostrar.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        }
+      </div>
+
+      @if (etiquetas()?.nota; as nota) {
+        <span class="text-[10px] text-[var(--mis-text-tertiary)]">{{ nota }}</span>
+      }
+    </div>
+  }
+</p-dialog>

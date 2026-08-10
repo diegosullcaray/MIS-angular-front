@@ -1,0 +1,22 @@
+@if (!incentivos.cargando()) {
+  <div class="grid grid-cols-2 gap-2 h-full content-start">
+    @for (item of incentivos.avances(); track item.id) {
+      @if (item.show) {
+        <button
+          type="button"
+          class="flex flex-col items-center gap-1 p-1.5 rounded-lg transition-colors"
+          [class]="item.enab ? 'cursor-pointer hover:bg-black/5' : ''"
+          [disabled]="!item.enab"
+          (click)="onClic(item)"
+        >
+          <div class="flex items-center gap-1">
+            <i [class]="'pi pi-circle-fill text-[8px] ' + colorEstado(item)"></i>
+            <span class="text-[10px] text-center leading-tight">{{ item.des }}</span>
+          </div>
+          <p-knob [ngModel]="item.per" [readonly]="true" [size]="64" [valueColor]="colorAvance(item)" rangeColor="#e5e7eb" [showValue]="false" [strokeWidth]="10" />
+          <span class="text-[11px] font-semibold">{{ item.val * 100 | number: '.0-1' }}%</span>
+        </button>
+      }
+    }
+  </div>
+}

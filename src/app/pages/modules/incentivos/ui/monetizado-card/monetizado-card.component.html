@@ -1,0 +1,52 @@
+@if (!incentivos.cargando()) {
+  <div class="flex flex-col gap-2 text-[13px]">
+    <div class="grid grid-cols-2 gap-2">
+      <div class="flex flex-col">
+        <span class="text-[11px] text-[var(--mis-text-secondary)]">Bono Base:</span>
+        <span class="font-semibold">S/. {{ incentivos.monetizado().bonoBase | number: '.0-2' }}</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[11px] text-[var(--mis-text-secondary)]">Bono Plus:</span>
+        <span class="font-semibold">S/. {{ incentivos.monetizado().bonoPlus | number: '.0-2' }}</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[11px] text-[var(--mis-text-secondary)]">Bono Super Plus:</span>
+        <span class="font-semibold" [class]="claseBonoSuperPlus()">S/. {{ incentivos.monetizado().bonoSuperPlus | number: '.0-2' }}</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[11px] text-[var(--mis-text-secondary)]">Total Monetizado:</span>
+        @if (incentivos.monetizado().codigoSituacion === 1) {
+          <span class="font-bold">S/. {{ incentivos.monetizado().bonoTotal | number: '.0-2' }}</span>
+        } @else {
+          <span class="font-bold">S/. 0</span>
+          <span class="text-[10px] text-[var(--mis-text-tertiary)]">(S/. {{ incentivos.monetizado().bonoTotal | number: '.0-2' }})</span>
+        }
+      </div>
+    </div>
+
+    <div class="flex items-center gap-1.5">
+      <span>Comisión:</span>
+      <span class="font-semibold" [class]="claseSituacion()">{{ incentivos.monetizado().descripcionSituacion }}</span>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 flex-wrap">
+      @if (incentivos.monetizado().mostrarModelo) {
+        <div class="text-[13px] font-bold" style="color: #ea580c;">
+          <span>Modelo:</span>
+          <span>{{ incentivos.monetizado().modeloDescripcion }}</span>
+        </div>
+      }
+      @if (incentivos.monetizado().puedeSimular) {
+        <button
+          type="button"
+          class="pi pi-calculator text-[16px] w-8 h-8 rounded-full flex items-center justify-center bg-[var(--mis-primary-light)] text-[var(--mis-primary)] hover:opacity-80"
+          title="Calculadora"
+          (click)="abrirCalculadora.emit()"
+        ></button>
+      }
+      <div class="border border-[var(--mis-border-strong)] rounded px-2 py-1 text-[11px]">
+        {{ fechaCorteFormateada() }}
+      </div>
+    </div>
+  </div>
+}

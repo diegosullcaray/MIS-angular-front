@@ -1,0 +1,76 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '520px' }"
+  [draggable]="false"
+  [resizable]="false"
+  header="Clientes Bancarizados"
+  appendTo="body"
+>
+  @if (cargando()) {
+    <div class="flex flex-col gap-2 py-4">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <p-skeleton height="1.5rem" />
+      }
+    </div>
+  } @else {
+    <div class="flex flex-col gap-3">
+      <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+        <p-table [value]="resultado().filas" styleClass="p-datatable-sm" scrollHeight="360px" [scrollable]="true">
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="text-[11px]">Nombre</th>
+              <th class="text-[11px] text-center">Mujer</th>
+              <th class="text-[11px] text-center">Rural</th>
+              <th class="text-[11px] text-center">Migrante</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-fila>
+            <tr class="text-[12px]" [class]="claseFila(fila.tf)">
+              <td>{{ fila.nom }}</td>
+              <td class="text-center"><i class="pi pi-circle-fill text-[10px]" [class]="claseIndicador(fila.gen)"></i></td>
+              <td class="text-center"><i class="pi pi-circle-fill text-[10px]" [class]="claseIndicador(fila.rur)"></i></td>
+              <td class="text-center"><i class="pi pi-circle-fill text-[10px]" [class]="claseIndicador(fila.mig)"></i></td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center text-[12px] text-[var(--mis-text-tertiary)] py-4">Sin clientes bancarizados para mostrar.</td>
+            </tr>
+          </ng-template>
+          @if (resultado().totales; as totales) {
+            <ng-template pTemplate="footer">
+              <tr class="text-[12px] font-semibold">
+                <td>Parciales:</td>
+                <td class="text-center">{{ totales.gen_c }}</td>
+                <td class="text-center">{{ totales.rur_c }}</td>
+                <td class="text-center">{{ totales.mig_c }}</td>
+              </tr>
+              <tr class="text-[12px] font-semibold">
+                <td>Total:</td>
+                <td colspan="2"></td>
+                <td class="text-center">{{ totales.tot_c }}</td>
+              </tr>
+              <tr class="text-[12px] font-semibold">
+                <td>Monetización:</td>
+                <td colspan="3">S/. {{ totales.tot_m | number: '.0-2' }}</td>
+              </tr>
+            </ng-template>
+          }
+        </p-table>
+      </div>
+
+      <div class="flex flex-col gap-1 text-[11px]">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded bg-[var(--mis-primary-light)]"></span>
+          <span>Trasladado (Sí contabiliza)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded bg-[var(--mis-warning-light)]"></span>
+          <span>Heredado (No contabiliza)</span>
+        </div>
+      </div>
+    </div>
+  }
+</p-dialog>
