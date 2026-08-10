@@ -20,6 +20,24 @@ const RESPUESTA_LOGIN: IWinderResponse = {
         tip_use: 0,
       },
       sid: 'winder-sid-1',
+      alternates: [
+        { email_alt: 'carlos.ruiz@confianza.pe', nombre_alt: 'Carlos Ruiz', cargo_alt: 'Supervisor' },
+      ],
+    },
+  },
+};
+
+const RESPUESTA_ALT_LOGIN: IWinderResponse = {
+  code: '0',
+  headers: {},
+  body: {
+    login_response: {
+      profile: {
+        email: 'carlos.ruiz@confianza.pe',
+        nombre: 'Carlos Ruiz',
+        cod_bt: 'BT-002',
+        tip_use: 1,
+      },
     },
   },
 };
@@ -41,11 +59,14 @@ describe('AuthService', () => {
   let service: AuthService;
   let shell: ShellStateService;
   let router: Router;
-  let modSysLoginService: { login: ReturnType<typeof vi.fn> };
+  let modSysLoginService: { login: ReturnType<typeof vi.fn>; altLogin: ReturnType<typeof vi.fn> };
   let oauthServiceFalso: ReturnType<typeof crearOAuthServiceFalso>;
 
   function configurar(oauthOverrides: Partial<Record<keyof OAuthService, unknown>> = {}) {
-    modSysLoginService = { login: vi.fn().mockReturnValue(of(RESPUESTA_LOGIN)) };
+    modSysLoginService = {
+      login: vi.fn().mockReturnValue(of(RESPUESTA_LOGIN)),
+      altLogin: vi.fn().mockReturnValue(of(RESPUESTA_ALT_LOGIN)),
+    };
     oauthServiceFalso = crearOAuthServiceFalso(oauthOverrides);
 
     TestBed.configureTestingModule({
@@ -237,5 +258,116 @@ describe('AuthService', () => {
     vi.advanceTimersByTime(15 * 60 * 1000);
 
     expect(navSpy).not.toHaveBeenCalledWith('/error/401');
+  });
+
+  describe('Cambiar usuario (alternates)', () => {
+    async function iniciarSesion() {
+      configurar({
+        hasValidIdToken: vi.fn().mockReturnValue(true),
+        getIdentityClaims: vi.fn().mockReturnValue({ email: 'ana.torres@confianza.pe', name: 'Ana Torres' }),
+      });
+      await service.completarLoginGoogle();
+    }
+
+    it('completarLoginGoogle() expone los alternates recibidos del backend', async () => {
+      await iniciarSesion();
+
+      expect(service.alternates()).toEqual([
+        { email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz', cargo: 'Supervisor' },
+      ]);
+      expect(service.esUsuarioAlterno()).toBe(false);
+      expect(service.puedeCambiarUsuario()).toBe(true);
+    });
+
+    it('puedeCambiarUsuario() es falso cuando el usuario no tiene alternates asignados', async () => {
+      configurar({
+        hasValidIdToken: vi.fn().mockReturnValue(true),
+        getIdentityClaims: vi.fn().mockReturnValue({ email: 'ana.torres@confianza.pe' }),
+      });
+      modSysLoginService.login.mockReturnValue(
+        of({
+          code: '0',
+          headers: {},
+          body: {
+            login_response: {
+              profile: { email: environment.devUser, nombre: 'Ana Torres', cod_bt: 'BT-001', tip_use: 0 },
+              sid: 'winder-sid-1',
+            },
+          },
+        })
+      );
+
+      await service.completarLoginGoogle();
+
+      expect(service.alternates()).toEqual([]);
+      expect(service.puedeCambiarUsuario()).toBe(false);
+    });
+
+    it('cambiarAUsuarioAlterno() cambia el usuario mostrado sin tocar el token de sesión', async () => {
+      await iniciarSesion();
+      const tokenAntes = service.token();
+
+      await service.cambiarAUsuarioAlterno({ email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz' });
+
+      expect(modSysLoginService.altLogin).toHaveBeenCalledWith('carlos.ruiz@confianza.pe');
+      expect(shell.usuarioActivo()?.email).toBe('carlos.ruiz@confianza.pe');
+      expect(shell.usuarioActivo()?.codBt).toBe('BT-002');
+      expect(service.token()).toBe(tokenAntes);
+      expect(service.esUsuarioAlterno()).toBe(true);
+      expect(service.puedeCambiarUsuario()).toBe(false);
+
+      const persistida = JSON.parse(sessionStorage.getItem('mis.sesion')!);
+      expect(persistida.usuario.email).toBe('carlos.ruiz@confianza.pe');
+      expect(persistida.usuarioOriginal.email).toBe(environment.devUser);
+    });
+
+    it('cambiarAUsuarioAlterno() preserva expiraEn — no reinicia el cronómetro de la sesión', async () => {
+      await iniciarSesion();
+      const expiraEnAntes = JSON.parse(sessionStorage.getItem('mis.sesion')!).expiraEn;
+
+      await service.cambiarAUsuarioAlterno({ email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz' });
+
+      const expiraEnDespues = JSON.parse(sessionStorage.getItem('mis.sesion')!).expiraEn;
+      expect(expiraEnDespues).toBe(expiraEnAntes);
+    });
+
+    it('volverAUsuarioOriginal() restaura la identidad original sin llamar al backend de nuevo', async () => {
+      await iniciarSesion();
+      await service.cambiarAUsuarioAlterno({ email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz' });
+      modSysLoginService.login.mockClear();
+      modSysLoginService.altLogin.mockClear();
+
+      service.volverAUsuarioOriginal();
+
+      expect(modSysLoginService.login).not.toHaveBeenCalled();
+      expect(modSysLoginService.altLogin).not.toHaveBeenCalled();
+      expect(shell.usuarioActivo()?.email).toBe(environment.devUser);
+      expect(service.esUsuarioAlterno()).toBe(false);
+      expect(service.puedeCambiarUsuario()).toBe(true);
+
+      const persistida = JSON.parse(sessionStorage.getItem('mis.sesion')!);
+      expect(persistida.usuarioOriginal).toBeUndefined();
+    });
+
+    it('cambiarAUsuarioAlterno() traduce un error del backend Ant en un mensaje legible', async () => {
+      await iniciarSesion();
+      modSysLoginService.altLogin.mockReturnValue(throwError(() => new Error('Usuario alterno no autorizado')));
+
+      await expect(
+        service.cambiarAUsuarioAlterno({ email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz' })
+      ).rejects.toThrow('Usuario alterno no autorizado');
+      expect(shell.usuarioActivo()?.email).toBe(environment.devUser);
+      expect(service.esUsuarioAlterno()).toBe(false);
+    });
+
+    it('cerrarSesion() limpia también los alternates y la identidad original', async () => {
+      await iniciarSesion();
+      await service.cambiarAUsuarioAlterno({ email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz' });
+
+      service.cerrarSesion(false);
+
+      expect(service.alternates()).toEqual([]);
+      expect(service.esUsuarioAlterno()).toBe(false);
+    });
   });
 });

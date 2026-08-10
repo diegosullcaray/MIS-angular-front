@@ -1,4 +1,4 @@
-import { Component, inject, computed, effect, signal, OnInit } from '@angular/core';
+import { Component, inject, computed, effect, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
@@ -19,7 +19,7 @@ const DURACION_TRANSICION_PANEL_MS = 300;
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   protected readonly shell = inject(ShellStateService);
   private readonly menuStg = inject(MenuStgService);
   private readonly kaypacha = inject(KaypachaService);
@@ -39,13 +39,18 @@ export class SidebarComponent implements OnInit {
     effect(() => {
       this.shell.setSidebarTienePanel(this.panelActivo() !== null);
     });
-  }
 
-  ngOnInit() {
-    const usuario = this.shell.usuarioActivo();
-    if (usuario?.email) {
-      this.menuStg.cargar(usuario.email);
-    }
+    // Reactivo (no ngOnInit de una sola vez): al cambiar/revertir un usuario
+    // alterno (ver `AuthService.cambiarAUsuarioAlterno`), `usuarioActivo()`
+    // cambia de email y el árbol de STG debe recargarse para ese usuario —
+    // `MenuStgService.cargar` ya deduplica por email, así que llamarlo de
+    // nuevo con el mismo email no genera una petición extra.
+    effect(() => {
+      const usuario = this.shell.usuarioActivo();
+      if (usuario?.email) {
+        this.menuStg.cargar(usuario.email);
+      }
+    });
   }
 
   protected readonly iconActivoId = this.shell.sidebarIconActivo;

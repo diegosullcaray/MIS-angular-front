@@ -94,6 +94,9 @@
 
   --mis-radius-xs: 4px;
   --mis-font-bold: 700;
+
+  /* Por encima de contenido/paneles normales (sidebar, overlays z-40/z-50) pero debajo de overlays de bloqueo total (redirect/spinner, z-[999]+). Antes indefinida: el dropdown del header (header.component.html) y su overlay de click-afuera quedaban ambos en z-index:auto, y el overlay (más tarde en el DOM) tapaba los botones del menú. */
+  --mis-z-dropdown: 1000;
 }
 
 /* Dark Mode Tokens */

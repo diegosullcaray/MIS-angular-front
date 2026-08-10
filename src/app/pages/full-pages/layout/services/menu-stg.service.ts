@@ -36,12 +36,18 @@ export class MenuStgService {
   /** Nodos de segundo nivel+ de cada sistema STG (cod_par → hijos), para Col 2 y el breadcrumb. */
   readonly hijosPorSistema = signal<Record<string, SidebarNavRuta[]>>({});
 
-  private cargado = false;
+  /** Email para el que ya se cargó (o está cargando) el árbol actual; `null` si todavía no se cargó ninguno. */
+  private emailCargado: string | null = null;
 
-  /** Carga el menú una sola vez por sesión; llamadas repetidas no vuelven a pedirlo. */
+  /**
+   * Carga el menú del email dado — solo vuelve a pedirlo al backend si el
+   * email cambia (ej. al cambiar/revertir un usuario alterno, ver
+   * `AuthService.cambiarAUsuarioAlterno`); llamadas repetidas con el mismo
+   * email no generan una nueva petición.
+   */
   cargar(email: string): void {
-    if (this.cargado) return;
-    this.cargado = true;
+    if (this.emailCargado === email) return;
+    this.emailCargado = email;
 
     this.modSysAdminService.getMenuItems(email).subscribe({
       next: (response) => {

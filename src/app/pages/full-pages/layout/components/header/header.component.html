@@ -28,7 +28,13 @@
     <!-- Pill de usuario — en mobile solo se ve el círculo del avatar; nombre, rol y flecha se ocultan -->
     <div class="flex items-center gap-2 p-1 pr-1 sm:pr-2 rounded-full border-1.5 border-[var(--mis-border-strong)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-primary-light)] hover:border-[var(--mis-primary)]"
          (click)="toggleDropdown()" (keydown.enter)="toggleDropdown()" tabindex="0" role="button" aria-haspopup="true" [attr.aria-expanded]="dropdownOpen()">
-      <div class="w-7 h-7 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-xs font-semibold shrink-0">{{ shell.inicialesUsuario() }}</div>
+      <div class="relative w-7 h-7 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-xs font-semibold shrink-0" [class.avatar-alterno]="auth.esUsuarioAlterno()">
+        @if (auth.esUsuarioAlterno()) {
+          <ng-icon name="lucideUsers" size="14" aria-label="Viendo como otro usuario" />
+        } @else {
+          {{ shell.inicialesUsuario() }}
+        }
+      </div>
       <div class="hidden sm:flex flex-col">
         <span class="text-sm font-medium text-[var(--mis-text-primary)] leading-tight">{{ shell.usuarioActivo()?.nombre }}</span>
         <span class="text-[10px] text-[var(--mis-text-tertiary)] leading-none">{{ rolLabel() }}</span>
@@ -40,7 +46,13 @@
     @if (dropdownOpen()) {
       <div class="absolute top-[calc(100%+8px)] right-0 w-[240px] bg-[var(--mis-surface)] border border-[var(--mis-border)] rounded-[10px] shadow-[var(--mis-shadow-lg)] z-[var(--mis-z-dropdown)] overflow-hidden animate-dropdownFadeIn" role="menu">
         <div class="flex items-center gap-3 p-3 px-4">
-          <div class="w-9 h-9 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-sm font-semibold shrink-0">{{ shell.inicialesUsuario() }}</div>
+          <div class="relative w-9 h-9 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-sm font-semibold shrink-0" [class.avatar-alterno]="auth.esUsuarioAlterno()">
+            @if (auth.esUsuarioAlterno()) {
+              <ng-icon name="lucideUsers" size="16" aria-label="Viendo como otro usuario" />
+            } @else {
+              {{ shell.inicialesUsuario() }}
+            }
+          </div>
           <div>
             <div class="text-sm font-semibold text-[var(--mis-text-primary)]">{{ shell.usuarioActivo()?.nombre }}</div>
             <div class="text-xs text-[var(--mis-text-tertiary)]">{{ shell.usuarioActivo()?.email }}</div>
@@ -55,6 +67,20 @@
           <ng-icon name="lucideSettings" size="14" />
           Preferencias
         </button>
+        @if (auth.puedeCambiarUsuario()) {
+          <div class="h-[1px] bg-[var(--mis-border)] my-1"></div>
+          <button class="flex items-center gap-3 w-full p-2 px-4 border-0 bg-transparent text-sm text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem" (click)="abrirCambiarUsuario()">
+            <ng-icon name="lucideUsers" size="14" />
+            Cambiar usuario
+          </button>
+        }
+        @if (auth.esUsuarioAlterno()) {
+          <div class="h-[1px] bg-[var(--mis-border)] my-1"></div>
+          <button class="flex items-center gap-3 w-full p-2 px-4 border-0 bg-transparent text-sm text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem" (click)="volverAUsuarioOriginal()">
+            <ng-icon name="lucideUser" size="14" />
+            Mi usuario
+          </button>
+        }
         <div class="h-[1px] bg-[var(--mis-border)] my-1"></div>
         <button class="flex items-center gap-3 w-full p-2 px-4 border-0 bg-transparent text-sm text-[var(--mis-danger)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-danger-light)]" role="menuitem" (click)="pedirConfirmacionSalir()">
           <ng-icon name="lucideLogOut" size="14" />
@@ -98,4 +124,10 @@
       />
     </div>
   </p-dialog>
+
+  <!-- Cambiar usuario (usuarios alternos) -->
+  <app-cambiar-usuario-dialog
+    [visible]="cambiarUsuarioOpen()"
+    (visibleChange)="cambiarUsuarioOpen.set($event)"
+  />
 </div>
