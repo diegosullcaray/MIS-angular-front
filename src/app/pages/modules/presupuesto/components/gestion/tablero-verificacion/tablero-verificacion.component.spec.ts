@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { TableroVerificacionComponent } from './tablero-verificacion.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
@@ -16,7 +17,7 @@ describe('TableroVerificacionComponent', () => {
     presupuestoFalso = { obtenerLogVerificaciones: vi.fn() };
     TestBed.configureTestingModule({
       imports: [TableroVerificacionComponent],
-      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }],
+      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }, MessageService],
     });
   });
 

@@ -20,7 +20,7 @@ describe('ErrorPageComponent', () => {
 
     const texto = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(texto).toContain('500');
-    expect(texto).toContain('Algo salió mal'); // fallback (500 no está en HTTP_ERROR_MESSAGES)
+    expect(texto).toContain('Error del servidor'); // 500 está mapeado en HTTP_ERROR_MESSAGES (no cae al fallback genérico)
   });
 
   it('muestra el título/mensaje mapeado para un código conocido (403)', () => {
@@ -70,10 +70,16 @@ describe('ErrorPageComponent', () => {
     const fixture = TestBed.createComponent(ErrorPageComponent);
     fixture.componentRef.setInput('code', '408');
     fixture.detectChanges();
-    const reloadSpy = vi.spyOn(window.location, 'reload').mockImplementation(() => {});
+    // jsdom define `window.location.reload` como no configurable — vi.spyOn()
+    // directo lanza "Cannot redefine property". Se reemplaza `window.location`
+    // entero por un stub y se restaura al terminar.
+    const locationOriginal = window.location;
+    const reloadSpy = vi.fn();
+    Object.defineProperty(window, 'location', { value: { ...locationOriginal, reload: reloadSpy }, configurable: true });
 
     ((fixture.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement).click();
 
     expect(reloadSpy).toHaveBeenCalled();
+    Object.defineProperty(window, 'location', { value: locationOriginal, configurable: true });
   });
 });

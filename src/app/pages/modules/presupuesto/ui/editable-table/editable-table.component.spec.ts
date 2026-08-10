@@ -52,18 +52,21 @@ describe('EditableTableComponent', () => {
 
   it('formatear() muestra los porcentajes multiplicados por 100 con 2 decimales y el símbolo "%"', () => {
     const fixture = crear();
+    fixture.componentRef.setInput('columnas', []);
     fixture.detectChanges();
     expect(fixture.componentInstance['formatear'](0.1234, 'percent')).toBe('12.34%');
   });
 
   it('formatear() muestra los números con separador de miles (formato es-PE)', () => {
     const fixture = crear();
+    fixture.componentRef.setInput('columnas', []);
     fixture.detectChanges();
     expect(fixture.componentInstance['formatear'](12345.678, 'number')).toBe('12,345.68');
   });
 
   it('formatear() de un valor vacío/nulo devuelve una cadena vacía', () => {
     const fixture = crear();
+    fixture.componentRef.setInput('columnas', []);
     fixture.detectChanges();
     expect(fixture.componentInstance['formatear'](null, 'number')).toBe('');
     expect(fixture.componentInstance['formatear'](undefined, 'number')).toBe('');
@@ -71,6 +74,7 @@ describe('EditableTableComponent', () => {
 
   it('esEditable() por defecto es siempre false (columnas de solo lectura, ej. Comp. Prod.)', () => {
     const fixture = crear();
+    fixture.componentRef.setInput('columnas', []);
     fixture.detectChanges();
     expect(fixture.componentInstance.esEditable()({ ord: 1 }, 'd_1')).toBe(false);
   });

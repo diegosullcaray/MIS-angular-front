@@ -35,7 +35,11 @@ describe('WinderService', () => {
   function configCifradaDe(packet: RESTPacket): Record<string, unknown> {
     const url = packet.computeURL();
     const cipher = new URL(url).searchParams.get('w')!;
-    const plano = cypher.decryptFromRoute(cipher, CONN.secret);
+    // El parámetro `w` se cifra con el secreto global (`environment.cypherSecret`,
+    // el default de `CypherService.encrypt()`) — no con el secreto del módulo
+    // (`CONN.secret`), que solo viaja como el campo `key` DENTRO del JSON cifrado
+    // (ver `WinderService.winderConfig()`).
+    const plano = cypher.decryptFromRoute(cipher, environment.cypherSecret);
     return JSON.parse(plano);
   }
 

@@ -1,22 +1,25 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { SegurosOperacionesComponent } from './seguros-operaciones.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 
 describe('SegurosOperacionesComponent', () => {
   let presupuestoFalso: {
+    esAdmin: ReturnType<typeof vi.fn>;
     obtenerResumenSegOperaciones: ReturnType<typeof vi.fn>;
     guardarResumenSegOperaciones: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
     presupuestoFalso = {
+      esAdmin: vi.fn().mockReturnValue(false),
       obtenerResumenSegOperaciones: vi.fn().mockReturnValue(of({ ws: [], bp: {} })),
       guardarResumenSegOperaciones: vi.fn().mockReturnValue(of({})),
     };
     TestBed.configureTestingModule({
       imports: [SegurosOperacionesComponent],
-      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }],
+      providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }, MessageService],
     });
   });
 

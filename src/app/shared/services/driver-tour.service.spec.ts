@@ -1,9 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { DriverTourService } from './driver-tour.service';
+import type { DriverTourService } from './driver-tour.service';
 
-const driveMock = vi.fn();
-const destroyMock = vi.fn();
-const driverFactoryMock = vi.fn((_config: unknown) => ({ drive: driveMock, destroy: destroyMock }));
+// vi.mock() se hoistea sobre los imports, así que la factory no puede cerrar
+// sobre consts normales del módulo (todavía no existirían en ese punto) —
+// vi.hoisted() sube también la creación de los mocks para que estén listas.
+const { driveMock, destroyMock, driverFactoryMock } = vi.hoisted(() => {
+  const driveMock = vi.fn();
+  const destroyMock = vi.fn();
+  const driverFactoryMock = vi.fn((_config: unknown) => ({ drive: driveMock, destroy: destroyMock }));
+  return { driveMock, destroyMock, driverFactoryMock };
+});
 
 vi.mock('driver.js', () => ({
   driver: (config: unknown) => driverFactoryMock(config),
@@ -12,13 +18,22 @@ vi.mock('driver.js', () => ({
 describe('DriverTourService', () => {
   let service: DriverTourService;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     driveMock.mockClear();
     destroyMock.mockClear();
     driverFactoryMock.mockClear();
 
+    // Esta suite corre con --isolate=false (un solo realm de JS para todos
+    // los specs, ver angular.json), así que si otro spec ya importó
+    // driver-tour.service.ts antes que este archivo registrara su vi.mock,
+    // ese módulo quedaría con el `driver()` real de driver.js "de fábrica".
+    // vi.resetModules() + import() dinámico fuerzan una reevaluación fresca
+    // del módulo, ahora sí con el mock ya activo.
+    vi.resetModules();
+    const { DriverTourService: DriverTourServiceCtor } = await import('./driver-tour.service');
+
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DriverTourService);
+    service = TestBed.inject(DriverTourServiceCtor);
   });
 
   it('no tiene un tour activo al inicio', () => {
