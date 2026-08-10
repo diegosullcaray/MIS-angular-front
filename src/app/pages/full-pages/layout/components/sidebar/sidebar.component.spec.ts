@@ -34,6 +34,14 @@ describe('SidebarComponent', () => {
   let redirectFalso: { redirigir: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
+    // jsdom no implementa matchMedia por defecto y los specs de este proyecto
+    // corren con --isolate=false (globals compartidos entre archivos) — sin
+    // este stub, si ningún otro spec lo definió antes en la misma corrida,
+    // esMobil() revienta con "window.matchMedia is not a function".
+    if (typeof window.matchMedia !== 'function') {
+      window.matchMedia = vi.fn().mockReturnValue({ matches: false } as MediaQueryList);
+    }
+
     menuStgFalso = {
       sistemas: signal<SidebarIcon[]>([]),
       hijosPorSistema: signal<Record<string, SidebarNavRuta[]>>({}),
@@ -70,15 +78,27 @@ describe('SidebarComponent', () => {
     expect(kaypachaFalso.cargarCategorias).toHaveBeenCalled();
   });
 
-  it('ngOnInit carga el menú STG solo si hay un usuario activo con email', () => {
+  it('carga el menú STG solo si hay un usuario activo con email', () => {
     crear();
     expect(menuStgFalso.cargar).not.toHaveBeenCalled();
   });
 
-  it('ngOnInit carga el menú STG con el email del usuario activo', () => {
+  it('carga el menú STG con el email del usuario activo', () => {
     shell.setUsuarioActivo(usuario());
     crear();
     expect(menuStgFalso.cargar).toHaveBeenCalledWith('ana.torres@confianza.pe');
+  });
+
+  it('recarga el menú STG reactivamente cuando cambia el usuario activo (cambiar/revertir usuario alterno)', () => {
+    shell.setUsuarioActivo(usuario());
+    const fixture = crear();
+    expect(menuStgFalso.cargar).toHaveBeenCalledWith('ana.torres@confianza.pe');
+
+    shell.setUsuarioActivo(usuario({ id: 'u-2', email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz' }));
+    fixture.detectChanges();
+
+    expect(menuStgFalso.cargar).toHaveBeenCalledWith('carlos.ruiz@confianza.pe');
+    expect(menuStgFalso.cargar).toHaveBeenCalledTimes(2);
   });
 
   it('iconos() siempre incluye "host-inicio" primero, seguido de los sistemas de STG tal cual', () => {

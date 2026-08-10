@@ -5,7 +5,7 @@ import { filter, map } from 'rxjs';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideChevronDown, lucideUser, lucideSettings,
-  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle
+  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle, lucideUsers
 } from '@ng-icons/lucide';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { DialogModule } from 'primeng/dialog';
@@ -15,6 +15,7 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 import { AuthService } from '../../../auth/service/auth.service';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
+import { CambiarUsuarioDialogComponent } from '../dialogs/cambiar-usuario-dialog/cambiar-usuario-dialog.component';
 
 /** Etiquetas de los segmentos de ruta conocidos del Host. */
 const SEGMENTO_LABELS: Record<string, string> = {
@@ -45,22 +46,23 @@ const SEGMENTO_LABELS: Record<string, string> = {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule],
+  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule, CambiarUsuarioDialogComponent],
   viewProviders: [provideIcons({
     lucideChevronDown, lucideUser, lucideSettings,
-    lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
+    lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle, lucideUsers,
   })],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
   protected readonly shell = inject(ShellStateService);
-  private readonly auth = inject(AuthService);
+  protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly menuStg = inject(MenuStgService);
   private readonly kaypacha = inject(KaypachaService);
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
+  protected readonly cambiarUsuarioOpen = signal(false);
 
   /** URL actual como signal (zoneless-friendly). */
   private readonly urlActual = toSignal(
@@ -165,6 +167,17 @@ export class HeaderComponent {
   protected pedirConfirmacionSalir(): void {
     this.dropdownOpen.set(false);
     this.confirmarSalirOpen.set(true);
+  }
+
+  protected abrirCambiarUsuario(): void {
+    this.dropdownOpen.set(false);
+    this.cambiarUsuarioOpen.set(true);
+  }
+
+  /** Vuelve a la identidad original (STG: `LoginService.onOriLogin`) — instantáneo, sin diálogo de confirmación, igual que el legado. */
+  protected volverAUsuarioOriginal(): void {
+    this.dropdownOpen.set(false);
+    this.auth.volverAUsuarioOriginal();
   }
 
   protected async confirmarCerrarSesion(): Promise<void> {

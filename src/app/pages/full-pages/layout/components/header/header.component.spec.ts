@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
+import { MessageService } from 'primeng/api';
 import { HeaderComponent } from './header.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AuthService } from '../../../auth/service/auth.service';
@@ -27,12 +28,26 @@ function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
 describe('HeaderComponent', () => {
   let shell: ShellStateService;
   let router: Router;
-  let authFalso: { cerrarSesion: ReturnType<typeof vi.fn> };
+  let authFalso: {
+    cerrarSesion: ReturnType<typeof vi.fn>;
+    esUsuarioAlterno: ReturnType<typeof vi.fn>;
+    puedeCambiarUsuario: ReturnType<typeof vi.fn>;
+    alternates: ReturnType<typeof vi.fn>;
+    cambiarAUsuarioAlterno: ReturnType<typeof vi.fn>;
+    volverAUsuarioOriginal: ReturnType<typeof vi.fn>;
+  };
   let menuStgFalso: { sistemas: ReturnType<typeof signal<SidebarIcon[]>>; buscarPorRuta: ReturnType<typeof vi.fn> };
   let kaypachaFalso: { buscarCategoria: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    authFalso = { cerrarSesion: vi.fn() };
+    authFalso = {
+      cerrarSesion: vi.fn(),
+      esUsuarioAlterno: vi.fn().mockReturnValue(false),
+      puedeCambiarUsuario: vi.fn().mockReturnValue(false),
+      alternates: vi.fn().mockReturnValue([]),
+      cambiarAUsuarioAlterno: vi.fn().mockResolvedValue(undefined),
+      volverAUsuarioOriginal: vi.fn(),
+    };
     menuStgFalso = { sistemas: signal<SidebarIcon[]>([]), buscarPorRuta: vi.fn().mockReturnValue(null) };
     kaypachaFalso = { buscarCategoria: vi.fn().mockReturnValue(undefined) };
 
@@ -43,6 +58,7 @@ describe('HeaderComponent', () => {
         { provide: AuthService, useValue: authFalso },
         { provide: MenuStgService, useValue: menuStgFalso },
         { provide: KaypachaService, useValue: kaypachaFalso },
+        MessageService,
       ],
     });
     shell = TestBed.inject(ShellStateService);
@@ -190,5 +206,59 @@ describe('HeaderComponent', () => {
     const fixture = await crear('/app/dashboard');
 
     expect((fixture.nativeElement as HTMLElement).querySelector('button[aria-label="Alternar menú lateral"]')).toBeNull();
+  });
+
+  describe('Cambiar usuario', () => {
+    it('no muestra "Cambiar usuario" ni "Mi usuario" cuando no aplica ninguno', async () => {
+      const fixture = await crear('/app/dashboard');
+      fixture.componentInstance['toggleDropdown']();
+      fixture.detectChanges();
+
+      const texto = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(texto).not.toContain('Cambiar usuario');
+      expect(texto).not.toContain('Mi usuario');
+    });
+
+    it('muestra "Cambiar usuario" cuando el usuario activo tiene alternates asignados', async () => {
+      authFalso.puedeCambiarUsuario.mockReturnValue(true);
+      const fixture = await crear('/app/dashboard');
+      fixture.componentInstance['toggleDropdown']();
+      fixture.detectChanges();
+
+      expect((fixture.nativeElement as HTMLElement).textContent).toContain('Cambiar usuario');
+    });
+
+    it('abrirCambiarUsuario() cierra el dropdown y abre el diálogo de cambiar usuario', async () => {
+      const fixture = await crear('/app/dashboard');
+      const instancia = fixture.componentInstance;
+      instancia['toggleDropdown']();
+
+      instancia['abrirCambiarUsuario']();
+
+      expect(instancia['dropdownOpen']()).toBe(false);
+      expect(instancia['cambiarUsuarioOpen']()).toBe(true);
+    });
+
+    it('muestra "Mi usuario" y el aro de aviso en el avatar cuando se está viendo como un usuario alterno', async () => {
+      authFalso.esUsuarioAlterno.mockReturnValue(true);
+      const fixture = await crear('/app/dashboard');
+      fixture.componentInstance['toggleDropdown']();
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.textContent).toContain('Mi usuario');
+      expect(el.querySelector('.avatar-alterno')).not.toBeNull();
+    });
+
+    it('volverAUsuarioOriginal() cierra el dropdown y delega en AuthService', async () => {
+      const fixture = await crear('/app/dashboard');
+      const instancia = fixture.componentInstance;
+      instancia['toggleDropdown']();
+
+      instancia['volverAUsuarioOriginal']();
+
+      expect(instancia['dropdownOpen']()).toBe(false);
+      expect(authFalso.volverAUsuarioOriginal).toHaveBeenCalled();
+    });
   });
 });

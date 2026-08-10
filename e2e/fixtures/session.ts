@@ -27,23 +27,69 @@ export const USUARIO_DE_PRUEBA: UsuarioDePrueba = {
   codBt: 'BT-001',
 };
 
+/** Un usuario alterno tal como lo expone `AuthService.alternates()` (ver `alternate-usuario.model.ts`). */
+export interface AlternateDePrueba {
+  email: string;
+  nombre: string;
+  cargo?: string;
+}
+
 /**
  * Inyecta una sesión ya autenticada en `sessionStorage` antes de que la app
  * arranque (`addInitScript` corre antes que cualquier script de la página).
  * Evita depender de un login real contra Google + el backend Ant en los E2E.
  */
-async function inyectarSesion(page: Page, expiraEn: number): Promise<void> {
+async function inyectarSesion(
+  page: Page,
+  expiraEn: number,
+  extra: { alternates?: AlternateDePrueba[]; usuarioOriginal?: UsuarioDePrueba } = {}
+): Promise<void> {
   await page.addInitScript(
-    ({ key, usuario, expiraEn }) => {
-      window.sessionStorage.setItem(key, JSON.stringify({ token: 'e2e-fake-token', usuario, expiraEn }));
+    ({ key, usuario, expiraEn, extra }) => {
+      window.sessionStorage.setItem(key, JSON.stringify({ token: 'e2e-fake-token', usuario, expiraEn, ...extra }));
     },
-    { key: SESSION_STORAGE_KEY, usuario: USUARIO_DE_PRUEBA, expiraEn }
+    { key: SESSION_STORAGE_KEY, usuario: USUARIO_DE_PRUEBA, expiraEn, extra }
   );
 }
 
 /** Sesión válida por los 15 minutos completos — para specs del shell autenticado. */
 export async function inyectarSesionVigente(page: Page): Promise<void> {
   await inyectarSesion(page, Date.now() + QUINCE_MINUTOS_MS);
+}
+
+/**
+ * Sesión vigente con usuarios alternos asignados (ver `AuthService.alternates`
+ * / diálogo "Cambiar usuario") — para el spec de cambio de usuario.
+ */
+export async function inyectarSesionConAlternates(page: Page, alternates: AlternateDePrueba[]): Promise<void> {
+  await inyectarSesion(page, Date.now() + QUINCE_MINUTOS_MS, { alternates });
+}
+
+/**
+ * Sesión vigente ya "viendo como" un usuario alterno (`usuarioOriginal`
+ * presente) — simula haber usado "Cambiar usuario" antes del refresh, sin
+ * depender de una llamada real al backend (ver `AuthService.restaurarSesion`).
+ */
+export async function inyectarSesionComoAlterno(
+  page: Page,
+  alterno: UsuarioDePrueba,
+  alternates: AlternateDePrueba[] = []
+): Promise<void> {
+  await page.addInitScript(
+    ({ key, usuario, usuarioOriginal, alternates, expiraEn }) => {
+      window.sessionStorage.setItem(
+        key,
+        JSON.stringify({ token: 'e2e-fake-token', usuario, usuarioOriginal, alternates, expiraEn })
+      );
+    },
+    {
+      key: SESSION_STORAGE_KEY,
+      usuario: alterno,
+      usuarioOriginal: USUARIO_DE_PRUEBA,
+      alternates,
+      expiraEn: Date.now() + QUINCE_MINUTOS_MS,
+    }
+  );
 }
 
 /** Sesión ya vencida — para el spec de expiración (`session-expiry.spec.ts`). */

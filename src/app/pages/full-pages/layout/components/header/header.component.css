@@ -8,6 +8,11 @@
   animation: dropdownFadeIn var(--mis-transition-fast) ease;
 }
 
+/* Aro de aviso en el avatar mientras se está "viendo como" un usuario alterno (STG: sustitución de foto por supervised_user_circle). */
+.avatar-alterno {
+  box-shadow: 0 0 0 2px var(--mis-warning);
+}
+
 /* Breadcrumb integrado al header glass: sin fondo, sin borde ni padding propio */
 .header-breadcrumb ::ng-deep .p-breadcrumb {
   background: transparent;

@@ -34,14 +34,26 @@ describe('MenuStgService', () => {
     expect(service.hijosPorSistema()).toEqual({});
   });
 
-  it('cargar() solo pide el menú una vez por sesión', () => {
+  it('cargar() no repite la petición si se llama de nuevo con el mismo email', () => {
     getMenuItemsSpy.mockReturnValue(of(respuestaCon([])));
 
     service.cargar('ana.torres@confianza.pe');
     service.cargar('ana.torres@confianza.pe');
-    service.cargar('otro.usuario@confianza.pe');
 
     expect(getMenuItemsSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('cargar() vuelve a pedir el menú cuando el email cambia (cambiar/revertir usuario alterno)', () => {
+    getMenuItemsSpy.mockReturnValue(of(respuestaCon([])));
+
+    service.cargar('ana.torres@confianza.pe');
+    service.cargar('carlos.ruiz@confianza.pe');
+    service.cargar('ana.torres@confianza.pe');
+
+    expect(getMenuItemsSpy).toHaveBeenCalledTimes(3);
+    expect(getMenuItemsSpy).toHaveBeenNthCalledWith(1, 'ana.torres@confianza.pe');
+    expect(getMenuItemsSpy).toHaveBeenNthCalledWith(2, 'carlos.ruiz@confianza.pe');
+    expect(getMenuItemsSpy).toHaveBeenNthCalledWith(3, 'ana.torres@confianza.pe');
   });
 
   it('filtra los ítems raíz (sin cod_par) y los ordena por order_sec', () => {

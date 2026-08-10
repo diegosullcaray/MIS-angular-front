@@ -1,0 +1,46 @@
+<p-dialog
+  header="Cambiar de cuenta"
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  appendTo="body"
+  [style]="{ width: '320px' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="flex items-center gap-2 -mt-2 mb-3 text-[var(--mis-text-tertiary)]">
+    <ng-icon name="lucideUsers" size="14" />
+    <span class="text-xs">Elige la cuenta con la que quieres ver la aplicación</span>
+  </div>
+
+  <div class="flex flex-col gap-1" role="menu">
+    @for (alterno of alternates(); track alterno.email) {
+      <button
+        type="button"
+        class="flex items-center gap-3 w-full p-2 rounded-[8px] border-0 bg-transparent text-left cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] disabled:opacity-60 disabled:cursor-wait"
+        role="menuitem"
+        [disabled]="!!cambiando()"
+        (click)="elegir(alterno)"
+      >
+        <div class="w-9 h-9 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-sm font-semibold shrink-0">
+          {{ iniciales(alterno.nombre) }}
+        </div>
+        <div class="min-w-0">
+          <div class="text-sm font-medium text-[var(--mis-text-primary)] truncate">{{ alterno.nombre }}</div>
+          @if (alterno.cargo) {
+            <div class="text-xs text-[var(--mis-text-tertiary)] truncate">{{ alterno.cargo }}</div>
+          }
+        </div>
+        @if (cambiando() === alterno.email) {
+          <i class="pi pi-spin pi-spinner ml-auto text-[var(--mis-text-tertiary)]" aria-hidden="true"></i>
+        }
+      </button>
+    } @empty {
+      <p class="m-0 py-2 text-sm text-[var(--mis-text-tertiary)]">No tienes usuarios alternos asignados.</p>
+    }
+  </div>
+
+  <div class="flex justify-end mt-4">
+    <p-button label="Cancelar" [text]="true" severity="secondary" (click)="cerrar()" />
+  </div>
+</p-dialog>
