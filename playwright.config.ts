@@ -24,10 +24,14 @@ export default defineConfig({
     baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    // El Chromium preinstalado del entorno no siempre coincide con la revisión
-    // que espera la versión de @playwright/test del proyecto — se apunta al
-    // binario preinstalado en vez de descargar uno nuevo (no hay red para eso).
-    launchOptions: { executablePath: '/opt/pw-browsers/chromium' },
+    // Opcional: solo para entornos donde el Chromium instalado no coincide
+    // con la revisión que espera esta versión de @playwright/test (p. ej.
+    // contenedores con un binario preinstalado en una ruta fija). En una
+    // máquina normal esta variable no está seteada y Playwright usa su
+    // propia resolución de navegador (el que instala `npx playwright install`).
+    ...(process.env['PLAYWRIGHT_CHROMIUM_EXECUTABLE']
+      ? { launchOptions: { executablePath: process.env['PLAYWRIGHT_CHROMIUM_EXECUTABLE'] } }
+      : {}),
   },
   projects: [
     {
