@@ -8,7 +8,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import type { ReporteDashboard } from '../../models';
 
-const REPORTE: ReporteDashboard = { id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport', typ_rep: 1, datasetId: 'ds-1' };
+const REPORTE: ReporteDashboard = { id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport', datasetId: 'ds-1' };
 
 describe('PowerBiComponent', () => {
   let dashboardFalso: {

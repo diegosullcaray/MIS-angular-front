@@ -23,7 +23,7 @@ function respuesta(body: unknown): IWinderResponse {
   return { code: '0', headers: {}, body };
 }
 
-const REPORTE: ReporteDashboard = { id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport', typ_rep: 1, datasetId: 'ds-1' };
+const REPORTE: ReporteDashboard = { id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport', datasetId: 'ds-1' };
 
 interface AntFalso {
   getObjectList: ReturnType<typeof vi.fn>;

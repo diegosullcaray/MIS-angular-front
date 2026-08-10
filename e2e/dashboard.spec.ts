@@ -8,7 +8,8 @@ import { inyectarSesionVigente, mockearBackendAnt } from './fixtures/session';
  * lista cuando se entra directo, sin un reporte elegido antes (ver
  * `PowerBiComponent`, constructor). Sin datos reales del backend (mockeado
  * con éxito vacío), la lista queda vacía — la lógica de negocio ya está
- * cubierta a nivel unitario.
+ * cubierta a nivel unitario. Sin filtros de tipo/búsqueda: la tabla muestra
+ * `dashboard.reportes()` directo (ver `PrincipalComponent`).
  */
 test.describe('Dashboard — smoke de Dashboards Integrados', () => {
   test.beforeEach(async ({ page }) => {
@@ -29,13 +30,13 @@ test.describe('Dashboard — smoke de Dashboards Integrados', () => {
     expect(erroresConsola).toEqual([]);
   });
 
-  test('muestra el título, el botón Actualizar y los filtros por tipo', async ({ page }) => {
+  test('muestra el título y el botón Actualizar (solo ícono, con tooltip)', async ({ page }) => {
     await page.goto('/app/dashboards');
 
     await expect(page.getByText('Dashboards Integrados')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Actualizar' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Power BI' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Oracle AC' })).toBeVisible();
+    const botonActualizar = page.getByRole('button', { name: 'Actualizar' });
+    await expect(botonActualizar).toBeVisible();
+    await expect(botonActualizar).not.toContainText('Actualizar');
   });
 
   test('entrar directo a /app/dashboards/power-bi sin reporte elegido redirige a la lista', async ({ page }) => {
