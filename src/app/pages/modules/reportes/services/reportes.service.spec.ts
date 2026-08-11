@@ -62,7 +62,15 @@ describe('ReportesService', () => {
     vi.useRealTimers();
   });
 
-  it('fechaCorte() devuelve una fecha en formato YYYY-MM-DD', () => {
+  it('fechaCorte() usa profile.curr_fec (usuarioActivo().fechaCorte) convertido de YYYYMMDD a YYYY-MM-DD', () => {
+    shell.setUsuarioActivo(usuario({ fechaCorte: '20260805' }));
+
+    expect(service.fechaCorte()).toBe('2026-08-05');
+  });
+
+  it('fechaCorte() cae a la fecha real en formato YYYY-MM-DD si el usuario activo todavía no trae fechaCorte', () => {
+    shell.setUsuarioActivo(usuario({ fechaCorte: undefined }));
+
     expect(service.fechaCorte()).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 

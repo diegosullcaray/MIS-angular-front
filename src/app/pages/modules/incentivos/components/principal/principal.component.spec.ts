@@ -15,6 +15,7 @@ class ResizeObserverFalso {
 describe('PrincipalComponent', () => {
   let incentivosFalso: {
     iniciar: ReturnType<typeof vi.fn>;
+    actualizar: ReturnType<typeof vi.fn>;
     requiereSeleccionInicial: ReturnType<typeof signal<boolean>>;
     error: ReturnType<typeof signal<string | null>>;
     cargando: ReturnType<typeof signal<boolean>>;
@@ -28,6 +29,8 @@ describe('PrincipalComponent', () => {
     monetizado: ReturnType<typeof signal<unknown>>;
     puedeElegirNivel: ReturnType<typeof signal<boolean>>;
     nivelesSelector: unknown[];
+    fechaActual: ReturnType<typeof signal<string>>;
+    seleccionarFecha: ReturnType<typeof vi.fn>;
     fechaCorte: ReturnType<typeof vi.fn>;
   };
 
@@ -36,6 +39,7 @@ describe('PrincipalComponent', () => {
 
     incentivosFalso = {
       iniciar: vi.fn(),
+      actualizar: vi.fn(),
       requiereSeleccionInicial: signal(false),
       error: signal<string | null>(null),
       cargando: signal(false),
@@ -54,6 +58,8 @@ describe('PrincipalComponent', () => {
       }),
       puedeElegirNivel: signal(false),
       nivelesSelector: [],
+      fechaActual: signal('20260115'),
+      seleccionarFecha: vi.fn(),
       fechaCorte: vi.fn().mockReturnValue('20260115'),
     };
 
@@ -94,6 +100,12 @@ describe('PrincipalComponent', () => {
     expect(fixture.componentInstance['mostrarCalculadora']()).toBe(true);
   });
 
+  it('actualizar() delega en el servicio', () => {
+    const fixture = crear();
+    fixture.componentInstance['actualizar']();
+    expect(incentivosFalso.actualizar).toHaveBeenCalled();
+  });
+
   it('abrirDetalleAvance() arma detalleActivo con req="getDetail" y card=true, y abre el diálogo de variable', () => {
     const fixture = crear();
     const item: ItemAvance = { id: 'car', des: 'Cartera', icono: 'pi pi-briefcase', val: 0.5, per: 50, sit: 1, show: true, enab: true };
@@ -101,6 +113,15 @@ describe('PrincipalComponent', () => {
     fixture.componentInstance['abrirDetalleAvance']({ item, codVar: 91 });
 
     expect(fixture.componentInstance['detalleActivo']()).toEqual({ titulo: 'Cartera', icono: 'pi pi-briefcase', req: 'getDetail', codVar: 91, card: true });
+    expect(fixture.componentInstance['mostrarDetalleVariable']()).toBe(true);
+  });
+
+  it('abrirDetalleTabla() arma detalleActivo con req="getDetail" y card=true, y abre el diálogo de variable', () => {
+    const fixture = crear();
+
+    fixture.componentInstance['abrirDetalleTabla']({ codVar: 4, titulo: 'Efect. -30 a 0 días', icono: 'pi pi-clock' });
+
+    expect(fixture.componentInstance['detalleActivo']()).toEqual({ titulo: 'Efect. -30 a 0 días', icono: 'pi pi-clock', req: 'getDetail', codVar: 4, card: true });
     expect(fixture.componentInstance['mostrarDetalleVariable']()).toBe(true);
   });
 

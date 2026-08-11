@@ -23,3 +23,60 @@
 .mis-card .p-card-body {
   padding: var(--mis-space-4) var(--mis-space-6);
 }
+
+/* ── Diálogos (p-dialog de PrimeNG) ────────────────────────── */
+.p-dialog {
+  border-radius: var(--mis-radius-lg) !important;
+  overflow: hidden !important;
+  box-shadow: var(--mis-shadow-lg) !important;
+  border: 1px solid var(--mis-border) !important;
+}
+
+.p-dialog .p-dialog-header {
+  background: var(--mis-primary) !important;
+  color: var(--mis-text-on-primary) !important;
+  padding: 1rem 1.25rem !important;
+  border-bottom: 1px solid var(--mis-border-strong) !important;
+}
+
+.p-dialog .p-dialog-title,
+.p-dialog .p-dialog-header-title {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  color: var(--mis-text-on-primary) !important;
+}
+
+.p-dialog .p-dialog-header-close-icon,
+.p-dialog .p-dialog-header-icon,
+.p-dialog .p-dialog-header-close-button .pi,
+.p-dialog .p-dialog-close-icon,
+.p-dialog [data-pc-section="closeicon"],
+.p-dialog [data-pc-section="closebutton"] {
+  color: var(--mis-text-on-primary) !important;
+}
+
+.p-dialog .p-dialog-header-close-button,
+.p-dialog .p-dialog-header-icon,
+.p-dialog [data-pc-section="closebutton"] {
+  border-radius: var(--mis-radius-sm) !important;
+  transition: background-color var(--mis-transition-fast) !important;
+}
+
+.p-dialog .p-dialog-header-close-button:hover,
+.p-dialog .p-dialog-header-icon:hover,
+.p-dialog [data-pc-section="closebutton"]:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+.p-dialog .p-dialog-content {
+  background: var(--mis-surface) !important;
+  color: var(--mis-text-primary) !important;
+  padding: 1.25rem !important;
+}
+
+.p-dialog .p-dialog-footer {
+  background: var(--mis-panel-bg) !important;
+  border-top: 1px solid var(--mis-border) !important;
+  padding: 0.875rem 1.25rem !important;
+}
+

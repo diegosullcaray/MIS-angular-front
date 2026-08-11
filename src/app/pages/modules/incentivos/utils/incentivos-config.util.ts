@@ -15,29 +15,29 @@ import type {
  * cercano (PG-07 del TRD: PrimeIcons para el resto de iconografía).
  */
 export const ICONOS_INCENTIVOS: Record<string, string> = {
-  car: 'pi pi-briefcase', // cartera
+  car: 'pi pi-wallet', // cartera
   cli: 'pi pi-users', // clientes
   sc1: 'pi pi-eye', // supervisión
-  efec1: 'pi pi-gauge', // efectividad -30 a 0
-  efec2: 'pi pi-gauge', // efectividad 1 a 30
-  efec3: 'pi pi-gauge', // efectividad 31 a 60
-  prod: 'pi pi-star', // productividad
+  efec1: 'pi pi-clock', // efectividad -30 a 0
+  efec2: 'pi pi-calendar', // efectividad 1 a 30
+  efec3: 'pi pi-history', // efectividad 31 a 60
+  prod: 'pi pi-chart-line', // productividad
   rop: 'pi pi-exclamation-triangle', // riesgo operativo
   clim: 'pi pi-sun', // clima
-  clib: 'pi pi-id-card', // bancarizados
+  clib: 'pi pi-credit-card', // bancarizados
   ret: 'pi pi-user-plus', // retención
-  sis: 'pi pi-sitemap', // sistemática
-  rot: 'pi pi-arrow-right-arrow-left', // rotación
+  sis: 'pi pi-cog', // sistemática
+  rot: 'pi pi-sync', // rotación
   tas: 'pi pi-percentage', // tasas
-  gru: 'pi pi-briefcase', // variación de grupos
-  pagop: 'pi pi-users', // pago puntual
-  tgru: 'pi pi-briefcase', // tamaño de grupos
+  gru: 'pi pi-sitemap', // variación de grupos
+  pagop: 'pi pi-check-circle', // pago puntual
+  tgru: 'pi pi-chart-bar', // tamaño de grupos
   areu: 'pi pi-calendar-check', // asistencia a reuniones
-  acom: 'pi pi-percentage', // % asesores comisionan
+  acom: 'pi pi-dollar', // % asesores comisionan
 };
 
 /** Descripciones de cada variable — compartidas por perfil/avances/calculadora. */
-const DESCRIPCIONES: Record<string, string> = {
+export const DESCRIPCIONES: Record<string, string> = {
   car: 'Cartera Vigente',
   gru: 'Grupos',
   cli: 'Clientes',

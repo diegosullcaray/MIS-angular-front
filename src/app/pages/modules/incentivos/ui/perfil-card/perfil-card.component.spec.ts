@@ -11,7 +11,8 @@ describe('PerfilCardComponent', () => {
     cargando: ReturnType<typeof signal<boolean>>;
     puedeElegirNivel: ReturnType<typeof signal<boolean>>;
     monetizado: ReturnType<typeof signal<MonetizadoIncentivo>>;
-    fechaCorte: ReturnType<typeof vi.fn>;
+    fechaActual: ReturnType<typeof signal<string>>;
+    seleccionarFecha: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
@@ -27,7 +28,8 @@ describe('PerfilCardComponent', () => {
         bonoBase: 0, bonoPlus: 0, bonoSuperPlus: 0, bonoTotal: 0, codigoSituacion: 0, descripcionSituacion: '--',
         puedeSimular: false, modelo: '2026', modeloDescripcion: 'M2026', mostrarModelo: false, fechasHabilitadas: [],
       }),
-      fechaCorte: vi.fn().mockReturnValue('20260115'),
+      fechaActual: signal('20260115'),
+      seleccionarFecha: vi.fn(),
     };
     TestBed.configureTestingModule({
       imports: [PerfilCardComponent],

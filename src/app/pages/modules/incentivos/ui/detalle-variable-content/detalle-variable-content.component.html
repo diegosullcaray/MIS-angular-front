@@ -1,0 +1,134 @@
+@if (cargando()) {
+  <div class="flex flex-col gap-2.5 py-4">
+    @for (i of [1, 2, 3, 4]; track i) {
+      <p-skeleton height="1.75rem" />
+    }
+  </div>
+} @else if (frameActual(); as frame) {
+  <div class="flex flex-col gap-3.5">
+    @if (puedeVolver()) {
+      <button
+        type="button"
+        class="self-start flex items-center gap-1.5 text-[12px] font-medium text-[var(--mis-secondary)] hover:text-[var(--mis-secondary-hover)]"
+        (click)="volver()"
+      >
+        <i class="pi pi-arrow-left text-[11px]"></i>
+        Volver
+      </button>
+    }
+
+    <div class="flex items-center justify-between flex-wrap gap-2 text-[12px] text-[var(--mis-text-secondary)]">
+      <span class="font-semibold bg-[var(--mis-panel-bg)] border border-[var(--mis-border)] px-3 py-1 rounded-full text-[var(--mis-text-primary)]">
+        {{ frame.desLab }}: {{ frame.desRel }}
+      </span>
+      <span class="inline-flex items-center gap-1.5 font-medium bg-[var(--mis-panel-bg)] border border-[var(--mis-border)] px-3 py-1 rounded-full text-[var(--mis-text-secondary)]">
+        <i class="pi pi-calendar text-[11px] text-[var(--mis-primary)]"></i>
+        Fecha: {{ frame.resultado.card.f2 }}
+      </span>
+    </div>
+
+    @if (mostrarTarjetas()) {
+      <div class="grid grid-cols-3 gap-3">
+        <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-3 flex flex-col gap-1 shadow-xs">
+          <span class="text-[11px] font-semibold uppercase text-[var(--mis-text-secondary)] tracking-wider">{{ etiquetas()?.tarjetas?.[0] ?? 'Cierre' }}</span>
+          <span class="text-[16px] font-bold text-[var(--mis-primary)]">{{ formatearValorTarjeta(frame.resultado.card.cie_real) }}</span>
+        </div>
+
+        <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-3 flex flex-col gap-1 shadow-xs">
+          <span class="text-[11px] font-semibold uppercase text-[var(--mis-text-secondary)] tracking-wider">{{ etiquetas()?.tarjetas?.[1] ?? 'Variación' }}</span>
+          <span class="text-[16px] font-bold text-[var(--mis-primary)]">{{ formatearValorTarjeta(frame.resultado.card.var_real) }}</span>
+        </div>
+
+        <div class="rounded-xl border p-3 flex flex-col gap-1 shadow-xs" [class]="frame.resultado.card.avan >= 1 ? 'border-[var(--mis-success)] bg-[var(--mis-success-light)]/40' : 'border-[var(--mis-border)] bg-[var(--mis-panel-bg)]'">
+          <span class="text-[11px] font-semibold uppercase text-[var(--mis-text-secondary)] tracking-wider">{{ etiquetas()?.tarjetas?.[2] ?? 'Meta' }}</span>
+          <div class="flex items-baseline gap-1.5 flex-wrap">
+            <span class="text-[16px] font-bold text-[var(--mis-text-primary)]">{{ formatearMeta() }}</span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full" [class]="frame.resultado.card.avan >= 1 ? 'bg-[var(--mis-success-light)] text-[var(--mis-success)] border border-[var(--mis-success)]/30' : 'bg-[var(--mis-warning-light)] text-[var(--mis-warning)] border border-[var(--mis-warning)]/30'">
+              ({{ frame.resultado.card.avan * 100 | number: '.0-1' }}%)
+            </span>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (muestraBotonesToggle()) {
+      <div class="flex items-center gap-2">
+        <p-button label="Indicadores" icon="pi pi-table" size="small" [outlined]="vistaTabla() !== 'vars'" (onClick)="mostrarVars()" />
+        <p-button label="Ranking" icon="pi pi-list-check" size="small" [outlined]="vistaTabla() !== 'rank'" (onClick)="mostrarRank()" />
+      </div>
+    }
+
+    <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden shadow-xs">
+      @if (vistaTabla() === 'vars') {
+        <p-table [value]="varsMostradas()" styleClass="p-datatable-sm" scrollHeight="360px" [scrollable]="true" [stripedRows]="true">
+          <ng-template pTemplate="header">
+            <tr class="bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)]">
+              <th class="whitespace-nowrap text-[12px] uppercase bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Variable</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">{{ frame.resultado.card.f1 }}</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">{{ frame.resultado.card.f2 }}</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Variación</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-fila>
+            <tr
+              class="text-[12px]"
+              [class.cursor-pointer]="fila.cod_bdd !== undefined && fila.cod_bdd !== null"
+              [class.hover:bg-black/5]="fila.cod_bdd !== undefined && fila.cod_bdd !== null"
+              (click)="toggleBloque(fila)"
+            >
+              <td [class]="fila.cod_bdd !== undefined && fila.cod_bdd !== null ? 'underline font-medium text-[var(--mis-secondary)] hover:text-[var(--mis-secondary-hover)]' : 'font-medium'">
+                {{ fila.des_var }}
+              </td>
+              <td class="text-right font-medium">{{ formatearCelda(fila.f1, fila.fmt) }}</td>
+              <td class="text-right font-semibold">{{ formatearCelda(fila.f2, fila.fmt) }}</td>
+              <td class="text-right font-semibold" [class]="(fila.diff ?? 0) < 0 ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-success)]'">{{ formatearCelda(fila.diff, fila.fmt) }}</td>
+            </tr>
+            @if (fila.cod_bdd !== undefined && fila.cod_bdd !== null && bloqueExpandido() === fila.cod_bdd) {
+              @for (sub of subVars(fila.cod_bdd); track sub.des_var) {
+                <tr class="text-[12px]" style="background: var(--mis-panel-bg);">
+                  <td class="pl-6 text-[var(--mis-text-secondary)]">{{ sub.des_var }}</td>
+                  <td class="text-right">{{ formatearCelda(sub.f1, sub.fmt) }}</td>
+                  <td class="text-right font-medium">{{ formatearCelda(sub.f2, sub.fmt) }}</td>
+                  <td class="text-right font-medium" [class]="(sub.diff ?? 0) < 0 ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-success)]'">{{ formatearCelda(sub.diff, sub.fmt) }}</td>
+                </tr>
+              }
+            }
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center text-[12px] text-[var(--mis-text-tertiary)] py-4">Sin indicadores para mostrar.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      } @else {
+        <p-table [value]="frame.resultado.rank" styleClass="p-datatable-sm" scrollHeight="360px" [scrollable]="true" [stripedRows]="true">
+          <ng-template pTemplate="header">
+            <tr class="bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)]">
+              <th class="whitespace-nowrap text-[12px] uppercase bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Nivel</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Real</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Meta</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Distancia</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-fila>
+            <tr class="text-[12px] cursor-pointer hover:bg-[var(--mis-primary-light)]/40 transition-colors">
+              <td class="underline font-medium text-[var(--mis-secondary)] hover:text-[var(--mis-secondary-hover)]" (click)="drillRanking(fila)">{{ fila.des_rel }}</td>
+              <td class="text-right font-semibold">{{ fila.var_real | number: '.0-0' }}</td>
+              <td class="text-right font-medium">{{ fila.met | number: '.0-0' }}</td>
+              <td class="text-right font-semibold" [class]="fila.diff < 0 ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-success)]'">{{ fila.diff | number: '.0-0' }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center text-[12px] text-[var(--mis-text-tertiary)] py-4">Sin ranking para mostrar.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </div>
+
+    @if (etiquetas()?.nota; as nota) {
+      <span class="text-[10.5px] italic text-[var(--mis-text-tertiary)] px-1">{{ nota }}</span>
+    }
+  </div>
+}

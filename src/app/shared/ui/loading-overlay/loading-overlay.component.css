@@ -1,0 +1,19 @@
+:host {
+  display: contents;
+}
+
+.loading-overlay-wrapper {
+  background: rgba(10, 22, 48, 0.55);
+  backdrop-filter: blur(3px);
+  animation: loadingOverlayFadeIn 0.15s ease-out;
+}
+
+@keyframes loadingOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+:host ::ng-deep .mis-spinner .p-progressspinner-circle {
+  stroke: var(--mis-secondary, #00A2FF);
+  animation-duration: 1.6s;
+}

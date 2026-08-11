@@ -8,23 +8,12 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { IncentivosService } from '../../services/incentivos.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
+import { LoadingService } from '../../../../../shared/services/loading.service';
 import type { AsesorPickItem, NivelSelectorJerarquia, NodoJerarquiaIncentivo } from '../../models';
 
 type Vista = 'menu' | 'asesores' | 'jerarquia';
 
-/**
- * Selector de nivel del Cuadro de Mando — reemplaza a
- * `SelectorJerComponent` + `SecPickerDialog2Service` + `TblPickerDialogService`
- * (legado STG, 3 piezas coordinadas por Subjects) con un único diálogo con
- * 3 vistas internas (`menu`/`asesores`/`jerarquia`), sin la variante enrutada
- * para mobile del legado — el layout de este Host ya es responsive.
- *
- * No migra la opción "Mi Perfil" del legado: ver la nota de
- * `IncentivosService` sobre el gap de datos de perfil (`niv`/`cla_use`).
- * En el modelo simplificado de este Host, `puedeElegirNivel` (que controla
- * si este diálogo puede abrirse) solo es `true` para el equivalente STAFF,
- * que en el legado tampoco tenía esa opción.
- */
+/** Selector de nivel del Cuadro de Mando: un único diálogo con 3 vistas internas (`menu`/`asesores`/`jerarquia`). */
 @Component({
   selector: 'app-selector-nivel-dialog',
   standalone: true,
@@ -35,9 +24,10 @@ type Vista = 'menu' | 'asesores' | 'jerarquia';
 export class SelectorNivelDialogComponent {
   private readonly incentivos = inject(IncentivosService);
   private readonly toast = inject(ToastService);
+  private readonly loading = inject(LoadingService);
 
   readonly visible = input(false);
-  /** `true` mientras no haya ningún nivel elegido todavía — oculta el botón de cerrar (equivalente a `disableClose=firstLoad` del legado). */
+  /** `true` mientras no haya ningún nivel elegido todavía — oculta el botón de cerrar. */
   readonly obligatorio = input(false);
 
   readonly visibleChange = output<boolean>();
@@ -46,7 +36,6 @@ export class SelectorNivelDialogComponent {
 
   protected readonly vista = signal<Vista>('menu');
   protected readonly nivelJerarquiaActivo = signal<NivelSelectorJerarquia | null>(null);
-  protected readonly cargando = signal(false);
   protected readonly filtro = signal('');
   protected readonly asesores = signal<AsesorPickItem[]>([]);
   protected readonly nodos = signal<NodoJerarquiaIncentivo[]>([]);
@@ -71,15 +60,15 @@ export class SelectorNivelDialogComponent {
     this.vista.set('asesores');
     this.filtro.set('');
     this.seleccionadoAsesor.set(null);
-    this.cargando.set(true);
+    this.loading.show('Cargando asesores…');
     this.incentivos.obtenerAsesores().subscribe({
       next: (lista) => {
         this.asesores.set(lista);
-        this.cargando.set(false);
+        this.loading.hide();
       },
       error: () => {
         this.toast.error('No se pudo cargar la lista de asesores', 'Inténtalo de nuevo en unos segundos.');
-        this.cargando.set(false);
+        this.loading.hide();
       },
     });
   }
@@ -89,15 +78,15 @@ export class SelectorNivelDialogComponent {
     this.nivelJerarquiaActivo.set(nivel);
     this.filtro.set('');
     this.seleccionadoNodo.set(null);
-    this.cargando.set(true);
+    this.loading.show('Cargando listado…');
     this.incentivos.obtenerNivelesJerarquia(nivel.tipCodListado).subscribe({
       next: (lista) => {
         this.nodos.set(lista);
-        this.cargando.set(false);
+        this.loading.hide();
       },
       error: () => {
         this.toast.error('No se pudo cargar el listado', 'Inténtalo de nuevo en unos segundos.');
-        this.cargando.set(false);
+        this.loading.hide();
       },
     });
   }
@@ -128,14 +117,7 @@ export class SelectorNivelDialogComponent {
     this.confirmarYCerrar(() => this.incentivos.seleccionarFinancieraConfianza(claUsu));
   }
 
-  /**
-   * Cierra el diálogo primero y recién después dispara la carga de datos.
-   * Una selección real siempre cierra, sin importar `obligatorio()`: ese input
-   * es un signal alimentado por el mismo servicio que la carga está a punto de
-   * actualizar, así que leerlo aquí (como hacía antes `cerrar()`) podía ver el
-   * valor todavía no refrescado por el ciclo de detección de cambios y dejar
-   * el diálogo trabado abierto aunque la selección ya se hubiera hecho.
-   */
+  /** Cierra el diálogo y recién después carga los datos — una selección real siempre cierra, sin mirar `obligatorio()`. */
   private confirmarYCerrar(cargar: () => void): void {
     this.vista.set('menu');
     this.visibleChange.emit(false);

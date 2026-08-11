@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
 import { ReportesService, COD_JERARQUIA_ORGANIZATIVA, NIVEL_MAXIMO_JERARQUIA } from '../../../services/reportes.service';
@@ -13,14 +14,20 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 
 /**
  * "Monitor Reprogramados" — migrado de la ruta `mon-rep` (legado STG,
- * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'RS_MON_REP'`),
- * un único bloque de tabla (`RS_MON_REP_01`) con un filtro "Tipo"
- * (Operaciones/Saldo, `GCOVID_OPT01()` del legado, enviado como `car`).
+ * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'RS_MON_REP'`).
+ *
+ * La carga inicial la dispara únicamente `app-hier-selector` (evento
+ * `nodoSeleccionado`) — igual que `ReportCraV1p1Component` en el legado,
+ * que no hace su propio `getBaseHierarchy()`: solo reacciona a
+ * `(onSelectHier)` de `hier-rem-selector`. Tener acá un fetch inicial propio
+ * duplicaba la llamada a `obtenerJerarquiaBase` y competía en carrera con el
+ * cascadeo interno del selector (root → nivel por nivel hasta `maxLvl`), que
+ * también dispara `onNivelSeleccionado` en cada paso.
  */
 @Component({
   selector: 'app-monitor-reprogramados',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SelectModule, FormsModule, SkeletonModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, SelectModule, FormsModule, SkeletonModule, ProgressSpinnerModule],
   templateUrl: './monitor-reprogramados.component.html',
   styleUrl: './monitor-reprogramados.component.css',
 })
@@ -37,7 +44,7 @@ export class MonitorReprogramadosComponent {
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly tipoSeleccionado = signal<1 | 2>(1);
-  protected readonly cargando = signal(false);
+  protected readonly cargando = signal(true);
   protected readonly tablaReprogramados = signal<TablaReporteResultado>(TABLA_VACIA);
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
@@ -72,5 +79,11 @@ export class MonitorReprogramadosComponent {
           this.cargando.set(false);
         },
       });
+  }
+
+  /** Único caso en que `app-hier-selector` nunca llega a emitir `nodoSeleccionado` (falla o viene vacía la jerarquía) — sin esto, `cargando` se quedaba en `true` para siempre. */
+  protected onErrorJerarquia(): void {
+    this.toast.error('No se pudo cargar la jerarquía', 'Inténtalo de nuevo en unos segundos.');
+    this.cargando.set(false);
   }
 }

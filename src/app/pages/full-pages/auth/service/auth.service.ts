@@ -51,6 +51,10 @@ interface PerfilRaw {
   /** Tipo de usuario: 0 = administrador. STG no tiene una jerarquía de 3 niveles. */
   tip_use?: number;
   pic_url?: string;
+  /** Fecha de corte de campaña (`YYYYMMDD`) — usada por Incentivos/Presupuesto en vez de la fecha real. */
+  curr_fec?: string;
+  /** Fechas de corte re-consultables, separadas por coma (`YYYYMMDD` cada una) — selector de fecha de Incentivos. */
+  hab_fec?: string;
 }
 
 /** Un usuario alterno tal como lo devuelve el backend (`login_response.alternates`). */
@@ -188,6 +192,8 @@ export class AuthService {
       subsistemas: [],
       avatarUrl: datos.avatarUrl || profile.pic_url,
       codBt: profile.cod_bt,
+      fechaCorte: profile.curr_fec,
+      fechasHabilitadas: profile.hab_fec,
     };
   }
 

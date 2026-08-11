@@ -3,7 +3,9 @@ import { TabsModule } from 'primeng/tabs';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
+import { TooltipModule } from 'primeng/tooltip';
 import { FrameworkEsgService } from '../../services/framework-esg.service';
+import { FrameworkEsgTourService } from '../../services/framework-esg-tour.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { CategoriaMetricasTablaComponent } from '../../ui/categoria-metricas-tabla/categoria-metricas-tabla.component';
@@ -64,6 +66,7 @@ const TABS_CATEGORIAS: TabCategoria[] = [
     ButtonModule,
     TableModule,
     SkeletonModule,
+    TooltipModule,
     CategoriaMetricasTablaComponent,
     EditarMetricaDialogComponent,
     UsuariosMetricaDialogComponent,
@@ -75,6 +78,7 @@ export class PrincipalComponent {
   private readonly esg = inject(FrameworkEsgService);
   private readonly shell = inject(ShellStateService);
   private readonly toast = inject(ToastService);
+  protected readonly tour = inject(FrameworkEsgTourService);
 
   protected readonly tabsCategorias = TABS_CATEGORIAS;
   protected readonly tabActiva = signal('portada');

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
@@ -47,9 +47,28 @@ export class ReportesService {
     return ayer.toISOString().slice(0, 10).replace(/-/g, '');
   }
 
-  /** Fecha de corte (`YYYY-MM-DD`) — `getHierarchyConfig('UNI_1').params` del legado, usada al pedir cada nivel de la jerarquía (distinta de `fechaUltimoDia()`, que es `YYYYMMDD` y un día antes). El Host no expone `profile.curr_fec` todavía, se usa la fecha real. */
+  /**
+   * Fecha de corte (`YYYY-MM-DD`) — `getHierarchyConfig('UNI_1').params` del legado
+   * (`moment(profile.curr_fec).format('YYYY-MM-DD')`), usada al pedir cada nivel de la
+   * jerarquía (distinta de `fechaUltimoDia()`, que es `YYYYMMDD` y un día antes).
+   *
+   * Usa `usuarioActivo().fechaCorte` (`profile.curr_fec`, `YYYYMMDD`) cuando el Host ya lo
+   * expuso — mismo campo que ya consume `IncentivosService.fechaCorte()`. Si todavía no
+   * llegó, cae a la fecha real como aproximación, pero eso puede pedir datos de un día que
+   * el backend no cerró/calculó todavía y devolver la jerarquía vacía (ver el doc de
+   * `UsuarioActivo.fechaCorte`) — es la causa real de que el selector de jerarquía fallara
+   * en el primer nivel.
+   */
   fechaCorte(): string {
-    return new Date().toISOString().slice(0, 10);
+    const currFec = this.shell.usuarioActivo()?.fechaCorte;
+    if (currFec && /^\d{8}$/.test(currFec)) {
+      const resultado = `${currFec.slice(0, 4)}-${currFec.slice(4, 6)}-${currFec.slice(6, 8)}`;
+      console.warn(`[ReportesService] fechaCorte() usó usuarioActivo().fechaCorte="${currFec}" -> "${resultado}"`);
+      return resultado;
+    }
+    const fallback = new Date().toISOString().slice(0, 10);
+    console.warn(`[ReportesService] fechaCorte() SIN usuarioActivo().fechaCorte (valor crudo: ${JSON.stringify(currFec)}) — usando fallback de fecha real: "${fallback}"`);
+    return fallback;
   }
 
   obtenerJerarquiaBase(codHierarchy: number): Observable<HierarquiaNodo[]> {
@@ -65,9 +84,22 @@ export class ReportesService {
     codRels: string[],
     params?: Record<string, unknown>
   ): Observable<HierarquiaNodo[]> {
-    return this.antAdmin
-      .getLevelHierarchy(codHier, lvlHier, tipCod, codRels, params)
-      .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.level_hierarchy ?? []));
+    return this.antAdmin.getLevelHierarchy(codHier, lvlHier, tipCod, codRels, params).pipe(
+      tap((r) => {
+        const nivel = (r.body as JerarquiaResponseBody | null)?.level_hierarchy;
+        if (!nivel || nivel.length === 0) {
+          // Diagnóstico temporal: `map()` de abajo colapsa cualquier respuesta sin
+          // `level_hierarchy` a `[]` por igual — código de error, body con otra forma,
+          // o vacío legítimo. Loguear la respuesta cruda para distinguir cuál es.
+          console.warn('[ReportesService] getLevelHierarchy() sin level_hierarchy — respuesta cruda:', {
+            code: r.code,
+            errors: r.errors,
+            body: r.body,
+          });
+        }
+      }),
+      map((r) => (r.body as JerarquiaResponseBody | null)?.level_hierarchy ?? [])
+    );
   }
 
   /** Un bloque del motor de reportes "mixtos" (tabla multi-encabezado o tarjeta KPI, según `codRep`). */

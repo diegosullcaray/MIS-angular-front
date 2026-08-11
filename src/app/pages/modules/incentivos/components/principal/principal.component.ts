@@ -1,14 +1,17 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { IncentivosService } from '../../services/incentivos.service';
 import { PerfilCardComponent } from '../../ui/perfil-card/perfil-card.component';
 import { AvancesGridComponent, type DetalleAvanceEvent } from '../../ui/avances-grid/avances-grid.component';
 import { SuperPlusGridComponent, type DetalleSuperPlusEvent } from '../../ui/super-plus-grid/super-plus-grid.component';
-import { TablaVariablesComponent } from '../../ui/tabla-variables/tabla-variables.component';
+import { TablaVariablesComponent, type DetalleTablaVariableEvent } from '../../ui/tabla-variables/tabla-variables.component';
 import { SelectorNivelDialogComponent } from '../../ui/selector-nivel-dialog/selector-nivel-dialog.component';
 import { CalculadoraDialogComponent } from '../../ui/calculadora-dialog/calculadora-dialog.component';
 import { DetalleVariableDialogComponent } from '../../ui/detalle-variable-dialog/detalle-variable-dialog.component';
 import { DetalleBancarizacionDialogComponent } from '../../ui/detalle-bancarizacion-dialog/detalle-bancarizacion-dialog.component';
+import { LoadingOverlayComponent } from '../../../../../shared/ui/loading-overlay/loading-overlay.component';
 
 type ReqDetalleVariable = 'getDetail' | 'getTasa' | 'getProd' | 'getRetencion';
 
@@ -40,6 +43,8 @@ interface DetalleVariableActivo {
   standalone: true,
   imports: [
     SkeletonModule,
+    ButtonModule,
+    TooltipModule,
     PerfilCardComponent,
     AvancesGridComponent,
     SuperPlusGridComponent,
@@ -48,6 +53,7 @@ interface DetalleVariableActivo {
     CalculadoraDialogComponent,
     DetalleVariableDialogComponent,
     DetalleBancarizacionDialogComponent,
+    LoadingOverlayComponent,
   ],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.css',
@@ -73,8 +79,18 @@ export class PrincipalComponent {
     this.mostrarSelector.set(true);
   }
 
+  protected actualizar(): void {
+    this.incentivos.actualizar();
+  }
+
   protected abrirCalculadora(): void {
     this.mostrarCalculadora.set(true);
+  }
+
+  /** Filas de la tabla de Variables/Efectividad abren el mismo diálogo que Avances (`getDetail`, con tarjetas KPI) — el detalle nunca se muestra embebido en la tabla. */
+  protected abrirDetalleTabla(evento: DetalleTablaVariableEvent): void {
+    this.detalleActivo.set({ titulo: evento.titulo, icono: evento.icono, req: 'getDetail', codVar: evento.codVar, card: true });
+    this.mostrarDetalleVariable.set(true);
   }
 
   /** Avances siempre abre el mismo diálogo (`getDetail`, con tarjetas KPI) — igual que `dialogDet()` de `AvancesComponent` en el legado. */

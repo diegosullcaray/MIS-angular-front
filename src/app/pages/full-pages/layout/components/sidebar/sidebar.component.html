@@ -34,36 +34,47 @@
   </div>
 </aside>
 
-<!-- Col 2: Panel de navegación (se mantiene igual — oculto si el usuario la colapsó, o si el sistema activo no tiene panel) -->
-@if (cambiandoPanel() || (!shell.navPanelColapsado() && panelActivo())) {
-  <!-- Fondo oscuro que bloquea el layout mientras el panel está abierto — solo en mobile, donde el panel flota sobre el contenido en vez de compartir el ancho -->
-  <div
-    class="sm:hidden fixed inset-0 bottom-16 z-40 bg-black/50"
-    (click)="shell.setNavPanelColapsado(true)"
-    aria-hidden="true"
-  ></div>
-}
+<!-- Col 2: Panel de navegación con animación de desvanecimiento (fade in/out) -->
+@if (panelActivo(); as panel) {
+  <!-- Fondo oscuro que bloquea el layout en mobile mientras el panel está abierto -->
+  @if (!shell.navPanelColapsado()) {
+    <div
+      class="sm:hidden fixed inset-0 bottom-16 z-40 bg-black/50 transition-opacity duration-300 ease-in-out"
+      (click)="shell.setNavPanelColapsado(true)"
+      aria-hidden="true"
+    ></div>
+  }
 
-@if (cambiandoPanel()) {
-  <!-- Esqueleto de transición al cambiar de sistema — mismas dimensiones que app-sidebar-nav-panel -->
   <div
-    class="fixed top-0 left-0 bottom-16 z-50 w-[85vw] max-w-[300px] shadow-2xl flex flex-col overflow-hidden sm:static sm:inset-auto sm:z-auto sm:h-full sm:w-[220px] sm:shrink-0 sm:shadow-none"
-    style="background: #E9EDF5;"
-    aria-label="Cargando navegación del sistema"
+    class="transition-all duration-300 ease-in-out overflow-hidden shrink-0 sm:h-full"
+    [class.w-0]="shell.navPanelColapsado()"
+    [class.opacity-0]="shell.navPanelColapsado()"
+    [class.pointer-events-none]="shell.navPanelColapsado()"
+    [class.w-[85vw]]="!shell.navPanelColapsado()"
+    [class.sm:w-[220px]]="!shell.navPanelColapsado()"
+    [class.opacity-100]="!shell.navPanelColapsado()"
   >
-    <div class="flex items-center gap-3 px-3 h-[56px] min-h-[56px] border-b border-[var(--mis-border)] shrink-0 box-border">
-      <p-skeleton shape="circle" width="1.75rem" height="1.75rem" />
-      <p-skeleton width="60%" height="1rem" />
-    </div>
-    <div class="flex flex-col gap-3 p-3">
-      @for (i of [1, 2, 3, 4, 5]; track i) {
-        <p-skeleton height="1.1rem" />
-      }
-    </div>
+    @if (cambiandoPanel()) {
+      <!-- Esqueleto de transición al cambiar de sistema -->
+      <div
+        class="fixed top-0 left-0 bottom-16 z-50 w-[85vw] max-w-[300px] shadow-2xl flex flex-col overflow-hidden sm:static sm:inset-auto sm:z-auto sm:h-full sm:w-[220px] sm:shrink-0 sm:shadow-none bg-white/80 backdrop-blur-xl border-r border-[var(--mis-border)]"
+        aria-label="Cargando navegación del sistema"
+      >
+        <div class="flex items-center gap-3 px-3 h-[44px] min-h-[44px] border-b border-[var(--mis-border)] shrink-0 box-border">
+          <p-skeleton shape="circle" width="1.75rem" height="1.75rem" />
+          <p-skeleton width="60%" height="1rem" />
+        </div>
+        <div class="flex flex-col gap-3 p-3">
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <p-skeleton height="1.1rem" />
+          }
+        </div>
+      </div>
+    } @else {
+      <app-sidebar-nav-panel
+        [panelConfig]="panel"
+        (rutaSeleccionada)="onRutaSeleccionada($event)"
+      />
+    }
   </div>
-} @else if (!shell.navPanelColapsado() && panelActivo(); as panel) {
-  <app-sidebar-nav-panel
-    [panelConfig]="panel"
-    (rutaSeleccionada)="onRutaSeleccionada($event)"
-  />
 }

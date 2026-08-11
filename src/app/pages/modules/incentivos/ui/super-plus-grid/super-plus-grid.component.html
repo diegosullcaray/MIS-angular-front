@@ -11,9 +11,9 @@
           [disabled]="!item.enab"
           (click)="onClic(item)"
         >
-          <i [class]="item.icono + ' text-[16px]'"></i>
-          <span class="text-[9px] text-center leading-tight">{{ item.des }}</span>
-          <span class="text-[11px] font-semibold">S/. {{ item.val | number: '.0-2' }}</span>
+          <i [class]="item.icono + ' text-[18px]'"></i>
+          <span class="text-[11px] font-medium text-center leading-tight">{{ item.des }}</span>
+          <span class="text-[12px] font-semibold">S/. {{ item.val | number: '.0-2' }}</span>
         </button>
       }
     }

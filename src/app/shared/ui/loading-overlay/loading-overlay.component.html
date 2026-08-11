@@ -1,0 +1,8 @@
+@if (estado().isLoading) {
+  <div class="loading-overlay-wrapper fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-4 p-4">
+    <p-progress-spinner styleClass="mis-spinner" strokeWidth="4" fill="transparent" [style]="{ width: '64px', height: '64px' }" />
+    @if (estado().message) {
+      <span class="text-sm font-medium text-white">{{ estado().message }}</span>
+    }
+  </div>
+}

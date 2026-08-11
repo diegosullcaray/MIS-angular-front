@@ -9,12 +9,13 @@ import type { EsgMetricaFila } from '../../models';
 interface ColumnaFija {
   key: string;
   label: string;
+  headerBg?: string;
 }
 
 const COLUMNAS_FIJAS: ColumnaFija[] = [
-  { key: 'des_met', label: 'Metrica' },
-  { key: 'des_med', label: 'Medida' },
-  { key: 'des_dis', label: 'Esta disponible?' },
+  { key: 'des_met', label: 'Metrica', headerBg: '#008080' },
+  { key: 'des_med', label: 'Medida', headerBg: '#008080' },
+  { key: 'des_dis', label: 'Esta disponible?', headerBg: '#4472c4' },
 ];
 
 /**

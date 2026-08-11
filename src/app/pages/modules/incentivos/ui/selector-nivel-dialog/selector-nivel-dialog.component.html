@@ -62,7 +62,6 @@
       @if (vista() === 'asesores') {
         <p-table
           [value]="asesoresFiltrados()"
-          [loading]="cargando()"
           [paginator]="true"
           [rows]="8"
           selectionMode="single"
@@ -92,7 +91,6 @@
       } @else {
         <p-table
           [value]="nodosFiltrados()"
-          [loading]="cargando()"
           [paginator]="true"
           [rows]="8"
           selectionMode="single"

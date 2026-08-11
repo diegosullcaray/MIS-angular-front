@@ -1,18 +1,34 @@
 import { Component, computed, inject, output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DatePickerModule } from 'primeng/datepicker';
 import { IncentivosService } from '../../services/incentivos.service';
+
+/** `YYYYMMDD` → `Date` local (mediodía, para no cruzar de día por huso horario). */
+function aFecha(f: string): Date {
+  return new Date(Number(f.slice(0, 4)), Number(f.slice(4, 6)) - 1, Number(f.slice(6, 8)), 12);
+}
+
+/** `Date` → `YYYYMMDD`, igual formato que usa el backend. */
+function aYYYYMMDD(d: Date): string {
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}${mm}${dd}`;
+}
 
 /**
  * Panel de Monetización — migrado de `MonetizadoComponent` (legado STG,
- * `pages/modules/incentivos3/monetizado`). No migra el selector de fecha de
- * corte (`mat-menu`+`mat-calendar` filtrado a `profile.hab_fec`): ese campo
- * no lo expone todavía el `UsuarioActivo` de este Host — ver la nota de
- * gap de datos en `IncentivosService`. La fecha se muestra de solo lectura.
+ * `pages/modules/incentivos3/monetizado`). El selector de fecha de corte
+ * (`mat-menu`+`mat-calendar` filtrado a `profile.hab_fec` en el legado) se
+ * migra con `p-datepicker`: solo quedan clickeables los días presentes en
+ * `fechasHabilitadas` — el resto del rango se arma en `disabledDates` — ver
+ * `IncentivosService.seleccionarFecha`/`calcularFechasHabilitadas`.
  */
 @Component({
   selector: 'app-monetizado-card',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, FormsModule, DatePickerModule],
   templateUrl: './monetizado-card.component.html',
   styleUrl: './monetizado-card.component.css',
 })
@@ -21,10 +37,40 @@ export class MonetizadoCardComponent {
 
   readonly abrirCalculadora = output<void>();
 
-  protected readonly fechaCorteFormateada = computed(() => {
-    const f = this.incentivos.fechaCorte();
-    return `${f.slice(0, 4)}-${f.slice(4, 6)}-${f.slice(6, 8)}`;
+  private readonly fechasOrdenadas = computed(() => [...this.incentivos.monetizado().fechasHabilitadas].sort());
+
+  protected readonly fechaSeleccionada = computed(() => {
+    const f = this.incentivos.fechaActual();
+    return f ? aFecha(f) : null;
   });
+
+  protected readonly minDate = computed(() => {
+    const fechas = this.fechasOrdenadas();
+    return fechas.length ? aFecha(fechas[0]) : undefined;
+  });
+
+  protected readonly maxDate = computed(() => {
+    const fechas = this.fechasOrdenadas();
+    return fechas.length ? aFecha(fechas[fechas.length - 1]) : undefined;
+  });
+
+  /** Todo el rango [minDate, maxDate] menos los días en `fechasHabilitadas` — así solo esos quedan clickeables en el calendario. */
+  protected readonly disabledDates = computed(() => {
+    const habilitadas = new Set(this.fechasOrdenadas());
+    const min = this.minDate();
+    const max = this.maxDate();
+    if (!min || !max) return [];
+
+    const deshabilitadas: Date[] = [];
+    for (const cursor = new Date(min); cursor <= max; cursor.setDate(cursor.getDate() + 1)) {
+      if (!habilitadas.has(aYYYYMMDD(cursor))) deshabilitadas.push(new Date(cursor));
+    }
+    return deshabilitadas;
+  });
+
+  protected onCambioFecha(fecha: Date | null): void {
+    if (fecha) this.incentivos.seleccionarFecha(aYYYYMMDD(fecha));
+  }
 
   protected claseBonoSuperPlus(): string {
     return this.incentivos.monetizado().bonoSuperPlus < 0 ? 'text-[var(--mis-danger)]' : '';

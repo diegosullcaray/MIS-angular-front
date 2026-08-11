@@ -13,12 +13,17 @@ function tabla(overrides: Partial<TablaReporteResultado> = {}): TablaReporteResu
 }
 
 describe('MonitorReprogramadosComponent', () => {
-  let reportesFalso: { obtenerBloqueReporte: ReturnType<typeof vi.fn>; fechaUltimoDia: ReturnType<typeof vi.fn> };
+  let reportesFalso: {
+    obtenerBloqueReporte: ReturnType<typeof vi.fn>;
+    fechaUltimoDia: ReturnType<typeof vi.fn>;
+    obtenerJerarquiaBase: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     reportesFalso = {
       obtenerBloqueReporte: vi.fn().mockReturnValue(of(tabla())),
       fechaUltimoDia: vi.fn().mockReturnValue('20260809'),
+      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([])),
     };
     TestBed.configureTestingModule({
       imports: [MonitorReprogramadosComponent],

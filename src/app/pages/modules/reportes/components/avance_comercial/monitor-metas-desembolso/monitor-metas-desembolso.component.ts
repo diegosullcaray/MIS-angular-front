@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
 import { ReportesService, COD_JERARQUIA_ORGANIZATIVA, NIVEL_MAXIMO_JERARQUIA } from '../../../services/reportes.service';
@@ -17,20 +18,20 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 
 /**
  * "Monitor Metas Desembolso" — migrado de la ruta `mon-desem` (legado STG,
- * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese'`),
- * renderizada en el legado por el motor genérico `ReportCraV1p1Component`.
- * Ese reporte tiene 4 bloques (`Monitor_Dese_01`..`_04`): los dos primeros
- * son tarjetas KPI ("Operaciones Desembolsadas"/"Monto Desembolsado" con su
- * cumplimiento de meta), los dos últimos son tablas de datos genéricas.
+ * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese'`).
  *
- * No migra el bloque hermano `Monitor_Dese_misi` (ruta `mon-desem-misi`,
- * "Monitor Metas Desembolso Misionales") — fuera del alcance de este nodo
- * (`avance_comercial`), es una variante con su propio filtro de producto.
+ * La carga inicial la dispara únicamente `app-hier-selector` (evento
+ * `nodoSeleccionado`) — igual que `ReportCraV1p1Component` en el legado,
+ * que no hace su propio `getBaseHierarchy()`: solo reacciona a
+ * `(onSelectHier)` de `hier-rem-selector`. Tener acá un fetch inicial propio
+ * duplicaba la llamada a `obtenerJerarquiaBase` y competía en carrera con el
+ * cascadeo interno del selector (root → nivel por nivel hasta `maxLvl`), que
+ * también dispara `onNivelSeleccionado` en cada paso.
  */
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule],
   templateUrl: './monitor-metas-desembolso.component.html',
   styleUrl: './monitor-metas-desembolso.component.css',
 })
@@ -45,12 +46,14 @@ export class MonitorMetasDesembolsoComponent {
   };
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
-  protected readonly cargando = signal(false);
+  protected readonly cargando = signal(true);
 
   protected readonly kpiOperaciones = signal<KpiOperacionesDesembolsadas | null>(null);
   protected readonly kpiMonto = signal<KpiMontoDesembolsado | null>(null);
-  protected readonly tablaOperaciones = signal<TablaReporteResultado>(TABLA_VACIA);
-  protected readonly tablaMontos = signal<TablaReporteResultado>(TABLA_VACIA);
+  protected readonly tabla1 = signal<TablaReporteResultado>(TABLA_VACIA);
+  protected readonly tabla2 = signal<TablaReporteResultado>(TABLA_VACIA);
+  protected readonly tabla3 = signal<TablaReporteResultado>(TABLA_VACIA);
+  protected readonly tabla4 = signal<TablaReporteResultado>(TABLA_VACIA);
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
@@ -59,16 +62,18 @@ export class MonitorMetasDesembolsoComponent {
     const nivel = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel };
 
     forkJoin({
-      operaciones: this.reportes.obtenerBloqueReporte('Monitor_Dese_01', { ...nivel, tipmet: 1 }),
-      monto: this.reportes.obtenerBloqueReporte('Monitor_Dese_02', { ...nivel, tipmet: 1 }),
-      tablaOperaciones: this.reportes.obtenerBloqueReporte('Monitor_Dese_03', { ...nivel, tipmet: 1 }),
-      tablaMontos: this.reportes.obtenerBloqueReporte('Monitor_Dese_04', nivel),
+      t1: this.reportes.obtenerBloqueReporte('Monitor_Dese_01', { ...nivel, tipmet: 1 }),
+      t2: this.reportes.obtenerBloqueReporte('Monitor_Dese_02', { ...nivel, tipmet: 1 }),
+      t3: this.reportes.obtenerBloqueReporte('Monitor_Dese_03', { ...nivel, tipmet: 1 }),
+      t4: this.reportes.obtenerBloqueReporte('Monitor_Dese_04', nivel),
     }).subscribe({
-      next: ({ operaciones, monto, tablaOperaciones, tablaMontos }) => {
-        this.kpiOperaciones.set((operaciones.additional as unknown as KpiOperacionesDesembolsadas | undefined) ?? null);
-        this.kpiMonto.set((monto.additional as unknown as KpiMontoDesembolsado | undefined) ?? null);
-        this.tablaOperaciones.set(tablaOperaciones);
-        this.tablaMontos.set(tablaMontos);
+      next: ({ t1, t2, t3, t4 }) => {
+        this.kpiOperaciones.set((t1.additional as unknown as KpiOperacionesDesembolsadas | undefined) ?? null);
+        this.kpiMonto.set((t2.additional as unknown as KpiMontoDesembolsado | undefined) ?? null);
+        this.tabla1.set(t1);
+        this.tabla2.set(t2);
+        this.tabla3.set(t3);
+        this.tabla4.set(t4);
         this.cargando.set(false);
       },
       error: () => {
@@ -76,5 +81,11 @@ export class MonitorMetasDesembolsoComponent {
         this.cargando.set(false);
       },
     });
+  }
+
+  /** Único caso en que `app-hier-selector` nunca llega a emitir `nodoSeleccionado` (falla o viene vacía la jerarquía) — sin esto, `cargando` se quedaba en `true` para siempre. */
+  protected onErrorJerarquia(): void {
+    this.toast.error('No se pudo cargar la jerarquía', 'Inténtalo de nuevo en unos segundos.');
+    this.cargando.set(false);
   }
 }

@@ -39,4 +39,12 @@ describe('AvanceComercialComponent', () => {
     const fixture = crear();
     expect(fixture.componentInstance['tabActiva']()).toBe('mon-desem');
   });
+
+  it('activa la pestaña "Monitor Reprogramados" si recibe el input tab="mon-rep"', () => {
+    const fixture = TestBed.createComponent(AvanceComercialComponent);
+    fixture.componentRef.setInput('tab', 'mon-rep');
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance['tabActiva']()).toBe('mon-rep');
+  });
 });

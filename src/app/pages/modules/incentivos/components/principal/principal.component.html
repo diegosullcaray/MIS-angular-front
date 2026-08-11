@@ -1,4 +1,24 @@
 <div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <div class="flex items-center justify-between flex-wrap gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-gauge text-[var(--mis-primary)]"></i>
+      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cuadro de Mando de Incentivos</h2>
+    </div>
+
+    <p-button
+      icon="pi pi-refresh"
+      [text]="true"
+      [rounded]="true"
+      size="small"
+      ariaLabel="Actualizar"
+      pTooltip="Actualizar"
+      tooltipPosition="bottom"
+      [loading]="incentivos.cargando()"
+      [disabled]="!incentivos.perfil()"
+      (onClick)="actualizar()"
+    />
+  </div>
+
   @if (incentivos.error()) {
     <div class="mis-card p-4 text-[13px] text-[var(--mis-danger)] flex items-center gap-2">
       <i class="pi pi-exclamation-triangle"></i>
@@ -21,15 +41,15 @@
           <app-perfil-card (abrirSelector)="abrirSelector()" (abrirCalculadora)="abrirCalculadora()" />
         </div>
         <div class="mis-card p-3 flex-1 min-h-[320px]">
-          <app-tabla-variables />
+          <app-tabla-variables (abrirDetalle)="abrirDetalleTabla($event)" />
         </div>
       </div>
 
       <div class="flex flex-col gap-4 min-h-0">
-        <div class="mis-card p-3 min-h-[280px]">
+        <div class="mis-card p-3">
           <app-avances-grid (abrirDetalle)="abrirDetalleAvance($event)" />
         </div>
-        <div class="mis-card p-3 min-h-[280px]">
+        <div class="mis-card p-3">
           <app-super-plus-grid (abrirDetalle)="abrirDetalleSuperPlus($event)" />
         </div>
       </div>
@@ -54,3 +74,5 @@
 }
 
 <app-detalle-bancarizacion-dialog [visible]="mostrarDetalleBancarizacion()" (visibleChange)="mostrarDetalleBancarizacion.set($event)" />
+
+<app-loading-overlay />

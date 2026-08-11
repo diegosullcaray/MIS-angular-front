@@ -1,27 +1,22 @@
-<p-button
-  [label]="etiquetaActual() ?? placeholder()"
-  icon="pi pi-sitemap"
-  [text]="true"
-  size="small"
-  (onClick)="abrir()"
-/>
-
-<p-dialog
-  [header]="paramsHier().dlgTitulo"
-  [(visible)]="dialogAbierto"
-  [modal]="true"
-  appendTo="body"
-  [style]="{ width: '420px' }"
-  [draggable]="false"
->
-  <p-tree
-    [value]="nodos()"
-    [loading]="cargandoRaiz()"
-    selectionMode="single"
-    [filter]="true"
-    filterPlaceholder="Buscar…"
-    emptyMessage="Sin niveles disponibles."
-    (onNodeExpand)="onExpandir($event)"
-    (onNodeSelect)="onSeleccionar($event)"
-  />
-</p-dialog>
+<div class="flex items-center gap-3 flex-wrap p-2 bg-[var(--mis-panel-bg)]/60 border border-[var(--mis-border)] rounded-lg shadow-sm w-full">
+  @for (cbo of nodosNivel(); track cbo.level; let i = $index) {
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">
+        {{ cbo.label }}
+      </span>
+      <p-select
+        [options]="cbo.data"
+        [ngModel]="valoresSeleccionados()[i]"
+        (onChange)="onSeleccionarNivel(i, $event.value)"
+        optionLabel="des_rel"
+        dataKey="cod_rel"
+        styleClass="w-44 text-[11.5px]"
+        [placeholder]="cbo.label"
+        ariaLabel="Seleccionar nivel jerárquico"
+      />
+    </div>
+  }
+  @if (cargando()) {
+    <i class="pi pi-spin pi-spinner text-[var(--mis-primary)] text-sm self-end mb-2 ml-1"></i>
+  }
+</div>

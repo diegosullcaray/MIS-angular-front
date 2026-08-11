@@ -159,6 +159,23 @@ describe('IncentivosService', () => {
     });
   });
 
+  describe('actualizar()', () => {
+    it('sin nivel seleccionado todavía, no llama al backend', () => {
+      service.actualizar();
+      expect(ant.getDataSourcesIndividual).not.toHaveBeenCalled();
+      expect(ant.getDataSourcesGrupal).not.toHaveBeenCalled();
+    });
+
+    it('con un nivel ya seleccionado, vuelve a pedir sus datos', () => {
+      service.seleccionarNodoJerarquia({ tip_cod: 18, cod_rel: 'U-01', des_rel: 'Unidad 1' });
+      ant.getDataSourcesIndividual.mockClear();
+
+      service.actualizar();
+
+      expect(ant.getDataSourcesIndividual).toHaveBeenCalledWith('2026', 18, 'U-01', expect.any(String));
+    });
+  });
+
   describe('cargarDatos() — mapeo de ds3/ds4 a las señales del Cuadro de Mando', () => {
     it('arma semáforo/avances/superPlus/monetizado a partir de ds3/ds4 (perfil sectorista individual)', () => {
       service.seleccionarAsesor({ cod_sec: 'BT-002', des_sec: 'Juan Pérez', cod_gru: 1 });
@@ -295,7 +312,12 @@ describe('IncentivosService', () => {
     });
   });
 
-  it('fechaCorte() devuelve una fecha en formato YYYYMMDD', () => {
+  it('fechaCorte() usa profile.curr_fec (vía UsuarioActivo.fechaCorte) cuando el backend lo mandó', () => {
+    shell.setUsuarioActivo(usuario({ fechaCorte: '20260808' }));
+    expect(service.fechaCorte()).toBe('20260808');
+  });
+
+  it('fechaCorte() aproxima con la fecha real si UsuarioActivo todavía no trae fechaCorte', () => {
     expect(service.fechaCorte()).toMatch(/^\d{8}$/);
   });
 });

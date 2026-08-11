@@ -1,4 +1,4 @@
-<div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+<div id="tour-esg-metricas-tabla" class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
   @if (cargando()) {
     <div class="p-4 flex flex-col gap-2">
       @for (i of [1, 2, 3, 4, 5]; track i) {
@@ -17,12 +17,12 @@
       <ng-template pTemplate="header">
         <tr>
           @for (col of columnasFijas; track col.key) {
-            <th class="whitespace-nowrap text-[12px] uppercase" style="background-color: #008080; color: white;">{{ col.label }}</th>
+            <th class="whitespace-nowrap text-[12px] uppercase" [style.background-color]="col.headerBg ?? '#008080'" style="color: white;">{{ col.label }}</th>
           }
           @for (col of columnasHistoricasCol(); track col.key) {
             <th class="whitespace-nowrap text-[11px]" style="background-color: #4472c4; color: white;">{{ col.label }}</th>
           }
-          <th class="whitespace-nowrap text-[12px] uppercase text-center" style="background-color: #008080; color: white; width: 90px;">Acciones</th>
+          <th class="whitespace-nowrap text-[12px] uppercase text-center" style="background-color: #4472c4; color: white; width: 90px;">Acciones</th>
         </tr>
       </ng-template>
 

@@ -3,36 +3,36 @@
     <p-table [value]="incentivos.tablaVariables()" [scrollable]="true" scrollHeight="flex" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th rowspan="2" class="text-[10px]" style="width: 40px;"></th>
-          <th colspan="2" class="text-center text-[10px] uppercase">Cierre</th>
-          <th colspan="2" class="text-center text-[10px] uppercase">Traslado</th>
-          <th colspan="2" class="text-center text-[10px] uppercase">Variación</th>
-          <th rowspan="2" class="text-[10px] uppercase">Monetización</th>
+          <th rowspan="2" class="text-[11px]" style="width: 44px;"></th>
+          <th colspan="2" class="text-center text-[11px] uppercase">Cierre</th>
+          <th colspan="2" class="text-center text-[11px] uppercase">Traslado</th>
+          <th colspan="2" class="text-center text-[11px] uppercase">Variación</th>
+          <th rowspan="2" class="text-[11px] uppercase">Monetización</th>
         </tr>
         <tr>
-          <th class="text-[9px]">Anterior</th>
-          <th class="text-[9px]">Actual</th>
-          <th class="text-[9px]">Origen</th>
-          <th class="text-[9px]">Destino</th>
-          <th class="text-[9px]">Real</th>
-          <th class="text-[9px]">Meta</th>
+          <th class="text-[11px]">Anterior</th>
+          <th class="text-[11px]">Actual</th>
+          <th class="text-[11px]">Origen</th>
+          <th class="text-[11px]">Destino</th>
+          <th class="text-[11px]">Real</th>
+          <th class="text-[11px]">Meta</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-fila>
-        <tr class="text-[10px]">
-          <td class="text-center"><i [class]="iconoVariable(fila.cod_var)"></i></td>
-          <td class="text-right">{{ fila.ini_n | number: '.0-2' }}</td>
-          <td class="text-right">{{ fila.cie_n | number: '.0-2' }}</td>
-          <td class="text-right">{{ fila.cie_n_o | number: '.0-2' }}</td>
-          <td class="text-right">{{ fila.cie_n_d | number: '.0-2' }}</td>
-          <td class="text-right">{{ fila.var_real | number: '.0-2' }}</td>
-          <td class="text-right rounded" [class]="claseMeta(fila)">{{ fila.met | number: '.0-2' }}</td>
-          <td class="text-right font-semibold">S/. {{ fila.mon | number: '.0-2' }}</td>
+        <tr class="text-[12px] cursor-pointer hover:bg-black/5 transition-colors" (click)="onClicFila(fila.cod_var)">
+          <td class="text-center"><i [class]="iconoVariable(fila.cod_var) + ' text-[16px]'"></i></td>
+          <td [class]="claseCelda(fila, 'ini')">{{ fila.ini_n | number: '.0-2' }}</td>
+          <td [class]="claseCelda(fila, 'real')">{{ fila.cie_n | number: '.0-2' }}</td>
+          <td [class]="claseCelda(fila, 'ini')">{{ fila.cie_n_o | number: '.0-2' }}</td>
+          <td [class]="claseCelda(fila, 'ini')">{{ fila.cie_n_d | number: '.0-2' }}</td>
+          <td [class]="claseCelda(fila, 'real')">{{ fila.var_real | number: '.0-2' }}</td>
+          <td [class]="claseCelda(fila, 'met')">{{ fila.met | number: '.0-2' }}</td>
+          <td [class]="claseCelda(fila, 'mon')">S/. {{ fila.mon | number: '.0-2' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="8" class="text-center text-[11px] text-[var(--mis-text-tertiary)] py-4">Sin variables para mostrar.</td>
+          <td colspan="8" class="text-center text-[12px] text-[var(--mis-text-tertiary)] py-4">Sin variables para mostrar.</td>
         </tr>
       </ng-template>
     </p-table>
@@ -42,24 +42,24 @@
     <p-table [value]="incentivos.tablaEfectividad()" [scrollable]="true" scrollHeight="flex" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th class="text-[10px]" style="width: 40px;"></th>
-          <th class="text-[9px]">Base Inicial</th>
-          <th class="text-[9px]">Mantiene</th>
-          <th class="text-[9px]">Recuperado</th>
-          <th class="text-[9px]">Efectividad</th>
-          <th class="text-[9px]">Meta</th>
-          <th class="text-[9px] uppercase">Monetización</th>
+          <th class="text-[11px]" style="width: 44px;"></th>
+          <th class="text-[11px]">Base Inicial</th>
+          <th class="text-[11px]">Mantiene</th>
+          <th class="text-[11px]">Recuperado</th>
+          <th class="text-[11px]">Efectividad</th>
+          <th class="text-[11px]">Meta</th>
+          <th class="text-[11px] uppercase">Monetización</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-fila>
-        <tr class="text-[10px]">
-          <td class="text-center"><i [class]="iconoVariable(fila.cod_var)"></i></td>
-          <td class="text-right">{{ fila.ini | number: '.0-2' }}</td>
-          <td class="text-right">{{ fila.man_efe | number: '.0-2' }}</td>
-          <td class="text-right">{{ fila.rec | number: '.0-2' }}</td>
-          <td class="text-right">{{ fila.efec * 100 | number: '.0-2' }}%</td>
-          <td class="text-right rounded" [class]="claseMeta(fila)">{{ fila.met * 100 | number: '.0-2' }}%</td>
-          <td class="text-right font-semibold">S/. {{ fila.mon | number: '.0-2' }}</td>
+        <tr class="text-[12px] cursor-pointer hover:bg-black/5 transition-colors" (click)="onClicFila(fila.cod_var)">
+          <td class="text-center"><i [class]="iconoVariable(fila.cod_var) + ' text-[16px]'"></i></td>
+          <td [class]="claseCelda(fila, 'ini')">{{ fila.ini | number: '.0-2' }}</td>
+          <td [class]="claseCelda(fila, 'real')">{{ fila.man_efe | number: '.0-2' }}</td>
+          <td [class]="claseCelda(fila, 'real')">{{ fila.rec | number: '.0-2' }}</td>
+          <td [class]="claseCelda(fila, 'real')">{{ fila.efec * 100 | number: '.0-2' }}%</td>
+          <td [class]="claseCelda(fila, 'met')">{{ fila.met * 100 | number: '.0-2' }}%</td>
+          <td [class]="claseCelda(fila, 'mon')">S/. {{ fila.mon | number: '.0-2' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">

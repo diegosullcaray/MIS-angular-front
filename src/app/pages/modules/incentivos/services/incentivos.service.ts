@@ -1,8 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, throwError } from 'rxjs';
 import { ModIncentivosService } from '../../../../core/winder/instances/mod-incentivos.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
+import { LoadingService } from '../../../../shared/services/loading.service';
 import {
   CFG_INDIVIDUAL_SECTORISTA,
   NIVELES_SELECTOR_JERARQUIA,
@@ -32,7 +33,7 @@ import type {
 /** `cod_jer` de la jerarquía organizativa — mismo código que usan Presupuesto/Kaypacha para `base_hier`. */
 const COD_JERARQUIA_ORGANIZATIVA = 9;
 
-/** Modelo de campaña — fijo en `'2026'`. El legado tenía `changeModel()` para alternar con `'2025'`, pero el botón de UI que lo disparaba ya estaba comentado (`monetizado.component.html`) — evidencia de que la transición 2025→2026 ya se dio en la práctica. Ver `docs/06-legado-sistema-anterior/incentivos-auditoria.md`. */
+/** Modelo de campaña — fijo en `'2026'` (la campaña 2025 ya cerró). */
 const MODELO_CAMPANIA = '2026';
 
 /** Forma cruda de `incentivos4.resultados4`/`.resultados5` (`resultado`). */
@@ -68,44 +69,22 @@ interface BancarizacionBody {
 }
 
 /**
- * Fachada + estado del módulo `incentivos` (Cuadro de Mando de Incentivos,
- * `/app/incentivos3`) — reemplaza a `Incentivos3Service` (legado STG,
- * `pages/modules/incentivos3/compartido/servicios/incentivos3.service.ts`),
- * traduciendo las respuestas del backend Ant a los modelos tipados del
- * módulo y manteniendo el Cuadro de Mando como estado compartido
- * (`signal`s) entre `PrincipalComponent` y los diálogos
- * (Calculadora/Detalle/Selector de Nivel).
+ * Fachada + estado del módulo `incentivos` (Cuadro de Mando, `/app/incentivos3`).
+ * Traduce las respuestas del backend Ant a los modelos tipados del módulo y
+ * mantiene el estado compartido (`signal`s) entre `PrincipalComponent` y los
+ * diálogos (Calculadora/Detalle/Selector de Nivel).
  *
- * ## Gap de datos conocido — pendiente de negocio/backend
- *
- * El legado diferenciaba el acceso con 3 campos de `profile` que el
- * `UsuarioActivo` de este Host **no expone todavía**: `niv` (STAFF/
- * TERRITORIO/CORREDOR/ADMINISTRACION/SECTORISTA), `cla_use` (individual/
- * grupal) y `tip_use` (admin/asesor/otros) — igual gap que ya documentó
- * `PresupuestoService.esAdmin()`/`fechaCorte()` para su propio módulo. Acá
- * se resuelve así, hasta que el backend real exponga esos campos:
- * - `ShellStateService.esAdmin()` (`true`) ⇒ se trata como el STAFF del
- *   legado: ve el selector de nivel de entrada, con acceso a los 3 niveles
- *   de jerarquía + los 2 atajos "FC" (`lvlHier=4`). No se migra la opción
- *   "Mi Perfil" del selector legado (`showMe`, exclusiva de roles con perfil
- *   propio) — el modelo simplificado de acceso de este Host no distingue esa
- *   variante intermedia, y STAFF (el rol que sí se migra) tampoco la tenía.
- * - `esAdmin()` (`false`) ⇒ se trata como el SECTORISTA individual del
- *   legado: carga directo el perfil propio (`tip_cod=1`, `cla_usu=1`,
- *   `cod_rel` = `codBt` del usuario), sin botón para abrir el selector.
- *
- * `curr_fec` (fecha de corte) tampoco está expuesta — se usa la fecha real
- * como aproximación (`fechaCorte()`), igual que en `PresupuestoService`. El
- * selector de fecha del legado (`monetizado.component.html`, calendario
- * limitado a `profile.hab_fec`) no se migra: sin esa lista de fechas
- * habilitadas del backend no hay nada real que ofrecer para elegir — la
- * fecha se muestra de solo lectura.
+ * Gap conocido: `UsuarioActivo` todavía no expone `niv`/`cla_use`/`tip_use`
+ * del legado, así que el acceso se aproxima con `ShellStateService.esAdmin()`:
+ * admin ⇒ ve el selector de nivel (como STAFF); no-admin ⇒ carga directo su
+ * propio perfil (`tip_cod=1`, `codRel=codBt`, como SECTORISTA individual).
  */
 @Injectable({ providedIn: 'root' })
 export class IncentivosService {
   private readonly ant = inject(ModIncentivosService);
   private readonly antAdmin = inject(ModSysAdminService);
   private readonly shell = inject(ShellStateService);
+  private readonly loading = inject(LoadingService);
 
   readonly modelo = MODELO_CAMPANIA;
 
@@ -123,11 +102,16 @@ export class IncentivosService {
 
   readonly nivelActual = signal<NivelSeleccionado | null>(null);
   readonly puedeElegirNivel = signal(false);
-  /** `true` justo después de `iniciar()` si el usuario debe elegir un nivel antes de ver datos (equivalente admin/STAFF). */
+  /** `true` si el usuario debe elegir un nivel antes de ver datos (admin/STAFF). */
   readonly requiereSeleccionInicial = signal(false);
   readonly nivelesSelector = NIVELES_SELECTOR_JERARQUIA;
 
+  /** Fecha (`YYYYMMDD`) de los datos actualmente mostrados — la que el usuario eligió en el selector, o la de corte por defecto. */
+  readonly fechaActual = signal('');
+
   private raizJerarquia: { tipCod: number; codRel: string } | null = null;
+  /** Override manual del selector de fecha (`seleccionarFecha`) — `null` usa la fecha de corte por defecto. */
+  private fechaSeleccionada: string | null = null;
 
   private monetizadoInicial(): MonetizadoIncentivo {
     return {
@@ -153,21 +137,29 @@ export class IncentivosService {
     return this.shell.usuarioActivo()?.email ?? '';
   }
 
-  /** Fecha de corte — el Host no expone `profile.curr_fec` todavía, se usa la fecha real. Formato `YYYYMMDD`, igual que el backend. */
+  /** Fecha de corte de campaña (`YYYYMMDD`) — la elegida a mano (`seleccionarFecha`) o `profile.curr_fec` del backend; si ninguna llegó todavía, aproxima con la fecha real. */
   fechaCorte(): string {
-    return new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    return this.fechaSeleccionada ?? this.shell.usuarioActivo()?.fechaCorte ?? new Date().toISOString().slice(0, 10).replace(/-/g, '');
   }
 
-  /** Arranca el módulo — equivalente a `loadData()` del legado (llamar una vez al entrar a la pantalla). */
+  /** Vuelve a cargar el Cuadro de Mando del nivel actual a otra fecha de corte (selector de fecha del panel de Monetización). */
+  seleccionarFecha(fecha: string): void {
+    this.fechaSeleccionada = fecha;
+    const nivel = this.nivelActual();
+    if (nivel) this.cargarDatos(nivel);
+  }
+
+  /** Arranca el módulo — llamar una vez al entrar a la pantalla. */
   iniciar(): void {
     this.cargando.set(true);
     this.error.set(null);
     this.perfil.set(null);
     this.nivelActual.set(null);
+    this.fechaSeleccionada = null;
 
     const esAdmin = this.shell.esAdmin();
     this.puedeElegirNivel.set(esAdmin);
-    this.monetizado.update((actual) => ({ ...actual, mostrarModelo: !esAdmin }));
+    this.monetizado.update((actual) => ({ ...actual, mostrarModelo: !esAdmin, fechasHabilitadas: this.calcularFechasHabilitadas() }));
 
     if (esAdmin) {
       this.requiereSeleccionInicial.set(true);
@@ -186,19 +178,47 @@ export class IncentivosService {
     this.seleccionarNivel({ nombre: 'Mi perfil', nivel: '--', descripcionNivel: '--', imagenUrl: '' }, { tipCod: 1, codRel, claUsu: 1 });
   }
 
-  /** Deja el cache de jerarquía listo para el selector, sin bloquear la pantalla (equivalente a `getBaseHier()` cuando abre el chooser). */
+  /** Recarga el Cuadro de Mando del nivel actualmente seleccionado (botón "Actualizar"). */
+  actualizar(): void {
+    const nivel = this.nivelActual();
+    if (nivel) this.cargarDatos(nivel);
+  }
+
+  /** Fechas de corte re-consultables (`profile.hab_fec`) más la fecha de corte vigente — selector de fecha del panel de Monetización. */
+  private calcularFechasHabilitadas(): string[] {
+    const usuario = this.shell.usuarioActivo();
+    const habilitadas = (usuario?.fechasHabilitadas ?? '')
+      .split(',')
+      .map((f) => f.trim())
+      .filter(Boolean);
+    if (usuario?.fechaCorte) habilitadas.push(usuario.fechaCorte);
+    return [...new Set(habilitadas)].sort().reverse();
+  }
+
+  /** Carga la raíz de jerarquía para el selector de nivel, con el spinner de pantalla completa activo hasta que termine. */
   private cargarRaizJerarquia(): void {
-    this.antAdmin.getBaseHierarchy(this.email, COD_JERARQUIA_ORGANIZATIVA).subscribe((respuesta) => {
-      const h = (respuesta.body as { base_hierarchy?: { tip_cod: number; cod_rel: string }[] } | null)?.base_hierarchy;
-      if (h?.[0]) {
-        this.raizJerarquia = { tipCod: h[0].tip_cod, codRel: h[0].cod_rel };
-      }
+    this.loading.show('Cargando jerarquía…');
+    this.antAdmin.getBaseHierarchy(this.email, COD_JERARQUIA_ORGANIZATIVA).subscribe({
+      next: (respuesta) => {
+        const h = (respuesta.body as { base_hierarchy?: { tip_cod: number; cod_rel: string }[] } | null)?.base_hierarchy;
+        if (h?.[0]) {
+          this.raizJerarquia = { tipCod: h[0].tip_cod, codRel: h[0].cod_rel };
+        } else {
+          this.error.set('No se pudo determinar tu jerarquía base.');
+        }
+        this.loading.hide();
+      },
+      error: () => {
+        this.error.set('No se pudo determinar tu jerarquía base.');
+        this.loading.hide();
+      },
     });
   }
 
   /** Niveles listados por `incentivos3.lista3` desde la raíz de jerarquía del usuario — selector "Unidades"/"Corredores"/"Territorios". */
   obtenerNivelesJerarquia(tipCodListado: number): Observable<NodoJerarquiaIncentivo[]> {
-    const raiz = this.raizJerarquia ?? { tipCod: 7, codRel: '231' };
+    if (!this.raizJerarquia) return throwError(() => new Error('La jerarquía base todavía no está lista.'));
+    const raiz = this.raizJerarquia;
     return this.ant
       .getFromHierList(raiz.tipCod, raiz.codRel, tipCodListado)
       .pipe(map((r) => (r.body as ListaJerarquiaBody | null)?.resultado ?? []));
@@ -206,7 +226,8 @@ export class IncentivosService {
 
   /** Colaboradores listados por `list_pick_01` desde la raíz de jerarquía del usuario — selector "Asesores". */
   obtenerAsesores(): Observable<AsesorPickItem[]> {
-    const raiz = this.raizJerarquia ?? { tipCod: 7, codRel: '231' };
+    if (!this.raizJerarquia) return throwError(() => new Error('La jerarquía base todavía no está lista.'));
+    const raiz = this.raizJerarquia;
     return this.antAdmin
       .getListPick01(raiz.tipCod, raiz.codRel)
       .pipe(map((r) => (r.body as AsesoresBody | null)?.list_res ?? []));
@@ -253,6 +274,7 @@ export class IncentivosService {
     const puedeSimular = ![20, 7].includes(nivel.tipCod);
     const cfg = resolverConfiguracionUsuario(nivel.tipCod, nivel.claUsu);
     const fec = this.fechaCorte();
+    this.fechaActual.set(fec);
 
     const fuente$ =
       nivel.claUsu === 2

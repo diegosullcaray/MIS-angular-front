@@ -58,8 +58,8 @@ export class LoginComponent implements OnInit {
   private async entrarAlDashboard(): Promise<void> {
     this.shell.setSidebarIconActivo('host-inicio');
     this.paso.set('cargando');
-    // Mantiene visible la pantalla de carga branded al menos 5s antes de navegar.
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // Mantiene visible la pantalla de carga branded al menos 3s antes de navegar.
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     await this.router.navigate(['/app/dashboard']);
   }
 }

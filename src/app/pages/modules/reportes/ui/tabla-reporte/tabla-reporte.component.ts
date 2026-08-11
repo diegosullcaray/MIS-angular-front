@@ -41,12 +41,12 @@ export class TablaReporteComponent {
   }
 
   protected esSemaforo(columna: ColumnaReporte): boolean {
-    return columna.format?.type === 'traffic-light';
+    return columna.format?.['type'] === 'traffic-light';
   }
 
   protected formatear(valor: unknown, columna: ColumnaReporte): string {
     if (valor === null || valor === undefined || valor === '') return '';
-    switch (columna.format?.type) {
+    switch (columna.format?.['type']) {
       case 'number':
         return typeof valor === 'number' ? new Intl.NumberFormat('es-PE').format(valor) : String(valor);
       case 'percent':

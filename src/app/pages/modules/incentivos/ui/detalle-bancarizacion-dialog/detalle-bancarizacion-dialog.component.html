@@ -19,11 +19,11 @@
       <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
         <p-table [value]="resultado().filas" styleClass="p-datatable-sm" scrollHeight="360px" [scrollable]="true">
           <ng-template pTemplate="header">
-            <tr>
-              <th class="text-[11px]">Nombre</th>
-              <th class="text-[11px] text-center">Mujer</th>
-              <th class="text-[11px] text-center">Rural</th>
-              <th class="text-[11px] text-center">Migrante</th>
+            <tr class="bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)]">
+              <th class="whitespace-nowrap text-[12px] uppercase bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Nombre</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-center bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Mujer</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-center bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Rural</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-center bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Migrante</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-fila>

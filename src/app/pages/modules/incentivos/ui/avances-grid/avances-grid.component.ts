@@ -33,6 +33,11 @@ export class AvancesGridComponent {
   /** Índice de variable esperado por `incentivos3.detalle_var3` — `midx` de `AvancesComponent.showDetail()` del legado. */
   private readonly indiceDetalle: Record<string, number> = { car: 91, cli: 2, sc1: 3, efec1: 4, efec2: 5, efec3: 6 };
 
+  /** `p-knob` asume `[0,100]` — pasarle `item.per` sin acotar cuando supera 100 (meta superada) rompe el arco. El valor real sigue mostrándose sin acotar en el texto (`item.val`). */
+  protected arcoAvance(item: ItemAvance): number {
+    return Math.min(Math.max(item.per, 0), 100);
+  }
+
   protected colorAvance(item: ItemAvance): string {
     if (item.val >= 0.65 && item.val < 1) return '#efb45f';
     if (item.val > 0 && item.val < 0.65) return '#E3005B';

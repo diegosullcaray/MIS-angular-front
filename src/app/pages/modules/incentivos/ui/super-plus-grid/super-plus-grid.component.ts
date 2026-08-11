@@ -23,10 +23,12 @@ export class SuperPlusGridComponent {
 
   readonly abrirDetalle = output<DetalleSuperPlusEvent>();
 
-  /** Mismos colores que `SuperPlusComponent.getBoxCls()` del legado (`.bg1`/`.bg2`/`.bg3` de `super-plus.component.scss`). */
+  /** Mismo criterio que `SuperPlusComponent.getBoxCls()` del legado (`.bg1`/`.bg2`/`.bg3`), con la paleta de tokens `--mis-*` del sistema en vez de los hex hardcodeados del legado. */
   protected claseCaja(item: ItemSuperPlus): string {
-    if (item.estado === 0) return 'bg-[darkgrey] text-white';
-    return item.val >= 0 ? 'bg-[#009fe3] text-white' : 'bg-[#E3005B] text-white';
+    if (item.estado === 0) return 'bg-[var(--mis-text-tertiary)] text-[var(--mis-text-on-primary)]';
+    return item.val >= 0
+      ? 'bg-[var(--mis-secondary)] text-[var(--mis-text-on-secondary)]'
+      : 'bg-[var(--mis-danger)] text-[var(--mis-text-on-primary)]';
   }
 
   protected onClic(item: ItemSuperPlus): void {

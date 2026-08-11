@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TablaVariablesComponent } from './tabla-variables.component';
 import { IncentivosService } from '../../services/incentivos.service';
+import { ICONOS_INCENTIVOS } from '../../utils/incentivos-config.util';
 import type { FilaTablaVariable } from '../../models';
 
 describe('TablaVariablesComponent', () => {
@@ -23,8 +24,8 @@ describe('TablaVariablesComponent', () => {
 
   it('iconoVariable() mapea cod_var 1..6 a car/cli/sc1/efec1/efec2/efec3', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['iconoVariable'](1)).toBe('pi pi-briefcase'); // car
-    expect(fixture.componentInstance['iconoVariable'](4)).toBe('pi pi-gauge'); // efec1
+    expect(fixture.componentInstance['iconoVariable'](1)).toBe(ICONOS_INCENTIVOS['car']);
+    expect(fixture.componentInstance['iconoVariable'](4)).toBe(ICONOS_INCENTIVOS['efec1']);
   });
 
   it('iconoVariable() de un cod_var fuera de rango devuelve un ícono genérico', () => {
@@ -32,10 +33,21 @@ describe('TablaVariablesComponent', () => {
     expect(fixture.componentInstance['iconoVariable'](99)).toBe('pi pi-circle');
   });
 
-  it('claseMeta() resalta en verde cuando avan_fix>=1 y en rojo en cualquier otro caso', () => {
+  it('claseCelda(fila, "met") resalta con el token de éxito cuando avan_fix>=1 y el de peligro en cualquier otro caso', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['claseMeta']({ cod_var: 1, avan_fix: 1 })).toContain('success');
-    expect(fixture.componentInstance['claseMeta']({ cod_var: 1, avan_fix: 0.5 })).toContain('danger');
-    expect(fixture.componentInstance['claseMeta']({ cod_var: 1 })).toContain('danger');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1, avan_fix: 1 }, 'met')).toContain('--mis-success');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1, avan_fix: 0.5 }, 'met')).toContain('--mis-danger');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'met')).toContain('--mis-danger');
+  });
+
+  it('claseCelda(fila, "mon") siempre usa el token primario, sin importar avan_fix', () => {
+    const fixture = crear();
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'mon')).toContain('--mis-primary');
+  });
+
+  it('claseCelda(fila, "real")/"ini" usan los tokens secundario/neutro del sistema', () => {
+    const fixture = crear();
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'real')).toContain('--mis-secondary-light');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'ini')).toContain('--mis-bg');
   });
 });

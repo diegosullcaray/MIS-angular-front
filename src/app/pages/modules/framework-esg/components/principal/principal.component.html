@@ -1,18 +1,28 @@
 <div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
   <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
     <div class="flex items-center justify-between flex-wrap gap-3">
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cuadro de Mando ESG</h2>
+      <h2 id="tour-esg-header" class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cuadro de Mando ESG</h2>
 
       <div class="flex items-center gap-2 flex-wrap">
         @if (esAdmin()) {
-          <p-button label="Usuarios" icon="pi pi-users" size="small" [outlined]="true" (onClick)="mostrarDialogoUsuarios()" />
+          <p-button id="tour-esg-usuarios-btn" label="Usuarios" icon="pi pi-users" size="small" [outlined]="true" (onClick)="mostrarDialogoUsuarios()" />
         }
+        <p-button
+          id="tour-esg-tour-btn"
+          icon="pi pi-question-circle"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          pTooltip="Ver guía interactiva"
+          tooltipPosition="bottom"
+          (onClick)="tour.iniciarTourGuiado()"
+        />
       </div>
     </div>
   </div>
 
   <p-tabs [(value)]="tabActiva">
-    <p-tablist>
+    <p-tablist id="tour-esg-tabs">
       <p-tab value="portada">Portada</p-tab>
       @for (tab of tabsCategorias; track tab.codCat) {
         <p-tab [value]="'cat-' + tab.codCat">{{ tab.titulo }}</p-tab>
@@ -22,7 +32,7 @@
       <p-tabpanel value="portada">
         <div class="esg-portada-fondo rounded-lg overflow-hidden flex-1 flex flex-col">
           <div class="esg-portada-degradado flex-1 flex items-end justify-end p-3 sm:p-6">
-            <div class="w-full sm:w-3/5 lg:w-2/5">
+            <div class="w-full sm:w-4/5 lg:w-3/5 xl:w-1/2 max-w-3xl">
               @if (cargandoPortada()) {
                 <div class="flex flex-col gap-2">
                   @for (i of [1, 2, 3]; track i) {
@@ -30,24 +40,24 @@
                   }
                 </div>
               } @else {
-                <p-table [value]="portada()" [stripedRows]="true" styleClass="p-datatable-sm">
+                <p-table id="tour-esg-portada-tabla" [value]="portada()" [stripedRows]="true" styleClass="p-datatable-sm">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th style="background-color: #5b9bd5; color: white;">Estado</th>
-                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Medio Ambiente</th>
-                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Social Empleados</th>
-                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Social Clientes</th>
-                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Gobierno</th>
-                      <th style="background-color: #5b9bd5; color: white; width: 90px;">Total</th>
+                      <th class="whitespace-nowrap" style="background-color: #5b9bd5; color: white;">Estado</th>
+                      <th class="whitespace-nowrap text-center" style="background-color: #5b9bd5; color: white; min-width: 115px;">Medio Ambiente</th>
+                      <th class="whitespace-nowrap text-center" style="background-color: #5b9bd5; color: white; min-width: 120px;">Social Empleados</th>
+                      <th class="whitespace-nowrap text-center" style="background-color: #5b9bd5; color: white; min-width: 115px;">Social Clientes</th>
+                      <th class="whitespace-nowrap text-center" style="background-color: #5b9bd5; color: white; min-width: 90px;">Gobierno</th>
+                      <th class="whitespace-nowrap text-center" style="background-color: #5b9bd5; color: white; min-width: 75px;">Total</th>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="body" let-fila>
                     <tr class="text-[12px]">
-                      <td>{{ fila.des }}</td>
-                      <td>{{ fila.c1 }}</td>
-                      <td>{{ fila.c3 }}</td>
-                      <td>{{ fila.c2 }}</td>
-                      <td>{{ fila.c4 }}</td>
+                      <td class="whitespace-nowrap font-medium">{{ fila.des }}</td>
+                      <td class="text-center">{{ fila.c1 }}</td>
+                      <td class="text-center">{{ fila.c3 }}</td>
+                      <td class="text-center">{{ fila.c2 }}</td>
+                      <td class="text-center">{{ fila.c4 }}</td>
                       <td class="font-bold text-center">{{ fila.c99 }}</td>
                     </tr>
                   </ng-template>

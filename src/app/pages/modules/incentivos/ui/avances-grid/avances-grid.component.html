@@ -4,17 +4,17 @@
       @if (item.show) {
         <button
           type="button"
-          class="flex flex-col items-center gap-1 p-1.5 rounded-lg transition-colors"
+          class="flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors"
           [class]="item.enab ? 'cursor-pointer hover:bg-black/5' : ''"
           [disabled]="!item.enab"
           (click)="onClic(item)"
         >
-          <div class="flex items-center gap-1">
-            <i [class]="'pi pi-circle-fill text-[8px] ' + colorEstado(item)"></i>
-            <span class="text-[10px] text-center leading-tight">{{ item.des }}</span>
+          <p-knob [ngModel]="item.per" [readonly]="true" [size]="52" [valueColor]="colorAvance(item)" rangeColor="#e5e7eb" [showValue]="false" [strokeWidth]="8" />
+          <span class="text-[11px] font-bold text-[var(--mis-text-primary)]">{{ item.val * 100 | number: '.0-1' }}%</span>
+          <div class="flex items-center justify-center gap-1.5 mt-0.5">
+            <i [class]="item.icono + ' text-[14px] ' + colorEstado(item)"></i>
+            <span class="text-[12px] font-medium text-center leading-tight text-[var(--mis-text-primary)]">{{ item.des }}</span>
           </div>
-          <p-knob [ngModel]="item.per" [readonly]="true" [size]="64" [valueColor]="colorAvance(item)" rangeColor="#e5e7eb" [showValue]="false" [strokeWidth]="10" />
-          <span class="text-[11px] font-semibold">{{ item.val * 100 | number: '.0-1' }}%</span>
         </button>
       }
     }

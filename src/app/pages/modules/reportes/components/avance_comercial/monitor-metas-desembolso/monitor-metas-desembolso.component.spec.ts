@@ -13,10 +13,13 @@ function tabla(overrides: Partial<TablaReporteResultado> = {}): TablaReporteResu
 }
 
 describe('MonitorMetasDesembolsoComponent', () => {
-  let reportesFalso: { obtenerBloqueReporte: ReturnType<typeof vi.fn> };
+  let reportesFalso: { obtenerBloqueReporte: ReturnType<typeof vi.fn>; obtenerJerarquiaBase: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    reportesFalso = { obtenerBloqueReporte: vi.fn() };
+    reportesFalso = {
+      obtenerBloqueReporte: vi.fn(),
+      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([])),
+    };
     TestBed.configureTestingModule({
       imports: [MonitorMetasDesembolsoComponent],
       providers: [{ provide: ReportesService, useValue: reportesFalso }, MessageService],
@@ -62,8 +65,9 @@ describe('MonitorMetasDesembolsoComponent', () => {
 
     expect(fixture.componentInstance['kpiOperaciones']()).toEqual({ fecha: '2026-08-10', hora: '10:00', cumpl_des_acum: '85%' });
     expect(fixture.componentInstance['kpiMonto']()).toEqual({ cumpl_ope_acum: '92%' });
-    expect(fixture.componentInstance['tablaOperaciones']().body).toEqual([{ x: 1 }]);
-    expect(fixture.componentInstance['tablaMontos']().body).toEqual([{ x: 1 }]);
+    expect(fixture.componentInstance['tabla1']().additional).toEqual({ fecha: '2026-08-10', hora: '10:00', cumpl_des_acum: '85%' });
+    expect(fixture.componentInstance['tabla3']().body).toEqual([{ x: 1 }]);
+    expect(fixture.componentInstance['tabla4']().body).toEqual([{ x: 1 }]);
     expect(fixture.componentInstance['cargando']()).toBe(false);
   });
 

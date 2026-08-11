@@ -44,9 +44,20 @@
           (click)="abrirCalculadora.emit()"
         ></button>
       }
-      <div class="border border-[var(--mis-border-strong)] rounded px-2 py-1 text-[11px]">
-        {{ fechaCorteFormateada() }}
-      </div>
+      @if (fechaSeleccionada(); as fecha) {
+        <p-datepicker
+          [ngModel]="fecha"
+          (ngModelChange)="onCambioFecha($event)"
+          dateFormat="yy-mm-dd"
+          [showIcon]="true"
+          appendTo="body"
+          [minDate]="minDate()"
+          [maxDate]="maxDate()"
+          [disabledDates]="disabledDates()"
+          inputStyleClass="text-[11px]"
+          [style]="{ width: '9.5rem' }"
+        />
+      }
     </div>
   </div>
 }

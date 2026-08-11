@@ -1,23 +1,23 @@
-<div class="flex flex-col gap-5 p-2 sm:p-4">
-  <!-- Encabezado -->
-  <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl shadow-xs border border-slate-200">
+<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+  <!-- Encabezado minimalista -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-lg bg-emerald-600/10 text-emerald-700 flex items-center justify-center text-xl">
+      <div class="w-9 h-9 rounded-lg bg-emerald-600/10 text-emerald-700 flex items-center justify-center font-bold text-lg shrink-0">
         <i class="pi pi-bolt"></i>
       </div>
       <div>
-        <h1 class="text-base sm:text-lg font-bold text-slate-800 m-0">Transacciones de Corresponsal</h1>
-        <p class="text-xs text-slate-500 m-0">Consulta de transacciones y referencias del corresponsal</p>
+        <h1 class="text-base sm:text-lg font-bold text-[var(--mis-text-primary)] m-0 leading-tight">Transacciones de Corresponsal</h1>
+        <p class="text-xs text-[var(--mis-text-secondary)] m-0 mt-0.5">Consulta de transacciones y referencias del corresponsal</p>
       </div>
     </div>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2.5">
       <p-iconfield iconPosition="left" styleClass="w-full sm:w-72">
-        <p-inputicon styleClass="pi pi-search"></p-inputicon>
+        <p-inputicon styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]"></p-inputicon>
         <input type="text" pInputText placeholder="Buscar por nombre, DNI o consulta RCC..." (input)="onSearchInput($event)" class="w-full text-xs py-1.5" />
       </p-iconfield>
       <p-button icon="pi pi-refresh" [rounded]="true" [outlined]="true" severity="secondary" size="small" pTooltip="Actualizar" (onClick)="cargarDatos()"></p-button>
     </div>
-  </header>
+  </div>
 
   <!-- Estado de carga / error -->
   @if (loading()) {
@@ -25,7 +25,7 @@
   } @else if (error()) {
     <app-inline-error [detalle]="error()!" (reintentar)="cargarDatos()" />
   } @else {
-    <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+    <div class="rounded-xl overflow-hidden border border-[var(--mis-border)] bg-white/90 backdrop-blur-sm shadow-xs flex-1">
       <p-table
         [value]="filteredData()"
         [paginator]="true"

@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import type { TreeNode } from 'primeng/api';
+import { of, throwError } from 'rxjs';
 import { HierSelectorComponent } from './hier-selector.component';
 import { ReportesService } from '../../services/reportes.service';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../models';
@@ -34,77 +33,110 @@ describe('HierSelectorComponent', () => {
     return fixture;
   }
 
-  it('abrir() carga la jerarquía base una sola vez, aunque se abra el diálogo varias veces', () => {
-    const fixture = crear();
-    const instancia = fixture.componentInstance;
+  /** Sin `detectChanges()` — para poder suscribirse a `error`/`nodoSeleccionado` antes de que `ngOnInit()` dispare la carga (los observables mockeados emiten sincrónicamente). */
+  function crearSinInit(params: ParamsJerarquia = PARAMS) {
+    const fixture = TestBed.createComponent(HierSelectorComponent);
+    fixture.componentRef.setInput('paramsHier', params);
+    return fixture;
+  }
 
-    instancia['abrir']();
-    instancia['dialogAbierto'].set(false);
-    instancia['abrir']();
-
-    expect(reportesFalso.obtenerJerarquiaBase).toHaveBeenCalledTimes(1);
-    expect(reportesFalso.obtenerJerarquiaBase).toHaveBeenCalledWith(9);
-  });
-
-  it('convierte la jerarquía base en nodos de árbol, marcando hoja cuando el nivel alcanza maxLvl', () => {
+  it('cargarRaiz() pide la jerarquía base al inicializarse', () => {
     reportesFalso.obtenerJerarquiaBase.mockReturnValue(
       of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[])
     );
-    const fixture = crear({ code: 9, maxLvl: 1, dlgTitulo: 'x' }); // raíz = nivel 1 = maxLvl → ya es hoja
+    crear();
 
-    fixture.componentInstance['abrir']();
-
-    const nodos = fixture.componentInstance['nodos']();
-    expect(nodos).toEqual([
-      { key: '1-7-231', label: 'Financiera Confianza', data: { tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }, leaf: true },
-    ]);
+    expect(reportesFalso.obtenerJerarquiaBase).toHaveBeenCalledWith(9);
   });
 
-  it('onExpandir() pide el siguiente nivel con el tip_cod/cod_rel del nodo y arma sus hijos', () => {
-    reportesFalso.obtenerJerarquiaNivel.mockReturnValue(
-      of([{ tip_cod: 4, cod_rel: 'A1', desc_rel: 'Agencia 1' }] as HierarquiaNodo[])
+  it('cargarRaiz() pide level_hier del propio nivel de la raíz (root.lvl), no el nivel hijo', () => {
+    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
+      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 } as HierarquiaNodo])
     );
-    const fixture = crear({ code: 9, maxLvl: 3, dlgTitulo: 'x' });
-    const arbol: TreeNode<HierarquiaNodo> = {
-      key: '1-7-231', label: 'Financiera Confianza',
-      data: { tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 },
-      leaf: false,
-    };
+    crear();
 
-    fixture.componentInstance['onExpandir']({ originalEvent: new Event('expand'), node: arbol });
-
-    expect(reportesFalso.obtenerJerarquiaNivel).toHaveBeenCalledWith(9, 2, 7, ['231'], { key: 'fec', val: '2026-08-05' });
-    expect(arbol.children).toEqual([
-      { key: '2-4-A1', label: 'Agencia 1', data: { tip_cod: 4, cod_rel: 'A1', desc_rel: 'Agencia 1', lvl: 2 }, leaf: false },
-    ]);
-    expect(arbol.loading).toBe(false);
+    // Confirmado contra el legado (log real de `hier-rem-selector.component.ts` en producción):
+    // la primera llamada pide `lvl = root.lvl` (1) — devuelve la raíz "hidratada" con
+    // des_rel/lbl_hier, no sus hijos.
+    expect(reportesFalso.obtenerJerarquiaNivel).toHaveBeenCalledWith(9, 1, 7, ['231'], expect.objectContaining({ key: 'fec' }));
   });
 
-  it('onExpandir() no vuelve a pedir hijos si el nodo ya es hoja', () => {
-    const fixture = crear();
-    const hoja: TreeNode<HierarquiaNodo> = {
-      key: '2-4-A1', label: 'Agencia 1',
-      data: { tip_cod: 4, cod_rel: 'A1', desc_rel: 'Agencia 1', lvl: 2 },
-      leaf: true,
-    };
-
-    fixture.componentInstance['onExpandir']({ originalEvent: new Event('expand'), node: hoja });
-
-    expect(reportesFalso.obtenerJerarquiaNivel).not.toHaveBeenCalled();
-  });
-
-  it('onSeleccionar() cierra el diálogo, fija la etiqueta y emite el nodo elegido', () => {
-    const fixture = crear();
+  it('onSeleccionarNivel() actualiza el nivel y pide el siguiente nivel si no supera maxLvl', () => {
+    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
+      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[])
+    );
+    reportesFalso.obtenerJerarquiaNivel.mockReturnValue(
+      of([{ tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1', lbl_hier: 'AGENCIA' }] as HierarquiaNodo[])
+    );
+    const fixture = crear({ code: 9, maxLvl: 2, dlgTitulo: 'x' });
     const instancia = fixture.componentInstance;
     const emitSpy = vi.fn();
     instancia.nodoSeleccionado.subscribe(emitSpy);
-    instancia['dialogAbierto'].set(true);
 
-    const nodo: HierarquiaNodo = { tip_cod: 4, cod_rel: 'A1', desc_rel: 'Agencia 1', lvl: 2 };
-    instancia['onSeleccionar']({ originalEvent: new Event('select'), node: { key: 'k', label: 'Agencia 1', data: nodo } });
+    const nodoElegido = { tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1', lvl: 2 };
+    instancia['onSeleccionarNivel'](0, nodoElegido);
 
-    expect(instancia['dialogAbierto']()).toBe(false);
-    expect(instancia['etiquetaActual']()).toBe('Agencia 1');
-    expect(emitSpy).toHaveBeenCalledWith(nodo);
+    expect(emitSpy).toHaveBeenCalledWith(nodoElegido);
+  });
+
+  it('emite error si la jerarquía base viene vacía — nunca llegaría a emitir nodoSeleccionado', () => {
+    reportesFalso.obtenerJerarquiaBase.mockReturnValue(of([] as HierarquiaNodo[]));
+    const fixture = crearSinInit();
+    const errorSpy = vi.fn();
+    fixture.componentInstance.error.subscribe(errorSpy);
+
+    fixture.detectChanges();
+
+    expect(errorSpy).toHaveBeenCalled();
+    expect(fixture.componentInstance['cargando']()).toBe(false);
+  });
+
+  it('emite error si falla la petición de jerarquía base', () => {
+    reportesFalso.obtenerJerarquiaBase.mockReturnValue(throwError(() => new Error('caído')));
+    const fixture = crearSinInit();
+    const errorSpy = vi.fn();
+    fixture.componentInstance.error.subscribe(errorSpy);
+
+    fixture.detectChanges();
+
+    expect(errorSpy).toHaveBeenCalled();
+    expect(fixture.componentInstance['cargando']()).toBe(false);
+  });
+
+  it('emite error si la carga inicial del primer nivel falla, aunque la raíz sí se haya resuelto', () => {
+    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
+      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[])
+    );
+    reportesFalso.obtenerJerarquiaNivel.mockReturnValue(throwError(() => new Error('caído')));
+    const fixture = crearSinInit();
+    const errorSpy = vi.fn();
+    const nodoSpy = vi.fn();
+    fixture.componentInstance.error.subscribe(errorSpy);
+    fixture.componentInstance.nodoSeleccionado.subscribe(nodoSpy);
+
+    fixture.detectChanges();
+
+    expect(errorSpy).toHaveBeenCalled();
+    expect(nodoSpy).not.toHaveBeenCalled();
+    expect(fixture.componentInstance['cargando']()).toBe(false);
+  });
+
+  it('no emite error si el primer nivel sale bien pero un nivel más profundo falla (ya se emitió nodoSeleccionado antes)', () => {
+    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
+      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[])
+    );
+    reportesFalso.obtenerJerarquiaNivel
+      .mockReturnValueOnce(of([{ tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1', lbl_hier: 'AGENCIA', lvl: 2 }] as HierarquiaNodo[]))
+      .mockReturnValueOnce(throwError(() => new Error('caído')));
+    const fixture = crearSinInit({ code: 9, maxLvl: 3, dlgTitulo: 'x' });
+    const errorSpy = vi.fn();
+    const nodoSpy = vi.fn();
+    fixture.componentInstance.error.subscribe(errorSpy);
+    fixture.componentInstance.nodoSeleccionado.subscribe(nodoSpy);
+
+    fixture.detectChanges();
+
+    expect(nodoSpy).toHaveBeenCalledTimes(1);
+    expect(errorSpy).not.toHaveBeenCalled();
   });
 });

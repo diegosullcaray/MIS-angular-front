@@ -3,6 +3,7 @@ import { of, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { PrincipalComponent } from './principal.component';
 import { FrameworkEsgService } from '../../services/framework-esg.service';
+import { DriverTourService } from '../../../../../shared/services/driver-tour.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import type { EsgConfiguracionModulo, EsgMetricaFila, EsgResumenCategoria } from '../../models';
@@ -48,10 +49,12 @@ describe('PrincipalComponent', () => {
     cargarResumenCategoria: ReturnType<typeof vi.fn>;
     esAdmin: ReturnType<typeof vi.fn>;
   };
+  let driverFalso: { createQuickTour: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     (globalThis as unknown as { ResizeObserver: typeof ResizeObserverFalso }).ResizeObserver = ResizeObserverFalso;
 
+    driverFalso = { createQuickTour: vi.fn() };
     esgFalso = {
       cargarConfiguracion: vi.fn().mockReturnValue(of(configuracion())),
       cargarResumenPortada: vi.fn().mockReturnValue(of([])),
@@ -61,7 +64,11 @@ describe('PrincipalComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [PrincipalComponent],
-      providers: [{ provide: FrameworkEsgService, useValue: esgFalso }, MessageService],
+      providers: [
+        { provide: FrameworkEsgService, useValue: esgFalso },
+        { provide: DriverTourService, useValue: driverFalso },
+        MessageService,
+      ],
     });
   });
 
@@ -161,5 +168,12 @@ describe('PrincipalComponent', () => {
 
     expect(errorSpy).toHaveBeenCalled();
     expect(fixture.componentInstance['cargandoCategorias']()[1]).toBe(false);
+  });
+
+  it('al activar el tour, inicia el recorrido guiado llamando al DriverTourService', () => {
+    const fixture = crear();
+    fixture.componentInstance['tour'].iniciarTourGuiado();
+
+    expect(driverFalso.createQuickTour).toHaveBeenCalledTimes(1);
   });
 });
