@@ -37,11 +37,8 @@ interface ClaimsGoogle {
 }
 
 /**
- * Forma real de la respuesta del backend Ant para `login` (módulo
- * `session`, ver `ModSysLoginService`) — migrada tal cual del STG
- * (`login.service.ts` → `processLogin`). El backend NUNCA devuelve campos
- * planos (`id`/`name`/`role`) en la raíz del body: todo vive anidado bajo
- * `login_response.profile`.
+ * Perfil que devuelve `login` (módulo `session`).
+ * Siempre anidado bajo `login_response.profile`, nunca plano en la raíz del body.
  */
 interface PerfilRaw {
   email?: string;
@@ -76,18 +73,13 @@ interface LoginResponseBody {
 }
 
 /**
- * Servicio de autenticación del Host — Google Sign-In + Winder (STG).
+ * Autenticación del Host: Google Sign-In (Implicit Flow) + backend Ant.
  *
- * 1. `iniciarLoginGoogle()` redirige a Google (Implicit Flow, igual que STG).
- * 2. `completarLoginGoogle()` corre al volver del redirect: valida el
- *    `id_token` recibido y autentica el email contra el backend Ant.
- * 3. Fuera de producción, el email autenticado se reemplaza por
- *    `environment.devUser` — el mismo mecanismo que `UserService` aplica en
- *    STG para que el equipo de desarrollo no dependa de una cuenta Google
- *    real ni de tipear nada a mano.
+ * `iniciarLoginGoogle()` redirige a Google; `completarLoginGoogle()` corre al
+ * volver, valida el `id_token` y autentica el email contra Ant. Fuera de
+ * producción `environment.devUser` reemplaza al email autenticado.
  *
- * La sesión resultante se persiste en `sessionStorage` para sobrevivir al
- * refresh (F5).
+ * La sesión se persiste en `sessionStorage` para sobrevivir al refresh.
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {

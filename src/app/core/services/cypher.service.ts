@@ -2,31 +2,20 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
 /**
- * CypherService — Cifrado AES-128-CBC para el protocolo Winder.
+ * Cifrado AES-128-CBC del protocolo Winder. El backend espera exactamente:
+ * key de 128 bits (hex de 32 caracteres), IV de 16 bytes en cero, padding
+ * PKCS#7 y salida en Base64 estándar — cambiar cualquiera rompe el handshake.
  *
- * Usa la Web Crypto API nativa del browser (sin dependencias externas)
- * replicando exactamente el comportamiento de CryptoJS del STG:
- *   - Algoritmo: AES-CBC
- *   - Key: 128 bits (hex string de 32 caracteres)
- *   - IV: 16 bytes en cero
- *   - Padding: PKCS#7 (lo aplica SubtleCrypto por defecto)
- *   - Output: Base64 estándar
- *
- * El método sincrónico `encryptSync` / `decryptSync` se expone para
- * compatibilidad con WinderService (que construye la URL de forma síncrona).
- * Internamente usa una implementación AES-CBC pura en JS cuando SubtleCrypto
- * no está disponible (entornos SSR / Node).
- *
- * Migrado del STG (stg-app-mis-r22) — sin dependencia de crypto-js.
+ * `encryptSync`/`decryptSync` existen porque `WinderService` arma la URL de
+ * forma síncrona y SubtleCrypto es asíncrona; caen a una implementación
+ * AES-CBC en JS puro cuando SubtleCrypto no está disponible (SSR/Node).
  */
 @Injectable({ providedIn: 'root' })
 export class CypherService {
   private readonly secret = environment.cypherSecret;
 
   // ─── AES-CBC puro en JS (sincrónico) ─────────────────────────────────────
-  // Implementación mínima compatible con el comportamiento de CryptoJS.
 
-  /** Convierte un string hexadecimal en Uint8Array. */
   private hexToBytes(hex: string): Uint8Array {
     const bytes = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
@@ -35,14 +24,12 @@ export class CypherService {
     return bytes;
   }
 
-  /** Convierte Uint8Array a string Base64. */
   private bytesToBase64(bytes: Uint8Array): string {
     let binary = '';
     bytes.forEach((b) => (binary += String.fromCharCode(b)));
     return btoa(binary);
   }
 
-  /** Convierte string Base64 a Uint8Array. */
   private base64ToBytes(b64: string): Uint8Array {
     const binary = atob(b64);
     const bytes = new Uint8Array(binary.length);
@@ -52,9 +39,6 @@ export class CypherService {
     return bytes;
   }
 
-  /**
-   * Aplica padding PKCS#7 a un buffer para que sea múltiplo de 16 bytes.
-   */
   private pkcs7Pad(data: Uint8Array): Uint8Array {
     const blockSize = 16;
     const padLen = blockSize - (data.length % blockSize);
@@ -64,9 +48,6 @@ export class CypherService {
     return padded;
   }
 
-  /**
-   * Elimina el padding PKCS#7 tras descifrar.
-   */
   private pkcs7Unpad(data: Uint8Array): Uint8Array {
     const padLen = data[data.length - 1];
     return data.slice(0, data.length - padLen);

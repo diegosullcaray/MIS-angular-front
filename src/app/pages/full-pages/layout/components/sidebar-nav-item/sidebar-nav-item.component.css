@@ -6,7 +6,7 @@
 
 .nav-item-link:hover {
   background: var(--mis-primary-light);
-  color: var(--mis-primary);
+  color: var(--mis-primary-text);
   transform: translateX(2px);
 }
 

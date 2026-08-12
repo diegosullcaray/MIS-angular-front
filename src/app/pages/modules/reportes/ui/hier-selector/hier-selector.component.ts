@@ -45,21 +45,17 @@ export class HierSelectorComponent implements OnInit {
     this.reportes.obtenerJerarquiaBase(this.paramsHier().code).subscribe({
       next: (raiz) => {
         if (raiz && raiz.length > 0) {
-          // Confirmado contra el legado (`hier-rem-selector.component.ts`, log real de
-          // producción): la primera llamada a `level_hier` pide el propio nivel de la raíz
-          // (`lvl = root.lvl`, típicamente 1) — devuelve la raíz "hidratada" con
-          // `des_rel`/`lbl_hier`, no sus hijos. La causa real de la jerarquía vacía era la
-          // fecha (`fec`), no el nivel — ver `ReportesService.fechaCorte()`.
+          // La primera llamada a `level_hier` pide el propio nivel de la raíz
+          // (`lvl = root.lvl`): devuelve la raíz hidratada con `des_rel`/`lbl_hier`,
+          // no sus hijos.
           const root = raiz[0];
           this.cargarNivel(root.tip_cod, [root.cod_rel], root.lvl ?? 1, true);
         } else {
-          console.warn(`[app-hier-selector] obtenerJerarquiaBase() devolvió una jerarquía vacía — code: ${this.paramsHier().code}`);
           this.cargando.set(false);
           this.error.emit();
         }
       },
-      error: (err) => {
-        console.error(`[app-hier-selector] obtenerJerarquiaBase() falló — code: ${this.paramsHier().code}`, err);
+      error: () => {
         this.cargando.set(false);
         this.error.emit();
       },
@@ -75,18 +71,7 @@ export class HierSelectorComponent implements OnInit {
         next: (lh) => {
           this.cargando.set(false);
           if (!lh || lh.length === 0) {
-            if (esCargaInicial) {
-              console.warn(
-                `[app-hier-selector] obtenerJerarquiaNivel() devolvió vacío en la carga inicial — params: ${JSON.stringify({
-                  code: this.paramsHier().code,
-                  lvl,
-                  tip_cod,
-                  cod_rels,
-                  paramsFec,
-                })}`
-              );
-              this.error.emit();
-            }
+            if (esCargaInicial) this.error.emit();
             return;
           }
 

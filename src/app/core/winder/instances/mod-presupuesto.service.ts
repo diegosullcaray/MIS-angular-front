@@ -4,21 +4,7 @@ import { AntService } from '../ant/ant-service.class';
 import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * ModPresupuestoService — Módulo de Presupuesto del backend Ant.
- *
- * | Parámetro | Valor  |
- * |-----------|--------|
- * | Port      | 6302   |
- * | AppId     | app    |
- * | Secret    | `environment.moduleSecrets.app` |
- *
- * Mismo port/secret/appId que `ModKaypachaService` — el legado
- * `ModBudgetService` (`docs/07-modulos/presupuesto/compartido/servicios/mod-budget.service.ts`)
- * se conecta idéntico.
- *
- * Migrado del STG (stg-app-mis-r22, `ModBudgetService`).
- */
+/** Módulo de Presupuesto del backend Ant (puerto 6302, appId `app`). */
 @Injectable({ providedIn: 'root' })
 export class ModPresupuestoService extends AntService {
   constructor() {

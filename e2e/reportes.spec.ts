@@ -3,20 +3,26 @@ import { inyectarSesionVigente, mockearBackendAnt } from './fixtures/session';
 import { ShellPage } from './pages/shell.page';
 
 /**
- * Smoke test del módulo "reportes" (`/app/reportes`): confirma que el primer
- * nodo migrado, "Avance Comercial" (`/app/reportes/avance-comercial`),
- * renderiza sin errores de consola y muestra sus 2 pestañas ("Monitor Metas
- * Desembolso"/"Monitor Reprogramados"). Sin datos reales del backend
- * (mockeado con éxito vacío), el selector de jerarquía queda vacío — la
- * lógica de negocio ya está cubierta a nivel unitario.
+ * Smoke test del módulo "reportes" (`/app/reportes`): confirma que los 2 nodos
+ * migrados de "Avance Comercial" renderizan sin errores de consola y muestran
+ * su selector de jerarquía.
+ *
+ * Cada reporte es una ruta propia con el path del legado STG
+ * (`leg/com/rda/adm/*`), no pestañas de una pantalla contenedora — ver
+ * `reportes.routes.ts`. Sin datos reales del backend (mockeado con éxito
+ * vacío) el selector queda vacío; la lógica de negocio está cubierta a nivel
+ * unitario.
  */
 test.describe('Reportes — smoke de Avance Comercial', () => {
+  const RUTA_DESEMBOLSO = '/app/reportes/leg/com/rda/adm/mon-desem';
+  const RUTA_REPROGRAMADOS = '/app/reportes/leg/com/rda/adm/mon-rep';
+
   test.beforeEach(async ({ page }) => {
     await inyectarSesionVigente(page);
     await mockearBackendAnt(page);
   });
 
-  test('/app/reportes/avance-comercial renderiza sin errores de consola', async ({ page }) => {
+  test('/app/reportes/avance-comercial redirige al primer reporte', async ({ page }) => {
     const erroresConsola: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') erroresConsola.push(msg.text());
@@ -24,27 +30,27 @@ test.describe('Reportes — smoke de Avance Comercial', () => {
     page.on('pageerror', (err) => erroresConsola.push(err.message));
 
     await page.goto('/app/reportes/avance-comercial');
+    await page.waitForURL(`**${RUTA_DESEMBOLSO}`);
     await page.waitForLoadState('networkidle');
 
     expect(erroresConsola).toEqual([]);
   });
 
-  test('muestra el título y las 2 pestañas de reportes', async ({ page }) => {
-    await page.goto('/app/reportes/avance-comercial');
+  test('"Monitor Metas Desembolso" muestra su título y sus tarjetas KPI', async ({ page }) => {
+    await page.goto(RUTA_DESEMBOLSO);
+    // En mobile, Col 2 (panel de navegación) arranca abierta y tapa el contenido.
+    await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
 
-    await expect(page.getByRole('heading', { name: 'Avance Comercial' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Monitor Metas Desembolso' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Monitor Reprogramados' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Monitor Metas Desembolso' })).toBeVisible();
+    await expect(page.getByText('Operaciones Desembolsadas')).toBeVisible();
+    await expect(page.getByText('Monto Desembolsado')).toBeVisible();
   });
 
-  test('la pestaña "Monitor Reprogramados" muestra el selector de nivel y el filtro "Tipo"', async ({ page }) => {
-    await page.goto('/app/reportes/avance-comercial');
-    // En mobile, Col 2 (panel de navegación) arranca abierta y tapa el resto de la pantalla — ver `ShellPage`.
+  test('"Monitor Reprogramados" muestra su título y el filtro "Tipo"', async ({ page }) => {
+    await page.goto(RUTA_REPROGRAMADOS);
     await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
-    await page.getByRole('tab', { name: 'Monitor Reprogramados' }).click();
 
-    const panel = page.getByRole('tabpanel', { name: 'Monitor Reprogramados' });
-    await expect(panel.getByRole('button', { name: 'Elegir nivel' })).toBeVisible();
-    await expect(panel.getByText('Elige un nivel de la jerarquía para ver el reporte.')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Monitor Reprogramados' })).toBeVisible();
+    await expect(page.getByLabel('Tipo')).toBeVisible();
   });
 });

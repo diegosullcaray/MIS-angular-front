@@ -5,21 +5,7 @@ import { Strand } from '../winder/strand.class';
 import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * ModSysLoginService — Módulo de Sesión/Login del backend Ant.
- *
- * | Parámetro | Valor  |
- * |-----------|--------|
- * | Port      | 6300   |
- * | AppId     | session|
- * | Secret    | `environment.moduleSecrets.session` |
- *
- * Rutas disponibles en el backend:
- * - `login`  → valida el email y devuelve la sesión cifrada.
- * - `meta`   → registra metadatos del dispositivo/sesión.
- *
- * Migrado del STG (stg-app-mis-r22/src/app/core/data/remote/instances/mod-sys-login.service.ts).
- */
+/** Módulo de Sesión/Login del backend Ant (puerto 6300, appId `session`). */
 @Injectable({ providedIn: 'root' })
 export class ModSysLoginService extends AntService {
   constructor() {

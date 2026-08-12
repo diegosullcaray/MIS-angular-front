@@ -37,10 +37,32 @@
   --mis-border: rgba(29,57,110,0.10);
   --mis-border-strong: rgba(29,57,110,0.20);
 
+  /* Superficies translúcidas sobre el wallpaper (header, tarjetas del shell). */
+  --mis-surface-translucido: rgba(255,255,255,0.85);
+  --mis-surface-elevado: rgba(255,255,255,0.95);
+  /* Panel de página (`.mis-page`) — vidrio sobre el wallpaper. */
+  --mis-glass-bg: rgba(255,255,255,0.70);
+  --mis-glass-border: rgba(255,255,255,0.60);
+  /* Velo sobre el wallpaper — transparente en claro, oscurece la foto en oscuro. */
+  --mis-wallpaper-velo: transparent;
+  /* Fondo de overlays a pantalla completa (spinner, redirect). */
+  --mis-overlay-bg: rgba(255,255,255,0.72);
+  /* Realce de fila/hover en tablas y listas. */
+  --mis-hover-bg: rgba(29,57,110,0.04);
+  --mis-scrollbar-thumb: rgba(29,57,110,0.20);
+  --mis-scrollbar-thumb-hover: rgba(29,57,110,0.35);
+
   /* Primario: Navy */
   --mis-primary: #1D396E;
   --mis-primary-hover: #162D58;
   --mis-primary-light: #E8EDF5;
+  /**
+   * Marca cuando se usa como COLOR DE TEXTO/ícono sobre el fondo de la página.
+   * Separado de `--mis-primary` porque ese sigue siendo un fondo sólido que se
+   * combina con `--mis-text-on-primary`: en oscuro tiene que seguir siendo
+   * navy, mientras que el texto necesita aclararse para ser legible.
+   */
+  --mis-primary-text: #1D396E;
 
   /* Secundario: Sky Blue (tomado del hover real del árbol de navegación STG) */
   --mis-secondary: #00A2FF;
@@ -95,26 +117,43 @@
   --mis-radius-xs: 4px;
   --mis-font-bold: 700;
 
-  /* Por encima de contenido/paneles normales (sidebar, overlays z-40/z-50) pero debajo de overlays de bloqueo total (redirect/spinner, z-[999]+). Antes indefinida: el dropdown del header (header.component.html) y su overlay de click-afuera quedaban ambos en z-index:auto, y el overlay (más tarde en el DOM) tapaba los botones del menú. */
+  /* Sobre contenido y sidebar (z-40/z-50), debajo de los overlays de bloqueo
+     total (redirect/spinner, z-[999]+). El dropdown del header y su overlay de
+     click-afuera necesitan un z-index explícito o el overlay lo tapa. */
   --mis-z-dropdown: 1000;
+
+  color-scheme: light;
 }
 
-/* Dark Mode Tokens */
+/* ── Modo oscuro ──────────────────────────────────────────────
+   `.dark` en <html> lo pone ThemeService; es el mismo selector que
+   declara providePrimeNG({ theme: { options: { darkModeSelector } } }). */
 .dark {
-  --mis-bg: #111827;
-  --mis-surface: #1F2937;
-  --mis-sidebar-bg: #162D58;
+  --mis-bg: #0E1626;
+  --mis-surface: #162034;
+  --mis-sidebar-bg: #101A2E;
   --mis-panel-bg: #1A2740;
-  --mis-border: rgba(0,162,255,0.12);
-  --mis-border-strong: rgba(0,162,255,0.25);
+  --mis-border: rgba(0,162,255,0.14);
+  --mis-border-strong: rgba(0,162,255,0.28);
+
+  --mis-surface-translucido: rgba(16,26,46,0.85);
+  --mis-surface-elevado: rgba(22,32,52,0.95);
+  --mis-glass-bg: rgba(22,32,52,0.72);
+  --mis-glass-border: rgba(255,255,255,0.08);
+  --mis-wallpaper-velo: rgba(8,14,26,0.94);
+  --mis-overlay-bg: rgba(8,14,26,0.78);
+  --mis-hover-bg: rgba(0,162,255,0.08);
+  --mis-scrollbar-thumb: rgba(0,162,255,0.25);
+  --mis-scrollbar-thumb-hover: rgba(0,162,255,0.45);
 
   --mis-primary: #2A4E8F;
-  --mis-primary-hover: #1D396E;
+  --mis-primary-hover: #37619F;
   --mis-primary-light: #1D2D45;
+  --mis-primary-text: #8FBEF5;
 
   --mis-secondary: #4DC3FF;
   --mis-secondary-hover: #00A2FF;
-  --mis-secondary-light: #1A3A4D;
+  --mis-secondary-light: #12293D;
 
   --mis-accent: #4DC3FF;
 
@@ -125,9 +164,21 @@
   --mis-danger:         #F87171;
   --mis-danger-light:   #3B1A1A;
 
-  --mis-text-primary: #F0F4FF;
-  --mis-text-secondary: #94A3B8;
-  --mis-text-tertiary: #64748B;
+  --mis-text-primary: #E8EEF9;
+  --mis-text-secondary: #A3B2C9;
+  --mis-text-tertiary: #6F819C;
   --mis-text-on-primary: #FFFFFF;
   --mis-text-on-secondary: #0F1E2E;
+
+  /* Sombras: sobre fondo oscuro el negro no se ve — más opacidad y difusión. */
+  --mis-shadow-sm:    0 1px 3px rgba(0,0,0,0.40), 0 1px 2px rgba(0,0,0,0.30);
+  --mis-shadow-md:    0 4px 16px rgba(0,0,0,0.45), 0 2px 4px rgba(0,0,0,0.30);
+  --mis-shadow-lg:    0 8px 32px rgba(0,0,0,0.55), 0 4px 8px rgba(0,0,0,0.35);
+
+  /* Paleta del Ranking — la versión clara es ilegible sobre fondo oscuro. */
+  --mis-ranking-header-bg: #0A2C4D;
+  --mis-ranking-subheader-bg: #1E4E7D;
+  --mis-ranking-row1-bg: #143A4A;
+
+  color-scheme: dark;
 }

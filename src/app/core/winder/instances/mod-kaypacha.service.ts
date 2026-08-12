@@ -4,21 +4,7 @@ import { AntService } from '../ant/ant-service.class';
 import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * ModKaypachaService — Módulo de Ranking Kaypacha del backend Ant.
- *
- * | Parámetro | Valor  |
- * |-----------|--------|
- * | Port      | 6302   |
- * | AppId     | app    |
- * | Secret    | `environment.moduleSecrets.app` |
- *
- * Rutas disponibles en el backend:
- * - `kaypacha.listRanking`   → lista de categorías del ranking (`name`, `reportType`, `rdestip`).
- * - `kaypacha.DetalleRanking` → desglose de una categoría puntual.
- *
- * Migrado del STG (stg-app-mis-r22/src/app/core/data/remote/instances/mod-kaypacha.service.ts).
- */
+/** Módulo de Ranking Kaypacha del backend Ant (puerto 6302, appId `app`). */
 @Injectable({ providedIn: 'root' })
 export class ModKaypachaService extends AntService {
   constructor() {

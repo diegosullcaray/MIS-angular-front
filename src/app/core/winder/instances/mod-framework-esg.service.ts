@@ -4,23 +4,7 @@ import { AntService } from '../ant/ant-service.class';
 import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * ModFrameworkEsgService — Módulo "Framework ESG" del backend Ant.
- *
- * | Parámetro | Valor  |
- * |-----------|--------|
- * | Port      | 6302   |
- * | AppId     | app    |
- * | Secret    | `environment.moduleSecrets.app` |
- *
- * Mismo port/secret/appId que `ModPresupuestoService`/`ModKaypachaService` —
- * el legado `ModFrameworkEsgService`
- * (`docs/06-legado-sistema-anterior` no lo documenta, migrado directo del
- * volcado en `pages/modules/framework-esg/compartido/servicios/mod-framework-esg.service.ts`
- * del repo STG) se conecta idéntico.
- *
- * Migrado del STG (stg-app-mis-r22, `ModFrameworkEsgService`).
- */
+/** Módulo "Framework ESG" del backend Ant (puerto 6302, appId `app`). */
 @Injectable({ providedIn: 'root' })
 export class ModFrameworkEsgService extends AntService {
   constructor() {

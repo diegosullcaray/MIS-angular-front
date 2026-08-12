@@ -22,7 +22,7 @@
         {{ frame.desLab }}: {{ frame.desRel }}
       </span>
       <span class="inline-flex items-center gap-1.5 font-medium bg-[var(--mis-panel-bg)] border border-[var(--mis-border)] px-3 py-1 rounded-full text-[var(--mis-text-secondary)]">
-        <i class="pi pi-calendar text-[11px] text-[var(--mis-primary)]"></i>
+        <i class="pi pi-calendar text-[11px] text-[var(--mis-primary-text)]"></i>
         Fecha: {{ frame.resultado.card.f2 }}
       </span>
     </div>
@@ -31,12 +31,12 @@
       <div class="grid grid-cols-3 gap-3">
         <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-3 flex flex-col gap-1 shadow-xs">
           <span class="text-[11px] font-semibold uppercase text-[var(--mis-text-secondary)] tracking-wider">{{ etiquetas()?.tarjetas?.[0] ?? 'Cierre' }}</span>
-          <span class="text-[16px] font-bold text-[var(--mis-primary)]">{{ formatearValorTarjeta(frame.resultado.card.cie_real) }}</span>
+          <span class="text-[16px] font-bold text-[var(--mis-primary-text)]">{{ formatearValorTarjeta(frame.resultado.card.cie_real) }}</span>
         </div>
 
         <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-3 flex flex-col gap-1 shadow-xs">
           <span class="text-[11px] font-semibold uppercase text-[var(--mis-text-secondary)] tracking-wider">{{ etiquetas()?.tarjetas?.[1] ?? 'Variación' }}</span>
-          <span class="text-[16px] font-bold text-[var(--mis-primary)]">{{ formatearValorTarjeta(frame.resultado.card.var_real) }}</span>
+          <span class="text-[16px] font-bold text-[var(--mis-primary-text)]">{{ formatearValorTarjeta(frame.resultado.card.var_real) }}</span>
         </div>
 
         <div class="rounded-xl border p-3 flex flex-col gap-1 shadow-xs" [class]="frame.resultado.card.avan >= 1 ? 'border-[var(--mis-success)] bg-[var(--mis-success-light)]/40' : 'border-[var(--mis-border)] bg-[var(--mis-panel-bg)]'">

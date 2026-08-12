@@ -1,5 +1,6 @@
-<!-- Fondo: wallpaper_cell.png en mobile, wallpaper.png desde sm: (ver breakpoint `sm` de Tailwind usado en todo el layout responsive) -->
-<div class="h-screen flex overflow-hidden bg-[url('/assets/images/fc/fondos/wallpaper_cell.png')] sm:bg-[url('/assets/images/fc/fondos/wallpaper.png')] bg-cover bg-center bg-no-repeat bg-fixed">
+<!-- Fondo: wallpaper_cell.png en mobile, wallpaper.png desde sm:. El velo
+     (`shell-wallpaper::before`) lo oscurece en modo oscuro. -->
+<div class="shell-wallpaper h-screen flex overflow-hidden bg-[url('/assets/images/fc/fondos/wallpaper_cell.png')] sm:bg-[url('/assets/images/fc/fondos/wallpaper.png')] bg-cover bg-center bg-no-repeat bg-fixed">
   <!-- Sidebar: Col1 (íconos) + Col2 (panel) -->
   <app-sidebar class="flex shrink-0 h-full" />
 
@@ -7,7 +8,7 @@
   <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
     <!-- Header minimalista translúcido con elevación ligera z-30 -->
     <header
-      class="h-[44px] min-h-[44px] shrink-0 bg-white/85 backdrop-blur-md border-b border-[var(--mis-border)] shadow-2xs z-30 flex items-center w-full relative"
+      class="h-[44px] min-h-[44px] shrink-0 bg-[var(--mis-surface-translucido)] backdrop-blur-md border-b border-[var(--mis-border)] shadow-2xs z-30 flex items-center w-full relative"
     >
       <app-header class="w-full h-full block" />
     </header>

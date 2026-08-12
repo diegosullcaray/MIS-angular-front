@@ -20,5 +20,5 @@
 
 /* Inputs de error con borde rojo sutil */
 :host ::ng-deep input.ng-invalid.ng-touched {
-  border-color: #ef4444;
+  border-color: var(--mis-danger);
 }

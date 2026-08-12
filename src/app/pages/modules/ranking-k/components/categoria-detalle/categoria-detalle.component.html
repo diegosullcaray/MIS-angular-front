@@ -1,5 +1,5 @@
 <div
-  class="mis-card p-3.5 sm:p-5 flex flex-col justify-between min-h-[calc(100vh-130px)] gap-4 sm:gap-5 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg flex-1">
+  class="mis-page justify-between">
   <!-- Cabecera principal del módulo -->
   <div
     class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
@@ -19,7 +19,7 @@
           @if (fechaActualizacion()) {
           <span
             class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--mis-panel-bg)] border border-[var(--mis-border)] font-medium text-[var(--mis-text-secondary)] text-[11px]">
-            <i class="pi pi-calendar text-[10px] text-[var(--mis-primary)]"></i>
+            <i class="pi pi-calendar text-[10px] text-[var(--mis-primary-text)]"></i>
             Data actualizada al: {{ fechaActualizacion() }}
           </span>
           }

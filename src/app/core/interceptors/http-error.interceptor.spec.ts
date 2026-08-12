@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpRequest, HttpHandlerFn, HttpErrorResponse, HttpEvent } from '@angular/common/http';
 import { firstValueFrom, Observable, of, throwError } from 'rxjs';
 import { httpErrorInterceptor } from './http-error.interceptor';
-import { HttpErrorService } from '../../pages/full-pages/error/services';
+import { HttpErrorService } from '../http-error';
 
 describe('httpErrorInterceptor', () => {
   let httpError: HttpErrorService;

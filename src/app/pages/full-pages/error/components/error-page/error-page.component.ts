@@ -7,8 +7,7 @@ import {
   lucideCompass, lucideTimer, lucideServerCrash, lucideArrowLeft,
   lucideHome, lucideRefreshCw, lucideLogIn,
 } from '@ng-icons/lucide';
-import { HttpErrorService } from '../../services';
-import type { HttpErrorAction } from '../../models';
+import { HttpErrorService, type HttpErrorAction } from '../../../../../core/http-error';
 
 /**
  * Página de error genérica de fullpages — renderiza cualquier código HTTP

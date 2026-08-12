@@ -1,6 +1,6 @@
-/* Panel de navegación (Col 2) — fondo claro (#E9EDF5), texto oscuro sobre él. */
 /* Lista plana de secciones del Host (sin anidamiento). El árbol de STG usa
-   app-sidebar-nav-item, con sus propios estilos (sidebar-nav-item.component.css). */
+   app-sidebar-nav-item, con sus propios estilos (sidebar-nav-item.component.css).
+   El fondo del panel lo pone `.mis-nav-panel` (assets/styles/components.css). */
 
 .nav-link {
   color: var(--mis-text-primary);
@@ -9,7 +9,7 @@
 
 .nav-link:hover {
   background: var(--mis-primary-light);
-  color: var(--mis-primary);
+  color: var(--mis-primary-text);
   transform: translateX(2px);
 }
 
@@ -22,7 +22,7 @@
 }
 
 .nav-link:hover .nav-link-icon {
-  color: var(--mis-primary);
+  color: var(--mis-primary-text);
 }
 
 .nav-link--active .nav-link-icon {

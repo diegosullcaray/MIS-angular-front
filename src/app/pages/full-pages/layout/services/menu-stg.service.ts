@@ -3,12 +3,7 @@ import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-ad
 import { mapMaterialIconToPrimeIcons } from '../utils/material-to-primeicons.util';
 import type { SidebarIcon, SidebarNavRuta } from '../interfaces/sidebar.model';
 
-/**
- * Ítem crudo del árbol de menú del backend Ant (`list_sec` / `menu_response`).
- *
- * Nombres de campo tal cual los devuelve STG — ver
- * stg-app-mis-r22/src/app/pages/full-pages/layout/services/navigation.service.ts.
- */
+/** Ítem crudo del árbol de menú del backend Ant (`list_sec` / `menu_response`). */
 interface AntMenuItem {
   cod_sec: string;
   cod_par?: string | null;
@@ -20,11 +15,9 @@ interface AntMenuItem {
 }
 
 /**
- * Árbol de menú de STG (list_sec) — única fuente de verdad, compartida entre
- * el sidebar (Col 1/Col 2) y el breadcrumb del header. Antes cada uno lo
- * recalculaba por su cuenta: el sidebar mostraba los `desc_sec` reales, pero
- * el breadcrumb no tenía acceso al árbol y terminaba mostrando los segmentos
- * crudos de la URL (códigos de `act_sec`) en vez de las etiquetas reales.
+ * Árbol de menú de STG (`list_sec`) — fuente única para el sidebar (Col 1/Col 2)
+ * y el breadcrumb del header, que necesita el árbol para resolver un `act_sec`
+ * a su etiqueta legible en vez de mostrar el segmento crudo de la URL.
  */
 @Injectable({ providedIn: 'root' })
 export class MenuStgService {

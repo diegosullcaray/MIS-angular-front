@@ -1,9 +1,14 @@
-/* Filas de agrupación/sección (is_nod===1) — mismo color que usaba el legado
-   (rsFn1 de framework-esg.util.ts) para que resalten como una división
-   dentro de la tabla, en vez de una fila de datos más. !important porque
-   p-stripedRows (PrimeNG) también fija su propio background por fila. */
+/* Filas de agrupación/sección (is_nod===1) — resaltan como división de la
+   tabla, no como una fila de datos más. !important porque p-stripedRows
+   (PrimeNG) también fija su propio background por fila. */
 .esg-fila-nodo > td {
   background-color: #f2f2f2 !important;
   color: #008080 !important;
   font-weight: 600;
+}
+
+/* El gris/teal del legado es ilegible sobre fondo oscuro. */
+:host-context(.dark) .esg-fila-nodo > td {
+  background-color: var(--mis-panel-bg) !important;
+  color: #5EEAD4 !important;
 }

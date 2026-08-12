@@ -20,14 +20,14 @@ export const REPORTES_ROUTE: Routes = [
   {
     path: 'leg/com/rda/adm/mon-desem',
     loadComponent: () =>
-      import('./components/avance_comercial/monitor-metas-desembolso/monitor-metas-desembolso.component').then(
+      import('./components/avance-comercial/monitor-metas-desembolso/monitor-metas-desembolso.component').then(
         (m) => m.MonitorMetasDesembolsoComponent
       ),
   },
   {
     path: 'leg/com/rda/adm/mon-rep',
     loadComponent: () =>
-      import('./components/avance_comercial/monitor-reprogramados/monitor-reprogramados.component').then(
+      import('./components/avance-comercial/monitor-reprogramados/monitor-reprogramados.component').then(
         (m) => m.MonitorReprogramadosComponent
       ),
   },

@@ -5,27 +5,11 @@ import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
 /**
- * ModIncentivosService — Módulo "Incentivos" del backend Ant.
+ * Módulo "Incentivos" del backend Ant (puerto 6302, appId `app`).
  *
- * | Parámetro | Valor  |
- * |-----------|--------|
- * | Port      | 6302   |
- * | AppId     | app    |
- * | Secret    | `environment.moduleSecrets.app` |
- *
- * Mismo port/secret/appId que `ModPresupuestoService`/`ModFrameworkEsgService`/
- * `ModDashboardService` — el legado `ModIncentivos3Service`
- * (`pages/modules/incentivos3/compartido/servicios/mod-incentivos3.service.ts`
- * del repo STG) se conecta idéntico.
- *
- * El motor de cálculo real vive en el namespace de backend `incentivos4.*`
- * (`getDataSources*`/`calcular*`) — el namespace `incentivos3.*` que le da
- * nombre al módulo Angular legado solo cubre las pantallas de detalle
- * (`getDetail`/`getTasa`/`getProd`/`getCliBanc`) y el listado de niveles del
- * selector de jerarquía (`getFromHierList`). Ver
- * `docs/06-legado-sistema-anterior/incentivos-auditoria.md`.
- *
- * Migrado del STG (stg-app-mis-r22, `ModIncentivos3Service`).
+ * Los namespaces no se corresponden con el nombre del módulo: el motor de
+ * cálculo vive en `incentivos4.*`, mientras que `incentivos3.*` solo cubre las
+ * pantallas de detalle y el listado de niveles del selector de jerarquía.
  */
 @Injectable({ providedIn: 'root' })
 export class ModIncentivosService extends AntService {

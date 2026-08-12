@@ -5,19 +5,8 @@ import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
 /**
- * ModSeccionesService — Módulo "Secciones" del backend Ant.
- *
- * | Parámetro | Valor      |
- * |-----------|------------|
- * | Port      | 5301       |
- * | AppId     | secciones  |
- * | Secret    | `environment.moduleSecrets.secciones` |
- *
- * Migrado del STG (`docs/07-modulos/analista/compartido/servicios/mod-sec.service.ts`,
- * `ModSecService`) — porta las rutas que usan Categorización y Analista
- * (Principal/Listas). No incluye `dashboard.cliente` con `pais` como ruta
- * de detalle propia de "prospecto" (`docs/.../analista/prospecto`), fuera
- * del alcance de esta migración.
+ * Módulo "Secciones" del backend Ant (puerto 5301, appId `secciones`).
+ * Cubre las rutas que usan Categorización y Analista (Principal/Listas).
  */
 @Injectable({ providedIn: 'root' })
 export class ModSeccionesService extends AntService {

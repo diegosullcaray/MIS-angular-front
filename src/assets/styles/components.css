@@ -11,6 +11,76 @@
   border-radius: var(--mis-radius-sm);
 }
 
+/* ── Panel de página ──────────────────────────────────────────
+   Contenedor raíz de cada pantalla de módulo: panel de vidrio sobre el
+   wallpaper del shell. Reemplaza la repetición de utilidades
+   (`bg-white/70 backdrop-blur-[15px] border border-white/60 …`) que estaba
+   copiada en cada plantilla. Los outliers ajustan encima con utilidades
+   sueltas (`justify-between`, otro `min-h-*`). */
+.mis-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--mis-space-4);
+  width: 100%;
+  min-height: calc(100vh - 130px);
+  padding: var(--mis-space-3);
+  background: var(--mis-glass-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--mis-glass-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: var(--mis-shadow-lg);
+}
+
+@media (min-width: 640px) {
+  .mis-page {
+    gap: var(--mis-space-5);
+    padding: var(--mis-space-5);
+  }
+}
+
+/* Alto natural del contenido, sin llenar el viewport. */
+.mis-page--auto {
+  min-height: 0;
+}
+
+/* ── Panel de navegación (Col 2 del sidebar) ──────────────────
+   Compartido por el panel real (`sidebar-nav-panel`) y su esqueleto de
+   transición (`sidebar`), que viven en componentes distintos y por eso
+   no pueden compartir un estilo con `:host`. */
+.mis-nav-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 64px;
+  z-index: 50;
+  width: 85vw;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  background: var(--mis-surface-translucido);
+  backdrop-filter: blur(24px);
+  border-right: 1px solid var(--mis-border);
+  box-shadow: var(--mis-shadow-lg);
+}
+
+@media (min-width: 640px) {
+  .mis-nav-panel {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    height: 100%;
+    width: 220px;
+    flex-shrink: 0;
+    box-shadow: none;
+  }
+}
+
+/* Pantallas sin la franja de filtros del shell (115px en vez de 130px). */
+.mis-page--alta {
+  min-height: calc(100vh - 115px);
+}
+
 /* ── Cards de gestión (p-card con header/body) ────────────── */
 .mis-card {
   border: 1px solid var(--mis-border);

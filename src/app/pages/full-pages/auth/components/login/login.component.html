@@ -32,13 +32,14 @@
       >
         <!-- Marca MIS, esquina superior izquierda del panel -->
         <div class="absolute top-6 left-6 flex items-center gap-2">
-          <img src="assets/images/fc/logos/mis.png" alt="MIS" class="h-9 w-auto" />
-          <span class="text-lg font-bold text-[var(--mis-primary)]">Sistema de Información</span>
+          <!-- El wordmark navy es ilegible en oscuro: se cambia por la versión blanca. -->
+          <img [src]="logoMis()" alt="MIS" class="h-9 w-auto" />
+          <span class="text-lg font-bold text-[var(--mis-primary-text)]">Sistema de Información</span>
         </div>
 
         <div class="w-full max-w-[380px] flex flex-col gap-4">
           <div class="flex flex-col items-center gap-1 mb-2">
-            <h1 class="text-xl font-bold text-[var(--mis-primary)] m-0">Inicio de sesión</h1>
+            <h1 class="text-xl font-bold text-[var(--mis-primary-text)] m-0">Inicio de sesión</h1>
             <p class="text-sm text-[var(--mis-text-secondary)] text-center m-0">
               Ingresa con tu cuenta corporativa de Google.
             </p>

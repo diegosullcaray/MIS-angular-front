@@ -10,7 +10,13 @@ html, body {
   font-family: var(--mis-font-family);
   font-size: var(--mis-text-base);
   color: var(--mis-text-primary);
-  background: url('/assets/images/fc/fondos/wallpaper.png') no-repeat center center fixed;
+  background-color: var(--mis-bg);
+  /* El velo va primero para quedar por encima del wallpaper. */
+  background-image: linear-gradient(var(--mis-wallpaper-velo), var(--mis-wallpaper-velo)),
+                    url('/assets/images/fc/fondos/wallpaper.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
   background-size: cover;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -25,11 +31,14 @@ html, body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(29, 57, 110, 0.20);
+  background: var(--mis-scrollbar-thumb);
   border-radius: var(--mis-radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(29, 57, 110, 0.35);
+  background: var(--mis-scrollbar-thumb-hover);
+}
+* {
+  scrollbar-color: var(--mis-scrollbar-thumb) transparent;
 }
 
 /* ── Focus visible ring (accesibilidad) ───────────────────── */

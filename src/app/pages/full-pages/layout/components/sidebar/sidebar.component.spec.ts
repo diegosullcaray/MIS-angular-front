@@ -363,7 +363,14 @@ describe('SidebarComponent', () => {
     fixture.detectChanges();
 
     expect(shell.navPanelColapsado()).toBe(true);
-    expect((fixture.nativeElement as HTMLElement).querySelector('app-sidebar-nav-panel')).toBeNull();
+    // El panel sigue montado (la transición de ancho/opacidad lo necesita);
+    // colapsado significa que su contenedor queda sin ancho ni interacción.
+    const panel = (fixture.nativeElement as HTMLElement).querySelector('app-sidebar-nav-panel');
+    expect(panel).not.toBeNull();
+    const contenedor = panel!.parentElement!;
+    expect(contenedor.classList.contains('w-0')).toBe(true);
+    expect(contenedor.classList.contains('opacity-0')).toBe(true);
+    expect(contenedor.classList.contains('pointer-events-none')).toBe(true);
   });
 
   it('sincroniza shell.sidebarTienePanel() con panelActivo(), para que el header sepa si mostrar su botón en mobile', () => {

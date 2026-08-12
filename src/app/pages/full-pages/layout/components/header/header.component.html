@@ -12,7 +12,8 @@
 
   <!-- Logo / Wordmark + Breadcrumb Minimalista -->
   <div class="flex items-center gap-2.5 shrink-0 min-w-0">
-    <img src="assets/images/fc/logos/mis.png" alt="MIS" class="h-5 w-auto shrink-0 opacity-90 hover:opacity-100 transition-opacity" />
+    <!-- El wordmark navy es ilegible en oscuro: se cambia por la versión blanca. -->
+    <img [src]="logoMis()" alt="MIS" class="h-5 w-auto shrink-0 opacity-90 hover:opacity-100 transition-opacity" />
     <span class="hidden sm:inline text-[var(--mis-border-strong)] text-xs font-light">/</span>
     <p-breadcrumb
       class="header-breadcrumb hidden sm:block text-xs"
@@ -26,6 +27,17 @@
 
   <!-- Acciones de cabecera minimalistas -->
   <div class="flex items-center gap-2 relative">
+    <!-- Alternar tema claro/oscuro -->
+    <button
+      class="w-8 h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      (click)="theme.alternar()"
+      [attr.aria-label]="theme.oscuro() ? 'Activar modo claro' : 'Activar modo oscuro'"
+      [attr.aria-pressed]="theme.oscuro()"
+      [title]="theme.oscuro() ? 'Modo claro' : 'Modo oscuro'"
+    >
+      <ng-icon [name]="theme.oscuro() ? 'lucideSun' : 'lucideMoon'" size="15" />
+    </button>
+
     <!-- Pill de usuario minimalista -->
     <div class="flex items-center gap-2 p-0.5 pr-2 rounded-full border border-[var(--mis-border)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-panel-bg)] hover:border-[var(--mis-border-strong)]"
          (click)="toggleDropdown()" (keydown.enter)="toggleDropdown()" tabindex="0" role="button" aria-haspopup="true" [attr.aria-expanded]="dropdownOpen()">
@@ -63,6 +75,26 @@
           <ng-icon name="lucideUser" size="13" />
           Mi perfil
         </button>
+
+        <!-- Selector de tema (claro / oscuro / seguir al sistema) -->
+        <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
+        <div class="px-4 py-2">
+          <div class="text-[10px] uppercase tracking-wide text-[var(--mis-text-tertiary)] mb-1.5">Apariencia</div>
+          <div class="flex gap-1 p-0.5 rounded-lg bg-[var(--mis-panel-bg)] border border-[var(--mis-border)]" role="radiogroup" aria-label="Tema de la interfaz">
+            @for (opcion of opcionesTema; track opcion.modo) {
+              <button
+                class="flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-md border-0 bg-transparent cursor-pointer transition-colors duration-150 text-[10px] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)]"
+                [class.tema-opcion--activa]="theme.modo() === opcion.modo"
+                role="radio"
+                [attr.aria-checked]="theme.modo() === opcion.modo"
+                (click)="theme.setModo(opcion.modo)"
+              >
+                <ng-icon [name]="opcion.icono" size="14" />
+                {{ opcion.label }}
+              </button>
+            }
+          </div>
+        </div>
         @if (auth.puedeCambiarUsuario()) {
           <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
           <button class="flex items-center gap-2.5 w-full p-2 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem" (click)="abrirCambiarUsuario()">

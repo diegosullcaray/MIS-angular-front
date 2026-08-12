@@ -1,0 +1,33 @@
+<div class="mis-page mis-page--alta">
+  <div class="flex items-center justify-between flex-wrap gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-list-check text-[var(--mis-primary-text)]"></i>
+      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Monitor Reprogramados</h2>
+    </div>
+
+    <div class="flex items-center gap-3 flex-wrap">
+      <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
+
+      <p-select
+        [options]="opcionesTipo"
+        optionLabel="desc"
+        optionValue="id"
+        [ngModel]="tipoSeleccionado()"
+        (ngModelChange)="onTipoSeleccionado($event)"
+        styleClass="w-40"
+        ariaLabel="Tipo"
+      />
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <div class="p-12 flex flex-col items-center justify-center gap-3 my-auto">
+      <p-progressSpinner styleClass="w-12 h-12" strokeWidth="4" animationDuration=".8s" />
+      <span class="text-[13px] font-medium text-[var(--mis-primary-text)]">Cargando reporte de reprogramados...</span>
+    </div>
+  } @else {
+    <div class="mis-card p-3 overflow-x-auto">
+      <app-tabla-reporte [encabezados]="tablaReprogramados().headers" [filas]="tablaReprogramados().body" [cargando]="cargando()" />
+    </div>
+  }
+</div>

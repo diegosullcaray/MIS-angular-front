@@ -5,13 +5,15 @@ import { filter, map } from 'rxjs';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideChevronDown, lucideUser, lucideSettings,
-  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle, lucideUsers
+  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle, lucideUsers,
+  lucideSun, lucideMoon, lucideMonitor
 } from '@ng-icons/lucide';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import type { MenuItem } from 'primeng/api';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import { ThemeService, type ModoTema } from '../../../../../core/services/theme.service';
 import { AuthService } from '../../../auth/service/auth.service';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
@@ -50,6 +52,7 @@ const SEGMENTO_LABELS: Record<string, string> = {
   viewProviders: [provideIcons({
     lucideChevronDown, lucideUser, lucideSettings,
     lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle, lucideUsers,
+    lucideSun, lucideMoon, lucideMonitor,
   })],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
@@ -57,6 +60,7 @@ const SEGMENTO_LABELS: Record<string, string> = {
 export class HeaderComponent {
   protected readonly shell = inject(ShellStateService);
   protected readonly auth = inject(AuthService);
+  protected readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
   private readonly menuStg = inject(MenuStgService);
   private readonly kaypacha = inject(KaypachaService);
@@ -159,6 +163,17 @@ export class HeaderComponent {
     };
     return labels[this.shell.usuarioActivo()?.rol ?? ''] ?? '';
   });
+
+  protected readonly logoMis = computed(() =>
+    this.theme.oscuro() ? 'assets/images/fc/logos/mis_white.png' : 'assets/images/fc/logos/mis.png'
+  );
+
+  /** Opciones del selector de tema, en el orden en que se muestran. */
+  protected readonly opcionesTema: ReadonlyArray<{ modo: ModoTema; icono: string; label: string }> = [
+    { modo: 'claro', icono: 'lucideSun', label: 'Claro' },
+    { modo: 'oscuro', icono: 'lucideMoon', label: 'Oscuro' },
+    { modo: 'sistema', icono: 'lucideMonitor', label: 'Sistema' },
+  ];
 
   protected toggleDropdown(): void {
     this.dropdownOpen.update(v => !v);

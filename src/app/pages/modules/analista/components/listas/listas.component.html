@@ -1,4 +1,4 @@
-<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+<div class="mis-page">
   <div class="flex items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
     <div class="flex items-center gap-2.5">
       <p-button icon="pi pi-arrow-left" severity="secondary" [outlined]="true" size="small" ariaLabel="Volver" pTooltip="Volver" tooltipPosition="bottom" (onClick)="volver()" />
@@ -13,7 +13,7 @@
         class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-4 flex items-center gap-3 no-underline hover:border-[var(--mis-primary)] hover:shadow-md transition-all"
       >
         <div class="w-11 h-11 rounded-full bg-[var(--mis-primary-light)] flex items-center justify-center shrink-0">
-          <i [class]="enlace.icono" class="text-[var(--mis-primary)] text-lg"></i>
+          <i [class]="enlace.icono" class="text-[var(--mis-primary-text)] text-lg"></i>
         </div>
         <div class="flex flex-col gap-0.5 min-w-0">
           <span class="text-[14px] font-semibold text-[var(--mis-text-primary)]">{{ enlace.nombre }}</span>

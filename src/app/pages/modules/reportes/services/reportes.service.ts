@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
@@ -20,15 +20,10 @@ interface ReporteResponseBody {
 }
 
 /**
- * Fachada del módulo `reportes` — reemplaza a `ModRepService`
- * (`reportes/compartido/servicios/mod-rep.service.ts`, jerarquía) +
- * `ComercialService`/`ant-mod-rep.service.ts` (`getMixData`/`ReportType.REGULAR`,
- * datos de cada bloque) del legado. Cada pantalla de reporte (ej.
- * `MonitorMetasDesembolsoComponent`) inyecta este servicio directamente en
- * vez de compartir estado — a diferencia de Incentivos/ESG, los reportes de
- * este módulo no comparten ningún nivel de jerarquía seleccionado entre sí,
- * igual que en el legado (cada ruta `mon-desem`/`mon-rep` era una pantalla
- * independiente con su propio `hier-rem-selector`).
+ * Fachada del módulo `reportes`: jerarquía organizativa + datos de cada bloque.
+ *
+ * Sin estado compartido entre pantallas — cada reporte tiene su propio nivel de
+ * jerarquía seleccionado, a diferencia de Incentivos/ESG.
  */
 @Injectable({ providedIn: 'root' })
 export class ReportesService {
@@ -48,27 +43,18 @@ export class ReportesService {
   }
 
   /**
-   * Fecha de corte (`YYYY-MM-DD`) — `getHierarchyConfig('UNI_1').params` del legado
-   * (`moment(profile.curr_fec).format('YYYY-MM-DD')`), usada al pedir cada nivel de la
-   * jerarquía (distinta de `fechaUltimoDia()`, que es `YYYYMMDD` y un día antes).
+   * Fecha de corte (`YYYY-MM-DD`) con la que se pide cada nivel de la jerarquía.
+   * Distinta de `fechaUltimoDia()` (`YYYYMMDD`, un día antes).
    *
-   * Usa `usuarioActivo().fechaCorte` (`profile.curr_fec`, `YYYYMMDD`) cuando el Host ya lo
-   * expuso — mismo campo que ya consume `IncentivosService.fechaCorte()`. Si todavía no
-   * llegó, cae a la fecha real como aproximación, pero eso puede pedir datos de un día que
-   * el backend no cerró/calculó todavía y devolver la jerarquía vacía (ver el doc de
-   * `UsuarioActivo.fechaCorte`) — es la causa real de que el selector de jerarquía fallara
-   * en el primer nivel.
+   * El fallback a la fecha real puede pedir un día que el backend no cerró todavía
+   * y devolver la jerarquía vacía; solo aplica si el Host aún no expuso `fechaCorte`.
    */
   fechaCorte(): string {
     const currFec = this.shell.usuarioActivo()?.fechaCorte;
     if (currFec && /^\d{8}$/.test(currFec)) {
-      const resultado = `${currFec.slice(0, 4)}-${currFec.slice(4, 6)}-${currFec.slice(6, 8)}`;
-      console.warn(`[ReportesService] fechaCorte() usó usuarioActivo().fechaCorte="${currFec}" -> "${resultado}"`);
-      return resultado;
+      return `${currFec.slice(0, 4)}-${currFec.slice(4, 6)}-${currFec.slice(6, 8)}`;
     }
-    const fallback = new Date().toISOString().slice(0, 10);
-    console.warn(`[ReportesService] fechaCorte() SIN usuarioActivo().fechaCorte (valor crudo: ${JSON.stringify(currFec)}) — usando fallback de fecha real: "${fallback}"`);
-    return fallback;
+    return new Date().toISOString().slice(0, 10);
   }
 
   obtenerJerarquiaBase(codHierarchy: number): Observable<HierarquiaNodo[]> {
@@ -84,22 +70,9 @@ export class ReportesService {
     codRels: string[],
     params?: Record<string, unknown>
   ): Observable<HierarquiaNodo[]> {
-    return this.antAdmin.getLevelHierarchy(codHier, lvlHier, tipCod, codRels, params).pipe(
-      tap((r) => {
-        const nivel = (r.body as JerarquiaResponseBody | null)?.level_hierarchy;
-        if (!nivel || nivel.length === 0) {
-          // Diagnóstico temporal: `map()` de abajo colapsa cualquier respuesta sin
-          // `level_hierarchy` a `[]` por igual — código de error, body con otra forma,
-          // o vacío legítimo. Loguear la respuesta cruda para distinguir cuál es.
-          console.warn('[ReportesService] getLevelHierarchy() sin level_hierarchy — respuesta cruda:', {
-            code: r.code,
-            errors: r.errors,
-            body: r.body,
-          });
-        }
-      }),
-      map((r) => (r.body as JerarquiaResponseBody | null)?.level_hierarchy ?? [])
-    );
+    return this.antAdmin
+      .getLevelHierarchy(codHier, lvlHier, tipCod, codRels, params)
+      .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.level_hierarchy ?? []));
   }
 
   /** Un bloque del motor de reportes "mixtos" (tabla multi-encabezado o tarjeta KPI, según `codRep`). */

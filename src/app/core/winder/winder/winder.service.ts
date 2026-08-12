@@ -7,32 +7,21 @@ import { RESTPacket } from '../rest/rest-packet.class';
 import type { IWinderConnectionConf, IWinderRequestConfig, IWinderResponse } from './winder.interface';
 
 /**
- * WinderService — Orquestador del protocolo Winder/Ant.
+ * Orquestador del protocolo Winder/Ant: serializa los Strands en el header
+ * `Winder-Params`, cifra `{key, port, id, responseType}` con AES-128-CBC en el
+ * parámetro `w`, y delega el HTTP a `RESTService`.
  *
- * Responsabilidades:
- * 1. Recibe la configuración de conexión (módulo) y la configuración de la request.
- * 2. Serializa los Strands como JSON en el header HTTP `Winder-Params`.
- * 3. Cifra el objeto `{key, port, id, responseType}` con AES-128-CBC → parámetro `w`.
- * 4. Delega la ejecución HTTP a `RESTService`.
- *
- * ## Rutas generadas
  * | Tipo        | URL                                          |
  * |-------------|----------------------------------------------|
  * | GET (JSON)  | `/v1/g?w=<cipher>`                           |
  * | POST (JSON) | `/v1/p` body: `{w: <cipher>}`                |
  * | POST (file) | `/v1/pf` multipart, campo `w` + `winder-file`|
  *
- * ## Ejemplo de uso
  * ```typescript
  * const strand = new Strand('list_sec', 'menu_response');
  * strand.pushToPayload('email', 'user@confianza.pe');
- * winderService
- *   .prepare(connectionConf, { responseType: 'JSON', strands: strand })
- *   .get()
- *   .subscribe(res => console.log(res.body));
+ * winderService.prepare(conn, { responseType: 'JSON', strands: strand }).get();
  * ```
- *
- * Migrado del STG (stg-app-mis-r22) al stack Angular 22 (zoneless, signals).
  */
 @Injectable({ providedIn: 'root' })
 export class WinderService {

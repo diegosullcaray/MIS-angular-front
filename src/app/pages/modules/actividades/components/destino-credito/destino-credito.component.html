@@ -1,4 +1,4 @@
-<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+<div class="mis-page">
   <!-- Encabezado minimalista -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
     <div class="flex items-center gap-3">
@@ -47,7 +47,7 @@
     <app-inline-error [detalle]="error()!" (reintentar)="cargarDatos()" />
   } @else {
     <!-- Tabla Principal con PrimeNG -->
-    <div class="rounded-xl overflow-hidden border border-[var(--mis-border)] bg-white/90 backdrop-blur-sm shadow-xs flex-1">
+    <div class="rounded-xl overflow-hidden border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs flex-1">
       <p-table
         [value]="filteredData()"
         [paginator]="true"
@@ -75,17 +75,17 @@
         </ng-template>
 
         <ng-template pTemplate="body" let-item>
-          <tr class="hover:bg-slate-50 transition-colors">
-            <td class="text-center font-mono text-slate-700 font-semibold">{{ item.HCODSEC }}</td>
-            <td class="font-medium text-slate-800">{{ item.HDESSEC }}</td>
-            <td class="font-mono text-slate-600">{{ item.HCTACLI }}</td>
-            <td class="text-slate-800 font-medium">{{ item.HDESCLI }}</td>
+          <tr class="hover:bg-[var(--mis-panel-bg)] transition-colors">
+            <td class="text-center font-mono text-[var(--mis-text-primary)] font-semibold">{{ item.HCODSEC }}</td>
+            <td class="font-medium text-[var(--mis-text-primary)]">{{ item.HDESSEC }}</td>
+            <td class="font-mono text-[var(--mis-text-secondary)]">{{ item.HCTACLI }}</td>
+            <td class="text-[var(--mis-text-primary)] font-medium">{{ item.HDESCLI }}</td>
             <td class="text-center font-mono font-bold text-[#035096]">{{ item.HCODOPE }}</td>
-            <td class="text-center text-slate-600">{{ item.HFECDES }}</td>
-            <td class="text-right font-mono font-semibold text-slate-900">
+            <td class="text-center text-[var(--mis-text-secondary)]">{{ item.HFECDES }}</td>
+            <td class="text-right font-mono font-semibold text-[var(--mis-text-primary)]">
               {{ item.HMONDES | currency:'PEN':'symbol':'1.2-2' }}
             </td>
-            <td class="text-center text-slate-700">
+            <td class="text-center text-[var(--mis-text-primary)]">
               {{ item.HFECVIS || '-' }}
             </td>
             <td class="text-center">
@@ -113,7 +113,7 @@
 
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="10" class="text-center py-6 text-slate-400">
+            <td colspan="10" class="text-center py-6 text-[var(--mis-text-tertiary)]">
               No se encontraron registros de destino de crédito.
             </td>
           </tr>

@@ -6,6 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { IncentivosService } from '../../services/incentivos.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { ETIQUETAS_DETALLE_SUPER_PLUS, ETIQUETAS_DETALLE_VARIABLE } from '../../utils/incentivos-config.util';
+import { formatearNumero, formatearPorcentaje, formatearSoles } from '../../../../../shared/utils/formato.util';
 import type { FilaRankingDetalle, FilaVariableDetalle, ResultadoDetalleVariable } from '../../models';
 
 type Vista = 'vars' | 'rank';
@@ -159,11 +160,12 @@ export class DetalleVariableContentComponent {
 
   protected formatearValorTarjeta(valor: number | undefined): string {
     const v = valor ?? 0;
-    const formato = this.formatoTarjeta();
-    if (formato === 'currency') return `S/. ${v.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
-    if (formato === 'integer') return v.toLocaleString('en-US', { maximumFractionDigits: 0 });
-    if (formato === 'percent') return `${(v * 100).toLocaleString('en-US', { maximumFractionDigits: 2 })}%`;
-    return v.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    switch (this.formatoTarjeta()) {
+      case 'currency': return formatearSoles(v, 0);
+      case 'integer':  return formatearNumero(v, 0);
+      case 'percent':  return formatearPorcentaje(v);
+      default:         return formatearNumero(v);
+    }
   }
 
   protected formatearMeta(): string {
@@ -174,8 +176,8 @@ export class DetalleVariableContentComponent {
 
   protected formatearCelda(valor: number | undefined, formato: string | undefined): string {
     if (valor === undefined || valor === null) return '--';
-    if (formato === 'percent') return `${(valor * 100).toLocaleString('en-US', { maximumFractionDigits: 2 })}%`;
-    if (formato === 'pen') return `S/. ${valor.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
-    return valor.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    if (formato === 'percent') return formatearPorcentaje(valor);
+    if (formato === 'pen') return formatearSoles(valor);
+    return formatearNumero(valor);
   }
 }

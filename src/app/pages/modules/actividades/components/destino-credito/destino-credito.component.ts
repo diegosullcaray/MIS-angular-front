@@ -10,7 +10,7 @@ import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 import { ActividadesService } from '../../services/actividades.service';
 import type { DestinoCreditoItem } from '../../models/actividades.model';
-import { DestinoCreditoDialogComponent } from './destino-credito-dialog/destino-credito-dialog.component';
+import { DestinoCreditoDialogComponent } from '../../ui/destino-credito-dialog/destino-credito-dialog.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 

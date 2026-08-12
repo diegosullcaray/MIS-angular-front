@@ -5,23 +5,9 @@ import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
 /**
- * ModDashboardService — Módulo "Dashboards Integrados" (`reportes2`) del
- * backend Ant.
- *
- * | Parámetro | Valor  |
- * |-----------|--------|
- * | Port      | 6302   |
- * | AppId     | app    |
- * | Secret    | `environment.moduleSecrets.app` |
- *
- * Mismo port/secret/appId que `ModPresupuestoService`/`ModFrameworkEsgService`
- * — el legado `ModReportesEService`
- * (`pages/modules/reportes-e/compartido/servicios/mod-reportes-e.service.ts`
- * del repo STG) se conecta idéntico. Distinto de `ModReportesService`
- * (puerto 5304, appId `reporting`, usado por Herramientas) — a pesar del
- * nombre similar, son dos módulos de negocio distintos en el backend.
- *
- * Migrado del STG (stg-app-mis-r22, `ModReportesEService`).
+ * Módulo "Dashboards Integrados" (`reportes2`) del backend Ant (puerto 6302,
+ * appId `app`). No confundir con `ModReportesService` (puerto 5304, appId
+ * `reporting`): pese al nombre parecido son dos módulos de negocio distintos.
  */
 @Injectable({ providedIn: 'root' })
 export class ModDashboardService extends AntService {

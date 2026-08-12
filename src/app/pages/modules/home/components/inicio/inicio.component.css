@@ -7,7 +7,7 @@
 .welcome-title {
     font-size: var(--mis-text-2xl);
     font-weight: var(--mis-font-bold);
-    color: var(--mis-primary);
+    color: var(--mis-primary-text);
     margin: 0 0 var(--mis-space-1);
 }
 
@@ -30,7 +30,7 @@
 }
 
 .kpi-card--link:hover {
-    border-color: var(--mis-primary);
+    border-color: var(--mis-primary-text);
 }
 
 .kpi-content {

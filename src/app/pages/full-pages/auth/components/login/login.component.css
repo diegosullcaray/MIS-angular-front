@@ -14,9 +14,11 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Fondo con `--mis-primary`, no `--mis-text-primary`: ese último se aclara en
+   modo oscuro y dejaría el botón blanco con texto blanco. */
 :host ::ng-deep .login-btn-dark.p-button {
-    background: var(--mis-text-primary) !important;
-    border-color: var(--mis-text-primary) !important;
+    background: var(--mis-primary) !important;
+    border-color: var(--mis-primary) !important;
     color: var(--mis-text-on-primary) !important;
 }
 

@@ -5,7 +5,7 @@
 
 :host ::ng-deep .mis-info-pulse-btn .p-button-icon {
   animation: mis-pulse-heartbeat 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
-  color: var(--mis-primary);
+  color: var(--mis-primary-text);
 }
 
 @keyframes mis-pulse-heartbeat {

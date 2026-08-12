@@ -173,13 +173,6 @@ export interface CalculadoraConfig {
   claseUsuario: number;
 }
 
-/** Payload enviado a `incentivos4.calculadora4`/`.calculadora5` — claves dinámicas `v_*`/`p_*` según qué variables muestre el perfil. */
-export type PayloadSimulacion = Record<string, number> & {
-  tip_cod: number;
-  cod_rel: string;
-  mar_ren: number;
-};
-
 /** Nodo listado por `incentivos3.lista3` (selector de nivel — Unidades/Corredores/Territorios). */
 export interface NodoJerarquiaIncentivo {
   tip_cod: number;

@@ -4,6 +4,23 @@
   overflow: hidden;
 }
 
+/* Velo sobre el wallpaper: transparente en claro, oscuro en `.dark`.
+   Va en un ::before para no pisar el background-image de las utilidades. */
+.shell-wallpaper {
+  position: relative;
+  isolation: isolate;
+}
+
+.shell-wallpaper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--mis-wallpaper-velo);
+  transition: background var(--mis-transition-base);
+}
+
 .shell-content-inner {
   animation: routeFadeIn var(--mis-transition-base) ease;
 }

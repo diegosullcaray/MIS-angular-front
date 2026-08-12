@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -6,7 +6,8 @@ import { AuthService } from '../../service/auth.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { LoadSpinnerComponent } from '../load-spinner/load-spinner.component';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import { version } from '../../../../../global';
+import { ThemeService } from '../../../../../core/services/theme.service';
+import { APP_VERSION } from '../../../../../core/constants/app.constants';
 
 /**
  * Login del Host — Google Sign-In + Winder.
@@ -27,8 +28,13 @@ export class LoginComponent implements OnInit {
   private readonly shell = inject(ShellStateService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly theme = inject(ThemeService);
 
-  protected readonly appVersion = version;
+  protected readonly appVersion = APP_VERSION;
+
+  protected readonly logoMis = computed(() =>
+    this.theme.oscuro() ? 'assets/images/fc/logos/mis_white.png' : 'assets/images/fc/logos/mis.png'
+  );
 
   /**
    * `verificando`: revisando si venimos de un redirect de Google.

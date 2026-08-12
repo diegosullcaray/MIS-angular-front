@@ -5,26 +5,11 @@ import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
 /**
- * ModReportesService — Módulo de Reporting del backend Ant (`ModRepService`
- * del legado, `stg-fuente/.../reportes/compartido/servicios/mod-rep.service.ts`).
+ * Módulo de Reporting del backend Ant (puerto 5304, appId `reporting`).
  *
- * | Parámetro | Valor        |
- * |-----------|--------------|
- * | Port      | 5304         |
- * | AppId     | reporting    |
- * | Secret    | `environment.moduleSecrets.reporting` |
- *
- * Rutas disponibles en el backend:
- * - `table.regular` → resultado de una tabla genérica (`cod_rep` + parámetros
- *   propios de cada reporte), usada por Herramientas (`cons_base_negativa`),
- *   igual que `getRegularTableResult` del legado (`ModRepService` en
- *   `reportes/compartido/servicios/mod-rep.service.ts`).
- * - `regularData` → motor de reportes "mixtos" (tablas multi-encabezado +
- *   tarjetas KPI) usado por Reportes/Avance Comercial, igual que
- *   `ReportType.REGULAR` + `getData()`/`getMixData()` del legado
- *   (`reportes/legacy/support/data/ant-mod-rep.service.ts` +
- *   `reportes/legacy/comercial/comercial.service.ts`) — **distinta** de
- *   `table.regular`, aunque el nombre se preste a confusión.
+ * `table.regular` y `regularData` son motores **distintos** pese al nombre
+ * parecido: el primero devuelve una tabla genérica (lo usa Herramientas), el
+ * segundo el motor de reportes "mixtos" (tablas multi-encabezado + tarjetas KPI).
  */
 @Injectable({ providedIn: 'root' })
 export class ModReportesService extends AntService {

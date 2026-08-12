@@ -1,14 +1,14 @@
 <nav
   id="tour-sidebar-panel"
-  class="fixed top-0 left-0 bottom-16 z-50 w-[85vw] max-w-[300px] shadow-2xl flex flex-col overflow-y-auto sm:static sm:inset-auto sm:z-auto sm:h-full sm:w-[220px] sm:shrink-0 sm:shadow-none bg-white/80 backdrop-blur-xl border-r border-[var(--mis-border)]"
+  class="mis-nav-panel overflow-y-auto"
   aria-label="Navegación del sistema"
 >
   <!-- Encabezado del panel: sistema activo (Alineado a 44px con el header principal) -->
   <div class="flex items-center gap-2.5 px-3.5 h-[44px] min-h-[44px] border-b border-[var(--mis-border)] shrink-0 box-border">
-    <div class="w-6 h-6 rounded-md bg-[var(--mis-primary-light)] flex items-center justify-center text-[var(--mis-primary)] shrink-0">
+    <div class="w-6 h-6 rounded-md bg-[var(--mis-primary-light)] flex items-center justify-center text-[var(--mis-primary-text)] shrink-0">
       <i [class]="panelConfig().icono + ' text-[14px]'"></i>
     </div>
-    <div class="text-[13px] font-semibold text-[var(--mis-primary)] leading-tight flex-1 truncate">
+    <div class="text-[13px] font-semibold text-[var(--mis-primary-text)] leading-tight flex-1 truncate">
       {{ panelConfig().titulo }}
     </div>
   </div>

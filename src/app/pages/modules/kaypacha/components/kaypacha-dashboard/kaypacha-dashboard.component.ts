@@ -8,7 +8,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { KaypachaDashboardService } from '../../services/kaypacha-dashboard.service';
 import { KaypachaTourService } from '../../services/kaypacha-tour.service';
-import { BuscadorColaboradorDialogComponent } from '../buscador-colaborador-dialog/buscador-colaborador-dialog.component';
+import { BuscadorColaboradorDialogComponent } from '../../ui/buscador-colaborador-dialog/buscador-colaborador-dialog.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import type { KaypachaColaboradorItem } from '../../models';

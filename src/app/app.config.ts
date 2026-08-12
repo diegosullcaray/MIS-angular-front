@@ -17,6 +17,7 @@ import { MisTheme } from './theme/mis-theme';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
+import { ThemeService } from './core/services/theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,6 +36,9 @@ export const appConfig: ApplicationConfig = {
     // Restaura la sesión persistida (sessionStorage) antes de renderizar,
     // para que authGuard no expulse al usuario al refrescar la página.
     provideAppInitializer(() => inject(AuthService).restaurarSesion()),
+
+    // Aplica el tema guardado antes del primer render (evita el parpadeo claro).
+    provideAppInitializer(() => void inject(ThemeService)),
 
     // PrimeNG con tema personalizado macOS
     providePrimeNG({

@@ -6,15 +6,10 @@ import { WinderService } from '../winder/winder.service';
 import type { IWinderConnectionConf, IWinderRequestConfig, IWinderResponse } from '../winder/winder.interface';
 
 /**
- * AntService — Clase base para los módulos de negocio del backend Ant.
+ * Clase base de los módulos de negocio del backend Ant. Cada módulo (login,
+ * admin, reporting…) la extiende con su `IWinderConnectionConf` y usa los
+ * helpers protegidos, que ocultan el protocolo Winder.
  *
- * Cada módulo de negocio (login, admin, reporting…) extiende esta clase
- * e inyecta su `IWinderConnectionConf` (port + secret + appId).
- *
- * Los métodos protegidos proveen un API de alto nivel que oculta
- * los detalles del protocolo Winder a las subclases.
- *
- * ## Ejemplo de módulo
  * ```typescript
  * \@Injectable({ providedIn: 'root' })
  * export class ModSysAdminService extends AntService {
@@ -27,8 +22,6 @@ import type { IWinderConnectionConf, IWinderRequestConfig, IWinderResponse } fro
  *   }
  * }
  * ```
- *
- * Migrado del STG (stg-app-mis-r22) al stack Angular 22.
  */
 export abstract class AntService {
   private readonly connectionConf: IWinderConnectionConf;

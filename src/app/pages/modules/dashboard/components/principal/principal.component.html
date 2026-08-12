@@ -1,8 +1,8 @@
-<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+<div class="mis-page mis-page--auto">
   <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
     <div class="flex items-center justify-between flex-wrap gap-3">
       <div class="flex items-center gap-2">
-        <i class="pi pi-cloud text-[var(--mis-primary)]"></i>
+        <i class="pi pi-cloud text-[var(--mis-primary-text)]"></i>
         <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Dashboards Integrados</h2>
       </div>
 
@@ -50,7 +50,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-reporte>
           <tr>
-            <td><i [class]="iconoTipo(reporte.reportType)" style="color: var(--mis-primary);"></i></td>
+            <td><i [class]="iconoTipo(reporte.reportType)" style="color: var(--mis-primary-text);"></i></td>
             <td>
               @if (reporte.reportType === 'PowerBIReport') {
                 <button type="button" class="text-[var(--mis-accent)] hover:underline text-[13px]" (click)="abrirReporte(reporte)">

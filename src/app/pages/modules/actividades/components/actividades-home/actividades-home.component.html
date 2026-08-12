@@ -1,4 +1,4 @@
-<div class="mis-card p-3.5 sm:p-5 flex flex-col gap-5 w-full min-h-[calc(100vh-130px)] flex-1 bg-white/70 backdrop-blur-[15px] border border-white/60 rounded-xl shadow-lg">
+<div class="mis-page">
   <!-- Banner del módulo -->
   <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#035096] via-[#0466c8] to-[#0353a4] p-5 sm:p-6 text-white shadow-md">
     <div class="relative z-10">
@@ -26,7 +26,7 @@
     @for (card of cards; track card.ruta) {
       <a
         [routerLink]="card.ruta"
-        class="nav-card group flex flex-col bg-white/90 backdrop-blur-sm rounded-xl border border-[var(--mis-border)] shadow-xs hover:shadow-md hover:border-slate-300 transition-all duration-200 cursor-pointer no-underline overflow-hidden"
+        class="nav-card group flex flex-col bg-[var(--mis-surface-translucido)] backdrop-blur-sm rounded-xl border border-[var(--mis-border)] shadow-xs hover:shadow-md hover:border-[var(--mis-border)] transition-all duration-200 cursor-pointer no-underline overflow-hidden"
       >
         <!-- Top bar de color -->
         <div class="h-1.5 w-full" [style.background]="card.colorIcon"></div>
@@ -38,20 +38,20 @@
               <i [class]="card.icono" [style.color]="card.colorIcon"></i>
             </div>
             @if (card.badge) {
-              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-[#035096]">{{ card.badge }}</span>
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[var(--mis-primary-light)] text-[#035096]">{{ card.badge }}</span>
             }
           </div>
 
           <!-- Texto -->
           <div>
-            <h2 class="text-sm font-bold text-slate-800 m-0 leading-tight group-hover:text-[#035096] transition-colors duration-150">
+            <h2 class="text-sm font-bold text-[var(--mis-text-primary)] m-0 leading-tight group-hover:text-[#035096] transition-colors duration-150">
               {{ card.titulo }}
             </h2>
-            <p class="text-xs text-slate-500 m-0 mt-1 leading-relaxed">{{ card.descripcion }}</p>
+            <p class="text-xs text-[var(--mis-text-secondary)] m-0 mt-1 leading-relaxed">{{ card.descripcion }}</p>
           </div>
 
           <!-- Acción -->
-          <div class="flex items-center justify-end mt-auto pt-2 border-t border-slate-100">
+          <div class="flex items-center justify-end mt-auto pt-2 border-t border-[var(--mis-border)]">
             <span class="text-xs text-[#035096] font-semibold flex items-center gap-1 group-hover:gap-2 transition-all duration-150">
               Acceder <i class="pi pi-arrow-right text-[10px]"></i>
             </span>

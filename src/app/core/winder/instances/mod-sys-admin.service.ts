@@ -6,22 +6,9 @@ import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
 /**
- * ModSysAdminService — Módulo de Administración del backend Ant.
- *
- * | Parámetro | Valor  |
- * |-----------|--------|
- * | Port      | 6301   |
- * | AppId     | admin  |
- * | Secret    | `environment.moduleSecrets.admin` |
- *
- * Rutas disponibles en el backend:
- * - `list_sec`       → lista de secciones/menús del usuario.
- * - `base_hier`      → nivel/TipCod/CodRel base de la jerarquía del usuario.
- * - `level_hier`     → detalle de un nivel jerárquico.
- * - `list_pick_01`   → lista de sectoristas.
- * - `reg_track_info` → registra el tracking de navegación.
- *
- * Migrado del STG (stg-app-mis-r22/src/app/core/data/remote/instances/mod-sys-admin.service.ts).
+ * Módulo de Administración del backend Ant (puerto 6301, appId `admin`).
+ * Provee el menú del usuario (`list_sec`), la jerarquía organizativa
+ * (`base_hier`/`level_hier`), la lista de sectoristas y el tracking de navegación.
  */
 @Injectable({ providedIn: 'root' })
 export class ModSysAdminService extends AntService {

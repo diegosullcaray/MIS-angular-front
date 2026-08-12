@@ -1,0 +1,19 @@
+/* destino-credito-dialog.component.css */
+
+/* Panel del diálogo con scroll en contenido largo */
+:host ::ng-deep .p-dialog .p-dialog-content {
+  max-height: 72vh;
+  overflow-y: auto;
+}
+
+/* Inputs de solo lectura con tono gris diferenciado */
+:host ::ng-deep input[readonly] {
+  cursor: default;
+  opacity: 0.75;
+}
+
+/* Separador visual entre campos de lectura y editables */
+.section-divider {
+  border-top: 1px solid var(--mis-border);
+  margin: 0.5rem 0 0.75rem;
+}

@@ -42,7 +42,7 @@
         @for (item of variablesVisibles(); track item.id) {
           <div class="rounded-lg border border-[var(--mis-border)] p-2.5 flex flex-col gap-2" [class.sm:col-span-2]="item.id === 'efec1'">
             <div class="flex items-center gap-2">
-              <i [class]="item.icono + ' text-[20px] text-[var(--mis-primary)]'"></i>
+              <i [class]="item.icono + ' text-[20px] text-[var(--mis-primary-text)]'"></i>
               <span class="text-[14px] font-semibold">{{ item.des }}</span>
             </div>
             <div class="grid grid-cols-2 gap-2">
@@ -112,7 +112,7 @@
         @for (item of plusVisibles(); track item.id) {
           <div class="rounded-lg border border-[var(--mis-border)] p-2.5 flex flex-col gap-2 bg-[var(--mis-primary-light)]/30">
             <div class="flex items-center gap-2">
-              <i [class]="item.icono + ' text-[var(--mis-primary)]'"></i>
+              <i [class]="item.icono + ' text-[var(--mis-primary-text)]'"></i>
               <span class="text-[12px] font-medium">{{ item.des }}</span>
             </div>
             <div class="grid grid-cols-2 gap-2">

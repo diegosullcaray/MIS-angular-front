@@ -9,7 +9,7 @@
             @if (perfil.imagenUrl) {
               <img [src]="perfil.imagenUrl" alt="" class="w-full h-full object-cover" referrerpolicy="no-referrer" />
             } @else {
-              <i class="pi pi-user text-[var(--mis-primary)] text-2xl"></i>
+              <i class="pi pi-user text-[var(--mis-primary-text)] text-2xl"></i>
             }
           </div>
 
@@ -21,7 +21,7 @@
             @if (incentivos.puedeElegirNivel()) {
               <button
                 type="button"
-                class="pi pi-search text-[14px] w-8 h-8 rounded-full flex items-center justify-center bg-[var(--mis-primary-light)] text-[var(--mis-primary)] hover:opacity-80 shrink-0 ml-auto sm:ml-0"
+                class="pi pi-search text-[14px] w-8 h-8 rounded-full flex items-center justify-center bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)] hover:opacity-80 shrink-0 ml-auto sm:ml-0"
                 title="Cambiar de nivel"
                 (click)="abrirSelector.emit()"
               ></button>

@@ -4,6 +4,7 @@ import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
 import type { ColumnaTabla, TipoColumna } from '../../models';
+import { formatearNumero } from '../../../../../shared/utils/formato.util';
 
 /** Fila genérica de la tabla — cualquier objeto plano (`FilaLineaSimple`, `ResponsableFila`, `LogVerificacionFila`...). */
 export type FilaTabla = Record<string, unknown>;
@@ -59,11 +60,13 @@ export class EditableTableComponent<T extends FilaTabla = FilaTabla> {
     if (Number.isNaN(num)) return String(valor);
 
     if (tipo === 'percent') {
+      // toFixed, no formatearPorcentaje: acá el legado muestra siempre 2
+      // decimales y sin separador de miles.
       return `${(num * 100).toFixed(2)}%`;
     }
     if (tipo === 'text') {
       return String(valor);
     }
-    return num.toLocaleString('es-PE', { maximumFractionDigits: 2 });
+    return formatearNumero(num);
   }
 }
