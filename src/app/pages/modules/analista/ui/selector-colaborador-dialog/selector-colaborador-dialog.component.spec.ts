@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { SelectorColaboradorDialogComponent } from './selector-colaborador-dialog.component';
-import type { ColaboradorItem } from '../../models';
+import type { ColaboradorItem } from '../../models/colaborador.model';
 
 const COLABORADORES: ColaboradorItem[] = [
   { cod_sec: 'SEC-1', des_sec: 'Juan Pérez' },

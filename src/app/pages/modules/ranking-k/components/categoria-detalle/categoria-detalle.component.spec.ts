@@ -3,7 +3,7 @@ import { of, throwError } from 'rxjs';
 import { CategoriaDetalleComponent } from './categoria-detalle.component';
 import { KaypachaService } from '../../services/kaypacha.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
-import type { DetalleRanking, FilaDetalleRanking } from '../../models';
+import type { DetalleRanking, FilaDetalleRanking } from '../../models/categoria-ranking.model';
 
 function fila(overrides: Partial<FilaDetalleRanking> = {}): FilaDetalleRanking {
   return { ROWNUMBER: 1, HCOLNOM: 'Ana Torres', TOTAL_MES: 100, hdester: 'Norte', ...overrides };
@@ -41,7 +41,7 @@ describe('CategoriaDetalleComponent', () => {
     return fixture;
   }
 
-  it('carga las categorías al construirse (para poder mostrar el nombre real si se entra directo por URL)', () => {
+  it('carga las categorías al construirse', () => {
     crear('z1');
     expect(kaypachaFalso.cargarCategorias).toHaveBeenCalled();
   });
@@ -51,7 +51,7 @@ describe('CategoriaDetalleComponent', () => {
     expect(kaypachaFalso.obtenerDetalle).toHaveBeenCalledWith('z1');
   });
 
-  it('vuelve a pedir el detalle cuando cambia el :id (navegar entre categorías reutiliza la instancia)', () => {
+  it('vuelve a pedir el detalle cuando cambia el :id', () => {
     const fixture = crear('z1');
     fixture.componentRef.setInput('id', 'z2');
     fixture.detectChanges();
@@ -60,7 +60,7 @@ describe('CategoriaDetalleComponent', () => {
     expect(kaypachaFalso.obtenerDetalle).toHaveBeenLastCalledWith('z2');
   });
 
-  it('dispara el overlay de redirección si el :id parece un enlace externo (imparables/jira)', () => {
+  it('dispara el overlay de redirección si el :id requiere enlace externo', () => {
     crear('Imparables');
     expect(redirectFalso.redirigir).toHaveBeenCalledWith('Imparables');
   });
@@ -124,7 +124,7 @@ describe('CategoriaDetalleComponent', () => {
     expect(fixture.componentInstance['puntosMaxDisponible']()).toBe(300);
   });
 
-  it('sin filas, los límites de puntos caen a 0-100 (valores por defecto)', () => {
+  it('sin filas, los límites de puntos caen a 0-100 por defecto', () => {
     const fixture = crear('z1');
     expect(fixture.componentInstance['puntosMinDisponible']()).toBe(0);
     expect(fixture.componentInstance['puntosMaxDisponible']()).toBe(100);
@@ -180,7 +180,7 @@ describe('CategoriaDetalleComponent', () => {
     expect(fixture.componentInstance['aplicandoFiltros']()).toBe(false);
   });
 
-  it('arrayDe(n) devuelve un arreglo de longitud n para repetir la tarjeta-esqueleto', () => {
+  it('arrayDe(n) devuelve un arreglo de longitud n', () => {
     const fixture = crear('z1');
     expect(fixture.componentInstance['arrayDe'](3).length).toBe(3);
   });

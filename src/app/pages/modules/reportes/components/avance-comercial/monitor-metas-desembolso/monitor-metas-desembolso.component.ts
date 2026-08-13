@@ -4,15 +4,12 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { ReportesService, COD_JERARQUIA_ORGANIZATIVA, NIVEL_MAXIMO_JERARQUIA } from '../../../services/reportes.service';
+import { ReportesService, PARAMS_HIER_UNIDAD } from '../../../services/reportes.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type {
-  HierarquiaNodo,
-  KpiMontoDesembolsado,
-  KpiOperacionesDesembolsadas,
-  ParamsJerarquia,
-  TablaReporteResultado,
-} from '../../../models';
+import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../../models/monitor-metas-desembolso.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 
@@ -39,14 +36,11 @@ export class MonitorMetasDesembolsoComponent {
   private readonly reportes = inject(ReportesService);
   private readonly toast = inject(ToastService);
 
-  protected readonly paramsHier: ParamsJerarquia = {
-    code: COD_JERARQUIA_ORGANIZATIVA,
-    maxLvl: NIVEL_MAXIMO_JERARQUIA,
-    dlgTitulo: 'JERARQUIA UNIDAD',
-  };
+  protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(true);
+  protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   protected readonly kpiOperaciones = signal<KpiOperacionesDesembolsadas | null>(null);
   protected readonly kpiMonto = signal<KpiMontoDesembolsado | null>(null);
@@ -81,11 +75,5 @@ export class MonitorMetasDesembolsoComponent {
         this.cargando.set(false);
       },
     });
-  }
-
-  /** Único caso en que `app-hier-selector` nunca llega a emitir `nodoSeleccionado` (falla o viene vacía la jerarquía) — sin esto, `cargando` se quedaba en `true` para siempre. */
-  protected onErrorJerarquia(): void {
-    this.toast.error('No se pudo cargar la jerarquía', 'Inténtalo de nuevo en unos segundos.');
-    this.cargando.set(false);
   }
 }

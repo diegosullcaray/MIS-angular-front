@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { RankingTableComponent } from './ranking-table.component';
-import type { RankingTableFila } from '../../models';
+import type { RankingTableFila } from '../../models/ranking-table.model';
 
 const FILAS: RankingTableFila[] = Array.from({ length: 15 }, (_, i) => ({
   posicion: i + 1,
@@ -36,7 +36,7 @@ describe('RankingTableComponent', () => {
     expect(fixture.componentInstance['filasVisibles']().length).toBe(15);
   });
 
-  it('esPrimerPuesto() coerciona a número — funciona aunque posicion llegue como string', () => {
+  it('esPrimerPuesto() coerciona a número', () => {
     const fixture = crear(FILAS);
     const instancia = fixture.componentInstance;
 

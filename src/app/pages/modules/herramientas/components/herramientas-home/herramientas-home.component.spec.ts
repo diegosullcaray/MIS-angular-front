@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { HerramientasHomeComponent } from './herramientas-home.component';
 import { BaseNegativaService } from '../../services/base-negativa.service';
-import type { BaseNegativaBusquedaFila, TableHeaderDef } from '../../models';
+import type { BaseNegativaBusquedaFila, TableHeaderDef } from '../../models/base-negativa.model';
 
 function cliente(overrides: Partial<BaseNegativaBusquedaFila> = {}): BaseNegativaBusquedaFila {
   return { HCTACLI: 'C-001', HDESCLI: 'Juan Pérez', FECHA: '2026-01-01', TIPO: 'Venta', ...overrides };

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
-import type { TableHeaderDef } from '../../models';
+import type { TableHeaderDef } from '../../models/base-negativa.model';
 
 /**
  * Tabla de resultados de "Consulta Base Negativa" — columnas dinámicas

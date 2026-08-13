@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import type { ColumnaReporte, FilaEncabezadoReporte, FilaReporte } from '../../models';
+import type { ColumnaReporte, FilaEncabezadoReporte, FilaReporte } from '../../models/tabla-reporte.model';
 
 /**
  * Tabla genérica del motor de reportes "mixtos" — reemplaza a

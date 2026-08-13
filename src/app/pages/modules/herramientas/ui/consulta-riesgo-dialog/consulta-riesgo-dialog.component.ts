@@ -8,7 +8,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BaseNegativaService } from '../../services/base-negativa.service';
-import type { BaseNegativaBusquedaFila } from '../../models';
+import type { BaseNegativaBusquedaFila } from '../../models/base-negativa.model';
 
 /**
  * Diálogo de búsqueda de "Consulta Base Negativa" — busca en el servidor con

@@ -3,25 +3,23 @@ import { FormsModule } from '@angular/forms';
 import { KnobModule } from 'primeng/knob';
 import { DecimalPipe } from '@angular/common';
 import { IncentivosService } from '../../services/incentivos.service';
-import type { ItemAvance } from '../../models';
+import type { ItemAvance } from '../../models/incentivos-tablas.model';
+import type { DetalleAvanceEvent } from '../../models/incentivos-eventos.model';
 
-/** Payload emitido al hacer clic en un ítem habilitado — `codVar` es el índice que espera `incentivos3.detalle_var3`. */
-export interface DetalleAvanceEvent {
-  item: ItemAvance;
-  codVar: number;
-}
+const COD_VAR_POR_ID: Record<string, number> = {
+  car: 1,
+  cli: 2,
+  sc1: 3,
+  efec1: 4,
+  efec2: 5,
+  efec3: 6,
+};
 
-/**
- * Grilla de Avances — migrado de `AvancesComponent` (legado STG,
- * `pages/modules/incentivos3/avances`). Reemplaza el "circle pie" CSS
- * casero (`circle-pie.scss`, un truco de 100 selectores con
- * `linear-gradient`) por `p-knob` de PrimeNG en modo solo lectura — mismo
- * efecto visual con muchísimo menos código.
- */
+/** Grilla de Avances del Cuadro de Mando. */
 @Component({
   selector: 'app-avances-grid',
   standalone: true,
-  imports: [KnobModule, FormsModule, DecimalPipe],
+  imports: [FormsModule, KnobModule, DecimalPipe],
   templateUrl: './avances-grid.component.html',
   styleUrl: './avances-grid.component.css',
 })
@@ -30,27 +28,23 @@ export class AvancesGridComponent {
 
   readonly abrirDetalle = output<DetalleAvanceEvent>();
 
-  /** Índice de variable esperado por `incentivos3.detalle_var3` — `midx` de `AvancesComponent.showDetail()` del legado. */
-  private readonly indiceDetalle: Record<string, number> = { car: 91, cli: 2, sc1: 3, efec1: 4, efec2: 5, efec3: 6 };
+  protected solicitarDetalle(item: ItemAvance): void {
+    if (!item.enab) return;
+    const codVar = COD_VAR_POR_ID[item.id] ?? 1;
+    this.abrirDetalle.emit({ item, codVar });
+  }
 
-  /** `p-knob` asume `[0,100]` — pasarle `item.per` sin acotar cuando supera 100 (meta superada) rompe el arco. El valor real sigue mostrándose sin acotar en el texto (`item.val`). */
-  protected arcoAvance(item: ItemAvance): number {
-    return Math.min(Math.max(item.per, 0), 100);
+  protected onClic(item: ItemAvance): void {
+    this.solicitarDetalle(item);
   }
 
   protected colorAvance(item: ItemAvance): string {
-    if (item.val >= 0.65 && item.val < 1) return '#efb45f';
-    if (item.val > 0 && item.val < 0.65) return '#E3005B';
-    return '#3fe91e';
+    if (item.sit === 1) return 'var(--mis-success)';
+    return 'var(--mis-primary-text)';
   }
 
   protected colorEstado(item: ItemAvance): string {
     if (item.sit === 1) return 'text-[var(--mis-success)]';
-    if (item.sit === 2) return 'text-[var(--mis-warning)]';
     return 'text-[var(--mis-text-tertiary)]';
-  }
-
-  protected onClic(item: ItemAvance): void {
-    if (item.enab) this.abrirDetalle.emit({ item, codVar: this.indiceDetalle[item.id] ?? 0 });
   }
 }

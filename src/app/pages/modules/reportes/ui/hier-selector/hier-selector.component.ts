@@ -3,13 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { ReportesService } from '../../services/reportes.service';
-import type { HierarquiaNodo, ParamsJerarquia } from '../../models';
-
-export interface NivelJerarquiaDropdown {
-  label: string;
-  level: number;
-  data: HierarquiaNodo[];
-}
+import type { HierarquiaNodo, NivelJerarquiaDropdown, ParamsJerarquia } from '../../models/jerarquia.model';
 
 /**
  * Selector de jerarquía organizativa en cascada horizontal (mismo patrón que

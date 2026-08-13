@@ -1,29 +1,30 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TagModule } from 'primeng/tag';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
+import { NgStyle } from '@angular/common';
 import { KaypachaDashboardService } from '../../services/kaypacha-dashboard.service';
 import { KaypachaTourService } from '../../services/kaypacha-tour.service';
 import { BuscadorColaboradorDialogComponent } from '../../ui/buscador-colaborador-dialog/buscador-colaborador-dialog.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
-import type { KaypachaColaboradorItem } from '../../models';
+import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.model';
 
+/** Componente principal del tablero Kaypacha. */
 @Component({
   selector: 'app-kaypacha-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
     TableModule,
     ButtonModule,
     TooltipModule,
     TagModule,
     CardModule,
     InputTextModule,
+    NgStyle,
     ListSkeletonComponent,
     InlineErrorComponent,
     BuscadorColaboradorDialogComponent,
@@ -63,9 +64,6 @@ export class KaypachaDashboardComponent implements OnInit, OnDestroy {
     this.tourService.iniciarTourGuiado();
   }
 
-  /**
-   * Helper para determinar qué insignia / medalla mostrar según la posición del asesor.
-   */
   protected get imagenMedalla(): string {
     const posNum = Number(this.service.posicion());
     if (!isNaN(posNum) && posNum > 0 && posNum <= 20) {

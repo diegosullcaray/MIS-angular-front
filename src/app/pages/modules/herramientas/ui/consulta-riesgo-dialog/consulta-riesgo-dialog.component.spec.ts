@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { ConsultaRiesgoDialogComponent } from './consulta-riesgo-dialog.component';
 import { BaseNegativaService } from '../../services/base-negativa.service';
-import type { BaseNegativaBusquedaFila } from '../../models';
+import type { BaseNegativaBusquedaFila } from '../../models/base-negativa.model';
 
 function fila(overrides: Partial<BaseNegativaBusquedaFila> = {}): BaseNegativaBusquedaFila {
   return { HCTACLI: 'C-001', HDESCLI: 'Juan Pérez', FECHA: '2026-01-01', TIPO: 'Venta', ...overrides };

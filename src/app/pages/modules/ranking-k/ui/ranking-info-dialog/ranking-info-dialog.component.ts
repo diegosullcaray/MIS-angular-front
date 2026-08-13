@@ -5,10 +5,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideInfo, lucideCheckCircle2 } from '@ng-icons/lucide';
 
-/**
- * Diálogo informativo con las bases y condiciones del ranking.
- * Se ubica en la cabecera de la vista de detalle del ranking junto al título.
- */
+/** Diálogo informativo con las bases y condiciones del ranking. */
 @Component({
   selector: 'app-ranking-info-dialog',
   standalone: true,

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { SelectorSectoristaDialogComponent } from './selector-sectorista-dialog.component';
-import type { SectoristaItem } from '../../models';
+import type { SectoristaItem } from '../../models/colaborador.model';
 
 const SECTORISTAS: SectoristaItem[] = [
   { cod_sec: 'SEC-1', des_sec: 'Juan Pérez' },

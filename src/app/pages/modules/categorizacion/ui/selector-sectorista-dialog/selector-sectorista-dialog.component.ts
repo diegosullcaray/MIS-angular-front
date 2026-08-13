@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import type { SectoristaItem } from '../../models';
+import type { SectoristaItem } from '../../models/colaborador.model';
 
 /**
  * Diálogo de selección de colaborador ("sectorista") — reconstrucción del

@@ -8,29 +8,15 @@ import { SelectModule } from 'primeng/select';
 import { IncentivosService } from '../../services/incentivos.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { redondear } from '../../utils/incentivos-calculo.util';
-import type { PlusCalculadora, VariableCalculadora } from '../../models';
+import type { PlusCalculadora, VariableCalculadora } from '../../models/incentivos-calculadora.model';
 
-/** Opciones fijas del selector "Sistemática" — `<select>` hardcodeado del legado (`calculadora.component.html`). */
 const OPCIONES_SISTEMATICA = [
   { label: 'No Aplica', value: 2 },
   { label: 'Si Cumple', value: 1 },
   { label: 'No Cumple', value: 0 },
 ];
 
-/**
- * Calculadora de simulación — migrado de `CalculadoraComponent`/
- * `CalculadoraDialogComponent`/`CalculadoraBaseComponent` (legado STG,
- * `pages/modules/incentivos3/calculadora`). Sin la variante enrutada para
- * mobile del legado (`showCalculator()` navegaba a `./calculadora` en
- * mobile) — el layout de este Host ya es responsive.
- *
- * A diferencia del legado (un `FormGroup` con un `FormControl` por
- * variable), acá los valores editados viven en un único `signal` plano
- * (`valoresEditados`, clave = clave del payload de simulación) y las
- * tarjetas leen bonos/metas directo de `IncentivosService.calculadora()` —
- * así el resultado de `simular()` (que muta esa señal) se refleja solo,
- * sin tener que sincronizar dos copias del estado.
- */
+/** Diálogo modal de la Calculadora de simulación de Incentivos. */
 @Component({
   selector: 'app-calculadora-dialog',
   standalone: true,
@@ -80,7 +66,6 @@ export class CalculadoraDialogComponent {
     this.valoresEditados.update((actual) => ({ ...actual, [clave]: valor ?? 0 }));
   }
 
-  /** Valor mostrado en el input — los campos `percent` se muestran ×100 (ej. 0.85 → 85), igual que `stg-pinput` del legado. */
   protected valorMostrado(clave: string, formato: 'number' | 'percent'): number {
     const v = this.valor(clave);
     return formato === 'percent' ? redondear(v * 100, 2) : v;

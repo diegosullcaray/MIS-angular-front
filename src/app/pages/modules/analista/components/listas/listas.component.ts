@@ -2,13 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-
-interface EnlaceListaAnalista {
-  nombre: string;
-  descripcion: string;
-  icono: string;
-  ruta: string;
-}
+import type { EnlaceListaAnalista } from '../../models/listas.model';
 
 const ENLACES: EnlaceListaAnalista[] = [
   {

@@ -3,6 +3,18 @@
  * Migradas desde el legado STG (stg-app-mis-r22).
  */
 
+// ─── Actividades Home (tarjetas de navegación) ─────────────────────────────
+
+export interface ActividadCard {
+  titulo: string;
+  descripcion: string;
+  icono: string;
+  ruta: string;
+  colorBg: string;
+  colorIcon: string;
+  badge?: string;
+}
+
 // ─── Destino de Crédito ────────────────────────────────────────────────────
 
 export interface DestinoCreditoItem {
@@ -64,6 +76,28 @@ export interface ProspectoCorresponsalItem {
   HVINFAMI?: string;    // Vínculo Familiar ('SI' | 'NO')
   HTIPVINC?: string;    // Tipo Vínculo
   HIDCORRES?: string;   // ID Corresponsal
+}
+
+// ─── Prospectos Corresponsal (formulario de alta) ──────────────────────────
+
+export interface NuevoProspecto {
+  HAPENOMB: string;     // Apellidos y Nombres / Razón Social
+  HNUMDOC: string;      // DNI / Documento
+  HNUMRUC: string;      // RUC
+  HCELULAR: string;     // Celular
+  HDIREC: string;       // Dirección
+  HNOMCOM: string;      // Nombre Comercial
+  HTIPAGENT: string;    // Tipo Agente
+  HCANACAP: string;     // Canal Captación
+  HZONA: string;        // Zona ('URBANA' | 'RURAL')
+  HPROSPEC: string;     // Prospecto ('APLICA' | 'NO APLICA')
+  HVINFAMI: string;     // Vínculo Familiar ('SI' | 'NO')
+  HTIPVINC: string;     // Tipo Vínculo
+  HGEOLATI: string;     // Latitud
+  HGEOLON: string;      // Longitud
+  HCTALICEF: string;    // Cuenta con Licencia de Funcionamiento ('SI' | 'NO')
+  HAPERTCTA: string;    // Apertura de Cuenta ('SI' | 'NO')
+  HINSTALAD: string;    // Instalado ('SI' | 'NO')
 }
 
 // ─── Transacciones Corresponsal (registro de consultas por fecha) ──────────

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { MessageService } from 'primeng/api';
 import { RankingFiltrosComponent } from './ranking-filtros.component';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { RankingFiltros } from '../../models';
+import type { RankingFiltros } from '../../models/ranking-filtros.model';
 
 describe('RankingFiltrosComponent', () => {
   beforeEach(() => {
@@ -72,7 +72,7 @@ describe('RankingFiltrosComponent', () => {
 
     const toast = TestBed.inject(ToastService);
     const toastSpy = vi.spyOn(toast, 'info');
-    fixture.componentInstance['onLimitePosicionesChange'](50); // ensuciar el modelo primero
+    fixture.componentInstance['onLimitePosicionesChange'](50);
 
     let emitido: RankingFiltros | undefined;
     fixture.componentInstance.aplicarFiltros.subscribe((f) => (emitido = f));

@@ -3,14 +3,8 @@ import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import type { EsgMetricaFila } from '../../models';
-
-/** Columna fija que precede a las columnas históricas dinámicas de cada categoría. */
-interface ColumnaFija {
-  key: string;
-  label: string;
-  headerBg?: string;
-}
+import type { EsgMetricaFila } from '../../models/metrica.model';
+import type { ColumnaFija } from '../../models/ui.model';
 
 const COLUMNAS_FIJAS: ColumnaFija[] = [
   { key: 'des_met', label: 'Metrica', headerBg: '#008080' },

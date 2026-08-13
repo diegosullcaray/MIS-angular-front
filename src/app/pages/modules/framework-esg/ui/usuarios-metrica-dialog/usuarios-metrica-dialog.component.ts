@@ -7,7 +7,8 @@ import { SelectModule } from 'primeng/select';
 import { ListboxModule } from 'primeng/listbox';
 import { FrameworkEsgService } from '../../services/framework-esg.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { EsgCategoriaConfig, EsgMetricaListItem, EsgUsuariosPorMetrica } from '../../models';
+import type { EsgCategoriaConfig } from '../../models/configuracion.model';
+import type { EsgMetricaListItem, EsgUsuariosPorMetrica } from '../../models/metrica.model';
 
 const TODOS_ID_PREFIJO = '-';
 const TODOS_NOMBRE = 'Todos';

@@ -11,29 +11,10 @@ import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { ActividadesService } from '../../services/actividades.service';
-import type { ProspectoCorresponsalItem } from '../../models/actividades.model';
+import type { NuevoProspecto, ProspectoCorresponsalItem } from '../../models/actividades.model';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
-
-interface NuevoProspecto {
-  HAPENOMB: string;
-  HNUMDOC: string;
-  HNUMRUC: string;
-  HCELULAR: string;
-  HDIREC: string;
-  HNOMCOM: string;
-  HTIPAGENT: string;
-  HCANACAP: string;
-  HZONA: string;
-  HPROSPEC: string;
-  HVINFAMI: string;
-  HTIPVINC: string;
-  HGEOLATI: string;
-  HGEOLON: string;
-  HCTALICEF: string;
-  HAPERTCTA: string;
-  HINSTALAD: string;
-}
+import { inputValue } from '../../../../../shared/utils/dom.util';
 
 @Component({
   selector: 'app-prospectos-corresponsal',
@@ -135,7 +116,7 @@ export class ProspectosCorresponsalComponent implements OnInit {
   }
 
   protected onSearchInput(event: Event): void {
-    this.globalFilter.set((event.target as HTMLInputElement).value);
+    this.globalFilter.set(inputValue(event));
   }
 
   protected abrirNuevoRegistro(): void {

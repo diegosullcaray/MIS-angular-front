@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { KaypachaHomeComponent } from './kaypacha-home.component';
 import { KaypachaService } from '../../services/kaypacha.service';
-import type { CategoriaRanking } from '../../models';
+import type { CategoriaRanking } from '../../models/categoria-ranking.model';
 
 describe('KaypachaHomeComponent', () => {
   let kaypachaFalso: { ruta: string; categorias: ReturnType<typeof signal<CategoriaRanking[]>>; cargarCategorias: ReturnType<typeof vi.fn>; cargando: ReturnType<typeof signal<boolean>>; error: ReturnType<typeof signal<string | null>> };
@@ -37,7 +37,7 @@ describe('KaypachaHomeComponent', () => {
     expect(navSpy).not.toHaveBeenCalled();
   });
 
-  it('en cuanto llega la primera categoría, navega directo a su detalle (reemplazando la URL)', () => {
+  it('en cuanto llega la primera categoría, navega directo a su detalle', () => {
     const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     const fixture = TestBed.createComponent(KaypachaHomeComponent);
     fixture.detectChanges();

@@ -4,7 +4,8 @@ import { MessageService } from 'primeng/api';
 import { MonitorReprogramadosComponent } from './monitor-reprogramados.component';
 import { ReportesService } from '../../../services/reportes.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { HierarquiaNodo, TablaReporteResultado } from '../../../models';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 4, cod_rel: 'A1', desc_rel: 'Agencia 1', lvl: 2 };
 

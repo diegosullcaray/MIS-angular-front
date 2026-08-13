@@ -20,7 +20,7 @@ import type {
  * — comparten `responseName='resultado'` con `kaypacha.listRanking` y, como esa
  * ruta, son de forma tabular (arreglo de filas): se asume la misma envoltura
  * `resultado.list[0].JSONLIST` (JSON serializado como string). Ver
- * `KaypachaResponseBody` (`ranking-k/models`) para el precedente.
+ * `KaypachaResponseBody` (`ranking-k/models/kaypacha-response.model`) para el precedente.
  */
 interface ListaResponseBody {
   resultado?: { list?: Array<{ JSONLIST: string }> };

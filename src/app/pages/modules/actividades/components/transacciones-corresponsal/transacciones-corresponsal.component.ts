@@ -11,6 +11,7 @@ import { ActividadesService } from '../../services/actividades.service';
 import type { TransaccionCorresponsalItem } from '../../models/actividades.model';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
+import { inputValue } from '../../../../../shared/utils/dom.util';
 
 @Component({
   selector: 'app-transacciones-corresponsal',
@@ -73,6 +74,6 @@ export class TransaccionesCorresponsalComponent implements OnInit {
   }
 
   protected onSearchInput(event: Event): void {
-    this.globalFilter.set((event.target as HTMLInputElement).value);
+    this.globalFilter.set(inputValue(event));
   }
 }

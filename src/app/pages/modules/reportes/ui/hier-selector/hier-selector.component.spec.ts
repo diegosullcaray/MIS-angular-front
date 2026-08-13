@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { HierSelectorComponent } from './hier-selector.component';
 import { ReportesService } from '../../services/reportes.service';
-import type { HierarquiaNodo, ParamsJerarquia } from '../../models';
+import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
 
 const PARAMS: ParamsJerarquia = { code: 9, maxLvl: 2, dlgTitulo: 'JERARQUIA UNIDAD' };
 

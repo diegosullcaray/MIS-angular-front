@@ -2,9 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { of, throwError, Subject } from 'rxjs';
 import { BecasComponent } from './becas.component';
-import { AnalistaService, type ColaboradorActivo } from '../../services/analista.service';
+import { AnalistaService } from '../../services/analista.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { ColaboradorItem, FilaBeca, NodoJerarquiaAncla } from '../../models';
+import type { ColaboradorActivo, ColaboradorItem, NodoJerarquiaAncla } from '../../models/colaborador.model';
+import type { FilaBeca } from '../../models/listas.model';
 
 const ANCLA: NodoJerarquiaAncla = { tip_cod: 7, cod_rel: '231' };
 const FILAS: FilaBeca[] = [

@@ -7,12 +7,9 @@ import { SelectModule } from 'primeng/select';
 import { SliderModule } from 'primeng/slider';
 import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { RankingFiltros, FiltrosFormModel } from '../../models';
+import type { RankingFiltros, FiltrosFormModel } from '../../models/ranking-filtros.model';
 
-/**
- * Panel de filtros del reporte de ranking (`categoria-detalle`) — filtra por
- * usuario, posiciones por tabla, rango de puntos y lugar (`hdester`).
- */
+/** Panel de filtros del ranking. */
 @Component({
   selector: 'app-ranking-filtros',
   standalone: true,
@@ -74,15 +71,7 @@ export class RankingFiltrosComponent {
   }
 
   protected onAplicar(): void {
-    const val = this.model();
-    this.aplicarFiltros.emit({
-      usuario: val.usuario.trim(),
-      puntosMin: val.rangoPuntos[0],
-      puntosMax: val.rangoPuntos[1],
-      lugares: val.lugares,
-      limitePosiciones: val.limitePosiciones,
-    });
-    this.toast.exito('Mensaje de éxito', 'Los filtros fueron aplicados correctamente');
+    this.emitirYCerrar('Los filtros fueron aplicados correctamente', true);
   }
 
   protected onLimpiar(): void {
@@ -92,6 +81,10 @@ export class RankingFiltrosComponent {
       lugares: [...this.lugaresDisponibles()],
       limitePosiciones: 0,
     });
+    this.emitirYCerrar('Los filtros fueron restablecidos', false);
+  }
+
+  private emitirYCerrar(mensaje: string, esExito: boolean): void {
     const val = this.model();
     this.aplicarFiltros.emit({
       usuario: val.usuario.trim(),
@@ -100,6 +93,10 @@ export class RankingFiltrosComponent {
       lugares: val.lugares,
       limitePosiciones: val.limitePosiciones,
     });
-    this.toast.info('Mensaje de información', 'Los filtros fueron restablecidos');
+    if (esExito) {
+      this.toast.exito('Mensaje de éxito', mensaje);
+    } else {
+      this.toast.info('Mensaje de información', mensaje);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal, computed, inject } from '@angular/core';
+import { Component, model, output, signal, computed, inject } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -7,8 +7,9 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { TagModule } from 'primeng/tag';
 import { KaypachaDashboardService } from '../../services/kaypacha-dashboard.service';
-import type { KaypachaColaboradorItem } from '../../models';
+import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.model';
 
+/** Diálogo modal para buscar y seleccionar colaboradores. */
 @Component({
   selector: 'app-buscador-colaborador-dialog',
   standalone: true,
@@ -27,9 +28,8 @@ import type { KaypachaColaboradorItem } from '../../models';
 export class BuscadorColaboradorDialogComponent {
   protected readonly service = inject(KaypachaDashboardService);
 
-  @Input() visible = false;
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() colaboradorSeleccionado = new EventEmitter<KaypachaColaboradorItem>();
+  readonly visible = model(false);
+  readonly colaboradorSeleccionado = output<KaypachaColaboradorItem>();
 
   protected readonly filtroTexto = signal('');
   protected readonly itemSeleccionado = signal<KaypachaColaboradorItem | null>(null);
@@ -54,7 +54,7 @@ export class BuscadorColaboradorDialogComponent {
     this.filtroTexto.set(val);
   }
 
-  protected onRowSelect(item: any): void {
+  protected onRowSelect(item: unknown): void {
     if (item && !Array.isArray(item)) {
       this.itemSeleccionado.set(item as KaypachaColaboradorItem);
     }
@@ -69,8 +69,7 @@ export class BuscadorColaboradorDialogComponent {
   }
 
   protected cerrar(): void {
-    this.visible = false;
-    this.visibleChange.emit(false);
+    this.visible.set(false);
     this.filtroTexto.set('');
     this.itemSeleccionado.set(null);
   }

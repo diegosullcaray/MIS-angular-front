@@ -4,12 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { IncentivosService } from '../../services/incentivos.service';
 
-/** `YYYYMMDD` → `Date` local (mediodía, para no cruzar de día por huso horario). */
 function aFecha(f: string): Date {
   return new Date(Number(f.slice(0, 4)), Number(f.slice(4, 6)) - 1, Number(f.slice(6, 8)), 12);
 }
 
-/** `Date` → `YYYYMMDD`, igual formato que usa el backend. */
 function aYYYYMMDD(d: Date): string {
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -17,14 +15,7 @@ function aYYYYMMDD(d: Date): string {
   return `${yyyy}${mm}${dd}`;
 }
 
-/**
- * Panel de Monetización — migrado de `MonetizadoComponent` (legado STG,
- * `pages/modules/incentivos3/monetizado`). El selector de fecha de corte
- * (`mat-menu`+`mat-calendar` filtrado a `profile.hab_fec` en el legado) se
- * migra con `p-datepicker`: solo quedan clickeables los días presentes en
- * `fechasHabilitadas` — el resto del rango se arma en `disabledDates` — ver
- * `IncentivosService.seleccionarFecha`/`calcularFechasHabilitadas`.
- */
+/** Panel de Monetización de Incentivos. */
 @Component({
   selector: 'app-monetizado-card',
   standalone: true,
@@ -54,7 +45,6 @@ export class MonetizadoCardComponent {
     return fechas.length ? aFecha(fechas[fechas.length - 1]) : undefined;
   });
 
-  /** Todo el rango [minDate, maxDate] menos los días en `fechasHabilitadas` — así solo esos quedan clickeables en el calendario. */
   protected readonly disabledDates = computed(() => {
     const habilitadas = new Set(this.fechasOrdenadas());
     const min = this.minDate();

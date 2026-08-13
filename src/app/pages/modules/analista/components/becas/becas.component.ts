@@ -14,19 +14,17 @@ import { ToastService } from '../../../../../shared/services/toast.service';
 import { SelectorColaboradorDialogComponent } from '../../ui/selector-colaborador-dialog/selector-colaborador-dialog.component';
 import { DetalleTablaDialogComponent } from '../../ui/detalle-tabla-dialog/detalle-tabla-dialog.component';
 import { AnalistaService } from '../../services/analista.service';
-import type { ColaboradorItem, FilaBeca, FilaLabelValor, NodoJerarquiaAncla } from '../../models';
+import { crearSelectorColaborador } from '../../utils/colaborador-selector.util';
+import type { ColaboradorItem } from '../../models/colaborador.model';
+import type { FilaLabelValor } from '../../models/comun.model';
+import type { FilaBeca } from '../../models/listas.model';
 
 /**
- * Becas Financiera Confianza (`/app/analista/listas/becas`) — migrado de
- * `BecasComponent` (legado STG, `docs/07-modulos/analista/listas/becas`).
- * Lista de clientes postulantes a prospectar para becas; un click en una
- * fila la selecciona, habilitando "Prospectar" (si no está prospectada) y
- * "Detalle".
- *
- * El legado abría un diálogo de confirmación y, tras confirmar, uno de
- * formulario aparte solo para el comentario — acá es un único diálogo con
- * el comentario y los botones Cancelar/Confirmar, mismo resultado con un
- * paso menos.
+ * Becas Financiera Confianza (`/app/analista/listas/becas`) — lista de
+ * postulantes a prospectar; seleccionar una fila habilita "Prospectar" (si
+ * no está prospectada) y "Detalle". Migrado de `BecasComponent` (legado
+ * STG): el legado usaba dos diálogos (confirmación + formulario de
+ * comentario); acá es uno solo con ambos controles.
  */
 @Component({
   selector: 'app-becas-analista',
@@ -53,17 +51,17 @@ export class BecasComponent implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
 
-  protected readonly esAdmin = computed(() => this.analista.esAdmin());
-  protected readonly colaborador = this.analista.colaboradorActivo;
+  protected readonly selectorColaborador = crearSelectorColaborador(this.analista);
+  protected readonly esAdmin = this.selectorColaborador.esAdmin;
+  protected readonly colaborador = this.selectorColaborador.colaboradorActivo;
+  protected readonly dialogColaboradorAbierto = this.selectorColaborador.dialogAbierto;
+  protected readonly colaboradores = this.selectorColaborador.colaboradores;
+  protected readonly cargandoColaboradores = this.selectorColaborador.cargando;
 
   protected readonly cargando = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly filas = signal<FilaBeca[]>([]);
   protected readonly filaSeleccionada = signal<FilaBeca | null>(null);
-
-  protected readonly dialogColaboradorAbierto = signal(false);
-  protected readonly colaboradores = signal<ColaboradorItem[]>([]);
-  protected readonly cargandoColaboradores = signal(false);
 
   protected readonly dialogProspectarAbierto = signal(false);
   protected readonly comentario = signal('');
@@ -83,66 +81,23 @@ export class BecasComponent implements OnInit {
     ];
   });
 
-  private readonly ancla = signal<NodoJerarquiaAncla | null>(null);
-  private readonly cargandoAncla = signal(false);
-
   constructor() {
     effect(() => {
       const c = this.colaborador();
       if (c) untracked(() => this.cargar(c.codBt));
     });
-
-    // Dispara la carga de colaboradores en cuanto el diálogo esté abierto Y
-    // el nodo ancla haya terminado de resolverse — antes se intentaba una
-    // sola vez al abrir el diálogo (`abrirSelectorColaborador`), así que si
-    // el admin hacía click antes de que `obtenerAnclaAdmin()` respondiera,
-    // el diálogo quedaba vacío para siempre (sin spinner ni reintento).
-    effect(() => {
-      const abierto = this.dialogColaboradorAbierto();
-      if (!abierto || this.colaboradores().length > 0) return;
-      if (this.cargandoAncla()) return;
-
-      const ancla = this.ancla();
-      if (!ancla) {
-        untracked(() => this.cargandoColaboradores.set(false));
-        return;
-      }
-      untracked(() => this.cargarColaboradores(ancla));
-    });
   }
 
   ngOnInit(): void {
-    if (this.esAdmin()) {
-      this.cargandoAncla.set(true);
-      this.analista.obtenerAnclaAdmin().subscribe({
-        next: (ancla) => {
-          this.ancla.set(ancla);
-          this.cargandoAncla.set(false);
-        },
-        error: () => this.cargandoAncla.set(false),
-      });
-    } else {
-      this.analista.usarColaboradorPropio();
-    }
+    this.selectorColaborador.inicializar();
   }
 
   protected abrirSelectorColaborador(): void {
-    this.dialogColaboradorAbierto.set(true);
-    if (this.colaboradores().length === 0) this.cargandoColaboradores.set(true);
-  }
-
-  private cargarColaboradores(ancla: NodoJerarquiaAncla): void {
-    this.analista.obtenerColaboradores(ancla.tip_cod, ancla.cod_rel).subscribe({
-      next: (lista) => {
-        this.colaboradores.set(lista);
-        this.cargandoColaboradores.set(false);
-      },
-      error: () => this.cargandoColaboradores.set(false),
-    });
+    this.selectorColaborador.abrir();
   }
 
   protected onColaboradorSeleccionado(item: ColaboradorItem): void {
-    this.analista.establecerColaborador(item);
+    this.selectorColaborador.seleccionar(item);
   }
 
   protected seleccionarFila(fila: FilaBeca | FilaBeca[] | undefined): void {

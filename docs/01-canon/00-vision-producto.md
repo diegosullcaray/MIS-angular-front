@@ -1,11 +1,9 @@
 # 00 — Visión de producto: el MIS Host es un router de sistemas
 
-> **Documentacion:** [Indice](../README.md) | [01 PRD](./01-prd.md) | [02 UX/App Flow](./02-ux-app-flow.md) | [03 TRD](./03-trd.md)
+> **Documentacion:** [Indice](../README.md) | [Arquitectura del código actual](../02-arquitectura/05-arquitectura-frontend-actual.md)
 
 > Este documento es la entrada al canon: la frase que hay que poder repetir de memoria
-> antes de leer el PRD, el flujo de UX o el TRD. No introduce requisitos nuevos — es la
-> síntesis de lo que el PRD §2, el TRD §5.1/§9 y el UX-flow §5/§6 ya dicen, puesto en un
-> solo lugar para que no se diluya entre secciones.
+> antes de leer el resto de la documentación técnica.
 
 ## La frase
 
@@ -32,8 +30,7 @@ funcional es: autenticar, decidir (vía IAM) a qué sistemas tiene acceso el usu
 | Administra IAM y el registro de sistemas (qué Remote existe, qué rol lo ve) | No implementa reportería, incentivos, RRHH, etc. — eso vive en cada Remote |
 | Muestra skeleton/error por Remote sin romper la shell (CA-04, CA-05) | No bloquea la navegación del resto del Host si un Remote cae |
 
-Esto es, en el fondo, la misma lección que dejó la auditoría del sistema anterior (ver
-[`../06-legado-sistema-anterior/01-analisis/01-arquitectura.md §6`](../06-legado-sistema-anterior/01-analisis/01-arquitectura.md#6-el-patrón-de-ui-configuración-declarativa)):
+Esto es, en el fondo, la misma lección que dejó la auditoría del sistema anterior (STG):
 un menú dirigido por datos ya era "medio sistema dinámico" — el Host completa la otra
 mitad enrutando también las pantallas, no solo el menú, y lo hace por federación en
 tiempo de ejecución en vez de por despliegue monolítico.
@@ -72,8 +69,6 @@ cada fila vive en el TRD.
 | Tema visual macOS | Preset PrimeNG personalizado (`mis-theme.ts`) | CSS custom properties (`tokens.css`) + Tailwind v4 (`@import "tailwindcss"`) para layout/spacing |
 | Iconografía | `@ng-icons/lucide` (vistas del Host) | `primeicons` (sidebar y botones PrimeNG) |
 
-Para el detalle técnico completo (versiones, configuración de `app.config.ts`,
-convenciones de carpetas, reglas PG-01..PG-10 de uso de PrimeNG) ver el
-[TRD](./03-trd.md). Para el mapa de rutas y el árbol de componentes, ver el
-[UX/App Flow](./02-ux-app-flow.md). Para requisitos de negocio y criterios de aceptación,
-ver el [PRD](./01-prd.md).
+Para el detalle técnico de cómo está construido el código hoy (arranque, login, guards,
+convención de módulo, obtención de datos) ver
+[`05-arquitectura-frontend-actual.md`](../02-arquitectura/05-arquitectura-frontend-actual.md).

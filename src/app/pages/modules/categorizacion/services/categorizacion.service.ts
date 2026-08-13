@@ -3,15 +3,15 @@ import { Observable, map } from 'rxjs';
 import { ModSeccionesService } from '../../../../core/winder/instances/mod-secciones.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
+import type { ComisionTarjeta, DetalleCategorizacion, RequisitoTarjeta } from '../models/dashboard.model';
+import type { NodoJerarquiaAncla, SectoristaItem } from '../models/colaborador.model';
 import type {
-  ComisionTarjeta,
-  DetalleCategorizacion,
+  BaseHierResponseBody,
   DetalleCategorizacionRaw,
-  NodoJerarquiaAncla,
+  DetalleResponseBody,
+  ListPickResponseBody,
   PeriodoComisionRaw,
-  RequisitoTarjeta,
-  SectoristaItem,
-} from '../models';
+} from '../models/categorizacion-api.model';
 
 /** Etiquetas fijas de las 4 tarjetas de "Estado Requisitos" (legado, sin traer nombre del backend). */
 const ETIQUETAS_REQUISITOS = ['Disciplina', 'Calificación', 'Permanencia', 'Formación'] as const;
@@ -22,18 +22,6 @@ const ETIQUETAS_REQUISITOS = ['Disciplina', 'Calificación', 'Permanencia', 'For
  * Comercial en Presupuesto (ver `ParamsJerarquia`, `presupuesto/models`).
  */
 const COD_JERARQUIA_ANCLA = 9;
-
-interface DetalleResponseBody {
-  resultado?: { data?: DetalleCategorizacionRaw; per?: PeriodoComisionRaw[] };
-}
-
-interface BaseHierResponseBody {
-  base_hierarchy?: NodoJerarquiaAncla[];
-}
-
-interface ListPickResponseBody {
-  list_res?: SectoristaItem[];
-}
 
 /**
  * Fachada del módulo `categorizacion` — migrado de `CategorizacionComponent`

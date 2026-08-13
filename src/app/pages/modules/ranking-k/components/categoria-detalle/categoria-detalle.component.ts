@@ -12,15 +12,27 @@ import { RankingInfoDialogComponent } from '../../ui/ranking-info-dialog/ranking
 import { KaypachaService } from '../../services/kaypacha.service';
 import { RankingTourService } from '../../services/ranking-tour.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
-import type { FilaDetalleRanking, GrupoRanking, RankingFiltros, RankingTableFila } from '../../models';
+import type { FilaDetalleRanking } from '../../models/categoria-ranking.model';
+import type { GrupoRanking, RankingTableFila } from '../../models/ranking-table.model';
+import type { RankingFiltros } from '../../models/ranking-filtros.model';
 
-/** Duración de la transición "aplicando filtros" (solo UX — el filtrado en sí es síncrono). */
 const DURACION_TRANSICION_FILTROS_MS = 350;
 
+/** Vista de detalle de categoría de ranking Kaypacha. */
 @Component({
   selector: 'app-categoria-detalle',
   standalone: true,
-  imports: [NgIconComponent, ButtonModule, TooltipModule, ListSkeletonComponent, InlineErrorComponent, EmptyStateComponent, RankingTableComponent, RankingFiltrosComponent, RankingInfoDialogComponent],
+  imports: [
+    NgIconComponent,
+    ButtonModule,
+    TooltipModule,
+    ListSkeletonComponent,
+    InlineErrorComponent,
+    EmptyStateComponent,
+    RankingTableComponent,
+    RankingFiltrosComponent,
+    RankingInfoDialogComponent,
+  ],
   viewProviders: [provideIcons({ lucideTrophy, lucideFilter })],
   templateUrl: './categoria-detalle.component.html',
   styleUrl: './categoria-detalle.component.css',
@@ -30,7 +42,6 @@ export class CategoriaDetalleComponent {
   protected readonly tour = inject(RankingTourService);
   protected readonly redirect = inject(RedirectOverlayService);
 
-  /** `rdestip` de la categoría — route param `:id` (withComponentInputBinding). */
   readonly id = input.required<string>();
 
   protected readonly categoria = computed(() => this.kaypacha.buscarCategoria(this.id()));
@@ -42,23 +53,28 @@ export class CategoriaDetalleComponent {
   protected readonly mostrarFiltros = signal(false);
   protected readonly aplicandoFiltros = signal(false);
   protected readonly filtros = signal<RankingFiltros | null>(null);
-  /** Cantidad de tarjetas-esqueleto a mostrar mientras `aplicandoFiltros` está activo (evita el salto de layout). */
   protected readonly gruposEsqueleto = signal(0);
 
-  /** Lugares (`hdester`) disponibles en la data actual — opciones del filtro. */
-  protected readonly lugaresDisponibles = computed(() => Array.from(new Set(this.filas().map((f) => f.hdester))).sort());
+  protected readonly lugaresDisponibles = computed(() =>
+    Array.from(new Set(this.filas().map((f) => f.hdester))).sort()
+  );
 
-  protected readonly puntosMinDisponible = computed(() => {
-    const valores = this.filas().map((f) => Number(f.TOTAL_MES));
-    return valores.length ? Math.min(...valores) : 0;
+  private readonly rangoPuntos = computed(() => {
+    const filas = this.filas();
+    if (!filas.length) return { min: 0, max: 100 };
+    let min = Infinity;
+    let max = -Infinity;
+    for (const f of filas) {
+      const v = Number(f.TOTAL_MES);
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+    return { min, max };
   });
 
-  protected readonly puntosMaxDisponible = computed(() => {
-    const valores = this.filas().map((f) => Number(f.TOTAL_MES));
-    return valores.length ? Math.max(...valores) : 100;
-  });
+  protected readonly puntosMinDisponible = computed(() => this.rangoPuntos().min);
+  protected readonly puntosMaxDisponible = computed(() => this.rangoPuntos().max);
 
-  /** Determina si hay filtros activos que estén restringiendo los datos por encima de los valores por defecto. */
   protected readonly hayFiltrosActivos = computed(() => {
     const f = this.filtros();
     if (!f) return false;
@@ -71,7 +87,6 @@ export class CategoriaDetalleComponent {
     return usuarioModificado || lugaresModificados || puntosModificados || limiteModificado;
   });
 
-  /** Filas agrupadas por `hdester` (ya filtradas), cada una lista para `RankingTableComponent`. */
   protected readonly grupos = computed<GrupoRanking[]>(() => {
     const filtros = this.filtros();
     const porHdester = new Map<string, RankingTableFila[]>();
@@ -96,11 +111,8 @@ export class CategoriaDetalleComponent {
   });
 
   constructor() {
-    // Si se entra directo por URL (sin pasar por la lista), asegura que las
-    // categorías estén cargadas para poder mostrar el nombre en el título.
     this.kaypacha.cargarCategorias();
 
-    // Reacciona a cada cambio de :id (navegar entre categorías reutiliza la instancia).
     effect(() => {
       this.id();
       untracked(() => this.cargarDetalle());
@@ -131,7 +143,6 @@ export class CategoriaDetalleComponent {
     });
   }
 
-  /** Helper de template: arreglo de longitud `n` para repetir la tarjeta-esqueleto con `@for`. */
   protected arrayDe(n: number): unknown[] {
     return Array.from({ length: n });
   }

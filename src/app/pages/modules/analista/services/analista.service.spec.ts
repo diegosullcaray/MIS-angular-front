@@ -6,7 +6,7 @@ import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-ad
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
 import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
-import type { ResumenDashboard } from '../models';
+import type { ResumenDashboard } from '../models/dashboard.model';
 
 function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
   return {

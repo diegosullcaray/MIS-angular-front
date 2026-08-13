@@ -2,16 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-
-interface ActividadCard {
-  titulo: string;
-  descripcion: string;
-  icono: string;
-  ruta: string;
-  colorBg: string;
-  colorIcon: string;
-  badge?: string;
-}
+import type { ActividadCard } from '../../models/actividades.model';
 
 @Component({
   selector: 'app-actividades-home',

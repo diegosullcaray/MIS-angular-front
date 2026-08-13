@@ -13,6 +13,7 @@ import type { DestinoCreditoItem } from '../../models/actividades.model';
 import { DestinoCreditoDialogComponent } from '../../ui/destino-credito-dialog/destino-credito-dialog.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
+import { inputValue } from '../../../../../shared/utils/dom.util';
 
 @Component({
   selector: 'app-destino-credito',
@@ -43,11 +44,9 @@ export class DestinoCreditoComponent implements OnInit {
   readonly data = signal<DestinoCreditoItem[]>([]);
   readonly globalFilter = signal('');
 
-  // Control del modal de edición
   readonly modalVisible = signal(false);
   readonly selectedItem = signal<DestinoCreditoItem | null>(null);
 
-  // Datos filtrados para la tabla PrimeNG
   readonly filteredData = computed(() => {
     const q = this.globalFilter().toLowerCase().trim();
     if (!q) return this.data();
@@ -85,8 +84,7 @@ export class DestinoCreditoComponent implements OnInit {
   }
 
   protected onSearchInput(event: Event): void {
-    const val = (event.target as HTMLInputElement).value;
-    this.globalFilter.set(val);
+    this.globalFilter.set(inputValue(event));
   }
 
   protected abrirEdicion(item: DestinoCreditoItem): void {
@@ -97,7 +95,6 @@ export class DestinoCreditoComponent implements OnInit {
   protected guardarEdicion(payload: { cod_ope: string; fec_vis: string; is_valid: string }): void {
     this.actividadesService.postRegResultadosDestCred(payload).subscribe({
       next: () => {
-        // Actualiza el item localmente
         this.data.update((items) =>
           items.map((it) => {
             if (it.HCODOPE === payload.cod_ope) {

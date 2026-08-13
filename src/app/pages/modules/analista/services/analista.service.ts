@@ -3,15 +3,19 @@ import { Observable, map } from 'rxjs';
 import { ModSeccionesService } from '../../../../core/winder/instances/mod-secciones.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
+import type { FilaLabelValor } from '../models/comun.model';
+import type { ColaboradorActivo, ColaboradorItem, NodoJerarquiaAncla } from '../models/colaborador.model';
+import type { HistoricoVariable, ResumenDashboard } from '../models/dashboard.model';
+import type { FilaBeca, FilaLead } from '../models/listas.model';
 import type {
-  ColaboradorItem,
-  FilaBeca,
-  FilaLabelValor,
-  FilaLead,
-  HistoricoVariable,
-  NodoJerarquiaAncla,
-  ResumenDashboard,
-} from '../models';
+  BaseHierResponseBody,
+  ClienteResponseBody,
+  DashboardResponseBody,
+  HistoricoResponseBody,
+  ListaResponseBody,
+  ListPickResponseBody,
+  PostBecaResponseBody,
+} from '../models/analista-api.model';
 
 /**
  * `cod_jer` de la jerarquía usada para ubicar el nodo ancla del admin — mismo
@@ -19,40 +23,6 @@ import type {
  * Créditos/Seguros Comercial en Presupuesto.
  */
 const COD_JERARQUIA_ANCLA = 9;
-
-/** Colaborador activo — el que se está mirando (uno mismo, o el elegido por un admin). */
-export interface ColaboradorActivo {
-  codBt: string;
-  nombre: string;
-}
-
-interface DashboardResponseBody {
-  resultado?: ResumenDashboard;
-}
-
-interface HistoricoResponseBody {
-  resultado?: HistoricoVariable;
-}
-
-interface ClienteResponseBody {
-  resultado?: { prof?: FilaLabelValor[] };
-}
-
-interface ListaResponseBody {
-  resultado?: unknown[];
-}
-
-interface PostBecaResponseBody {
-  result?: { code?: number; fec_pro?: string };
-}
-
-interface BaseHierResponseBody {
-  base_hierarchy?: NodoJerarquiaAncla[];
-}
-
-interface ListPickResponseBody {
-  list_res?: ColaboradorItem[];
-}
 
 /**
  * Fachada del módulo `analista` — migrado de `AnalistaService` + `ModSecService`

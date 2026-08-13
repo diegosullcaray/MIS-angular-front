@@ -6,7 +6,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { FrameworkEsgService } from '../../services/framework-esg.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { EsgAtributoConfig, EsgMetricaFila, EsgSituacionOpcion } from '../../models';
+import type { EsgAtributoConfig, EsgSituacionOpcion } from '../../models/configuracion.model';
+import type { EsgMetricaFila } from '../../models/metrica.model';
 
 /**
  * Diálogo de Editar/Detalle de una métrica ESG — reemplaza a

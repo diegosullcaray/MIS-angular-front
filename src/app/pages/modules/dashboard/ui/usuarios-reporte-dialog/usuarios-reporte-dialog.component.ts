@@ -6,7 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ListboxModule } from 'primeng/listbox';
 import { DashboardService } from '../../services/dashboard.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { ReporteDashboard, ReporteListItem, UsuariosPorReporte } from '../../models';
+import type { ReporteDashboard, ReporteListItem, UsuariosPorReporte } from '../../models/reporte.model';
 
 const TODOS_ID = '_ALL_';
 const TODOS_NOMBRE = 'Todos';
