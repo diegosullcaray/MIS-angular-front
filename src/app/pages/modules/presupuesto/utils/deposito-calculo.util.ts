@@ -1,4 +1,4 @@
-import type { FilaDeposito } from '../models';
+import type { FilaDeposito } from '../models/deposito.model';
 
 /**
  * Fórmula de cascada de Depósitos BP/Red (`calculateRow` del legado) — idéntica

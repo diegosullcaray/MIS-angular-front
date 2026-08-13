@@ -4,7 +4,8 @@ import { MessageService } from 'primeng/api';
 import { TableroVerificacionComponent } from './tablero-verificacion.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { HierarquiaNodo, LogVerificacionFila } from '../../../models';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { LogVerificacionFila } from '../../../models/tablero-verificacion.model';
 
 function nodo(overrides: Partial<HierarquiaNodo> = {}): HierarquiaNodo {
   return { tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', ...overrides };

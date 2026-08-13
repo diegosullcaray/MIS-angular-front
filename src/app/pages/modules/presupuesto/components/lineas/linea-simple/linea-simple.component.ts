@@ -3,9 +3,11 @@ import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
-import { EditableTableComponent, type CeldaEditadaEvent } from '../../../ui/editable-table/editable-table.component';
+import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
-import type { FilaLineaSimple, HierarquiaNodo, LineaSimpleConfig, ResumenMetadata } from '../../../models';
+import type { CeldaEditadaEvent } from '../../../models/tabla.model';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { FilaLineaSimple, LineaSimpleConfig, ResumenMetadata } from '../../../models/linea-simple.model';
 
 /**
  * Pantalla genérica "línea simple" — reemplaza a `PreLineaSimpleComponent`

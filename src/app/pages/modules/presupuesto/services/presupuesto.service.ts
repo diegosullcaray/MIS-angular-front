@@ -3,46 +3,15 @@ import { Observable, map } from 'rxjs';
 import { ModPresupuestoService } from '../../../../core/winder/instances/mod-presupuesto.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type {
-  FilaCarteraCreditosVariables,
-  FilaDeposito,
-  FilaSegurosComercial,
-  FilaSegurosOperaciones,
-  HierarquiaNodo,
-  LogVerificacionFila,
-  ResponsableFila,
-  ResumenCarteraCreditos,
-  ResumenLineaSimple,
-} from '../models';
-
-/**
- * Forma de `response.body` para las rutas `presupuesto.get_reg_res`/`get_log_ver`
- * — comparten `responseName='resultado'` con `kaypacha.listRanking` y, como esa
- * ruta, son de forma tabular (arreglo de filas): se asume la misma envoltura
- * `resultado.list[0].JSONLIST` (JSON serializado como string). Ver
- * `KaypachaResponseBody` (`ranking-k/models/kaypacha-response.model`) para el precedente.
- */
-interface ListaResponseBody {
-  resultado?: { list?: Array<{ JSONLIST: string }> };
-}
-
-/**
- * Forma de `response.body` para las rutas `presupuesto.get_car_cre`/`get_dep_bp`/
- * `get_dep_red`/`get_seg_com`/`get_seg_ope` — `responseName='resumen'`, forma
- * compuesta (objeto con `ws`/`bp`/`cs`), como `login_response`/`menu_response`:
- * se asume que llega anidada directo, sin envoltura `JSONLIST`.
- */
-interface ResumenResponseBody {
-  resumen?: ResumenLineaSimple | ResumenCarteraCreditos;
-}
-
-/**
- * Forma de `response.body` para `base_hier`/`level_hier` (`ModSysAdminService`).
- */
-interface JerarquiaResponseBody {
-  base_hierarchy?: HierarquiaNodo[];
-  level_hierarchy?: HierarquiaNodo[];
-}
+import type { HierarquiaNodo } from '../models/jerarquia.model';
+import type { ResumenLineaSimple } from '../models/linea-simple.model';
+import type { FilaDeposito } from '../models/deposito.model';
+import type { FilaSegurosComercial } from '../models/seguros-comercial.model';
+import type { FilaSegurosOperaciones } from '../models/seguros-operaciones.model';
+import type { FilaCarteraCreditosVariables, ResumenCarteraCreditos } from '../models/cartera-creditos.model';
+import type { LogVerificacionFila } from '../models/tablero-verificacion.model';
+import type { ResponsableFila } from '../models/responsables.model';
+import type { JerarquiaResponseBody, ListaResponseBody, ResumenResponseBody } from '../models/presupuesto-api.model';
 
 /**
  * Fachada del módulo `presupuesto` — traduce las respuestas crudas del

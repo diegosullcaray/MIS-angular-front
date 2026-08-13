@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import type { TreeNode } from 'primeng/api';
 import { PresupuestoService } from '../../services/presupuesto.service';
-import type { HierarquiaNodo, ParamsJerarquia } from '../../models';
+import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
 
 /**
  * Selector de jerarquía organizativa — reconstrucción del `hier-rem-selector`

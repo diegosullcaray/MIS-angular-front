@@ -1,7 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { LineaSimpleComponent } from '../linea-simple/linea-simple.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
-import type { ColumnaTabla, FilaSegurosComercial, LineaSimpleConfig } from '../../../models';
+import type { ColumnaTabla } from '../../../models/tabla.model';
+import type { LineaSimpleConfig } from '../../../models/linea-simple.model';
+import type { FilaSegurosComercial } from '../../../models/seguros-comercial.model';
 
 const COLUMNAS: ColumnaTabla[] = [
   { label: 'Fecha', key: 'fec_pro', tipo: 'text' },

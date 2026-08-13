@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import type { TreeNode } from 'primeng/api';
 import { HierSelectorComponent } from './hier-selector.component';
 import { PresupuestoService } from '../../services/presupuesto.service';
-import type { HierarquiaNodo, ParamsJerarquia } from '../../models';
+import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
 
 const PARAMS: ParamsJerarquia = { code: 9, maxLvl: 2, dlgTitulo: 'JERARQUIA ADMIN. COMER.' };
 

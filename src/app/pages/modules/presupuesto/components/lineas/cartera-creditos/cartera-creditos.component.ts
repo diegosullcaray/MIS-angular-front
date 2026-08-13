@@ -4,18 +4,13 @@ import { TabsModule } from 'primeng/tabs';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
-import { EditableTableComponent, type CeldaEditadaEvent } from '../../../ui/editable-table/editable-table.component';
+import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
 import { aplicarCascadaAsesores, calcularFilaCarteraCreditos, PRODUCTOS_COMPOSICION } from '../../../utils/cartera-creditos-calculo.util';
-import type {
-  ColumnaTabla,
-  FilaCarteraCreditosComposicion,
-  FilaCarteraCreditosVariables,
-  HierarquiaNodo,
-  ParamsJerarquia,
-  ResumenMetadata,
-  TipoColumna,
-} from '../../../models';
+import type { CeldaEditadaEvent, ColumnaTabla, TipoColumna } from '../../../models/tabla.model';
+import type { HierarquiaNodo, ParamsJerarquia } from '../../../models/jerarquia.model';
+import type { ResumenMetadata } from '../../../models/linea-simple.model';
+import type { FilaCarteraCreditosComposicion, FilaCarteraCreditosVariables } from '../../../models/cartera-creditos.model';
 
 const INPUT_COLS = ['b1', 'b3', 'b5', 'b2'];
 

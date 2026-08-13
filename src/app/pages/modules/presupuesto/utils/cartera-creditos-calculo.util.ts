@@ -1,4 +1,4 @@
-import type { FilaCarteraCreditosComposicion, FilaCarteraCreditosVariables, IdProductoComposicion } from '../models';
+import type { FilaCarteraCreditosComposicion, FilaCarteraCreditosVariables, IdProductoComposicion } from '../models/cartera-creditos.model';
 
 /**
  * Ids de negocio de los 11 productos de la composición por producto (tabs

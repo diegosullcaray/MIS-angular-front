@@ -3,18 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
-import type { ColumnaTabla, TipoColumna } from '../../models';
+import type { CeldaEditadaEvent, ColumnaTabla, FilaTabla, TipoColumna } from '../../models/tabla.model';
 import { formatearNumero } from '../../../../../shared/utils/formato.util';
-
-/** Fila genérica de la tabla — cualquier objeto plano (`FilaLineaSimple`, `ResponsableFila`, `LogVerificacionFila`...). */
-export type FilaTabla = Record<string, unknown>;
-
-/** Evento de edición de una celda — igual forma que `editCell(evt)` del legado. */
-export interface CeldaEditadaEvent<T extends FilaTabla = FilaTabla> {
-  fila: T;
-  key: string;
-  valor: unknown;
-}
 
 /**
  * Tabla editable genérica de Presupuesto — reemplaza al `stg-table` legado

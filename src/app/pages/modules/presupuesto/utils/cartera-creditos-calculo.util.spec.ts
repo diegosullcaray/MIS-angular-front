@@ -1,5 +1,5 @@
 import { aplicarCascadaAsesores, calcularFilaCarteraCreditos, PRODUCTOS_COMPOSICION } from './cartera-creditos-calculo.util';
-import type { FilaCarteraCreditosComposicion, FilaCarteraCreditosVariables } from '../models';
+import type { FilaCarteraCreditosComposicion, FilaCarteraCreditosVariables } from '../models/cartera-creditos.model';
 
 function filaVariables(overrides: Partial<FilaCarteraCreditosVariables> = {}): FilaCarteraCreditosVariables {
   return { ord: 1, a1: 0, a2: 0, a3: 0, b1: 0, b2: 0, b3: 0, b4: 0, b5: 0, b6: 0, c1: 0, c2: 0, ...overrides };

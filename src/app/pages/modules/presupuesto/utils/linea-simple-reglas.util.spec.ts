@@ -1,5 +1,6 @@
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from './linea-simple-reglas.util';
-import type { HierarquiaNodo, ResumenMetadata } from '../models';
+import type { HierarquiaNodo } from '../models/jerarquia.model';
+import type { ResumenMetadata } from '../models/linea-simple.model';
 
 function metadata(overrides: Partial<ResumenMetadata> = {}): ResumenMetadata {
   return { tip_cod_edi: 4, ord_ini_edi: 3, act_res: true, cod_sec: 'SEC-1', ...overrides };

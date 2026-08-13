@@ -6,8 +6,9 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
-import { normalizarTexto } from '../../../utils/texto.util';
-import type { HierarquiaNodo, LogVerificacionFila, ParamsJerarquia } from '../../../models';
+import { filtrarPorDescripcion } from '../../../utils/texto.util';
+import type { HierarquiaNodo, ParamsJerarquia } from '../../../models/jerarquia.model';
+import type { LogVerificacionFila } from '../../../models/tablero-verificacion.model';
 
 /**
  * Tablero de Verificación (`/app/presupuesto/gestion/seguimiento/tbl-ver`) —
@@ -50,11 +51,7 @@ export class TableroVerificacionComponent {
   protected readonly filas = signal<LogVerificacionFila[]>([]);
   protected readonly filtro = signal('');
 
-  protected readonly filasFiltradas = computed(() => {
-    const termino = normalizarTexto(this.filtro().trim());
-    if (!termino) return this.filas();
-    return this.filas().filter((f) => normalizarTexto(f.des_rel).includes(termino));
-  });
+  protected readonly filasFiltradas = computed(() => filtrarPorDescripcion(this.filas(), this.filtro()));
 
   protected onLineaSeleccionada(nodo: HierarquiaNodo): void {
     this.nivelLinea.set(nodo);
