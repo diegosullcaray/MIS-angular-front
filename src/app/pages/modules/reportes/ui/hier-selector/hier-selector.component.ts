@@ -2,6 +2,7 @@ import { Component, inject, input, OnInit, output, signal } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
 import { ReportesService } from '../../services/reportes.service';
 import type { HierarquiaNodo, NivelJerarquiaDropdown, ParamsJerarquia } from '../../models/jerarquia.model';
 
@@ -13,7 +14,7 @@ import type { HierarquiaNodo, NivelJerarquiaDropdown, ParamsJerarquia } from '..
 @Component({
   selector: 'app-hier-selector',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectModule],
+  imports: [CommonModule, FormsModule, SelectModule, ButtonModule],
   templateUrl: './hier-selector.component.html',
   styleUrl: './hier-selector.component.css',
 })
@@ -31,6 +32,12 @@ export class HierSelectorComponent implements OnInit {
   protected readonly cargando = signal(false);
 
   ngOnInit(): void {
+    this.cargarRaiz();
+  }
+
+  public limpiar(): void {
+    this.nodosNivel.set([]);
+    this.valoresSeleccionados.set([]);
     this.cargarRaiz();
   }
 
@@ -97,17 +104,18 @@ export class HierSelectorComponent implements OnInit {
             data: dataNormalizada,
           };
 
-          const nodosActuales = [...this.nodosNivel(), dp];
-          const seleccionadosActuales = [...this.valoresSeleccionados(), primerNodo];
+          if (esCargaInicial) {
+            const primerNodo = dataNormalizada[0];
+            this.nodosNivel.set([dp]);
+            this.valoresSeleccionados.set([primerNodo]);
+            this.nodoSeleccionado.emit(primerNodo);
 
-          this.nodosNivel.set(nodosActuales);
-          this.valoresSeleccionados.set(seleccionadosActuales);
-
-          this.nodoSeleccionado.emit(primerNodo);
-
-          const proximoNivel = (primerNodo.lvl ?? lvl) + 1;
-          if (proximoNivel <= this.paramsHier().maxLvl && lh && lh.length > 0) {
-            this.cargarNivel(primerNodo.tip_cod, [primerNodo.cod_rel], proximoNivel);
+            const proximoNivel = (primerNodo.lvl ?? lvl) + 1;
+            if (proximoNivel <= this.paramsHier().maxLvl && lh && lh.length > 0) {
+              this.cargarNivel(primerNodo.tip_cod, [primerNodo.cod_rel], proximoNivel, false);
+            }
+          } else {
+            this.nodosNivel.set([...this.nodosNivel(), dp]);
           }
         },
         error: (err) => {
@@ -125,7 +133,7 @@ export class HierSelectorComponent implements OnInit {
     if (!val) return;
 
     const nuevosNodos = this.nodosNivel().slice(0, index + 1);
-    const nuevosValores = this.valoresSeleccionados().slice(0, index + 1);
+    const nuevosValores = this.valoresSeleccionados().slice(0, index);
     nuevosValores[index] = val;
 
     this.nodosNivel.set(nuevosNodos);
@@ -133,9 +141,9 @@ export class HierSelectorComponent implements OnInit {
 
     this.nodoSeleccionado.emit(val);
 
-    const levelAtual = val.lvl ?? index + 1;
-    if (levelAtual + 1 <= this.paramsHier().maxLvl) {
-      this.cargarNivel(val.tip_cod, [val.cod_rel], levelAtual + 1);
+    const proximoNivel = (val.lvl ?? index + 1) + 1;
+    if (proximoNivel <= this.paramsHier().maxLvl) {
+      this.cargarNivel(val.tip_cod, [val.cod_rel], proximoNivel, false);
     }
   }
 }

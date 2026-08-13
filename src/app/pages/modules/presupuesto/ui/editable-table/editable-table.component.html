@@ -1,83 +1,75 @@
 <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
-  @if (cargando()) {
-    <div class="p-4 flex flex-col gap-2">
-      @for (i of [1, 2, 3, 4, 5]; track i) {
-        <p-skeleton height="1.5rem" />
-      }
-    </div>
-  } @else {
-    <p-table [value]="filas()" [scrollable]="true" scrollHeight="480px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
-      <ng-template pTemplate="header">
-        @if (tieneGrupos()) {
-          <tr>
-            @for (col of columnas(); track col.label) {
-              @if (col.hijos?.length) {
-                <th [attr.colspan]="col.hijos!.length" class="text-center text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
-                  {{ col.label }}
-                </th>
-              } @else {
-                <th rowspan="2" class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
-                  {{ col.label }}
-                </th>
-              }
-            }
-          </tr>
-          <tr>
-            @for (col of columnas(); track col.label) {
-              @if (col.hijos?.length) {
-                @for (hijo of col.hijos; track hijo.key) {
-                  <th class="whitespace-nowrap text-[11px]" style="background-color: var(--mis-primary-light);">{{ hijo.label }}</th>
-                }
-              }
-            }
-          </tr>
-        } @else {
-          <tr>
-            @for (col of columnasPlanas(); track col.key) {
-              <th class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+  <p-table [value]="filas()" [scrollable]="true" scrollHeight="480px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      @if (tieneGrupos()) {
+        <tr>
+          @for (col of columnas(); track col.label) {
+            @if (col.hijos?.length) {
+              <th [attr.colspan]="col.hijos!.length" class="text-center text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+                {{ col.label }}
+              </th>
+            } @else {
+              <th rowspan="2" class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
                 {{ col.label }}
               </th>
             }
-          </tr>
-        }
-      </ng-template>
-
-      <ng-template pTemplate="body" let-fila>
-        <tr>
-          @for (col of columnasPlanas(); track col.key) {
-            <td
-              class="text-[13px]"
-              [pEditableColumn]="fila"
-              [pEditableColumnField]="col.key!"
-              [pEditableColumnDisabled]="!esEditable()(fila, col.key!)"
-              [style.background-color]="esEditable()(fila, col.key!) ? 'rgb(220, 230, 241)' : null"
-            >
-              <p-cellEditor>
-                <ng-template pTemplate="input">
-                  <input
-                    pInputText
-                    type="number"
-                    class="w-full text-[13px]"
-                    [ngModel]="fila[col.key!]"
-                    (ngModelChange)="onCambio(fila, col.key!, $event)"
-                  />
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{ formatear(fila[col.key!], col.tipo) }}
-                </ng-template>
-              </p-cellEditor>
-            </td>
           }
         </tr>
-      </ng-template>
-
-      <ng-template pTemplate="emptymessage">
         <tr>
-          <td [attr.colspan]="columnasPlanas().length || 1" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
-            Elige un nivel de la jerarquía para ver los datos.
-          </td>
+          @for (col of columnas(); track col.label) {
+            @if (col.hijos?.length) {
+              @for (hijo of col.hijos; track hijo.key) {
+                <th class="whitespace-nowrap text-[11px]" style="background-color: var(--mis-primary-light);">{{ hijo.label }}</th>
+              }
+            }
+          }
         </tr>
-      </ng-template>
-    </p-table>
-  }
+      } @else {
+        <tr>
+          @for (col of columnasPlanas(); track col.key) {
+            <th class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+              {{ col.label }}
+            </th>
+          }
+        </tr>
+      }
+    </ng-template>
+
+    <ng-template pTemplate="body" let-fila>
+      <tr>
+        @for (col of columnasPlanas(); track col.key) {
+          <td
+            class="text-[13px]"
+            [pEditableColumn]="fila"
+            [pEditableColumnField]="col.key!"
+            [pEditableColumnDisabled]="!esEditable()(fila, col.key!)"
+            [style.background-color]="esEditable()(fila, col.key!) ? 'rgb(220, 230, 241)' : null"
+          >
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input
+                  pInputText
+                  [type]="col.tipo === 'text' ? 'text' : 'number'"
+                  class="w-full text-[13px]"
+                  [ngModel]="fila[col.key!]"
+                  (ngModelChange)="onCambio(fila, col.key!, $event)"
+                />
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{ formatear(fila[col.key!], col.tipo) }}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+        }
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="columnasPlanas().length || 1" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
+          Elige un nivel de la jerarquía para ver los datos.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>

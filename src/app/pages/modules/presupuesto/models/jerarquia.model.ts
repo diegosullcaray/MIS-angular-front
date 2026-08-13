@@ -11,11 +11,20 @@
 export interface HierarquiaNodo {
   tip_cod: number;
   cod_rel: string;
-  desc_rel: string;
+  desc_rel?: string;
+  des_rel?: string;
+  lbl_hier?: string;
   lvl?: number;
 }
 
-/** Parámetros para pedir la jerarquía base de una pantalla "línea simple". */
+/** Estructura para cada desplegable p-select por nivel jerárquico. */
+export interface NivelJerarquiaDropdown {
+  label: string;
+  level: number;
+  data: HierarquiaNodo[];
+}
+
+/** Parámetros para pedir la jerarquía base de una pantalla. */
 export interface ParamsJerarquia {
   /** `cod_jer` — código de la jerarquía organizativa a explorar. */
   code: number;

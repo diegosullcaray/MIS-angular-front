@@ -3,7 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import { ButtonModule } from 'primeng/button';
+import { HierSelectorComponent } from '../../../../presupuesto/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
 import { ReportesService, PARAMS_HIER_UNIDAD } from '../../../services/reportes.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
@@ -29,7 +30,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-monitor-reprogramados',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SelectModule, FormsModule, SkeletonModule, ProgressSpinnerModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, SelectModule, FormsModule, SkeletonModule, ProgressSpinnerModule, ButtonModule],
   templateUrl: './monitor-reprogramados.component.html',
   styleUrl: './monitor-reprogramados.component.css',
 })
@@ -40,6 +41,7 @@ export class MonitorReprogramadosComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesTipo = OPCIONES_TIPO_MON_REP;
 
+  protected readonly mostrarFiltros = signal(true);
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly tipoSeleccionado = signal<1 | 2>(1);
   protected readonly cargando = signal(true);

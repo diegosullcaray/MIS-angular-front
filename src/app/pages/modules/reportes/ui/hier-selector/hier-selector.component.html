@@ -1,4 +1,4 @@
-<div class="flex items-center gap-3 flex-wrap p-2 bg-[var(--mis-panel-bg)]/60 border border-[var(--mis-border)] rounded-lg shadow-sm w-full">
+<div class="flex items-end gap-3 flex-wrap p-2 bg-[var(--mis-panel-bg)]/60 border border-[var(--mis-border)] rounded-lg shadow-sm w-full">
   @for (cbo of nodosNivel(); track cbo.level; let i = $index) {
     <div class="flex flex-col gap-0.5">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">
@@ -10,13 +10,24 @@
         (onChange)="onSeleccionarNivel(i, $event.value)"
         optionLabel="des_rel"
         dataKey="cod_rel"
-        styleClass="w-44 text-[11.5px]"
+        styleClass="min-w-44 text-[11.5px]"
         [placeholder]="cbo.label"
         ariaLabel="Seleccionar nivel jerárquico"
-      />
+      >
+        <ng-template pTemplate="selectedItem" let-selectedOption>
+          @if (selectedOption) {
+            <span class="truncate block max-w-[200px]">{{ selectedOption.des_rel || selectedOption.desc_rel }}</span>
+          }
+        </ng-template>
+        <ng-template pTemplate="item" let-nodo>
+          <span class="truncate block max-w-[260px]">{{ nodo.des_rel || nodo.desc_rel }}</span>
+        </ng-template>
+      </p-select>
     </div>
   }
-  @if (cargando()) {
-    <i class="pi pi-spin pi-spinner text-[var(--mis-primary-text)] text-sm self-end mb-2 ml-1"></i>
-  }
+  <div class="flex-1"></div>
+  <div class="flex flex-col gap-0.5">
+    <span class="text-[9.5px] font-bold opacity-0 select-none uppercase tracking-wider">&nbsp;</span>
+    <p-button label="Limpiar" icon="pi pi-refresh" severity="warn" [outlined]="true" (onClick)="limpiar()" />
+  </div>
 </div>

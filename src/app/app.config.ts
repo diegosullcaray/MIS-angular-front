@@ -16,6 +16,7 @@ import { APP_ROUTES } from './app.routes';
 import { MisTheme } from './theme/mis-theme';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
 import { ThemeService } from './pages/full-pages/layout/services/theme.service';
 
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(APP_ROUTES, withComponentInputBinding()),
 
     // HttpClient con interceptores y Fetch API nativa (compatible con Zoneless)
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, httpErrorInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, httpErrorInterceptor, loadingInterceptor])),
 
     // Cliente OAuth (Google Sign-In) usado por AuthService
     provideOAuthClient(),

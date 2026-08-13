@@ -65,6 +65,13 @@ export class PresupuestoService {
    * hasta confirmar el campo real con el backend.
    */
   fechaCorte(): string {
+    const currFec = this.shell.usuarioActivo()?.fechaCorte;
+    if (currFec && /^\d{8}$/.test(currFec)) {
+      return `${currFec.slice(0, 4)}-${currFec.slice(4, 6)}-${currFec.slice(6, 8)}`;
+    }
+    if (currFec && /^\d{4}-\d{2}-\d{2}$/.test(currFec)) {
+      return currFec;
+    }
     return new Date().toISOString().slice(0, 10);
   }
 
@@ -166,8 +173,22 @@ export class PresupuestoService {
   // ─── Privados ────────────────────────────────────────────────────────────
 
   private parseLista<T>(body: unknown): T[] {
-    const json = (body as ListaResponseBody | null)?.resultado?.list?.[0]?.JSONLIST;
-    return json ? (JSON.parse(json) as T[]) : [];
+    const res = (body as any)?.resultado;
+    if (Array.isArray(res)) {
+      return res as T[];
+    }
+    const json = res?.list?.[0]?.JSONLIST;
+    if (json) {
+      try {
+        return JSON.parse(json) as T[];
+      } catch {
+        return [];
+      }
+    }
+    if (Array.isArray(body)) {
+      return body as T[];
+    }
+    return [];
   }
 
   private parseResumen<T extends ResumenLineaSimple>(body: unknown): T {

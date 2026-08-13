@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
@@ -33,7 +34,7 @@ import type { LogVerificacionFila } from '../../../models/tablero-verificacion.m
 @Component({
   selector: 'app-tablero-verificacion',
   standalone: true,
-  imports: [HierSelectorComponent, TableModule, InputTextModule, SkeletonModule, FormsModule],
+  imports: [HierSelectorComponent, TableModule, InputTextModule, SkeletonModule, FormsModule, ButtonModule],
   templateUrl: './tablero-verificacion.component.html',
   styleUrl: './tablero-verificacion.component.css',
 })
@@ -45,6 +46,7 @@ export class TableroVerificacionComponent {
   /** Raíz fija del legado — ver comentario de clase. */
   protected readonly raizFija: HierarquiaNodo[] = [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }];
 
+  protected readonly mostrarFiltros = signal(true);
   protected readonly cargando = signal(false);
   protected readonly nivelLinea = signal<HierarquiaNodo | null>(null);
   protected readonly nivelSegundo = signal<HierarquiaNodo | null>(null);

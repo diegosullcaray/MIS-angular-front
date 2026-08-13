@@ -1,36 +1,38 @@
 <div class="mis-page mis-page--auto">
   <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Responsables</h2>
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Responsables</h2>
 
-    <div class="flex items-end gap-3 flex-wrap">
-      <div class="flex flex-col gap-1.5">
-        <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Nivel</label>
-        <p-select
-          [options]="niveles"
-          optionLabel="des_lvl"
-          [ngModel]="nivelActual()"
-          (ngModelChange)="onNivelCambiado($event)"
-          styleClass="w-56"
-          appendTo="body"
-        />
+      <div class="flex items-center gap-2 flex-wrap">
+        <p-button label="Reiniciar" severity="secondary" [outlined]="true" (onClick)="reiniciar()" />
+        <p-button label="Guardar" [loading]="guardando()" (onClick)="guardar()" />
       </div>
+    </div>
+  </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Buscar elemento</label>
-        <input
-          pInputText
-          type="text"
-          placeholder="Buscar por nombre…"
-          class="text-[13px]"
-          [ngModel]="filtro()"
-          (ngModelChange)="filtro.set($event)"
-        />
-      </div>
+  <div class="flex items-end gap-3 flex-wrap">
+    <div class="flex flex-col gap-1.5">
+      <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Nivel</label>
+      <p-select
+        [options]="niveles"
+        optionLabel="des_lvl"
+        [ngModel]="nivelActual()"
+        (ngModelChange)="onNivelCambiado($event)"
+        styleClass="w-56"
+        appendTo="body"
+      />
+    </div>
 
-      <div class="flex-1"></div>
-
-      <p-button label="Reiniciar" severity="secondary" [outlined]="true" size="small" (onClick)="reiniciar()" />
-      <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
+    <div class="flex flex-col gap-1.5">
+      <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Buscar elemento</label>
+      <input
+        pInputText
+        type="text"
+        placeholder="Buscar por nombre…"
+        class="text-[13px]"
+        [ngModel]="filtro()"
+        (ngModelChange)="filtro.set($event)"
+      />
     </div>
   </div>
 

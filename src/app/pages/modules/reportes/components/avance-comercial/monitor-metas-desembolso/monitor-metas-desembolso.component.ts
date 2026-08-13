@@ -2,7 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import { ButtonModule } from 'primeng/button';
+import { HierSelectorComponent } from '../../../../presupuesto/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
 import { ReportesService, PARAMS_HIER_UNIDAD } from '../../../services/reportes.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
@@ -28,7 +29,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule, ButtonModule],
   templateUrl: './monitor-metas-desembolso.component.html',
   styleUrl: './monitor-metas-desembolso.component.css',
 })
@@ -37,6 +38,8 @@ export class MonitorMetasDesembolsoComponent {
   private readonly toast = inject(ToastService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
+
+  protected readonly mostrarFiltros = signal(true);
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(true);

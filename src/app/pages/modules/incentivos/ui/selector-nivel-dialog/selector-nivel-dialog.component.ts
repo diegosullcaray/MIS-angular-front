@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -22,6 +23,7 @@ type Vista = 'menu' | 'asesores' | 'jerarquia';
   styleUrl: './selector-nivel-dialog.component.css',
 })
 export class SelectorNivelDialogComponent {
+  private readonly router = inject(Router);
   private readonly incentivos = inject(IncentivosService);
   private readonly toast = inject(ToastService);
   private readonly loading = inject(LoadingService);
@@ -128,11 +130,11 @@ export class SelectorNivelDialogComponent {
   }
 
   protected cerrar(): void {
-    if (this.obligatorio()) return;
     this.vista.set('menu');
     this.filtro.set('');
     this.seleccionadoAsesor.set(null);
     this.seleccionadoNodo.set(null);
     this.visibleChange.emit(false);
+    this.router.navigate(['/app/dashboard']);
   }
 }
