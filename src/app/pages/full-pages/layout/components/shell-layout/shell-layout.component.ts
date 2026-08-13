@@ -6,10 +6,12 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { RedirectOverlayComponent } from '../../../../../shared/ui/redirect-overlay/redirect-overlay.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 
+import { PanelNeutroComponent } from '../panel-neutro/panel-neutro.component';
+
 @Component({
   selector: 'app-shell-layout',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, SidebarComponent, RedirectOverlayComponent, ProgressSpinnerModule],
+  imports: [RouterOutlet, HeaderComponent, SidebarComponent, RedirectOverlayComponent, ProgressSpinnerModule, PanelNeutroComponent],
   templateUrl: './shell-layout.component.html',
   styleUrl: './shell-layout.component.css',
 })

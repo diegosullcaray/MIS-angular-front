@@ -9,7 +9,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
-import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavSeccion } from '../../interfaces/sidebar.model';
+import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta, SidebarNavSeccion } from '../../interfaces/sidebar.model';
 
 /** Duración de la transición (esqueleto) al cambiar de sistema. */
 const DURACION_TRANSICION_PANEL_MS = 300;
@@ -61,9 +61,7 @@ export class SidebarComponent implements AfterViewInit {
       }
     });
 
-    // Apaga `contenidoPendienteSeleccion` cuando el Router termina de resolver
-    // la navegación (llegue a destino, se cancele o falle). Ante cualquier error o
-    // cancelación de ruta, resetea el ícono del sidebar a Inicio y redirige a /app/dashboard.
+    // Apaga `contenidoPendienteSeleccion` cuando el Router termina de resolver la navegación.
     this.router.events
       .pipe(
         filter(
@@ -76,12 +74,11 @@ export class SidebarComponent implements AfterViewInit {
         takeUntilDestroyed()
       )
       .subscribe((evento) => {
-        this.shell.setContenidoPendienteSeleccion(false);
+        if (evento instanceof NavigationEnd || evento instanceof NavigationError || evento instanceof NavigationSkipped) {
+          this.shell.setContenidoPendienteSeleccion(false);
+        }
 
-        if (evento instanceof NavigationError || evento instanceof NavigationCancel) {
-          this.shell.setSidebarIconActivo('host-inicio');
-          this.router.navigateByUrl('/app/dashboard');
-        } else if (evento instanceof NavigationEnd) {
+        if (evento instanceof NavigationEnd) {
           const url = evento.urlAfterRedirects || evento.url;
           if (url.includes('/dashboard') || url.startsWith('/error') || url === '/app') {
             this.shell.setSidebarIconActivo('host-inicio');
@@ -135,18 +132,6 @@ export class SidebarComponent implements AfterViewInit {
       return;
     }
 
-    // Caso especial: Inicio navega directamente al dashboard
-    if (icon.id === 'host-inicio') {
-      this.shell.setContenidoPendienteSeleccion(false);
-      this.router.navigateByUrl('/app/dashboard').catch(() => {});
-    } else if (ruta) {
-      // Navegación local directa si el ícono tiene ruta especificada
-      this.shell.setContenidoPendienteSeleccion(false);
-      this.router.navigateByUrl(ruta).catch(() => {
-        console.warn(`Ruta no encontrada: ${ruta}`);
-      });
-    }
-
     // Transición visual para sistemas con panel
     if (icon.tienePanel && (eraActivo !== icon.id || this.shell.navPanelColapsado())) {
       this.cambiandoPanel.set(true);
@@ -154,13 +139,27 @@ export class SidebarComponent implements AfterViewInit {
       setTimeout(() => this.cambiandoPanel.set(false), DURACION_TRANSICION_PANEL_MS);
     }
 
-    // Al cambiar a otro sistema con panel sin ruta directa, se muestra el estado de carga
-    // con un temporizador de respaldo para asegurar que la pantalla no se quede estática.
-    if (icon.tienePanel && eraActivo !== icon.id && !ruta && icon.id !== 'host-inicio') {
+    // Caso especial: Inicio navega directamente al dashboard
+    if (icon.id === 'host-inicio') {
+      this.shell.setContenidoPendienteSeleccion(false);
+      this.router.navigateByUrl('/app/dashboard').catch(() => {});
+      return;
+    }
+
+    // Módulos simples sin panel secundario que tienen ruta propia
+    if (!icon.tienePanel && ruta) {
+      this.shell.setContenidoPendienteSeleccion(false);
+      this.router.navigateByUrl(ruta).catch(() => {
+        console.warn(`Ruta no encontrada: ${ruta}`);
+      });
+      return;
+    }
+
+    // Sistemas con panel secundario: abren el panel y muestran el loader/spinner neutro
+    // en el área de contenido a la espera de que el usuario elija un sub-ítem.
+    // Permanece ahí de forma indefinida (sin auto-redirecciones ni reseteo por tiempo).
+    if (icon.tienePanel) {
       this.shell.setContenidoPendienteSeleccion(true);
-      setTimeout(() => {
-        this.shell.setContenidoPendienteSeleccion(false);
-      }, 2500);
     }
   }
 
@@ -168,6 +167,12 @@ export class SidebarComponent implements AfterViewInit {
   protected onRutaSeleccionada(ruta: string): void {
     this.shell.setMenuItemActivo({ ruta, etiqueta: ruta.split('/').pop() ?? '' });
     this.shell.setContenidoPendienteSeleccion(false);
+
+    if (ruta) {
+      this.router.navigateByUrl(ruta).catch((err) => {
+        console.warn(`Ruta no encontrada: ${ruta}`, err);
+      });
+    }
 
     // En pantallas pequeñas, el panel se oculta tras la selección para dejar ver el contenido.
     if (this.esMobil()) {

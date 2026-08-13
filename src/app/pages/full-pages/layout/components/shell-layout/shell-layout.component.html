@@ -19,8 +19,8 @@
            router-outlet (todavía tiene montada la pantalla anterior) y se
            muestra este loader — ver ShellStateService.contenidoPendienteSeleccion. -->
       @if (shell.contenidoPendienteSeleccion()) {
-        <div class="shell-content-loading flex items-center justify-center w-full h-full min-h-[60vh]">
-          <p-progress-spinner styleClass="mis-spinner" strokeWidth="4" fill="transparent" [style]="{ width: '48px', height: '48px' }" />
+        <div class="w-full p-3 pb-20 sm:p-4">
+          <app-panel-neutro />
         </div>
       }
       <!-- pb-20: reserva espacio para la barra inferior fija del sidebar en mobile (h-16 + margen) -->

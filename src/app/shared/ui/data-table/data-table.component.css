@@ -80,5 +80,12 @@
   .mis-col-hide-mobile {
     display: none !important;
   }
+
+  /* Botones del caption (Buscar/Filtrar/Limpiar/Actualizar): en mobile solo
+     el ícono, para que la fila del caption no se apriete — el texto vuelve
+     desde `sm:` (tablet/desktop) en adelante. */
+  :host ::ng-deep .mis-btn-label-desktop .p-button-label {
+    display: none;
+  }
 }
 

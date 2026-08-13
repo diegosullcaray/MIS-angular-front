@@ -90,7 +90,7 @@ describe('MenuStgService', () => {
     expect(conHijos.ruta).toBeUndefined();
 
     expect(sinHijos.tienePanel).toBe(false);
-    expect(sinHijos.ruta).toBe('/ranking-k');
+    expect(sinHijos.ruta).toBe('/app/ranking-k');
   });
 
   it('rutaDeAntItem no duplica el segmento /app (usa act_sec tal cual, sin anteponer /app)', () => {
@@ -106,7 +106,7 @@ describe('MenuStgService', () => {
 
     service.cargar('ana.torres@confianza.pe');
 
-    expect(service.sistemas()[0].ruta).toBe('/sin-act-sec');
+    expect(service.sistemas()[0].ruta).toBe('/app/sin-act-sec');
   });
 
   it('construye el árbol de hijos recursivamente y compara cod_par como string (tipos mixtos)', () => {
@@ -125,11 +125,11 @@ describe('MenuStgService', () => {
     service.cargar('ana.torres@confianza.pe');
 
     const hijos = service.hijosPorSistema()['1'];
-    expect(hijos.find((h) => h.etiqueta === 'Nieto directo')?.ruta).toBe('/sistema/nieto');
+    expect(hijos.find((h) => h.etiqueta === 'Nieto directo')?.ruta).toBe('/app/sistema/nieto');
 
     const grupo = hijos.find((h) => h.etiqueta === 'Grupo intermedio');
     expect(grupo?.ruta).toBeUndefined(); // es un grupo, no una hoja
-    expect(grupo?.hijos?.[0]).toEqual({ etiqueta: 'Hoja final', ruta: '/sistema/grupo/hoja', hijos: undefined });
+    expect(grupo?.hijos?.[0]).toEqual({ etiqueta: 'Hoja final', ruta: '/app/sistema/grupo/hoja', hijos: undefined });
   });
 
   it('buscarPorRuta() encuentra la cadena de etiquetas de una hoja anidada', () => {
@@ -145,7 +145,7 @@ describe('MenuStgService', () => {
 
     service.cargar('ana.torres@confianza.pe');
 
-    expect(service.buscarPorRuta('/a/clientes/cmg')).toEqual({
+    expect(service.buscarPorRuta('/app/a/clientes/cmg')).toEqual({
       sistemaId: 'A',
       etiquetas: ['Clientes', 'CMG Clientes Flujo'],
     });

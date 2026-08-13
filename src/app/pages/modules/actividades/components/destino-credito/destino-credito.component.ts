@@ -17,7 +17,7 @@ import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-t
 const COLUMNAS: DataTableColumn[] = [
   { field: 'HCODSEC', header: 'Cod. Asesor', align: 'center', width: '7rem', filterType: 'text' },
   { field: 'HDESSEC', header: 'Nombre Asesor', filterType: 'text' },
-  { field: 'HCTACLI', header: 'Cuenta Cli.', filterType: 'text', mobileVisible: false },
+  { field: 'HCTACLI', header: 'Cuenta Cli.', filterType: 'text' },
   { field: 'HDESCLI', header: 'Nombre Cliente', filterType: 'text', mobileVisible: false },
   { field: 'HCODOPE', header: 'Operación', align: 'center', filterType: 'text', mobileVisible: false },
   { field: 'HFECDES', header: 'Fec. Desembolso', align: 'center', filterType: 'date', mobileVisible: false },

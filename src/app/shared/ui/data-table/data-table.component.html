@@ -27,7 +27,7 @@
                 class="w-full text-xs"
               />
             </p-iconfield>
-            <p-button icon="pi pi-search" label="Buscar" size="small" styleClass="shrink-0" pTooltip="Buscar" tooltipPosition="top" (onClick)="buscar(buscadorInput.value)"></p-button>
+            <p-button icon="pi pi-search" label="Buscar" size="small" styleClass="shrink-0 mis-btn-label-desktop" pTooltip="Buscar" tooltipPosition="top" (onClick)="buscar(buscadorInput.value)"></p-button>
           }
 
           @if (hayColumnasFiltrable()) {
@@ -37,19 +37,19 @@
               size="small"
               severity="secondary"
               [outlined]="true"
-              styleClass="shrink-0"
+              styleClass="shrink-0 mis-btn-label-desktop"
               [pTooltip]="filtrosVisibles() ? 'Desfiltrar' : 'Filtrar'"
               tooltipPosition="top"
               (onClick)="toggleFiltros()"
             ></p-button>
 
             @if (filtrosVisibles() && hayFiltrosActivos()) {
-              <p-button icon="pi pi-eraser" label="Limpiar" size="small" severity="danger" [text]="true" styleClass="shrink-0" pTooltip="Limpiar filtros" tooltipPosition="top" (onClick)="limpiarFiltros()"></p-button>
+              <p-button icon="pi pi-eraser" label="Limpiar" size="small" severity="danger" [text]="true" styleClass="shrink-0 mis-btn-label-desktop" pTooltip="Limpiar filtros" tooltipPosition="top" (onClick)="limpiarFiltros()"></p-button>
             }
           }
 
           @if (showRefreshButton()) {
-            <p-button icon="pi pi-refresh" label="Actualizar" size="small" severity="secondary" [outlined]="true" styleClass="shrink-0 ml-auto" pTooltip="Actualizar" tooltipPosition="top" (onClick)="refrescar.emit()"></p-button>
+            <p-button icon="pi pi-refresh" label="Actualizar" size="small" severity="secondary" [outlined]="true" styleClass="shrink-0 ml-auto mis-btn-label-desktop" pTooltip="Actualizar" tooltipPosition="top" (onClick)="refrescar.emit()"></p-button>
           }
         </div>
       </ng-template>

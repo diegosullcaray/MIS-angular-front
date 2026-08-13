@@ -1,8 +1,4 @@
 :host ::ng-deep .riesgo-dialog .p-dialog-header {
-  background: var(--mis-primary);
-  color: var(--mis-text-on-primary);
-  border-bottom: 1px solid var(--mis-border);
-  padding: 1rem 1.25rem;
   border-top-left-radius: var(--mis-radius-md);
   border-top-right-radius: var(--mis-radius-md);
 }
