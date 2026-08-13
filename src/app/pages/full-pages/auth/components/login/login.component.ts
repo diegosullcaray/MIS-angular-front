@@ -7,7 +7,7 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 import { LoadSpinnerComponent } from '../load-spinner/load-spinner.component';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { ThemeService } from '../../../../../core/services/theme.service';
-import { APP_VERSION } from '../../../../../core/constants/app.constants';
+import { APP_VERSION } from '../../../../../app.global';
 
 /**
  * Login del Host — Google Sign-In + Winder.

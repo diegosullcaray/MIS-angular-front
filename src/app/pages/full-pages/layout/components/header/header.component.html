@@ -70,31 +70,14 @@
             <div class="text-[11px] text-[var(--mis-text-tertiary)] truncate max-w-[150px]">{{ shell.usuarioActivo()?.email }}</div>
           </div>
         </div>
+        
         <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
+        
         <button class="flex items-center gap-2.5 w-full p-2 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem">
           <ng-icon name="lucideUser" size="13" />
           Mi perfil
         </button>
 
-        <!-- Selector de tema (claro / oscuro / seguir al sistema) -->
-        <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
-        <div class="px-4 py-2">
-          <div class="text-[10px] uppercase tracking-wide text-[var(--mis-text-tertiary)] mb-1.5">Apariencia</div>
-          <div class="flex gap-1 p-0.5 rounded-lg bg-[var(--mis-panel-bg)] border border-[var(--mis-border)]" role="radiogroup" aria-label="Tema de la interfaz">
-            @for (opcion of opcionesTema; track opcion.modo) {
-              <button
-                class="flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-md border-0 bg-transparent cursor-pointer transition-colors duration-150 text-[10px] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)]"
-                [class.tema-opcion--activa]="theme.modo() === opcion.modo"
-                role="radio"
-                [attr.aria-checked]="theme.modo() === opcion.modo"
-                (click)="theme.setModo(opcion.modo)"
-              >
-                <ng-icon [name]="opcion.icono" size="14" />
-                {{ opcion.label }}
-              </button>
-            }
-          </div>
-        </div>
         @if (auth.puedeCambiarUsuario()) {
           <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
           <button class="flex items-center gap-2.5 w-full p-2 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem" (click)="abrirCambiarUsuario()">
@@ -102,6 +85,7 @@
             Cambiar usuario
           </button>
         }
+        
         @if (auth.esUsuarioAlterno()) {
           <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
           <button class="flex items-center gap-2.5 w-full p-2 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem" (click)="volverAUsuarioOriginal()">
@@ -109,7 +93,9 @@
             Mi usuario
           </button>
         }
+        
         <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
+        
         <button class="flex items-center gap-2.5 w-full p-2 px-4 border-0 bg-transparent text-xs text-[var(--mis-danger)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-danger-light)]" role="menuitem" (click)="pedirConfirmacionSalir()">
           <ng-icon name="lucideLogOut" size="13" />
           Cerrar sesión

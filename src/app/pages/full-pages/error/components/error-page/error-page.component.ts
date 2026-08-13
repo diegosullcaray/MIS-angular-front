@@ -7,21 +7,18 @@ import {
   lucideCompass, lucideTimer, lucideServerCrash, lucideArrowLeft,
   lucideHome, lucideRefreshCw, lucideLogIn,
 } from '@ng-icons/lucide';
-import { HttpErrorService, type HttpErrorAction } from '../../../../../core/http-error';
+import { HttpErrorService } from '../../services/http-error.service';
+import type { HttpErrorAction } from '../../models/http-error.model';
+import { ButtonModule } from 'primeng/button';
 
 /**
- * Página de error genérica de fullpages — renderiza cualquier código HTTP
- * conocido (`http-error.constants.ts`) a partir del parámetro de ruta
- * `:code` (ver `app.routes.ts` → `error/:code`).
- *
- * `httpErrorInterceptor` navega aquí para errores fatales de infraestructura
- * (backend caído, timeout, sin red); también es alcanzable manualmente
- * (ej. un enlace "Reportar problema").
+ * Página de error genérica.
+ * Resuelve y muestra información según el código HTTP recibido en la ruta (ej: /error/404).
  */
 @Component({
   selector: 'app-error-page',
   standalone: true,
-  imports: [RouterLink, NgIconComponent],
+  imports: [RouterLink, NgIconComponent, ButtonModule],
   viewProviders: [provideIcons({
     lucideWifiOff, lucideCircleAlert, lucideLock, lucideShieldAlert,
     lucideCompass, lucideTimer, lucideServerCrash, lucideArrowLeft,
@@ -35,7 +32,7 @@ export class ErrorPageComponent {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
 
-  /** Código HTTP como string (route param, ver `withComponentInputBinding`). */
+  /** Código HTTP inyectado por el router (requiere withComponentInputBinding). */
   readonly code = input<string>('500');
 
   protected readonly info = computed(() => this.httpErrorService.resolver(Number(this.code())));
@@ -55,19 +52,13 @@ export class ErrorPageComponent {
   };
 
   protected ejecutarAccion(): void {
-    switch (this.info().accion) {
-      case 'retry':
-        window.location.reload();
-        break;
-      case 'login':
-        this.router.navigateByUrl('/login');
-        break;
-      case 'home':
-        this.router.navigateByUrl('/app/dashboard');
-        break;
-      case 'back':
-        this.location.back();
-        break;
-    }
+    const acciones: Record<HttpErrorAction, () => void> = {
+      retry: () => window.location.reload(),
+      login: () => this.router.navigateByUrl('/login'),
+      home:  () => this.router.navigateByUrl('/app/dashboard'),
+      back:  () => this.location.back(),
+    };
+
+    acciones[this.info().accion]?.();
   }
 }

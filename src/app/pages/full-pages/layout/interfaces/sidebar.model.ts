@@ -1,17 +1,17 @@
 export type SidebarIconType = 'host-inicio' | 'host-modulo' | 'remote';
 
-/** Ícono de la Col 1 (rail angosto) — selecciona qué panel mostrar en la Col 2. */
+/** Ícono del menú principal (Col 1). */
 export interface SidebarIcon {
   id: string;
   tipo: SidebarIconType;
   icono: string;
   etiqueta: string;
-  /** Presente cuando el ícono no tiene panel propio: navega directo al hacer clic. */
+  /** Ruta de navegación directa (aplica si no tiene panel). */
   ruta?: string;
   tienePanel: boolean;
 }
 
-/** Panel de la Col 2 para el ícono seleccionado. */
+/** Configuración del panel secundario (Col 2). */
 export interface SidebarNavPanelConfig {
   tipo: 'host-admin' | 'remote';
   titulo: string;
@@ -19,7 +19,7 @@ export interface SidebarNavPanelConfig {
   secciones: SidebarNavSeccion[];
 }
 
-/** Sección colapsable del panel (chevron ▾ igual que "Espacios"/"GOOGLE" en Gmail/Chat). */
+/** Sección agrupadora dentro del panel. */
 export interface SidebarNavSeccion {
   titulo?: string;
   rutas: SidebarNavRuta[];
@@ -27,11 +27,11 @@ export interface SidebarNavSeccion {
 
 export interface SidebarNavRuta {
   etiqueta: string;
-  /** Ausente cuando el nodo es un grupo (tiene `hijos`): no navega, solo expande/colapsa. */
+  /** Opcional. Si se omite, el nodo actúa como un grupo desplegable. */
   ruta?: string;
   icono?: string;
   soloAdmin?: boolean;
   soloAdminSistema?: boolean;
-  /** Nodos de nivel N+1 (árbol de STG, profundidad arbitraria). */
+  /** Subrutas anidadas. */
   hijos?: SidebarNavRuta[];
 }

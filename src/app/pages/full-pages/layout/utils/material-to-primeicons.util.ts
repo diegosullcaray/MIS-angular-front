@@ -1,16 +1,4 @@
-/**
- * STG (Ant) guarda en `icon_sec` nombres de ligature de Material Icons
- * (ej. "assessment", "people_alt", "monetization_on") — ver
- * stg-app-mis-r22/src/app/pages/full-pages/layout/services/navigation.service.ts.
- *
- * PrimeIcons no tiene un catálogo equivalente, así que no existe un mapeo 1:1.
- * Esta tabla cubre los nombres de Material Icons más usados en menús de
- * administración/back-office (los módulos de STG son de este tipo: comercial,
- * contable, cartera, incentivos, reportes, usabilidad) con el ícono de
- * PrimeIcons más parecido semánticamente. Los nombres no cubiertos caen al
- * fallback ('pi pi-th-large', el mismo genérico que ya usa el resto del
- * sidebar para remotes sin ícono propio).
- */
+/** Mapeo de Material Icons (backend Ant/STG) a clases de PrimeIcons. */
 const MATERIAL_TO_PRIMEICONS: Record<string, string> = {
   // Navegación / generales
   dashboard: 'pi pi-th-large',
@@ -42,7 +30,7 @@ const MATERIAL_TO_PRIMEICONS: Record<string, string> = {
   policy: 'pi pi-shield',
   gavel: 'pi pi-hammer',
 
-  // Reportes / analítica (comercial, cartera, incentivos)
+  // Reportes / analítica
   assessment: 'pi pi-chart-bar',
   bar_chart: 'pi pi-chart-bar',
   insert_chart: 'pi pi-chart-bar',
@@ -57,7 +45,7 @@ const MATERIAL_TO_PRIMEICONS: Record<string, string> = {
   timeline: 'pi pi-history',
   history: 'pi pi-history',
 
-  // Finanzas (contable, cartera, incentivos)
+  // Finanzas
   monetization_on: 'pi pi-money-bill',
   attach_money: 'pi pi-dollar',
   payments: 'pi pi-wallet',
@@ -133,7 +121,7 @@ const MATERIAL_TO_PRIMEICONS: Record<string, string> = {
   calendar_today: 'pi pi-calendar',
   schedule: 'pi pi-clock',
 
-  // Otros de uso frecuente en menús
+  // Otros
   search: 'pi pi-search',
   filter_list: 'pi pi-filter',
   print: 'pi pi-print',
@@ -152,24 +140,24 @@ const MATERIAL_TO_PRIMEICONS: Record<string, string> = {
   share: 'pi pi-share-alt',
   link: 'pi pi-link',
 
-  // Confirmados en runtime desde STG (ver consola del navegador, `[sidebar] icon_sec`)
-  summarize: 'pi pi-chart-bar',            // Reportes
-  military_tech: 'pi pi-trophy',           // Ranking
+  // Agregados detectados en runtime desde STG
+  summarize: 'pi pi-chart-bar',
+  military_tech: 'pi pi-trophy',
   cloud_circle: 'pi pi-cloud',
   public: 'pi pi-globe',
   stars: 'pi pi-star',
-  task: 'pi pi-list-check',                // Actividades
-  donut_small: 'pi pi-chart-pie',          // Cuadro de mando
+  task: 'pi pi-list-check',
+  donut_small: 'pi pi-chart-pie',
   pets: 'pi pi-heart',
-  launch: 'pi pi-external-link',           // Jira SD / Helpdesk
-  insights: 'pi pi-chart-line',            // Desempeño
-  home_repair_service: 'pi pi-wrench',     // Herramientas
+  launch: 'pi pi-external-link',
+  insights: 'pi pi-chart-line',
+  home_repair_service: 'pi pi-wrench',
 };
 
-/** Ícono genérico para nombres de Material Icons sin equivalente conocido en PrimeIcons. */
+/** Ícono genérico por defecto. */
 export const PRIMEICONS_FALLBACK = 'pi pi-th-large';
 
-/** Índice normalizado (minúsculas, `-`/espacio → `_`) para no depender del casing/formato exacto que mande STG. */
+/** Índice con claves normalizadas (minúsculas y guiones bajos). */
 const NORMALIZED_INDEX: Record<string, string> = Object.fromEntries(
   Object.entries(MATERIAL_TO_PRIMEICONS).map(([key, value]) => [normalizar(key), value]),
 );
@@ -178,15 +166,10 @@ function normalizar(nombre: string): string {
   return nombre.trim().toLowerCase().replace(/[\s-]+/g, '_');
 }
 
-/** `icon_sec` sin mapeo conocido, vistos en runtime (para extender la tabla con datos reales de STG). */
+/** Caché de íconos no mapeados para evitar logs duplicados en consola. */
 const sinMapear = new Set<string>();
 
-/**
- * Traduce un nombre de ligature de Material Icons (`icon_sec` de STG) a la
- * clase CSS de PrimeIcons más parecida. Si no hay un mapeo conocido, devuelve
- * {@link PRIMEICONS_FALLBACK} y registra el nombre (una vez) en consola para
- * poder añadirlo a `MATERIAL_TO_PRIMEICONS`.
- */
+/** Convierte un Material Icon a su equivalente en PrimeIcons. */
 export function mapMaterialIconToPrimeIcons(materialIconName: string | undefined | null): string {
   if (!materialIconName) return PRIMEICONS_FALLBACK;
 
@@ -196,7 +179,7 @@ export function mapMaterialIconToPrimeIcons(materialIconName: string | undefined
 
   if (!sinMapear.has(clave)) {
     sinMapear.add(clave);
-    console.warn(`[sidebar] icon_sec "${materialIconName}" sin mapeo a PrimeIcons — usando ícono genérico. Añádelo a material-to-primeicons.util.ts.`);
+    console.warn(`[sidebar] icon_sec "${materialIconName}" sin mapeo a PrimeIcons — usando ícono genérico.`);
   }
   return PRIMEICONS_FALLBACK;
 }

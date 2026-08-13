@@ -2,73 +2,61 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
+
+// Iconos
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideChevronDown, lucideUser, lucideSettings,
-  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle, lucideUsers,
-  lucideSun, lucideMoon, lucideMonitor
+  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
+  lucideUsers, lucideSun, lucideMoon
 } from '@ng-icons/lucide';
+
+// PrimeNG
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import type { MenuItem } from 'primeng/api';
+
+// Servicios y Componentes
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { ThemeService, type ModoTema } from '../../../../../core/services/theme.service';
+import { ThemeService } from '../../../../../core/services/theme.service';
 import { AuthService } from '../../../auth/service/auth.service';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { CambiarUsuarioDialogComponent } from '../dialogs/cambiar-usuario-dialog/cambiar-usuario-dialog.component';
+import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
 
-/** Etiquetas de los segmentos de ruta conocidos del Host. */
-const SEGMENTO_LABELS: Record<string, string> = {
-  dashboard: 'Mi espacio',
-  'ranking-k': 'Ranking Kaypacha',
-  'Kaypacha__': 'Kaypacha',
-  categoria: 'Categoría',
-  actividades: 'Actividades',
-  'dest-credito': 'Destino de Crédito',
-  'reg-prosp-corr': 'Prospectos Corresponsal',
-  'regprosp-corr': 'Transacciones Corresponsal',
-  presupuesto: 'Presupuesto',
-  lineas: 'Líneas',
-  gestion: 'Gestión',
-  activos: 'Activos',
-  'pasivos-patrimonio': 'Pasivos y Patrimonio',
-  sistema: 'Sistema',
-  seguimiento: 'Seguimiento',
-  'car-cre': 'Cartera de Créditos',
-  'car-dep-bp': 'Depósitos Banca Preferente',
-  'car-dep-red': 'Depósitos Red',
-  'seg-com': 'Seguros Comercial',
-  'seg-ope': 'Seguros Operaciones',
-  resp: 'Responsables',
-  'tbl-ver': 'Tablero de Verificación',
-};
+
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule, CambiarUsuarioDialogComponent],
-  viewProviders: [provideIcons({
-    lucideChevronDown, lucideUser, lucideSettings,
-    lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle, lucideUsers,
-    lucideSun, lucideMoon, lucideMonitor,
-  })],
+  viewProviders: [
+    provideIcons({
+      lucideChevronDown, lucideUser, lucideSettings,
+      lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
+      lucideUsers, lucideSun, lucideMoon
+    })
+  ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
+  // ─── Dependencias ──────────────────────────────────────────────────────────
   protected readonly shell = inject(ShellStateService);
   protected readonly auth = inject(AuthService);
   protected readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
   private readonly menuStg = inject(MenuStgService);
   private readonly kaypacha = inject(KaypachaService);
+
+  // ─── Estado Local (Signals) ───────────────────────────────────────────────
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
   protected readonly cambiarUsuarioOpen = signal(false);
 
-  /** URL actual como signal (zoneless-friendly). */
+  /** URL actual capturada para reaccionar a cambios de ruta. */
   private readonly urlActual = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -77,119 +65,50 @@ export class HeaderComponent {
     { initialValue: this.router.url }
   );
 
-  /** Ítem raíz del breadcrumb (Host). */
-  protected readonly breadcrumbHome: MenuItem = {
-    icon: 'pi pi-home',
-    routerLink: '/app/dashboard',
-  };
+  // ─── Estado Computado ─────────────────────────────────────────────────────
+  protected readonly logoMis = computed(() =>
+    this.theme.oscuro() ? 'assets/images/fc/logos/mis_white.png' : 'assets/images/fc/logos/mis.png'
+  );
 
-  /** Modelo del p-breadcrumb derivado de la ruta activa. */
+  protected readonly rolLabel = computed(() => {
+    const roles: Record<string, string> = {
+      'admin-sistema': 'Admin Sistema',
+      'admin-general': 'Admin General',
+      'supervisor-area': 'Supervisor',
+    };
+    return roles[this.shell.usuarioActivo()?.rol ?? ''] ?? '';
+  });
+
+  // ─── Configuración de Breadcrumb ──────────────────────────────────────────
+  protected readonly breadcrumbHome: MenuItem = { icon: 'pi pi-home', routerLink: '/app/dashboard' };
+
+  /** Construye la ruta de navegación superior basándose en la URL activa. */
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
     const url = this.urlActual().split('?')[0].split('#')[0];
     const segmentos = url.split('/').filter(Boolean);
 
-    // Solo rutas del shell: /app/...
-    if (segmentos[0] !== 'app') return [];
+    // Ignora rutas que no sean del shell principal (/app/...)
+    if (segmentos[0] !== 'app' || segmentos.length < 2) return [];
 
     const resto = segmentos.slice(1);
-    if (resto.length === 0) return [];
-
-    // Si el primer segmento no es una ruta propia del Host, es un remote:
-    // sus subsegmentos son rutas internas del subsistema, no vistas del Host.
     const esRemote = !(resto[0] in SEGMENTO_LABELS);
 
     return esRemote ? this.breadcrumbRemote(resto, url) : this.breadcrumbHost(resto);
   });
 
-  /** Breadcrumb de las rutas propias del Host, a partir de `SEGMENTO_LABELS`. */
-  private breadcrumbHost(resto: string[]): MenuItem[] {
-    const items: MenuItem[] = [];
-    let rutaAcumulada = '/app';
-
-    for (let i = 0; i < resto.length; i++) {
-      const seg = resto[i];
-      rutaAcumulada += `/${seg}`;
-
-      let label = SEGMENTO_LABELS[seg];
-
-      if (!label && resto[i - 1] === 'categoria') {
-        // El segmento es el :id (rdestip) de la categoría de Kaypacha.
-        label = this.kaypacha.buscarCategoria(seg)?.name ?? 'Detalle';
-      }
-
-      if (!label) {
-        label = 'Detalle';
-      }
-
-      const esUltimo = i === resto.length - 1;
-      items.push(esUltimo ? { label } : { label, routerLink: rutaAcumulada });
-    }
-
-    return items;
-  }
-
-  /**
-   * Breadcrumb de un sistema de STG (backend Ant) todavía no migrado a un
-   * módulo propio del Host. El resto de la URL es la ruta interna
-   * (`act_sec`) de la hoja activa — el slug real del sistema (`cod_sec`) no
-   * aparece como segmento propio, va embebido ahí. Por eso no se puede leer
-   * el sistema de `resto[0]`: se busca la hoja completa en el árbol de STG
-   * (`MenuStgService`, a través de todos los sistemas) y de ahí salen tanto
-   * el sistema real como las etiquetas de sus ancestros.
-   */
-  private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
-    const hallazgo = this.menuStg.buscarPorRuta(url);
-
-    if (hallazgo) {
-      const items: MenuItem[] = [{ label: this.labelDeRemote(hallazgo.sistemaId) }];
-      hallazgo.etiquetas.forEach((label) => items.push({ label }));
-      return items;
-    }
-
-    // El árbol de STG todavía no cargó o no encontró la hoja: se muestra
-    // igual el último segmento (mejor que nada), legible en vez de crudo.
-    const items: MenuItem[] = [{ label: this.labelDeRemote(resto[0]) }];
-    if (resto.length > 1) {
-      items.push({ label: this.prettify(resto[resto.length - 1]) });
-    }
-    return items;
-  }
-
-  protected readonly rolLabel = computed(() => {
-    const labels: Record<string, string> = {
-      'admin-sistema': 'Admin Sistema',
-      'admin-general': 'Admin General',
-      'supervisor-area': 'Supervisor',
-    };
-    return labels[this.shell.usuarioActivo()?.rol ?? ''] ?? '';
-  });
-
-  protected readonly logoMis = computed(() =>
-    this.theme.oscuro() ? 'assets/images/fc/logos/mis_white.png' : 'assets/images/fc/logos/mis.png'
-  );
-
-  /** Opciones del selector de tema, en el orden en que se muestran. */
-  protected readonly opcionesTema: ReadonlyArray<{ modo: ModoTema; icono: string; label: string }> = [
-    { modo: 'claro', icono: 'lucideSun', label: 'Claro' },
-    { modo: 'oscuro', icono: 'lucideMoon', label: 'Oscuro' },
-    { modo: 'sistema', icono: 'lucideMonitor', label: 'Sistema' },
-  ];
-
+  // ─── Acciones de la Vista ─────────────────────────────────────────────────
   protected toggleDropdown(): void {
     this.dropdownOpen.update(v => !v);
   }
 
   protected pedirConfirmacionSalir(): void {
-    this.dropdownOpen.set(false);
-    this.confirmarSalirOpen.set(true);
+    this.cerrarDropdownYAbrir(this.confirmarSalirOpen);
   }
 
   protected abrirCambiarUsuario(): void {
-    this.dropdownOpen.set(false);
-    this.cambiarUsuarioOpen.set(true);
+    this.cerrarDropdownYAbrir(this.cambiarUsuarioOpen);
   }
 
-  /** Vuelve a la identidad original (STG: `LoginService.onOriLogin`) — instantáneo, sin diálogo de confirmación, igual que el legado. */
   protected volverAUsuarioOriginal(): void {
     this.dropdownOpen.set(false);
     this.auth.volverAUsuarioOriginal();
@@ -197,12 +116,57 @@ export class HeaderComponent {
 
   protected async confirmarCerrarSesion(): Promise<void> {
     this.confirmarSalirOpen.set(false);
-    // El overlay se pinta desde AppComponent (raíz) para no quedar atrapado
-    // dentro del contenedor del header, que tiene backdrop-blur y por lo
-    // tanto rompe el "position: fixed" del spinner (crea un containing block).
+    // El overlay de carga (spinner) se maneja a nivel raíz para evitar problemas de z-index
     this.shell.setCerrandoSesion(true);
     await new Promise((resolve) => setTimeout(resolve, 5000));
     this.auth.cerrarSesion();
+  }
+
+  // ─── Métodos Privados ─────────────────────────────────────────────────────
+
+  /** Helper para cerrar el menú y abrir un dialog específico. */
+  private cerrarDropdownYAbrir(modalSignal: typeof this.confirmarSalirOpen): void {
+    this.dropdownOpen.set(false);
+    modalSignal.set(true);
+  }
+
+  /** Genera el breadcrumb mapeando los segmentos nativos. */
+  private breadcrumbHost(resto: string[]): MenuItem[] {
+    let rutaAcumulada = '/app';
+
+    return resto.map((seg, index) => {
+      rutaAcumulada += `/${seg}`;
+      let label = SEGMENTO_LABELS[seg];
+
+      // Excepción: Búsqueda dinámica de nombre de categoría para Kaypacha
+      if (!label && resto[index - 1] === 'categoria') {
+        label = this.kaypacha.buscarCategoria(seg)?.name ?? 'Detalle';
+      }
+
+      label = label || 'Detalle';
+      const esUltimo = index === resto.length - 1;
+
+      return esUltimo ? { label } : { label, routerLink: rutaAcumulada };
+    });
+  }
+
+  /** Genera el breadcrumb dinámico extrayendo datos del árbol del menú STG (sistemas remotos). */
+  private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
+    const hallazgo = this.menuStg.buscarPorRuta(url);
+
+    if (hallazgo) {
+      return [
+        { label: this.labelDeRemote(hallazgo.sistemaId) },
+        ...hallazgo.etiquetas.map(label => ({ label }))
+      ];
+    }
+
+    // Fallback: Muestra el último segmento limpio si el árbol aún no cargó.
+    const items: MenuItem[] = [{ label: this.labelDeRemote(resto[0]) }];
+    if (resto.length > 1) {
+      items.push({ label: this.prettify(resto[resto.length - 1]) });
+    }
+    return items;
   }
 
   private labelDeRemote(slug: string): string {
@@ -210,7 +174,7 @@ export class HeaderComponent {
     return stg?.etiqueta ?? this.prettify(slug.replace('subsistema-', ''));
   }
 
-  /** kebab-case → texto legible: 'reportes-operativos' → 'Reportes operativos' */
+  /** Convierte formato URL a texto legible (ej: 'cartera-credito' -> 'Cartera credito'). */
   private prettify(seg: string): string {
     const texto = seg.replace(/-/g, ' ');
     return texto.charAt(0).toUpperCase() + texto.slice(1);
