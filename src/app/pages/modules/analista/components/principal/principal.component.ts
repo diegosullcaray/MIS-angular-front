@@ -12,14 +12,10 @@ import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-
 import { SelectorColaboradorDialogComponent } from '../../ui/selector-colaborador-dialog/selector-colaborador-dialog.component';
 import { DetalleTablaDialogComponent } from '../../ui/detalle-tabla-dialog/detalle-tabla-dialog.component';
 import { AnalistaService } from '../../services/analista.service';
-import type {
-  ColaboradorItem,
-  FilaClienteCredito,
-  FilaLabelValor,
-  HistoricoVariable,
-  NodoJerarquiaAncla,
-  ResumenDashboard,
-} from '../../models';
+import { crearSelectorColaborador } from '../../utils/colaborador-selector.util';
+import type { ColaboradorItem } from '../../models/colaborador.model';
+import type { FilaLabelValor } from '../../models/comun.model';
+import type { DatosGraficoLinea, FilaClienteCredito, HistoricoVariable, ResumenDashboard } from '../../models/dashboard.model';
 
 /** Paleta fija (mismo tinte navy/sky del sistema — Chart.js no resuelve variables CSS). */
 const COLOR_PRIMARY = '#1D396E';
@@ -28,24 +24,12 @@ const PALETA_TRAMOS = ['#16A34A', '#00A2FF', '#B45309', '#DC2626', '#7C3AED', '#
 
 const OPCIONES_BASE = { responsive: true, maintainAspectRatio: false };
 
-/** Forma esperada por `p-chart` — dataset genérico de Chart.js. */
-interface DatosGraficoLinea {
-  labels: string[];
-  datasets: Array<{ label: string; data: number[]; borderColor: string; backgroundColor: string; tension: number }>;
-}
-
 /**
- * Principal (`/app/analista`) — migrado de `PrincipalComponent` (legado STG,
- * `docs/07-modulos/analista/principal`). Dashboard de un analista: KPIs,
- * perfil, 3 gráficos (comparativo de día, evolutivo mensual, cartera por
- * tramos de mora) y la tabla de clientes con detalle.
- *
- * El legado, apenas terminaba de cargar los datos, navegaba solo a
- * `./listas` (`nav()` al final de `loadData()`/`selectedSec$`) — con eso el
- * propio dashboard quedaba inalcanzable en la práctica. Se preserva el botón
- * "Listas" para ir para allá, pero sin el redirect automático: si el
- * dashboard ya no fuera útil no se habría migrado, así que se deja
- * disponible.
+ * Principal (`/app/analista`) — dashboard del analista: KPIs, perfil, 3
+ * gráficos y tabla de clientes con detalle. Migrado de `PrincipalComponent`
+ * (legado STG): el legado redirigía solo a `./listas` apenas cargaba,
+ * dejando el propio dashboard inalcanzable; acá se preserva el botón
+ * "Listas" pero sin el redirect automático.
  */
 @Component({
   selector: 'app-principal-analista',
@@ -70,8 +54,12 @@ export class PrincipalComponent implements OnInit {
   private readonly analista = inject(AnalistaService);
   private readonly router = inject(Router);
 
-  protected readonly esAdmin = computed(() => this.analista.esAdmin());
-  protected readonly colaborador = this.analista.colaboradorActivo;
+  protected readonly selectorColaborador = crearSelectorColaborador(this.analista);
+  protected readonly esAdmin = this.selectorColaborador.esAdmin;
+  protected readonly colaborador = this.selectorColaborador.colaboradorActivo;
+  protected readonly dialogColaboradorAbierto = this.selectorColaborador.dialogAbierto;
+  protected readonly colaboradores = this.selectorColaborador.colaboradores;
+  protected readonly cargandoColaboradores = this.selectorColaborador.cargando;
 
   protected readonly cargando = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -79,10 +67,6 @@ export class PrincipalComponent implements OnInit {
 
   protected readonly cargandoHistorico = signal(false);
   protected readonly variableActual = signal<string | null>(null);
-
-  protected readonly dialogColaboradorAbierto = signal(false);
-  protected readonly colaboradores = signal<ColaboradorItem[]>([]);
-  protected readonly cargandoColaboradores = signal(false);
 
   protected readonly dialogDetalleAbierto = signal(false);
   protected readonly detalleCliente = signal<FilaLabelValor[]>([]);
@@ -125,66 +109,23 @@ export class PrincipalComponent implements OnInit {
 
   protected readonly datosEvolutivo = signal<DatosGraficoLinea | null>(null);
 
-  private readonly ancla = signal<NodoJerarquiaAncla | null>(null);
-  private readonly cargandoAncla = signal(false);
-
   constructor() {
     effect(() => {
       const c = this.colaborador();
       if (c) untracked(() => this.cargar(c.codBt));
     });
-
-    // Dispara la carga de colaboradores en cuanto el diálogo esté abierto Y
-    // el nodo ancla haya terminado de resolverse — antes se intentaba una
-    // sola vez al abrir el diálogo (`abrirSelectorColaborador`), así que si
-    // el admin hacía click antes de que `obtenerAnclaAdmin()` respondiera,
-    // el diálogo quedaba vacío para siempre (sin spinner ni reintento).
-    effect(() => {
-      const abierto = this.dialogColaboradorAbierto();
-      if (!abierto || this.colaboradores().length > 0) return;
-      if (this.cargandoAncla()) return;
-
-      const ancla = this.ancla();
-      if (!ancla) {
-        untracked(() => this.cargandoColaboradores.set(false));
-        return;
-      }
-      untracked(() => this.cargarColaboradores(ancla));
-    });
   }
 
   ngOnInit(): void {
-    if (this.esAdmin()) {
-      this.cargandoAncla.set(true);
-      this.analista.obtenerAnclaAdmin().subscribe({
-        next: (ancla) => {
-          this.ancla.set(ancla);
-          this.cargandoAncla.set(false);
-        },
-        error: () => this.cargandoAncla.set(false),
-      });
-    } else {
-      this.analista.usarColaboradorPropio();
-    }
+    this.selectorColaborador.inicializar();
   }
 
   protected abrirSelectorColaborador(): void {
-    this.dialogColaboradorAbierto.set(true);
-    if (this.colaboradores().length === 0) this.cargandoColaboradores.set(true);
-  }
-
-  private cargarColaboradores(ancla: NodoJerarquiaAncla): void {
-    this.analista.obtenerColaboradores(ancla.tip_cod, ancla.cod_rel).subscribe({
-      next: (lista) => {
-        this.colaboradores.set(lista);
-        this.cargandoColaboradores.set(false);
-      },
-      error: () => this.cargandoColaboradores.set(false),
-    });
+    this.selectorColaborador.abrir();
   }
 
   protected onColaboradorSeleccionado(item: ColaboradorItem): void {
-    this.analista.establecerColaborador(item);
+    this.selectorColaborador.seleccionar(item);
   }
 
   protected cambiarVariable(cod: string): void {

@@ -13,13 +13,3 @@ export interface BaseNegativaBusquedaFila {
   TIPO: string;
   [key: string]: unknown;
 }
-
-export interface BaseNegativaResultadoRaw {
-  data?: unknown[];
-  /** Definición de columnas dinámica — solo viene en el resultado de detalle, no en el de búsqueda. */
-  headers?: string;
-}
-
-export interface BaseNegativaResponseBody {
-  resultado?: BaseNegativaResultadoRaw;
-}

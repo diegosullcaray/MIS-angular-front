@@ -6,8 +6,9 @@ import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
-import { normalizarTexto } from '../../../utils/texto.util';
-import type { ColumnaTabla, NivelJerarquiaFijo, ResponsableFila } from '../../../models';
+import { filtrarPorDescripcion } from '../../../utils/texto.util';
+import type { ColumnaTabla } from '../../../models/tabla.model';
+import type { NivelJerarquiaFijo, ResponsableFila } from '../../../models/responsables.model';
 
 const NIVELES: NivelJerarquiaFijo[] = [
   { tip_cod: 7, des_lvl: 'Financiera' },
@@ -53,11 +54,7 @@ export class ResponsablesComponent implements OnInit {
   protected readonly filtro = signal('');
   private filasOriginales: ResponsableFila[] = [];
 
-  protected readonly filasFiltradas = computed(() => {
-    const termino = normalizarTexto(this.filtro().trim());
-    if (!termino) return this.filas();
-    return this.filas().filter((f) => normalizarTexto(f.des_rel).includes(termino));
-  });
+  protected readonly filasFiltradas = computed(() => filtrarPorDescripcion(this.filas(), this.filtro()));
 
   protected readonly esEditable = (_fila: ResponsableFila, key: string): boolean => key === 'cod_res';
 

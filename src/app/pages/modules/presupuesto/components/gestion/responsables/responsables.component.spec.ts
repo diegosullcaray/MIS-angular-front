@@ -4,7 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ResponsablesComponent } from './responsables.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { ResponsableFila } from '../../../models';
+import type { ResponsableFila } from '../../../models/responsables.model';
 
 describe('ResponsablesComponent', () => {
   let presupuestoFalso: {

@@ -15,11 +15,20 @@
 
     <!-- Contenido de la ruta activa -->
     <main class="flex-1 overflow-y-auto bg-transparent">
+      <!-- Mientras se elige un sub-ítem tras cambiar de sistema, se oculta el
+           router-outlet (todavía tiene montada la pantalla anterior) y se
+           muestra este loader — ver ShellStateService.contenidoPendienteSeleccion. -->
+      @if (shell.contenidoPendienteSeleccion()) {
+        <div class="w-full p-3 pb-20 sm:p-4">
+          <app-panel-neutro />
+        </div>
+      }
       <!-- pb-20: reserva espacio para la barra inferior fija del sidebar en mobile (h-16 + margen) -->
-      <div class="w-full p-3 pb-20 sm:p-4 shell-content-inner">
+      <div class="w-full p-3 pb-20 sm:p-4 shell-content-inner" [class.hidden]="shell.contenidoPendienteSeleccion()">
         <router-outlet />
       </div>
     </main>
   </div>
   <app-redirect-overlay />
+  <app-loading-overlay />
 </div>

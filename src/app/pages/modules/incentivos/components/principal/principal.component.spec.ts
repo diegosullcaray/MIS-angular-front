@@ -3,7 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { MessageService } from 'primeng/api';
 import { PrincipalComponent } from './principal.component';
 import { IncentivosService } from '../../services/incentivos.service';
-import type { ItemAvance, ItemSuperPlus, PerfilUsuarioIncentivo } from '../../models';
+import type { PerfilUsuarioIncentivo } from '../../models/incentivos-perfil.model';
+import type { ItemAvance, ItemSuperPlus } from '../../models/incentivos-tablas.model';
 
 // jsdom no implementa ResizeObserver — lo usan internamente varios componentes de PrimeNG.
 class ResizeObserverFalso {

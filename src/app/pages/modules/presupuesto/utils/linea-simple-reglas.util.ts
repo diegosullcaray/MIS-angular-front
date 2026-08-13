@@ -1,4 +1,5 @@
-import type { FilaLineaSimple, HierarquiaNodo, ResumenMetadata } from '../models';
+import type { HierarquiaNodo } from '../models/jerarquia.model';
+import type { FilaLineaSimple, ResumenMetadata } from '../models/linea-simple.model';
 
 /** `actSave` del legado — habilita Guardar/Reiniciar: nivel activo = nivel editable Y (responsable vigente o admin). */
 export function calcularPuedeGuardar(

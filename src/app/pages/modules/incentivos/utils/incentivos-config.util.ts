@@ -1,12 +1,8 @@
-import type {
-  CalculadoraConfig,
-  ItemAvance,
-  ItemSemaforo,
-  ItemSuperPlus,
-  NivelSelectorJerarquia,
-  PlusCalculadora,
-  VariableCalculadora,
-} from '../models';
+import type { ConfiguracionUsuarioIncentivos } from '../models/incentivos-perfil.model';
+import type { ItemAvance, ItemSemaforo, ItemSuperPlus } from '../models/incentivos-tablas.model';
+import type { CalculadoraConfig, PlusCalculadora, VariableCalculadora } from '../models/incentivos-calculadora.model';
+import type { NivelSelectorJerarquia } from '../models/incentivos-jerarquia.model';
+import type { EtiquetasDetalle } from '../models/incentivos-detalle.model';
 
 /**
  * Config estática del módulo Incentivos — migrado de `incentivos3.util.ts` +
@@ -65,24 +61,7 @@ export const DESCRIPCIONES: Record<string, string> = {
  * muestran/habilitan en cada pantalla según el tipo de cargo (`tip_cod`) y
  * clase de usuario (`cla_usu`, 1 individual / 2 grupal).
  */
-export interface ConfiguracionUsuarioIncentivos {
-  /** Variables visibles en el semáforo del perfil y editables en la Calculadora. */
-  prof: string[];
-  /** Variables visibles en la grilla de Avances. */
-  avanS: string[];
-  /** Variables de Avances que habilitan el detalle al hacer clic. */
-  avanE: string[];
-  /** Ancho (%) de cada card en la grilla de Avances (depende de cuántas variables aplican al perfil). */
-  avanFlex: number;
-  /** Ítems visibles en la grilla de Super Plus. */
-  supS: string[];
-  /** Ítems de Super Plus que habilitan el detalle al hacer clic. */
-  supE: string[];
-  /** Ítems Plus editables en la Calculadora. */
-  calE: string[];
-  /** Ítems Plus que participan en la suma del bono Super Plus total. */
-  calS: string[];
-}
+
 
 export const CFG_INDIVIDUAL_SECTORISTA: ConfiguracionUsuarioIncentivos = {
   prof: ['car', 'cli', 'efec1', 'efec2', 'efec3'],
@@ -239,10 +218,7 @@ export function crearCalculadoraPlusDefault(): PlusCalculadora[] {
 export const INDICE_SUPER_PLUS: Record<string, number> = Object.fromEntries(IDS_SUPER_PLUS.map((id, i) => [id, i + 1]));
 
 /** Etiquetas de las 3 tarjetas KPI + nota al pie del diálogo de detalle, por `cod_var` — `detalleConfig.items`/`.items2` del legado (título/ícono ya no se duplican acá: se usan directo del ítem de origen, ver `DetalleVariableDialogComponent`). */
-export interface EtiquetasDetalle {
-  tarjetas: [string, string, string];
-  nota?: string;
-}
+
 
 const NOTA_ZONIFICACION = '*Valores netos no incluyen desembolsos fuera de la zonificación y créditos a trabajadores FC';
 const NOTA_IMPULSA = '* Valores netos no incluyen producto Impulsa Mi Perú';

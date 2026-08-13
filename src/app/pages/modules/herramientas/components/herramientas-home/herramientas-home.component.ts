@@ -8,7 +8,7 @@ import { ConsultaRiesgoDialogComponent } from '../../ui/consulta-riesgo-dialog/c
 import { ResultadoTableComponent } from '../../ui/resultado-table/resultado-table.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import type { BaseNegativaBusquedaFila } from '../../models';
+import type { BaseNegativaBusquedaFila } from '../../models/base-negativa.model';
 
 /**
  * "Consulta Base Negativa" (`/app/cons_base_negativa`, módulo Herramientas).

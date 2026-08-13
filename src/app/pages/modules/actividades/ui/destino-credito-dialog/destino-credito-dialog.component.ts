@@ -24,7 +24,6 @@ import type { DestinoCreditoItem } from '../../models/actividades.model';
   styleUrl: './destino-credito-dialog.component.css',
 })
 export class DestinoCreditoDialogComponent implements OnChanges {
-  /** Item a editar */
   readonly itemData = input<DestinoCreditoItem | null>(null);
   readonly visible = input<boolean>(false);
 

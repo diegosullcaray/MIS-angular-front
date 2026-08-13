@@ -1,146 +1,232 @@
-import { Component, inject, input, output, signal } from '@angular/core';
-import { TreeModule } from 'primeng/tree';
-import type { TreeNodeExpandEvent, TreeNodeSelectEvent } from 'primeng/tree';
+import { Component, OnInit, inject, input, output, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import type { TreeNode } from 'primeng/api';
 import { PresupuestoService } from '../../services/presupuesto.service';
-import type { HierarquiaNodo, ParamsJerarquia } from '../../models';
+import type { HierarquiaNodo, NivelJerarquiaDropdown, ParamsJerarquia } from '../../models/jerarquia.model';
 
 /**
- * Selector de jerarquía organizativa — reconstrucción del `hier-rem-selector`
- * legado (componente compartido de otro paquete de STG, no incluido en el
- * volcado de referencia de `docs/07-modulos/presupuesto`). Botón que abre un
- * diálogo con un árbol de expansión perezosa (`base_hier` → `level_hier` por
- * cada nodo expandido), hasta `paramsHier().maxLvl` niveles de profundidad.
- *
- * Emite el nodo elegido tal cual lo usaba el legado (`onSelectHier`, un solo
- * elemento por selector — quien necesite combinar 2 selectores, como el
- * Tablero de Verificación, renderiza dos instancias de este componente).
+ * Selector de jerarquía organizativa mediante desplegables `<p-select>` por nivel jerárquico.
+ * Muestra siempre el texto descriptivo del nodo (ej. "FINANCIERA CONFIANZA") en lugar del código numérico.
  */
 @Component({
   selector: 'app-hier-selector',
   standalone: true,
-  imports: [TreeModule, ButtonModule, DialogModule],
+  imports: [CommonModule, FormsModule, SelectModule, ButtonModule],
   templateUrl: './hier-selector.component.html',
   styleUrl: './hier-selector.component.css',
 })
-export class HierSelectorComponent {
+export class HierSelectorComponent implements OnInit {
   private readonly presupuesto = inject(PresupuestoService);
 
   readonly paramsHier = input.required<ParamsJerarquia>();
-  /** Etiqueta del botón mientras no se eligió ningún nodo. */
   readonly placeholder = input('Elegir jerarquía');
-  /**
-   * Raíz fija opcional — replica `roots` hardcodeado en `confHier` del legado
-   * (ver `PreGesSegTableroVerificacionComponent.ngOnInit`, único caso donde
-   * el legado no pedía la raíz con `getBaseHierarchy`). Si se provee, se usa
-   * tal cual en vez de llamar al backend.
-   */
   readonly raizFija = input<HierarquiaNodo[] | null>(null);
+  /**
+   * `true` (default): la raíz queda preseleccionada y se emite al cargar, así la
+   * pantalla muestra datos de entrada — es lo que esperan las de Presupuesto.
+   *
+   * `false`: la raíz se muestra como punto de partida pero NO se emite, y el
+   * usuario baja de a un nivel. Lo usan los reportes, donde entrar a la pantalla
+   * no debe disparar la consulta de un nodo que nadie eligió.
+   */
+  readonly autoSeleccionar = input(true);
   readonly nodoSeleccionado = output<HierarquiaNodo>();
+  /** Emite cuando la jerarquía no pudo cargarse o vino vacía (ni error HTTP ni nodo alguno) — único caso en que este componente nunca llega a emitir `nodoSeleccionado`. */
+  readonly error = output<void>();
 
-  protected readonly dialogAbierto = signal(false);
-  protected readonly nodos = signal<TreeNode<HierarquiaNodo>[]>([]);
-  protected readonly cargandoRaiz = signal(false);
-  protected readonly etiquetaActual = signal<string | null>(null);
+  protected readonly nodosNivel = signal<NivelJerarquiaDropdown[]>([]);
+  protected readonly valoresSeleccionados = signal<(HierarquiaNodo | null)[]>([]);
+  protected readonly cargando = signal(false);
 
-  private raizCargada = false;
+  ngOnInit(): void {
+    this.cargarRaiz();
+  }
 
-  protected abrir(): void {
-    this.dialogAbierto.set(true);
-    if (!this.raizCargada) {
-      this.cargarRaiz();
-    }
+  public limpiar(): void {
+    this.nodosNivel.set([]);
+    this.valoresSeleccionados.set([]);
+    this.cargarRaiz();
   }
 
   private cargarRaiz(): void {
-    this.raizCargada = true;
-
     const raizFija = this.raizFija();
-    if (raizFija) {
-      this.nodos.set(raizFija.map((nodo) => this.aNodoArbol(nodo, 1)));
+    if (raizFija && raizFija.length > 0) {
+      const primerNodoRaiz = raizFija[0];
+      const crls = raizFija.map((item) => item.cod_rel);
+      this.cargarNivelInicial(primerNodoRaiz.tip_cod, crls, primerNodoRaiz.lvl ?? 1);
       return;
     }
 
-    this.cargandoRaiz.set(true);
-
+    this.cargando.set(true);
     this.presupuesto.obtenerJerarquiaBase(this.paramsHier().code).subscribe({
       next: (raiz) => {
-        this.nodos.set(raiz.map((nodo) => this.aNodoArbol(nodo, 1)));
-        this.cargandoRaiz.set(false);
+        if (raiz && raiz.length > 0) {
+          const primerNodoRaiz = raiz[0];
+          const crls = raiz.map((item) => item.cod_rel);
+          this.cargarNivelInicial(primerNodoRaiz.tip_cod, crls, primerNodoRaiz.lvl ?? 1);
+        } else {
+          this.cargando.set(false);
+          this.error.emit();
+        }
       },
       error: () => {
-        this.cargandoRaiz.set(false);
-        this.raizCargada = false;
+        this.cargando.set(false);
+        this.error.emit();
       },
     });
   }
 
-  protected onExpandir(event: TreeNodeExpandEvent): void {
-    const arbol = event.node as TreeNode<HierarquiaNodo>;
-    if (arbol.leaf || (arbol.children && arbol.children.length > 0)) return;
-
-    const nodo = arbol.data;
-    if (!nodo) return;
-
-    const nivelHijos = (nodo.lvl ?? 1) + 1;
-    arbol.loading = true;
-
+  private cargarNivelInicial(tip_cod: number, cod_rels: string[], lvl: number): void {
+    this.cargando.set(true);
+    const paramsFec = { key: 'fec', val: this.presupuesto.fechaCorte() };
     this.presupuesto
-      .obtenerJerarquiaNivel(this.paramsHier().code, nivelHijos, nodo.tip_cod, [nodo.cod_rel], {
-        key: 'fec',
-        val: this.presupuesto.fechaCorte(),
-      })
+      .obtenerJerarquiaNivel(this.paramsHier().code, lvl, tip_cod, cod_rels, paramsFec)
       .subscribe({
-        next: (hijos) => {
-          arbol.children = hijos.map((hijo) => this.aNodoArbol(hijo, nivelHijos));
-          arbol.loading = false;
-          // Nueva referencia de arreglo raíz para que el árbol detecte el cambio.
-          this.nodos.set([...this.nodos()]);
+        next: (lh) => {
+          if (lh && lh.length > 0) {
+            this.cargando.set(false);
+            this.procesarRespuestaNivelInicial(lh, lvl);
+          } else {
+            // Reintento sin filtro de fecha si la fecha corte actual no devolvió registros
+            this.presupuesto
+              .obtenerJerarquiaNivel(this.paramsHier().code, lvl, tip_cod, cod_rels)
+              .subscribe({
+                next: (lhSinFec) => {
+                  this.cargando.set(false);
+                  if (lhSinFec && lhSinFec.length > 0) {
+                    this.procesarRespuestaNivelInicial(lhSinFec, lvl);
+                  } else {
+                    this.error.emit();
+                  }
+                },
+                error: () => {
+                  this.cargando.set(false);
+                  this.error.emit();
+                },
+              });
+          }
         },
         error: () => {
-          arbol.loading = false;
+          this.presupuesto
+            .obtenerJerarquiaNivel(this.paramsHier().code, lvl, tip_cod, cod_rels)
+            .subscribe({
+              next: (lhSinFec) => {
+                this.cargando.set(false);
+                if (lhSinFec && lhSinFec.length > 0) {
+                  this.procesarRespuestaNivelInicial(lhSinFec, lvl);
+                } else {
+                  this.error.emit();
+                }
+              },
+              error: () => {
+                this.cargando.set(false);
+                this.error.emit();
+              },
+            });
         },
       });
   }
 
-  protected onSeleccionar(event: TreeNodeSelectEvent): void {
-    const arbol = event.node as TreeNode<HierarquiaNodo>;
-    if (!arbol.data) return;
+  private procesarRespuestaNivelInicial(lh: HierarquiaNodo[], lvl: number): void {
+    const dataNormalizada = lh.map((item) => this.normalizarNodo(item, lvl));
+    const primerNodo = dataNormalizada[0];
+    const labelNivel = (lh[0] as any).lbl_hier || (lh[0] as any).lbl_node || `Nivel ${lvl}`;
 
-    this.confirmarSeleccion(arbol);
+    const dp: NivelJerarquiaDropdown = {
+      label: labelNivel,
+      level: lvl,
+      data: dataNormalizada,
+    };
+
+    this.nodosNivel.set([dp]);
+    // La raíz se fija siempre como punto de partida, pero solo se emite (y por
+    // lo tanto se consulta) cuando la pantalla pidió autoselección.
+    this.valoresSeleccionados.set([primerNodo]);
+    if (this.autoSeleccionar()) {
+      this.nodoSeleccionado.emit(primerNodo);
+    }
+
+    const proximoNivel = (primerNodo.lvl ?? lvl) + 1;
+    if (proximoNivel <= this.paramsHier().maxLvl) {
+      this.cargarNivel(primerNodo.tip_cod, [primerNodo.cod_rel], proximoNivel);
+    }
   }
 
-  /**
-   * Atajo para elegir el nodo raíz completo (ej. toda la Financiera) sin
-   * navegar nivel por nivel — necesario para "Verificar", que solo se
-   * habilita en un nivel distinto al editable (ver `calcularPuedeVerificar`),
-   * típicamente uno más alto que el usuario nunca llegaría a pisar
-   * expandiendo el árbol hoja por hoja.
-   */
-  protected seleccionarRaiz(): void {
-    const raiz = this.nodos()[0];
-    if (!raiz) return;
-
-    this.confirmarSeleccion(raiz);
+  private cargarNivel(tip_cod: number, cod_rels: string[], lvl: number): void {
+    this.cargando.set(true);
+    const paramsFec = { key: 'fec', val: this.presupuesto.fechaCorte() };
+    this.presupuesto
+      .obtenerJerarquiaNivel(this.paramsHier().code, lvl, tip_cod, cod_rels, paramsFec)
+      .subscribe({
+        next: (lh) => {
+          if (lh && lh.length > 0) {
+            this.cargando.set(false);
+            const dataNormalizada = lh.map((item) => this.normalizarNodo(item, lvl));
+            const labelNivel = (lh[0] as any).lbl_hier || (lh[0] as any).lbl_node || `Nivel ${lvl}`;
+            const dp: NivelJerarquiaDropdown = { label: labelNivel, level: lvl, data: dataNormalizada };
+            this.nodosNivel.set([...this.nodosNivel(), dp]);
+          } else {
+            this.presupuesto
+              .obtenerJerarquiaNivel(this.paramsHier().code, lvl, tip_cod, cod_rels)
+              .subscribe({
+                next: (lhSinFec) => {
+                  this.cargando.set(false);
+                  if (!lhSinFec || lhSinFec.length > 0) {
+                    const dataNormalizada = lhSinFec.map((item) => this.normalizarNodo(item, lvl));
+                    const labelNivel = (lhSinFec[0] as any).lbl_hier || (lhSinFec[0] as any).lbl_node || `Nivel ${lvl}`;
+                    const dp: NivelJerarquiaDropdown = { label: labelNivel, level: lvl, data: dataNormalizada };
+                    this.nodosNivel.set([...this.nodosNivel(), dp]);
+                  }
+                },
+                error: () => this.cargando.set(false),
+              });
+          }
+        },
+        error: () => {
+          this.cargando.set(false);
+        },
+      });
   }
 
-  private confirmarSeleccion(arbol: TreeNode<HierarquiaNodo>): void {
-    if (!arbol.data) return;
+  protected onSeleccionarNivel(index: number, val: HierarquiaNodo | null): void {
+    if (!val) return;
 
-    this.etiquetaActual.set(arbol.label ?? null);
-    this.dialogAbierto.set(false);
-    this.nodoSeleccionado.emit(arbol.data);
+    // Al seleccionar un nivel, truncamos niveles y selecciones posteriores
+    const nuevosNodos = this.nodosNivel().slice(0, index + 1);
+    const nuevosValores = this.valoresSeleccionados().slice(0, index);
+    nuevosValores[index] = val;
+
+    this.nodosNivel.set(nuevosNodos);
+    this.valoresSeleccionados.set(nuevosValores);
+
+    this.nodoSeleccionado.emit(val);
+
+    const proximoNivel = (val.lvl ?? index + 1) + 1;
+    if (proximoNivel <= this.paramsHier().maxLvl) {
+      this.cargarNivel(val.tip_cod, [val.cod_rel], proximoNivel);
+    }
   }
 
-  private aNodoArbol(nodoCrudo: HierarquiaNodo, nivel: number): TreeNode<HierarquiaNodo> {
-    const nodo: HierarquiaNodo = { ...nodoCrudo, lvl: nivel };
+  private normalizarNodo(nodoCrudo: any, nivel: number): HierarquiaNodo {
+    const descTexto =
+      nodoCrudo.desc_rel ||
+      nodoCrudo.des_rel ||
+      (nodoCrudo.lbl_node && nodoCrudo.lbl_node !== nodoCrudo.lbl_hier ? nodoCrudo.lbl_node : null) ||
+      nodoCrudo.desc ||
+      nodoCrudo.nom ||
+      nodoCrudo.label ||
+      nodoCrudo.name ||
+      nodoCrudo.cod_rel;
+
+    const textoLimpio = String(descTexto ?? '').trim();
+
     return {
-      key: `${nivel}-${nodo.tip_cod}-${nodo.cod_rel}`,
-      label: nodo.desc_rel,
-      data: nodo,
-      leaf: nivel >= this.paramsHier().maxLvl,
+      ...nodoCrudo,
+      desc_rel: textoLimpio,
+      des_rel: textoLimpio,
+      lvl: nodoCrudo.lvl ?? nodoCrudo.lvl_hier ?? nivel,
     };
   }
 }

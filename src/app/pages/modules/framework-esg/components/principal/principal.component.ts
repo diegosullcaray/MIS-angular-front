@@ -11,18 +11,9 @@ import { ToastService } from '../../../../../shared/services/toast.service';
 import { CategoriaMetricasTablaComponent } from '../../ui/categoria-metricas-tabla/categoria-metricas-tabla.component';
 import { EditarMetricaDialogComponent } from '../../ui/editar-metrica-dialog/editar-metrica-dialog.component';
 import { UsuariosMetricaDialogComponent } from '../../ui/usuarios-metrica-dialog/usuarios-metrica-dialog.component';
-import type {
-  EsgConfiguracionModulo,
-  EsgMetricaFila,
-  EsgMetricaListItem,
-  EsgResumenCategoria,
-  EsgResumenPortadaFila,
-} from '../../models';
-
-interface TabCategoria {
-  codCat: number;
-  titulo: string;
-}
+import type { EsgConfiguracionModulo } from '../../models/configuracion.model';
+import type { EsgMetricaFila, EsgMetricaListItem, EsgResumenCategoria, EsgResumenPortadaFila } from '../../models/metrica.model';
+import type { TabCategoria } from '../../models/ui.model';
 
 /**
  * Orden de pestañas y mapeo de `cod_cat` — igual que `arrOrd`/el

@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { SkeletonModule } from 'primeng/skeleton';
-import type { FilaLabelValor } from '../../models';
+import type { FilaLabelValor } from '../../models/comun.model';
 
 /**
  * Diálogo genérico de detalle "etiqueta/valor" — reutilizado por el detalle

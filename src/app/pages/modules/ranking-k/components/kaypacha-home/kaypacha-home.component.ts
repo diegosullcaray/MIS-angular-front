@@ -7,12 +7,7 @@ import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inli
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { KaypachaService } from '../../services/kaypacha.service';
 
-/**
- * Landing de Kaypacha (`/app/ranking-k`) — en cuanto las categorías cargan,
- * navega directo a la primera (ya no se le pide al usuario que "elija una
- * categoría"); esta vista solo se ve brevemente mientras carga, o si hay
- * error / no hay categorías.
- */
+/** Vista principal de redirección del ranking Kaypacha. */
 @Component({
   selector: 'app-kaypacha-home',
   standalone: true,

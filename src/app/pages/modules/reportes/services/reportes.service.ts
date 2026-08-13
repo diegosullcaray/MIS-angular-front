@@ -3,21 +3,21 @@ import { Observable, map } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type { FilaEncabezadoReporte, FilaReporte, HierarquiaNodo, TablaReporteResultado } from '../models';
+import type { HierarquiaNodo, ParamsJerarquia } from '../models/jerarquia.model';
+import type { FilaEncabezadoReporte, FilaReporte, TablaReporteResultado } from '../models/tabla-reporte.model';
+import type { JerarquiaResponseBody, ReporteResponseBody } from '../models/reportes-api.model';
 
 /** `cod_jer` de la jerarquía organizativa (`UNI_1` del legado) — mismo código que usan Presupuesto/Kaypacha/Incentivos para `base_hier`. */
 export const COD_JERARQUIA_ORGANIZATIVA = 9;
 /** Profundidad máxima de niveles de `UNI_1` — `getHierarchyConfig('UNI_1')` del legado. */
 export const NIVEL_MAXIMO_JERARQUIA = 6;
 
-interface JerarquiaResponseBody {
-  base_hierarchy?: HierarquiaNodo[];
-  level_hierarchy?: HierarquiaNodo[];
-}
-
-interface ReporteResponseBody {
-  result?: { headers?: FilaEncabezadoReporte[]; body?: FilaReporte[]; additional?: Record<string, unknown> };
-}
+/** `paramsHier` de `app-hier-selector` para la jerarquía organizativa — igual en todo reporte que la use (hoy: Monitor Metas Desembolso, Monitor Reprogramados). */
+export const PARAMS_HIER_UNIDAD: ParamsJerarquia = {
+  code: COD_JERARQUIA_ORGANIZATIVA,
+  maxLvl: NIVEL_MAXIMO_JERARQUIA,
+  dlgTitulo: 'JERARQUIA UNIDAD',
+};
 
 /**
  * Fachada del módulo `reportes`: jerarquía organizativa + datos de cada bloque.

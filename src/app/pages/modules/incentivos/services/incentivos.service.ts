@@ -14,21 +14,13 @@ import {
   resolverConfiguracionUsuario,
 } from '../utils/incentivos-config.util';
 import { asignarValores, marcarHabilitados, marcarVisibles, sumarPorIds, resolverSituacion } from '../utils/incentivos-calculo.util';
-import type {
-  AsesorPickItem,
-  CalculadoraConfig,
-  FilaTablaEfectividad,
-  FilaTablaVariable,
-  ItemAvance,
-  ItemSemaforo,
-  ItemSuperPlus,
-  MonetizadoIncentivo,
-  NivelSeleccionado,
-  NodoJerarquiaIncentivo,
-  PerfilUsuarioIncentivo,
-  ResultadoBancarizacion,
-  ResultadoDetalleVariable,
-} from '../models';
+import type { NivelSeleccionado, PerfilUsuarioIncentivo } from '../models/incentivos-perfil.model';
+import type { FilaTablaEfectividad, FilaTablaVariable, ItemAvance, ItemSemaforo, ItemSuperPlus, MonetizadoIncentivo } from '../models/incentivos-tablas.model';
+import type { CalculadoraConfig } from '../models/incentivos-calculadora.model';
+import type { AsesorPickItem, NodoJerarquiaIncentivo } from '../models/incentivos-jerarquia.model';
+import type { ResultadoDetalleVariable } from '../models/incentivos-detalle.model';
+import type { ResultadoBancarizacion } from '../models/incentivos-bancarizacion.model';
+import type { AsesoresBody, BancarizacionBody, DetalleVariableBody, ListaJerarquiaBody, ResultadosBody, SimulacionBody } from '../models/incentivos-api-response.model';
 
 /** `cod_jer` de la jerarquía organizativa — mismo código que usan Presupuesto/Kaypacha para `base_hier`. */
 const COD_JERARQUIA_ORGANIZATIVA = 9;
@@ -37,36 +29,7 @@ const COD_JERARQUIA_ORGANIZATIVA = 9;
 const MODELO_CAMPANIA = '2026';
 
 /** Forma cruda de `incentivos4.resultados4`/`.resultados5` (`resultado`). */
-interface ResultadosBody {
-  resultado?: {
-    ds1?: FilaTablaVariable[];
-    ds2?: FilaTablaEfectividad[];
-    /** Mapa dinámico `${id}_avan_fix`/`${id}_avan_floor` (avances) + `pag1/pag2/pag3/tas_min/tas_met/mar_ren` (calculadora). */
-    ds3?: Record<string, unknown>;
-    /** Mapa dinámico `flag_<id>`/`bob_<id>`/`bop_<id>`/`bos_<id>` + `flag_act`. */
-    ds4?: Record<string, unknown>;
-  };
-}
 
-interface SimulacionBody {
-  resultado?: Record<string, unknown> & { flag_act?: number };
-}
-
-interface ListaJerarquiaBody {
-  resultado?: NodoJerarquiaIncentivo[];
-}
-
-interface AsesoresBody {
-  list_res?: AsesorPickItem[];
-}
-
-interface DetalleVariableBody {
-  resultado?: ResultadoDetalleVariable;
-}
-
-interface BancarizacionBody {
-  resultado?: { det?: ResultadoBancarizacion['filas']; tot?: ResultadoBancarizacion['totales'] };
-}
 
 /**
  * Fachada + estado del módulo `incentivos` (Cuadro de Mando, `/app/incentivos3`).

@@ -4,8 +4,10 @@ import { MessageService } from 'primeng/api';
 import { CarteraCreditosComponent } from './cartera-creditos.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { CeldaEditadaEvent } from '../../../ui/editable-table/editable-table.component';
-import type { FilaCarteraCreditosVariables, HierarquiaNodo, ResumenCarteraCreditos, ResumenMetadata } from '../../../models';
+import type { CeldaEditadaEvent } from '../../../models/tabla.model';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { ResumenMetadata } from '../../../models/linea-simple.model';
+import type { FilaCarteraCreditosVariables, ResumenCarteraCreditos } from '../../../models/cartera-creditos.model';
 
 function metadata(overrides: Partial<ResumenMetadata> = {}): ResumenMetadata {
   return { tip_cod_edi: 4, ord_ini_edi: 1, act_res: true, cod_sec: 'SEC-1', ...overrides };
@@ -34,6 +36,9 @@ describe('CarteraCreditosComponent', () => {
     verificar: ReturnType<typeof vi.fn>;
     obtenerResumenCarteraCreditos: ReturnType<typeof vi.fn>;
     guardarResumenCarteraCreditos: ReturnType<typeof vi.fn>;
+    obtenerJerarquiaBase: ReturnType<typeof vi.fn>;
+    obtenerJerarquiaNivel: ReturnType<typeof vi.fn>;
+    fechaCorte: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
@@ -44,6 +49,9 @@ describe('CarteraCreditosComponent', () => {
       verificar: vi.fn().mockReturnValue(of({})),
       obtenerResumenCarteraCreditos: vi.fn(),
       guardarResumenCarteraCreditos: vi.fn().mockReturnValue(of({})),
+      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }])),
+      obtenerJerarquiaNivel: vi.fn().mockReturnValue(of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }])),
+      fechaCorte: vi.fn().mockReturnValue('2026-08-05'),
     };
     TestBed.configureTestingModule({
       imports: [CarteraCreditosComponent],

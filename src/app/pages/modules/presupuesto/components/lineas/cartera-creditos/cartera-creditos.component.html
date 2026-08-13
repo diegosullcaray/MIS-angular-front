@@ -1,20 +1,29 @@
 <div class="mis-page mis-page--auto">
   <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cartera de Créditos</h2>
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cartera de Créditos</h2>
 
-    <div class="flex items-center gap-3 flex-wrap">
-      <app-hier-selector [paramsHier]="paramsHier" (nodoSeleccionado)="onNivelSeleccionado($event)" />
-
-      <div class="flex-1"></div>
-
-      @if (puedeGuardar()) {
-        <p-button label="Reiniciar" severity="secondary" [outlined]="true" size="small" (onClick)="reiniciar()" />
-        <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
-      }
-      @if (puedeVerificar()) {
-        <p-button label="Verificar" icon="pi pi-check-circle" size="small" [loading]="verificando()" (onClick)="verificar()" />
-      }
+      <div class="flex items-center gap-2 flex-wrap">
+        <p-button
+          [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+          [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="mostrarFiltros.set(!mostrarFiltros())"
+        />
+        @if (puedeGuardar()) {
+          <p-button label="Reiniciar" severity="secondary" [outlined]="true" (onClick)="reiniciar()" />
+          <p-button label="Guardar" [loading]="guardando()" (onClick)="guardar()" />
+        }
+        @if (puedeVerificar()) {
+          <p-button label="Verificar" icon="pi pi-check-circle" [loading]="verificando()" (onClick)="verificar()" />
+        }
+      </div>
     </div>
+  </div>
+
+  <div class="flex items-center gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
+    <app-hier-selector [paramsHier]="paramsHier" (nodoSeleccionado)="onNivelSeleccionado($event)" />
   </div>
 
   <p-tabs [(value)]="tabActiva">

@@ -4,7 +4,7 @@ import { MessageService } from 'primeng/api';
 import { UsuariosMetricaDialogComponent } from './usuarios-metrica-dialog.component';
 import { FrameworkEsgService } from '../../services/framework-esg.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { EsgMetricaListItem } from '../../models';
+import type { EsgMetricaListItem } from '../../models/metrica.model';
 
 describe('UsuariosMetricaDialogComponent', () => {
   let esgFalso: { obtenerUsuariosMetrica: ReturnType<typeof vi.fn>; guardarUsuariosPorMetrica: ReturnType<typeof vi.fn> };

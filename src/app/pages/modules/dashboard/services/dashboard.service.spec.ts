@@ -5,7 +5,7 @@ import { ModDashboardService } from '../../../../core/winder/instances/mod-dashb
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
 import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
-import type { ReporteDashboard } from '../models';
+import type { ReporteDashboard } from '../models/reporte.model';
 
 function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
   return {

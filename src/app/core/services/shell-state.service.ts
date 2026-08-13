@@ -25,6 +25,7 @@ export class ShellStateService {
   private readonly _cerrandoSesion = signal(false);
   private readonly _navPanelColapsado = signal(false);
   private readonly _sidebarTienePanel = signal(false);
+  private readonly _contenidoPendienteSeleccion = signal(false);
 
   // ─── Signals de solo lectura (expuestos — Remotes solo leen) ────────────
 
@@ -59,6 +60,16 @@ export class ShellStateService {
    * alternar el panel en mobile si no hay nada que mostrar/ocultar.
    */
   readonly sidebarTienePanel = this._sidebarTienePanel.asReadonly();
+
+  /**
+   * True mientras se cambió a un sistema con panel propio (Col 2) pero el
+   * usuario todavía no eligió un sub-ítem — `SidebarComponent` lo enciende al
+   * cambiar de sistema y lo apaga cuando el `Router` termina de navegar.
+   * `ShellLayoutComponent` lo lee para ocultar el `<router-outlet>` (que
+   * todavía tiene montada la pantalla del sistema anterior) y mostrar un
+   * loader en su lugar, en vez de dejar ver contenido de otro módulo.
+   */
+  readonly contenidoPendienteSeleccion = this._contenidoPendienteSeleccion.asReadonly();
 
   // ─── Computed ────────────────────────────────────────────────────────────
 
@@ -120,6 +131,10 @@ export class ShellStateService {
 
   setSidebarTienePanel(valor: boolean): void {
     this._sidebarTienePanel.set(valor);
+  }
+
+  setContenidoPendienteSeleccion(valor: boolean): void {
+    this._contenidoPendienteSeleccion.set(valor);
   }
 
   cerrarSesion(): void {

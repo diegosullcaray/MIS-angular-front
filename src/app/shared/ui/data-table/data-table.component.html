@@ -1,0 +1,169 @@
+<div class="rounded-xl overflow-hidden border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs flex-1">
+  <p-table
+    [value]="filasFiltradas()"
+    [loading]="loading()"
+    [paginator]="true"
+    [rows]="rows()"
+    [rowsPerPageOptions]="rowsPerPageOptions()"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+    styleClass="p-datatable-sm p-datatable-gridlines text-xs"
+    [scrollable]="!!scrollHeight()"
+    [scrollHeight]="scrollHeight()"
+  >
+    <ng-template pTemplate="caption">
+      @if (mostrarBuscador() || hayColumnasFiltrable() || showRefreshButton()) {
+        <div class="flex flex-nowrap items-center gap-1.5 p-1 overflow-x-auto">
+          @if (mostrarBuscador()) {
+            <p-iconfield iconPosition="left" styleClass="flex-1 min-w-[5.5rem] sm:flex-none sm:w-64">
+              <p-inputicon styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]"></p-inputicon>
+              <input
+                #buscadorInput
+                type="text"
+                pInputText
+                pSize="small"
+                [placeholder]="searchPlaceholder()"
+                (keyup.enter)="buscar(buscadorInput.value)"
+                class="w-full text-xs"
+              />
+            </p-iconfield>
+            <p-button icon="pi pi-search" label="Buscar" size="small" styleClass="shrink-0 mis-btn-label-desktop" pTooltip="Buscar" tooltipPosition="top" (onClick)="buscar(buscadorInput.value)"></p-button>
+          }
+
+          @if (hayColumnasFiltrable()) {
+            <p-button
+              [icon]="filtrosVisibles() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+              [label]="filtrosVisibles() ? 'Desfiltrar' : 'Filtrar'"
+              size="small"
+              severity="secondary"
+              [outlined]="true"
+              styleClass="shrink-0 mis-btn-label-desktop"
+              [pTooltip]="filtrosVisibles() ? 'Desfiltrar' : 'Filtrar'"
+              tooltipPosition="top"
+              (onClick)="toggleFiltros()"
+            ></p-button>
+
+            @if (filtrosVisibles() && hayFiltrosActivos()) {
+              <p-button icon="pi pi-eraser" label="Limpiar" size="small" severity="danger" [text]="true" styleClass="shrink-0 mis-btn-label-desktop" pTooltip="Limpiar filtros" tooltipPosition="top" (onClick)="limpiarFiltros()"></p-button>
+            }
+          }
+
+          @if (showRefreshButton()) {
+            <p-button icon="pi pi-refresh" label="Actualizar" size="small" severity="secondary" [outlined]="true" styleClass="shrink-0 ml-auto mis-btn-label-desktop" pTooltip="Actualizar" tooltipPosition="top" (onClick)="refrescar.emit()"></p-button>
+          }
+        </div>
+      }
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr class="bg-[#035096] text-white">
+        @for (col of columns(); track col.field) {
+          <th
+            [pSortableColumn]="col.sortable !== false ? col.field : undefined"
+            class="!bg-[#035096] !text-white font-semibold text-[11px]"
+            [class.text-center]="col.align === 'center'"
+            [class.text-right]="col.align === 'right'"
+            [class.mis-col-hide-mobile]="col.mobileVisible === false"
+            [style.width]="col.width || '8rem'"
+          >
+            <span class="flex items-center gap-1 min-w-0">
+              <span class="truncate">{{ col.header }}</span>
+              @if (col.sortable !== false) {
+                <p-sortIcon [field]="col.field" class="shrink-0"></p-sortIcon>
+              }
+            </span>
+          </th>
+        }
+      </tr>
+      @if (filtrosVisibles()) {
+        <tr class="bg-[var(--mis-panel-bg)]">
+          @for (col of columns(); track col.field) {
+            <th class="!bg-[var(--mis-panel-bg)] p-1 font-normal mis-filtro-col" [class.mis-col-hide-mobile]="col.mobileVisible === false">
+              @switch (col.filterType) {
+                @case ('text') {
+                  <input
+                    type="text"
+                    pInputText
+                    pSize="small"
+                    [value]="filtrosColumna()[col.field] ?? ''"
+                    [placeholder]="col.filterPlaceholder || col.header"
+                    (input)="aplicarFiltroColumna(col.field, $any($event.target).value)"
+                    class="w-full text-xs"
+                  />
+                }
+                @case ('number') {
+                  <input
+                    type="number"
+                    pInputText
+                    pSize="small"
+                    [value]="filtrosColumna()[col.field] ?? ''"
+                    [placeholder]="col.filterPlaceholder || col.header"
+                    (input)="aplicarFiltroColumna(col.field, $any($event.target).value)"
+                    class="w-full text-xs"
+                  />
+                }
+                @case ('dropdown') {
+                  <p-select
+                    [options]="col.dropdownOptions ?? []"
+                    optionLabel="label"
+                    optionValue="value"
+                    pSize="small"
+                    [ngModel]="filtrosColumna()[col.field] ?? null"
+                    (onChange)="aplicarFiltroColumna(col.field, $event.value)"
+                    [showClear]="true"
+                    [placeholder]="col.filterPlaceholder || col.header"
+                    appendTo="body"
+                    styleClass="w-full text-xs"
+                  ></p-select>
+                }
+                @case ('date') {
+                  <p-datepicker
+                    [ngModel]="filtrosColumna()[col.field] ?? null"
+                    dateFormat="dd/mm/yy"
+                    pSize="small"
+                    [showClear]="true"
+                    (onSelect)="aplicarFiltroColumna(col.field, $event)"
+                    (onClear)="aplicarFiltroColumna(col.field, null)"
+                    [placeholder]="col.filterPlaceholder || 'dd/mm/aaaa'"
+                    appendTo="body"
+                    styleClass="w-full text-xs"
+                  ></p-datepicker>
+                }
+              }
+            </th>
+          }
+        </tr>
+      }
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr class="hover:bg-[var(--mis-panel-bg)] transition-colors">
+        @for (col of columns(); track col.field) {
+          <td
+            [class.text-center]="col.align === 'center'"
+            [class.text-right]="col.align === 'right'"
+            [class.mis-col-hide-mobile]="col.mobileVisible === false"
+          >
+            @if (plantillaPara(col.field); as tpl) {
+              <ng-container *ngTemplateOutlet="tpl; context: { $implicit: row }"></ng-container>
+            } @else {
+              {{ valorCelda(col, row) }}
+            }
+          </td>
+        }
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="columns().length" class="text-center py-8">
+          <div class="flex flex-col items-center gap-2">
+            <i class="pi pi-search text-2xl text-[var(--mis-text-tertiary)]"></i>
+            <span class="font-medium text-[var(--mis-text-secondary)]">{{ emptyMessage() }}</span>
+            <span class="text-xs text-[var(--mis-text-tertiary)]">{{ emptyHint() }}</span>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

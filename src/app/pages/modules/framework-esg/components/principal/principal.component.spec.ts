@@ -6,7 +6,8 @@ import { FrameworkEsgService } from '../../services/framework-esg.service';
 import { DriverTourService } from '../../../../../shared/services/driver-tour.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { EsgConfiguracionModulo, EsgMetricaFila, EsgResumenCategoria } from '../../models';
+import type { EsgConfiguracionModulo } from '../../models/configuracion.model';
+import type { EsgMetricaFila, EsgResumenCategoria } from '../../models/metrica.model';
 
 // jsdom no implementa ResizeObserver — lo usa internamente `p-tabs` (PrimeNG) al
 // inicializar (`TabList.bindResizeObserver`). Mismo gap que sufren los specs de

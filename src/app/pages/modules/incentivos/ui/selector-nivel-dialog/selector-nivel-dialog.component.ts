@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -9,11 +10,11 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IncentivosService } from '../../services/incentivos.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { LoadingService } from '../../../../../shared/services/loading.service';
-import type { AsesorPickItem, NivelSelectorJerarquia, NodoJerarquiaIncentivo } from '../../models';
+import type { AsesorPickItem, NivelSelectorJerarquia, NodoJerarquiaIncentivo } from '../../models/incentivos-jerarquia.model';
 
 type Vista = 'menu' | 'asesores' | 'jerarquia';
 
-/** Selector de nivel del Cuadro de Mando: un único diálogo con 3 vistas internas (`menu`/`asesores`/`jerarquia`). */
+/** Diálogo de selección de nivel y jerarquía en Incentivos. */
 @Component({
   selector: 'app-selector-nivel-dialog',
   standalone: true,
@@ -22,12 +23,12 @@ type Vista = 'menu' | 'asesores' | 'jerarquia';
   styleUrl: './selector-nivel-dialog.component.css',
 })
 export class SelectorNivelDialogComponent {
+  private readonly router = inject(Router);
   private readonly incentivos = inject(IncentivosService);
   private readonly toast = inject(ToastService);
   private readonly loading = inject(LoadingService);
 
   readonly visible = input(false);
-  /** `true` mientras no haya ningún nivel elegido todavía — oculta el botón de cerrar. */
   readonly obligatorio = input(false);
 
   readonly visibleChange = output<boolean>();
@@ -91,12 +92,10 @@ export class SelectorNivelDialogComponent {
     });
   }
 
-  /** Resalta la fila (no cierra ni carga nada todavía) — la carga espera al botón "Seleccionar". */
   protected onFilaAsesor(item: AsesorPickItem | AsesorPickItem[] | undefined): void {
     if (item && !Array.isArray(item)) this.seleccionadoAsesor.set(item);
   }
 
-  /** Resalta la fila (no cierra ni carga nada todavía) — la carga espera al botón "Seleccionar". */
   protected onFilaNodo(item: NodoJerarquiaIncentivo | NodoJerarquiaIncentivo[] | undefined): void {
     if (item && !Array.isArray(item)) this.seleccionadoNodo.set(item);
   }
@@ -117,7 +116,6 @@ export class SelectorNivelDialogComponent {
     this.confirmarYCerrar(() => this.incentivos.seleccionarFinancieraConfianza(claUsu));
   }
 
-  /** Cierra el diálogo y recién después carga los datos — una selección real siempre cierra, sin mirar `obligatorio()`. */
   private confirmarYCerrar(cargar: () => void): void {
     this.vista.set('menu');
     this.visibleChange.emit(false);
@@ -132,11 +130,11 @@ export class SelectorNivelDialogComponent {
   }
 
   protected cerrar(): void {
-    if (this.obligatorio()) return;
     this.vista.set('menu');
     this.filtro.set('');
     this.seleccionadoAsesor.set(null);
     this.seleccionadoNodo.set(null);
     this.visibleChange.emit(false);
+    this.router.navigate(['/app/dashboard']);
   }
 }

@@ -5,7 +5,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideUsers } from '@ng-icons/lucide';
 import { AuthService } from '../../../../auth/service/auth.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { AlternateUsuario } from '../../../../auth/model/alternate-usuario.model';
+import { AlternateUsuario } from '../../../../auth/model/auth-session.model';
 
 /**
  * Diálogo "Cambiar usuario" — estilo selector de cuentas de Google: una

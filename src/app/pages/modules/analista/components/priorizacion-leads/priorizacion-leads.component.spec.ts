@@ -2,8 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { of, throwError, Subject } from 'rxjs';
 import { PriorizacionLeadsComponent } from './priorizacion-leads.component';
-import { AnalistaService, type ColaboradorActivo } from '../../services/analista.service';
-import type { FilaLead, NodoJerarquiaAncla } from '../../models';
+import { AnalistaService } from '../../services/analista.service';
+import type { ColaboradorActivo, NodoJerarquiaAncla } from '../../models/colaborador.model';
+import type { FilaLead } from '../../models/listas.model';
 
 const ANCLA: NodoJerarquiaAncla = { tip_cod: 7, cod_rel: '231' };
 const FILAS: FilaLead[] = [

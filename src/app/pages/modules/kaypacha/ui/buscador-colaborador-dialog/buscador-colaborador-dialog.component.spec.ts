@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { BuscadorColaboradorDialogComponent } from './buscador-colaborador-dialog.component';
 import { KaypachaDashboardService } from '../../services/kaypacha-dashboard.service';
-import type { KaypachaColaboradorItem } from '../../models';
+import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.model';
 
 const COLABORADORES: KaypachaColaboradorItem[] = [
   { cod_bt: 'BT-001', des_col: 'Ana Torres', HCOLCAR: 'Asesor Comercial', RCODCOL: 'Puma', num_doc: '12345678' },
@@ -65,42 +65,39 @@ describe('BuscadorColaboradorDialogComponent', () => {
     expect(fixture.componentInstance['filtroTexto']()).toBe('beto');
   });
 
-  it('onRowSelect() guarda el ítem seleccionado, ignorando arreglos (selección múltiple no aplica)', () => {
+  it('onRowSelect() guarda el ítem seleccionado', () => {
     const fixture = crear();
 
     fixture.componentInstance['onRowSelect'](COLABORADORES[0]);
     expect(fixture.componentInstance['itemSeleccionado']()).toEqual(COLABORADORES[0]);
 
     fixture.componentInstance['onRowSelect']([COLABORADORES[1]]);
-    expect(fixture.componentInstance['itemSeleccionado']()).toEqual(COLABORADORES[0]); // no cambia
+    expect(fixture.componentInstance['itemSeleccionado']()).toEqual(COLABORADORES[0]);
   });
 
-  it('seleccionarYCerrar() emite colaboradorSeleccionado y cierra el diálogo, solo si hay un ítem elegido', () => {
+  it('seleccionarYCerrar() emite colaboradorSeleccionado y cierra el diálogo', () => {
     const fixture = crear();
     let emitido: KaypachaColaboradorItem | undefined;
     fixture.componentInstance.colaboradorSeleccionado.subscribe((c) => (emitido = c));
 
-    fixture.componentInstance['seleccionarYCerrar'](); // sin selección, no debe emitir
+    fixture.componentInstance['seleccionarYCerrar']();
     expect(emitido).toBeUndefined();
 
     fixture.componentInstance['onRowSelect'](COLABORADORES[0]);
     fixture.componentInstance['seleccionarYCerrar']();
 
     expect(emitido).toEqual(COLABORADORES[0]);
-    expect(fixture.componentInstance.visible).toBe(false);
+    expect(fixture.componentInstance.visible()).toBe(false);
   });
 
-  it('cerrar() emite visibleChange(false) y limpia el filtro/selección', () => {
+  it('cerrar() cierra el diálogo y limpia el filtro/selección', () => {
     const fixture = crear();
     fixture.componentInstance['filtroTexto'].set('ana');
     fixture.componentInstance['onRowSelect'](COLABORADORES[0]);
 
-    let visibleEmitido: boolean | undefined;
-    fixture.componentInstance.visibleChange.subscribe((v) => (visibleEmitido = v));
-
     fixture.componentInstance['cerrar']();
 
-    expect(visibleEmitido).toBe(false);
+    expect(fixture.componentInstance.visible()).toBe(false);
     expect(fixture.componentInstance['filtroTexto']()).toBe('');
     expect(fixture.componentInstance['itemSeleccionado']()).toBeNull();
   });

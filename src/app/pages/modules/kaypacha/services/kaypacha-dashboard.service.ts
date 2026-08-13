@@ -1,13 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ModKaypachaService } from '../../../../core/winder/instances/mod-kaypacha.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type {
-  TableHeaderDef,
-  KaypachaColaboradorItem,
-  KaypachaResultadoRaw,
-  KaypachaResponseBody,
-} from '../models';
+import type { TableHeaderDef } from '../models/kaypacha-table-header.model';
+import type { KaypachaColaboradorItem } from '../models/kaypacha-colaborador.model';
+import type { KaypachaResultadoRaw, KaypachaResponseBody } from '../models/kaypacha-dashboard-response.model';
 
+/** Servicio de gestión del tablero Kaypacha y búsqueda de colaboradores. */
 @Injectable({ providedIn: 'root' })
 export class KaypachaDashboardService {
   private readonly ant = inject(ModKaypachaService);
@@ -15,7 +13,6 @@ export class KaypachaDashboardService {
 
   readonly ruta = '/app/Kaypacha__';
 
-  // Estado reactivo principal
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
 
@@ -25,22 +22,20 @@ export class KaypachaDashboardService {
   readonly puntajeFinal = signal<string | number>('0');
   readonly permitirBusqueda = signal<boolean>(true);
 
-  // Tablas
   readonly headers1 = signal<TableHeaderDef[]>([]);
   readonly headers1_1 = signal<TableHeaderDef[]>([]);
-  readonly dataSources1 = signal<any[]>([]);
+  readonly dataSources1 = signal<unknown[]>([]);
 
   readonly headers2 = signal<TableHeaderDef[]>([]);
   readonly headers2_2 = signal<TableHeaderDef[]>([]);
-  readonly dataSources2 = signal<any[]>([]);
+  readonly dataSources2 = signal<unknown[]>([]);
 
-  // Buscador de colaboradores
   readonly colaboradores = signal<KaypachaColaboradorItem[]>([]);
   readonly cargandoColaboradores = signal(false);
   readonly errorColaboradores = signal<string | null>(null);
 
-  private parseJsonHeader(cab: any[] | undefined): TableHeaderDef[] {
-    if (!cab || !cab.length || !cab[0]?.JSONNHEAD1) return [];
+  private parseJsonHeader(cab: Array<{ JSONNHEAD1: string }> | undefined): TableHeaderDef[] {
+    if (!cab?.length || !cab[0]?.JSONNHEAD1) return [];
     try {
       return JSON.parse(cab[0].JSONNHEAD1) as TableHeaderDef[];
     } catch {
@@ -48,49 +43,35 @@ export class KaypachaDashboardService {
     }
   }
 
-  /**
-   * Limpia todo el estado de datos en memoria para evitar mostrar información de otro sistema o sesión.
-   */
-  limpiar(): void {
-    this.loading.set(true);
-    this.error.set(null);
-
+  /** Restablece el estado de las tablas y métricas del usuario. */
+  private resetEstadoTablas(): void {
+    this.headers1.set([]);
+    this.headers1_1.set([]);
+    this.dataSources1.set([]);
+    this.headers2.set([]);
+    this.headers2_2.set([]);
+    this.dataSources2.set([]);
     this.nombreUsuario.set('');
     this.cargo.set('');
     this.posicion.set('-');
     this.puntajeFinal.set('0');
+  }
 
-    this.headers1.set([]);
-    this.headers1_1.set([]);
-    this.dataSources1.set([]);
-
-    this.headers2.set([]);
-    this.headers2_2.set([]);
-    this.dataSources2.set([]);
-
+  /** Limpia todo el estado en memoria del módulo. */
+  limpiar(): void {
+    this.loading.set(true);
+    this.error.set(null);
+    this.resetEstadoTablas();
     this.colaboradores.set([]);
     this.cargandoColaboradores.set(false);
     this.errorColaboradores.set(null);
   }
 
-  /**
-   * Carga los datos del tablero para el colaborador indicado (o el usuario activo si no se pasa codBT).
-   */
+  /** Carga los datos del tablero para un colaborador o el usuario activo. */
   cargarDatos(codBT?: string): void {
     this.loading.set(true);
     this.error.set(null);
-
-    // Limpia datos previos antes de pedir la nueva información
-    this.headers1.set([]);
-    this.headers1_1.set([]);
-    this.dataSources1.set([]);
-    this.headers2.set([]);
-    this.headers2_2.set([]);
-    this.dataSources2.set([]);
-    this.nombreUsuario.set('');
-    this.cargo.set('');
-    this.posicion.set('-');
-    this.puntajeFinal.set('0');
+    this.resetEstadoTablas();
 
     const targetCodBt = codBT || this.shell.usuarioActivo()?.codBt;
 
@@ -105,7 +86,6 @@ export class KaypachaDashboardService {
           return;
         }
 
-        // Tablas y cabeceras
         this.headers1.set(this.parseJsonHeader(res.cab1));
         this.headers1_1.set(this.parseJsonHeader(res.cab1_1));
         this.dataSources1.set(res.res1 || []);
@@ -114,21 +94,15 @@ export class KaypachaDashboardService {
         this.headers2_2.set(this.parseJsonHeader(res.cab2_2));
         this.dataSources2.set(res.res2 || []);
 
-        // Datos del usuario y puntajes: solo mostrar nombre/cargo si se seleccionó explícitamente un colaborador
         this.puntajeFinal.set(res.puntos?.HPUNTAFINAL ?? '0');
         this.posicion.set(res.puntos?.HDESPOS ?? '-');
 
         if (codBT) {
           this.nombreUsuario.set(res.datosUsurio?.HDESPER ?? '');
           this.cargo.set(res.datosUsurio?.HDESCAR ?? '');
-        } else {
-          this.nombreUsuario.set('');
-          this.cargo.set('');
         }
 
-        // Botón de búsqueda habilitado por defecto o según perfil
-        this.permitirBusqueda.set(res.puntos?.HACTBOTON === '1' || true);
-
+        this.permitirBusqueda.set(res.puntos?.HACTBOTON !== '0');
         this.loading.set(false);
       },
       error: (err) => {
@@ -139,12 +113,10 @@ export class KaypachaDashboardService {
     });
   }
 
-  /**
-   * Carga la lista de colaboradores para el modal de búsqueda.
-   */
+  /** Carga la lista de colaboradores para el modal de búsqueda. */
   cargarListaColaboradores(): void {
     if (this.colaboradores().length > 0 && !this.errorColaboradores()) {
-      return; // Ya cargados
+      return;
     }
 
     this.cargandoColaboradores.set(true);

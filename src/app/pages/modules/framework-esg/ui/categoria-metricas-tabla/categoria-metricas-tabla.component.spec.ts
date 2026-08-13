@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CategoriaMetricasTablaComponent } from './categoria-metricas-tabla.component';
-import type { EsgMetricaFila } from '../../models';
+import type { EsgMetricaFila } from '../../models/metrica.model';
 
 function metrica(overrides: Partial<EsgMetricaFila> = {}): EsgMetricaFila {
   return {

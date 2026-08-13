@@ -5,15 +5,9 @@ import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { IncentivosService } from '../../services/incentivos.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { ResultadoBancarizacion } from '../../models';
+import type { ResultadoBancarizacion } from '../../models/incentivos-bancarizacion.model';
 
-/**
- * Diálogo de detalle de Bancarización — migrado de `Detalle2Component`/
- * `Detalle2DialogComponent`/`Detalle2BaseComponent` (legado STG,
- * `pages/modules/incentivos3/detalle2`), único consumidor real de
- * `comp:2` en el legado (`super-plus.util.ts`, ítem `clib`). Sin
- * drill-down — es una tabla plana con totales.
- */
+/** Diálogo modal de detalle de bancarización en Incentivos. */
 @Component({
   selector: 'app-detalle-bancarizacion-dialog',
   standalone: true,

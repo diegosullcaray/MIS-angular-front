@@ -2,18 +2,17 @@ import { Component, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import { ButtonModule } from 'primeng/button';
+import { HierSelectorComponent } from '../../../../presupuesto/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
 import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/empty-state.component';
-import { ReportesService, COD_JERARQUIA_ORGANIZATIVA, NIVEL_MAXIMO_JERARQUIA } from '../../../services/reportes.service';
+import { ReportesService, PARAMS_HIER_UNIDAD } from '../../../services/reportes.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type {
-  HierarquiaNodo,
-  KpiMontoDesembolsado,
-  KpiOperacionesDesembolsadas,
-  ParamsJerarquia,
-  TablaReporteResultado,
-} from '../../../models';
+import { MessageService } from '../../../../../../core/services/message.service';
+import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../../models/monitor-metas-desembolso.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 
@@ -21,29 +20,33 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
  * "Monitor Metas Desembolso" — migrado de la ruta `mon-desem` (legado STG,
  * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese'`).
  *
- * No pide nada al entrar: el reporte lo dispara únicamente la elección del
- * usuario en `app-hier-selector` (`nodoSeleccionado`), igual que el
- * `combineLatest([filter$, level$])` de `ReportCraV1p1Component` en el legado.
+ * La carga inicial la dispara únicamente `app-hier-selector` (evento
+ * `nodoSeleccionado`) — igual que `ReportCraV1p1Component` en el legado,
+ * que no hace su propio `getBaseHierarchy()`: solo reacciona a
+ * `(onSelectHier)` de `hier-rem-selector`. Tener acá un fetch inicial propio
+ * duplicaba la llamada a `obtenerJerarquiaBase` y competía en carrera con el
+ * cascadeo interno del selector (root → nivel por nivel hasta `maxLvl`), que
+ * también dispara `onNivelSeleccionado` en cada paso.
  */
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, ButtonModule],
   templateUrl: './monitor-metas-desembolso.component.html',
   styleUrl: './monitor-metas-desembolso.component.css',
 })
 export class MonitorMetasDesembolsoComponent {
   private readonly reportes = inject(ReportesService);
   private readonly toast = inject(ToastService);
+  private readonly mensajes = inject(MessageService);
 
-  protected readonly paramsHier: ParamsJerarquia = {
-    code: COD_JERARQUIA_ORGANIZATIVA,
-    maxLvl: NIVEL_MAXIMO_JERARQUIA,
-    dlgTitulo: 'JERARQUIA UNIDAD',
-  };
+  protected readonly paramsHier = PARAMS_HIER_UNIDAD;
+
+  protected readonly mostrarFiltros = signal(true);
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
+  protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   protected readonly kpiOperaciones = signal<KpiOperacionesDesembolsadas | null>(null);
   protected readonly kpiMonto = signal<KpiMontoDesembolsado | null>(null);
@@ -72,16 +75,18 @@ export class MonitorMetasDesembolsoComponent {
         this.tabla3.set(t3);
         this.tabla4.set(t4);
         this.cargando.set(false);
+
+        if ([t1, t2, t3, t4].every((t) => t.body.length === 0)) {
+          this.mensajes.warn(
+            'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.',
+            'Carga en proceso',
+          );
+        }
       },
       error: () => {
         this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
         this.cargando.set(false);
       },
     });
-  }
-
-  protected onErrorJerarquia(): void {
-    this.toast.error('No se pudo cargar la jerarquía', 'Inténtalo de nuevo en unos segundos.');
-    this.cargando.set(false);
   }
 }

@@ -3,8 +3,9 @@ import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { of, throwError, Subject } from 'rxjs';
 import { PrincipalComponent } from './principal.component';
-import { AnalistaService, type ColaboradorActivo } from '../../services/analista.service';
-import type { ColaboradorItem, NodoJerarquiaAncla, ResumenDashboard } from '../../models';
+import { AnalistaService } from '../../services/analista.service';
+import type { ColaboradorActivo, ColaboradorItem, NodoJerarquiaAncla } from '../../models/colaborador.model';
+import type { ResumenDashboard } from '../../models/dashboard.model';
 
 const ANCLA: NodoJerarquiaAncla = { tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' };
 const COLABORADORES: ColaboradorItem[] = [{ cod_sec: 'SEC-1', des_sec: 'Juan Pérez' }];

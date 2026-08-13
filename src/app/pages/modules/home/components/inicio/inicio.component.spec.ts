@@ -5,7 +5,7 @@ import { InicioComponent } from './inicio.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { KaypachaService } from '../../../ranking-k/services/kaypacha.service';
 import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
-import type { CategoriaRanking } from '../../../ranking-k/models';
+import type { CategoriaRanking } from '../../../ranking-k/models/categoria-ranking.model';
 
 describe('InicioComponent', () => {
   let shell: ShellStateService;

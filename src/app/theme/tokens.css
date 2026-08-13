@@ -1,6 +1,7 @@
 :root {
   /* Layout Dimensions */
   --mis-header-h: 56px;
+  --mis-sidebar-col1-w: 64px;
 
   /* Fuente principal: Anek Latin con fallback macOS/Inter */
   --mis-font-family: 'Anek Latin', 'Anek Devanagari', -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
@@ -33,6 +34,7 @@
   --mis-bg: #F4F6F9;
   --mis-surface: #FFFFFF;
   --mis-sidebar-bg: #1D396E;
+  --mis-nav-panel-bg: rgba(235, 241, 248, 0.95);
   --mis-panel-bg: #F8FAFC;
   --mis-border: rgba(29,57,110,0.10);
   --mis-border-strong: rgba(29,57,110,0.20);
@@ -53,7 +55,7 @@
   --mis-scrollbar-thumb-hover: rgba(29,57,110,0.35);
 
   /* Primario: Navy */
-  --mis-primary: #1D396E;
+  --mis-primary: #035096;
   --mis-primary-hover: #162D58;
   --mis-primary-light: #E8EDF5;
   /**
@@ -131,13 +133,14 @@
 .dark {
   --mis-bg: #0E1626;
   --mis-surface: #162034;
-  --mis-sidebar-bg: #101A2E;
+  --mis-sidebar-bg: #09101D;
+  --mis-nav-panel-bg: rgba(22, 34, 56, 0.85);
   --mis-panel-bg: #1A2740;
   --mis-border: rgba(0,162,255,0.14);
   --mis-border-strong: rgba(0,162,255,0.28);
 
-  --mis-surface-translucido: rgba(16,26,46,0.85);
-  --mis-surface-elevado: rgba(22,32,52,0.95);
+  --mis-surface-translucido: rgba(22,34,56,0.85);
+  --mis-surface-elevado: rgba(26,40,66,0.95);
   --mis-glass-bg: rgba(22,32,52,0.72);
   --mis-glass-border: rgba(255,255,255,0.08);
   --mis-wallpaper-velo: rgba(8,14,26,0.94);

@@ -6,20 +6,16 @@ import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-
 import { SelectorSectoristaDialogComponent } from '../../ui/selector-sectorista-dialog/selector-sectorista-dialog.component';
 import { CategorizacionService } from '../../services/categorizacion.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import type { ComisionTarjeta, NodoJerarquiaAncla, PerfilColaborador, RequisitoTarjeta, SectoristaItem } from '../../models';
+import type { ComisionTarjeta, PerfilColaborador, RequisitoTarjeta } from '../../models/dashboard.model';
+import type { NodoJerarquiaAncla, SectoristaItem } from '../../models/colaborador.model';
 
 /**
- * Categorización (`/app/analista/categorizacion`) — migrado de
- * `CategorizacionComponent` (legado STG, `docs/07-modulos/analista/categorizacion`).
- * Tablero de un colaborador: perfil, estado de 4 requisitos y resultados de
- * comisión de 6 periodos.
- *
- * Un colaborador ve su propia categorización directo al entrar; un
- * admin/supervisor (`esAdmin`) primero elige a qué colaborador ver desde un
- * selector de sectoristas (el legado lo resolvía con `hier-rem-selector` +
- * `SecPickerDialog2`, ninguno incluido en el volcado de referencia — acá se
- * reconstruye con la misma jerarquía `base_hier`/`list_pick_01` que ya usa
- * el resto del Host).
+ * Categorización (`/app/analista/categorizacion`) — tablero de un
+ * colaborador: perfil, estado de 4 requisitos y resultados de comisión de 6
+ * periodos. Un colaborador ve la propia al entrar; un admin/supervisor
+ * primero elige a quién ver desde un selector de sectoristas, reconstruido
+ * con la jerarquía `base_hier`/`list_pick_01` (el `SecPickerDialog2` legado
+ * no está en el volcado de referencia).
  */
 @Component({
   selector: 'app-categorizacion-dashboard',

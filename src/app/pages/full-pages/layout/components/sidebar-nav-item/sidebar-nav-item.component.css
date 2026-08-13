@@ -66,6 +66,14 @@
   transform: none;
 }
 
+:host-context(.dark) .nav-item-node--expanded {
+  background: rgba(0, 162, 255, 0.06);
+}
+
+:host-context(.dark) .nav-item-node--expanded > .nav-item-link {
+  background: rgba(0, 162, 255, 0.12);
+}
+
 .nav-item-submenu {
   overflow: hidden;
 }

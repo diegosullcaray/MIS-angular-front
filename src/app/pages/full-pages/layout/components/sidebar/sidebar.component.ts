@@ -1,5 +1,7 @@
-import { Component, inject, computed, effect, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject, computed, effect, signal, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
 import { TooltipModule } from 'primeng/tooltip';
@@ -7,9 +9,9 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
-import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavSeccion } from '../../interfaces/sidebar.model';
+import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta, SidebarNavSeccion } from '../../interfaces/sidebar.model';
 
-/** Duración del esqueleto de transición al cambiar de sistema (solo UX). */
+/** Duración de la transición (esqueleto) al cambiar de sistema. */
 const DURACION_TRANSICION_PANEL_MS = 300;
 
 @Component({
@@ -19,221 +21,257 @@ const DURACION_TRANSICION_PANEL_MS = 300;
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
-export class SidebarComponent {
+export class SidebarComponent implements AfterViewInit {
+  @ViewChild('scrollContainer') private scrollContainer?: ElementRef<HTMLDivElement>;
+
   protected readonly shell = inject(ShellStateService);
   private readonly menuStg = inject(MenuStgService);
   private readonly kaypacha = inject(KaypachaService);
   private readonly redirect = inject(RedirectOverlayService);
   private readonly router = inject(Router);
 
-  /** True brevemente mientras se cambia de sistema — el panel real se reemplaza por un esqueleto (ver template). */
+  /** Indica si el panel está en transición (muestra el esqueleto de carga). */
   protected readonly cambiandoPanel = signal(false);
+  
+  protected readonly iconActivoId = this.shell.sidebarIconActivo;
+
+  /** Estado de visibilidad de las flechas de scroll horizontal en mobile. */
+  protected readonly puedeScrollIzquierda = signal(false);
+  protected readonly puedeScrollDerecha = signal(false);
 
   constructor() {
-    // Categorías del ranking, para la sección "Categoría" del panel de ranking-k.
     this.kaypacha.cargarCategorias();
 
-    // Header (hermano, no padre/hijo) necesita saber si el sistema activo
-    // tiene panel propio, para no mostrar el botón de alternarlo en mobile
-    // cuando no hay nada que mostrar/ocultar.
+    // Re-evalúa visibilidad de flechas cuando la lista de íconos se actualice.
+    effect(() => {
+      this.iconos();
+      setTimeout(() => this.verificarScroll(), 150);
+    });
+
+    // Sincroniza el estado del header: oculta el botón de menú si el sistema actual no tiene panel.
     effect(() => {
       this.shell.setSidebarTienePanel(this.panelActivo() !== null);
     });
 
-    // Reactivo (no ngOnInit de una sola vez): al cambiar/revertir un usuario
-    // alterno (ver `AuthService.cambiarAUsuarioAlterno`), `usuarioActivo()`
-    // cambia de email y el árbol de STG debe recargarse para ese usuario —
-    // `MenuStgService.cargar` ya deduplica por email, así que llamarlo de
-    // nuevo con el mismo email no genera una petición extra.
+    // Recarga el árbol del menú STG si el usuario activo cambia (ej. modo alterno).
     effect(() => {
-      const usuario = this.shell.usuarioActivo();
-      if (usuario?.email) {
-        this.menuStg.cargar(usuario.email);
+      const email = this.shell.usuarioActivo()?.email;
+      if (email) {
+        this.menuStg.cargar(email);
       }
     });
+
+    // Apaga `contenidoPendienteSeleccion` cuando el Router termina de resolver la navegación.
+    this.router.events
+      .pipe(
+        filter(
+          (evento) =>
+            evento instanceof NavigationEnd ||
+            evento instanceof NavigationCancel ||
+            evento instanceof NavigationError ||
+            evento instanceof NavigationSkipped
+        ),
+        takeUntilDestroyed()
+      )
+      .subscribe((evento) => {
+        if (evento instanceof NavigationEnd || evento instanceof NavigationError || evento instanceof NavigationSkipped) {
+          this.shell.setContenidoPendienteSeleccion(false);
+        }
+
+        if (evento instanceof NavigationEnd) {
+          const url = evento.urlAfterRedirects || evento.url;
+          if (url.includes('/dashboard') || url.startsWith('/error') || url === '/app') {
+            this.shell.setSidebarIconActivo('host-inicio');
+          }
+        }
+      });
   }
 
-  protected readonly iconActivoId = this.shell.sidebarIconActivo;
-
+  /** Lista combinada de íconos base y los que provienen del backend STG. */
   protected readonly iconos = computed<SidebarIcon[]>(() => {
     const base: SidebarIcon[] = [
-      {
-        id: 'host-inicio',
-        tipo: 'host-inicio',
-        icono: 'pi pi-home',
-        etiqueta: 'Inicio',
-        tienePanel: true,
-      },
+      { id: 'host-inicio', tipo: 'host-inicio', icono: 'pi pi-home', etiqueta: 'Inicio', tienePanel: true }
     ];
 
-    // Sistemas de STG (backend Ant), tal cual los devuelve el backend — sin
-    // filtrar ni hardcodear ninguno. Si un ítem apunta a la ruta de un
-    // módulo ya migrado del Host (ej. ranking-k), se le habilita panel
-    // propio (sección "Categoría") en vez de navegar directo a la ruta.
     const sistemasStg = this.menuStg.sistemas().map((sistema) => {
-      if (sistema.ruta === this.kaypacha.ruta) return { ...sistema, tienePanel: true };
-      // "Analista" (Principal/Categorización/Listas) ya está migrado por
-      // completo al Host — se fuerza panel propio (ver `getPanelAnalista`)
-      // en vez de depender de qué hijos traiga `list_sec` para este ítem,
-      // que hoy en STG solo conoce "Categorización" (o ninguno).
-      if (this.esAnalista(sistema)) return { ...sistema, tienePanel: true };
-      return sistema;
+      const forzarPanel = sistema.ruta === this.kaypacha.ruta || this.esAnalista(sistema);
+      return forzarPanel ? { ...sistema, tienePanel: true } : sistema;
     });
 
     return [...base, ...sistemasStg];
   });
 
-  /** `null` cuando el sistema activo no tiene panel — Col 2 se oculta por completo (ver template). */
+  /** Configuración del panel secundario activo (Col 2). Es `null` si no aplica. */
   protected readonly panelActivo = computed<SidebarNavPanelConfig | null>(() => {
     const id = this.shell.sidebarIconActivo();
 
-    if (id === 'host-inicio') {
-      return this.getPanelHost();
-    }
+    if (id === 'host-inicio') return this.getPanelHost();
 
     const icono = this.iconos().find(i => i.id === id);
     if (!icono?.tienePanel) return null;
 
-    if (icono.ruta === this.kaypacha.ruta) {
-      return this.kaypacha.panelPara(icono.etiqueta, icono.icono);
-    }
-
-    if (this.esAnalista(icono)) {
-      return this.getPanelAnalista(icono.etiqueta, icono.icono);
-    }
+    if (icono.ruta === this.kaypacha.ruta) return this.kaypacha.panelPara(icono.etiqueta, icono.icono);
+    if (this.esAnalista(icono)) return this.getPanelAnalista(icono.etiqueta, icono.icono);
 
     return this.getPanelStg(id);
   });
 
+  /** Acción al hacer clic en un ícono de la columna principal (Col 1). */
   protected seleccionarIcono(icon: SidebarIcon): void {
     const eraActivo = this.shell.sidebarIconActivo();
-
-    // Siempre se marca activo el ícono clickeado, tenga panel o no: así Col 1
-    // resalta el sistema correcto y `panelActivo` oculta Col 2 si no aplica.
     this.shell.setSidebarIconActivo(icon.id);
 
     const key = (icon.etiqueta || icon.id || '').toLowerCase();
     const ruta = icon.ruta || '';
-
-    // Si el sistema clickeado es un enlace externo (Jira, Imparables, Helpdesk, o URL con http)
-    if (key.includes('jira') || key.includes('imparable') || key.includes('helpdesk') || ruta.startsWith('http')) {
+    
+    // Verificación de enlaces externos
+    const esExterno = ['jira', 'imparable', 'helpdesk'].some(ext => key.includes(ext)) || ruta.startsWith('http');
+    if (esExterno) {
+      this.shell.setContenidoPendienteSeleccion(false);
       this.redirect.redirigir(icon.etiqueta || icon.id, ruta.startsWith('http') ? ruta : undefined);
       return;
     }
 
-    if (!icon.tienePanel && ruta) {
-      this.router.navigateByUrl(ruta).catch(() => {
-        console.warn(`Ruta local no encontrada: ${ruta}`);
-      });
-      return;
-    }
-
-    // Cambiar de sistema debe mostrar el panel por defecto para elegir algo
-    // (antes se quedaba colapsado si venía cerrado del sistema anterior, ej.
-    // por el auto-cierre en mobile al navegar) — con un breve esqueleto de
-    // transición en vez de un salto instantáneo al contenido nuevo.
+    // Transición visual para sistemas con panel
     if (icon.tienePanel && (eraActivo !== icon.id || this.shell.navPanelColapsado())) {
       this.cambiandoPanel.set(true);
       this.shell.setNavPanelColapsado(false);
       setTimeout(() => this.cambiandoPanel.set(false), DURACION_TRANSICION_PANEL_MS);
     }
+
+    // Caso especial: Inicio navega directamente al dashboard
+    if (icon.id === 'host-inicio') {
+      this.shell.setContenidoPendienteSeleccion(false);
+      this.router.navigateByUrl('/app/dashboard').catch(() => {});
+      return;
+    }
+
+    // Módulos simples sin panel secundario que tienen ruta propia
+    if (!icon.tienePanel && ruta) {
+      this.shell.setContenidoPendienteSeleccion(false);
+      this.router.navigateByUrl(ruta).catch(() => {
+        console.warn(`Ruta no encontrada: ${ruta}`);
+      });
+      return;
+    }
+
+    // Sistemas con panel secundario: abren el panel y muestran el loader/spinner neutro
+    // en el área de contenido a la espera de que el usuario elija un sub-ítem.
+    // Permanece ahí de forma indefinida (sin auto-redirecciones ni reseteo por tiempo).
+    if (icon.tienePanel) {
+      this.shell.setContenidoPendienteSeleccion(true);
+    }
   }
 
+  /** Acción al seleccionar un sub-ítem del panel (Col 2). */
   protected onRutaSeleccionada(ruta: string): void {
     this.shell.setMenuItemActivo({ ruta, etiqueta: ruta.split('/').pop() ?? '' });
+    this.shell.setContenidoPendienteSeleccion(false);
 
-    // En mobile el panel flota sobre el contenido (con fondo oscuro bloqueando
-    // el layout, ver template) — al elegir una ruta se oculta solo ahí, para
-    // dejar ver la pantalla que recién cargó. En desktop el panel es fijo al
-    // costado y debe quedarse abierto para seguir navegando dentro de él.
+    if (ruta) {
+      this.router.navigateByUrl(ruta).catch((err) => {
+        console.warn(`Ruta no encontrada: ${ruta}`, err);
+      });
+    }
+
+    // En pantallas pequeñas, el panel se oculta tras la selección para dejar ver el contenido.
     if (this.esMobil()) {
       this.shell.setNavPanelColapsado(true);
     }
   }
 
-  /** Breakpoint `sm` de Tailwind (640px) — mismo corte usado en las clases responsive del layout. */
+  /** Detecta si el ancho de pantalla corresponde al breakpoint `sm` (640px). */
   private esMobil(): boolean {
-    return typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches;
+    return typeof window !== 'undefined' && window.innerWidth < 640;
   }
 
   private getPanelHost(): SidebarNavPanelConfig {
-    const secciones: SidebarNavSeccion[] = [
-      {
-        titulo: 'Acceso directo',
-        rutas: [
-          { etiqueta: 'Mi espacio', ruta: '/app/dashboard', icono: 'lucideGrid' },
-        ],
-      },
-    ];
-
     return {
-      tipo:   'host-admin',
+      tipo: 'host-admin',
       titulo: 'Host Principal',
-      icono:  'pi pi-home',
-      secciones: secciones
+      icono: 'pi pi-home',
+      secciones: [
+        {
+          titulo: 'Acceso directo',
+          rutas: [{ etiqueta: 'Mi espacio', ruta: '/app/dashboard', icono: 'lucideGrid' }],
+        },
+      ],
     };
   }
 
-  /**
-   * "Analista" (`desc_sec` real de STG) — identifica el ítem por etiqueta,
-   * no por `ruta`: a diferencia de ranking-k, este sistema ya trae hijos
-   * propios en `list_sec` (p. ej. "Categorización"), así que `ruta` llega
-   * `undefined` desde `menuStg.sistemas()` y no sirve para matchear. Mismo
-   * estilo de comparación por palabra clave que ya usa `seleccionarIcono`
-   * para los enlaces externos (Jira/Imparables/Helpdesk).
-   */
   private esAnalista(icono: SidebarIcon): boolean {
     return (icono.etiqueta || '').trim().toLowerCase() === 'analista';
   }
 
-  /**
-   * Panel de Col 2 de "Analista" — a diferencia de `getPanelStg`, no
-   * depende de qué hijos traiga `list_sec` (hoy en STG a lo sumo conoce
-   * "Categorización"): todas las pantallas del módulo ya están migradas al
-   * Host, así que se arma acá con sus rutas reales (mismo criterio que
-   * `getPanelHost`).
-   */
   private getPanelAnalista(titulo: string, icono: string): SidebarNavPanelConfig {
-    const secciones: SidebarNavSeccion[] = [
-      {
-        rutas: [
-          { etiqueta: 'Principal', ruta: '/app/analista', icono: 'pi pi-home' },
-          { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
-          {
-            etiqueta: 'Listas',
-            icono: 'pi pi-list',
-            hijos: [
-              { etiqueta: 'Priorización de Leads', ruta: '/app/analista/listas/priorizacion-leads' },
-              { etiqueta: 'Becas Financiera Confianza', ruta: '/app/analista/listas/becas' },
-            ],
-          },
-        ],
-      },
-    ];
-
     return {
       tipo: 'host-admin',
       titulo,
       icono,
-      secciones,
+      secciones: [
+        {
+          rutas: [
+            { etiqueta: 'Principal', ruta: '/app/analista', icono: 'pi pi-home' },
+            { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
+            {
+              etiqueta: 'Listas',
+              icono: 'pi pi-list',
+              hijos: [
+                { etiqueta: 'Priorización de Leads', ruta: '/app/analista/listas/priorizacion-leads' },
+                { etiqueta: 'Becas Financiera Confianza', ruta: '/app/analista/listas/becas' },
+              ],
+            },
+          ],
+        },
+      ],
     };
   }
 
-  /**
-   * Solo se llama para sistemas con `tienePanel: true` que vienen de STG
-   * (list_sec), es decir, todavía no migrados a un módulo propio del Host.
-   */
+  /** Genera el panel para módulos legacy no migrados, basándose en la data del menú STG. */
   private getPanelStg(slug: string): SidebarNavPanelConfig {
     const hijosStg = this.menuStg.hijosPorSistema()[slug] ?? [];
     const stg = this.menuStg.sistemas().find(s => s.id === slug);
     const titulo = stg?.etiqueta ?? slug;
-    const secciones: SidebarNavSeccion[] = [{ titulo, rutas: hijosStg }];
 
     return {
-      tipo:   'remote',
+      tipo: 'remote',
       titulo,
-      icono:  stg?.icono ?? 'pi pi-th-large',
-      secciones,
+      icono: stg?.icono ?? 'pi pi-th-large',
+      secciones: [{ titulo, rutas: hijosStg }],
     };
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.verificarScroll(), 100);
+  }
+
+  @HostListener('window:resize')
+  protected onResize(): void {
+    this.verificarScroll();
+  }
+
+  protected onScrollMobile(): void {
+    this.verificarScroll();
+  }
+
+  protected desplazarIzquierda(): void {
+    if (this.scrollContainer?.nativeElement) {
+      this.scrollContainer.nativeElement.scrollBy({ left: -140, behavior: 'smooth' });
+    }
+  }
+
+  protected desplazarDerecha(): void {
+    if (this.scrollContainer?.nativeElement) {
+      this.scrollContainer.nativeElement.scrollBy({ left: 140, behavior: 'smooth' });
+    }
+  }
+
+  private verificarScroll(): void {
+    const el = this.scrollContainer?.nativeElement;
+    if (!el) return;
+
+    const tieneScroll = el.scrollWidth > el.clientWidth + 2;
+    this.puedeScrollIzquierda.set(el.scrollLeft > 2);
+    this.puedeScrollDerecha.set(tieneScroll && el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
   }
 }

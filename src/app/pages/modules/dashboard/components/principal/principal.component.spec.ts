@@ -4,7 +4,7 @@ import { provideRouter, Router, ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { PrincipalComponent } from './principal.component';
 import { DashboardService } from '../../services/dashboard.service';
-import type { ReporteDashboard } from '../../models';
+import type { ReporteDashboard } from '../../models/reporte.model';
 
 const POWER_BI: ReporteDashboard = { id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport' };
 const ORACLE: ReporteDashboard = { id: 'rep-2', name: 'Cartera Oracle', reportType: 'OracleACReport' };

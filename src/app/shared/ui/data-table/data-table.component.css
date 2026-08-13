@@ -1,0 +1,91 @@
+:host {
+  display: contents;
+}
+
+/* `table-layout: auto` (default de PrimeNG) recalcula el ancho de columnas
+   según el contenido de TODAS las filas — al mostrar/ocultar la fila de
+   filtros (con p-select/p-datepicker, que tienen su propio ancho mínimo),
+   las columnas se corrían. `fixed` las ancla a la primera fila (header).
+   OJO: sin `width: 100%` a propósito — forzarla a 100% del contenedor
+   apretaba las columnas sin `width` propio hasta volverlas ilegibles
+   (el texto del header se cortaba en 2 líneas) en vez de dejar que la
+   tabla scrollee horizontal (`[scrollable]`) cuando no entra todo. */
+:host ::ng-deep .p-datatable-table {
+  table-layout: fixed !important;
+}
+
+:host ::ng-deep .p-datatable-thead > tr > th,
+:host ::ng-deep .p-datatable-tbody > tr > td {
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+/* `table-layout: fixed` calcula el ancho de cada columna únicamente a
+   partir del `width` (no `min-width`) de la celda del header en esa
+   columna — por eso el `[style.width]` del <th> en el HTML siempre trae un
+   valor (con `8rem` de respaldo si la columna no define uno propio). Sin
+   esto, columnas sin `width` se repartían el espacio sobrante a partes
+   iguales y, en mobile, terminaban tan angostas que solo se veía el ícono
+   de orden — ni el header ni el contenido de la columna eran legibles. */
+
+/* Fila de filtros por columna: reducida (pSize="small" en cada control) —
+   ajustamos el padding del <th> contenedor, que PrimeNG no controla por sí
+   solo, y forzamos la misma altura en los tres tipos de control (input de
+   texto/número, p-select, p-datepicker) porque pSize="small" por sí solo no
+   les da una altura idéntica entre componentes distintos. */
+.mis-filtro-col {
+  padding: 2px !important;
+}
+
+.mis-filtro-col > * {
+  width: 100%;
+}
+
+:host ::ng-deep .mis-filtro-col input.p-inputtext,
+:host ::ng-deep .mis-filtro-col .p-select,
+:host ::ng-deep .mis-filtro-col .p-datepicker .p-datepicker-input {
+  height: 1.75rem !important;
+  min-height: 1.75rem !important;
+  box-sizing: border-box !important;
+}
+
+:host ::ng-deep .mis-filtro-col .p-select-label {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Ícono de orden del header (fondo azul #035096) — el color por defecto de
+   PrimeNG lo hereda gris/apagado del tema base, no del `!text-white` del
+   <th>: el ícono es un <svg> propio que no siempre toma el color heredado.
+   Blanco translúcido en reposo, blanco sólido en la columna activa — para
+   que se note el cambio al hacer clic (antes ambos estados se veían igual). */
+:host ::ng-deep .p-datatable-thead th .p-datatable-sort-icon {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+:host ::ng-deep .p-datatable-thead th:hover .p-datatable-sort-icon,
+:host ::ng-deep .p-datatable-thead th.p-datatable-column-sorted .p-datatable-sort-icon {
+  color: #ffffff !important;
+}
+
+/* Columnas marcadas `mobileVisible: false` — ocultas bajo el breakpoint `sm`
+   de Tailwind (640px) para priorizar las esenciales en pantallas chicas. La
+   tabla sigue siendo horizontalmente scrolleable si aun así no entra todo. */
+@media (max-width: 639px) {
+  .mis-col-hide-mobile {
+    display: none !important;
+  }
+
+  /* Botones del caption (Buscar/Filtrar/Limpiar/Actualizar): en mobile solo
+     el ícono, para que la fila del caption no se apriete — el texto vuelve
+     desde `sm:` (tablet/desktop) en adelante. */
+  :host ::ng-deep .mis-btn-label-desktop .p-button-label {
+    display: none;
+  }
+}
+

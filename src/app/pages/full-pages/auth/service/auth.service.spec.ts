@@ -239,7 +239,7 @@ describe('AuthService', () => {
     });
     await service.completarLoginGoogle();
 
-    service.cerrarSesion(false);
+    service.cerrarSesion('');
 
     expect(oauthServiceFalso.logOut).toHaveBeenCalled();
     expect(service.token()).toBeNull();
@@ -256,7 +256,7 @@ describe('AuthService', () => {
     const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     await service.completarLoginGoogle();
 
-    service.cerrarSesion(false);
+    service.cerrarSesion('');
     vi.advanceTimersByTime(15 * 60 * 1000);
 
     expect(navSpy).not.toHaveBeenCalledWith('/error/401');
@@ -366,7 +366,7 @@ describe('AuthService', () => {
       await iniciarSesion();
       await service.cambiarAUsuarioAlterno({ email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz' });
 
-      service.cerrarSesion(false);
+      service.cerrarSesion('');
 
       expect(service.alternates()).toEqual([]);
       expect(service.esUsuarioAlterno()).toBe(false);

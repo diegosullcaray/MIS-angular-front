@@ -1,89 +1,69 @@
-import { Component, DestroyRef, EventEmitter, Input, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TooltipModule } from 'primeng/tooltip';
 import { BaseNegativaService } from '../../services/base-negativa.service';
-import type { BaseNegativaBusquedaFila } from '../../models';
+import type { BaseNegativaBusquedaFila } from '../../models/base-negativa.model';
+import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
+import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
+import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-table.model';
+
+const COLUMNAS: DataTableColumn[] = [
+  { field: 'HCTACLI', header: 'Cuenta Cliente', filterType: 'text' },
+  { field: 'HDESCLI', header: 'Nombre Cliente', filterType: 'text' },
+  { field: 'FECHA', header: 'Fecha Reg.', align: 'center', filterType: 'date' },
+  { field: 'TIPO', header: 'Tipo Cartera', align: 'center', filterType: 'text' },
+  { field: 'accion', header: '', align: 'center', width: '8rem', sortable: false },
+];
 
 /**
- * Diálogo de búsqueda de "Consulta Base Negativa" — busca en el servidor con
- * debounce de 500ms, igual que `buscador.component.ts` del legado (STG,
- * `docs/07-modulos/basenegativa/buscador/`), en vez de filtrar en el cliente
- * como el buscador de colaboradores de Kaypacha (esa lista sí carga completa).
+ * Diálogo de "Consulta Base Negativa" — lista todos los clientes de la base
+ * de riesgos con `app-data-table` (búsqueda y filtros por columna en el
+ * cliente), igual que `destino-credito.component`, en vez de la búsqueda en
+ * vivo contra el servidor que tenía antes. `BaseNegativaService.buscar('')`
+ * ya devuelve el listado completo (el legado usa el mismo endpoint para
+ * búsqueda y detalle).
  */
 @Component({
   selector: 'app-consulta-riesgo-dialog',
   standalone: true,
-  imports: [DialogModule, TableModule, ButtonModule, InputTextModule, IconFieldModule, InputIconModule],
+  imports: [DialogModule, ButtonModule, TooltipModule, DataTableComponent, DataTableCellDirective],
   templateUrl: './consulta-riesgo-dialog.component.html',
   styleUrl: './consulta-riesgo-dialog.component.css',
 })
 export class ConsultaRiesgoDialogComponent {
   private readonly service = inject(BaseNegativaService);
-  private readonly destroyRef = inject(DestroyRef);
 
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() clienteSeleccionado = new EventEmitter<BaseNegativaBusquedaFila>();
 
-  protected readonly terminoBusqueda = signal('');
+  protected readonly columnas = COLUMNAS;
   protected readonly resultados = signal<BaseNegativaBusquedaFila[]>([]);
   protected readonly cargando = signal(false);
-  protected readonly itemSeleccionado = signal<BaseNegativaBusquedaFila | null>(null);
-
-  private readonly terminoSubject = new Subject<string>();
 
   constructor() {
-    this.terminoSubject
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        switchMap((termino) => {
-          this.cargando.set(true);
-          return this.service.buscar(termino);
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe({
-        next: (filas) => {
-          this.resultados.set(filas);
-          this.cargando.set(false);
-        },
-        error: () => this.cargando.set(false),
-      });
-
-    // Carga inicial (término vacío), igual que `ngAfterViewInit` del legado.
-    this.terminoSubject.next('');
+    this.cargarClientes();
   }
 
-  protected onBuscar(event: Event): void {
-    const valor = (event.target as HTMLInputElement).value;
-    this.terminoBusqueda.set(valor);
-    this.terminoSubject.next(valor);
+  protected cargarClientes(): void {
+    this.cargando.set(true);
+    this.service.buscar('').subscribe({
+      next: (filas) => {
+        this.resultados.set(filas);
+        this.cargando.set(false);
+      },
+      error: () => this.cargando.set(false),
+    });
   }
 
-  protected onRowSelect(item: unknown): void {
-    if (item && !Array.isArray(item)) {
-      this.itemSeleccionado.set(item as BaseNegativaBusquedaFila);
-    }
-  }
-
-  protected seleccionarYCerrar(): void {
-    const item = this.itemSeleccionado();
-    if (item) {
-      this.clienteSeleccionado.emit(item);
-      this.cerrar();
-    }
+  protected seleccionar(item: BaseNegativaBusquedaFila): void {
+    this.clienteSeleccionado.emit(item);
+    this.cerrar();
   }
 
   protected cerrar(): void {
     this.visible = false;
     this.visibleChange.emit(false);
-    this.itemSeleccionado.set(null);
   }
 }

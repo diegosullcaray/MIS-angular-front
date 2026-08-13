@@ -3,9 +3,11 @@ import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
-import { EditableTableComponent, type CeldaEditadaEvent } from '../../../ui/editable-table/editable-table.component';
+import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
-import type { FilaLineaSimple, HierarquiaNodo, LineaSimpleConfig, ResumenMetadata } from '../../../models';
+import type { CeldaEditadaEvent } from '../../../models/tabla.model';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { FilaLineaSimple, LineaSimpleConfig, ResumenMetadata } from '../../../models/linea-simple.model';
 
 /**
  * Pantalla genérica "línea simple" — reemplaza a `PreLineaSimpleComponent`
@@ -30,6 +32,7 @@ export class LineaSimpleComponent<F extends FilaLineaSimple = FilaLineaSimple> {
 
   readonly config = input.required<LineaSimpleConfig<F>>();
 
+  protected readonly mostrarFiltros = signal(true);
   protected readonly cargando = signal(false);
   protected readonly guardando = signal(false);
   protected readonly verificando = signal(false);
@@ -60,8 +63,9 @@ export class LineaSimpleComponent<F extends FilaLineaSimple = FilaLineaSimple> {
       .subscribe({
         next: (resumen) => {
           this.metadata.set(resumen.bp);
-          this.filas.set(resumen.ws);
-          this.filasOriginales = structuredClone(resumen.ws);
+          const ws = resumen.ws ?? [];
+          this.filas.set(ws);
+          this.filasOriginales = structuredClone(ws);
           this.cargando.set(false);
         },
         error: () => {

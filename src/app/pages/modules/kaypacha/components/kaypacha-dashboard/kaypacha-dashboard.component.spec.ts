@@ -3,7 +3,7 @@ import { signal } from '@angular/core';
 import { KaypachaDashboardComponent } from './kaypacha-dashboard.component';
 import { KaypachaDashboardService } from '../../services/kaypacha-dashboard.service';
 import { KaypachaTourService } from '../../services/kaypacha-tour.service';
-import type { KaypachaColaboradorItem } from '../../models';
+import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.model';
 
 describe('KaypachaDashboardComponent', () => {
   let serviceFalso: {
@@ -71,7 +71,7 @@ describe('KaypachaDashboardComponent', () => {
     expect(serviceFalso.cargarDatos).toHaveBeenCalledWith();
   });
 
-  it('limpia el estado en memoria al destruirse (no debe quedar data de otra sesión)', () => {
+  it('limpia el estado en memoria al destruirse', () => {
     const fixture = crear();
     fixture.destroy();
     expect(serviceFalso.limpiar).toHaveBeenCalled();

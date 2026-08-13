@@ -4,7 +4,8 @@ import { CategorizacionDashboardComponent } from './categorizacion-dashboard.com
 import { CategorizacionService } from '../../services/categorizacion.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
-import type { DetalleCategorizacion, NodoJerarquiaAncla, SectoristaItem } from '../../models';
+import type { DetalleCategorizacion } from '../../models/dashboard.model';
+import type { NodoJerarquiaAncla, SectoristaItem } from '../../models/colaborador.model';
 
 function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
   return {

@@ -6,7 +6,7 @@ import { MessageService } from 'primeng/api';
 import { PowerBiComponent } from './power-bi.component';
 import { DashboardService } from '../../services/dashboard.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { ReporteDashboard } from '../../models';
+import type { ReporteDashboard } from '../../models/reporte.model';
 
 const REPORTE: ReporteDashboard = { id: 'rep-1', name: 'Ventas', reportType: 'PowerBIReport', datasetId: 'ds-1' };
 

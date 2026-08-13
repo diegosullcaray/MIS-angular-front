@@ -1,11 +1,15 @@
 <div class="error-page-wrapper min-h-screen w-full flex flex-col items-center justify-center p-4">
   <div class="mis-card bg-[var(--mis-surface-elevado)] backdrop-blur-xl border border-[var(--mis-glass-border)] shadow-2xl rounded-2xl p-8 sm:p-12 max-w-lg w-full flex flex-col items-center justify-center gap-4 text-center">
+    
+    <!-- Icono de Error -->
     <div class="w-16 h-16 rounded-full bg-[var(--mis-danger-light)] flex items-center justify-center shrink-0">
       <ng-icon [name]="info().icono" size="32" class="text-[var(--mis-danger)]" />
     </div>
 
+    <!-- Código HTTP -->
     <div class="text-5xl font-extrabold text-[var(--mis-primary-text)] leading-none tracking-tight">{{ info().code }}</div>
 
+    <!-- Textos -->
     <div class="flex flex-col gap-1">
       <h1 class="m-0 text-xl font-bold text-[var(--mis-text-primary)]">{{ info().titulo }}</h1>
       <p class="m-0 text-xs text-[var(--mis-text-secondary)] leading-relaxed max-w-[360px]">
@@ -13,21 +17,25 @@
       </p>
     </div>
 
-    <div class="flex items-center gap-3 mt-2">
-      <button
-        type="button"
-        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--mis-primary)] text-white border-0 text-xs font-semibold cursor-pointer shadow-md transition-all duration-150 hover:bg-[var(--mis-primary-hover)] hover:scale-[1.02]"
-        (click)="ejecutarAccion()"
+    <!-- Acciones (Botones de PrimeNG) -->
+    <div class="flex items-center justify-center gap-3 mt-4">
+      <!-- Botón de acción principal -->
+      <p-button (onClick)="ejecutarAccion()">
+        <div class="flex items-center gap-2 text-xs font-semibold px-2 py-0.5">
+          <ng-icon [name]="accionIcono[info().accion]" size="14" />
+          <span>{{ accionLabel[info().accion] }}</span>
+        </div>
+      </p-button>
+
+      <!-- Botón secundario (RouterLink) -->
+      <p-button 
+        routerLink="/app/dashboard" 
+        severity="secondary" 
+        [outlined]="true"
       >
-        <ng-icon [name]="accionIcono[info().accion]" size="14" />
-        {{ accionLabel[info().accion] }}
-      </button>
-      <a
-        routerLink="/app/dashboard"
-        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] border border-[var(--mis-border)] no-underline text-xs font-semibold transition-colors duration-150 hover:text-[var(--mis-text-primary)]"
-      >
-        Mi espacio
-      </a>
+        <span class="text-xs font-semibold px-2 py-0.5">Mi espacio</span>
+      </p-button>
     </div>
+
   </div>
 </div>

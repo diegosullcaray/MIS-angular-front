@@ -79,7 +79,7 @@ describe('KaypachaDashboardService', () => {
     expect(service.loading()).toBe(false);
   });
 
-  it('sin codBT explícito, no muestra nombre/cargo del colaborador (solo al buscar a alguien puntual)', () => {
+  it('sin codBT explícito, no muestra nombre/cargo del colaborador', () => {
     getColaboradoresDataSpy.mockReturnValue(
       of({ code: '0', headers: {}, body: { resultado: { datosUsurio: { HDESPER: 'Ana Torres', HDESCAR: 'Asesor' } } } } as IWinderResponse)
     );
@@ -145,7 +145,7 @@ describe('KaypachaDashboardService', () => {
     expect(service.cargandoColaboradores()).toBe(false);
   });
 
-  it('cargarListaColaboradores() no vuelve a pedir la lista si ya está cargada sin error', () => {
+  it('cargarListaColaboradores() no vuelve a pedir la lista si ya está cargada', () => {
     getUserListsSpy.mockReturnValue(of({ code: '0', headers: {}, body: { resultado: [{ cod_bt: 'BT-002', des_col: 'Beto' }] } } as IWinderResponse));
     service.cargarListaColaboradores();
 

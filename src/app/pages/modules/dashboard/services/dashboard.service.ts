@@ -2,29 +2,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ModDashboardService } from '../../../../core/winder/instances/mod-dashboard.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type { ReporteDashboard, UsuariosPorReporte } from '../models';
-
-/** Forma cruda de `reportes2.lista` (`resultado`). */
-interface ListaReportesBody {
-  resultado?: {
-    list?: ReporteDashboard[];
-    /** 1 = el usuario administra el módulo (controla el botón "Usuarios"), igual que `mod_admin` del legado. */
-    mod_admin?: number;
-  };
-}
-
-/** Forma cruda de `reportes2.pbi_rtoken` (`resultado`). */
-interface TokenReporteBody {
-  resultado?: { token?: string };
-}
-
-/** Forma cruda de `reportes2.usuarios` (`resultado`) — igual convención que `esg.get_users`. */
-interface UsuariosReporteBody {
-  resultado?: {
-    code?: string;
-    row?: { use_lis?: string };
-  };
-}
+import type { ReporteDashboard, UsuariosPorReporte } from '../models/reporte.model';
+import type { ListaReportesBody, TokenReporteBody, UsuariosReporteBody } from '../models/dashboard-api.model';
 
 /**
  * Fachada del módulo `dashboard` (Dashboards Integrados, `/app/dashboards`)

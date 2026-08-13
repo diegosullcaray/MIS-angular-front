@@ -5,7 +5,7 @@ import { ModFrameworkEsgService } from '../../../../core/winder/instances/mod-fr
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
 import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
-import type { EsgConfiguracionModulo } from '../models';
+import type { EsgConfiguracionModulo } from '../models/configuracion.model';
 
 function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
   return {

@@ -41,11 +41,11 @@ describe('KaypachaService', () => {
     shell = TestBed.inject(ShellStateService);
   });
 
-  it('ruta apunta a /app/ranking-k (para que el sidebar identifique el ítem real de STG)', () => {
+  it('ruta apunta a /app/ranking-k', () => {
     expect(service.ruta).toBe('/app/ranking-k');
   });
 
-  it('cargarCategorias() no pide nada sin cod_bt: el backend respondería 500 sin ese parámetro', () => {
+  it('cargarCategorias() no pide nada sin cod_bt', () => {
     shell.setUsuarioActivo(usuario({ codBt: undefined }));
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -88,7 +88,7 @@ describe('KaypachaService', () => {
     expect(getListRankingSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('en caso de error, permite reintentar (no se queda "cargado" para siempre)', () => {
+  it('en caso de error, permite reintentar', () => {
     shell.setUsuarioActivo(usuario());
     getListRankingSpy.mockReturnValue(throwError(() => new Error('backend caído')));
     vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -103,7 +103,7 @@ describe('KaypachaService', () => {
     expect(service.categorias()).toEqual([{ name: 'A', reportType: 'x', rdestip: '1' }]);
   });
 
-  it('buscarCategoria() compara rdestip como string (puede llegar como number desde el JSON)', () => {
+  it('buscarCategoria() compara rdestip como string', () => {
     shell.setUsuarioActivo(usuario());
     getListRankingSpy.mockReturnValue(of(respuestaCategorias([{ name: 'A', reportType: 'x', rdestip: 1 }])));
     service.cargarCategorias();
@@ -112,7 +112,7 @@ describe('KaypachaService', () => {
     expect(service.buscarCategoria('2')).toBeUndefined();
   });
 
-  it('panelPara() arma el panel con la sección "Categoría" y las rutas de detalle de cada categoría', () => {
+  it('panelPara() arma el panel con la sección "Categoría" y las rutas de detalle', () => {
     shell.setUsuarioActivo(usuario());
     getListRankingSpy.mockReturnValue(of(respuestaCategorias([{ name: 'Zona Norte', reportType: 'x', rdestip: 'z1' }])));
     service.cargarCategorias();
@@ -144,7 +144,7 @@ describe('KaypachaService', () => {
     });
   });
 
-  it('obtenerDetalle() devuelve fechaActualizacion null cuando datTable no es un arreglo (formato inconsistente del legado)', async () => {
+  it('obtenerDetalle() devuelve fechaActualizacion null cuando datTable no es un arreglo', async () => {
     const body = { resultado: { list: [{ JSONLIST: '[]' }], datTable: 'no-es-un-arreglo' } };
     getDetalleRankingSpy.mockReturnValue(of({ code: '0', headers: {}, body }));
 

@@ -4,17 +4,28 @@ import { MessageService } from 'primeng/api';
 import { TableroVerificacionComponent } from './tablero-verificacion.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { HierarquiaNodo, LogVerificacionFila } from '../../../models';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { LogVerificacionFila } from '../../../models/tablero-verificacion.model';
 
 function nodo(overrides: Partial<HierarquiaNodo> = {}): HierarquiaNodo {
   return { tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', ...overrides };
 }
 
 describe('TableroVerificacionComponent', () => {
-  let presupuestoFalso: { obtenerLogVerificaciones: ReturnType<typeof vi.fn> };
+  let presupuestoFalso: {
+    obtenerLogVerificaciones: ReturnType<typeof vi.fn>;
+    obtenerJerarquiaBase: ReturnType<typeof vi.fn>;
+    obtenerJerarquiaNivel: ReturnType<typeof vi.fn>;
+    fechaCorte: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
-    presupuestoFalso = { obtenerLogVerificaciones: vi.fn() };
+    presupuestoFalso = {
+      obtenerLogVerificaciones: vi.fn().mockReturnValue(of([])),
+      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([])),
+      obtenerJerarquiaNivel: vi.fn().mockReturnValue(of([])),
+      fechaCorte: vi.fn().mockReturnValue('2026-08-05'),
+    };
     TestBed.configureTestingModule({
       imports: [TableroVerificacionComponent],
       providers: [{ provide: PresupuestoService, useValue: presupuestoFalso }, MessageService],

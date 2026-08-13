@@ -6,7 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { DashboardService } from '../../services/dashboard.service';
 import { UsuariosReporteDialogComponent } from '../../ui/usuarios-reporte-dialog/usuarios-reporte-dialog.component';
-import type { ReporteDashboard } from '../../models';
+import type { ReporteDashboard } from '../../models/reporte.model';
 
 /**
  * Dashboards Integrados (`/app/dashboards`) — migrado de `PrincipalComponent`

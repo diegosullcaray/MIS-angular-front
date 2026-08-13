@@ -2,46 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ModFrameworkEsgService } from '../../../../core/winder/instances/mod-framework-esg.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
+import type { EsgConfiguracionModulo } from '../models/configuracion.model';
+import type { EsgActualizarMetricaPayload, EsgResumenCategoria, EsgResumenPortadaFila, EsgUsuariosPorMetrica } from '../models/metrica.model';
 import type {
-  EsgActualizarMetricaPayload,
-  EsgConfiguracionModulo,
-  EsgMetricaFila,
-  EsgResumenCategoria,
-  EsgResumenPortadaFila,
-  EsgUsuariosPorMetrica,
-} from '../models';
-
-/** Forma cruda de `esg.cfg_mod` (`resultado`) — cada bloque trae su valor de negocio serializado en `cfg` (JSON string). */
-interface ConfiguracionModuloBody {
-  resultado?: {
-    sit?: { cfg?: string };
-    attr?: { cfg?: string };
-    cats?: { cfg?: string };
-    mod_admin?: { cfg?: string };
-    can_edit?: { cfg?: string };
-  };
-}
-
-/** Forma cruda de `esg.res_por` (`resultado`) — arreglo directo, sin envoltura `JSONLIST`. */
-interface ResumenPortadaBody {
-  resultado?: EsgResumenPortadaFila[];
-}
-
-/** Forma cruda de `esg.res_cat` (`resultado`) — columnas históricas dinámicas + filas. */
-interface ResumenCategoriaBody {
-  resultado?: {
-    cab?: { cols?: string };
-    res?: EsgMetricaFila[];
-  };
-}
-
-/** Forma cruda de `esg.get_users` (`resultado`) — `row.use_lis` es una lista de `cod_bt` separada por coma, ausente si no hay usuarios. */
-interface UsuariosMetricaBody {
-  resultado?: {
-    code?: string;
-    row?: { use_lis?: string };
-  };
-}
+  ConfiguracionModuloBody,
+  ResumenCategoriaBody,
+  ResumenPortadaBody,
+  UsuariosMetricaBody,
+} from '../models/framework-esg-api.model';
 
 /** Parsea un bloque `{ cfg: '<json>' }` de `esg.cfg_mod`, devolviendo `fallback` si falta o el JSON es inválido. */
 function parseCfg<T>(bloque: { cfg?: string } | undefined, fallback: T): T {

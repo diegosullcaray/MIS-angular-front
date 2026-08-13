@@ -1,11 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
-import type {
-  BaseNegativaBusquedaFila,
-  BaseNegativaResponseBody,
-  TableHeaderDef,
-} from '../models';
+import type { BaseNegativaBusquedaFila, TableHeaderDef } from '../models/base-negativa.model';
+import type { BaseNegativaResponseBody } from '../models/base-negativa-api.model';
 
 /** Código de reporte del SP `RS_BASE_NEG_01` (legado: `basenegativa.component.ts`/`buscador.component.ts`). */
 const COD_REP = 'RS_BASE_NEG_01';

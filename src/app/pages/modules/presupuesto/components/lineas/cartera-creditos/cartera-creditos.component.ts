@@ -4,18 +4,13 @@ import { TabsModule } from 'primeng/tabs';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
-import { EditableTableComponent, type CeldaEditadaEvent } from '../../../ui/editable-table/editable-table.component';
+import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
 import { aplicarCascadaAsesores, calcularFilaCarteraCreditos, PRODUCTOS_COMPOSICION } from '../../../utils/cartera-creditos-calculo.util';
-import type {
-  ColumnaTabla,
-  FilaCarteraCreditosComposicion,
-  FilaCarteraCreditosVariables,
-  HierarquiaNodo,
-  ParamsJerarquia,
-  ResumenMetadata,
-  TipoColumna,
-} from '../../../models';
+import type { CeldaEditadaEvent, ColumnaTabla, TipoColumna } from '../../../models/tabla.model';
+import type { HierarquiaNodo, ParamsJerarquia } from '../../../models/jerarquia.model';
+import type { ResumenMetadata } from '../../../models/linea-simple.model';
+import type { FilaCarteraCreditosComposicion, FilaCarteraCreditosVariables } from '../../../models/cartera-creditos.model';
 
 const INPUT_COLS = ['b1', 'b3', 'b5', 'b2'];
 
@@ -82,6 +77,7 @@ export class CarteraCreditosComponent {
   protected readonly columnasRatio = columnasComposicion('g', 'percent');
 
   protected readonly tabActiva = signal('variables');
+  protected readonly mostrarFiltros = signal(true);
   protected readonly cargando = signal(false);
   protected readonly guardando = signal(false);
   protected readonly verificando = signal(false);
@@ -115,10 +111,12 @@ export class CarteraCreditosComponent {
     this.presupuesto.obtenerResumenCarteraCreditos(nodo.tip_cod, nodo.cod_rel).subscribe({
       next: (resumen) => {
         this.metadata.set(resumen.bp);
-        this.filas.set(resumen.ws);
-        this.filasComposicion.set(resumen.cs);
-        this.filasOriginales = structuredClone(resumen.ws);
-        this.filasComposicionOriginales = structuredClone(resumen.cs);
+        const ws = resumen.ws ?? [];
+        const cs = resumen.cs ?? [];
+        this.filas.set(ws);
+        this.filasComposicion.set(cs);
+        this.filasOriginales = structuredClone(ws);
+        this.filasComposicionOriginales = structuredClone(cs);
         this.cargando.set(false);
       },
       error: () => {

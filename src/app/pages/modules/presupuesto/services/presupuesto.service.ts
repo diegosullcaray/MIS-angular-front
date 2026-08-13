@@ -3,46 +3,15 @@ import { Observable, map } from 'rxjs';
 import { ModPresupuestoService } from '../../../../core/winder/instances/mod-presupuesto.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type {
-  FilaCarteraCreditosVariables,
-  FilaDeposito,
-  FilaSegurosComercial,
-  FilaSegurosOperaciones,
-  HierarquiaNodo,
-  LogVerificacionFila,
-  ResponsableFila,
-  ResumenCarteraCreditos,
-  ResumenLineaSimple,
-} from '../models';
-
-/**
- * Forma de `response.body` para las rutas `presupuesto.get_reg_res`/`get_log_ver`
- * — comparten `responseName='resultado'` con `kaypacha.listRanking` y, como esa
- * ruta, son de forma tabular (arreglo de filas): se asume la misma envoltura
- * `resultado.list[0].JSONLIST` (JSON serializado como string). Ver
- * `KaypachaResponseBody` (`ranking-k/models`) para el precedente.
- */
-interface ListaResponseBody {
-  resultado?: { list?: Array<{ JSONLIST: string }> };
-}
-
-/**
- * Forma de `response.body` para las rutas `presupuesto.get_car_cre`/`get_dep_bp`/
- * `get_dep_red`/`get_seg_com`/`get_seg_ope` — `responseName='resumen'`, forma
- * compuesta (objeto con `ws`/`bp`/`cs`), como `login_response`/`menu_response`:
- * se asume que llega anidada directo, sin envoltura `JSONLIST`.
- */
-interface ResumenResponseBody {
-  resumen?: ResumenLineaSimple | ResumenCarteraCreditos;
-}
-
-/**
- * Forma de `response.body` para `base_hier`/`level_hier` (`ModSysAdminService`).
- */
-interface JerarquiaResponseBody {
-  base_hierarchy?: HierarquiaNodo[];
-  level_hierarchy?: HierarquiaNodo[];
-}
+import type { HierarquiaNodo } from '../models/jerarquia.model';
+import type { ResumenLineaSimple } from '../models/linea-simple.model';
+import type { FilaDeposito } from '../models/deposito.model';
+import type { FilaSegurosComercial } from '../models/seguros-comercial.model';
+import type { FilaSegurosOperaciones } from '../models/seguros-operaciones.model';
+import type { FilaCarteraCreditosVariables, ResumenCarteraCreditos } from '../models/cartera-creditos.model';
+import type { LogVerificacionFila } from '../models/tablero-verificacion.model';
+import type { ResponsableFila } from '../models/responsables.model';
+import type { JerarquiaResponseBody, ListaResponseBody, ResumenResponseBody } from '../models/presupuesto-api.model';
 
 /**
  * Fachada del módulo `presupuesto` — traduce las respuestas crudas del
@@ -96,6 +65,13 @@ export class PresupuestoService {
    * hasta confirmar el campo real con el backend.
    */
   fechaCorte(): string {
+    const currFec = this.shell.usuarioActivo()?.fechaCorte;
+    if (currFec && /^\d{8}$/.test(currFec)) {
+      return `${currFec.slice(0, 4)}-${currFec.slice(4, 6)}-${currFec.slice(6, 8)}`;
+    }
+    if (currFec && /^\d{4}-\d{2}-\d{2}$/.test(currFec)) {
+      return currFec;
+    }
     return new Date().toISOString().slice(0, 10);
   }
 
@@ -197,8 +173,22 @@ export class PresupuestoService {
   // ─── Privados ────────────────────────────────────────────────────────────
 
   private parseLista<T>(body: unknown): T[] {
-    const json = (body as ListaResponseBody | null)?.resultado?.list?.[0]?.JSONLIST;
-    return json ? (JSON.parse(json) as T[]) : [];
+    const res = (body as any)?.resultado;
+    if (Array.isArray(res)) {
+      return res as T[];
+    }
+    const json = res?.list?.[0]?.JSONLIST;
+    if (json) {
+      try {
+        return JSON.parse(json) as T[];
+      } catch {
+        return [];
+      }
+    }
+    if (Array.isArray(body)) {
+      return body as T[];
+    }
+    return [];
   }
 
   private parseResumen<T extends ResumenLineaSimple>(body: unknown): T {

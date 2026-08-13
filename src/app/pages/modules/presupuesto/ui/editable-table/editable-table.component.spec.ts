@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { EditableTableComponent } from './editable-table.component';
-import type { ColumnaTabla, FilaLineaSimple } from '../../models';
+import type { ColumnaTabla } from '../../models/tabla.model';
+import type { FilaLineaSimple } from '../../models/linea-simple.model';
 
 describe('EditableTableComponent', () => {
   beforeEach(() => {

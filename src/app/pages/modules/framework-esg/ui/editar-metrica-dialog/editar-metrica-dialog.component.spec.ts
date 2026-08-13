@@ -4,7 +4,7 @@ import { MessageService } from 'primeng/api';
 import { EditarMetricaDialogComponent } from './editar-metrica-dialog.component';
 import { FrameworkEsgService } from '../../services/framework-esg.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import type { EsgMetricaFila } from '../../models';
+import type { EsgMetricaFila } from '../../models/metrica.model';
 
 function fila(overrides: Partial<EsgMetricaFila> = {}): EsgMetricaFila {
   return {

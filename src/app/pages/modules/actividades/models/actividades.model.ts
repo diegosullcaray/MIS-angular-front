@@ -3,8 +3,21 @@
  * Migradas desde el legado STG (stg-app-mis-r22).
  */
 
+// ─── Actividades Home (tarjetas de navegación) ─────────────────────────────
+
+export interface ActividadCard {
+  titulo: string;
+  descripcion: string;
+  icono: string;
+  ruta: string;
+  colorBg: string;
+  colorIcon: string;
+  badge?: string;
+}
+
 // ─── Destino de Crédito ────────────────────────────────────────────────────
 
+/** Firma de índice: para que `DataTableComponent<T extends Record<string, unknown>>` la acepte. */
 export interface DestinoCreditoItem {
   pk?: number;
   HCODSEC: string;      // Cod. Asesor
@@ -19,6 +32,7 @@ export interface DestinoCreditoItem {
   HDESCRE?: string;     // Destino Crédito
   HFECVIS?: string;     // Fecha de Visita
   HCUMPLDC?: string;    // Cumple Destino Crédito ('Si' | 'No')
+  [key: string]: unknown;
 }
 
 // ─── Prospectos Corresponsal ───────────────────────────────────────────────
@@ -64,6 +78,28 @@ export interface ProspectoCorresponsalItem {
   HVINFAMI?: string;    // Vínculo Familiar ('SI' | 'NO')
   HTIPVINC?: string;    // Tipo Vínculo
   HIDCORRES?: string;   // ID Corresponsal
+}
+
+// ─── Prospectos Corresponsal (formulario de alta) ──────────────────────────
+
+export interface NuevoProspecto {
+  HAPENOMB: string;     // Apellidos y Nombres / Razón Social
+  HNUMDOC: string;      // DNI / Documento
+  HNUMRUC: string;      // RUC
+  HCELULAR: string;     // Celular
+  HDIREC: string;       // Dirección
+  HNOMCOM: string;      // Nombre Comercial
+  HTIPAGENT: string;    // Tipo Agente
+  HCANACAP: string;     // Canal Captación
+  HZONA: string;        // Zona ('URBANA' | 'RURAL')
+  HPROSPEC: string;     // Prospecto ('APLICA' | 'NO APLICA')
+  HVINFAMI: string;     // Vínculo Familiar ('SI' | 'NO')
+  HTIPVINC: string;     // Tipo Vínculo
+  HGEOLATI: string;     // Latitud
+  HGEOLON: string;      // Longitud
+  HCTALICEF: string;    // Cuenta con Licencia de Funcionamiento ('SI' | 'NO')
+  HAPERTCTA: string;    // Apertura de Cuenta ('SI' | 'NO')
+  HINSTALAD: string;    // Instalado ('SI' | 'NO')
 }
 
 // ─── Transacciones Corresponsal (registro de consultas por fecha) ──────────
