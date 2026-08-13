@@ -74,9 +74,10 @@ export class MenuStgService {
     });
   }
 
-  /** Normaliza la ruta absoluta eliminando barras iniciales duplicadas. */
+  /** Normaliza la ruta absoluta, asegurando el prefijo /app/ sin duplicarlo. */
   private rutaDeAntItem(item: AntMenuItem): string {
-    return `/${(item.act_sec || item.cod_sec || '').replace(/^\/+/, '')}`;
+    const segmento = (item.act_sec || item.cod_sec || '').replace(/^\/+/, '');
+    return segmento.startsWith('app/') ? `/${segmento}` : `/app/${segmento}`;
   }
 
   /** Construye recursivamente el árbol usando el mapa agrupado. */

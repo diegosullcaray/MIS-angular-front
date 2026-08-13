@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { MessageService } from 'primeng/api';
 import { CambiarUsuarioDialogComponent } from './cambiar-usuario-dialog.component';
 import { AuthService } from '../../../../auth/service/auth.service';
-import type { AlternateUsuario } from '../../../../auth/model/alternate-usuario.model';
+import type { AlternateUsuario } from '../../../../auth/model/auth-session.model';
 
 const ALTERNATES: AlternateUsuario[] = [
   { email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz', cargo: 'Supervisor' },

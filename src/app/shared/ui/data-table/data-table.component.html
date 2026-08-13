@@ -11,8 +11,8 @@
     [scrollable]="!!scrollHeight()"
     [scrollHeight]="scrollHeight()"
   >
-    @if (mostrarBuscador() || hayColumnasFiltrable() || showRefreshButton()) {
-      <ng-template pTemplate="caption">
+    <ng-template pTemplate="caption">
+      @if (mostrarBuscador() || hayColumnasFiltrable() || showRefreshButton()) {
         <div class="flex flex-nowrap items-center gap-1.5 p-1 overflow-x-auto">
           @if (mostrarBuscador()) {
             <p-iconfield iconPosition="left" styleClass="flex-1 min-w-[5.5rem] sm:flex-none sm:w-64">
@@ -52,8 +52,8 @@
             <p-button icon="pi pi-refresh" label="Actualizar" size="small" severity="secondary" [outlined]="true" styleClass="shrink-0 ml-auto mis-btn-label-desktop" pTooltip="Actualizar" tooltipPosition="top" (onClick)="refrescar.emit()"></p-button>
           }
         </div>
-      </ng-template>
-    }
+      }
+    </ng-template>
 
     <ng-template pTemplate="header">
       <tr class="bg-[#035096] text-white">

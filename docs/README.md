@@ -12,9 +12,11 @@ docs/
 ├── 01-canon/
 │   └── 00-vision-producto.md                 qué es el producto y su identidad de interacción
 ├── 02-arquitectura/
-│   └── 05-arquitectura-frontend-actual.md     cómo está construido el código HOY: arranque,
-│                                               login, guards, convención de módulo, cómo se
-│                                               obtienen los datos (protocolo Winder/Ant)
+│   ├── 05-arquitectura-frontend-actual.md     cómo está construido el código HOY: arranque,
+│   │                                           login, guards, convención de módulo, cómo se
+│   │                                           obtienen los datos (protocolo Winder/Ant)
+│   └── 06-filtros-jerarquia-organizativa.md   selector de jerarquía en cascada, fallback de fecha,
+│                                               persistencia visual [class.hidden] y loader global
 └── 07-modulos/                              código fuente del sistema legado STG por módulo
     ├── analista/                               (`stg-app-mis-r22`), conservado como referencia
     ├── incentivos3/                            al migrar cada módulo al Host — no es código
@@ -28,6 +30,7 @@ docs/
 |---|---|
 | [`01-canon/00-vision-producto.md`](./01-canon/00-vision-producto.md) | **Empezar aquí.** Qué es el MIS Host y su identidad de interacción (macOS-like) |
 | [`02-arquitectura/05-arquitectura-frontend-actual.md`](./02-arquitectura/05-arquitectura-frontend-actual.md) | Arquitectura real del código: punto de entrada, login → guards → shell, estructura de carpetas, convención de un módulo de negocio, protocolo Winder/Ant para obtener datos |
+| [`02-arquitectura/06-filtros-jerarquia-organizativa.md`](./02-arquitectura/06-filtros-jerarquia-organizativa.md) | Componente `HierSelectorComponent`: flujo reactivo en cascada, auto-selección de Nivel 1, fallback de fecha de corte, persistencia con `[class.hidden]`, botón Limpiar e integración con `LoadingService` |
 | [`07-modulos/`](./07-modulos/) | Fuente del sistema legado STG (`analista`, `incentivos3`, `presupuesto`, `reportes`) — referencia de solo lectura para migrar cada módulo, no forma parte de la app actual |
 
 Cada módulo migrado en `src/app/pages/modules/<modulo>/` puede tener además su propio

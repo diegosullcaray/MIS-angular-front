@@ -8,6 +8,7 @@ import type { DataTableColumn } from './data-table.model';
 interface Fila {
   codigo: string;
   nombre: string;
+  [key: string]: unknown;
 }
 
 const COLUMNAS: DataTableColumn[] = [
@@ -273,6 +274,7 @@ describe('DataTableComponent — fila de filtros por columna', () => {
 interface FilaConFecha {
   codigo: string;
   fecha: string;
+  [key: string]: unknown;
 }
 
 const COLUMNAS_FECHA: DataTableColumn[] = [

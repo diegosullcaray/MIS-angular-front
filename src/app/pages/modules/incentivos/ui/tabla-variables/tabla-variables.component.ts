@@ -22,8 +22,9 @@ export class TablaVariablesComponent {
   readonly abrirDetalle = output<DetalleTablaVariableEvent>();
 
   protected iconoPorCodVar(codVar: number): string {
-    const id = ID_POR_COD_VAR[codVar - 1] ?? 'car';
-    return ICONOS_INCENTIVOS[id] ?? 'pi pi-chart-bar';
+    const id = ID_POR_COD_VAR[codVar - 1];
+    if (!id) return 'pi pi-circle';
+    return ICONOS_INCENTIVOS[id] ?? 'pi pi-circle';
   }
 
   protected iconoVariable(codVar: number): string {
@@ -46,9 +47,15 @@ export class TablaVariablesComponent {
   }
 
   protected claseCelda(fila: FilaTablaVariable | FilaTablaEfectividad, tipo: string): string {
-    if (tipo === 'met' && fila.avan_fix !== undefined) {
-      return fila.avan_fix >= 1 ? 'font-semibold text-[var(--mis-success)]' : '';
+    if (tipo === 'met') {
+      const avance = (fila as FilaTablaVariable).avan_fix;
+      return avance !== undefined && avance >= 1
+        ? 'font-semibold text-[var(--mis-success)]'
+        : 'font-semibold text-[var(--mis-danger)]';
     }
+    if (tipo === 'mon') return 'font-semibold text-[var(--mis-primary)]';
+    if (tipo === 'real') return 'text-[var(--mis-secondary-light)]';
+    if (tipo === 'ini') return 'text-[var(--mis-bg)]';
     return '';
   }
 

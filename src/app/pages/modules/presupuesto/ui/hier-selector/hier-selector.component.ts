@@ -25,6 +25,8 @@ export class HierSelectorComponent implements OnInit {
   readonly raizFija = input<HierarquiaNodo[] | null>(null);
   readonly autoSeleccionar = input(true);
   readonly nodoSeleccionado = output<HierarquiaNodo>();
+  /** Emite cuando la jerarquía no pudo cargarse o vino vacía (ni error HTTP ni nodo alguno) — único caso en que este componente nunca llega a emitir `nodoSeleccionado`. */
+  readonly error = output<void>();
 
   protected readonly nodosNivel = signal<NivelJerarquiaDropdown[]>([]);
   protected readonly valoresSeleccionados = signal<(HierarquiaNodo | null)[]>([]);
@@ -58,10 +60,12 @@ export class HierSelectorComponent implements OnInit {
           this.cargarNivelInicial(primerNodoRaiz.tip_cod, crls, primerNodoRaiz.lvl ?? 1);
         } else {
           this.cargando.set(false);
+          this.error.emit();
         }
       },
       error: () => {
         this.cargando.set(false);
+        this.error.emit();
       },
     });
   }
@@ -85,9 +89,14 @@ export class HierSelectorComponent implements OnInit {
                   this.cargando.set(false);
                   if (lhSinFec && lhSinFec.length > 0) {
                     this.procesarRespuestaNivelInicial(lhSinFec, lvl);
+                  } else {
+                    this.error.emit();
                   }
                 },
-                error: () => this.cargando.set(false),
+                error: () => {
+                  this.cargando.set(false);
+                  this.error.emit();
+                },
               });
           }
         },
@@ -99,9 +108,14 @@ export class HierSelectorComponent implements OnInit {
                 this.cargando.set(false);
                 if (lhSinFec && lhSinFec.length > 0) {
                   this.procesarRespuestaNivelInicial(lhSinFec, lvl);
+                } else {
+                  this.error.emit();
                 }
               },
-              error: () => this.cargando.set(false),
+              error: () => {
+                this.cargando.set(false);
+                this.error.emit();
+              },
             });
         },
       });

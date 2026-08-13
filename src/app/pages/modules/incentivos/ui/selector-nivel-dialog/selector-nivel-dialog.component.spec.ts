@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { SelectorNivelDialogComponent } from './selector-nivel-dialog.component';
 import { IncentivosService } from '../../services/incentivos.service';
@@ -31,7 +32,11 @@ describe('SelectorNivelDialogComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [SelectorNivelDialogComponent],
-      providers: [{ provide: IncentivosService, useValue: incentivosFalso }, MessageService],
+      providers: [
+        { provide: IncentivosService, useValue: incentivosFalso },
+        MessageService,
+        provideRouter([{ path: '**', redirectTo: '' }]),
+      ],
     });
   });
 
@@ -157,7 +162,7 @@ describe('SelectorNivelDialogComponent', () => {
     expect(incentivosFalso.seleccionarFinancieraConfianza).toHaveBeenCalledWith(2);
   });
 
-  it('cerrar() no emite visibleChange si el diálogo es obligatorio (aún no se eligió ningún nivel)', () => {
+  it('cerrar() siempre emite visibleChange(false) y redirige al dashboard, incluso si el diálogo es obligatorio', () => {
     const fixture = crear();
     fixture.componentRef.setInput('obligatorio', true);
     fixture.detectChanges();
@@ -166,7 +171,7 @@ describe('SelectorNivelDialogComponent', () => {
 
     fixture.componentInstance['cerrar']();
 
-    expect(visibleChangeSpy).not.toHaveBeenCalled();
+    expect(visibleChangeSpy).toHaveBeenCalledWith(false);
   });
 
   it('volverAlMenu() regresa a la vista de menú y limpia el filtro', () => {

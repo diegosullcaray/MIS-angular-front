@@ -9,6 +9,9 @@ describe('SegurosComercialComponent', () => {
     esAdmin: ReturnType<typeof vi.fn>;
     obtenerResumenSegComercial: ReturnType<typeof vi.fn>;
     guardarResumenSegComercial: ReturnType<typeof vi.fn>;
+    obtenerJerarquiaBase: ReturnType<typeof vi.fn>;
+    obtenerJerarquiaNivel: ReturnType<typeof vi.fn>;
+    fechaCorte: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
@@ -16,6 +19,9 @@ describe('SegurosComercialComponent', () => {
       esAdmin: vi.fn().mockReturnValue(false),
       obtenerResumenSegComercial: vi.fn().mockReturnValue(of({ ws: [], bp: {} })),
       guardarResumenSegComercial: vi.fn().mockReturnValue(of({})),
+      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([])),
+      obtenerJerarquiaNivel: vi.fn().mockReturnValue(of([])),
+      fechaCorte: vi.fn().mockReturnValue('2026-01-01'),
     };
     TestBed.configureTestingModule({
       imports: [SegurosComercialComponent],

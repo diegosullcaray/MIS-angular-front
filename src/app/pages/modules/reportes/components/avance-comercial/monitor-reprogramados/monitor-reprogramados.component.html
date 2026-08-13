@@ -17,7 +17,7 @@
   </div>
 
   <div class="flex items-end gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
-    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" />
+    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Tipo</span>

@@ -10,6 +10,9 @@ describe('DepositoBpComponent', () => {
     esAdmin: ReturnType<typeof vi.fn>;
     obtenerResumenDepBP: ReturnType<typeof vi.fn>;
     guardarResumenDepBP: ReturnType<typeof vi.fn>;
+    obtenerJerarquiaBase: ReturnType<typeof vi.fn>;
+    obtenerJerarquiaNivel: ReturnType<typeof vi.fn>;
+    fechaCorte: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
@@ -17,6 +20,9 @@ describe('DepositoBpComponent', () => {
       esAdmin: vi.fn().mockReturnValue(false),
       obtenerResumenDepBP: vi.fn().mockReturnValue(of({ ws: [], bp: {} })),
       guardarResumenDepBP: vi.fn().mockReturnValue(of({})),
+      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }])),
+      obtenerJerarquiaNivel: vi.fn().mockReturnValue(of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }])),
+      fechaCorte: vi.fn().mockReturnValue('2026-08-05'),
     };
     TestBed.configureTestingModule({
       imports: [DepositoBpComponent],

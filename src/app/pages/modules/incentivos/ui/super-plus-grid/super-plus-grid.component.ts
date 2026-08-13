@@ -29,8 +29,8 @@ export class SuperPlusGridComponent {
   }
 
   protected claseCaja(item: ItemSuperPlus): string {
-    if (!item.enab) return 'bg-[var(--mis-surface-variant)] text-[var(--mis-text-tertiary)]';
-    if (item.estado === 1) return 'bg-[var(--mis-success-light)] text-[var(--mis-success-text)]';
-    return 'bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)]';
+    if (item.estado === 0) return 'bg-[var(--mis-surface-variant)] text-[var(--mis-text-tertiary)]';
+    if (item.val < 0) return 'bg-[var(--mis-danger-light)] text-[var(--mis-danger-text)]';
+    return 'bg-[var(--mis-secondary-light)] text-[var(--mis-secondary-text)]';
   }
 }

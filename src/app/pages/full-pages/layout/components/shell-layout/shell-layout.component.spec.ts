@@ -20,13 +20,28 @@ class StubHeaderComponent {}
 @Component({ selector: 'app-redirect-overlay', standalone: true, template: '' })
 class StubRedirectOverlayComponent {}
 
+@Component({ selector: 'app-loading-overlay', standalone: true, template: '' })
+class StubLoadingOverlayComponent {}
+
+@Component({ selector: 'app-panel-neutro', standalone: true, template: '<div class="stub-panel-neutro"></div>' })
+class StubPanelNeutroComponent {}
+
 describe('ShellLayoutComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ShellLayoutComponent],
       providers: [provideRouter([])],
     }).overrideComponent(ShellLayoutComponent, {
-      set: { imports: [RouterOutlet, StubHeaderComponent, StubSidebarComponent, StubRedirectOverlayComponent] },
+      set: {
+        imports: [
+          RouterOutlet,
+          StubHeaderComponent,
+          StubSidebarComponent,
+          StubRedirectOverlayComponent,
+          StubLoadingOverlayComponent,
+          StubPanelNeutroComponent,
+        ],
+      },
     });
   });
 
@@ -49,23 +64,23 @@ describe('ShellLayoutComponent', () => {
     expect(raiz.className).toContain("sm:bg-[url('/assets/images/fc/fondos/wallpaper.png')]");
   });
 
-  it('mientras contenidoPendienteSeleccion está activo, oculta el router-outlet (contenido del sistema anterior) y muestra el loader', () => {
+  it('mientras contenidoPendienteSeleccion está activo, oculta el router-outlet (contenido del sistema anterior) y muestra el panel neutro', () => {
     const fixture = TestBed.createComponent(ShellLayoutComponent);
     const shell = TestBed.inject(ShellStateService);
     shell.setContenidoPendienteSeleccion(true);
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('.shell-content-loading')).not.toBeNull();
+    expect(el.querySelector('app-panel-neutro')).not.toBeNull();
     expect(el.querySelector('.shell-content-inner')?.classList.contains('hidden')).toBe(true);
   });
 
-  it('sin contenidoPendienteSeleccion, no muestra el loader y deja visible el router-outlet', () => {
+  it('sin contenidoPendienteSeleccion, no muestra el panel neutro y deja visible el router-outlet', () => {
     const fixture = TestBed.createComponent(ShellLayoutComponent);
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('.shell-content-loading')).toBeNull();
+    expect(el.querySelector('app-panel-neutro')).toBeNull();
     expect(el.querySelector('.shell-content-inner')?.classList.contains('hidden')).toBe(false);
   });
 });
