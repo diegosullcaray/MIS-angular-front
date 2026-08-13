@@ -1,42 +1,14 @@
 <div class="mis-page">
   <!-- Encabezado minimalista -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-[#035096]/10 text-[#035096] flex items-center justify-center font-bold text-lg shrink-0">
-        <i class="pi pi-compass"></i>
-      </div>
-      <div>
-        <h1 class="text-base sm:text-lg font-bold text-[var(--mis-text-primary)] m-0 leading-tight">
-          Seguimiento de Destino de Crédito
-        </h1>
-        <p class="text-xs text-[var(--mis-text-secondary)] m-0 mt-0.5">
-          Monitoreo de visitas y cumplimiento de destino de crédito desembolsado
-        </p>
-      </div>
+  <div class="flex items-center gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="w-9 h-9 rounded-lg bg-[#035096]/10 text-[#035096] flex items-center justify-center font-bold text-lg shrink-0">
+      <i class="pi pi-compass"></i>
     </div>
-
-    <!-- Buscador global e indicador -->
-    <div class="flex items-center gap-2.5">
-      <p-iconfield iconPosition="left" styleClass="w-full sm:w-72">
-        <p-inputicon styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]"></p-inputicon>
-        <input
-          type="text"
-          pInputText
-          placeholder="Buscar por asesor, cliente u operación..."
-          (input)="onSearchInput($event)"
-          class="w-full text-xs py-1.5"
-        />
-      </p-iconfield>
-
-      <p-button
-        icon="pi pi-refresh"
-        [rounded]="true"
-        [outlined]="true"
-        severity="secondary"
-        size="small"
-        pTooltip="Actualizar datos"
-        (onClick)="cargarDatos()"
-      ></p-button>
+    <div>
+      <h1 class="text-base sm:text-lg font-bold text-[var(--mis-text-primary)] m-0 leading-tight flex items-center gap-1.5">
+        Seguimiento de Destino de Crédito
+        <app-destino-credito-info-dialog />
+      </h1>
     </div>
   </div>
 
@@ -46,80 +18,72 @@
   } @else if (error()) {
     <app-inline-error [detalle]="error()!" (reintentar)="cargarDatos()" />
   } @else {
-    <!-- Tabla Principal con PrimeNG -->
-    <div class="rounded-xl overflow-hidden border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs flex-1">
-      <p-table
-        [value]="filteredData()"
-        [paginator]="true"
-        [rows]="10"
-        [rowsPerPageOptions]="[10, 25, 50]"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
-        styleClass="p-datatable-sm p-datatable-gridlines text-xs"
-        [scrollable]="true"
-        scrollHeight="560px"
-      >
-        <ng-template pTemplate="header">
-          <tr class="bg-[#035096] text-white">
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px] text-center w-28">Cod. Asesor</th>
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px]">Nombre Asesor</th>
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px]">Cuenta Cli.</th>
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px]">Nombre Cliente</th>
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px] text-center">Operación</th>
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px] text-center">Fec. Desembolso</th>
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px] text-right">Monto Desembolso</th>
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px] text-center">Fecha Visita</th>
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px] text-center">Cumple Destino</th>
-            <th class="!bg-[#035096] !text-white font-semibold text-[11px] text-center w-20">Acción</th>
-          </tr>
-        </ng-template>
+    <app-data-table
+      [columns]="columnas"
+      [data]="data()"
+      [scrollHeight]="'560px'"
+      [searchFields]="['HDESSEC', 'HCODSEC']"
+      searchPlaceholder="Buscar asesor..."
+      emptyMessage="No se encontraron registros de destino de crédito."
+      [showRefreshButton]="true"
+      (refrescar)="cargarDatos()"
+    >
+      <ng-template appDataTableCell="HCODSEC" let-row>
+        <span class="font-mono text-[var(--mis-text-primary)] font-semibold">{{ row.HCODSEC }}</span>
+      </ng-template>
 
-        <ng-template pTemplate="body" let-item>
-          <tr class="hover:bg-[var(--mis-panel-bg)] transition-colors">
-            <td class="text-center font-mono text-[var(--mis-text-primary)] font-semibold">{{ item.HCODSEC }}</td>
-            <td class="font-medium text-[var(--mis-text-primary)]">{{ item.HDESSEC }}</td>
-            <td class="font-mono text-[var(--mis-text-secondary)]">{{ item.HCTACLI }}</td>
-            <td class="text-[var(--mis-text-primary)] font-medium">{{ item.HDESCLI }}</td>
-            <td class="text-center font-mono font-bold text-[#035096]">{{ item.HCODOPE }}</td>
-            <td class="text-center text-[var(--mis-text-secondary)]">{{ item.HFECDES }}</td>
-            <td class="text-right font-mono font-semibold text-[var(--mis-text-primary)]">
-              {{ item.HMONDES | currency:'PEN':'symbol':'1.2-2' }}
-            </td>
-            <td class="text-center text-[var(--mis-text-primary)]">
-              {{ item.HFECVIS || '-' }}
-            </td>
-            <td class="text-center">
-              @if (item.HCUMPLDC === 'Si') {
-                <p-tag value="Si" severity="success" styleClass="text-[10px] px-2 py-0.5"></p-tag>
-              } @else if (item.HCUMPLDC === 'No') {
-                <p-tag value="No" severity="danger" styleClass="text-[10px] px-2 py-0.5"></p-tag>
-              } @else {
-                <p-tag value="Pendiente" severity="warn" styleClass="text-[10px] px-2 py-0.5"></p-tag>
-              }
-            </td>
-            <td class="text-center">
-              <p-button
-                icon="pi pi-pencil"
-                [rounded]="true"
-                [text]="true"
-                severity="primary"
-                size="small"
-                pTooltip="Editar reporte de visita"
-                (onClick)="abrirEdicion(item)"
-              ></p-button>
-            </td>
-          </tr>
-        </ng-template>
+      <ng-template appDataTableCell="HDESSEC" let-row>
+        <span class="font-medium text-[var(--mis-text-primary)]">{{ row.HDESSEC }}</span>
+      </ng-template>
 
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="10" class="text-center py-6 text-[var(--mis-text-tertiary)]">
-              No se encontraron registros de destino de crédito.
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
+      <ng-template appDataTableCell="HCTACLI" let-row>
+        <span class="font-mono text-[var(--mis-text-secondary)]">{{ row.HCTACLI }}</span>
+      </ng-template>
+
+      <ng-template appDataTableCell="HDESCLI" let-row>
+        <span class="text-[var(--mis-text-primary)] font-medium">{{ row.HDESCLI }}</span>
+      </ng-template>
+
+      <ng-template appDataTableCell="HCODOPE" let-row>
+        <span class="font-mono font-bold text-[#035096]">{{ row.HCODOPE }}</span>
+      </ng-template>
+
+      <ng-template appDataTableCell="HFECDES" let-row>
+        <span class="text-[var(--mis-text-secondary)]">{{ row.HFECDES }}</span>
+      </ng-template>
+
+      <ng-template appDataTableCell="HMONDES" let-row>
+        <span class="font-mono font-semibold text-[var(--mis-text-primary)]">
+          {{ row.HMONDES | currency:'PEN':'symbol':'1.2-2' }}
+        </span>
+      </ng-template>
+
+      <ng-template appDataTableCell="HFECVIS" let-row>
+        <span class="text-[var(--mis-text-primary)]">{{ row.HFECVIS || '-' }}</span>
+      </ng-template>
+
+      <ng-template appDataTableCell="HCUMPLDC" let-row>
+        @if (row.HCUMPLDC === 'Si') {
+          <p-tag value="Si" severity="success" styleClass="text-[10px] px-2 py-0.5"></p-tag>
+        } @else if (row.HCUMPLDC === 'No') {
+          <p-tag value="No" severity="danger" styleClass="text-[10px] px-2 py-0.5"></p-tag>
+        } @else {
+          <p-tag value="Pendiente" severity="warn" styleClass="text-[10px] px-2 py-0.5"></p-tag>
+        }
+      </ng-template>
+
+      <ng-template appDataTableCell="accion" let-row>
+        <p-button
+          icon="pi pi-pencil"
+          [rounded]="true"
+          [text]="true"
+          severity="primary"
+          size="small"
+          pTooltip="Editar reporte de visita"
+          (onClick)="abrirEdicion(row)"
+        ></p-button>
+      </ng-template>
+    </app-data-table>
   }
 
   <!-- Componente Modal Dialog -->

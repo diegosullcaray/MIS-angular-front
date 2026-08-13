@@ -17,7 +17,7 @@ import { MisTheme } from './theme/mis-theme';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
-import { ThemeService } from './core/services/theme.service';
+import { ThemeService } from './pages/full-pages/layout/services/theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

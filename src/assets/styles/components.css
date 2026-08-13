@@ -58,7 +58,7 @@
   max-width: 300px;
   display: flex;
   flex-direction: column;
-  background: var(--mis-surface-translucido);
+  background: var(--mis-nav-panel-bg);
   backdrop-filter: blur(24px);
   border-right: 1px solid var(--mis-border);
   box-shadow: var(--mis-shadow-lg);

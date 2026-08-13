@@ -19,7 +19,7 @@ import type { MenuItem } from 'primeng/api';
 
 // Servicios y Componentes
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { ThemeService } from '../../../../../core/services/theme.service';
+import { ThemeService } from '../../services/theme.service';
 import { AuthService } from '../../../auth/service/auth.service';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';

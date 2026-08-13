@@ -95,4 +95,14 @@ describe('ShellStateService', () => {
     service.setSidebarTienePanel(false);
     expect(service.sidebarTienePanel()).toBe(false);
   });
+
+  it('contenidoPendienteSeleccion empieza en false y setContenidoPendienteSeleccion() lo actualiza', () => {
+    expect(service.contenidoPendienteSeleccion()).toBe(false);
+
+    service.setContenidoPendienteSeleccion(true);
+    expect(service.contenidoPendienteSeleccion()).toBe(true);
+
+    service.setContenidoPendienteSeleccion(false);
+    expect(service.contenidoPendienteSeleccion()).toBe(false);
+  });
 });

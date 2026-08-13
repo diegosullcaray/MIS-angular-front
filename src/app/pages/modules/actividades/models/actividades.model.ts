@@ -17,6 +17,7 @@ export interface ActividadCard {
 
 // ─── Destino de Crédito ────────────────────────────────────────────────────
 
+/** Firma de índice: para que `DataTableComponent<T extends Record<string, unknown>>` la acepte. */
 export interface DestinoCreditoItem {
   pk?: number;
   HCODSEC: string;      // Cod. Asesor
@@ -31,6 +32,7 @@ export interface DestinoCreditoItem {
   HDESCRE?: string;     // Destino Crédito
   HFECVIS?: string;     // Fecha de Visita
   HCUMPLDC?: string;    // Cumple Destino Crédito ('Si' | 'No')
+  [key: string]: unknown;
 }
 
 // ─── Prospectos Corresponsal ───────────────────────────────────────────────

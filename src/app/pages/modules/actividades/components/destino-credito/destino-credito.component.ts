@@ -1,36 +1,56 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { TagModule } from 'primeng/tag';
 import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 import { ActividadesService } from '../../services/actividades.service';
 import type { DestinoCreditoItem } from '../../models/actividades.model';
 import { DestinoCreditoDialogComponent } from '../../ui/destino-credito-dialog/destino-credito-dialog.component';
+import { DestinoCreditoInfoDialogComponent } from '../../ui/destino-credito-info-dialog/destino-credito-info-dialog.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
-import { inputValue } from '../../../../../shared/utils/dom.util';
+import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
+import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
+import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-table.model';
+
+const COLUMNAS: DataTableColumn[] = [
+  { field: 'HCODSEC', header: 'Cod. Asesor', align: 'center', width: '7rem', filterType: 'text' },
+  { field: 'HDESSEC', header: 'Nombre Asesor', filterType: 'text' },
+  { field: 'HCTACLI', header: 'Cuenta Cli.', filterType: 'text', mobileVisible: false },
+  { field: 'HDESCLI', header: 'Nombre Cliente', filterType: 'text', mobileVisible: false },
+  { field: 'HCODOPE', header: 'Operación', align: 'center', filterType: 'text', mobileVisible: false },
+  { field: 'HFECDES', header: 'Fec. Desembolso', align: 'center', filterType: 'date', mobileVisible: false },
+  { field: 'HMONDES', header: 'Monto Desembolso', align: 'right', filterType: 'number', mobileVisible: false },
+  { field: 'HFECVIS', header: 'Fecha Visita', align: 'center', filterType: 'date', mobileVisible: false },
+  {
+    field: 'HCUMPLDC',
+    header: 'Cumple Destino',
+    align: 'center',
+    filterType: 'dropdown',
+    dropdownOptions: [
+      { label: 'Si', value: 'Si' },
+      { label: 'No', value: 'No' },
+    ],
+  },
+  { field: 'accion', header: 'Acción', align: 'center', width: '5rem', sortable: false },
+];
 
 @Component({
   selector: 'app-destino-credito',
   standalone: true,
   imports: [
     CommonModule,
-    TableModule,
     ButtonModule,
-    InputTextModule,
-    IconFieldModule,
-    InputIconModule,
     TagModule,
     CardModule,
     TooltipModule,
     ListSkeletonComponent,
     InlineErrorComponent,
     DestinoCreditoDialogComponent,
+    DestinoCreditoInfoDialogComponent,
+    DataTableComponent,
+    DataTableCellDirective,
   ],
   templateUrl: './destino-credito.component.html',
   styleUrl: './destino-credito.component.css',
@@ -42,23 +62,11 @@ export class DestinoCreditoComponent implements OnInit {
   readonly error = signal<string | null>(null);
 
   readonly data = signal<DestinoCreditoItem[]>([]);
-  readonly globalFilter = signal('');
 
   readonly modalVisible = signal(false);
   readonly selectedItem = signal<DestinoCreditoItem | null>(null);
 
-  readonly filteredData = computed(() => {
-    const q = this.globalFilter().toLowerCase().trim();
-    if (!q) return this.data();
-    return this.data().filter(
-      (x) =>
-        x.HDESSEC?.toLowerCase().includes(q) ||
-        x.HDESCLI?.toLowerCase().includes(q) ||
-        x.HCODOPE?.toLowerCase().includes(q) ||
-        x.HCTACLI?.toLowerCase().includes(q) ||
-        x.HCODSEC?.toLowerCase().includes(q)
-    );
-  });
+  protected readonly columnas = COLUMNAS;
 
   ngOnInit(): void {
     this.cargarDatos();
@@ -81,10 +89,6 @@ export class DestinoCreditoComponent implements OnInit {
         this.loading.set(false);
       },
     });
-  }
-
-  protected onSearchInput(event: Event): void {
-    this.globalFilter.set(inputValue(event));
   }
 
   protected abrirEdicion(item: DestinoCreditoItem): void {

@@ -1,0 +1,272 @@
+<div class="data-table-container">
+  <!-- Tabla principal -->
+  <p-table #dt [value]="config.data" [scrollable]="config.scrollable !== false" [styleClass]="config.tableStyleClass || 'tabla-datos'"
+    [paginator]="config.paginator !== false" [rows]="config.rowsPerPage || 11"
+    [rowsPerPageOptions]="config.rowsPerPageOptions || [10, 20, 30, 50]"
+    [lazy]="config.lazy || false"
+    [totalRecords]="config.totalRecords ?? (config.data ? config.data.length : 0)"
+    [first]="config.first || 0"
+    [showCurrentPageReport]="config.showCurrentPageReport !== false"
+    [currentPageReportTemplate]="config.currentPageReportTemplate || translatedTexts.currentPageReport"
+    [globalFilterFields]="getGlobalFilterFields()"
+    [(selection)]="selectedItems"
+    [selectAll]="selectAll"
+    [dataKey]="config.dataKey || ''"
+    [selectionMode]="config.selection ? 'multiple' : null"
+    (selectionChange)="onSelectionChange()"
+    (onPage)="onPageChange($event)"
+    (onSort)="onSort($event)"
+    [scrollHeight]="config.scrollHeight"
+    responsiveLayout="scroll"
+    showGridlines
+    [loading]="config.loading">
+
+    <!-- Caption con búsqueda global y filtros -->
+    <ng-template pTemplate="caption" *ngIf="config.showGlobalSearch !== false">
+      <div class="d-flex gap-2">
+        <p-iconfield iconPosition="left">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
+          <input
+            #searchInput
+            pInputText
+            type="text"
+            (input)="onGlobalInput($event)"
+            (keydown.enter)="onGlobalSearchEnter($event)"
+            [placeholder]="config.globalSearchPlaceholder || translatedTexts.globalSearchPlaceholder"
+            style="height: 42px; padding-left: 2.5rem !important;"
+            [(ngModel)]="filtroGlobalValue" />
+        </p-iconfield>
+                <ng-container *ngIf="captionTemplate"
+          [ngTemplateOutlet]="captionTemplate"
+          [ngTemplateOutletContext]="{ emit: emitFilterInput.bind(this) }">
+        </ng-container>
+        <p-button *ngIf="config.showColumnFilters !== false"
+          [icon]="filtrosVisibles ? 'pi pi-filter-slash' : 'pi pi-filter'"
+          (click)="toggleFiltros()"
+          [label]="filtrosVisibles ? translatedTexts.filtersButtonActive : translatedTexts.filtersButton"
+          styleClass="btn-info btn-md"
+          [pTooltip]="translatedTexts.filtersTooltip"
+          tooltipPosition="top" />
+
+        <p-button *ngIf="filtrosVisibles && config.showColumnFilters !== false"
+          [disabled]="!canClear"
+          [label]="translatedTexts.clearButton"
+          styleClass="btn-danger btn-md"
+          icon="pi pi-eraser"
+          (click)="clear(dt, searchInput)"
+          [pTooltip]="translatedTexts.clearTooltip"
+          tooltipPosition="top" />
+
+      </div>
+    </ng-template>
+
+    <!-- Header de la tabla -->
+    <ng-template pTemplate="header">
+      <tr class="text-center">
+        <!-- Columna de selección (checkbox) -->
+        <th *ngIf="config.selection" class="selection-checkbox-header" [ngStyle]="getCheckboxColumnStyles()">
+          <p-checkbox
+            [(ngModel)]="selectAll"
+            (onChange)="toggleSelectAll()"
+            [indeterminate]="isIndeterminate()"
+            binary="true">
+          </p-checkbox>
+        </th>
+        <th *ngFor="let col of config.columns"
+            [pSortableColumn]="col.sortable !== false ? col.field : undefined"
+            [ngClass]="getColumnClasses(col)"
+            [ngStyle]="getColumnStyles(col)"
+            [style.text-align]="col.align || 'center'">
+          <div class="w-100 d-flex justify-content-center align-items-center text-center">
+            <span>{{ col.header }}</span>
+            <p-sortIcon *ngIf="col.sortable !== false" [field]="col.field">
+              <ng-template pTemplate="default" let-sortOrder>
+                <i *ngIf="sortOrder === 1" class="pi pi-sort-up" style="font-size: 1.2rem"></i>
+                <i *ngIf="sortOrder === -1" class="pi pi-sort-down" style="font-size: 1.2rem"></i>
+                <i *ngIf="sortOrder === 0 || sortOrder == null" class="pi pi-sort" style="font-size: 1.2rem"></i>
+              </ng-template>
+            </p-sortIcon>
+          </div>
+        </th>
+      </tr>
+      <!-- Fila de filtros -->
+      <tr class="filtro" [ngClass]="{'d-none': !filtrosVisibles || config.showColumnFilters === false}">
+        <!-- Celda vacía para la columna de selección -->
+        <th *ngIf="config.selection"></th>
+        <th *ngFor="let col of config.columns"
+            [ngClass]="getColumnClasses(col)"
+            [ngStyle]="getColumnStyles(col)">
+          <div class="w-100 p-1" *ngIf="col.filterType && col.filterType !== FilterType.NONE && !col.isAction">
+            <!-- Filtro de texto -->
+            <input *ngIf="col.filterType === FilterType.TEXT"
+              type="text" pInputText pSize="small" class="w-100 filtro-columna-input"
+              style="padding: 3px; font-size: 10pt !important; text-align:center;"
+              [(ngModel)]="filtros[col.field]"
+              (input)="applyTextFilter($any($event.target).value, col.field, table)"
+              [placeholder]="translatedTexts.filterPlaceholder.replace('{column}', col.header)" />
+
+            <!-- Filtro de número -->
+            <input *ngIf="col.filterType === FilterType.NUMBER"
+              type="number" pInputText pSize="small" class="w-100 filtro-columna-input "
+              style="padding: 3px; font-size: 10pt !important; text-align:center;"
+              [(ngModel)]="filtros[col.field]"
+              (input)="applyNumberFilter($any($event.target).value, col.field, table)"
+              [placeholder]="translatedTexts.filterPlaceholder.replace('{column}', col.header)" />
+
+            <!-- Filtro de dropdown (p-select reemplaza a p-dropdown desde PrimeNG v18) -->
+            <p-select *ngIf="col.filterType === FilterType.DROPDOWN && col.dropdownOptions"
+              [options]="col.dropdownOptions"
+              optionLabel="label"
+              optionValue="value"
+              [(ngModel)]="filtros[col.field]"
+              (onChange)="applyDropdownFilter($event.value ?? $event, col.field, table)"
+              [placeholder]="translatedTexts.filterPlaceholder.replace('{column}', col.header)"
+              [style]="{'width': '100%', 'font-size': '10pt'}"
+              styleClass="filtro-columna-input p-column-filter"
+              appendTo="body">
+            </p-select>
+
+            <!-- Filtro de fecha -->
+            <p-datePicker *ngIf="col.filterType === FilterType.DATE"
+              [(ngModel)]="filtros[col.field]"
+              dateFormat="dd/mm/yy"
+              (onSelect)="onDatePickerSelect($event, col.field, table)"
+              [placeholder]="translatedTexts.filterPlaceholder.replace('{column}', col.header) + ' (dd/mm/yyyy)'"
+              [style]="{'width': '100%', 'font-size': '10pt'}"
+              inputStyleClass="filtro-columna-input p-column-filter"
+              appendTo="body">
+            </p-datePicker>
+          </div>
+        </th>
+      </tr>
+    </ng-template>
+
+    <!-- Cuerpo de la tabla -->
+    <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+      <tr [class.table-warning]="row.isModified"
+          [class.cursor-pointer]="!isMobile && !config.selection"
+          [pSelectableRow]="config.selection && !isMobile && isRowSelectable(row) ? row : null"
+          [ngClass]="getRowClass(row, rowIndex)"
+          [attr.data-indicador]="row?.TINDICREA"
+          (click)="onRowClick(row, rowIndex, $event)">
+        <!-- Celda de selección (checkbox) -->
+        <td *ngIf="config.selection" class="selection-checkbox-cell" [ngStyle]="getCheckboxColumnStyles()" (click)="onCheckboxCellClick($event)">
+          <p-tableCheckbox [value]="row" [disabled]="!isRowSelectable(row)"></p-tableCheckbox>
+        </td>
+
+         <ng-container *ngFor="let col of config.columns">
+          <td *ngIf="shouldRenderCell(rowIndex, col)"
+              [attr.rowspan]="getCellRowspan(rowIndex, col)"
+            [ngClass]="getColumnClasses(col)"
+            [ngStyle]="getColumnStyles(col)"
+            [style.text-align]="col.align || 'center'"
+            [class.cursor-pointer]="col.clickable"
+          (contextmenu)="onCellContextMenu($event, row, col, rowIndex)"
+            (click)="col.clickable ? onCellClick(row, col, $event) : null">
+          <!-- Contenido de celda normal -->
+          <div *ngIf="!col.isAction" class="cell-content">
+            <div *ngIf="col.renderHtml as renderHtmlFn; else textCell"
+              [innerHTML]="safeHtml(renderHtmlFn(getNestedValue(row, col.field), row))">
+            </div>
+            <ng-template #textCell>
+              <div class="cell-description"
+                   [pTooltip]="getCellValue(col, row)"
+                   tooltipPosition="top">
+                {{ getCellValue(col, row) }}
+              </div>
+            </ng-template>
+          </div>
+          <!-- Acciones -->
+          <div *ngIf="col.isAction" class="d-flex justify-content-center">
+            <ng-container *ngIf="getInlineEditAction(row) as inlineEditAction; else rowMenuActions">
+              <p-button
+                [icon]="getActionIcon(inlineEditAction, row)"
+                (onClick)="onInlineEditActionClick(inlineEditAction, row, rowIndex, $event)"
+                [text]="true"
+                [severity]="getActionSeverity(inlineEditAction, row) || 'secondary'"
+                [styleClass]="getActionStyleClass(inlineEditAction, row)"
+                [pTooltip]="getActionTooltip(inlineEditAction, row) || getActionLabel(inlineEditAction, row)"
+                tooltipPosition="top"
+                appendTo="body"
+                size="small">
+              </p-button>
+            </ng-container>
+            <ng-template #rowMenuActions>
+              <ng-container *ngIf="getVisibleRowActions(row).length > 0">
+                <p-button
+                  icon="pi pi-ellipsis-v"
+                  (onClick)="openActionMenu(rowActionMenu, row, rowIndex, $event)"
+                  [text]="true"
+                  [pTooltip]="'Ver acciones disponibles'"
+                  tooltipPosition="top"
+                  appendTo="body"
+                  size="small"
+                  severity="secondary">
+                </p-button>
+                <p-menu
+                  #rowActionMenu
+                  [model]="getActionMenuItems(row, rowIndex)"
+                  [popup]="true"
+                  appendTo="body"
+                  styleClass="row-action-menu"
+                  (onHide)="onActionMenuHide(rowActionMenu)">
+                </p-menu>
+              </ng-container>
+            </ng-template>
+          </div>
+        </td>
+        </ng-container>
+      </tr>
+      <!-- Fila expandida para móvil - Muestra TODAS las columnas ocultas -->
+      <tr *ngIf="isRowExpanded(rowIndex) && isMobile" class="expanded-row-mobile">
+        <td [attr.colspan]="getMobileVisibleColumnsCount()" style="width: 100%; max-width: 100%;">
+          <div class="expanded-details">
+            <div class="detail-item" *ngFor="let col of getMobileHiddenColumns()">
+              <span class="detail-label">{{ col.header }}:</span>
+              <span class="detail-value">{{ getCellValue(col, row) }}</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <!-- Mensaje cuando no hay datos -->
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="(config.selection ? 1 : 0) + config.columns.length" class="text-center p-4">
+          <div class="d-flex flex-column align-items-center gap-3">
+            <i class="pi pi-search" style="font-size: 2rem; color: #6c757d;"></i>
+            <span class="h5 text-muted">{{ config.emptyMessage || translatedTexts.emptyMessage }}</span>
+            <span class="text-muted">{{ translatedTexts.emptyHint }}</span>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <!-- Footer de la tabla -->
+    <ng-template pTemplate="footer" *ngIf="shouldShowFooter">
+      <tr>
+        <ng-container *ngFor="let cell of footerCellsCache; let i = index">
+          <td *ngIf="cell"
+              [attr.colspan]="cell.colspan || 1"
+              [style.text-align]="cell.align || 'center'"
+              [ngClass]="cell.cssClass"
+              [style.color]="cell.color">
+            <strong *ngIf="cell.bold">{{ cell.text }}</strong>
+            <span *ngIf="!cell.bold">{{ cell.text }}</span>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-contextmenu
+    #cellContextMenu
+    [model]="contextMenuItems"
+    appendTo="body"
+    (onHide)="onContextMenuHide()">
+  </p-contextmenu>
+</div>
+

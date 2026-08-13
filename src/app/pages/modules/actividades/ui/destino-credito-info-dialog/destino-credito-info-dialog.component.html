@@ -1,0 +1,52 @@
+<p-button
+  icon="pi pi-info-circle"
+  [text]="true"
+  [rounded]="true"
+  severity="secondary"
+  styleClass="mis-info-pulse-btn"
+  pTooltip="Criterios de monitoreo de destino de crédito"
+  tooltipPosition="top"
+  (click)="abrir()"
+/>
+
+<p-dialog
+  [(visible)]="visible"
+  header="Criterios de Monitoreo de Destino de Crédito"
+  [modal]="true"
+  [style]="{ width: '90vw', maxWidth: '34rem' }"
+  [draggable]="false"
+  [resizable]="false"
+  appendTo="body"
+>
+  <div class="flex flex-col gap-4 py-1 text-sm text-[var(--mis-text-primary)]">
+    <div class="p-3.5 bg-[var(--mis-secondary-light)] border border-[var(--mis-secondary)]/20 rounded-lg flex gap-3 items-start">
+      <ng-icon name="lucideInfo" size="20" class="text-[var(--mis-secondary)] shrink-0 mt-0.5" />
+      <p class="m-0 text-[13px] leading-relaxed text-[var(--mis-text-primary)]">
+        Se hace seguimiento a los créditos desembolsados que cumplan con alguna de las siguientes condiciones:
+      </p>
+    </div>
+
+    <ul class="flex flex-col gap-2 m-0 p-0 list-none">
+      <li class="flex items-start gap-2.5 p-2.5 rounded-md bg-[var(--mis-panel-bg)] border border-[var(--mis-border)]">
+        <span class="w-5 h-5 rounded-full bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)] text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+        <span class="text-[13px] leading-snug">Crédito mayor o igual a S/ 30,000.</span>
+      </li>
+      <li class="flex items-start gap-2.5 p-2.5 rounded-md bg-[var(--mis-panel-bg)] border border-[var(--mis-border)]">
+        <span class="w-5 h-5 rounded-full bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)] text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+        <span class="text-[13px] leading-snug">Créditos Agrícolas a una sola cuota mayor o igual a S/ 20,000.</span>
+      </li>
+      <li class="flex items-start gap-2.5 p-2.5 rounded-md bg-[var(--mis-panel-bg)] border border-[var(--mis-border)]">
+        <span class="w-5 h-5 rounded-full bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)] text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+        <span class="text-[13px] leading-snug">Todos los productos Construyendo Confianza mayor o igual a S/ 10,000.</span>
+      </li>
+      <li class="flex items-start gap-2.5 p-2.5 rounded-md bg-[var(--mis-panel-bg)] border border-[var(--mis-border)]">
+        <span class="w-5 h-5 rounded-full bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)] text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+        <span class="text-[13px] leading-snug">No aplica a Créditos destinados a Compra de Deuda o Créditos Grupales.</span>
+      </li>
+    </ul>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Entendido" icon="pi pi-check" (click)="cerrar()" />
+  </ng-template>
+</p-dialog>

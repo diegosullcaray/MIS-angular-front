@@ -1,5 +1,7 @@
-import { Component, inject, computed, effect, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject, computed, effect, signal, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
 import { TooltipModule } from 'primeng/tooltip';
@@ -19,7 +21,9 @@ const DURACION_TRANSICION_PANEL_MS = 300;
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
-export class SidebarComponent {
+export class SidebarComponent implements AfterViewInit {
+  @ViewChild('scrollContainer') private scrollContainer?: ElementRef<HTMLDivElement>;
+
   protected readonly shell = inject(ShellStateService);
   private readonly menuStg = inject(MenuStgService);
   private readonly kaypacha = inject(KaypachaService);
@@ -31,8 +35,18 @@ export class SidebarComponent {
   
   protected readonly iconActivoId = this.shell.sidebarIconActivo;
 
+  /** Estado de visibilidad de las flechas de scroll horizontal en mobile. */
+  protected readonly puedeScrollIzquierda = signal(false);
+  protected readonly puedeScrollDerecha = signal(false);
+
   constructor() {
     this.kaypacha.cargarCategorias();
+
+    // Re-evalúa visibilidad de flechas cuando la lista de íconos se actualice.
+    effect(() => {
+      this.iconos();
+      setTimeout(() => this.verificarScroll(), 150);
+    });
 
     // Sincroniza el estado del header: oculta el botón de menú si el sistema actual no tiene panel.
     effect(() => {
@@ -46,6 +60,34 @@ export class SidebarComponent {
         this.menuStg.cargar(email);
       }
     });
+
+    // Apaga `contenidoPendienteSeleccion` cuando el Router termina de resolver
+    // la navegación (llegue a destino, se cancele o falle). Ante cualquier error o
+    // cancelación de ruta, resetea el ícono del sidebar a Inicio y redirige a /app/dashboard.
+    this.router.events
+      .pipe(
+        filter(
+          (evento) =>
+            evento instanceof NavigationEnd ||
+            evento instanceof NavigationCancel ||
+            evento instanceof NavigationError ||
+            evento instanceof NavigationSkipped
+        ),
+        takeUntilDestroyed()
+      )
+      .subscribe((evento) => {
+        this.shell.setContenidoPendienteSeleccion(false);
+
+        if (evento instanceof NavigationError || evento instanceof NavigationCancel) {
+          this.shell.setSidebarIconActivo('host-inicio');
+          this.router.navigateByUrl('/app/dashboard');
+        } else if (evento instanceof NavigationEnd) {
+          const url = evento.urlAfterRedirects || evento.url;
+          if (url.includes('/dashboard') || url.startsWith('/error') || url === '/app') {
+            this.shell.setSidebarIconActivo('host-inicio');
+          }
+        }
+      });
   }
 
   /** Lista combinada de íconos base y los que provienen del backend STG. */
@@ -88,14 +130,21 @@ export class SidebarComponent {
     // Verificación de enlaces externos
     const esExterno = ['jira', 'imparable', 'helpdesk'].some(ext => key.includes(ext)) || ruta.startsWith('http');
     if (esExterno) {
+      this.shell.setContenidoPendienteSeleccion(false);
       this.redirect.redirigir(icon.etiqueta || icon.id, ruta.startsWith('http') ? ruta : undefined);
       return;
     }
 
-    // Navegación local sin panel
-    if (!icon.tienePanel && ruta) {
-      this.router.navigateByUrl(ruta).catch(() => console.warn(`Ruta local no encontrada: ${ruta}`));
-      return;
+    // Caso especial: Inicio navega directamente al dashboard
+    if (icon.id === 'host-inicio') {
+      this.shell.setContenidoPendienteSeleccion(false);
+      this.router.navigateByUrl('/app/dashboard').catch(() => {});
+    } else if (ruta) {
+      // Navegación local directa si el ícono tiene ruta especificada
+      this.shell.setContenidoPendienteSeleccion(false);
+      this.router.navigateByUrl(ruta).catch(() => {
+        console.warn(`Ruta no encontrada: ${ruta}`);
+      });
     }
 
     // Transición visual para sistemas con panel
@@ -104,11 +153,21 @@ export class SidebarComponent {
       this.shell.setNavPanelColapsado(false);
       setTimeout(() => this.cambiandoPanel.set(false), DURACION_TRANSICION_PANEL_MS);
     }
+
+    // Al cambiar a otro sistema con panel sin ruta directa, se muestra el estado de carga
+    // con un temporizador de respaldo para asegurar que la pantalla no se quede estática.
+    if (icon.tienePanel && eraActivo !== icon.id && !ruta && icon.id !== 'host-inicio') {
+      this.shell.setContenidoPendienteSeleccion(true);
+      setTimeout(() => {
+        this.shell.setContenidoPendienteSeleccion(false);
+      }, 2500);
+    }
   }
 
   /** Acción al seleccionar un sub-ítem del panel (Col 2). */
   protected onRutaSeleccionada(ruta: string): void {
     this.shell.setMenuItemActivo({ ruta, etiqueta: ruta.split('/').pop() ?? '' });
+    this.shell.setContenidoPendienteSeleccion(false);
 
     // En pantallas pequeñas, el panel se oculta tras la selección para dejar ver el contenido.
     if (this.esMobil()) {
@@ -175,5 +234,39 @@ export class SidebarComponent {
       icono: stg?.icono ?? 'pi pi-th-large',
       secciones: [{ titulo, rutas: hijosStg }],
     };
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.verificarScroll(), 100);
+  }
+
+  @HostListener('window:resize')
+  protected onResize(): void {
+    this.verificarScroll();
+  }
+
+  protected onScrollMobile(): void {
+    this.verificarScroll();
+  }
+
+  protected desplazarIzquierda(): void {
+    if (this.scrollContainer?.nativeElement) {
+      this.scrollContainer.nativeElement.scrollBy({ left: -140, behavior: 'smooth' });
+    }
+  }
+
+  protected desplazarDerecha(): void {
+    if (this.scrollContainer?.nativeElement) {
+      this.scrollContainer.nativeElement.scrollBy({ left: 140, behavior: 'smooth' });
+    }
+  }
+
+  private verificarScroll(): void {
+    const el = this.scrollContainer?.nativeElement;
+    if (!el) return;
+
+    const tieneScroll = el.scrollWidth > el.clientWidth + 2;
+    this.puedeScrollIzquierda.set(el.scrollLeft > 2);
+    this.puedeScrollDerecha.set(tieneScroll && el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
   }
 }

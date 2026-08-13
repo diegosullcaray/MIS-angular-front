@@ -39,65 +39,97 @@
     </button>
 
     <!-- Pill de usuario minimalista -->
-    <div class="flex items-center gap-2 p-0.5 pr-2 rounded-full border border-[var(--mis-border)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-panel-bg)] hover:border-[var(--mis-border-strong)]"
-         (click)="toggleDropdown()" (keydown.enter)="toggleDropdown()" tabindex="0" role="button" aria-haspopup="true" [attr.aria-expanded]="dropdownOpen()">
-      <div class="relative w-6 h-6 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-[11px] font-semibold shrink-0" [class.avatar-alterno]="auth.esUsuarioAlterno()">
+    <div
+      class="flex items-center justify-center sm:justify-start gap-0 sm:gap-2 p-0.5 sm:pr-2 rounded-full border border-[var(--mis-border)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-panel-bg)] hover:border-[var(--mis-border-strong)] active:scale-95 sm:active:scale-100"
+      (click)="toggleDropdown()"
+      (keydown.enter)="toggleDropdown()"
+      tabindex="0"
+      role="button"
+      aria-haspopup="true"
+      [attr.aria-expanded]="dropdownOpen()"
+      [title]="shell.usuarioActivo()?.nombre || 'Perfil de usuario'"
+    >
+      <div
+        class="relative w-6 h-6 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-[11px] font-semibold shrink-0"
+        [class.avatar-alterno]="auth.esUsuarioAlterno()"
+      >
         @if (auth.esUsuarioAlterno()) {
           <ng-icon name="lucideUsers" size="12" aria-label="Viendo como otro usuario" />
         } @else {
           {{ shell.inicialesUsuario() }}
         }
       </div>
-      <div class="hidden sm:flex flex-col">
-        <span class="text-[12px] font-medium text-[var(--mis-text-primary)] leading-tight">{{ shell.usuarioActivo()?.nombre }}</span>
+      <div class="hidden sm:flex flex-col min-w-0">
+        <span class="text-[12px] font-medium text-[var(--mis-text-primary)] leading-tight truncate">{{ shell.usuarioActivo()?.nombre }}</span>
       </div>
-      <ng-icon name="lucideChevronDown" size="12" class="hidden sm:block text-[var(--mis-text-tertiary)] transition-transform duration-150" [class.rotate-180]="dropdownOpen()" />
+      <ng-icon name="lucideChevronDown" size="12" class="hidden sm:block text-[var(--mis-text-tertiary)] transition-transform duration-150 shrink-0" [class.rotate-180]="dropdownOpen()" />
     </div>
 
     <!-- Dropdown del usuario -->
     @if (dropdownOpen()) {
-      <div class="absolute top-[calc(100%+6px)] right-0 w-[230px] bg-[var(--mis-surface)]/95 backdrop-blur-md border border-[var(--mis-border)] rounded-xl shadow-[var(--mis-shadow-lg)] z-[var(--mis-z-dropdown)] overflow-hidden animate-dropdownFadeIn" role="menu">
+      <div
+        class="absolute top-[calc(100%+6px)] right-0 w-[230px] max-w-[calc(100vw-32px)] bg-[var(--mis-surface)]/95 backdrop-blur-md border border-[var(--mis-border)] rounded-xl shadow-[var(--mis-shadow-lg)] z-[var(--mis-z-dropdown)] overflow-hidden animate-dropdownFadeIn"
+        role="menu"
+      >
         <div class="flex items-center gap-3 p-3 px-4">
-          <div class="relative w-8 h-8 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-xs font-semibold shrink-0" [class.avatar-alterno]="auth.esUsuarioAlterno()">
+          <div
+            class="relative w-8 h-8 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-xs font-semibold shrink-0"
+            [class.avatar-alterno]="auth.esUsuarioAlterno()"
+          >
             @if (auth.esUsuarioAlterno()) {
               <ng-icon name="lucideUsers" size="14" aria-label="Viendo como otro usuario" />
             } @else {
               {{ shell.inicialesUsuario() }}
             }
           </div>
-          <div>
-            <div class="text-xs font-semibold text-[var(--mis-text-primary)]">{{ shell.usuarioActivo()?.nombre }}</div>
+          <div class="min-w-0 flex-1">
+            <div class="text-xs font-semibold text-[var(--mis-text-primary)] truncate">{{ shell.usuarioActivo()?.nombre }}</div>
             <div class="text-[11px] text-[var(--mis-text-tertiary)] truncate max-w-[150px]">{{ shell.usuarioActivo()?.email }}</div>
           </div>
         </div>
         
         <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
         
-        <button class="flex items-center gap-2.5 w-full p-2 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem">
-          <ng-icon name="lucideUser" size="13" />
+        <button
+          class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] active:bg-[var(--mis-panel-bg)]"
+          role="menuitem"
+        >
+          <ng-icon name="lucideUser" size="14" />
           Mi perfil
         </button>
 
         @if (auth.puedeCambiarUsuario()) {
           <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
-          <button class="flex items-center gap-2.5 w-full p-2 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem" (click)="abrirCambiarUsuario()">
-            <ng-icon name="lucideUsers" size="13" />
+          <button
+            class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] active:bg-[var(--mis-panel-bg)]"
+            role="menuitem"
+            (click)="abrirCambiarUsuario()"
+          >
+            <ng-icon name="lucideUsers" size="14" />
             Cambiar usuario
           </button>
         }
         
         @if (auth.esUsuarioAlterno()) {
           <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
-          <button class="flex items-center gap-2.5 w-full p-2 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)]" role="menuitem" (click)="volverAUsuarioOriginal()">
-            <ng-icon name="lucideUser" size="13" />
+          <button
+            class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] active:bg-[var(--mis-panel-bg)]"
+            role="menuitem"
+            (click)="volverAUsuarioOriginal()"
+          >
+            <ng-icon name="lucideUser" size="14" />
             Mi usuario
           </button>
         }
         
         <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
         
-        <button class="flex items-center gap-2.5 w-full p-2 px-4 border-0 bg-transparent text-xs text-[var(--mis-danger)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-danger-light)]" role="menuitem" (click)="pedirConfirmacionSalir()">
-          <ng-icon name="lucideLogOut" size="13" />
+        <button
+          class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-danger)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-danger-light)] active:bg-[var(--mis-danger-light)]"
+          role="menuitem"
+          (click)="pedirConfirmacionSalir()"
+        >
+          <ng-icon name="lucideLogOut" size="14" />
           Cerrar sesión
         </button>
       </div>

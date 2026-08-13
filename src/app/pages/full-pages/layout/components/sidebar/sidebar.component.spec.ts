@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { SidebarComponent } from './sidebar.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { MenuStgService } from '../../services/menu-stg.service';
@@ -10,6 +10,9 @@ import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../../i
 import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
 
 const RUTA_RANKING_K = '/app/ranking-k';
+
+@Component({ selector: 'app-blank', standalone: true, template: '' })
+class BlankComponent {}
 
 function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
   return {
@@ -57,7 +60,7 @@ describe('SidebarComponent', () => {
     TestBed.configureTestingModule({
       imports: [SidebarComponent],
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: '**', component: BlankComponent }]),
         { provide: MenuStgService, useValue: menuStgFalso },
         { provide: KaypachaService, useValue: kaypachaFalso },
         { provide: RedirectOverlayService, useValue: redirectFalso },
@@ -278,6 +281,57 @@ describe('SidebarComponent', () => {
 
     expect(redirectFalso.redirigir).toHaveBeenCalledWith('Jira - Mesa de ayuda', undefined);
     expect(navSpy).not.toHaveBeenCalled();
+  });
+
+  it('seleccionarIcono() marca contenidoPendienteSeleccion al cambiar a otro sistema con panel, para ocultar el contenido del sistema anterior hasta elegir un sub-ítem', () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true }]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });
+    const fixture = crear();
+
+    fixture.componentInstance['seleccionarIcono']({ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true });
+
+    expect(shell.contenidoPendienteSeleccion()).toBe(true);
+  });
+
+  it('seleccionarIcono() no marca contenidoPendienteSeleccion al re-elegir el mismo sistema ya activo', () => {
+    const fixture = crear();
+    const icono: SidebarIcon = { id: 'host-inicio', tipo: 'host-inicio', icono: 'pi', etiqueta: 'Inicio', tienePanel: true };
+
+    fixture.componentInstance['seleccionarIcono'](icono); // host-inicio ya es el activo por defecto
+
+    expect(shell.contenidoPendienteSeleccion()).toBe(false);
+  });
+
+  it('seleccionarIcono() apaga contenidoPendienteSeleccion al navegar directo a un ícono sin panel', () => {
+    vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    shell.setContenidoPendienteSeleccion(true); // quedó pendiente de un cambio de sistema anterior
+    const fixture = crear();
+    const icono: SidebarIcon = { id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: false, ruta: '/reportes' };
+
+    fixture.componentInstance['seleccionarIcono'](icono);
+
+    expect(shell.contenidoPendienteSeleccion()).toBe(false);
+  });
+
+  it('seleccionarIcono() apaga contenidoPendienteSeleccion al ir a un enlace externo', () => {
+    shell.setContenidoPendienteSeleccion(true);
+    const fixture = crear();
+    const icono: SidebarIcon = { id: 'jira', tipo: 'remote', icono: 'pi', etiqueta: 'Jira - Mesa de ayuda', tienePanel: false, ruta: '' };
+
+    fixture.componentInstance['seleccionarIcono'](icono);
+
+    expect(shell.contenidoPendienteSeleccion()).toBe(false);
+  });
+
+  it('contenidoPendienteSeleccion se apaga cuando el Router termina de navegar (usuario eligió un sub-ítem del panel)', async () => {
+    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true }]);
+    const fixture = crear();
+    fixture.componentInstance['seleccionarIcono']({ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true });
+    expect(shell.contenidoPendienteSeleccion()).toBe(true);
+
+    await router.navigateByUrl('/reportes/a');
+
+    expect(shell.contenidoPendienteSeleccion()).toBe(false);
   });
 
   it('onRutaSeleccionada() guarda la última parte de la ruta como etiqueta del menú activo', () => {

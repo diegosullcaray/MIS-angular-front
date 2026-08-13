@@ -6,7 +6,7 @@ import { AuthService } from '../../service/auth.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { LoadSpinnerComponent } from '../load-spinner/load-spinner.component';
 import { ToastService } from '../../../../../shared/services/toast.service';
-import { ThemeService } from '../../../../../core/services/theme.service';
+import { ThemeService } from '../../../layout/services/theme.service';
 import { APP_VERSION } from '../../../../../app.global';
 
 /**

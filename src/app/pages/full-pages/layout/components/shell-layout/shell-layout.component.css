@@ -29,3 +29,12 @@
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+.shell-content-loading {
+  animation: routeFadeIn var(--mis-transition-base) ease;
+}
+
+:host ::ng-deep .mis-spinner .p-progressspinner-circle {
+  stroke: var(--mis-secondary, #00A2FF);
+  animation-duration: 1.6s;
+}

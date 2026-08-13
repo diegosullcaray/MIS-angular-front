@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, RouterOutlet } from '@angular/router';
 import { ShellLayoutComponent } from './shell-layout.component';
+import { ShellStateService } from '../../../../../core/services/shell-state.service';
 
 /**
  * `ShellLayoutComponent` es puramente de composición (sin lógica propia):
@@ -46,5 +47,25 @@ describe('ShellLayoutComponent', () => {
     const raiz = (fixture.nativeElement as HTMLElement).firstElementChild as HTMLElement;
     expect(raiz.className).toContain("bg-[url('/assets/images/fc/fondos/wallpaper_cell.png')]");
     expect(raiz.className).toContain("sm:bg-[url('/assets/images/fc/fondos/wallpaper.png')]");
+  });
+
+  it('mientras contenidoPendienteSeleccion está activo, oculta el router-outlet (contenido del sistema anterior) y muestra el loader', () => {
+    const fixture = TestBed.createComponent(ShellLayoutComponent);
+    const shell = TestBed.inject(ShellStateService);
+    shell.setContenidoPendienteSeleccion(true);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.shell-content-loading')).not.toBeNull();
+    expect(el.querySelector('.shell-content-inner')?.classList.contains('hidden')).toBe(true);
+  });
+
+  it('sin contenidoPendienteSeleccion, no muestra el loader y deja visible el router-outlet', () => {
+    const fixture = TestBed.createComponent(ShellLayoutComponent);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.shell-content-loading')).toBeNull();
+    expect(el.querySelector('.shell-content-inner')?.classList.contains('hidden')).toBe(false);
   });
 });

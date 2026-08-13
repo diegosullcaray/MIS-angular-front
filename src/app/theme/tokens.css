@@ -34,6 +34,7 @@
   --mis-bg: #F4F6F9;
   --mis-surface: #FFFFFF;
   --mis-sidebar-bg: #1D396E;
+  --mis-nav-panel-bg: rgba(235, 241, 248, 0.95);
   --mis-panel-bg: #F8FAFC;
   --mis-border: rgba(29,57,110,0.10);
   --mis-border-strong: rgba(29,57,110,0.20);
@@ -133,6 +134,7 @@
   --mis-bg: #0E1626;
   --mis-surface: #162034;
   --mis-sidebar-bg: #09101D;
+  --mis-nav-panel-bg: rgba(22, 34, 56, 0.85);
   --mis-panel-bg: #1A2740;
   --mis-border: rgba(0,162,255,0.14);
   --mis-border-strong: rgba(0,162,255,0.28);

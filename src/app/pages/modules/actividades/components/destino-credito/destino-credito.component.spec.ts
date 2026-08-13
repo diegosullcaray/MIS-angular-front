@@ -54,22 +54,21 @@ describe('DestinoCreditoComponent', () => {
     expect(fixture.componentInstance.loading()).toBe(false);
   });
 
-  it('filteredData() filtra por asesor/cliente/operación/cuenta, sin importar mayúsculas', () => {
-    getSpy.mockReturnValue(
-      of({ code: '0', headers: {}, body: { resultado: { result: [item({ HDESCLI: 'Cliente Uno' }), item({ HDESCLI: 'Cliente Dos', HCTACLI: 'C-002' })] } } } as IWinderResponse)
-    );
+  it('carga la lista completa en data(), sin filtrar (el filtrado por asesor lo hace app-data-table)', () => {
+    getSpy.mockReturnValue(of({ code: '0', headers: {}, body: { resultado: { result: [item(), item({ HCODSEC: 'B2' })] } } } as IWinderResponse));
     const fixture = crear();
 
-    fixture.componentInstance.globalFilter.set('dos');
-
-    expect(fixture.componentInstance.filteredData().map((x) => x.HDESCLI)).toEqual(['Cliente Dos']);
+    expect(fixture.componentInstance.data().length).toBe(2);
   });
 
-  it('sin filtro, filteredData() devuelve todos los registros', () => {
-    getSpy.mockReturnValue(of({ code: '0', headers: {}, body: { resultado: { result: [item(), item()] } } } as IWinderResponse));
+  it('columnas() incluye el campo de asesor (código y nombre) para búsqueda y visualización', () => {
     const fixture = crear();
 
-    expect(fixture.componentInstance.filteredData().length).toBe(2);
+    const campos = fixture.componentInstance['columnas'].map((c) => c.field);
+
+    expect(campos).toEqual(
+      expect.arrayContaining(['HCODSEC', 'HDESSEC'])
+    );
   });
 
   it('abrirEdicion() guarda el ítem seleccionado y abre el modal', () => {
@@ -95,15 +94,5 @@ describe('DestinoCreditoComponent', () => {
 
     const sinTocar = fixture.componentInstance.data().find((x) => x.HCODOPE === 'OP-2');
     expect(sinTocar?.HFECVIS).toBeUndefined();
-  });
-
-  it('onSearchInput() actualiza globalFilter desde el valor del input', () => {
-    const fixture = crear();
-    const input = document.createElement('input');
-    input.value = 'ana';
-
-    fixture.componentInstance['onSearchInput']({ target: input } as unknown as Event);
-
-    expect(fixture.componentInstance.globalFilter()).toBe('ana');
   });
 });
