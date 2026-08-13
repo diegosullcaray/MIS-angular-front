@@ -36,14 +36,15 @@ test.describe('Reportes — smoke de Avance Comercial', () => {
     expect(erroresConsola).toEqual([]);
   });
 
-  test('"Monitor Metas Desembolso" muestra su título y sus tarjetas KPI', async ({ page }) => {
+  test('"Monitor Metas Desembolso" pide elegir un nivel antes de mostrar el reporte', async ({ page }) => {
     await page.goto(RUTA_DESEMBOLSO);
     // En mobile, Col 2 (panel de navegación) arranca abierta y tapa el contenido.
     await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
 
     await expect(page.getByRole('heading', { name: 'Monitor Metas Desembolso' })).toBeVisible();
-    await expect(page.getByText('Operaciones Desembolsadas')).toBeVisible();
-    await expect(page.getByText('Monto Desembolsado')).toBeVisible();
+    // Sin nivel elegido no se pinta el reporte — ver `reportes-jerarquia.spec.ts`.
+    await expect(page.getByText('Elige un nivel de la jerarquía')).toBeVisible();
+    await expect(page.getByText('Operaciones Desembolsadas')).toBeHidden();
   });
 
   test('"Monitor Reprogramados" muestra su título y el filtro "Tipo"', async ({ page }) => {

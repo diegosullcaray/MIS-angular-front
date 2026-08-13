@@ -121,7 +121,7 @@ describe('HierSelectorComponent', () => {
     expect(fixture.componentInstance['cargando']()).toBe(false);
   });
 
-  it('no emite error si el primer nivel sale bien pero un nivel más profundo falla (ya se emitió nodoSeleccionado antes)', () => {
+  it('`error` es solo para la carga inicial: si falla un nivel más profundo, no se emite', () => {
     reportesFalso.obtenerJerarquiaBase.mockReturnValue(
       of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[])
     );
@@ -130,13 +130,60 @@ describe('HierSelectorComponent', () => {
       .mockReturnValueOnce(throwError(() => new Error('caído')));
     const fixture = crearSinInit({ code: 9, maxLvl: 3, dlgTitulo: 'x' });
     const errorSpy = vi.fn();
-    const nodoSpy = vi.fn();
     fixture.componentInstance.error.subscribe(errorSpy);
+
+    fixture.detectChanges();
+
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it('al cargar NO emite nodoSeleccionado: entrar a la pantalla no debe pedir ningún reporte', () => {
+    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
+      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }] as HierarquiaNodo[])
+    );
+    reportesFalso.obtenerJerarquiaNivel
+      .mockReturnValueOnce(of([{ tip_cod: 7, cod_rel: '231', des_rel: 'FINANCIERA', lbl_hier: 'FINANCIERA', lvl: 1 }] as HierarquiaNodo[]))
+      .mockReturnValueOnce(of([{ tip_cod: 4, cod_rel: 'Z1', des_rel: 'Zona 1', lbl_hier: 'ZONA', lvl: 2 }] as HierarquiaNodo[]));
+    const fixture = crearSinInit({ code: 9, maxLvl: 3, dlgTitulo: 'x' });
+    const nodoSpy = vi.fn();
     fixture.componentInstance.nodoSeleccionado.subscribe(nodoSpy);
 
     fixture.detectChanges();
 
-    expect(nodoSpy).toHaveBeenCalledTimes(1);
-    expect(errorSpy).not.toHaveBeenCalled();
+    expect(nodoSpy).not.toHaveBeenCalled();
+  });
+
+  it('la raíz queda fijada y el nivel siguiente se ofrece sin preselección', () => {
+    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
+      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }] as HierarquiaNodo[])
+    );
+    reportesFalso.obtenerJerarquiaNivel
+      .mockReturnValueOnce(of([{ tip_cod: 7, cod_rel: '231', des_rel: 'FINANCIERA', lbl_hier: 'FINANCIERA', lvl: 1 }] as HierarquiaNodo[]))
+      .mockReturnValueOnce(of([{ tip_cod: 4, cod_rel: 'Z1', des_rel: 'Zona 1', lbl_hier: 'ZONA', lvl: 2 }] as HierarquiaNodo[]));
+    const fixture = crear({ code: 9, maxLvl: 3, dlgTitulo: 'x' });
+    const instancia = fixture.componentInstance;
+
+    // Dos desplegables: la raíz y el nivel a elegir.
+    expect(instancia['nodosNivel']().length).toBe(2);
+    expect(instancia['valoresSeleccionados']()[0]?.des_rel).toBe('FINANCIERA');
+    expect(instancia['valoresSeleccionados']()[1]).toBeNull();
+  });
+
+  it('elegir un nivel descarta los niveles que colgaban debajo', () => {
+    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
+      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 }] as HierarquiaNodo[])
+    );
+    reportesFalso.obtenerJerarquiaNivel.mockReturnValue(
+      of([{ tip_cod: 4, cod_rel: 'Z1', des_rel: 'Zona 1', lbl_hier: 'ZONA', lvl: 2 }] as HierarquiaNodo[])
+    );
+    const fixture = crear({ code: 9, maxLvl: 4, dlgTitulo: 'x' });
+    const instancia = fixture.componentInstance;
+    const nivelesAntes = instancia['nodosNivel']().length;
+
+    instancia['onSeleccionarNivel'](0, { tip_cod: 7, cod_rel: '231', des_rel: 'FINANCIERA', lvl: 1 } as HierarquiaNodo);
+
+    // Se conserva el nivel elegido y se repuebla el siguiente, nunca más.
+    expect(instancia['nodosNivel']().length).toBeLessThanOrEqual(nivelesAntes);
+    expect(instancia['nodosNivel']()[0].level).toBe(1);
   });
 });

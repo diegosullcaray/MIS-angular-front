@@ -4,6 +4,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
+import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/empty-state.component';
 import { ReportesService, COD_JERARQUIA_ORGANIZATIVA, NIVEL_MAXIMO_JERARQUIA } from '../../../services/reportes.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import type {
@@ -20,18 +21,14 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
  * "Monitor Metas Desembolso" — migrado de la ruta `mon-desem` (legado STG,
  * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese'`).
  *
- * La carga inicial la dispara únicamente `app-hier-selector` (evento
- * `nodoSeleccionado`) — igual que `ReportCraV1p1Component` en el legado,
- * que no hace su propio `getBaseHierarchy()`: solo reacciona a
- * `(onSelectHier)` de `hier-rem-selector`. Tener acá un fetch inicial propio
- * duplicaba la llamada a `obtenerJerarquiaBase` y competía en carrera con el
- * cascadeo interno del selector (root → nivel por nivel hasta `maxLvl`), que
- * también dispara `onNivelSeleccionado` en cada paso.
+ * No pide nada al entrar: el reporte lo dispara únicamente la elección del
+ * usuario en `app-hier-selector` (`nodoSeleccionado`), igual que el
+ * `combineLatest([filter$, level$])` de `ReportCraV1p1Component` en el legado.
  */
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule],
   templateUrl: './monitor-metas-desembolso.component.html',
   styleUrl: './monitor-metas-desembolso.component.css',
 })
@@ -46,7 +43,7 @@ export class MonitorMetasDesembolsoComponent {
   };
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
-  protected readonly cargando = signal(true);
+  protected readonly cargando = signal(false);
 
   protected readonly kpiOperaciones = signal<KpiOperacionesDesembolsadas | null>(null);
   protected readonly kpiMonto = signal<KpiMontoDesembolsado | null>(null);
@@ -83,7 +80,6 @@ export class MonitorMetasDesembolsoComponent {
     });
   }
 
-  /** Único caso en que `app-hier-selector` nunca llega a emitir `nodoSeleccionado` (falla o viene vacía la jerarquía) — sin esto, `cargando` se quedaba en `true` para siempre. */
   protected onErrorJerarquia(): void {
     this.toast.error('No se pudo cargar la jerarquía', 'Inténtalo de nuevo en unos segundos.');
     this.cargando.set(false);

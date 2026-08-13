@@ -13,6 +13,11 @@
       <p-progressSpinner styleClass="w-12 h-12" strokeWidth="4" animationDuration=".8s" />
       <span class="text-[13px] font-medium text-[var(--mis-primary-text)]">Cargando reporte de desembolso...</span>
     </div>
+  } @else if (!nivelActual()) {
+    <app-empty-state
+      titulo="Elige un nivel de la jerarquía"
+      descripcion="Selecciona una unidad en los filtros de arriba para ver el reporte."
+    />
   } @else {
     <!-- Tarjetas KPI Compactas -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
