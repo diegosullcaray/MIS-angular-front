@@ -32,7 +32,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-monitor-reprogramados',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SelectModule, FormsModule, SkeletonModule, ProgressSpinnerModule, ButtonModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SelectModule, FormsModule, SkeletonModule, ProgressSpinnerModule, ButtonModule],
   templateUrl: './monitor-reprogramados.component.html',
   styleUrl: './monitor-reprogramados.component.css',
 })
@@ -47,7 +47,7 @@ export class MonitorReprogramadosComponent {
   protected readonly mostrarFiltros = signal(true);
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly tipoSeleccionado = signal<1 | 2>(1);
-  protected readonly cargando = signal(true);
+  protected readonly cargando = signal(false);
   protected readonly tablaReprogramados = signal<TablaReporteResultado>(TABLA_VACIA);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 

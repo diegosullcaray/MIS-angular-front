@@ -32,13 +32,6 @@
   font-weight: var(--mis-font-semibold);
 }
 
-/* Opción de tema elegida dentro del selector segmentado del dropdown. */
-.tema-opcion--activa {
-  background: var(--mis-surface);
-  color: var(--mis-text-primary);
-  box-shadow: var(--mis-shadow-sm);
-}
-
 @keyframes dropdownFadeIn {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }

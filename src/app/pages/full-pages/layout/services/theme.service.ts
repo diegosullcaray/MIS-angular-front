@@ -70,7 +70,12 @@ export class ThemeService {
 
   private observarSistema(): void {
     const media = window.matchMedia?.('(prefers-color-scheme: dark)');
-    media?.addEventListener('change', (e) => {
+    // No alcanza con comprobar `media`: hay entornos (jsdom, Safari < 14) que
+    // devuelven un MediaQueryList sin `addEventListener`. Sin el listener el
+    // tema igual funciona, solo deja de seguir cambios del sistema en vivo.
+    if (typeof media?.addEventListener !== 'function') return;
+
+    media.addEventListener('change', (e) => {
       this._sistemaOscuro.set(e.matches);
       this.aplicar();
     });

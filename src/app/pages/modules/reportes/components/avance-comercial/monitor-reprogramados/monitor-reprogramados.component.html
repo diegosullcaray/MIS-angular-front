@@ -17,7 +17,7 @@
   </div>
 
   <div class="flex items-end gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
-    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
+    <app-hier-selector [paramsHier]="paramsHier" [autoSeleccionar]="false" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Tipo</span>
@@ -33,7 +33,14 @@
     </div>
   </div>
 
-  <div class="mis-card p-3 overflow-x-auto">
-    <app-tabla-reporte [encabezados]="tablaReprogramados().headers" [filas]="tablaReprogramados().body" [cargando]="false" />
-  </div>
+  @if (!nivelActual()) {
+    <app-empty-state
+      titulo="Elige un nivel de la jerarquía"
+      descripcion="Selecciona una unidad en los filtros de arriba para ver el reporte."
+    />
+  } @else {
+    <div class="mis-card p-3 overflow-x-auto">
+      <app-tabla-reporte [encabezados]="tablaReprogramados().headers" [filas]="tablaReprogramados().body" [cargando]="cargando()" />
+    </div>
+  }
 </div>

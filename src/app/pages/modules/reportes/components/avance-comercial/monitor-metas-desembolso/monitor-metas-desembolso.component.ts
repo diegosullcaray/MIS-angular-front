@@ -30,7 +30,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule, ButtonModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, ButtonModule],
   templateUrl: './monitor-metas-desembolso.component.html',
   styleUrl: './monitor-metas-desembolso.component.css',
 })
@@ -44,7 +44,7 @@ export class MonitorMetasDesembolsoComponent {
   protected readonly mostrarFiltros = signal(true);
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
-  protected readonly cargando = signal(true);
+  protected readonly cargando = signal(false);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   protected readonly kpiOperaciones = signal<KpiOperacionesDesembolsadas | null>(null);
