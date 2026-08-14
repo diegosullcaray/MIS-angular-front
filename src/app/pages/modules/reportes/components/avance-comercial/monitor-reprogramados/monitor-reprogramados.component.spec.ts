@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { MonitorReprogramadosComponent } from './monitor-reprogramados.component';
-import { ReportesService } from '../../../services/reportes.service';
+import { AvanceComercialService } from '../../../services/avance-comercial.service';
+import { ModSysAdminService } from '../../../../../../core/winder/instances/mod-sys-admin.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
@@ -14,21 +15,19 @@ function tabla(overrides: Partial<TablaReporteResultado> = {}): TablaReporteResu
 }
 
 describe('MonitorReprogramadosComponent', () => {
-  let reportesFalso: {
-    obtenerBloqueReporte: ReturnType<typeof vi.fn>;
-    fechaUltimoDia: ReturnType<typeof vi.fn>;
-    obtenerJerarquiaBase: ReturnType<typeof vi.fn>;
-  };
+  let servicioFalso: { obtenerMonitorReprogramados: ReturnType<typeof vi.fn> };
+  let antAdminFalso: { getBaseHierarchy: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    reportesFalso = {
-      obtenerBloqueReporte: vi.fn().mockReturnValue(of(tabla())),
-      fechaUltimoDia: vi.fn().mockReturnValue('20260809'),
-      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([])),
-    };
+    servicioFalso = { obtenerMonitorReprogramados: vi.fn().mockReturnValue(of(tabla())) };
+    antAdminFalso = { getBaseHierarchy: vi.fn().mockReturnValue(of({ code: '0', headers: {}, body: { base_hierarchy: [] } })) };
     TestBed.configureTestingModule({
       imports: [MonitorReprogramadosComponent],
-      providers: [{ provide: ReportesService, useValue: reportesFalso }, MessageService],
+      providers: [
+        { provide: AvanceComercialService, useValue: servicioFalso },
+        { provide: ModSysAdminService, useValue: antAdminFalso },
+        MessageService,
+      ],
     });
   });
 
@@ -40,20 +39,15 @@ describe('MonitorReprogramadosComponent', () => {
 
   it('sin nivel elegido, no pide el reporte', () => {
     crear();
-    expect(reportesFalso.obtenerBloqueReporte).not.toHaveBeenCalled();
+    expect(servicioFalso.obtenerMonitorReprogramados).not.toHaveBeenCalled();
   });
 
-  it('onNivelSeleccionado() pide RS_MON_REP_01 con tip_cod/cod_rel/car (tipo por defecto=1)/fec', () => {
+  it('onNivelSeleccionado() pide el reporte con tip_cod/cod_rel y tipo por defecto=1', () => {
     const fixture = crear();
 
     fixture.componentInstance['onNivelSeleccionado'](NODO);
 
-    expect(reportesFalso.obtenerBloqueReporte).toHaveBeenCalledWith('RS_MON_REP_01', {
-      tip_cod: 4,
-      cod_rel: 'A1',
-      car: 1,
-      fec: '20260809',
-    });
+    expect(servicioFalso.obtenerMonitorReprogramados).toHaveBeenCalledWith({ tip_cod: 4, cod_rel: 'A1' }, 1);
   });
 
   it('onTipoSeleccionado() sin nivel elegido todavía, no pide nada', () => {
@@ -61,27 +55,22 @@ describe('MonitorReprogramadosComponent', () => {
 
     fixture.componentInstance['onTipoSeleccionado'](2);
 
-    expect(reportesFalso.obtenerBloqueReporte).not.toHaveBeenCalled();
+    expect(servicioFalso.obtenerMonitorReprogramados).not.toHaveBeenCalled();
     expect(fixture.componentInstance['tipoSeleccionado']()).toBe(2);
   });
 
   it('onTipoSeleccionado() con un nivel ya elegido, recarga el reporte con el nuevo tipo', () => {
     const fixture = crear();
     fixture.componentInstance['onNivelSeleccionado'](NODO);
-    reportesFalso.obtenerBloqueReporte.mockClear();
+    servicioFalso.obtenerMonitorReprogramados.mockClear();
 
     fixture.componentInstance['onTipoSeleccionado'](2);
 
-    expect(reportesFalso.obtenerBloqueReporte).toHaveBeenCalledWith('RS_MON_REP_01', {
-      tip_cod: 4,
-      cod_rel: 'A1',
-      car: 2,
-      fec: '20260809',
-    });
+    expect(servicioFalso.obtenerMonitorReprogramados).toHaveBeenCalledWith({ tip_cod: 4, cod_rel: 'A1' }, 2);
   });
 
   it('carga la tabla devuelta por el backend y apaga el loading', () => {
-    reportesFalso.obtenerBloqueReporte.mockReturnValue(
+    servicioFalso.obtenerMonitorReprogramados.mockReturnValue(
       of(tabla({ headers: [{ columns: [{ columnDef: 'x', header: 'X', isdata: 1 }] }], body: [{ x: 1 }] }))
     );
     const fixture = crear();
@@ -93,7 +82,7 @@ describe('MonitorReprogramadosComponent', () => {
   });
 
   it('ante un error del backend, muestra un toast y apaga el loading', () => {
-    reportesFalso.obtenerBloqueReporte.mockReturnValue(throwError(() => new Error('caído')));
+    servicioFalso.obtenerMonitorReprogramados.mockReturnValue(throwError(() => new Error('caído')));
     const errorSpy = vi.spyOn(TestBed.inject(ToastService), 'error');
     const fixture = crear();
 

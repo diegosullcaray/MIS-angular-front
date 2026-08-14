@@ -19,3 +19,15 @@ export interface NivelJerarquiaDropdown {
   level: number;
   data: HierarquiaNodo[];
 }
+
+/** `cod_jer` de la jerarquía organizativa (`UNI_1` del legado) — mismo código que usan Presupuesto/Kaypacha/Incentivos para `base_hier`. */
+export const COD_JERARQUIA_ORGANIZATIVA = 9;
+/** Profundidad máxima de niveles de `UNI_1` — `getHierarchyConfig('UNI_1')` del legado. */
+export const NIVEL_MAXIMO_JERARQUIA = 6;
+
+/** `paramsHier` de `app-hier-selector` para la jerarquía organizativa — igual en todo reporte que la use. */
+export const PARAMS_HIER_UNIDAD: ParamsJerarquia = {
+  code: COD_JERARQUIA_ORGANIZATIVA,
+  maxLvl: NIVEL_MAXIMO_JERARQUIA,
+  dlgTitulo: 'JERARQUIA UNIDAD',
+};

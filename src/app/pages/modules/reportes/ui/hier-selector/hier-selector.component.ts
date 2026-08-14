@@ -1,15 +1,21 @@
 import { Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { map } from 'rxjs';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
-import { ReportesService } from '../../services/reportes.service';
+import { ModSysAdminService } from '../../../../../core/winder/instances/mod-sys-admin.service';
+import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import { fechaCorte } from '../../utils/fecha-reporte.util';
 import type { HierarquiaNodo, NivelJerarquiaDropdown, ParamsJerarquia } from '../../models/jerarquia.model';
+import type { JerarquiaResponseBody } from '../../models/reportes-api.model';
 
 /**
  * Selector de jerarquía organizativa en cascada horizontal (mismo patrón que
  * `hier-rem-selector` del legado STG) mediante desplegables p-select por cada
- * nivel jerárquico obtenido dinámicamente desde el backend.
+ * nivel jerárquico obtenido dinámicamente desde el backend. Único consumidor
+ * de `ModSysAdminService` en el módulo `reportes` — habla directo con el
+ * backend de jerarquía, sin un service intermedio.
  */
 @Component({
   selector: 'app-hier-selector',
@@ -19,7 +25,8 @@ import type { HierarquiaNodo, NivelJerarquiaDropdown, ParamsJerarquia } from '..
   styleUrl: './hier-selector.component.css',
 })
 export class HierSelectorComponent implements OnInit {
-  private readonly reportes = inject(ReportesService);
+  private readonly antAdmin = inject(ModSysAdminService);
+  private readonly shell = inject(ShellStateService);
 
   readonly paramsHier = input.required<ParamsJerarquia>();
   readonly placeholder = input('Elegir jerarquía');
@@ -43,31 +50,38 @@ export class HierSelectorComponent implements OnInit {
 
   private cargarRaiz(): void {
     this.cargando.set(true);
-    this.reportes.obtenerJerarquiaBase(this.paramsHier().code).subscribe({
-      next: (raiz) => {
-        if (raiz && raiz.length > 0) {
-          // La primera llamada a `level_hier` pide el propio nivel de la raíz
-          // (`lvl = root.lvl`): devuelve la raíz hidratada con `des_rel`/`lbl_hier`,
-          // no sus hijos.
-          const root = raiz[0];
-          this.cargarNivel(root.tip_cod, [root.cod_rel], root.lvl ?? 1, true);
-        } else {
+    const email = this.shell.usuarioActivo()?.email ?? '';
+
+    this.antAdmin
+      .getBaseHierarchy(email, this.paramsHier().code)
+      .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.base_hierarchy ?? []))
+      .subscribe({
+        next: (raiz) => {
+          if (raiz && raiz.length > 0) {
+            // La primera llamada a `level_hier` pide el propio nivel de la raíz
+            // (`lvl = root.lvl`): devuelve la raíz hidratada con `des_rel`/`lbl_hier`,
+            // no sus hijos.
+            const root = raiz[0];
+            this.cargarNivel(root.tip_cod, [root.cod_rel], root.lvl ?? 1, true);
+          } else {
+            this.cargando.set(false);
+            this.error.emit();
+          }
+        },
+        error: () => {
           this.cargando.set(false);
           this.error.emit();
-        }
-      },
-      error: () => {
-        this.cargando.set(false);
-        this.error.emit();
-      },
-    });
+        },
+      });
   }
 
   private cargarNivel(tip_cod: number, cod_rels: string[], lvl: number, esCargaInicial = false): void {
     this.cargando.set(true);
-    const paramsFec = { key: 'fec', val: this.reportes.fechaCorte() };
-    this.reportes
-      .obtenerJerarquiaNivel(this.paramsHier().code, lvl, tip_cod, cod_rels, paramsFec)
+    const paramsFec = { key: 'fec', val: fechaCorte(this.shell.usuarioActivo()?.fechaCorte) };
+
+    this.antAdmin
+      .getLevelHierarchy(this.paramsHier().code, lvl, tip_cod, cod_rels, paramsFec)
+      .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.level_hierarchy ?? []))
       .subscribe({
         next: (lh) => {
           this.cargando.set(false);
@@ -120,7 +134,7 @@ export class HierSelectorComponent implements OnInit {
         },
         error: (err) => {
           console.error(
-            `[app-hier-selector] obtenerJerarquiaNivel() falló — params: ${JSON.stringify({ code: this.paramsHier().code, lvl, tip_cod, cod_rels, paramsFec })}`,
+            `[app-hier-selector] getLevelHierarchy() falló — params: ${JSON.stringify({ code: this.paramsHier().code, lvl, tip_cod, cod_rels, paramsFec })}`,
             err
           );
           this.cargando.set(false);

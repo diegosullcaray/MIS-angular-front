@@ -1,0 +1,70 @@
+<div class="mis-page mis-page--alta">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-chart-line text-[var(--mis-primary-text)]"></i>
+        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Productos Misionales</h2>
+      </div>
+
+      <p-button
+        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
+      />
+    </div>
+  </div>
+
+  <div class="flex items-end gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
+    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Productos</span>
+      <p-select
+        [options]="opcionesProducto"
+        optionLabel="desc"
+        optionValue="id"
+        [ngModel]="productoSeleccionado()"
+        (ngModelChange)="onProductoSeleccionado($event)"
+        styleClass="w-56 text-[11.5px]"
+        ariaLabel="Productos"
+      />
+    </div>
+  </div>
+
+  <div class="mis-card p-3 overflow-x-auto">
+    <app-tabla-dinamica [columnas]="resumen().columnas" [filas]="resumen().filas" [cargando]="cargando()" />
+  </div>
+
+  <p-tabs [(value)]="tabActiva">
+    <p-tablist>
+      <p-tab value="territorio">Territorio</p-tab>
+      <p-tab value="corredores">Corredores</p-tab>
+      <p-tab value="unidad">Unidad</p-tab>
+      <p-tab value="asesores">Asesores</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="territorio">
+        <div class="mis-card p-3 overflow-x-auto">
+          <app-tabla-dinamica [columnas]="territorio().columnas" [filas]="territorio().filas" [cargando]="cargando()" />
+        </div>
+      </p-tabpanel>
+      <p-tabpanel value="corredores">
+        <div class="mis-card p-3 overflow-x-auto">
+          <app-tabla-dinamica [columnas]="corredores().columnas" [filas]="corredores().filas" [cargando]="cargando()" />
+        </div>
+      </p-tabpanel>
+      <p-tabpanel value="unidad">
+        <div class="mis-card p-3 overflow-x-auto">
+          <app-tabla-dinamica [columnas]="unidad().columnas" [filas]="unidad().filas" [cargando]="cargando()" />
+        </div>
+      </p-tabpanel>
+      <p-tabpanel value="asesores">
+        <div class="mis-card p-3 overflow-x-auto">
+          <app-tabla-dinamica [columnas]="asesores().columnas" [filas]="asesores().filas" [cargando]="cargando()" />
+        </div>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</div>

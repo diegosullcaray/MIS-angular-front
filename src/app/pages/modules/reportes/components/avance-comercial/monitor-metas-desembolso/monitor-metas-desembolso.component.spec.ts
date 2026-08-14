@@ -2,7 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { MonitorMetasDesembolsoComponent } from './monitor-metas-desembolso.component';
-import { ReportesService } from '../../../services/reportes.service';
+import { AvanceComercialService } from '../../../services/avance-comercial.service';
+import { ModSysAdminService } from '../../../../../../core/winder/instances/mod-sys-admin.service';
+import type { ReporteMonitorMetasDesembolso } from '../../../models/avance-comercial/avance-comercial.model';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
@@ -13,17 +15,32 @@ function tabla(overrides: Partial<TablaReporteResultado> = {}): TablaReporteResu
   return { headers: [], body: [], additional: {}, ...overrides };
 }
 
+function reporte(overrides: Partial<ReporteMonitorMetasDesembolso> = {}): ReporteMonitorMetasDesembolso {
+  return {
+    kpiOperaciones: null,
+    kpiMonto: null,
+    tabla1: tabla(),
+    tabla2: tabla(),
+    tabla3: tabla(),
+    tabla4: tabla(),
+    ...overrides,
+  };
+}
+
 describe('MonitorMetasDesembolsoComponent', () => {
-  let reportesFalso: { obtenerBloqueReporte: ReturnType<typeof vi.fn>; obtenerJerarquiaBase: ReturnType<typeof vi.fn> };
+  let servicioFalso: { obtenerMonitorMetasDesembolso: ReturnType<typeof vi.fn> };
+  let antAdminFalso: { getBaseHierarchy: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    reportesFalso = {
-      obtenerBloqueReporte: vi.fn(),
-      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([])),
-    };
+    servicioFalso = { obtenerMonitorMetasDesembolso: vi.fn() };
+    antAdminFalso = { getBaseHierarchy: vi.fn().mockReturnValue(of({ code: '0', headers: {}, body: { base_hierarchy: [] } })) };
     TestBed.configureTestingModule({
       imports: [MonitorMetasDesembolsoComponent],
-      providers: [{ provide: ReportesService, useValue: reportesFalso }, MessageService],
+      providers: [
+        { provide: AvanceComercialService, useValue: servicioFalso },
+        { provide: ModSysAdminService, useValue: antAdminFalso },
+        MessageService,
+      ],
     });
   });
 
@@ -35,31 +52,30 @@ describe('MonitorMetasDesembolsoComponent', () => {
 
   it('sin nivel elegido, no pide ningún reporte', () => {
     crear();
-    expect(reportesFalso.obtenerBloqueReporte).not.toHaveBeenCalled();
+    expect(servicioFalso.obtenerMonitorMetasDesembolso).not.toHaveBeenCalled();
   });
 
-  it('onNivelSeleccionado() pide los 4 bloques del reporte con tip_cod/cod_rel del nivel', () => {
-    reportesFalso.obtenerBloqueReporte.mockReturnValue(of(tabla()));
+  it('onNivelSeleccionado() pide el reporte con tip_cod/cod_rel del nivel', () => {
+    servicioFalso.obtenerMonitorMetasDesembolso.mockReturnValue(of(reporte()));
     const fixture = crear();
 
     fixture.componentInstance['onNivelSeleccionado'](NODO);
 
-    expect(reportesFalso.obtenerBloqueReporte).toHaveBeenCalledWith('Monitor_Dese_01', { tip_cod: 4, cod_rel: 'A1', tipmet: 1 });
-    expect(reportesFalso.obtenerBloqueReporte).toHaveBeenCalledWith('Monitor_Dese_02', { tip_cod: 4, cod_rel: 'A1', tipmet: 1 });
-    expect(reportesFalso.obtenerBloqueReporte).toHaveBeenCalledWith('Monitor_Dese_03', { tip_cod: 4, cod_rel: 'A1', tipmet: 1 });
-    expect(reportesFalso.obtenerBloqueReporte).toHaveBeenCalledWith('Monitor_Dese_04', { tip_cod: 4, cod_rel: 'A1' });
+    expect(servicioFalso.obtenerMonitorMetasDesembolso).toHaveBeenCalledWith({ tip_cod: 4, cod_rel: 'A1' });
   });
 
-  it('onNivelSeleccionado() arma las tarjetas KPI desde el additional de cada bloque', () => {
-    reportesFalso.obtenerBloqueReporte.mockImplementation((codRep: string) => {
-      if (codRep === 'Monitor_Dese_01') {
-        return of(tabla({ additional: { fecha: '2026-08-10', hora: '10:00', cumpl_des_acum: '85%' } }));
-      }
-      if (codRep === 'Monitor_Dese_02') {
-        return of(tabla({ additional: { cumpl_ope_acum: '92%' } }));
-      }
-      return of(tabla({ headers: [{ columns: [{ columnDef: 'x', header: 'X', isdata: 1 }] }], body: [{ x: 1 }] }));
-    });
+  it('onNivelSeleccionado() vuelca las tarjetas KPI y tablas devueltas por el service', () => {
+    servicioFalso.obtenerMonitorMetasDesembolso.mockReturnValue(
+      of(
+        reporte({
+          kpiOperaciones: { fecha: '2026-08-10', hora: '10:00', cumpl_des_acum: '85%' },
+          kpiMonto: { cumpl_ope_acum: '92%' },
+          tabla1: tabla({ additional: { fecha: '2026-08-10', hora: '10:00', cumpl_des_acum: '85%' } }),
+          tabla3: tabla({ headers: [{ columns: [{ columnDef: 'x', header: 'X', isdata: 1 }] }], body: [{ x: 1 }] }),
+          tabla4: tabla({ headers: [{ columns: [{ columnDef: 'x', header: 'X', isdata: 1 }] }], body: [{ x: 1 }] }),
+        })
+      )
+    );
     const fixture = crear();
 
     fixture.componentInstance['onNivelSeleccionado'](NODO);
@@ -73,7 +89,7 @@ describe('MonitorMetasDesembolsoComponent', () => {
   });
 
   it('onNivelSeleccionado() ante un error del backend muestra un toast y apaga el loading', () => {
-    reportesFalso.obtenerBloqueReporte.mockReturnValue(throwError(() => new Error('caído')));
+    servicioFalso.obtenerMonitorMetasDesembolso.mockReturnValue(throwError(() => new Error('caído')));
     const errorSpy = vi.spyOn(TestBed.inject(ToastService), 'error');
     const fixture = crear();
 

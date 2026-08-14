@@ -1,29 +1,44 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { HierSelectorComponent } from './hier-selector.component';
-import { ReportesService } from '../../services/reportes.service';
+import { ModSysAdminService } from '../../../../../core/winder/instances/mod-sys-admin.service';
+import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
+import type { IWinderResponse } from '../../../../../core/winder/winder/winder.interface';
+import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
 
 const PARAMS: ParamsJerarquia = { code: 9, maxLvl: 2, dlgTitulo: 'JERARQUIA UNIDAD' };
 
-describe('HierSelectorComponent', () => {
-  let reportesFalso: {
-    obtenerJerarquiaBase: ReturnType<typeof vi.fn>;
-    obtenerJerarquiaNivel: ReturnType<typeof vi.fn>;
-    fechaCorte: ReturnType<typeof vi.fn>;
+function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
+  return {
+    id: 'u-1',
+    nombre: 'Ana Torres',
+    email: 'ana.torres@confianza.pe',
+    rol: 'admin-sistema',
+    subsistemas: [],
+    codBt: 'BT-001',
+    ...overrides,
   };
+}
+
+function respuesta(body: unknown): IWinderResponse {
+  return { code: '0', headers: {}, body };
+}
+
+describe('HierSelectorComponent', () => {
+  let antAdminFalso: { getBaseHierarchy: ReturnType<typeof vi.fn>; getLevelHierarchy: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    reportesFalso = {
-      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([] as HierarquiaNodo[])),
-      obtenerJerarquiaNivel: vi.fn().mockReturnValue(of([] as HierarquiaNodo[])),
-      fechaCorte: vi.fn().mockReturnValue('2026-08-05'),
+    antAdminFalso = {
+      getBaseHierarchy: vi.fn().mockReturnValue(of(respuesta({ base_hierarchy: [] }))),
+      getLevelHierarchy: vi.fn().mockReturnValue(of(respuesta({ level_hierarchy: [] }))),
     };
 
     TestBed.configureTestingModule({
       imports: [HierSelectorComponent],
-      providers: [{ provide: ReportesService, useValue: reportesFalso }],
+      providers: [{ provide: ModSysAdminService, useValue: antAdminFalso }],
     });
+    TestBed.inject(ShellStateService).setUsuarioActivo(usuario({ fechaCorte: '20260805' }));
   });
 
   function crear(params: ParamsJerarquia = PARAMS) {
@@ -40,33 +55,33 @@ describe('HierSelectorComponent', () => {
     return fixture;
   }
 
-  it('cargarRaiz() pide la jerarquía base al inicializarse', () => {
-    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
-      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[])
+  it('cargarRaiz() pide la jerarquía base al inicializarse, con el email del usuario activo', () => {
+    antAdminFalso.getBaseHierarchy.mockReturnValue(
+      of(respuesta({ base_hierarchy: [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[] }))
     );
     crear();
 
-    expect(reportesFalso.obtenerJerarquiaBase).toHaveBeenCalledWith(9);
+    expect(antAdminFalso.getBaseHierarchy).toHaveBeenCalledWith('ana.torres@confianza.pe', 9);
   });
 
   it('cargarRaiz() pide level_hier del propio nivel de la raíz (root.lvl), no el nivel hijo', () => {
-    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
-      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 } as HierarquiaNodo])
+    antAdminFalso.getBaseHierarchy.mockReturnValue(
+      of(respuesta({ base_hierarchy: [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza', lvl: 1 } as HierarquiaNodo] }))
     );
     crear();
 
     // Confirmado contra el legado (log real de `hier-rem-selector.component.ts` en producción):
     // la primera llamada pide `lvl = root.lvl` (1) — devuelve la raíz "hidratada" con
     // des_rel/lbl_hier, no sus hijos.
-    expect(reportesFalso.obtenerJerarquiaNivel).toHaveBeenCalledWith(9, 1, 7, ['231'], expect.objectContaining({ key: 'fec' }));
+    expect(antAdminFalso.getLevelHierarchy).toHaveBeenCalledWith(9, 1, 7, ['231'], expect.objectContaining({ key: 'fec', val: '2026-08-05' }));
   });
 
   it('onSeleccionarNivel() actualiza el nivel y pide el siguiente nivel si no supera maxLvl', () => {
-    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
-      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[])
+    antAdminFalso.getBaseHierarchy.mockReturnValue(
+      of(respuesta({ base_hierarchy: [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[] }))
     );
-    reportesFalso.obtenerJerarquiaNivel.mockReturnValue(
-      of([{ tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1', lbl_hier: 'AGENCIA' }] as HierarquiaNodo[])
+    antAdminFalso.getLevelHierarchy.mockReturnValue(
+      of(respuesta({ level_hierarchy: [{ tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1', lbl_hier: 'AGENCIA' }] as HierarquiaNodo[] }))
     );
     const fixture = crear({ code: 9, maxLvl: 2, dlgTitulo: 'x' });
     const instancia = fixture.componentInstance;
@@ -80,7 +95,7 @@ describe('HierSelectorComponent', () => {
   });
 
   it('emite error si la jerarquía base viene vacía — nunca llegaría a emitir nodoSeleccionado', () => {
-    reportesFalso.obtenerJerarquiaBase.mockReturnValue(of([] as HierarquiaNodo[]));
+    antAdminFalso.getBaseHierarchy.mockReturnValue(of(respuesta({ base_hierarchy: [] })));
     const fixture = crearSinInit();
     const errorSpy = vi.fn();
     fixture.componentInstance.error.subscribe(errorSpy);
@@ -92,7 +107,7 @@ describe('HierSelectorComponent', () => {
   });
 
   it('emite error si falla la petición de jerarquía base', () => {
-    reportesFalso.obtenerJerarquiaBase.mockReturnValue(throwError(() => new Error('caído')));
+    antAdminFalso.getBaseHierarchy.mockReturnValue(throwError(() => new Error('caído')));
     const fixture = crearSinInit();
     const errorSpy = vi.fn();
     fixture.componentInstance.error.subscribe(errorSpy);
@@ -104,10 +119,10 @@ describe('HierSelectorComponent', () => {
   });
 
   it('emite error si la carga inicial del primer nivel falla, aunque la raíz sí se haya resuelto', () => {
-    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
-      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[])
+    antAdminFalso.getBaseHierarchy.mockReturnValue(
+      of(respuesta({ base_hierarchy: [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[] }))
     );
-    reportesFalso.obtenerJerarquiaNivel.mockReturnValue(throwError(() => new Error('caído')));
+    antAdminFalso.getLevelHierarchy.mockReturnValue(throwError(() => new Error('caído')));
     const fixture = crearSinInit();
     const errorSpy = vi.fn();
     const nodoSpy = vi.fn();
@@ -122,11 +137,13 @@ describe('HierSelectorComponent', () => {
   });
 
   it('no emite error si el primer nivel sale bien pero un nivel más profundo falla (ya se emitió nodoSeleccionado antes)', () => {
-    reportesFalso.obtenerJerarquiaBase.mockReturnValue(
-      of([{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[])
+    antAdminFalso.getBaseHierarchy.mockReturnValue(
+      of(respuesta({ base_hierarchy: [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }] as HierarquiaNodo[] }))
     );
-    reportesFalso.obtenerJerarquiaNivel
-      .mockReturnValueOnce(of([{ tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1', lbl_hier: 'AGENCIA', lvl: 2 }] as HierarquiaNodo[]))
+    antAdminFalso.getLevelHierarchy
+      .mockReturnValueOnce(
+        of(respuesta({ level_hierarchy: [{ tip_cod: 4, cod_rel: 'A1', des_rel: 'Agencia 1', lbl_hier: 'AGENCIA', lvl: 2 }] as HierarquiaNodo[] }))
+      )
       .mockReturnValueOnce(throwError(() => new Error('caído')));
     const fixture = crearSinInit({ code: 9, maxLvl: 3, dlgTitulo: 'x' });
     const errorSpy = vi.fn();

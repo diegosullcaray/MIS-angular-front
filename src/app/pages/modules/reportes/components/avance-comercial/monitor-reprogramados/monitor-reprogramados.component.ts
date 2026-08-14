@@ -4,13 +4,14 @@ import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ButtonModule } from 'primeng/button';
-import { HierSelectorComponent } from '../../../../presupuesto/ui/hier-selector/hier-selector.component';
+import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { ReportesService, PARAMS_HIER_UNIDAD } from '../../../services/reportes.service';
+import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
+import { AvanceComercialService } from '../../../services/avance-comercial.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
-import { OPCIONES_TIPO_MON_REP } from '../../../models/monitor-reprogramados.model';
+import { OPCIONES_TIPO_MON_REP } from '../../../models/avance-comercial/avance-comercial.model';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
@@ -36,7 +37,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
   styleUrl: './monitor-reprogramados.component.css',
 })
 export class MonitorReprogramadosComponent {
-  private readonly reportes = inject(ReportesService);
+  private readonly servicio = inject(AvanceComercialService);
   private readonly toast = inject(ToastService);
   private readonly mensajes = inject(MessageService);
 
@@ -65,13 +66,8 @@ export class MonitorReprogramadosComponent {
     if (!nivel) return;
 
     this.cargando.set(true);
-    this.reportes
-      .obtenerBloqueReporte('RS_MON_REP_01', {
-        tip_cod: nivel.tip_cod,
-        cod_rel: nivel.cod_rel,
-        car: this.tipoSeleccionado(),
-        fec: this.reportes.fechaUltimoDia(),
-      })
+    this.servicio
+      .obtenerMonitorReprogramados({ tip_cod: nivel.tip_cod, cod_rel: nivel.cod_rel }, this.tipoSeleccionado())
       .subscribe({
         next: (resultado) => {
           this.tablaReprogramados.set(resultado);

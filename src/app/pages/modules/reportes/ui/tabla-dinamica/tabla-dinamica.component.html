@@ -1,0 +1,32 @@
+<p-table [value]="filas()" [loading]="cargando()" [scrollable]="true" scrollHeight="420px" styleClass="p-datatable-sm">
+  <ng-template pTemplate="header">
+    @for (fila of encabezados().filas; track $index) {
+      <tr>
+        @for (columna of fila; track columna.key) {
+          <th
+            [attr.colspan]="columna.colspan"
+            [attr.rowspan]="columna.rowspan"
+            class="text-[12px] uppercase text-center whitespace-nowrap"
+            style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);"
+          >
+            {{ columna.label }}
+          </th>
+        }
+      </tr>
+    }
+  </ng-template>
+  <ng-template pTemplate="body" let-fila>
+    <tr [class.font-bold]="destacada(fila)" [style.background-color]="destacada(fila) ? 'var(--mis-hover)' : null">
+      @for (columna of encabezados().columnasHoja; track columna.key) {
+        <td class="text-[13px] whitespace-nowrap" [style]="columna.style">{{ valor(fila, columna) }}</td>
+      }
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="encabezados().columnasHoja.length || 1" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
+        Sin datos para mostrar.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

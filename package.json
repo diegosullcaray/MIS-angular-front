@@ -30,6 +30,7 @@
     "@tailwindcss/vite": "^4.3.2",
     "angular-oauth2-oidc": "^22.0.2",
     "chart.js": "^4.5.1",
+    "chartjs-chart-matrix": "^3.0.5",
     "driver.js": "^1.8.0",
     "powerbi-client": "^2.24.1",
     "powerbi-client-angular": "^6.0.3",
