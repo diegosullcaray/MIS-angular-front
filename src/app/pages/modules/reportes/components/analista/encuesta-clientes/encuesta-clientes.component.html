@@ -1,0 +1,168 @@
+<div class="mis-page mis-page--alta">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-comments text-[var(--mis-primary-text)]"></i>
+        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Encuesta Clientes</h2>
+      </div>
+
+      <p-button
+        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+        severity="secondary"
+        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1" [class.hidden]="!mostrarFiltros()">
+    <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
+    <p-select
+      [options]="asesores()"
+      [ngModel]="asesorSeleccionado()"
+      (ngModelChange)="onAsesorSeleccionado($event)"
+      optionLabel="nombre"
+      dataKey="dni"
+      [filter]="true"
+      filterBy="nombre"
+      placeholder="Buscar asesor"
+      styleClass="w-72 text-[11.5px]"
+      ariaLabel="Asesor"
+    />
+  </div>
+
+  @if (!asesorSeleccionado()) {
+    <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">Elegí un asesor para ver su cartera de clientes.</p>
+  } @else {
+    <p-tabs [(value)]="tabActiva">
+      <p-tablist>
+        <p-tab value="lista">Lista Clientes</p-tab>
+        <p-tab value="encuesta" [disabled]="!clienteSeleccionado()">Actualizar Encuesta</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="lista">
+          <div class="mis-card p-3 overflow-x-auto">
+            <app-tabla-reporte
+              [encabezados]="tablaClientes().headers"
+              [filas]="tablaClientes().body"
+              [cargando]="cargando()"
+              [seleccionable]="true"
+              (filaSeleccionada)="onClienteSeleccionado($event)"
+            />
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="encuesta">
+          @if (clienteSeleccionado(); as cliente) {
+            <div class="mis-card p-4 flex flex-col gap-4 max-w-2xl">
+              <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)] uppercase">{{ cliente['nom_cli'] }}</h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1">
+                  <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">
+                    ¿Se ha visto afectado por el estado de emergencia establecido por el COVID-19?
+                  </span>
+                  <p-select
+                    [options]="opcionesAfecNeg"
+                    [ngModel]="model().afecNeg"
+                    (ngModelChange)="actualizarCampo('afecNeg', $event)"
+                    optionLabel="desc"
+                    optionValue="id"
+                    styleClass="text-[11.5px]"
+                    ariaLabel="Impacto COVID-19"
+                  />
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">¿Actualmente su negocio está funcionando?</span>
+                  <p-select
+                    [options]="opcionesFunNeg"
+                    [ngModel]="model().funNeg"
+                    (ngModelChange)="actualizarCampo('funNeg', $event)"
+                    optionLabel="desc"
+                    optionValue="id"
+                    styleClass="text-[11.5px]"
+                    ariaLabel="Negocio funcionando"
+                  />
+                </div>
+
+                @if (!encuestaForm.sitNeg().hidden()) {
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">
+                      Situación de su nivel de ventas/Ingresos después de la declaratoria de emergencia
+                    </span>
+                    <p-select
+                      [options]="opcionesSitNeg"
+                      [ngModel]="model().sitNeg"
+                      (ngModelChange)="actualizarCampo('sitNeg', $event)"
+                      optionLabel="desc"
+                      optionValue="id"
+                      styleClass="text-[11.5px]"
+                      ariaLabel="Situación de ventas"
+                    />
+                  </div>
+                }
+
+                @if (!encuestaForm.redNeg().hidden()) {
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">¿En qué % se redujo su nivel de ventas?</span>
+                    <p-select
+                      [options]="opcionesRedNeg"
+                      [ngModel]="model().redNeg"
+                      (ngModelChange)="actualizarCampo('redNeg', $event)"
+                      optionLabel="desc"
+                      optionValue="id"
+                      styleClass="text-[11.5px]"
+                      ariaLabel="% de reducción de ventas"
+                    />
+                  </div>
+                }
+
+                @if (!encuestaForm.secEco().hidden()) {
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Seleccione Sector Económico</span>
+                    <p-select
+                      [options]="opcionesSecEco"
+                      [ngModel]="model().secEco"
+                      (ngModelChange)="actualizarCampo('secEco', $event)"
+                      optionLabel="desc"
+                      optionValue="id"
+                      styleClass="text-[11.5px]"
+                      ariaLabel="Sector económico"
+                    />
+                  </div>
+                }
+
+                @if (!encuestaForm.girNeg().hidden()) {
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Seleccione Giro de negocio actual</span>
+                    <p-select
+                      [options]="opcionesGirNeg()"
+                      [ngModel]="model().girNeg"
+                      (ngModelChange)="actualizarCampo('girNeg', $event)"
+                      optionLabel="desc"
+                      optionValue="id"
+                      styleClass="text-[11.5px]"
+                      ariaLabel="Giro de negocio"
+                    />
+                  </div>
+                }
+              </div>
+
+              <div class="flex items-center justify-center gap-3 pt-2">
+                <p-button label="Regresar" icon="pi pi-undo" severity="secondary" (onClick)="onCancelar()" />
+                <p-button
+                  label="Guardar"
+                  icon="pi pi-save"
+                  [disabled]="encuestaForm().invalid() || guardando()"
+                  [loading]="guardando()"
+                  (onClick)="onGuardar()"
+                />
+              </div>
+            </div>
+          }
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  }
+</div>

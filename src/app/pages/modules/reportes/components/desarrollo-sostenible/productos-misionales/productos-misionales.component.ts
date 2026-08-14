@@ -46,7 +46,7 @@ export class ProductosMisionalesComponent {
   protected readonly opcionesProducto = OPCIONES_PRODUCTO_MISIONAL_PANEL;
 
   protected readonly mostrarFiltros = signal(true);
-  protected readonly tabActiva = signal('resumen');
+  protected readonly tabActiva = signal('territorio');
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly productoSeleccionado = signal('Todos');
   protected readonly cargando = signal(true);

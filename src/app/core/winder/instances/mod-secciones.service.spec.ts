@@ -92,4 +92,23 @@ describe('ModSeccionesService', () => {
     expect(strand.actionRoute).toBe('listas.post_becas');
     expect(strand.payload).toEqual({ cod_bt: 'BT-001', num_doc: '12345678', com: 'Cliente interesado' });
   });
+
+  it('getSecList() pide sec_list2 con email y responseName "result_sectorista"', () => {
+    service.getSecList('asesor@confianza.pe').subscribe();
+
+    const strand = inspeccionar(prepareSpy.mock.calls[0][1].strands as Strand);
+    expect(strand.actionRoute).toBe('sec_list2');
+    expect(strand.name).toBe('result_sectorista');
+    expect(strand.payload).toEqual({ email: 'asesor@confianza.pe' });
+  });
+
+  it('postRegularUpdate() pide regularUpdate por GET (no POST) con cod_rep y los params', () => {
+    service.postRegularUpdate('UPD_CAPRET_01', { num_doc: '12345678', reaccion: { afecNeg: 'Total' } }).subscribe();
+
+    expect(postSpy).not.toHaveBeenCalled(); // el legado manda esta acción por GET-encoded, no un POST real
+    const strand = inspeccionar(prepareSpy.mock.calls[0][1].strands as Strand);
+    expect(strand.actionRoute).toBe('regularUpdate');
+    expect(strand.name).toBe('result');
+    expect(strand.payload).toEqual({ num_doc: '12345678', reaccion: { afecNeg: 'Total' }, cod_rep: 'UPD_CAPRET_01' });
+  });
 });

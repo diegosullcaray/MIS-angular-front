@@ -1,0 +1,207 @@
+<div class="mis-page mis-page--alta">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-id-card text-[var(--mis-primary-text)]"></i>
+        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Datos Clientes</h2>
+      </div>
+
+      <p-button
+        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+        severity="secondary"
+        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1" [class.hidden]="!mostrarFiltros()">
+    <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
+    <p-select
+      [options]="asesores()"
+      [ngModel]="asesorSeleccionado()"
+      (ngModelChange)="onAsesorSeleccionado($event)"
+      optionLabel="nombre"
+      dataKey="dni"
+      [filter]="true"
+      filterBy="nombre"
+      placeholder="Buscar asesor"
+      styleClass="w-72 text-[11.5px]"
+      ariaLabel="Asesor"
+    />
+  </div>
+
+  @if (!asesorSeleccionado()) {
+    <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">Elegí un asesor para ver su cartera de clientes.</p>
+  } @else {
+    <p-tabs [(value)]="tabActiva">
+      <p-tablist>
+        <p-tab value="lista">Lista Clientes</p-tab>
+        <p-tab value="encuesta" [disabled]="!clienteSeleccionado()">Actualizar Datos</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="lista">
+          <div class="mis-card p-3 overflow-x-auto">
+            <app-tabla-reporte
+              [encabezados]="tablaClientes().headers"
+              [filas]="tablaClientes().body"
+              [cargando]="cargando()"
+              [seleccionable]="true"
+              (filaSeleccionada)="onClienteSeleccionado($event)"
+            />
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="encuesta">
+          @if (clienteSeleccionado(); as cliente) {
+            <div class="mis-card p-4 flex flex-col gap-4 max-w-3xl">
+              <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)] uppercase">{{ cliente['nom_cli'] }}</h3>
+
+              <!-- Teléfono de referencia (BanTotal) + verificador -->
+              <div class="grid grid-cols-1 sm:grid-cols-[2fr_1fr] gap-3 items-end">
+                <div class="flex flex-col gap-1">
+                  <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]"># Teléfono Bantotal</span>
+                  <input pInputText [value]="referencia().cel" disabled class="text-[11.5px]" />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Verificador Teléfono</span>
+                  <p-select
+                    [options]="opcionesVerificadorTele"
+                    [ngModel]="model().verificadorNumTele"
+                    (ngModelChange)="onVerificadorNumTeleChange($event)"
+                    optionLabel="desc"
+                    optionValue="id"
+                    styleClass="text-[11.5px]"
+                    ariaLabel="Verificador teléfono"
+                  />
+                </div>
+              </div>
+
+              <!-- Los 2 teléfonos editables -->
+              @for (indice of [0, 1]; track indice) {
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]"># Teléfono - {{ indice + 1 }}</span>
+                    <input
+                      pInputText
+                      [ngModel]="model().cels[indice].numTele"
+                      (ngModelChange)="actualizarCel(indice, 'numTele', $event)"
+                      class="text-[11.5px]"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Tipo Teléfono - {{ indice + 1 }}</span>
+                    <p-select
+                      [options]="opcionesTipoTele"
+                      [ngModel]="model().cels[indice].tipoTele"
+                      (ngModelChange)="actualizarCel(indice, 'tipoTele', $event)"
+                      optionLabel="desc"
+                      optionValue="id"
+                      styleClass="text-[11.5px]"
+                      [ariaLabel]="'Tipo teléfono ' + (indice + 1)"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Operador - {{ indice + 1 }}</span>
+                    <p-select
+                      [options]="opcionesOpeTele"
+                      [ngModel]="model().cels[indice].opeTele"
+                      (ngModelChange)="actualizarCel(indice, 'opeTele', $event)"
+                      optionLabel="desc"
+                      optionValue="id"
+                      styleClass="text-[11.5px]"
+                      [ariaLabel]="'Operador ' + (indice + 1)"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Plan Telefónico - {{ indice + 1 }}</span>
+                    <p-select
+                      [options]="opcionesPlanTele"
+                      [ngModel]="model().cels[indice].planTele"
+                      (ngModelChange)="actualizarCel(indice, 'planTele', $event)"
+                      optionLabel="desc"
+                      optionValue="id"
+                      styleClass="text-[11.5px]"
+                      [ariaLabel]="'Plan telefónico ' + (indice + 1)"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Whatsapp - {{ indice + 1 }}</span>
+                    <p-select
+                      [options]="opcionesWhatsapp"
+                      [ngModel]="model().cels[indice].whatshap"
+                      (ngModelChange)="actualizarCel(indice, 'whatshap', $event)"
+                      optionLabel="desc"
+                      optionValue="id"
+                      styleClass="text-[11.5px]"
+                      [ariaLabel]="'Whatsapp ' + (indice + 1)"
+                    />
+                  </div>
+                </div>
+              }
+
+              <!-- Email -->
+              <div class="flex flex-col gap-1 max-w-sm">
+                <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Email</span>
+                <input
+                  pInputText
+                  type="email"
+                  [ngModel]="model().email"
+                  (ngModelChange)="actualizarCampo('email', $event)"
+                  class="text-[11.5px]"
+                />
+              </div>
+
+              <!-- CIIU de referencia (BanTotal) + verificador -->
+              <div class="grid grid-cols-1 sm:grid-cols-[2fr_1fr] gap-3 items-end">
+                <div class="flex flex-col gap-1">
+                  <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">CIIU Bantotal</span>
+                  <input pInputText [value]="referencia().ciu" disabled class="text-[11.5px]" />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Verificador CIIU</span>
+                  <p-select
+                    [options]="opcionesVerificadorCiiu"
+                    [ngModel]="model().verificadorCiiu"
+                    (ngModelChange)="onVerificadorCiiuChange($event)"
+                    optionLabel="desc"
+                    optionValue="id"
+                    styleClass="text-[11.5px]"
+                    ariaLabel="Verificador CIIU"
+                  />
+                </div>
+              </div>
+
+              <!-- Los 3 CIIU editables -->
+              @for (indice of [0, 1, 2]; track indice) {
+                <div class="flex flex-col gap-1 max-w-sm">
+                  <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">CIIU - {{ indice + 1 }}</span>
+                  <p-select
+                    [options]="ciiu()"
+                    [ngModel]="model().cius[indice]"
+                    (ngModelChange)="actualizarCiu(indice, $event)"
+                    optionLabel="desc"
+                    optionValue="id"
+                    styleClass="text-[11.5px]"
+                    [ariaLabel]="'CIIU ' + (indice + 1)"
+                  />
+                </div>
+              }
+
+              <div class="flex items-center justify-center gap-3 pt-2">
+                <p-button label="Regresar" icon="pi pi-undo" severity="secondary" (onClick)="onCancelar()" />
+                <p-button
+                  label="Guardar"
+                  icon="pi pi-save"
+                  [disabled]="!formValido() || guardando()"
+                  [loading]="guardando()"
+                  (onClick)="onGuardar()"
+                />
+              </div>
+            </div>
+          }
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  }
+</div>

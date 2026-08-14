@@ -1,6 +1,7 @@
 export interface FilaEncabezadoColumna {
   columnDef: string;
-  header: string;
+  /** Ausente en columnas `hidden` sin etiqueta propia (ej. el semáforo oculto de "TMM") — el backend directamente no manda la clave. */
+  header?: string;
   cols?: number;
   rows?: number;
   isdata?: number;

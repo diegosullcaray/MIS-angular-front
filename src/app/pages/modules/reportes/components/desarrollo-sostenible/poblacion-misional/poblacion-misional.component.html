@@ -10,13 +10,12 @@
         [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
         [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
         severity="secondary"
-        [outlined]="true"
         (onClick)="mostrarFiltros.set(!mostrarFiltros())"
       />
     </div>
   </div>
 
-  <div class="flex items-end gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
+  <div class="flex flex-col gap-3" [class.hidden]="!mostrarFiltros()">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
 
     <div class="flex flex-col gap-1">

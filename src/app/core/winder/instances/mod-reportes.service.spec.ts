@@ -51,4 +51,15 @@ describe('ModReportesService', () => {
     expect(strand.name).toBe('result');
     expect(strand.payload).toEqual({ tip_cod: 1, cod_rel: 'BT-001', tipmet: 1, cod_rep: 'Monitor_Dese_01' });
   });
+
+  it('getDeprecatedData() usa el strand "reportData" (no "regularData") con respuesta "result"', () => {
+    // Reportes que el propio legado marca como no migrados a regularData (ej. "Cartera").
+    service.getDeprecatedData('rda/sectorista/cartera/cartera_sec_01', { tip_cod: 2, cod_rel: '12345678' }).subscribe();
+
+    const conf = prepareSpy.mock.calls[0][1];
+    const strand = inspeccionar(conf.strands as Strand);
+    expect(strand.actionRoute).toBe('reportData');
+    expect(strand.name).toBe('result');
+    expect(strand.payload).toEqual({ tip_cod: 2, cod_rel: '12345678', cod_rep: 'rda/sectorista/cartera/cartera_sec_01' });
+  });
 });

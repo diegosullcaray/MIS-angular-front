@@ -61,11 +61,41 @@ describe('TablaReporteComponent', () => {
     expect(fixture.componentInstance['esSemaforo'](ENCABEZADOS[0].columns[0])).toBe(false);
   });
 
-  it('colorSemaforo() mapea 1/2/otro a éxito/alerta/neutro', () => {
+  it('colorSemaforo() mapea 1/0/-1/otro a éxito/alerta/peligro/neutro', () => {
     const fixture = crear();
     expect(fixture.componentInstance['colorSemaforo'](1)).toContain('success');
-    expect(fixture.componentInstance['colorSemaforo'](2)).toContain('warning');
-    expect(fixture.componentInstance['colorSemaforo'](0)).toContain('text-tertiary');
+    // El naranja de alerta es `orange-500` (icono más chico), no `--mis-warning`
+    // (ámbar oscuro para texto/badges) — a ese tamaño se confundía con el rojo.
+    expect(fixture.componentInstance['colorSemaforo'](0)).toBe('text-orange-500');
+    expect(fixture.componentInstance['colorSemaforo'](-1)).toContain('danger');
+    expect(fixture.componentInstance['colorSemaforo'](2)).toContain('text-tertiary');
+  });
+
+  it('colorSemaforo() acepta el valor como string — el backend lo manda así ("1"/"0"/"-1")', () => {
+    const fixture = crear();
+    expect(fixture.componentInstance['colorSemaforo']('1')).toContain('success');
+    expect(fixture.componentInstance['colorSemaforo']('0')).toBe('text-orange-500');
+    expect(fixture.componentInstance['colorSemaforo']('-1')).toContain('danger');
+  });
+
+  it('colorSemaforo() no confunde null/undefined con "0" (alerta) — quedan neutros', () => {
+    const fixture = crear();
+    expect(fixture.componentInstance['colorSemaforo'](null)).toContain('text-tertiary');
+    expect(fixture.componentInstance['colorSemaforo'](undefined)).toContain('text-tertiary');
+  });
+
+  it('mostrarSemaforo() es false si la columna no es semáforo, o si el backend nunca mandó valor', () => {
+    // Regresión: "TAM" en DESEMP_SOC_01 declara la columna de semáforo pero el
+    // backend no manda valor en ninguna fila — no debe pintar un punto gris
+    // "sin significado" para todas las filas, mejor dejar la celda vacía.
+    const fixture = crear();
+    const columnaSemaforo = ENCABEZADOS[0].columns[3];
+    const columnaNumero = ENCABEZADOS[0].columns[1];
+
+    expect(fixture.componentInstance['mostrarSemaforo']({ estado: 1 }, columnaSemaforo)).toBe(true);
+    expect(fixture.componentInstance['mostrarSemaforo']({ estado: undefined }, columnaSemaforo)).toBe(false);
+    expect(fixture.componentInstance['mostrarSemaforo']({}, columnaSemaforo)).toBe(false);
+    expect(fixture.componentInstance['mostrarSemaforo']({ monto: 100 }, columnaNumero)).toBe(false);
   });
 
   it('la tabla renderiza el valor de cada columna de datos', () => {
@@ -117,12 +147,99 @@ describe('TablaReporteComponent', () => {
     expect(columnas).toEqual(['Fecha', 'fecha_nombre']);
   });
 
-  it('alineacion() alinea a la derecha salvo columnas de fecha o semáforo', () => {
+  it('alineacion() alinea number/percent a la derecha, texto a la izquierda, semáforos al centro', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['alineacion']({ columnDef: 'monto', header: 'Monto' })).toBe('text-right');
-    expect(fixture.componentInstance['alineacion']({ columnDef: 'fecha', header: 'Fecha' })).toBe('text-left');
+    expect(fixture.componentInstance['alineacion']({ columnDef: 'monto', header: 'Monto', format: { type: 'number' } })).toBe(
+      'text-right',
+    );
+    expect(fixture.componentInstance['alineacion']({ columnDef: 'avance', header: 'Avance', format: { type: 'percent' } })).toBe(
+      'text-right',
+    );
+    // Columna de texto libre (ej. "DESVAL"/"Variable..." de Desempeño Social) — no debe
+    // alinearse a la derecha solo por no tener "fecha" en el nombre.
+    expect(fixture.componentInstance['alineacion']({ columnDef: 'DESVAL', header: 'Variable', format: { type: 'string' } })).toBe(
+      'text-left',
+    );
     expect(fixture.componentInstance['alineacion']({ columnDef: 'estado', header: 'Estado', format: { type: 'traffic-light' } })).toBe(
       'text-center',
     );
+  });
+
+  it('filasEncabezado() ensancha el colspan de una columna visible que no cubrió a su semáforo oculto', () => {
+    // Caso real de "Desempeño Social" (DESEMP_SOC_01): "META" declara cols:1 aunque
+    // tiene un semáforo oculto detrás (a diferencia de "TMM", que sí declara cols:2
+    // para cubrir el suyo) — sin este ajuste, "TMM"/"TAM" quedan una columna
+    // desplazadas respecto a su dato real.
+    const fixture = crear([
+      {
+        columns: [
+          { columnDef: 'meta', header: 'META', cols: 1, isdata: 1, format: { type: 'number' } },
+          { columnDef: 'meta_sem', isdata: 2, hidden: true, format: { type: 'traffic-light' } },
+          { columnDef: 'tmm', header: 'TMM', cols: 2, isdata: 3, format: { type: 'number' } },
+          { columnDef: 'tmm_sem', isdata: 4, hidden: true, format: { type: 'traffic-light' } },
+        ],
+      },
+    ]);
+
+    const [meta, tmm] = fixture.componentInstance['filasEncabezado']()[0];
+    expect(meta.cols).toBe(2); // ensanchado: 1 declarado, pero tenía 1 oculta detrás
+    expect(tmm.cols).toBe(2); // sin cambios: ya declaraba correctamente su oculta
+  });
+
+  it('filasEncabezado() deja que la columna SIGUIENTE cubra hacia atrás un semáforo oculto cuando ya declaró ancho suficiente', () => {
+    // Caso real de "Clientes Producto" (cliente_producto_sec_01): el semáforo
+    // oculto de "clientes" (Número de Clientes a Hoy) va justo antes de
+    // "var_clientes" (Variación), que declara cols:2 — el punto debe quedar
+    // agrupado bajo "Variación", no ensanchar "clientes" (que no declaró nada).
+    const fixture = crear([
+      {
+        columns: [
+          { columnDef: 'descripcion', header: 'Productos', isdata: 1, format: { type: 'string' } },
+          { columnDef: 'clientes', header: 'Número de Clientes a Hoy', isdata: 2, format: { type: 'number' } },
+          { columnDef: 'sem_clientes', isdata: 3, hidden: true, format: { type: 'traffic-light' } },
+          { columnDef: 'var_clientes', header: 'Variación', cols: 2, isdata: 4, format: { type: 'number' } },
+        ],
+      },
+    ]);
+
+    const [descripcion, clientes, variacion] = fixture.componentInstance['filasEncabezado']()[0];
+    expect(descripcion.cols ?? 1).toBe(1);
+    expect(clientes.cols ?? 1).toBe(1); // no ensanchado: la siguiente ("Variación") ya cubre el semáforo
+    expect(variacion.cols).toBe(2); // sin cambios: ya declaraba correctamente el semáforo que la precede
+  });
+
+  it('claseFila() resalta en negrita las filas de categoría/subtotal (style === 1)', () => {
+    const fixture = crear();
+    expect(fixture.componentInstance['claseFila']({ style: 1 })).toContain('font-bold');
+    expect(fixture.componentInstance['claseFila']({ style: 0 })).toBe('');
+    expect(fixture.componentInstance['claseFila']({})).toBe('');
+  });
+
+  it('onClickFila() solo emite filaSeleccionada cuando seleccionable() es true', () => {
+    const fixture = crear();
+    const emitidas: FilaReporte[] = [];
+    fixture.componentInstance.filaSeleccionada.subscribe((f) => emitidas.push(f));
+
+    fixture.componentInstance['onClickFila'](FILAS[0]);
+    expect(emitidas).toEqual([]);
+
+    fixture.componentRef.setInput('seleccionable', true);
+    fixture.detectChanges();
+    fixture.componentInstance['onClickFila'](FILAS[0]);
+    expect(emitidas).toEqual([FILAS[0]]);
+  });
+
+  it('un click en la fila del cuerpo dispara filaSeleccionada solo si seleccionable=true', () => {
+    const fixture = crear(ENCABEZADOS, FILAS, false);
+    fixture.componentRef.setInput('seleccionable', true);
+    fixture.detectChanges();
+
+    const emitidas: FilaReporte[] = [];
+    fixture.componentInstance.filaSeleccionada.subscribe((f) => emitidas.push(f));
+
+    const filaDom = (fixture.nativeElement as HTMLElement).querySelector('tbody tr') as HTMLElement;
+    filaDom.click();
+
+    expect(emitidas).toEqual([FILAS[0]]);
   });
 });

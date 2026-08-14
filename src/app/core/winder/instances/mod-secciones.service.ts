@@ -60,4 +60,21 @@ export class ModSeccionesService extends AntService {
   public postProsBecas(codBt: string, numDoc: string, com: string): Observable<unknown> {
     return this.postSimpleResponseString('listas.post_becas', { cod_bt: codBt, num_doc: numDoc, com });
   }
+
+  // ─── Encuesta Clientes ────────────────────────────────────────────────────
+
+  /** Lista de asesores/sectoristas visibles para el usuario logueado (`email`) — legado `ModSecService.getSecList()`. */
+  public getSecList(email: string): Observable<IWinderResponse> {
+    return this.getSimpleResponseString('sec_list2', { email }, 'result_sectorista');
+  }
+
+  /**
+   * Actualiza un reporte del motor "mixto" (`cod_rep`) — legado
+   * `ModSecService.updateData()`. Pese al nombre, el propio legado la manda
+   * como GET-encoded (`getResponseString`), no como POST real — se respeta
+   * ese mismo mecanismo acá (`getSimpleResponseString`).
+   */
+  public postRegularUpdate(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
+    return this.getSimpleResponseString('regularUpdate', { ...params, cod_rep: codRep }, 'result');
+  }
 }

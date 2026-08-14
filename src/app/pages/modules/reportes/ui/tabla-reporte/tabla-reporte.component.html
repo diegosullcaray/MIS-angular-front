@@ -16,11 +16,13 @@
     }
   </ng-template>
   <ng-template pTemplate="body" let-fila>
-    <tr>
+    <tr [class]="claseFila(fila)" [class.cursor-pointer]="seleccionable()" (click)="onClickFila(fila)">
       @for (columna of columnasDato(); track columna.columnDef) {
         <td class="text-[13px]" [class]="alineacion(columna)" [style]="columna.style">
           @if (esSemaforo(columna)) {
-            <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(valor(fila, columna))"></i>
+            @if (mostrarSemaforo(fila, columna)) {
+              <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(valor(fila, columna))"></i>
+            }
           } @else {
             {{ formatear(valor(fila, columna), columna) }}
           }

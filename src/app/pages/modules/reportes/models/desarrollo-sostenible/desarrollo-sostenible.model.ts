@@ -50,6 +50,8 @@ export const OPCIONES_POBLACION_MISIONAL: OpcionPoblacionMisional[] = [
 /** Resultado combinado de "Monitor Productos Misionales" (`DesarrolloSostenibleService.obtenerMonitorProductosMisionales`). */
 export interface ReporteMonitorProductosMisionales {
   kpiOperaciones: KpiOperacionesDesembolsadas | null;
+  /** Tabla diaria completa del bloque `_01` (Día/Fecha/Diario/Acumulado/% Requerido) — el mismo bloque cuyo `additional` alimenta `kpiOperaciones`. */
+  tablaDetalle: TablaReporteResultado;
   tablaSimple: TablaReporteResultado;
 }
 

@@ -43,4 +43,16 @@ export class ModReportesService extends AntService {
   public getRegularData(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
     return this.getSimpleResponseString('regularData', { ...params, cod_rep: codRep }, 'result');
   }
+
+  /**
+   * Variante "deprecada" del motor de reportes "mixtos" (strand `reportData`
+   * en vez de `regularData`) — el propio legado la marca como obsoleta
+   * (`ComercialService.getReportData()`: "está usando un método depreciado")
+   * pero algunos reportes todavía no fueron migrados a `regularData` del
+   * lado del backend (ej. "Cartera", `rda/sectorista/cartera/cartera_sec`).
+   * Misma forma de respuesta (`result.headers`/`body`/`additional`).
+   */
+  public getDeprecatedData(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
+    return this.getSimpleResponseString('reportData', { ...params, cod_rep: codRep }, 'result');
+  }
 }

@@ -23,8 +23,10 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
  * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese_misi'`).
  *
  * Variante de "Monitor Metas Desembolso" con filtro de producto misional
- * (`SPRODUCTOMISI`, variable `prod`) y solo 2 bloques (`_02` tabla simple,
- * `_01` con tarjeta KPI) en vez de los 4 de `Monitor_Dese`.
+ * (`SPRODUCTOMISI`, variable `prod`) y solo 2 bloques en vez de los 4 de
+ * `Monitor_Dese`: `_02` (tabla simple) y `_01`, que — igual que el `_01` de
+ * `Monitor_Dese` — trae tanto la tarjeta KPI (`additional`) como su propia
+ * tabla diaria completa (`headers`/`body`, `tablaDetalle`).
  */
 @Component({
   selector: 'app-monitor-productos-misionales',
@@ -48,6 +50,7 @@ export class MonitorProductosMisionalesComponent {
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   protected readonly kpiOperaciones = signal<KpiOperacionesDesembolsadas | null>(null);
+  protected readonly tablaDetalle = signal<TablaReporteResultado>(TABLA_VACIA);
   protected readonly tablaSimple = signal<TablaReporteResultado>(TABLA_VACIA);
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
@@ -67,7 +70,8 @@ export class MonitorProductosMisionalesComponent {
     this.cargando.set(true);
 
     this.servicio.obtenerMonitorProductosMisionales({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, this.productoSeleccionado()).subscribe({
-      next: ({ kpiOperaciones, tablaSimple }) => {
+      next: ({ kpiOperaciones, tablaDetalle, tablaSimple }) => {
+        this.tablaDetalle.set(tablaDetalle);
         this.tablaSimple.set(tablaSimple);
         this.kpiOperaciones.set(kpiOperaciones);
         this.cargando.set(false);
