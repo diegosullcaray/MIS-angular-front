@@ -6,6 +6,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ButtonModule } from 'primeng/button';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
+import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/empty-state.component';
 import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
 import { AvanceComercialService } from '../../../services/avance-comercial.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';

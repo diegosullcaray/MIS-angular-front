@@ -30,6 +30,13 @@ export class HierSelectorComponent implements OnInit {
 
   readonly paramsHier = input.required<ParamsJerarquia>();
   readonly placeholder = input('Elegir jerarquía');
+  /**
+   * `true` (default): la raíz queda preseleccionada y se emite al cargar.
+   * `false`: la raíz se muestra como punto de partida pero NO se emite —
+   * lo usan los reportes, donde entrar a la pantalla no debe disparar la
+   * consulta de un nodo que nadie eligió.
+   */
+  readonly autoSeleccionar = input(true);
   readonly nodoSeleccionado = output<HierarquiaNodo>();
   /** Solo se emite si falla o queda vacía la carga inicial (raíz o su primer nivel) — el único caso en que este componente nunca llega a emitir `nodoSeleccionado`, así el contenedor puede apagar su propio loading en vez de quedarse esperando para siempre. */
   readonly error = output<void>();
@@ -119,10 +126,11 @@ export class HierSelectorComponent implements OnInit {
           };
 
           if (esCargaInicial) {
-            const primerNodo = dataNormalizada[0];
             this.nodosNivel.set([dp]);
             this.valoresSeleccionados.set([primerNodo]);
-            this.nodoSeleccionado.emit(primerNodo);
+            if (this.autoSeleccionar()) {
+              this.nodoSeleccionado.emit(primerNodo);
+            }
 
             const proximoNivel = (primerNodo.lvl ?? lvl) + 1;
             if (proximoNivel <= this.paramsHier().maxLvl && lh && lh.length > 0) {
