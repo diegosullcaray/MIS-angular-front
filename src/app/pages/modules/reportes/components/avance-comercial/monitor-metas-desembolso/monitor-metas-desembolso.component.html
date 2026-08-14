@@ -1,23 +1,29 @@
 <div class="mis-page mis-page--alta">
   <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
     <div class="flex items-center justify-between flex-wrap gap-3">
-      <div class="flex items-center gap-2">
-        <i class="pi pi-chart-line text-[var(--mis-primary-text)]"></i>
-        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Monitor Metas Desembolso</h2>
+      <div class="flex flex-col gap-0.5">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-chart-line text-[var(--mis-primary-text)]"></i>
+          <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Monitor Metas Desembolso</h2>
+        </div>
+        @if (kpiOperaciones()?.fecha) {
+          <span class="text-[10px] text-[var(--mis-text-tertiary)] ml-6">
+            <i class="pi pi-clock text-[9px] mr-1"></i>Actualizado al {{ kpiOperaciones()?.fecha }} {{ kpiOperaciones()?.hora }}
+          </span>
+        }
       </div>
 
       <p-button
         [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
         [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
         severity="secondary"
-        [outlined]="true"
         (onClick)="mostrarFiltros.set(!mostrarFiltros())"
       />
     </div>
   </div>
 
   <div class="flex items-center gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
-    <app-hier-selector [paramsHier]="paramsHier" [autoSeleccionar]="false" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
+    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
   </div>
 
   @if (!nivelActual()) {
@@ -32,11 +38,6 @@
         <div class="flex flex-col gap-0.5 min-w-0">
           <span class="text-[12px] font-bold text-[var(--mis-text-primary)]">Operaciones Desembolsadas</span>
           <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Cumplimiento de Meta:</span>
-          @if (kpiOperaciones()?.fecha) {
-            <span class="text-[10px] text-[var(--mis-text-tertiary)] mt-0.5">
-              <i class="pi pi-clock text-[9px] mr-1"></i>Al {{ kpiOperaciones()?.fecha }} {{ kpiOperaciones()?.hora }}
-            </span>
-          }
         </div>
         <span class="text-xl font-extrabold text-[var(--mis-primary-text)] shrink-0 ml-2">
           {{ kpiOperaciones()?.cumpl_des_acum || '--' }}

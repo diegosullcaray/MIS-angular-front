@@ -75,4 +75,54 @@ describe('TablaReporteComponent', () => {
     expect(texto).toContain('1,500.5');
     expect(texto).toContain('85.0%');
   });
+
+  it('filasEncabezado() excluye las columnas hidden, sin correr el resto de columnas', () => {
+    // Caso real de "Monitor Metas Desembolso" (Monitor_Dese_01): "Fecha" declara
+    // cols:2 para cubrir tanto la fecha como "fecha_nombre" (el día, ej. "Sábado"),
+    // que va hidden porque no necesita su propio <th> — solo su dato en el cuerpo.
+    const fixture = crear([
+      {
+        columns: [
+          { columnDef: 'dia_habil', header: 'Día', rows: 2, isdata: 1 },
+          { columnDef: 'Fecha', header: 'Fecha', cols: 2, rows: 2, isdata: 2 },
+          { columnDef: 'fecha_nombre', header: 'fecha_nombre', isdata: 3, hidden: true },
+          { columnDef: 'Diario', header: 'Diario', cols: 3 },
+        ],
+      },
+      {
+        columns: [
+          { columnDef: 'ope', header: 'Operaciones', isdata: 4 },
+          { columnDef: 'meta', header: 'Meta', isdata: 5 },
+          { columnDef: 'cumpl', header: '%Cumplimiento', isdata: 6 },
+        ],
+      },
+    ]);
+
+    const filas = fixture.componentInstance['filasEncabezado']();
+    expect(filas[0].map((c) => c.columnDef)).toEqual(['dia_habil', 'Fecha', 'Diario']);
+    expect(filas[1].map((c) => c.columnDef)).toEqual(['ope', 'meta', 'cumpl']);
+  });
+
+  it('columnasDato() sigue incluyendo el dato de una columna hidden — solo se oculta su <th>, no su <td>', () => {
+    const fixture = crear([
+      {
+        columns: [
+          { columnDef: 'Fecha', header: 'Fecha', cols: 2, isdata: 1 },
+          { columnDef: 'fecha_nombre', header: 'fecha_nombre', isdata: 2, hidden: true },
+        ],
+      },
+    ]);
+
+    const columnas = fixture.componentInstance['columnasDato']().map((c) => c.columnDef);
+    expect(columnas).toEqual(['Fecha', 'fecha_nombre']);
+  });
+
+  it('alineacion() alinea a la derecha salvo columnas de fecha o semáforo', () => {
+    const fixture = crear();
+    expect(fixture.componentInstance['alineacion']({ columnDef: 'monto', header: 'Monto' })).toBe('text-right');
+    expect(fixture.componentInstance['alineacion']({ columnDef: 'fecha', header: 'Fecha' })).toBe('text-left');
+    expect(fixture.componentInstance['alineacion']({ columnDef: 'estado', header: 'Estado', format: { type: 'traffic-light' } })).toBe(
+      'text-center',
+    );
+  });
 });

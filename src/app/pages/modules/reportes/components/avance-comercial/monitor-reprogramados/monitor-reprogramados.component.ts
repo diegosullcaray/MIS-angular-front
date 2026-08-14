@@ -45,7 +45,7 @@ export class MonitorReprogramadosComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesTipo = OPCIONES_TIPO_MON_REP;
 
-  protected readonly mostrarFiltros = signal(true);
+  protected readonly mostrarFiltros = signal(false);
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly tipoSeleccionado = signal<1 | 2>(1);
   protected readonly cargando = signal(false);

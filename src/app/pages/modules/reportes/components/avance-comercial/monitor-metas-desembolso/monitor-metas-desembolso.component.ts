@@ -42,7 +42,7 @@ export class MonitorMetasDesembolsoComponent {
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
-  protected readonly mostrarFiltros = signal(true);
+  protected readonly mostrarFiltros = signal(false);
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
@@ -68,6 +68,15 @@ export class MonitorMetasDesembolsoComponent {
         this.tabla3.set(tabla3);
         this.tabla4.set(tabla4);
         this.cargando.set(false);
+
+        // eslint-disable-next-line no-console
+        console.log('[DEBUG headers tabla1]', JSON.stringify(tabla1.headers, null, 2));
+        // eslint-disable-next-line no-console
+        console.log('[DEBUG headers tabla2]', JSON.stringify(tabla2.headers, null, 2));
+        // eslint-disable-next-line no-console
+        console.log('[DEBUG headers tabla3]', JSON.stringify(tabla3.headers, null, 2));
+        // eslint-disable-next-line no-console
+        console.log('[DEBUG headers tabla4]', JSON.stringify(tabla4.headers, null, 2));
 
         if ([tabla1, tabla2, tabla3, tabla4].every((t) => t.body.length === 0)) {
           this.mensajes.warn(

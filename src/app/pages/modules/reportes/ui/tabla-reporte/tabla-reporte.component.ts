@@ -36,12 +36,30 @@ export class TablaReporteComponent {
     return todas.filter((c) => c.isdata != null).sort((a, b) => (a.isdata ?? 0) - (b.isdata ?? 0));
   });
 
+  /**
+   * Filas de encabezado listas para renderizar, excluyendo las columnas `hidden`
+   * — no ocupan `<th>` ni reservan espacio en la grilla (su dato sigue en el
+   * cuerpo vía `columnasDato`), igual que la clase `hidden` del legado
+   * (`table-multiheader.component.html`), que solo saca el `<th>` del flujo de
+   * la tabla vía CSS sin tocar el `<td>`. Sin esto, una columna `hidden` sigue
+   * reservando su columna de grilla en la fila 1 y corre una a la derecha todo
+   * lo que viene después.
+   */
+  protected readonly filasEncabezado = computed(() => this.encabezados().map((fila) => fila.columns.filter((c) => !c.hidden)));
+
   protected valor(fila: FilaReporte, columna: ColumnaReporte): unknown {
     return fila[columna.columnDef];
   }
 
   protected esSemaforo(columna: ColumnaReporte): boolean {
     return columna.format?.['type'] === 'traffic-light';
+  }
+
+  /** Alineación de la celda de datos: a la derecha salvo columnas de fecha (semáforos, centrados). */
+  protected alineacion(columna: ColumnaReporte): string {
+    if (this.esSemaforo(columna)) return 'text-center';
+    const esFecha = columna.format?.['type'] === 'date' || /fecha/i.test(columna.columnDef);
+    return esFecha ? 'text-left' : 'text-right';
   }
 
   protected formatear(valor: unknown, columna: ColumnaReporte): string {
