@@ -6,7 +6,7 @@
           <th
             [attr.colspan]="columna.cols || 1"
             [attr.rowspan]="columna.rows || 1"
-            class="text-[12px] uppercase text-center border border-[var(--mis-text-on-primary)]/25"
+            class="text-[12px] uppercase text-center whitespace-nowrap border border-[var(--mis-text-on-primary)]/25"
             style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);"
           >
             {{ columna.header }}
@@ -18,7 +18,7 @@
   <ng-template pTemplate="body" let-fila>
     <tr [class]="claseFila(fila)" [class.cursor-pointer]="seleccionable()" (click)="onClickFila(fila)">
       @for (columna of columnasDato(); track columna.columnDef) {
-        <td class="text-[13px]" [class]="alineacion(columna)" [style]="columna.style">
+        <td class="text-[13px] whitespace-nowrap" [class]="alineacion(columna)" [style]="columna.style">
           @if (esSemaforo(columna)) {
             @if (mostrarSemaforo(fila, columna)) {
               <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(valor(fila, columna))"></i>

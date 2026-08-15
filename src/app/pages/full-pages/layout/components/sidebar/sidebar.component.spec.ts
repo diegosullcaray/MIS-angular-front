@@ -138,6 +138,55 @@ describe('SidebarComponent', () => {
     expect(icono?.tienePanel).toBe(true);
   });
 
+  it('iconos() deshabilita tienePanel para "Dashboards Integrados" aunque STG mande un hijo "usuarios" (ya migrado a diálogo, no a ruta)', () => {
+    menuStgFalso.sistemas.set([
+      { id: 'sist-db', tipo: 'remote', icono: 'pi pi-table', etiqueta: 'Dashboards Integrados', tienePanel: true },
+    ]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-db': [{ etiqueta: 'Usuarios', ruta: '/app/dashboards/usuarios' }] });
+    const fixture = crear();
+
+    const icono = fixture.componentInstance['iconos']().find((i) => i.id === 'sist-db');
+
+    expect(icono?.tienePanel).toBe(false);
+    expect(icono?.ruta).toBe('/app/dashboards');
+  });
+
+  it('seleccionarIcono() navega directo a /app/dashboards para "Dashboards Integrados", sin abrir el panel secundario', () => {
+    const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    menuStgFalso.sistemas.set([
+      { id: 'sist-db', tipo: 'remote', icono: 'pi pi-table', etiqueta: 'Dashboards Integrados', tienePanel: true },
+    ]);
+    menuStgFalso.hijosPorSistema.set({ 'sist-db': [{ etiqueta: 'Usuarios', ruta: '/app/dashboards/usuarios' }] });
+    const fixture = crear();
+    const icono = fixture.componentInstance['iconos']().find((i) => i.id === 'sist-db')!;
+
+    fixture.componentInstance['seleccionarIcono'](icono);
+
+    expect(navSpy).toHaveBeenCalledWith('/app/dashboards');
+    expect(shell.contenidoPendienteSeleccion()).toBe(false);
+  });
+
+  it('al navegar a /app/dashboards NO fuerza sidebarIconActivo a "host-inicio" — es un sistema distinto de /app/dashboard (Inicio)', async () => {
+    menuStgFalso.sistemas.set([
+      { id: 'sist-db', tipo: 'remote', icono: 'pi pi-table', etiqueta: 'Dashboards Integrados', tienePanel: false, ruta: '/app/dashboards' },
+    ]);
+    crear();
+    shell.setSidebarIconActivo('sist-db');
+
+    await router.navigateByUrl('/app/dashboards');
+
+    expect(shell.sidebarIconActivo()).toBe('sist-db');
+  });
+
+  it('al navegar a /app/dashboard (Inicio del Host, singular) sí fuerza sidebarIconActivo a "host-inicio"', async () => {
+    crear();
+    shell.setSidebarIconActivo('sist-db');
+
+    await router.navigateByUrl('/app/dashboard');
+
+    expect(shell.sidebarIconActivo()).toBe('host-inicio');
+  });
+
   it('panelActivo() arma el panel propio de "Analista" (Principal/Categorización/Listas) en vez del panel remoto de STG', () => {
     menuStgFalso.sistemas.set([{ id: 'sist-an', tipo: 'remote', icono: 'pi pi-briefcase', etiqueta: 'Analista', tienePanel: true }]);
     menuStgFalso.hijosPorSistema.set({ 'sist-an': [{ etiqueta: 'Categorización', ruta: '/app/analista/categorizacion' }] });

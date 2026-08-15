@@ -29,6 +29,13 @@
       </div>
     </main>
   </div>
-  <app-redirect-overlay />
-  <app-loading-overlay />
 </div>
+<!-- Fuera de `.shell-wallpaper`: ese contenedor tiene `isolation: isolate`
+     (ver .css), que crea un stacking context propio y le pone techo a
+     cualquier z-index de adentro — incluido el z-[9999] de estos overlays.
+     Los diálogos de PrimeNG con `appendTo="body"` (ej. `selector-nivel-dialog`)
+     se montan directo en `<body>`, fuera de ese contexto, y por eso pintaban
+     por ENCIMA del spinner aunque su propio z-index fuera menor. Estando acá
+     afuera, ambos comparan en el mismo stacking context que esos diálogos. -->
+<app-redirect-overlay />
+<app-loading-overlay />

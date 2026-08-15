@@ -62,4 +62,14 @@ describe('ModReportesService', () => {
     expect(strand.name).toBe('result');
     expect(strand.payload).toEqual({ tip_cod: 2, cod_rel: '12345678', cod_rep: 'rda/sectorista/cartera/cartera_sec_01' });
   });
+
+  it('getGraphicData() usa el strand "graphicData" con respuesta "result"', () => {
+    service.getGraphicData('rda/sectorista/brecha/brecha_inversion_sec_01', { tip_cod: 2, cod_rel: '12345678' }).subscribe();
+
+    const conf = prepareSpy.mock.calls[0][1];
+    const strand = inspeccionar(conf.strands as Strand);
+    expect(strand.actionRoute).toBe('graphicData');
+    expect(strand.name).toBe('result');
+    expect(strand.payload).toEqual({ tip_cod: 2, cod_rel: '12345678', cod_rep: 'rda/sectorista/brecha/brecha_inversion_sec_01' });
+  });
 });

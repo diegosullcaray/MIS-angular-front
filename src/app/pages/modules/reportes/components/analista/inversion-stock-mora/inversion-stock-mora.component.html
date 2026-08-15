@@ -1,0 +1,49 @@
+<div class="mis-page mis-page--alta">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-chart-line text-[var(--mis-primary-text)]"></i>
+        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Inversión y Stock de Mora</h2>
+      </div>
+
+      <p-button
+        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+        severity="secondary"
+        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1" [class.hidden]="!mostrarFiltros()">
+    <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
+    <p-select
+      [options]="asesores()"
+      [ngModel]="asesorSeleccionado()"
+      (ngModelChange)="onAsesorSeleccionado($event)"
+      optionLabel="nombre"
+      dataKey="dni"
+      [filter]="true"
+      filterBy="nombre"
+      placeholder="Buscar asesor"
+      styleClass="w-72 text-[11.5px]"
+      ariaLabel="Asesor"
+    />
+  </div>
+
+  @if (!asesorSeleccionado()) {
+    <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">Elegí un asesor para ver su inversión y stock de mora.</p>
+  } @else if (cargando()) {
+    <div class="flex flex-col gap-4">
+      <p-skeleton height="320px" />
+    </div>
+  } @else {
+    <div class="flex flex-col gap-5">
+      @for (grafico of graficos(); track $index) {
+        <div class="mis-card p-3">
+          <app-grafico-reporte [datos]="grafico" />
+        </div>
+      }
+    </div>
+  }
+</div>

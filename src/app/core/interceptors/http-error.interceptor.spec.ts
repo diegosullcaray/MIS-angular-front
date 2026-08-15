@@ -32,6 +32,17 @@ describe('httpErrorInterceptor', () => {
     expect(irSpy).not.toHaveBeenCalled();
   });
 
+  it('no intercepta el backend Ant/Winder (/cores2/ant/) aunque falle con un 500 — cada reporte maneja sus propios errores de bloque', async () => {
+    const irSpy = vi.spyOn(httpError, 'irAPaginaDeError');
+    const error = new HttpErrorResponse({ status: 500 });
+    const next: HttpHandlerFn = () => throwError(() => error);
+
+    await expect(
+      firstValueFrom(ejecutar('https://stg.confianza.pe/cores2/ant/v1/g?w=abc', next)),
+    ).rejects.toBe(error);
+    expect(irSpy).not.toHaveBeenCalled();
+  });
+
   it('redirige a la página de error cuando el status resuelto es fatal (ej. 500)', async () => {
     const irSpy = vi.spyOn(httpError, 'irAPaginaDeError').mockResolvedValue();
     const error = new HttpErrorResponse({ status: 500 });

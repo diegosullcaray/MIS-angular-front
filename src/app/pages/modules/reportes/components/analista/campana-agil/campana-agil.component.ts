@@ -1,0 +1,90 @@
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
+import { CampanaAgilService } from '../../../services/campana-agil.service';
+import { ToastService } from '../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../core/services/message.service';
+import { OPCIONES_SEMANA, SEMANA_POR_DEFECTO } from '../../../models/analista/campana-agil.model';
+import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+
+const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+
+/**
+ * "Campaña Ágil" — migrado de la ruta `leg/com/rda/sec/cam-agl` (legado STG,
+ * `reportes/legacy/support/components/template/crs/report-crs-v1`, config
+ * `rda/sectorista/campania_agil/campana_agil_sec` en `crs-map.ts`).
+ *
+ * Solo lectura: asesor + filtro "Semana" (real, `Semana01()` en `crs-map.ts`,
+ * semana 1 por defecto) → 1 tabla. Cambiar la semana recarga la tabla si ya
+ * hay un asesor elegido, igual que el legado (`mergeParams()`: `combineLatest`
+ * de filtro + nivel).
+ */
+@Component({
+  selector: 'app-campana-agil',
+  standalone: true,
+  imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent],
+  templateUrl: './campana-agil.component.html',
+  styleUrl: './campana-agil.component.css',
+})
+export class CampanaAgilComponent {
+  private readonly servicio = inject(CampanaAgilService);
+  private readonly toast = inject(ToastService);
+  private readonly mensajes = inject(MessageService);
+
+  protected readonly opcionesSemana = OPCIONES_SEMANA;
+
+  protected readonly mostrarFiltros = signal(false);
+
+  protected readonly asesores = signal<AsesorSec[]>([]);
+  protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);
+  protected readonly semana = signal(SEMANA_POR_DEFECTO);
+
+  protected readonly cargando = signal(false);
+  protected readonly tabla1 = signal<TablaReporteResultado>(TABLA_VACIA);
+
+  constructor() {
+    this.cargarAsesores();
+  }
+
+  private cargarAsesores(): void {
+    this.servicio.obtenerAsesores().subscribe({
+      next: (asesores) => this.asesores.set(asesores),
+      error: () => this.toast.error('No se pudo cargar la lista de asesores', 'Inténtalo de nuevo en unos segundos.'),
+    });
+  }
+
+  protected onAsesorSeleccionado(asesor: AsesorSec | null): void {
+    this.asesorSeleccionado.set(asesor);
+    if (asesor) this.cargarCampanaAgil();
+  }
+
+  protected onSemanaSeleccionada(semana: number): void {
+    this.semana.set(semana);
+    if (this.asesorSeleccionado()) this.cargarCampanaAgil();
+  }
+
+  private cargarCampanaAgil(): void {
+    const asesor = this.asesorSeleccionado();
+    if (!asesor) return;
+
+    this.cargando.set(true);
+    this.servicio.obtenerCampanaAgil({ tip_cod: 2, cod_rel: asesor.dni }, this.semana()).subscribe({
+      next: ({ tabla1 }) => {
+        this.tabla1.set(tabla1);
+        this.cargando.set(false);
+
+        if (tabla1.body.length === 0) {
+          this.mensajes.warn('Este asesor no tiene datos de campaña ágil para la semana elegida.', 'Sin resultados');
+        }
+      },
+      error: () => {
+        this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+        this.cargando.set(false);
+      },
+    });
+  }
+}

@@ -1,0 +1,241 @@
+<p-dialog
+  [visible]="visible"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '900px' }"
+  [draggable]="false"
+  [resizable]="false"
+  header="Registro Prospecto"
+  appendTo="body"
+>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[70vh] overflow-y-auto p-1">
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Nombre Cliente</span>
+      <input pInputText [ngModel]="model().HAPENOMB" (ngModelChange)="actualizarCampo('HAPENOMB', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">DNI</span>
+      <input pInputText [ngModel]="model().HNUMDOC" (ngModelChange)="actualizarCampo('HNUMDOC', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">RUC</span>
+      <input pInputText [ngModel]="model().HNUMRUC" (ngModelChange)="actualizarCampo('HNUMRUC', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Celular</span>
+      <input pInputText [ngModel]="model().HCELULAR" (ngModelChange)="actualizarCampo('HCELULAR', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">CIIU</span>
+      <p-select
+        [options]="opcionesCiiu()"
+        [ngModel]="model().HDCIIU"
+        (ngModelChange)="actualizarCampo('HDCIIU', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        [filter]="true"
+        filterBy="desc"
+        ariaLabel="CIIU"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Dirección</span>
+      <input pInputText [ngModel]="model().HDIREC" (ngModelChange)="actualizarCampo('HDIREC', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Departamento</span>
+      <p-select
+        [options]="opcionesDepartamento()"
+        [ngModel]="model().HDEPA"
+        (ngModelChange)="actualizarCampo('HDEPA', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        [filter]="true"
+        filterBy="desc"
+        ariaLabel="Departamento"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Provincia</span>
+      <p-select
+        [options]="opcionesProvincia()"
+        [ngModel]="model().HPROV"
+        (ngModelChange)="actualizarCampo('HPROV', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        [filter]="true"
+        filterBy="desc"
+        ariaLabel="Provincia"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Distrito</span>
+      <p-select
+        [options]="opcionesDistrito()"
+        [ngModel]="model().HDISTR"
+        (ngModelChange)="actualizarCampo('HDISTR', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        [filter]="true"
+        filterBy="desc"
+        ariaLabel="Distrito"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Territorio</span>
+      <p-select
+        [options]="opcionesTerritorio()"
+        [ngModel]="model().HDESTER"
+        (ngModelChange)="actualizarCampo('HDESTER', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        [filter]="true"
+        filterBy="desc"
+        ariaLabel="Territorio"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Corredor</span>
+      <p-select
+        [options]="opcionesCorredor()"
+        [ngModel]="model().HDESCOR"
+        (ngModelChange)="actualizarCampo('HDESCOR', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        [filter]="true"
+        filterBy="desc"
+        ariaLabel="Corredor"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Agencia</span>
+      <p-select
+        [options]="opcionesAgencia()"
+        [ngModel]="model().HDESAGE"
+        (ngModelChange)="actualizarCampo('HDESAGE', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        [filter]="true"
+        filterBy="desc"
+        ariaLabel="Agencia"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Latitud</span>
+      <input pInputText [ngModel]="model().HGEOLATI" (ngModelChange)="actualizarCampo('HGEOLATI', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Longitud</span>
+      <input pInputText [ngModel]="model().HGEOLON" (ngModelChange)="actualizarCampo('HGEOLON', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Nombre Comercial</span>
+      <input pInputText [ngModel]="model().HNOMCOM" (ngModelChange)="actualizarCampo('HNOMCOM', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Tipo Agente</span>
+      <p-select
+        [options]="opcionesTipoAgente"
+        [ngModel]="model().HTIPAGENT"
+        (ngModelChange)="actualizarCampo('HTIPAGENT', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        ariaLabel="Tipo Agente"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Tiempo Apertura Cta</span>
+      <input pInputText [ngModel]="model().HTAPERCC" (ngModelChange)="actualizarCampo('HTAPERCC', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Drive Consulta Ruc</span>
+      <input pInputText [ngModel]="model().HCONSRUC" (ngModelChange)="actualizarCampo('HCONSRUC', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Consulta RCC</span>
+      <input pInputText [ngModel]="model().HCONSRCC" (ngModelChange)="actualizarCampo('HCONSRCC', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Consulta Lista Negra</span>
+      <input pInputText [ngModel]="model().HCONSLNE" (ngModelChange)="actualizarCampo('HCONSLNE', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Foto Negocio</span>
+      <input pInputText [ngModel]="model().HFOTNEGO" (ngModelChange)="actualizarCampo('HFOTNEGO', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Cuenta con Licencia Funcionamiento</span>
+      <p-select
+        [options]="opcionesCtaLicencia"
+        [ngModel]="model().HCTALICEF"
+        (ngModelChange)="actualizarCampo('HCTALICEF', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        ariaLabel="Cuenta con Licencia Funcionamiento"
+      />
+    </div>
+
+    @if (!prospectoForm.HLICFUNCI().hidden()) {
+      <div class="flex flex-col gap-1">
+        <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Licencia Funcionamiento</span>
+        <input pInputText [ngModel]="model().HLICFUNCI" (ngModelChange)="actualizarCampo('HLICFUNCI', $event)" />
+      </div>
+    }
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Canal Captación</span>
+      <p-select
+        [options]="opcionesCanalCaptacion"
+        [ngModel]="model().HCANACAP"
+        (ngModelChange)="actualizarCampo('HCANACAP', $event)"
+        optionLabel="desc"
+        optionValue="id"
+        ariaLabel="Canal Captación"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">BT Asesor Asignado</span>
+      <input pInputText [ngModel]="model().HCODSECASIG" (ngModelChange)="actualizarCampo('HCODSECASIG', $event)" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Asesor Asignado</span>
+      <input pInputText [ngModel]="model().HASEASIG" (ngModelChange)="actualizarCampo('HASEASIG', $event)" />
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-end gap-3">
+      <p-button label="Cerrar" icon="pi pi-times" [outlined]="true" severity="secondary" (onClick)="cerrar()" />
+      <p-button
+        label="Guardar"
+        icon="pi pi-save"
+        [disabled]="prospectoForm().invalid() || guardando()"
+        [loading]="guardando()"
+        (onClick)="onGuardar()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

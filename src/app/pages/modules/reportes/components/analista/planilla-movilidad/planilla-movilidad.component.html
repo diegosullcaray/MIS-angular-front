@@ -1,0 +1,100 @@
+<div class="mis-page mis-page--alta">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex flex-col gap-0.5">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-wallet text-[var(--mis-primary-text)]"></i>
+          <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Planilla de Movilidad</h2>
+        </div>
+        <span class="text-[10px] text-[var(--mis-text-tertiary)] ml-6">Período: {{ periodo }}</span>
+      </div>
+
+      <p-button
+        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+        severity="secondary"
+        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1" [class.hidden]="!mostrarFiltros()">
+    <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
+    <p-select
+      [options]="asesores()"
+      [ngModel]="asesorSeleccionado()"
+      (ngModelChange)="onAsesorSeleccionado($event)"
+      optionLabel="nombre"
+      dataKey="dni"
+      [filter]="true"
+      filterBy="nombre"
+      placeholder="Buscar asesor"
+      styleClass="w-72 text-[11.5px]"
+      ariaLabel="Asesor"
+    />
+  </div>
+
+  @if (!asesorSeleccionado()) {
+    <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">Elegí un asesor para ver su planilla de movilidad.</p>
+  } @else {
+    <div class="flex flex-col gap-5">
+      <div class="mis-card overflow-hidden">
+        <p-tabs [(value)]="tabCascada">
+          <p-tablist>
+            <p-tab value="cascada">Cascada</p-tab>
+            <p-tab value="validos">Válidos</p-tab>
+            <p-tab value="depurados">Depurados</p-tab>
+          </p-tablist>
+          <p-tabpanels>
+            <p-tabpanel value="cascada">
+              <div class="flex flex-col gap-5">
+                <div class="flex flex-col gap-2">
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-[12px] font-bold text-[var(--mis-text-primary)]">Cascada de filtros aplicados</span>
+                    <span class="text-[11px] text-[var(--mis-text-secondary)]">Período: {{ periodo }}</span>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <app-tabla-reporte [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="cargando()" />
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <span class="text-[12px] font-bold text-[var(--mis-text-primary)]">Planilla de Gastos por Movilidad - Asesores</span>
+                  <div class="overflow-x-auto">
+                    <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
+                  </div>
+                </div>
+              </div>
+            </p-tabpanel>
+
+            <p-tabpanel value="validos">
+              <div class="flex flex-col gap-2">
+                <div class="overflow-x-auto">
+                  <app-tabla-reporte [encabezados]="tabla3().headers" [filas]="tabla3().body" [cargando]="cargando()" />
+                </div>
+                <p class="text-[10.5px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+                  @for (criterio of criteriosMovilidad; track criterio) {
+                    {{ criterio }}<br />
+                  }
+                </p>
+              </div>
+            </p-tabpanel>
+
+            <p-tabpanel value="depurados">
+              <div class="flex flex-col gap-2">
+                <div class="overflow-x-auto">
+                  <app-tabla-reporte [encabezados]="tabla4().headers" [filas]="tabla4().body" [cargando]="cargando()" />
+                </div>
+                <p class="text-[10.5px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+                  @for (criterio of criteriosMovilidad; track criterio) {
+                    {{ criterio }}<br />
+                  }
+                </p>
+              </div>
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,81 @@
+<div class="mis-page mis-page--alta">
+  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-percentage text-[var(--mis-primary-text)]"></i>
+        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Reporte de Autonomía de Tasas</h2>
+      </div>
+
+      <p-button
+        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+        severity="secondary"
+        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1" [class.hidden]="!mostrarFiltros()">
+    <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
+    <p-select
+      [options]="asesores()"
+      [ngModel]="asesorSeleccionado()"
+      (ngModelChange)="onAsesorSeleccionado($event)"
+      optionLabel="nombre"
+      dataKey="dni"
+      [filter]="true"
+      filterBy="nombre"
+      placeholder="Buscar asesor"
+      styleClass="w-72 text-[11.5px]"
+      ariaLabel="Asesor"
+    />
+  </div>
+
+  @if (!asesorSeleccionado()) {
+    <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">Elegí un asesor para ver su autonomía de tasas.</p>
+  } @else {
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-2">
+        <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">Resumen Gestión de Tasas</h3>
+        <div class="mis-card p-3 overflow-x-auto">
+          <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
+        </div>
+        <p class="text-[10.5px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+          1. TAPP Mes: Tasa Activa Promedio Ponderadas de las operaciones desembolsadas en el mes<br />
+          2. TAPP Mínima: Tasa de interés de tarifario (por mercado) +/- PBS por segmentación comercial + PBS por factores de riesgo<br />
+          3. PBS: puntos básicos. 100 puntos básicos corresponde a punto porcentual (1%).
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">Número de Operaciones Desembolsadas por Producto</h3>
+        <div class="mis-card p-3 overflow-x-auto">
+          <app-tabla-reporte [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="cargando()" />
+        </div>
+        <p class="text-[10.5px] text-[var(--mis-text-tertiary)] m-0">
+          Tasa Mínima: Tasa Base en función de Mercado +/- Segmentación Comercial (en pbs) + Factores de Riesgo (en pbs).
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">Monto Desembolsado por Producto</h3>
+        <div class="mis-card p-3 overflow-x-auto">
+          <app-tabla-reporte [encabezados]="tabla3().headers" [filas]="tabla3().body" [cargando]="cargando()" />
+        </div>
+        <p class="text-[10.5px] text-[var(--mis-text-tertiary)] m-0">
+          Tasa Mínima: Tasa Base en función de Mercado +/- Segmentación Comercial (en pbs) + Factores de Riesgo (en pbs).
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">TAPP Mes de Operaciones Desembolsadas por Producto</h3>
+        <div class="mis-card p-3 overflow-x-auto">
+          <app-tabla-reporte [encabezados]="tabla4().headers" [filas]="tabla4().body" [cargando]="cargando()" />
+        </div>
+        <p class="text-[10.5px] text-[var(--mis-text-tertiary)] m-0">
+          Tasa Mínima: Tasa Base en función de Mercado +/- Segmentación Comercial (en pbs) + Factores de Riesgo (en pbs).
+        </p>
+      </div>
+    </div>
+  }
+</div>

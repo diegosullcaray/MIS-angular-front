@@ -1,0 +1,79 @@
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
+import { ColocacionesDiariaService } from '../../../services/colocaciones-diaria.service';
+import { ToastService } from '../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../core/services/message.service';
+import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+
+const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+
+/**
+ * "Colocaciones diaria Operación, Monto y Recuperación" — migrado de la ruta
+ * `leg/com/rda/sec/proy_M6` (legado STG,
+ * `reportes/legacy/support/components/template/crs/report-crs-v1`, config
+ * `PROYEC_DIACOLREC_AS` en `crs-map.ts`).
+ *
+ * Solo lectura: asesor → 3 tablas, cada una con su propio título
+ * (`content.higher` del legado).
+ */
+@Component({
+  selector: 'app-colocaciones-diaria',
+  standalone: true,
+  imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent],
+  templateUrl: './colocaciones-diaria.component.html',
+  styleUrl: './colocaciones-diaria.component.css',
+})
+export class ColocacionesDiariaComponent {
+  private readonly servicio = inject(ColocacionesDiariaService);
+  private readonly toast = inject(ToastService);
+  private readonly mensajes = inject(MessageService);
+
+  protected readonly mostrarFiltros = signal(false);
+
+  protected readonly asesores = signal<AsesorSec[]>([]);
+  protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);
+
+  protected readonly cargando = signal(false);
+  protected readonly tabla1 = signal<TablaReporteResultado>(TABLA_VACIA);
+  protected readonly tabla2 = signal<TablaReporteResultado>(TABLA_VACIA);
+  protected readonly tabla3 = signal<TablaReporteResultado>(TABLA_VACIA);
+
+  constructor() {
+    this.cargarAsesores();
+  }
+
+  private cargarAsesores(): void {
+    this.servicio.obtenerAsesores().subscribe({
+      next: (asesores) => this.asesores.set(asesores),
+      error: () => this.toast.error('No se pudo cargar la lista de asesores', 'Inténtalo de nuevo en unos segundos.'),
+    });
+  }
+
+  protected onAsesorSeleccionado(asesor: AsesorSec | null): void {
+    this.asesorSeleccionado.set(asesor);
+    if (!asesor) return;
+
+    this.cargando.set(true);
+    this.servicio.obtenerColocacionesDiaria({ tip_cod: 2, cod_rel: asesor.dni }).subscribe({
+      next: ({ tabla1, tabla2, tabla3 }) => {
+        this.tabla1.set(tabla1);
+        this.tabla2.set(tabla2);
+        this.tabla3.set(tabla3);
+        this.cargando.set(false);
+
+        if ([tabla1, tabla2, tabla3].every((t) => t.body.length === 0)) {
+          this.mensajes.warn('Este asesor no tiene datos de colocaciones, o los datos podrían seguir procesándose.', 'Sin resultados');
+        }
+      },
+      error: () => {
+        this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+        this.cargando.set(false);
+      },
+    });
+  }
+}

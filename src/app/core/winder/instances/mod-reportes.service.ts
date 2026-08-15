@@ -55,4 +55,15 @@ export class ModReportesService extends AntService {
   public getDeprecatedData(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
     return this.getSimpleResponseString('reportData', { ...params, cod_rep: codRep }, 'result');
   }
+
+  /**
+   * Bloques de gráfico del motor de reportes "mixtos" (strand `graphicData`,
+   * `ReportType.GRAPHIC` del legado — `ReportCrsV2Component`/`GraphicService`).
+   * A diferencia de `getRegularData()`, `result` es un array: un mismo
+   * `cod_rep` puede devolver varios gráficos en una sola respuesta (ej.
+   * "Inversión" y "Stock de Mora" del mismo bloque `brecha_inversion_sec`).
+   */
+  public getGraphicData(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
+    return this.getSimpleResponseString('graphicData', { ...params, cod_rep: codRep }, 'result');
+  }
 }

@@ -11,7 +11,6 @@ import { SelectorNivelDialogComponent } from '../../ui/selector-nivel-dialog/sel
 import { CalculadoraDialogComponent } from '../../ui/calculadora-dialog/calculadora-dialog.component';
 import { DetalleVariableDialogComponent } from '../../ui/detalle-variable-dialog/detalle-variable-dialog.component';
 import { DetalleBancarizacionDialogComponent } from '../../ui/detalle-bancarizacion-dialog/detalle-bancarizacion-dialog.component';
-import { LoadingOverlayComponent } from '../../../../../shared/ui/loading-overlay/loading-overlay.component';
 import type { DetalleVariableActivo, ReqDetalleVariable } from '../../models/incentivos-detalle.model';
 import type { DetalleAvanceEvent, DetalleSuperPlusEvent, DetalleTablaVariableEvent } from '../../models/incentivos-eventos.model';
 
@@ -31,7 +30,6 @@ import type { DetalleAvanceEvent, DetalleSuperPlusEvent, DetalleTablaVariableEve
     CalculadoraDialogComponent,
     DetalleVariableDialogComponent,
     DetalleBancarizacionDialogComponent,
-    LoadingOverlayComponent,
   ],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.css',

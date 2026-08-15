@@ -80,7 +80,12 @@ export class SidebarComponent implements AfterViewInit {
 
         if (evento instanceof NavigationEnd) {
           const url = evento.urlAfterRedirects || evento.url;
-          if (url.includes('/dashboard') || url.startsWith('/error') || url === '/app') {
+          // `startsWith('/app/dashboard/')` (con la barra) en vez de `includes('/dashboard')`:
+          // ese `includes` también hacía match con `/app/dashboards` (Dashboards Integrados,
+          // otro sistema con su propio ícono) por ser substring, así que después de navegar
+          // ahí este handler pisaba `sidebarIconActivo` de vuelta a "host-inicio".
+          const esInicio = url === '/app/dashboard' || url.startsWith('/app/dashboard/') || url.startsWith('/error') || url === '/app';
+          if (esInicio) {
             this.shell.setSidebarIconActivo('host-inicio');
           }
         }
@@ -94,8 +99,19 @@ export class SidebarComponent implements AfterViewInit {
     ];
 
     const sistemasStg = this.menuStg.sistemas().map((sistema) => {
-      const forzarPanel = sistema.ruta === this.kaypacha.ruta || this.esAnalista(sistema);
-      return forzarPanel ? { ...sistema, tienePanel: true } : sistema;
+      if (sistema.ruta === this.kaypacha.ruta || this.esAnalista(sistema)) return { ...sistema, tienePanel: true };
+      // "Dashboards Integrados" (`reportes-e` del legado) todavía manda un hijo
+      // "usuarios" en el árbol del backend (`menu-stg.service.ts`), pero esa
+      // pantalla ya no es una ruta — se migró a un diálogo responsive
+      // (`UsuariosReporteDialogComponent`, ver `dashboard.routes.ts`). Sin este
+      // override, `tienePanel: !!hijos` abre un panel secundario con un único
+      // link muerto para un sistema que en realidad no tiene subnavegación.
+      // `ruta` también hay que fijarla acá: `menu-stg.service.ts` solo la
+      // completa cuando `hijos` es falsy, así que mientras el backend siga
+      // mandando ese nodo llega undefined — sin esto el clic no navegaría
+      // a ningún lado (`DASHBOARD_ROUTES` monta en `/app/dashboards`).
+      if (this.esDashboardsIntegrados(sistema)) return { ...sistema, tienePanel: false, ruta: '/app/dashboards' };
+      return sistema;
     });
 
     return [...base, ...sistemasStg];
@@ -201,6 +217,10 @@ export class SidebarComponent implements AfterViewInit {
 
   private esAnalista(icono: SidebarIcon): boolean {
     return (icono.etiqueta || '').trim().toLowerCase() === 'analista';
+  }
+
+  private esDashboardsIntegrados(icono: SidebarIcon): boolean {
+    return (icono.etiqueta || '').trim().toLowerCase() === 'dashboards integrados';
   }
 
   private getPanelAnalista(titulo: string, icono: string): SidebarNavPanelConfig {

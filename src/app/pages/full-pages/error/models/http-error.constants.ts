@@ -123,5 +123,14 @@ export const HTTP_ERROR_FALLBACK: HttpErrorInfo = {
   esFatal: false,
 };
 
-/** Rutas que nunca deben ser interceptadas globalmente (login, backend Ant/Winder). */
-export const HTTP_ERROR_IGNORED_URL_PATTERNS = ['/auth/', 'accounts.google.com'];
+/**
+ * Rutas que nunca deben ser interceptadas globalmente (login, backend
+ * Ant/Winder). El backend Ant/Winder (`/cores2/ant/`) es la excepción más
+ * importante: cada componente de `reportes` (y otros módulos) ya maneja sus
+ * propios errores de bloque/tabla con su propio toast — un solo bloque roto
+ * en un reporte no debería tirar abajo toda la app con un redirect global a
+ * `/error/500` (confirmado: `PLANMOV_03`/`_04` devuelven 500 cuando no hay
+ * datos para un asesor/fecha, algo esperable y ya tolerado a nivel de
+ * servicio, no un error fatal de la aplicación).
+ */
+export const HTTP_ERROR_IGNORED_URL_PATTERNS = ['/auth/', 'accounts.google.com', '/cores2/ant/'];
