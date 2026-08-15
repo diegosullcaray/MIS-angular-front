@@ -1,14 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
-import { ModSeccionesService } from '../../../../core/winder/instances/mod-secciones.service';
-import { ShellStateService } from '../../../../core/services/shell-state.service';
+import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { ModSeccionesService } from '../../../../../core/winder/instances/mod-secciones.service';
+import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../utils/reportes-mapeo.util';
-import { formularioAPayload } from '../models/analista/prospecto-corresponsal.model';
-import type { AsesorSec } from '../models/analista/asesor-sec.model';
-import type { TablaReporteResultado } from '../models/tabla-reporte.model';
-import type { OpcionJerarquia, ProspectoCorresponsalForm } from '../models/analista/prospecto-corresponsal.model';
+import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
+import { formularioAPayload } from '../../models/analista/prospecto-corresponsal.model';
+import type { AsesorSec } from '../../models/analista/asesor-sec.model';
+import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
+import type { OpcionJerarquia, ProspectoCorresponsalForm } from '../../models/analista/prospecto-corresponsal.model';
 
 /**
  * Datos de "Prospecto Corresponsal" (legado `leg/com/rda/sec/sec-prosp`,

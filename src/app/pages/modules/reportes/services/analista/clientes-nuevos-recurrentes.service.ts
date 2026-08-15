@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../utils/reportes-mapeo.util';
-import type { AsesorSec } from '../models/analista/asesor-sec.model';
-import type { ReporteClientesNuevosRecurrentes } from '../models/analista/clientes-nuevos-recurrentes.model';
+import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
+import type { AsesorSec } from '../../models/analista/asesor-sec.model';
+import type { ReporteClientesNuevosRecurrentes } from '../../models/analista/clientes-nuevos-recurrentes.model';
 
 /**
  * Datos de "Clientes Nuevos y Recurrentes" (legado `leg/com/rda/sec/cli-nue-rec`,

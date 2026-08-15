@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { ClientesReprogramadosService } from '../../../services/clientes-reprogramados.service';
+import { ClientesReprogramadosService } from '../../../services/analista/clientes-reprogramados.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import {

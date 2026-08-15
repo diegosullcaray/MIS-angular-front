@@ -4,7 +4,7 @@ import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { CampanaAgilService } from '../../../services/campana-agil.service';
+import { CampanaAgilService } from '../../../services/analista/campana-agil.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import { OPCIONES_SEMANA, SEMANA_POR_DEFECTO } from '../../../models/analista/campana-agil.model';

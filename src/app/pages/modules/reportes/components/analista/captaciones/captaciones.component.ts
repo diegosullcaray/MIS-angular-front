@@ -4,7 +4,7 @@ import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { CaptacionesService } from '../../../services/captaciones.service';
+import { CaptacionesService } from '../../../services/analista/captaciones.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../../models/analista/asesor-sec.model';

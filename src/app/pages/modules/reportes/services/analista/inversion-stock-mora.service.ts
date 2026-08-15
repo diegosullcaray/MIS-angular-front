@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloquesGrafico } from '../utils/reportes-mapeo.util';
-import type { AsesorSec } from '../models/analista/asesor-sec.model';
-import type { ReporteInversionStockMora } from '../models/analista/inversion-stock-mora.model';
+import { mapearBloquesGrafico } from '../../utils/reportes-mapeo.util';
+import type { AsesorSec } from '../../models/analista/asesor-sec.model';
+import type { ReporteInversionStockMora } from '../../models/analista/inversion-stock-mora.model';
 
 /**
  * Datos de "Inversión y Stock de Mora" (legado `leg/com/rda/sec/inv-stk`,

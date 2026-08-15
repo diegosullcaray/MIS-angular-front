@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { GruposPorVencerComponent } from './grupos-por-vencer.component';
-import { GruposPorVencerService } from '../../../services/grupos-por-vencer.service';
+import { GruposPorVencerService } from '../../../services/analista/grupos-por-vencer.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../../models/analista/asesor-sec.model';

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { DatosClientesComponent } from './datos-clientes.component';
-import { DatosClientesService } from '../../../services/datos-clientes.service';
+import { DatosClientesService } from '../../../services/analista/datos-clientes.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { DATOS_CLIENTE_FORM_VACIO } from '../../../models/analista/datos-clientes.model';
 import type { AsesorSec } from '../../../models/analista/asesor-sec.model';

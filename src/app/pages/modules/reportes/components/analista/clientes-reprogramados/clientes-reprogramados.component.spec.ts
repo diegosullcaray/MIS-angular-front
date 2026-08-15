@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { ClientesReprogramadosComponent } from './clientes-reprogramados.component';
-import { ClientesReprogramadosService } from '../../../services/clientes-reprogramados.service';
+import { ClientesReprogramadosService } from '../../../services/analista/clientes-reprogramados.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
 import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';

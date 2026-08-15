@@ -5,7 +5,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
-import { ProspectoCorresponsalService } from '../../../../services/prospecto-corresponsal.service';
+import { ProspectoCorresponsalService } from '../../../../services/analista/prospecto-corresponsal.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import {
   OPCIONES_CANAL_CAPTACION,

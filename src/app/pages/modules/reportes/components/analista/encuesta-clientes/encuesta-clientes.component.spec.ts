@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { EncuestaClientesComponent } from './encuesta-clientes.component';
-import { EncuestaClientesService } from '../../../services/encuesta-clientes.service';
+import { EncuestaClientesService } from '../../../services/analista/encuesta-clientes.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import type { CiiuOpcion } from '../../../models/analista/encuesta-clientes.model';
 import type { AsesorSec } from '../../../models/analista/asesor-sec.model';

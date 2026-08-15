@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
 import { AgregarProspectoDialogComponent } from './agregar-prospecto-dialog/agregar-prospecto-dialog.component';
-import { ProspectoCorresponsalService } from '../../../services/prospecto-corresponsal.service';
+import { ProspectoCorresponsalService } from '../../../services/analista/prospecto-corresponsal.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../../models/analista/asesor-sec.model';

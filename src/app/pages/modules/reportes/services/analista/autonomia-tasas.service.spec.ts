@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { AutonomiaTasasService } from './autonomia-tasas.service';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
+import type { IWinderResponse } from '../../../../../core/winder/winder/winder.interface';
 
 describe('AutonomiaTasasService', () => {
   let service: AutonomiaTasasService;

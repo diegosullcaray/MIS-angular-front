@@ -4,7 +4,7 @@ import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { GraficoReporteComponent } from '../../../ui/grafico-reporte/grafico-reporte.component';
-import { InversionStockMoraService } from '../../../services/inversion-stock-mora.service';
+import { InversionStockMoraService } from '../../../services/analista/inversion-stock-mora.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../../models/analista/asesor-sec.model';

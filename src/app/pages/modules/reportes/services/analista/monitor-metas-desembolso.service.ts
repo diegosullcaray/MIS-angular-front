@@ -1,14 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../utils/reportes-mapeo.util';
-import type { AsesorSec } from '../models/analista/asesor-sec.model';
+import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
+import type { AsesorSec } from '../../models/analista/asesor-sec.model';
 import type {
   KpiMontoDesembolsado,
   KpiOperacionesDesembolsadas,
   ReporteMonitorMetasDesembolso,
-} from '../models/analista/monitor-metas-desembolso.model';
+} from '../../models/analista/monitor-metas-desembolso.model';
 
 /**
  * Datos de "Monitor de Desembolsos" (legado `leg/com/rda/sec/mon-desem`,

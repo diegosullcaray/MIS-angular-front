@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { PlanillaMovilidadService } from './planilla-movilidad.service';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { fechaUltimoDia } from '../utils/fecha-reporte.util';
-import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
-import type { ReportePlanillaMovilidad } from '../models/analista/planilla-movilidad.model';
+import { fechaUltimoDia } from '../../utils/fecha-reporte.util';
+import type { IWinderResponse } from '../../../../../core/winder/winder/winder.interface';
+import type { ReportePlanillaMovilidad } from '../../models/analista/planilla-movilidad.model';
 
 describe('PlanillaMovilidadService', () => {
   let service: PlanillaMovilidadService;

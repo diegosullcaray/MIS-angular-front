@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ModSeccionesService } from '../../../../core/winder/instances/mod-secciones.service';
-import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type { AsesorSec } from '../models/analista/asesor-sec.model';
+import { ModSeccionesService } from '../../../../../core/winder/instances/mod-secciones.service';
+import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import type { AsesorSec } from '../../models/analista/asesor-sec.model';
 
 /**
  * Buscador de asesor/sectorista — legado `app-auto-complete-sec`, usado por

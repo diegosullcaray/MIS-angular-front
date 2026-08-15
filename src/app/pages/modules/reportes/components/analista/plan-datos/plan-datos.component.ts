@@ -4,7 +4,7 @@ import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { PlanDatosService } from '../../../services/plan-datos.service';
+import { PlanDatosService } from '../../../services/analista/plan-datos.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import { fechaBasePorDefecto, generarOpcionesFechaBase } from '../../../models/analista/plan-datos.model';

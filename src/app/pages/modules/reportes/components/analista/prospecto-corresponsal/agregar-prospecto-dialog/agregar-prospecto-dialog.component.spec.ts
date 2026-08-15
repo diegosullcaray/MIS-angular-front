@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { AgregarProspectoDialogComponent } from './agregar-prospecto-dialog.component';
-import { ProspectoCorresponsalService } from '../../../../services/prospecto-corresponsal.service';
+import { ProspectoCorresponsalService } from '../../../../services/analista/prospecto-corresponsal.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../../core/services/message.service';
 import { PROSPECTO_CORRESPONSAL_FORM_VACIO } from '../../../../models/analista/prospecto-corresponsal.model';

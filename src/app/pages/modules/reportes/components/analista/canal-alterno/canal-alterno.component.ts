@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { CanalAlternoService } from '../../../services/canal-alterno.service';
+import { CanalAlternoService } from '../../../services/analista/canal-alterno.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import { filtrarFilas } from '../../../utils/reportes-mapeo.util';

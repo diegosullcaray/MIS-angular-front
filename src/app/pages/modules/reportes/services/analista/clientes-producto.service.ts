@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../utils/reportes-mapeo.util';
-import type { AsesorSec } from '../models/analista/asesor-sec.model';
-import type { ReporteClientesProducto } from '../models/analista/clientes-producto.model';
+import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
+import type { AsesorSec } from '../../models/analista/asesor-sec.model';
+import type { ReporteClientesProducto } from '../../models/analista/clientes-producto.model';
 
 /**
  * Datos de "Clientes Producto" (legado `leg/com/rda/sec/cli-prod`,
