@@ -32,7 +32,7 @@ export const environment = {
     jira: 'https://jira.tecnologiafm.org/servicedesk/customer/user/login?destination=portal%2F15&logout=true',
   },
 
-  //devUser:  'nilda.quilla@confianza.pe' // comercial
+ // devUser:  'nilda.quilla@confianza.pe' // comercial
   //devUser:  'giomara.acevedo@confianza.pe' //operaciones  157
   //devUser: 'flor.garcia@confianza.pe' // asesor
   devUser: 'oscar.sanchez@confianza.pe'

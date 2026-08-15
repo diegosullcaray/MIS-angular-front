@@ -3,29 +3,31 @@
     <div class="flex items-center justify-between flex-wrap gap-3">
       <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Tablero de Verificación</h2>
 
-      <div class="flex items-center gap-2">
-        <p-button
-          [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
-          [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-          severity="secondary"
-          [outlined]="true"
-          (onClick)="mostrarFiltros.set(!mostrarFiltros())"
-        />
-        <input
-          pInputText
-          type="text"
-          placeholder="Buscar por nombre…"
-          class="text-[13px]"
-          [ngModel]="filtro()"
-          (ngModelChange)="filtro.set($event)"
-        />
-      </div>
+      <p-button
+        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
+      />
     </div>
   </div>
 
   <div class="flex items-end gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
     <app-hier-selector [paramsHier]="paramsHier" [raizFija]="raizFija" placeholder="Elegir línea" (nodoSeleccionado)="onLineaSeleccionada($event)" />
     <app-hier-selector [paramsHier]="paramsHier" [raizFija]="raizFija" placeholder="Elegir segundo nivel" (nodoSeleccionado)="onSegundoNivelSeleccionado($event)" />
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Buscar elemento</label>
+      <input
+        pInputText
+        type="text"
+        placeholder="Buscar por nombre…"
+        class="text-[13px]"
+        [ngModel]="filtro()"
+        (ngModelChange)="filtro.set($event)"
+      />
+    </div>
   </div>
 
   <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
