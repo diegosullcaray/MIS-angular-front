@@ -1,5 +1,4 @@
-<div
-  class="flex flex-col gap-1.5 p-2 bg-[var(--mis-panel-bg)]/60 border border-[var(--mis-border)] rounded-lg shadow-sm w-full">
+<div class="flex flex-col gap-1.5" [class.hier-marco]="conMarco()">
   @if (titulo()) {
   <span class="text-[11px] font-semibold text-[var(--mis-text-primary)]">{{ titulo() }}</span>
   }
@@ -25,11 +24,14 @@
       </p-select>
     </div>
     }
+
+    @if (mostrarLimpiar()) {
     <div class="flex-1"></div>
     <div class="flex flex-col gap-0.5">
       <span class="text-[9.5px] font-bold opacity-0 select-none uppercase tracking-wider">&nbsp;</span>
       <p-button label="Limpiar" icon="pi pi-refresh" severity="warn" [outlined]="true" size="small"
         [ariaLabel]="titulo() ? 'Limpiar ' + titulo() : 'Limpiar'" (onClick)="limpiar()" />
     </div>
+    }
   </div>
 </div>

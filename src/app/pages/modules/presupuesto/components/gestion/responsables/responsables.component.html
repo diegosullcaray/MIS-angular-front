@@ -12,9 +12,10 @@
     <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
   </div>
 
-  <div class="flex items-end gap-3 flex-wrap">
+  <!-- Franja de filtros: solo lo que cambia la consulta al backend. -->
+  <div class="flex items-end gap-3 flex-wrap w-fit p-3 bg-[var(--mis-panel-bg)]/60 border border-[var(--mis-border)] rounded-lg shadow-sm">
     <div class="flex flex-col gap-1.5">
-      <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Nivel</label>
+      <label class="text-[11px] font-semibold text-[var(--mis-text-primary)]">Nivel</label>
       <p-select
         [options]="niveles"
         optionLabel="des_lvl"
@@ -24,18 +25,6 @@
         appendTo="body"
       />
     </div>
-
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Buscar elemento</label>
-      <input
-        pInputText
-        type="text"
-        placeholder="Buscar por nombre…"
-        class="text-[13px]"
-        [ngModel]="filtro()"
-        (ngModelChange)="filtro.set($event)"
-      />
-    </div>
   </div>
 
   <app-editable-table
@@ -43,5 +32,24 @@
     [filas]="filasFiltradas()"
     [cargando]="cargando()"
     [esEditable]="esEditable"
-  />
+    [conCaption]="true"
+  >
+    <!-- El buscador filtra las filas ya cargadas, así que va en el caption de
+         la tabla y no en la franja de filtros. -->
+    <div tabla-caption class="flex items-center gap-2">
+      <p-iconfield iconPosition="left" styleClass="w-full sm:w-72">
+        <p-inputicon styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]" />
+        <input
+          pInputText
+          type="text"
+          placeholder="Buscar elemento por nombre…"
+          class="w-full text-[13px]"
+          aria-label="Buscar elemento en la tabla"
+          [ngModel]="filtro()"
+          (ngModelChange)="filtro.set($event)"
+        />
+      </p-iconfield>
+      <span class="text-[11px] text-[var(--mis-text-tertiary)]">{{ filasFiltradas().length }} de {{ totalFilas() }}</span>
+    </div>
+  </app-editable-table>
 </app-window-panel>

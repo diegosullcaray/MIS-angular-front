@@ -58,14 +58,23 @@ test.describe('Presupuesto — smoke de las 7 pantallas migradas', () => {
   });
 
   /**
-   * Los dos selectores salen de la MISMA jerarquía, así que sin título propio
-   * se ven como un filtro duplicado — el título es justamente lo que los
-   * distingue (ver `HierSelectorComponent.titulo`).
+   * Los dos selectores salen de la MISMA jerarquía: van en UNA sola franja de
+   * filtros (un marco, un "Limpiar") y lo que los distingue es su título — con
+   * un marco cada uno se veían como el filtro duplicado.
    */
-  test('Tablero de Verificación distingue sus 2 selectores de jerarquía por título', async ({ page }) => {
+  test('Tablero de Verificación: una sola franja con los 2 niveles distinguidos', async ({ page }) => {
     await page.goto('/app/presupuesto/gestion/seguimiento/tbl-ver');
 
-    await expect(page.getByText('Elegir línea', { exact: true })).toBeVisible();
-    await expect(page.getByText('Elegir segundo nivel', { exact: true })).toBeVisible();
+    await expect(page.getByText('Línea', { exact: true })).toBeVisible();
+    await expect(page.getByText('Segundo nivel', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Limpiar/ })).toHaveCount(1);
+  });
+
+  test('Tablero de Verificación: el buscador vive en el caption de la tabla', async ({ page }) => {
+    await page.goto('/app/presupuesto/gestion/seguimiento/tbl-ver');
+
+    await expect(
+      page.locator('.p-datatable-header').getByLabel('Buscar elemento en la tabla')
+    ).toBeVisible();
   });
 });

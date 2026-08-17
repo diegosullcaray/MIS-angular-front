@@ -2,6 +2,8 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
@@ -38,7 +40,16 @@ const COLUMNAS: ColumnaTabla[] = [
 @Component({
   selector: 'app-responsables',
   standalone: true,
-  imports: [EditableTableComponent, SelectModule, InputTextModule, ButtonModule, FormsModule, WindowPanelComponent],
+  imports: [
+    EditableTableComponent,
+    SelectModule,
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    ButtonModule,
+    FormsModule,
+    WindowPanelComponent,
+  ],
   templateUrl: './responsables.component.html',
   styleUrl: './responsables.component.css',
 })
@@ -56,6 +67,7 @@ export class ResponsablesComponent implements OnInit {
   private filasOriginales: ResponsableFila[] = [];
 
   protected readonly filasFiltradas = computed(() => filtrarPorDescripcion(this.filas(), this.filtro()));
+  protected readonly totalFilas = computed(() => this.filas().length);
 
   protected readonly esEditable = (_fila: ResponsableFila, key: string): boolean => key === 'cod_res';
 

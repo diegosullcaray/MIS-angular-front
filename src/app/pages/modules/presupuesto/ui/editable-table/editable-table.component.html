@@ -1,5 +1,11 @@
 <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
   <p-table [value]="filas()" [scrollable]="true" scrollHeight="480px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
+    @if (conCaption()) {
+      <ng-template pTemplate="caption">
+        <ng-content select="[tabla-caption]" />
+      </ng-template>
+    }
+
     <ng-template pTemplate="header">
       @if (tieneGrupos()) {
         <tr>

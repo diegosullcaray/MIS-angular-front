@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, viewChildren } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
@@ -6,6 +6,9 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from 'primeng/button';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { filtrarPorDescripcion } from '../../../utils/texto.util';
@@ -35,7 +38,18 @@ import type { LogVerificacionFila } from '../../../models/tablero-verificacion.m
 @Component({
   selector: 'app-tablero-verificacion',
   standalone: true,
-  imports: [HierSelectorComponent, TableModule, InputTextModule, SkeletonModule, FormsModule, TooltipModule, WindowPanelComponent],
+  imports: [
+    HierSelectorComponent,
+    TableModule,
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    SkeletonModule,
+    FormsModule,
+    TooltipModule,
+    ButtonModule,
+    WindowPanelComponent,
+  ],
   templateUrl: './tablero-verificacion.component.html',
   styleUrl: './tablero-verificacion.component.css',
 })
@@ -55,6 +69,10 @@ export class TableroVerificacionComponent {
   protected readonly filtro = signal('');
 
   protected readonly filasFiltradas = computed(() => filtrarPorDescripcion(this.filas(), this.filtro()));
+  protected readonly totalFilas = computed(() => this.filas().length);
+
+  /** Los dos selectores de la franja, para que un único "Limpiar" los resetee. */
+  private readonly selectores = viewChildren(HierSelectorComponent);
 
   protected onLineaSeleccionada(nodo: HierarquiaNodo): void {
     this.nivelLinea.set(nodo);
@@ -64,6 +82,16 @@ export class TableroVerificacionComponent {
   protected onSegundoNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelSegundo.set(nodo);
     this.cargarSiAmbosNivelesListos();
+  }
+
+  /** "Limpiar" único de la franja: resetea ambos selectores y el buscador. */
+  protected limpiarFiltros(): void {
+    this.nivelLinea.set(null);
+    this.nivelSegundo.set(null);
+    this.filas.set([]);
+    this.filtro.set('');
+    // `limpiar()` recarga la raíz y vuelve a emitir, lo que repuebla los niveles.
+    this.selectores().forEach((selector) => selector.limpiar());
   }
 
   /** Botón "Actualizar" de la ventana: relee el histórico de los niveles elegidos. */

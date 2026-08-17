@@ -29,6 +29,12 @@ export class EditableTableComponent<T extends FilaTabla = FilaTabla> {
   readonly columnas = input.required<ColumnaTabla[]>();
   readonly filas = input<T[]>([]);
   readonly cargando = input(false);
+  /**
+   * Dibuja la barra de caption con lo que proyecte la pantalla en
+   * `[tabla-caption]` (ej. el buscador de Responsables). Es un input explícito
+   * porque PrimeNG pinta la franja del caption aunque venga vacía.
+   */
+  readonly conCaption = input(false);
   /** `() => false` (todo de solo lectura) si no se provee — ej. Comp. Prod. Monto/Ratio. */
   readonly esEditable = input<(fila: T, key: string) => boolean>(() => false);
   readonly celdaEditada = output<CeldaEditadaEvent<T>>();

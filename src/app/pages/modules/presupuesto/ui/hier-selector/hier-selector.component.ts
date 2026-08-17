@@ -29,6 +29,15 @@ export class HierSelectorComponent implements OnInit {
    * forma de saber cuál es cuál.
    */
   readonly titulo = input('');
+  /**
+   * `false` quita el marco propio (fondo, borde, padding) para poder montar
+   * varios selectores dentro de UNA sola franja de filtros — si cada uno trae
+   * su caja, la pantalla se ve con el filtro duplicado. Igual criterio que en
+   * Reportes, donde la franja es siempre una sola.
+   */
+  readonly conMarco = input(true);
+  /** `false` cuando la pantalla ofrece un único "Limpiar" para todos los selectores. */
+  readonly mostrarLimpiar = input(true);
   readonly raizFija = input<HierarquiaNodo[] | null>(null);
   /**
    * `true` (default): la raíz queda preseleccionada y se emite al cargar, así la
