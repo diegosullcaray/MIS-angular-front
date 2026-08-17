@@ -57,10 +57,15 @@ test.describe('Presupuesto — smoke de las 7 pantallas migradas', () => {
     await expect(page.getByRole('columnheader', { name: 'Elemento' })).toBeVisible();
   });
 
-  test('Tablero de Verificación muestra los 2 selectores de jerarquía', async ({ page }) => {
+  /**
+   * Los dos selectores salen de la MISMA jerarquía, así que sin título propio
+   * se ven como un filtro duplicado — el título es justamente lo que los
+   * distingue (ver `HierSelectorComponent.titulo`).
+   */
+  test('Tablero de Verificación distingue sus 2 selectores de jerarquía por título', async ({ page }) => {
     await page.goto('/app/presupuesto/gestion/seguimiento/tbl-ver');
 
-    await expect(page.getByRole('button', { name: 'Elegir línea' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Elegir segundo nivel' })).toBeVisible();
+    await expect(page.getByText('Elegir línea', { exact: true })).toBeVisible();
+    await expect(page.getByText('Elegir segundo nivel', { exact: true })).toBeVisible();
   });
 });

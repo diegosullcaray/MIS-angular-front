@@ -67,6 +67,12 @@
   box-shadow: var(--mis-shadow-lg);
 }
 
+/* Alto natural del contenido, sin llenar el viewport (equivalente de
+   `.mis-page--auto`). */
+.mis-window--auto {
+  min-height: 0;
+}
+
 /* Barra de título. `grid` de 3 columnas (no flex) para que el título quede
    ópticamente centrado en la ventana aunque el semáforo y las acciones tengan
    anchos distintos, igual que en una ventana de macOS. */

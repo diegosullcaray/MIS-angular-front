@@ -1,9 +1,11 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
+import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
 import type { CeldaEditadaEvent } from '../../../models/tabla.model';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
@@ -22,7 +24,7 @@ import type { FilaLineaSimple, LineaSimpleConfig, ResumenMetadata } from '../../
 @Component({
   selector: 'app-linea-simple',
   standalone: true,
-  imports: [HierSelectorComponent, EditableTableComponent, ButtonModule],
+  imports: [HierSelectorComponent, EditableTableComponent, ButtonModule, TooltipModule, WindowPanelComponent],
   templateUrl: './linea-simple.component.html',
   styleUrl: './linea-simple.component.css',
 })
@@ -73,6 +75,12 @@ export class LineaSimpleComponent<F extends FilaLineaSimple = FilaLineaSimple> {
           this.cargando.set(false);
         },
       });
+  }
+
+  /** Botón "Actualizar" de la ventana: relee el nivel que está en pantalla. */
+  protected recargar(): void {
+    const nivel = this.nivelActual();
+    if (nivel) this.onNivelSeleccionado(nivel);
   }
 
   protected onCeldaEditada(evento: CeldaEditadaEvent<F>): void {

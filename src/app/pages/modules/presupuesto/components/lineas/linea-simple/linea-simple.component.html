@@ -1,26 +1,35 @@
-<div class="mis-page mis-page--auto">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center justify-between flex-wrap gap-3">
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">{{ config().mainTitle }}</h2>
+<app-window-panel
+  [titulo]="config().mainTitle"
+  [altoAuto]="true"
+  [actualizando]="cargando()"
+  [permitirActualizar]="nivelActual() !== null"
+  etiquetaActualizar="Actualizar datos"
+  (actualizar)="recargar()"
+>
+  <button
+    ventana-acciones
+    type="button"
+    class="mis-window-btn"
+    (click)="mostrarFiltros.set(!mostrarFiltros())"
+    [attr.aria-pressed]="mostrarFiltros()"
+    [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    tooltipPosition="bottom"
+  >
+    <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
+  </button>
 
-      <div class="flex items-center gap-2 flex-wrap">
-        <p-button
-          [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
-          [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-          severity="secondary"
-          [outlined]="true"
-          (onClick)="mostrarFiltros.set(!mostrarFiltros())"
-        />
-        @if (puedeGuardar()) {
-          <p-button label="Reiniciar" severity="secondary" [outlined]="true" (onClick)="reiniciar()" />
-          <p-button label="Guardar" [loading]="guardando()" (onClick)="guardar()" />
-        }
-        @if (puedeVerificar()) {
-          <p-button label="Verificar" icon="pi pi-check-circle" [loading]="verificando()" (onClick)="verificar()" />
-        }
-      </div>
+  @if (puedeGuardar() || puedeVerificar()) {
+    <div class="flex items-center justify-end gap-2 flex-wrap">
+      @if (puedeGuardar()) {
+        <p-button label="Reiniciar" severity="secondary" [outlined]="true" size="small" (onClick)="reiniciar()" />
+        <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
+      }
+      @if (puedeVerificar()) {
+        <p-button label="Verificar" icon="pi pi-check-circle" size="small" [loading]="verificando()" (onClick)="verificar()" />
+      }
     </div>
-  </div>
+  }
 
   <div class="flex items-center gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
     <app-hier-selector [paramsHier]="config().paramsHier" (nodoSeleccionado)="onNivelSeleccionado($event)" />
@@ -37,4 +46,4 @@
   <p class="text-[11px] text-[var(--mis-text-tertiary)]">
     Los datos mostrados están construidos para generar un histórico en función de los últimos responsables vigentes.
   </p>
-</div>
+</app-window-panel>

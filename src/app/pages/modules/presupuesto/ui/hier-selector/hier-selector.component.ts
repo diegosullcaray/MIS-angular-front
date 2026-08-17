@@ -21,7 +21,14 @@ export class HierSelectorComponent implements OnInit {
   private readonly presupuesto = inject(PresupuestoService);
 
   readonly paramsHier = input.required<ParamsJerarquia>();
-  readonly placeholder = input('Elegir jerarquía');
+  /**
+   * Título del bloque. Vacío (default) no dibuja encabezado — es lo que quieren
+   * las pantallas con un único selector. Las que montan DOS selectores sobre la
+   * misma jerarquía (Tablero de Verificación: línea + segundo nivel) lo
+   * necesitan sí o sí: sin él se ven dos bloques de filtros idénticos y no hay
+   * forma de saber cuál es cuál.
+   */
+  readonly titulo = input('');
   readonly raizFija = input<HierarquiaNodo[] | null>(null);
   /**
    * `true` (default): la raíz queda preseleccionada y se emite al cargar, así la

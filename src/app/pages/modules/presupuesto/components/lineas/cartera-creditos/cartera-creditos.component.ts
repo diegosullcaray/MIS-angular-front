@@ -1,10 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
+import { TooltipModule } from 'primeng/tooltip';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
+import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
 import { aplicarCascadaAsesores, calcularFilaCarteraCreditos, PRODUCTOS_COMPOSICION } from '../../../utils/cartera-creditos-calculo.util';
 import type { CeldaEditadaEvent, ColumnaTabla, TipoColumna } from '../../../models/tabla.model';
@@ -63,7 +65,7 @@ function columnasComposicion(prefijo: 'd' | 'g', tipo: TipoColumna): ColumnaTabl
 @Component({
   selector: 'app-cartera-creditos',
   standalone: true,
-  imports: [HierSelectorComponent, EditableTableComponent, TabsModule, ButtonModule],
+  imports: [HierSelectorComponent, EditableTableComponent, TabsModule, ButtonModule, TooltipModule, WindowPanelComponent],
   templateUrl: './cartera-creditos.component.html',
   styleUrl: './cartera-creditos.component.css',
 })
@@ -124,6 +126,12 @@ export class CarteraCreditosComponent {
         this.cargando.set(false);
       },
     });
+  }
+
+  /** Botón "Actualizar" de la ventana: relee el nivel que está en pantalla. */
+  protected recargar(): void {
+    const nivel = this.nivelActual();
+    if (nivel) this.onNivelSeleccionado(nivel);
   }
 
   protected onCeldaEditada(evento: CeldaEditadaEvent<FilaCarteraCreditosVariables>): void {

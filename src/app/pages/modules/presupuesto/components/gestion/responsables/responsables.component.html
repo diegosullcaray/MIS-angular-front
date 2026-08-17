@@ -1,13 +1,15 @@
-<div class="mis-page mis-page--auto">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center justify-between flex-wrap gap-3">
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Responsables</h2>
-
-      <div class="flex items-center gap-2 flex-wrap">
-        <p-button label="Reiniciar" severity="secondary" [outlined]="true" (onClick)="reiniciar()" />
-        <p-button label="Guardar" [loading]="guardando()" (onClick)="guardar()" />
-      </div>
-    </div>
+<app-window-panel
+  titulo="Responsables"
+  [altoAuto]="true"
+  [actualizando]="cargando()"
+  etiquetaActualizar="Actualizar responsables"
+  (actualizar)="recargar()"
+>
+  <!-- Acciones de edición: se quedan en el cuerpo (llevan etiqueta y son
+       acciones de formulario, no de ventana). -->
+  <div class="flex items-center justify-end gap-2 flex-wrap">
+    <p-button label="Reiniciar" severity="secondary" [outlined]="true" size="small" (onClick)="reiniciar()" />
+    <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
   </div>
 
   <div class="flex items-end gap-3 flex-wrap">
@@ -42,4 +44,4 @@
     [cargando]="cargando()"
     [esEditable]="esEditable"
   />
-</div>
+</app-window-panel>

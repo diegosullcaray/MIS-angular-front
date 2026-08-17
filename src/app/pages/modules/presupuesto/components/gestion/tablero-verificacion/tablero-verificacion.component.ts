@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
-import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
+import { TooltipModule } from 'primeng/tooltip';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { filtrarPorDescripcion } from '../../../utils/texto.util';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../../models/jerarquia.model';
 import type { LogVerificacionFila } from '../../../models/tablero-verificacion.model';
@@ -34,7 +35,7 @@ import type { LogVerificacionFila } from '../../../models/tablero-verificacion.m
 @Component({
   selector: 'app-tablero-verificacion',
   standalone: true,
-  imports: [HierSelectorComponent, TableModule, InputTextModule, SkeletonModule, FormsModule, ButtonModule],
+  imports: [HierSelectorComponent, TableModule, InputTextModule, SkeletonModule, FormsModule, TooltipModule, WindowPanelComponent],
   templateUrl: './tablero-verificacion.component.html',
   styleUrl: './tablero-verificacion.component.css',
 })
@@ -62,6 +63,11 @@ export class TableroVerificacionComponent {
 
   protected onSegundoNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelSegundo.set(nodo);
+    this.cargarSiAmbosNivelesListos();
+  }
+
+  /** Botón "Actualizar" de la ventana: relee el histórico de los niveles elegidos. */
+  protected recargar(): void {
     this.cargarSiAmbosNivelesListos();
   }
 

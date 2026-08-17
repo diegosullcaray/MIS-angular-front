@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
+import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { filtrarPorDescripcion } from '../../../utils/texto.util';
 import type { ColumnaTabla } from '../../../models/tabla.model';
 import type { NivelJerarquiaFijo, ResponsableFila } from '../../../models/responsables.model';
@@ -37,7 +38,7 @@ const COLUMNAS: ColumnaTabla[] = [
 @Component({
   selector: 'app-responsables',
   standalone: true,
-  imports: [EditableTableComponent, SelectModule, InputTextModule, ButtonModule, FormsModule],
+  imports: [EditableTableComponent, SelectModule, InputTextModule, ButtonModule, FormsModule, WindowPanelComponent],
   templateUrl: './responsables.component.html',
   styleUrl: './responsables.component.css',
 })
@@ -66,6 +67,11 @@ export class ResponsablesComponent implements OnInit {
     this.nivelActual.set(nivel);
     this.filtro.set('');
     this.cargar(nivel.tip_cod);
+  }
+
+  /** Botón "Actualizar" de la ventana: relee el nivel que está en pantalla. */
+  protected recargar(): void {
+    this.cargar(this.nivelActual().tip_cod);
   }
 
   protected reiniciar(): void {

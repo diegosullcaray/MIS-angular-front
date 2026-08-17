@@ -1,29 +1,51 @@
-<div class="mis-page mis-page--auto">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center justify-between flex-wrap gap-3">
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Tablero de Verificación</h2>
+<app-window-panel
+  titulo="Tablero de Verificación"
+  [altoAuto]="true"
+  [actualizando]="cargando()"
+  etiquetaActualizar="Actualizar histórico"
+  (actualizar)="recargar()"
+>
+  <button
+    ventana-acciones
+    type="button"
+    class="mis-window-btn"
+    (click)="mostrarFiltros.set(!mostrarFiltros())"
+    [attr.aria-pressed]="mostrarFiltros()"
+    [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    tooltipPosition="bottom"
+  >
+    <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
+  </button>
 
-      <p-button
-        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
-        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-        severity="secondary"
-        [outlined]="true"
-        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
-      />
-    </div>
-  </div>
+  <!-- Dos selecciones sobre la MISMA jerarquía (línea + segundo nivel), por eso
+       cada bloque va titulado: sin título se leen como un filtro repetido. -->
+  <div class="flex items-start gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
+    <app-hier-selector
+      class="flex-1 min-w-[280px]"
+      [paramsHier]="paramsHier"
+      [raizFija]="raizFija"
+      titulo="Elegir línea"
+      (nodoSeleccionado)="onLineaSeleccionada($event)"
+    />
+    <app-hier-selector
+      class="flex-1 min-w-[280px]"
+      [paramsHier]="paramsHier"
+      [raizFija]="raizFija"
+      titulo="Elegir segundo nivel"
+      (nodoSeleccionado)="onSegundoNivelSeleccionado($event)"
+    />
 
-  <div class="flex items-end gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
-    <app-hier-selector [paramsHier]="paramsHier" [raizFija]="raizFija" placeholder="Elegir línea" (nodoSeleccionado)="onLineaSeleccionada($event)" />
-    <app-hier-selector [paramsHier]="paramsHier" [raizFija]="raizFija" placeholder="Elegir segundo nivel" (nodoSeleccionado)="onSegundoNivelSeleccionado($event)" />
-
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Buscar elemento</label>
+    <!-- Mismo envoltorio que los selectores para que los tres bloques se lean
+         como una sola franja de filtros. -->
+    <div class="flex flex-col gap-1.5 p-2 bg-[var(--mis-panel-bg)]/60 border border-[var(--mis-border)] rounded-lg shadow-sm">
+      <span class="text-[11px] font-semibold text-[var(--mis-text-primary)]">Buscar elemento</span>
       <input
         pInputText
         type="text"
         placeholder="Buscar por nombre…"
         class="text-[13px]"
+        aria-label="Buscar elemento"
         [ngModel]="filtro()"
         (ngModelChange)="filtro.set($event)"
       />
@@ -66,4 +88,4 @@
       </ng-template>
     </p-table>
   </div>
-</div>
+</app-window-panel>
