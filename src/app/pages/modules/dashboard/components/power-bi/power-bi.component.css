@@ -1,3 +1,5 @@
+/* Alto fijo sobre el host de `app-window-panel` (su `:host` es flex column,
+   así que la ventana lo llena y el visor scrollea dentro, no la desborda). */
 .pbi-page {
   height: calc(100vh - 140px);
 }

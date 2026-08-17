@@ -1,8 +1,21 @@
-<div class="mis-page mis-page--auto pbi-page">
-  <div class="flex items-center gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <p-button icon="pi pi-arrow-circle-left" [outlined]="true" size="small" (onClick)="volver()" />
-    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">{{ reporte()?.name ?? 'Reporte' }}</h2>
-  </div>
+<app-window-panel
+  class="pbi-page"
+  [titulo]="reporte()?.name ?? 'Reporte'"
+  subtitulo="Power BI"
+  [altoAuto]="true"
+  [permitirActualizar]="false"
+>
+  <button
+    ventana-navegacion
+    type="button"
+    class="mis-window-btn"
+    (click)="volver()"
+    aria-label="Volver a Dashboards Integrados"
+    pTooltip="Volver"
+    tooltipPosition="bottom"
+  >
+    <i class="pi pi-arrow-left text-[14px]"></i>
+  </button>
 
   <div class="flex-1 min-h-0 rounded-lg border border-[var(--mis-border)] overflow-hidden">
     @if (cargando()) {
@@ -13,4 +26,4 @@
       <powerbi-report [embedConfig]="config" [cssClassName]="reportClass"></powerbi-report>
     }
   </div>
-</div>
+</app-window-panel>

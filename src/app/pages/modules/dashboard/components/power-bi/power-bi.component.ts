@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
+import { TooltipModule } from 'primeng/tooltip';
 import { PowerBIEmbedModule } from 'powerbi-client-angular';
 import { models, type IReportEmbedConfiguration } from 'powerbi-client';
 import { DashboardService } from '../../services/dashboard.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 
 /**
  * Visor de un reporte Power BI embebido (`/app/dashboards/power-bi`) —
@@ -23,7 +24,7 @@ import { ToastService } from '../../../../../shared/services/toast.service';
 @Component({
   selector: 'app-dashboard-power-bi',
   standalone: true,
-  imports: [ButtonModule, SkeletonModule, PowerBIEmbedModule],
+  imports: [SkeletonModule, TooltipModule, PowerBIEmbedModule, WindowPanelComponent],
   templateUrl: './power-bi.component.html',
   styleUrl: './power-bi.component.css',
 })

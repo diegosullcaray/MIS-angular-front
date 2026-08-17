@@ -1,29 +1,25 @@
-<div class="mis-page mis-page--auto">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center justify-between flex-wrap gap-3">
-      <div class="flex items-center gap-2">
-        <i class="pi pi-cloud text-[var(--mis-primary-text)]"></i>
-        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Dashboards Integrados</h2>
-      </div>
-
-      <div class="flex items-center gap-2 flex-wrap">
-        <p-button
-          icon="pi pi-refresh"
-          [text]="true"
-          [rounded]="true"
-          size="small"
-          ariaLabel="Actualizar"
-          pTooltip="Actualizar"
-          tooltipPosition="bottom"
-          [loading]="dashboard.cargando()"
-          (onClick)="actualizar()"
-        />
-        @if (dashboard.moduloAdmin()) {
-          <p-button label="Usuarios" icon="pi pi-users" size="small" [outlined]="true" (onClick)="mostrarDialogoUsuarios()" />
-        }
-      </div>
-    </div>
-  </div>
+<!-- El "Actualizar" que estaba en el encabezado ahora es el botón de la
+     esquina de la ventana; no se duplica acá. -->
+<app-window-panel
+  titulo="Dashboards Integrados"
+  [altoAuto]="true"
+  [actualizando]="dashboard.cargando()"
+  etiquetaActualizar="Actualizar reportes"
+  (actualizar)="actualizar()"
+>
+  @if (dashboard.moduloAdmin()) {
+    <button
+      ventana-acciones
+      type="button"
+      class="mis-window-btn"
+      (click)="mostrarDialogoUsuarios()"
+      aria-label="Usuarios de los reportes"
+      pTooltip="Usuarios"
+      tooltipPosition="bottom"
+    >
+      <i class="pi pi-users text-[14px]"></i>
+    </button>
+  }
 
   @if (dashboard.error()) {
     <div class="text-[13px] text-[var(--mis-danger)] flex items-center gap-2">
@@ -71,6 +67,6 @@
       </p-table>
     }
   </div>
-</div>
 
-<app-usuarios-reporte-dialog [visible]="mostrarUsuarios()" (visibleChange)="mostrarUsuarios.set($event)" [reportes]="dashboard.reportes()" />
+  <app-usuarios-reporte-dialog [visible]="mostrarUsuarios()" (visibleChange)="mostrarUsuarios.set($event)" [reportes]="dashboard.reportes()" />
+</app-window-panel>

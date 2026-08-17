@@ -1,11 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { DashboardService } from '../../services/dashboard.service';
 import { UsuariosReporteDialogComponent } from '../../ui/usuarios-reporte-dialog/usuarios-reporte-dialog.component';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { ReporteDashboard } from '../../models/reporte.model';
 
 /**
@@ -23,7 +23,7 @@ import type { ReporteDashboard } from '../../models/reporte.model';
 @Component({
   selector: 'app-dashboard-principal',
   standalone: true,
-  imports: [ButtonModule, TableModule, SkeletonModule, TooltipModule, UsuariosReporteDialogComponent],
+  imports: [TableModule, SkeletonModule, TooltipModule, UsuariosReporteDialogComponent, WindowPanelComponent],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.css',
 })

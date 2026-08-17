@@ -2,8 +2,12 @@
    estilo del sistema de diseño reutilizable por cualquier módulo, y las
    acciones proyectadas (`[ventana-acciones]`) pertenecen al scope del padre,
    así que no las alcanzarían estilos encapsulados de este componente. */
+/* Flex column (no block): así una pantalla que le fija un alto al host —el
+   visor de Power BI -— consigue que `.mis-window` lo llene y el contenido
+   scrollee dentro de la ventana, en vez de desbordarla. */
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-width: 0;
 }
