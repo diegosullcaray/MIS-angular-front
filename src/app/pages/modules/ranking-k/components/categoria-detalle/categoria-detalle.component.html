@@ -1,56 +1,52 @@
-<div
-  class="mis-page justify-between">
-  <!-- Cabecera principal del módulo -->
-  <div
-    class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <!-- Identidad de la categoría e información -->
-    <div id="tour-categoria-header" class="flex items-center gap-2.5">
-      <ng-icon name="lucideTrophy" size="22" class="text-[var(--mis-warning)] shrink-0" />
+<app-window-panel
+  id="tour-ranking-panel"
+  [titulo]="categoria()?.name ?? id()"
+  [subtitulo]="fechaActualizacion() ? 'Data al ' + fechaActualizacion() : ''"
+  [actualizando]="cargando()"
+  etiquetaActualizar="Actualizar ranking"
+  (actualizar)="cargarDetalle()"
+>
+  <!-- Acciones de la pantalla en la barra; conservan los ids del tour guiado. -->
+  <span ventana-acciones id="tour-info-btn" class="inline-flex items-center">
+    <app-ranking-info-dialog />
+  </span>
 
-      <div class="flex flex-col gap-0.5">
-        <div class="flex items-center gap-2 flex-wrap">
-          <h1 class="text-lg font-bold text-[var(--mis-text-primary)] m-0 tracking-tight">
-            {{ categoria()?.name ?? id() }}
-          </h1>
-          <span id="tour-info-btn"><app-ranking-info-dialog /></span>
-        </div>
+  <button
+    ventana-acciones
+    type="button"
+    class="mis-window-btn"
+    (click)="tour.iniciarTourGuiado()"
+    aria-label="Ver guía interactiva"
+    pTooltip="Ver guía interactiva"
+    tooltipPosition="bottom"
+  >
+    <i class="pi pi-question-circle text-[14px]"></i>
+  </button>
 
-        <div class="flex items-center gap-2.5 text-xs flex-wrap">
-          @if (fechaActualizacion()) {
-          <span
-            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--mis-panel-bg)] border border-[var(--mis-border)] font-medium text-[var(--mis-text-secondary)] text-[11px]">
-            <i class="pi pi-calendar text-[10px] text-[var(--mis-primary-text)]"></i>
-            Data actualizada al: {{ fechaActualizacion() }}
-          </span>
-          }
-          @if (hayFiltrosActivos()) {
-          <span
-            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[var(--mis-secondary-light)] text-[var(--mis-secondary)] font-semibold border border-[var(--mis-secondary)]/20 text-[11px]">
-            <i class="pi pi-filter-fill text-[9px]"></i>
-            Filtros activos
-          </span>
-          }
-        </div>
-      </div>
-    </div>
+  <button
+    ventana-acciones
+    id="tour-filtros-btn"
+    type="button"
+    class="mis-window-btn"
+    (click)="mostrarFiltros.set(!mostrarFiltros())"
+    [attr.aria-pressed]="mostrarFiltros()"
+    [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Filtros'"
+    tooltipPosition="bottom"
+  >
+    <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
+  </button>
 
-    <!-- Acciones del header -->
-    <div id="tour-filtros-btn" class="flex items-center gap-2 shrink-0 self-end sm:self-center">
-      <p-button
-        icon="pi pi-question-circle"
-        severity="secondary"
-        [outlined]="true"
-        size="small"
-        pTooltip="Ver guía interactiva"
-        tooltipPosition="bottom"
-        (click)="tour.iniciarTourGuiado()"
-      />
-      <p-button [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Filtros'"
-        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
-        [severity]="mostrarFiltros() ? 'primary' : 'secondary'" [outlined]="!mostrarFiltros()" size="small"
-        (click)="mostrarFiltros.set(!mostrarFiltros())" />
-    </div>
-  </div>
+  <!-- El "Data actualizada al" vive en el subtítulo de la barra; acá queda solo
+       el aviso de filtros, que es estado de la consulta y conviene tenerlo
+       junto a los resultados. -->
+  @if (hayFiltrosActivos()) {
+    <span
+      class="self-start inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[var(--mis-secondary-light)] text-[var(--mis-secondary)] font-semibold border border-[var(--mis-secondary)]/20 text-[11px]">
+      <i class="pi pi-filter-fill text-[9px]"></i>
+      Filtros activos
+    </span>
+  }
 
   @if (mostrarFiltros()) {
   <app-ranking-filtros [lugaresDisponibles]="lugaresDisponibles()" [puntosMinDisponible]="puntosMinDisponible()"
@@ -142,4 +138,4 @@
       }
     </div>
   }
-</div>
+</app-window-panel>

@@ -21,7 +21,7 @@ export class RankingTourService {
         },
       },
       {
-        element: '#tour-categoria-header',
+        element: '#tour-ranking-panel .mis-window-bar',
         popover: {
           title: '🏆 Módulo Ranking Kaypacha',
           description: 'Consulta el ranking en tiempo real, desglose por agencias, zonas y metas alcanzadas en la categoría activa.',

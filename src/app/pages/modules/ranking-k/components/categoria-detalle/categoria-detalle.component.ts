@@ -1,6 +1,4 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideTrophy, lucideFilter } from '@ng-icons/lucide';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
@@ -8,6 +6,7 @@ import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inli
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { RankingTableComponent } from '../../ui/ranking-table/ranking-table.component';
 import { RankingFiltrosComponent } from '../../ui/ranking-filtros/ranking-filtros.component';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { RankingInfoDialogComponent } from '../../ui/ranking-info-dialog/ranking-info-dialog.component';
 import { KaypachaService } from '../../services/kaypacha.service';
 import { RankingTourService } from '../../services/ranking-tour.service';
@@ -23,7 +22,6 @@ const DURACION_TRANSICION_FILTROS_MS = 350;
   selector: 'app-categoria-detalle',
   standalone: true,
   imports: [
-    NgIconComponent,
     ButtonModule,
     TooltipModule,
     ListSkeletonComponent,
@@ -32,8 +30,8 @@ const DURACION_TRANSICION_FILTROS_MS = 350;
     RankingTableComponent,
     RankingFiltrosComponent,
     RankingInfoDialogComponent,
+    WindowPanelComponent,
   ],
-  viewProviders: [provideIcons({ lucideTrophy, lucideFilter })],
   templateUrl: './categoria-detalle.component.html',
   styleUrl: './categoria-detalle.component.css',
 })

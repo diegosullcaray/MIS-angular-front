@@ -1,23 +1,12 @@
-<div class="mis-page">
-  <div class="flex items-center justify-between flex-wrap gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center gap-2">
-      <i class="pi pi-gauge text-[var(--mis-primary-text)]"></i>
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cuadro de Mando de Incentivos</h2>
-    </div>
-
-    <p-button
-      icon="pi pi-refresh"
-      [text]="true"
-      [rounded]="true"
-      size="small"
-      ariaLabel="Actualizar"
-      pTooltip="Actualizar"
-      tooltipPosition="bottom"
-      [loading]="incentivos.cargando()"
-      [disabled]="!incentivos.perfil()"
-      (onClick)="actualizar()"
-    />
-  </div>
+<!-- El "Actualizar" del encabezado es ahora el botón de la esquina; como antes,
+     no está disponible mientras no hay perfil cargado. -->
+<app-window-panel
+  titulo="Cuadro de Mando de Incentivos"
+  [actualizando]="incentivos.cargando()"
+  [permitirActualizar]="incentivos.perfil() !== null"
+  etiquetaActualizar="Actualizar cuadro de mando"
+  (actualizar)="actualizar()"
+>
 
   @if (incentivos.error()) {
     <div class="mis-card p-4 text-[13px] text-[var(--mis-danger)] flex items-center gap-2">
@@ -55,7 +44,7 @@
       </div>
     </div>
   }
-</div>
+</app-window-panel>
 
 <app-selector-nivel-dialog [visible]="mostrarSelector()" [obligatorio]="incentivos.requiereSeleccionInicial()" (visibleChange)="mostrarSelector.set($event)" />
 

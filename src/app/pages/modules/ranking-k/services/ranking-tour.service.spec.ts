@@ -21,7 +21,8 @@ describe('RankingTourService', () => {
     const pasos = driverFalso.createQuickTour.mock.calls[0][0] as Array<{ element: string }>;
     expect(pasos.map((p) => p.element)).toEqual([
       '#tour-sidebar-panel',
-      '#tour-categoria-header',
+      // La cabecera la pinta `app-window-panel`: se apunta por clase bajo el id del panel.
+      '#tour-ranking-panel .mis-window-bar',
       '#tour-info-btn',
       '#tour-filtros-btn',
       '#tour-ranking-tabla',
