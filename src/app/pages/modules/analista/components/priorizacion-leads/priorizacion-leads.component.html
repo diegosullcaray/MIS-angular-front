@@ -1,24 +1,36 @@
-<div class="mis-page">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center gap-2.5">
-      <p-button icon="pi pi-arrow-left" severity="secondary" [outlined]="true" size="small" ariaLabel="Volver a Listas" pTooltip="Volver a Listas" tooltipPosition="bottom" (onClick)="volver()" />
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Priorización de Leads</h2>
-    </div>
+<app-window-panel
+  titulo="Priorización de Leads"
+  [subtitulo]="colaborador()?.nombre ?? ''"
+  [actualizando]="cargando()"
+  [permitirActualizar]="colaborador() !== null"
+  etiquetaActualizar="Actualizar leads"
+  (actualizar)="reintentar()"
+>
+  <button
+    ventana-navegacion
+    type="button"
+    class="mis-window-btn"
+    (click)="volver()"
+    aria-label="Volver a Listas"
+    pTooltip="Volver a Listas"
+    tooltipPosition="bottom"
+  >
+    <i class="pi pi-arrow-left text-[14px]"></i>
+  </button>
 
-    <div class="flex items-center gap-3 flex-wrap">
-      @if (colaborador()) {
-        <span class="text-[13px] text-[var(--mis-text-secondary)]">
-          Analista: <strong class="text-[var(--mis-text-primary)]">{{ colaborador()!.nombre }}</strong>
-        </span>
-      }
-
-      <div class="flex-1"></div>
-
-      @if (esAdmin()) {
-        <p-button label="Buscar colaborador" icon="pi pi-search" size="small" (onClick)="abrirSelectorColaborador()" />
-      }
-    </div>
-  </div>
+  @if (esAdmin()) {
+    <button
+      ventana-acciones
+      type="button"
+      class="mis-window-btn"
+      (click)="abrirSelectorColaborador()"
+      aria-label="Buscar colaborador"
+      pTooltip="Buscar colaborador"
+      tooltipPosition="bottom"
+    >
+      <i class="pi pi-search text-[14px]"></i>
+    </button>
+  }
 
   @if (cargando()) {
     <div class="p-2">
@@ -68,12 +80,12 @@
       </p-table>
     </div>
   }
-</div>
 
-<app-selector-colaborador-dialog
-  [visible]="dialogColaboradorAbierto()"
-  [colaboradores]="colaboradores()"
-  [cargando]="cargandoColaboradores()"
-  (visibleChange)="dialogColaboradorAbierto.set($event)"
-  (colaboradorSeleccionado)="onColaboradorSeleccionado($event)"
-/>
+  <app-selector-colaborador-dialog
+    [visible]="dialogColaboradorAbierto()"
+    [colaboradores]="colaboradores()"
+    [cargando]="cargandoColaboradores()"
+    (visibleChange)="dialogColaboradorAbierto.set($event)"
+    (colaboradorSeleccionado)="onColaboradorSeleccionado($event)"
+  />
+</app-window-panel>

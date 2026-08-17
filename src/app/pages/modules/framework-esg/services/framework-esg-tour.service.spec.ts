@@ -20,7 +20,8 @@ describe('FrameworkEsgTourService', () => {
     expect(driverFalso.createQuickTour).toHaveBeenCalledTimes(1);
     const pasos = driverFalso.createQuickTour.mock.calls[0][0] as Array<{ element: string }>;
     expect(pasos.map((p) => p.element)).toEqual([
-      '#tour-esg-header',
+      // La barra la pinta `app-window-panel`, así que se apunta por clase bajo el id del panel.
+      '#tour-esg-panel .mis-window-bar',
       '#tour-esg-usuarios-btn',
       '#tour-esg-tour-btn',
       '#tour-esg-tabs',

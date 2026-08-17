@@ -1,22 +1,38 @@
-<div class="mis-page">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Analista</h2>
+<!-- Panel de módulo como ventana macOS: el colaborador que se está viendo va
+     como subtítulo de la barra. -->
+<app-window-panel
+  titulo="Analista"
+  [subtitulo]="colaborador()?.nombre ?? ''"
+  [actualizando]="cargando()"
+  [permitirActualizar]="colaborador() !== null"
+  etiquetaActualizar="Actualizar dashboard"
+  (actualizar)="reintentar()"
+>
+  <button
+    ventana-acciones
+    type="button"
+    class="mis-window-btn"
+    (click)="irAListas()"
+    aria-label="Ir a Listas"
+    pTooltip="Listas"
+    tooltipPosition="bottom"
+  >
+    <i class="pi pi-list text-[14px]"></i>
+  </button>
 
-    <div class="flex items-center gap-3 flex-wrap">
-      @if (colaborador()) {
-        <span class="text-[13px] text-[var(--mis-text-secondary)]">
-          Viendo a: <strong class="text-[var(--mis-text-primary)]">{{ colaborador()!.nombre }}</strong>
-        </span>
-      }
-
-      <div class="flex-1"></div>
-
-      <p-button label="Listas" icon="pi pi-list" severity="secondary" [outlined]="true" size="small" (onClick)="irAListas()" />
-      @if (esAdmin()) {
-        <p-button label="Buscar colaborador" icon="pi pi-search" size="small" (onClick)="abrirSelectorColaborador()" />
-      }
-    </div>
-  </div>
+  @if (esAdmin()) {
+    <button
+      ventana-acciones
+      type="button"
+      class="mis-window-btn"
+      (click)="abrirSelectorColaborador()"
+      aria-label="Buscar colaborador"
+      pTooltip="Buscar colaborador"
+      tooltipPosition="bottom"
+    >
+      <i class="pi pi-search text-[14px]"></i>
+    </button>
+  }
 
   @if (cargando()) {
     <div class="p-2">
@@ -147,20 +163,20 @@
       </div>
     </div>
   }
-</div>
 
-<app-selector-colaborador-dialog
-  [visible]="dialogColaboradorAbierto()"
-  [colaboradores]="colaboradores()"
-  [cargando]="cargandoColaboradores()"
-  (visibleChange)="dialogColaboradorAbierto.set($event)"
-  (colaboradorSeleccionado)="onColaboradorSeleccionado($event)"
-/>
+  <app-selector-colaborador-dialog
+    [visible]="dialogColaboradorAbierto()"
+    [colaboradores]="colaboradores()"
+    [cargando]="cargandoColaboradores()"
+    (visibleChange)="dialogColaboradorAbierto.set($event)"
+    (colaboradorSeleccionado)="onColaboradorSeleccionado($event)"
+  />
 
-<app-detalle-tabla-dialog
-  [visible]="dialogDetalleAbierto()"
-  titulo="Detalle Cliente"
-  [filas]="detalleCliente()"
-  [cargando]="cargandoDetalle()"
-  (visibleChange)="dialogDetalleAbierto.set($event)"
-/>
+  <app-detalle-tabla-dialog
+    [visible]="dialogDetalleAbierto()"
+    titulo="Detalle Cliente"
+    [filas]="detalleCliente()"
+    [cargando]="cargandoDetalle()"
+    (visibleChange)="dialogDetalleAbierto.set($event)"
+  />
+</app-window-panel>

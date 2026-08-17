@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { EnlaceListaAnalista } from '../../models/listas.model';
 
 const ENLACES: EnlaceListaAnalista[] = [
@@ -27,7 +27,7 @@ const ENLACES: EnlaceListaAnalista[] = [
 @Component({
   selector: 'app-listas-analista',
   standalone: true,
-  imports: [RouterLink, ButtonModule, TooltipModule],
+  imports: [RouterLink, TooltipModule, WindowPanelComponent],
   templateUrl: './listas.component.html',
   styleUrl: './listas.component.css',
 })

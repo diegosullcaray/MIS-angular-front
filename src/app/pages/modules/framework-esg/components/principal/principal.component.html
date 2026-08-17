@@ -1,25 +1,37 @@
-<div class="mis-page">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center justify-between flex-wrap gap-3">
-      <h2 id="tour-esg-header" class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cuadro de Mando ESG</h2>
+<app-window-panel
+  id="tour-esg-panel"
+  titulo="Cuadro de Mando ESG"
+  [actualizando]="cargandoPortada()"
+  etiquetaActualizar="Actualizar cuadro de mando"
+  (actualizar)="recargar()"
+>
+  @if (esAdmin()) {
+    <button
+      ventana-acciones
+      id="tour-esg-usuarios-btn"
+      type="button"
+      class="mis-window-btn"
+      (click)="mostrarDialogoUsuarios()"
+      aria-label="Usuarios de las métricas"
+      pTooltip="Usuarios"
+      tooltipPosition="bottom"
+    >
+      <i class="pi pi-users text-[14px]"></i>
+    </button>
+  }
 
-      <div class="flex items-center gap-2 flex-wrap">
-        @if (esAdmin()) {
-          <p-button id="tour-esg-usuarios-btn" label="Usuarios" icon="pi pi-users" size="small" [outlined]="true" (onClick)="mostrarDialogoUsuarios()" />
-        }
-        <p-button
-          id="tour-esg-tour-btn"
-          icon="pi pi-question-circle"
-          severity="secondary"
-          [outlined]="true"
-          size="small"
-          pTooltip="Ver guía interactiva"
-          tooltipPosition="bottom"
-          (onClick)="tour.iniciarTourGuiado()"
-        />
-      </div>
-    </div>
-  </div>
+  <button
+    ventana-acciones
+    id="tour-esg-tour-btn"
+    type="button"
+    class="mis-window-btn"
+    (click)="tour.iniciarTourGuiado()"
+    aria-label="Ver guía interactiva"
+    pTooltip="Ver guía interactiva"
+    tooltipPosition="bottom"
+  >
+    <i class="pi pi-question-circle text-[14px]"></i>
+  </button>
 
   <p-tabs [(value)]="tabActiva">
     <p-tablist id="tour-esg-tabs">
@@ -87,7 +99,7 @@
       }
     </p-tabpanels>
   </p-tabs>
-</div>
+</app-window-panel>
 
 <app-editar-metrica-dialog
   [visible]="mostrarEditar()"

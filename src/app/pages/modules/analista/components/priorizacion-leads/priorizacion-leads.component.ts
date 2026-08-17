@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -30,6 +31,7 @@ import type { FilaLead } from '../../models/listas.model';
     InlineErrorComponent,
     EmptyStateComponent,
     SelectorColaboradorDialogComponent,
+    WindowPanelComponent,
   ],
   templateUrl: './priorizacion-leads.component.html',
   styleUrl: './priorizacion-leads.component.css',

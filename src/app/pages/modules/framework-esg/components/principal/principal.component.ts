@@ -1,11 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
-import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { FrameworkEsgService } from '../../services/framework-esg.service';
 import { FrameworkEsgTourService } from '../../services/framework-esg-tour.service';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { CategoriaMetricasTablaComponent } from '../../ui/categoria-metricas-tabla/categoria-metricas-tabla.component';
@@ -54,13 +54,13 @@ const TABS_CATEGORIAS: TabCategoria[] = [
   standalone: true,
   imports: [
     TabsModule,
-    ButtonModule,
     TableModule,
     SkeletonModule,
     TooltipModule,
     CategoriaMetricasTablaComponent,
     EditarMetricaDialogComponent,
     UsuariosMetricaDialogComponent,
+    WindowPanelComponent,
   ],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.css',
@@ -102,6 +102,11 @@ export class PrincipalComponent {
   });
 
   constructor() {
+    this.cargarTodo();
+  }
+
+  /** Botón "Actualizar" de la ventana: relee configuración, portada y categorías. */
+  protected recargar(): void {
     this.cargarTodo();
   }
 

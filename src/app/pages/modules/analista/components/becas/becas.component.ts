@@ -7,6 +7,7 @@ import { DialogModule } from 'primeng/dialog';
 import { TextareaModule } from 'primeng/textarea';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -41,6 +42,7 @@ import type { FilaBeca } from '../../models/listas.model';
     InlineErrorComponent,
     EmptyStateComponent,
     SelectorColaboradorDialogComponent,
+    WindowPanelComponent,
     DetalleTablaDialogComponent,
   ],
   templateUrl: './becas.component.html',

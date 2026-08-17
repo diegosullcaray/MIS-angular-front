@@ -1,39 +1,56 @@
-<div class="mis-page">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center gap-2.5">
-      <p-button icon="pi pi-arrow-left" severity="secondary" [outlined]="true" size="small" ariaLabel="Volver a Listas" pTooltip="Volver a Listas" tooltipPosition="bottom" (onClick)="volver()" />
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Becas Financiera Confianza</h2>
-    </div>
+<app-window-panel
+  titulo="Becas Financiera Confianza"
+  [subtitulo]="colaborador()?.nombre ?? ''"
+  [actualizando]="cargando()"
+  [permitirActualizar]="colaborador() !== null"
+  etiquetaActualizar="Actualizar becas"
+  (actualizar)="reintentar()"
+>
+  <button
+    ventana-navegacion
+    type="button"
+    class="mis-window-btn"
+    (click)="volver()"
+    aria-label="Volver a Listas"
+    pTooltip="Volver a Listas"
+    tooltipPosition="bottom"
+  >
+    <i class="pi pi-arrow-left text-[14px]"></i>
+  </button>
 
-    <div class="flex items-center gap-3 flex-wrap">
-      @if (colaborador()) {
-        <span class="text-[13px] text-[var(--mis-text-secondary)]">
-          Analista: <strong class="text-[var(--mis-text-primary)]">{{ colaborador()!.nombre }}</strong>
-        </span>
-      }
+  @if (esAdmin()) {
+    <button
+      ventana-acciones
+      type="button"
+      class="mis-window-btn"
+      (click)="abrirSelectorColaborador()"
+      aria-label="Buscar colaborador"
+      pTooltip="Buscar colaborador"
+      tooltipPosition="bottom"
+    >
+      <i class="pi pi-search text-[14px]"></i>
+    </button>
+  }
 
-      <div class="flex-1"></div>
-
-      <p-button
-        label="Detalle"
-        icon="pi pi-table"
-        severity="secondary"
-        [outlined]="true"
-        size="small"
-        [disabled]="!filaSeleccionada()"
-        (onClick)="abrirDetalle()"
-      />
-      <p-button
-        label="Prospectar"
-        icon="pi pi-user-plus"
-        size="small"
-        [disabled]="!filaSeleccionada() || filaSeleccionada()!.ind_pro === 1"
-        (onClick)="abrirProspectar()"
-      />
-      @if (esAdmin()) {
-        <p-button label="Buscar colaborador" icon="pi pi-search" size="small" (onClick)="abrirSelectorColaborador()" />
-      }
-    </div>
+  <!-- Acciones sobre la fila elegida: llevan etiqueta y estado deshabilitado,
+       así que se quedan en el cuerpo y no en la barra de la ventana. -->
+  <div class="flex items-center justify-end gap-2 flex-wrap">
+    <p-button
+      label="Detalle"
+      icon="pi pi-table"
+      severity="secondary"
+      [outlined]="true"
+      size="small"
+      [disabled]="!filaSeleccionada()"
+      (onClick)="abrirDetalle()"
+    />
+    <p-button
+      label="Prospectar"
+      icon="pi pi-user-plus"
+      size="small"
+      [disabled]="!filaSeleccionada() || filaSeleccionada()!.ind_pro === 1"
+      (onClick)="abrirProspectar()"
+    />
   </div>
 
   @if (cargando()) {
@@ -88,7 +105,7 @@
       </p-table>
     </div>
   }
-</div>
+</app-window-panel>
 
 <app-selector-colaborador-dialog
   [visible]="dialogColaboradorAbierto()"

@@ -6,8 +6,10 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
+import { TooltipModule } from 'primeng/tooltip';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { SelectorColaboradorDialogComponent } from '../../ui/selector-colaborador-dialog/selector-colaborador-dialog.component';
 import { DetalleTablaDialogComponent } from '../../ui/detalle-tabla-dialog/detalle-tabla-dialog.component';
@@ -41,11 +43,13 @@ const OPCIONES_BASE = { responsive: true, maintainAspectRatio: false };
     SelectModule,
     TableModule,
     ChartModule,
+    TooltipModule,
     ListSkeletonComponent,
     InlineErrorComponent,
     EmptyStateComponent,
     SelectorColaboradorDialogComponent,
     DetalleTablaDialogComponent,
+    WindowPanelComponent,
   ],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.css',

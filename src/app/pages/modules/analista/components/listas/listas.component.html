@@ -1,10 +1,15 @@
-<div class="mis-page">
-  <div class="flex items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center gap-2.5">
-      <p-button icon="pi pi-arrow-left" severity="secondary" [outlined]="true" size="small" ariaLabel="Volver" pTooltip="Volver" tooltipPosition="bottom" (onClick)="volver()" />
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Listas</h2>
-    </div>
-  </div>
+<app-window-panel titulo="Listas" [permitirActualizar]="false">
+  <button
+    ventana-navegacion
+    type="button"
+    class="mis-window-btn"
+    (click)="volver()"
+    aria-label="Volver"
+    pTooltip="Volver"
+    tooltipPosition="bottom"
+  >
+    <i class="pi pi-arrow-left text-[14px]"></i>
+  </button>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     @for (enlace of enlaces; track enlace.ruta) {
@@ -24,4 +29,4 @@
       </a>
     }
   </div>
-</div>
+</app-window-panel>

@@ -1,7 +1,8 @@
 <div class="mis-window" [class.mis-window--auto]="altoAuto()">
   <!-- Barra de título: pegada al borde del panel, sin márgenes propios. -->
   <header class="mis-window-bar">
-    <!-- Semáforo (izquierda) -->
+    <!-- Izquierda: semáforo y, a su derecha, la navegación que proyecte la
+         pantalla (volver) — el mismo lugar que ocupa en una ventana de Finder. -->
     <div class="mis-window-lights" role="group" aria-label="Controles de la ventana">
       @if (mostrarSemaforo()) {
         <button
@@ -33,6 +34,8 @@
           tooltipPosition="bottom"
         ></button>
       }
+
+      <ng-content select="[ventana-navegacion]" />
     </div>
 
     <!-- Título centrado: solo texto, sin ícono ni logo -->

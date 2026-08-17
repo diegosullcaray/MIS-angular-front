@@ -26,7 +26,8 @@ const RUTA_HOME = '/app/dashboard';
  * Uso:
  * ```html
  * <app-window-panel titulo="Kaypacha" [actualizando]="loading()" (actualizar)="recargar()">
- *   <button ventana-acciones …>…</button>   <!-- acciones extra, a la izquierda de Actualizar -->
+ *   <button ventana-navegacion …>…</button>  <!-- volver, junto al semáforo -->
+ *   <button ventana-acciones …>…</button>    <!-- acciones extra, a la izquierda de Actualizar -->
  *   …contenido…
  * </app-window-panel>
  * ```

@@ -12,7 +12,7 @@ export class FrameworkEsgTourService {
   iniciarTourGuiado(): void {
     const pasos: DriveStep[] = [
       {
-        element: '#tour-esg-header',
+        element: '#tour-esg-panel .mis-window-bar',
         popover: {
           title: '🌱 Cuadro de Mando ESG',
           description: 'Bienvenido al módulo Framework ESG. Consulta la gestión de métricas e indicadores de sostenibilidad.',
