@@ -18,46 +18,14 @@
     <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
   </button>
 
-  <!-- UNA sola franja de filtros, como en Reportes: la pantalla necesita dos
-       selecciones sobre la misma jerarquía (línea + segundo nivel), pero cada
-       una con su propio marco y su propio "Limpiar" se veía como el filtro
-       duplicado. Van sin marco dentro de esta caja y comparten un "Limpiar". -->
-  <div
-    class="flex items-start gap-5 flex-wrap p-3 bg-[var(--mis-panel-bg)]/60 border border-[var(--mis-border)] rounded-lg shadow-sm"
-    [class.hidden]="!mostrarFiltros()"
-  >
+  <!-- Un único selector de jerarquía, igual que el resto del módulo y que
+       Reportes: la pantalla necesita DOS nodos, pero son los dos primeros
+       niveles de la MISMA ruta, no dos selecciones independientes. -->
+  <div class="flex items-center gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
     <app-hier-selector
-      #selectorLinea
       [paramsHier]="paramsHier"
       [raizFija]="raizFija"
-      titulo="Línea"
-      [conMarco]="false"
-      [mostrarLimpiar]="false"
-      (nodoSeleccionado)="onLineaSeleccionada($event)"
-    />
-
-    <span class="hidden lg:block self-stretch w-px bg-[var(--mis-border)]" aria-hidden="true"></span>
-
-    <app-hier-selector
-      #selectorSegundo
-      [paramsHier]="paramsHier"
-      [raizFija]="raizFija"
-      titulo="Segundo nivel"
-      [conMarco]="false"
-      [mostrarLimpiar]="false"
-      (nodoSeleccionado)="onSegundoNivelSeleccionado($event)"
-    />
-
-    <div class="flex-1"></div>
-
-    <p-button
-      label="Limpiar"
-      icon="pi pi-refresh"
-      severity="warn"
-      [outlined]="true"
-      size="small"
-      styleClass="self-end"
-      (onClick)="limpiarFiltros()"
+      (rutaSeleccionada)="onRutaSeleccionada($event)"
     />
   </div>
 
@@ -111,7 +79,7 @@
       <ng-template pTemplate="emptymessage">
         <tr>
           <td colspan="4" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
-            Elige una línea y un segundo nivel para ver el histórico de verificaciones.
+            Elige un segundo nivel de la jerarquía para ver el histórico de verificaciones.
           </td>
         </tr>
       </ng-template>

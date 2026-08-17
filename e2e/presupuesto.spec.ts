@@ -58,15 +58,14 @@ test.describe('Presupuesto — smoke de las 7 pantallas migradas', () => {
   });
 
   /**
-   * Los dos selectores salen de la MISMA jerarquía: van en UNA sola franja de
-   * filtros (un marco, un "Limpiar") y lo que los distingue es su título — con
-   * un marco cada uno se veían como el filtro duplicado.
+   * La pantalla consulta con DOS nodos, pero son los dos primeros niveles de la
+   * misma ruta: un único selector, como en el legado y como el resto del
+   * módulo. Con dos selectores salían dos raíces "Financiera Confianza".
    */
-  test('Tablero de Verificación: una sola franja con los 2 niveles distinguidos', async ({ page }) => {
+  test('Tablero de Verificación monta un único selector de jerarquía', async ({ page }) => {
     await page.goto('/app/presupuesto/gestion/seguimiento/tbl-ver');
 
-    await expect(page.getByText('Línea', { exact: true })).toBeVisible();
-    await expect(page.getByText('Segundo nivel', { exact: true })).toBeVisible();
+    await expect(page.locator('app-hier-selector')).toHaveCount(1);
     await expect(page.getByRole('button', { name: /Limpiar/ })).toHaveCount(1);
   });
 

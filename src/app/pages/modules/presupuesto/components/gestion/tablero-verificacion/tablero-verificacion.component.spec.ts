@@ -38,32 +38,51 @@ describe('TableroVerificacionComponent', () => {
     return fixture;
   }
 
-  it('no pide nada mientras falte elegir alguno de los 2 niveles', () => {
+  it('con la raíz sola (ruta de 1 nodo) todavía no pide nada', () => {
     const fixture = crear();
 
-    fixture.componentInstance['onLineaSeleccionada'](nodo());
+    fixture.componentInstance['onRutaSeleccionada']([nodo()]);
 
     expect(presupuestoFalso.obtenerLogVerificaciones).not.toHaveBeenCalled();
     expect(fixture.componentInstance['filas']()).toEqual([]);
   });
 
-  it('con ambos niveles elegidos, pide el histórico con (tip_cod del segundo nivel, cod_rel de la línea)', () => {
+  it('con 2 niveles en la ruta, pide el histórico con (tip_cod del segundo nivel, cod_rel de la línea)', () => {
     presupuestoFalso.obtenerLogVerificaciones.mockReturnValue(of([]));
     const fixture = crear();
 
-    fixture.componentInstance['onLineaSeleccionada'](nodo({ tip_cod: 7, cod_rel: '231' }));
-    fixture.componentInstance['onSegundoNivelSeleccionado'](nodo({ tip_cod: 99, cod_rel: '5' }));
+    fixture.componentInstance['onRutaSeleccionada']([
+      nodo({ tip_cod: 7, cod_rel: '231' }),
+      nodo({ tip_cod: 99, cod_rel: '5' }),
+    ]);
 
     expect(presupuestoFalso.obtenerLogVerificaciones).toHaveBeenCalledWith(5, '231');
   });
 
-  it('carga las filas del histórico cuando ambos niveles están listos', () => {
+  it('bajando a un tercer nivel la consulta deja de aplicar y la tabla se vacía (como el legado)', () => {
+    const filas: LogVerificacionFila[] = [{ des_rel: 'Línea 1', cod_est: 1, usu_log: 'ana', tim_log: '09:00' }];
+    presupuestoFalso.obtenerLogVerificaciones.mockReturnValue(of(filas));
+    const fixture = crear();
+    fixture.componentInstance['onRutaSeleccionada']([nodo(), nodo({ tip_cod: 99, cod_rel: '5' })]);
+    expect(fixture.componentInstance['filas']()).toEqual(filas);
+
+    presupuestoFalso.obtenerLogVerificaciones.mockClear();
+    fixture.componentInstance['onRutaSeleccionada']([
+      nodo(),
+      nodo({ tip_cod: 99, cod_rel: '5' }),
+      nodo({ tip_cod: 4, cod_rel: '77' }),
+    ]);
+
+    expect(presupuestoFalso.obtenerLogVerificaciones).not.toHaveBeenCalled();
+    expect(fixture.componentInstance['filas']()).toEqual([]);
+  });
+
+  it('carga las filas del histórico cuando la ruta tiene los 2 niveles', () => {
     const filas: LogVerificacionFila[] = [{ des_rel: 'Línea 1', cod_est: 1, usu_log: 'ana', tim_log: '09:00' }];
     presupuestoFalso.obtenerLogVerificaciones.mockReturnValue(of(filas));
     const fixture = crear();
 
-    fixture.componentInstance['onLineaSeleccionada'](nodo());
-    fixture.componentInstance['onSegundoNivelSeleccionado'](nodo({ tip_cod: 99, cod_rel: '5' }));
+    fixture.componentInstance['onRutaSeleccionada']([nodo(), nodo({ tip_cod: 99, cod_rel: '5' })]);
 
     expect(fixture.componentInstance['filas']()).toEqual(filas);
     expect(fixture.componentInstance['cargando']()).toBe(false);
@@ -74,19 +93,18 @@ describe('TableroVerificacionComponent', () => {
     const fixture = crear();
     const errorSpy = vi.spyOn(TestBed.inject(ToastService), 'error');
 
-    fixture.componentInstance['onLineaSeleccionada'](nodo());
-    fixture.componentInstance['onSegundoNivelSeleccionado'](nodo({ tip_cod: 99, cod_rel: '5' }));
+    fixture.componentInstance['onRutaSeleccionada']([nodo(), nodo({ tip_cod: 99, cod_rel: '5' })]);
 
     expect(errorSpy).toHaveBeenCalled();
     expect(fixture.componentInstance['cargando']()).toBe(false);
   });
 
-  it('al elegir un nuevo nivel, limpia el filtro de texto', () => {
+  it('al cambiar la selección, limpia el filtro de texto', () => {
     presupuestoFalso.obtenerLogVerificaciones.mockReturnValue(of([]));
     const fixture = crear();
     fixture.componentInstance['filtro'].set('algo escrito antes');
 
-    fixture.componentInstance['onLineaSeleccionada'](nodo());
+    fixture.componentInstance['onRutaSeleccionada']([nodo()]);
 
     expect(fixture.componentInstance['filtro']()).toBe('');
   });
@@ -100,8 +118,7 @@ describe('TableroVerificacionComponent', () => {
     it('sin filtro, devuelve todas las filas', () => {
       presupuestoFalso.obtenerLogVerificaciones.mockReturnValue(of(filas));
       const fixture = crear();
-      fixture.componentInstance['onLineaSeleccionada'](nodo());
-      fixture.componentInstance['onSegundoNivelSeleccionado'](nodo({ tip_cod: 99, cod_rel: '5' }));
+      fixture.componentInstance['onRutaSeleccionada']([nodo(), nodo({ tip_cod: 99, cod_rel: '5' })]);
 
       expect(fixture.componentInstance['filasFiltradas']()).toEqual(filas);
     });
@@ -109,8 +126,7 @@ describe('TableroVerificacionComponent', () => {
     it('filtra por des_rel, sin distinguir mayúsculas/minúsculas', () => {
       presupuestoFalso.obtenerLogVerificaciones.mockReturnValue(of(filas));
       const fixture = crear();
-      fixture.componentInstance['onLineaSeleccionada'](nodo());
-      fixture.componentInstance['onSegundoNivelSeleccionado'](nodo({ tip_cod: 99, cod_rel: '5' }));
+      fixture.componentInstance['onRutaSeleccionada']([nodo(), nodo({ tip_cod: 99, cod_rel: '5' })]);
 
       fixture.componentInstance['filtro'].set('norte');
 

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChildren } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
@@ -6,7 +6,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { TooltipModule } from 'primeng/tooltip';
-import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
@@ -17,10 +16,15 @@ import type { LogVerificacionFila } from '../../../models/tablero-verificacion.m
 
 /**
  * Tablero de Verificación (`/app/presupuesto/gestion/seguimiento/tbl-ver`) —
- * migrado de `PreGesSegTableroVerificacionComponent` (legado STG). A
- * diferencia de las demás pantallas, necesita DOS niveles de jerarquía
- * elegidos simultáneamente (Línea + un segundo nivel) antes de poder cargar
- * el histórico — es de solo lectura, sin edición ni guardado.
+ * migrado de `PreGesSegTableroVerificacionComponent` (legado STG). Es de solo
+ * lectura, sin edición ni guardado.
+ *
+ * Necesita DOS nodos para consultar, pero salen de UN solo selector: son los
+ * dos primeros niveles de la misma ruta, no dos selecciones independientes.
+ * El legado montaba un único `hier-rem-selector` y consultaba solo cuando la
+ * ruta emitida traía exactamente 2 nodos (`if (evt.length == 2)`, con
+ * `lv = evt[0]` y `tv = evt[1]`); bajar a un tercer nivel vaciaba la tabla.
+ * Se preserva tal cual — ver `HierSelectorComponent.rutaSeleccionada`.
  *
  * El legado hardcodeaba la raíz del árbol (`roots: [{ tip_cod: 7, cod_rel:
  * '231', lvl: 1 }]`, "Financiera Confianza") en vez de pedirla con
@@ -47,7 +51,6 @@ import type { LogVerificacionFila } from '../../../models/tablero-verificacion.m
     SkeletonModule,
     FormsModule,
     TooltipModule,
-    ButtonModule,
     WindowPanelComponent,
   ],
   templateUrl: './tablero-verificacion.component.html',
@@ -63,40 +66,22 @@ export class TableroVerificacionComponent {
 
   protected readonly mostrarFiltros = signal(true);
   protected readonly cargando = signal(false);
-  protected readonly nivelLinea = signal<HierarquiaNodo | null>(null);
-  protected readonly nivelSegundo = signal<HierarquiaNodo | null>(null);
+  /** Última ruta emitida por el selector; se guarda para poder recargar. */
+  private readonly ruta = signal<HierarquiaNodo[]>([]);
   protected readonly filas = signal<LogVerificacionFila[]>([]);
   protected readonly filtro = signal('');
 
   protected readonly filasFiltradas = computed(() => filtrarPorDescripcion(this.filas(), this.filtro()));
   protected readonly totalFilas = computed(() => this.filas().length);
 
-  /** Los dos selectores de la franja, para que un único "Limpiar" los resetee. */
-  private readonly selectores = viewChildren(HierSelectorComponent);
-
-  protected onLineaSeleccionada(nodo: HierarquiaNodo): void {
-    this.nivelLinea.set(nodo);
-    this.cargarSiAmbosNivelesListos();
+  protected onRutaSeleccionada(ruta: HierarquiaNodo[]): void {
+    this.ruta.set(ruta);
+    this.cargarSiLaRutaTieneDosNiveles();
   }
 
-  protected onSegundoNivelSeleccionado(nodo: HierarquiaNodo): void {
-    this.nivelSegundo.set(nodo);
-    this.cargarSiAmbosNivelesListos();
-  }
-
-  /** "Limpiar" único de la franja: resetea ambos selectores y el buscador. */
-  protected limpiarFiltros(): void {
-    this.nivelLinea.set(null);
-    this.nivelSegundo.set(null);
-    this.filas.set([]);
-    this.filtro.set('');
-    // `limpiar()` recarga la raíz y vuelve a emitir, lo que repuebla los niveles.
-    this.selectores().forEach((selector) => selector.limpiar());
-  }
-
-  /** Botón "Actualizar" de la ventana: relee el histórico de los niveles elegidos. */
+  /** Botón "Actualizar" de la ventana: relee el histórico de la ruta elegida. */
   protected recargar(): void {
-    this.cargarSiAmbosNivelesListos();
+    this.cargarSiLaRutaTieneDosNiveles();
   }
 
   protected estadoIcono(codEst: number): { icono: string; color: string; titulo: string } {
@@ -105,15 +90,18 @@ export class TableroVerificacionComponent {
       : { icono: 'pi pi-circle-fill', color: '#fe2712', titulo: 'Pendiente' };
   }
 
-  private cargarSiAmbosNivelesListos(): void {
-    const lv = this.nivelLinea();
-    const tv = this.nivelSegundo();
+  private cargarSiLaRutaTieneDosNiveles(): void {
+    const ruta = this.ruta();
     this.filtro.set('');
 
-    if (!lv || !tv) {
+    // Exactamente 2, como el legado: con la raíz sola todavía no hay qué pedir,
+    // y bajando más niveles la consulta deja de aplicar.
+    if (ruta.length !== 2) {
       this.filas.set([]);
       return;
     }
+
+    const [lv, tv] = ruta;
 
     this.cargando.set(true);
     this.presupuesto.obtenerLogVerificaciones(Number(tv.cod_rel), lv.cod_rel).subscribe({

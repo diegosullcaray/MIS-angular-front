@@ -21,23 +21,7 @@ export class HierSelectorComponent implements OnInit {
   private readonly presupuesto = inject(PresupuestoService);
 
   readonly paramsHier = input.required<ParamsJerarquia>();
-  /**
-   * Título del bloque. Vacío (default) no dibuja encabezado — es lo que quieren
-   * las pantallas con un único selector. Las que montan DOS selectores sobre la
-   * misma jerarquía (Tablero de Verificación: línea + segundo nivel) lo
-   * necesitan sí o sí: sin él se ven dos bloques de filtros idénticos y no hay
-   * forma de saber cuál es cuál.
-   */
-  readonly titulo = input('');
-  /**
-   * `false` quita el marco propio (fondo, borde, padding) para poder montar
-   * varios selectores dentro de UNA sola franja de filtros — si cada uno trae
-   * su caja, la pantalla se ve con el filtro duplicado. Igual criterio que en
-   * Reportes, donde la franja es siempre una sola.
-   */
-  readonly conMarco = input(true);
-  /** `false` cuando la pantalla ofrece un único "Limpiar" para todos los selectores. */
-  readonly mostrarLimpiar = input(true);
+  readonly placeholder = input('Elegir jerarquía');
   readonly raizFija = input<HierarquiaNodo[] | null>(null);
   /**
    * `true` (default): la raíz queda preseleccionada y se emite al cargar, así la
@@ -49,6 +33,14 @@ export class HierSelectorComponent implements OnInit {
    */
   readonly autoSeleccionar = input(true);
   readonly nodoSeleccionado = output<HierarquiaNodo>();
+  /**
+   * Ruta completa seleccionada, de la raíz al nivel elegido — el equivalente
+   * del array que emitía `hier-rem-selector` en el legado. La usan las
+   * pantallas que necesitan más de un nodo a la vez (Tablero de Verificación
+   * consulta con los DOS primeros niveles), en vez de montar un segundo
+   * selector sobre la misma jerarquía.
+   */
+  readonly rutaSeleccionada = output<HierarquiaNodo[]>();
   /** Emite cuando la jerarquía no pudo cargarse o vino vacía (ni error HTTP ni nodo alguno) — único caso en que este componente nunca llega a emitir `nodoSeleccionado`. */
   readonly error = output<void>();
 
@@ -163,6 +155,9 @@ export class HierSelectorComponent implements OnInit {
     if (this.autoSeleccionar()) {
       this.nodoSeleccionado.emit(primerNodo);
     }
+    // La ruta sí se emite siempre: una pantalla que espera N niveles necesita
+    // saber que volvió a quedar en 1 (ej. tras "Limpiar") para vaciar su tabla.
+    this.rutaSeleccionada.emit([primerNodo]);
 
     const proximoNivel = (primerNodo.lvl ?? lvl) + 1;
     if (proximoNivel <= this.paramsHier().maxLvl) {
@@ -218,6 +213,7 @@ export class HierSelectorComponent implements OnInit {
     this.valoresSeleccionados.set(nuevosValores);
 
     this.nodoSeleccionado.emit(val);
+    this.rutaSeleccionada.emit(nuevosValores.filter((n): n is HierarquiaNodo => n !== null));
 
     const proximoNivel = (val.lvl ?? index + 1) + 1;
     if (proximoNivel <= this.paramsHier().maxLvl) {
