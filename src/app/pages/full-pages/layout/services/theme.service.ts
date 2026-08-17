@@ -5,8 +5,16 @@ export type ModoTema = 'claro' | 'oscuro' | 'sistema';
 const STORAGE_KEY = 'mis-tema';
 const MODOS: readonly ModoTema[] = ['claro', 'oscuro', 'sistema'];
 
+/** Tema con el que arranca el sistema mientras el usuario no elija otro. */
+const MODO_POR_DEFECTO: ModoTema = 'oscuro';
+
 /**
  * Tema claro/oscuro del Host.
+ *
+ * Arranca en `oscuro` (`MODO_POR_DEFECTO`) — no en `sistema` — y solo cambia
+ * si el usuario elige un tema; esa elección queda guardada y manda sobre el
+ * arranque. El mismo valor lo replica el script de `index.html` para pintar la
+ * clase `.dark` antes del primer frame.
  *
  * `oscuro` se aplica como clase `.dark` en `<html>` — el mismo selector que
  * declara `providePrimeNG({ theme: { options: { darkModeSelector } } })`, así
@@ -58,9 +66,9 @@ export class ThemeService {
   private leerPreferencia(): ModoTema {
     try {
       const guardado = localStorage.getItem(STORAGE_KEY);
-      return MODOS.includes(guardado as ModoTema) ? (guardado as ModoTema) : 'sistema';
+      return MODOS.includes(guardado as ModoTema) ? (guardado as ModoTema) : MODO_POR_DEFECTO;
     } catch {
-      return 'sistema';
+      return MODO_POR_DEFECTO;
     }
   }
 

@@ -20,9 +20,11 @@ describe('KaypachaTourService', () => {
     expect(driverFalso.createQuickTour).toHaveBeenCalledTimes(1);
     const pasos = driverFalso.createQuickTour.mock.calls[0][0] as Array<{ element: string }>;
     expect(pasos.map((p) => p.element)).toEqual([
-      '#tour-kaypacha-header',
+      // La barra de título y el botón de actualizar los pinta `app-window-panel`
+      // dentro del panel, así que se apuntan por clase bajo el id del módulo.
+      '#tour-kaypacha-header .mis-window-bar',
       '#tour-kaypacha-cambiar-btn',
-      '#tour-kaypacha-limpiar-btn',
+      '#tour-kaypacha-header .mis-window-btn--esquina',
       '#tour-kaypacha-tour-btn',
       '#tour-kaypacha-asesor-info',
       '#tour-kaypacha-kpi-cards',

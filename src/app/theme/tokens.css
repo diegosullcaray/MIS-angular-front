@@ -3,6 +3,9 @@
   --mis-header-h: 56px;
   --mis-sidebar-col1-w: 64px;
 
+  /* Barra de título de los paneles de módulo (ventana estilo macOS). */
+  --mis-window-bar-h: 40px;
+
   /* Fuente principal: Anek Latin con fallback macOS/Inter */
   --mis-font-family: 'Anek Latin', 'Anek Devanagari', -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
 
@@ -33,11 +36,21 @@
   /* ------------------------------------- */
   --mis-bg: #F4F6F9;
   --mis-surface: #FFFFFF;
-  --mis-sidebar-bg: #1D396E;
-  --mis-nav-panel-bg: rgba(235, 241, 248, 0.95);
+  /* Rail de sistemas (Col 1): navy translúcido sobre el wallpaper. El alfa alto
+     + `--mis-sidebar-blur` mantienen la tonalidad navy aunque deje pasar la
+     foto de fondo — ver `.sidebar-rail` en sidebar.component.css. */
+  --mis-sidebar-bg: rgba(29, 57, 110, 0.84);
+  --mis-sidebar-blur: saturate(180%) blur(28px);
+  --mis-nav-panel-bg: rgba(235, 241, 248, 0.78);
   --mis-panel-bg: #F8FAFC;
   --mis-border: rgba(29,57,110,0.10);
   --mis-border-strong: rgba(29,57,110,0.20);
+
+  /* Cromo de ventana macOS de los paneles de módulo (`.mis-window`). */
+  --mis-window-bar-bg: linear-gradient(180deg, rgba(252,253,255,0.92) 0%, rgba(238,242,248,0.88) 100%);
+  --mis-window-bar-border: rgba(29, 57, 110, 0.12);
+  --mis-window-btn-hover: rgba(29, 57, 110, 0.08);
+  --mis-window-btn-active: rgba(29, 57, 110, 0.16);
 
   /* Superficies translúcidas sobre el wallpaper (header, tarjetas del shell). */
   --mis-surface-translucido: rgba(255,255,255,0.85);
@@ -133,17 +146,27 @@
 .dark {
   --mis-bg: #0E1626;
   --mis-surface: #162034;
-  --mis-sidebar-bg: #09101D;
-  --mis-nav-panel-bg: rgba(22, 34, 56, 0.85);
+  /* Mismo criterio que en claro: translúcido pero sin perder el navy profundo
+     del rail — acá el velo del wallpaper ya oscurece lo que se transparenta. */
+  --mis-sidebar-bg: rgba(9, 16, 29, 0.72);
+  --mis-nav-panel-bg: rgba(22, 34, 56, 0.70);
   --mis-panel-bg: #1A2740;
   --mis-border: rgba(0,162,255,0.14);
   --mis-border-strong: rgba(0,162,255,0.28);
+
+  --mis-window-bar-bg: linear-gradient(180deg, rgba(38,52,79,0.92) 0%, rgba(26,37,58,0.88) 100%);
+  --mis-window-bar-border: rgba(255, 255, 255, 0.10);
+  --mis-window-btn-hover: rgba(255, 255, 255, 0.10);
+  --mis-window-btn-active: rgba(255, 255, 255, 0.18);
 
   --mis-surface-translucido: rgba(22,34,56,0.85);
   --mis-surface-elevado: rgba(26,40,66,0.95);
   --mis-glass-bg: rgba(22,32,52,0.72);
   --mis-glass-border: rgba(255,255,255,0.08);
-  --mis-wallpaper-velo: rgba(8,14,26,0.94);
+  /* Un poco menos opaco que antes (0.94): con el sidebar translúcido, el velo
+     tiene que dejar algo de wallpaper debajo o el vidrio no se distingue de
+     una superficie sólida en oscuro. */
+  --mis-wallpaper-velo: rgba(8,14,26,0.90);
   --mis-overlay-bg: rgba(8,14,26,0.78);
   --mis-hover-bg: rgba(0,162,255,0.08);
   --mis-scrollbar-thumb: rgba(0,162,255,0.25);

@@ -11,10 +11,11 @@ export class KaypachaTourService {
   iniciarTourGuiado(): void {
     const pasos: DriveStep[] = [
       {
-        element: '#tour-kaypacha-header',
+        element: '#tour-kaypacha-header .mis-window-bar',
         popover: {
           title: '🚀 Tablero Kaypacha',
-          description: 'Bienvenido al tablero principal de Kaypacha. Consulta el desempeño y métricas en tiempo real.',
+          description:
+            'Bienvenido al tablero principal de Kaypacha. Esta es la barra de la ventana: desde el semáforo de la izquierda puedes cerrar la vista, minimizarla o verla en pantalla completa.',
           side: 'bottom',
           align: 'start',
         },
@@ -29,12 +30,12 @@ export class KaypachaTourService {
         },
       },
       {
-        element: '#tour-kaypacha-limpiar-btn',
+        element: '#tour-kaypacha-header .mis-window-btn--esquina',
         popover: {
-          title: '🧹 Limpiar Todo',
-          description: 'Restablece las vistas y recarga la información por defecto del usuario activo.',
+          title: '🔄 Actualizar',
+          description: 'En la esquina de la ventana: restablece las vistas y recarga la información del usuario activo.',
           side: 'bottom',
-          align: 'center',
+          align: 'end',
         },
       },
       {

@@ -93,7 +93,7 @@ app/
 │   └── modules/                 un directorio POR MÓDULO DE NEGOCIO — ver §5
 ├── shared/                    reutilizable entre módulos, sin lógica de negocio propia
 │   ├── services/                 p.ej. ToastService
-│   ├── ui/                       componentes de presentación (list-skeleton, inline-error…)
+│   ├── ui/                       componentes de presentación (window-panel, list-skeleton, inline-error…)
 │   └── utils/                    funciones puras (formato.util.ts, dom.util.ts)
 └── theme/                     preset PrimeNG (MisTheme)
 ```

@@ -1,0 +1,84 @@
+<div class="mis-window" [class.mis-window--minimizada]="minimizada()">
+  <!-- Barra de título: pegada al borde del panel, sin márgenes propios. -->
+  <header class="mis-window-bar">
+    <!-- Semáforo (izquierda) -->
+    <div class="mis-window-lights" role="group" aria-label="Controles de la ventana">
+      @if (mostrarSemaforo()) {
+        <button
+          type="button"
+          class="mis-window-light mis-window-light--cerrar"
+          data-glifo="✕"
+          (click)="onCerrar()"
+          aria-label="Cerrar el panel"
+          pTooltip="Cerrar"
+          tooltipPosition="bottom"
+        ></button>
+        <button
+          type="button"
+          class="mis-window-light mis-window-light--minimizar"
+          data-glifo="−"
+          (click)="alternarMinimizado()"
+          [attr.aria-label]="etiquetaMinimizar()"
+          [attr.aria-pressed]="minimizada()"
+          [pTooltip]="etiquetaMinimizar()"
+          tooltipPosition="bottom"
+        ></button>
+        <button
+          type="button"
+          class="mis-window-light mis-window-light--zoom"
+          data-glifo="⤢"
+          (click)="alternarPantallaCompleta()"
+          [attr.aria-label]="etiquetaZoom()"
+          [attr.aria-pressed]="pantallaCompleta()"
+          [pTooltip]="etiquetaZoom()"
+          tooltipPosition="bottom"
+        ></button>
+      }
+    </div>
+
+    <!-- Título centrado, con el ícono/logo del módulo como "proxy icon" de Finder -->
+    <div class="mis-window-title">
+      @if (logo()) {
+        <img class="mis-window-logo" [src]="logo()" [alt]="logoAlt() || titulo()" />
+      } @else if (icono()) {
+        <i class="mis-window-icon" [class]="icono()" aria-hidden="true"></i>
+      }
+      @if (titulo()) {
+        <h1 class="mis-window-titulo">{{ titulo() }}</h1>
+      }
+      @if (subtitulo()) {
+        <span class="mis-window-subtitulo">{{ subtitulo() }}</span>
+      }
+    </div>
+
+    <!-- Acciones: las del módulo primero, "Actualizar" pegado a la esquina -->
+    <div class="mis-window-actions">
+      <ng-content select="[ventana-acciones]" />
+
+      @if (permitirActualizar()) {
+        <button
+          type="button"
+          class="mis-window-btn mis-window-btn--esquina"
+          (click)="onActualizar()"
+          [disabled]="actualizando()"
+          [attr.aria-label]="etiquetaActualizar()"
+          [attr.aria-busy]="actualizando()"
+          [pTooltip]="etiquetaActualizar()"
+          tooltipPosition="bottom"
+        >
+          <ng-icon name="lucideRefreshCw" size="15" [class.mis-window-girando]="actualizando()" />
+        </button>
+      }
+    </div>
+  </header>
+
+  <!-- Cuerpo: se oculta con CSS al minimizar (no se destruye) para no perder
+       el estado del contenido proyectado — filtros, scroll, tablas cargadas. -->
+  <div
+    class="mis-window-body"
+    [class.mis-window-body--relleno]="conRelleno()"
+    [class.mis-window-body--oculto]="minimizada()"
+  >
+    <ng-content />
+  </div>
+</div>

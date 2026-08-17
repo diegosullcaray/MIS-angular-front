@@ -2,6 +2,37 @@
   display: contents;
 }
 
+/* Rail de sistemas (Col 1): vidrio esmerilado sobre el wallpaper.
+   `--mis-sidebar-bg` es translúcido, y el blur + saturate son los que evitan
+   que la foto de fondo se "cuele" y le baje la tonalidad navy al rail —
+   mismo criterio en claro y en oscuro, cambia solo el tono base del token. */
+.sidebar-rail {
+  background: var(--mis-sidebar-bg);
+  backdrop-filter: var(--mis-sidebar-blur);
+  -webkit-backdrop-filter: var(--mis-sidebar-blur);
+}
+
+/* Flechas de desplazamiento de la barra inferior (mobile): mismo material que
+   el rail, pero difuminando los íconos que quedan debajo para que se lea el
+   corte del scroll en vez de un choque de íconos. */
+.sidebar-rail-edge {
+  background: var(--mis-sidebar-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Sin soporte de backdrop-filter la translucidez dejaría el rail ilegible:
+   se cae a un navy sólido en vez de arriesgar el contraste de los íconos. */
+@supports not (backdrop-filter: blur(1px)) {
+  .sidebar-rail {
+    background: #1d396e;
+  }
+
+  :host-context(.dark) .sidebar-rail {
+    background: #09101d;
+  }
+}
+
 .scrollbar-none {
   scrollbar-width: none;
 }

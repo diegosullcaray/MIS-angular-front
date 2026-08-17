@@ -22,11 +22,19 @@ describe('ThemeService', () => {
     })) as unknown as typeof window.matchMedia;
   });
 
-  it('arranca en modo "sistema" cuando no hay preferencia guardada', () => {
-    expect(crear().modo()).toBe('sistema');
+  it('arranca en oscuro cuando no hay preferencia guardada, sin mirar al sistema', () => {
+    // El SO está en claro y aun así el sistema arranca oscuro: es el tema por
+    // defecto del producto, no un reflejo de `prefers-color-scheme`.
+    mediaOscuro = false;
+    const theme = crear();
+
+    expect(theme.modo()).toBe('oscuro');
+    expect(theme.oscuro()).toBe(true);
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
   it('en modo "sistema" sigue a prefers-color-scheme', () => {
+    localStorage.setItem('mis-tema', 'sistema');
     mediaOscuro = true;
     const theme = crear();
 
@@ -35,6 +43,7 @@ describe('ThemeService', () => {
   });
 
   it('aplica y quita la clase .dark en <html> al cambiar de modo', () => {
+    localStorage.setItem('mis-tema', 'claro');
     const theme = crear();
     expect(document.documentElement.classList.contains('dark')).toBe(false);
 
@@ -46,13 +55,14 @@ describe('ThemeService', () => {
   });
 
   it('persiste la preferencia y la recupera en la siguiente sesión', () => {
-    crear().setModo('oscuro');
+    crear().setModo('claro');
     TestBed.resetTestingModule();
 
-    expect(crear().modo()).toBe('oscuro');
+    expect(crear().modo()).toBe('claro');
   });
 
   it('alternar() usa el tema visible como punto de partida', () => {
+    localStorage.setItem('mis-tema', 'sistema');
     mediaOscuro = true;
     const theme = crear();
 
@@ -64,8 +74,8 @@ describe('ThemeService', () => {
     expect(theme.modo()).toBe('oscuro');
   });
 
-  it('ignora un valor corrupto en localStorage', () => {
+  it('ignora un valor corrupto en localStorage y cae al tema por defecto', () => {
     localStorage.setItem('mis-tema', 'turquesa');
-    expect(crear().modo()).toBe('sistema');
+    expect(crear().modo()).toBe('oscuro');
   });
 });

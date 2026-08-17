@@ -1,5 +1,29 @@
-<div
-  class="mis-page">
+<!-- Panel de módulo como ventana macOS: la barra de título va pegada al borde
+     del panel (semáforo, logo centrado y "Actualizar" en la esquina) y el
+     contenido del tablero se proyecta como cuerpo de la ventana. -->
+<app-window-panel
+  id="tour-kaypacha-header"
+  logo="assets/images/fc/modules/kaypacha/logo.png"
+  logoAlt="Kaypacha"
+  subtitulo="Plataforma de desempeño"
+  [actualizando]="service.loading()"
+  etiquetaActualizar="Actualizar tablero"
+  (actualizar)="limpiarTodo()"
+>
+  <!-- Acción propia del módulo, a la izquierda del botón de la esquina -->
+  <button
+    ventana-acciones
+    id="tour-kaypacha-tour-btn"
+    type="button"
+    class="mis-window-btn"
+    (click)="iniciarTour()"
+    aria-label="Iniciar tour guiado interactivo"
+    pTooltip="Iniciar tour guiado interactivo"
+    tooltipPosition="bottom"
+  >
+    <i class="pi pi-question-circle text-[15px]"></i>
+  </button>
+
   @if (service.loading()) {
   <div class="p-6 bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)]">
     <app-list-skeleton [rows]="[1, 2, 3, 4, 5, 6]" />
@@ -10,32 +34,6 @@
       (reintentar)="service.cargarDatos()" />
   </div>
   } @else {
-  <!-- Header Banner: Logo Kaypacha a la Izquierda y Botones de Acción a la Derecha -->
-  <header id="tour-kaypacha-header"
-    class="bg-[var(--mis-surface)] rounded-xl p-2.5 sm:p-3 shadow-xs border border-[var(--mis-border)] flex flex-col md:flex-row items-center justify-between gap-3 relative overflow-hidden">
-    <!-- Glow decorativo superior -->
-    <div class="absolute -top-12 -left-12 w-48 h-48 bg-[#035096]/10 rounded-full blur-3xl pointer-events-none"></div>
-
-    <!-- Izquierda: Logo Kaypacha -->
-    <div class="flex items-center gap-3 z-10">
-      <img src="assets/images/fc/modules/kaypacha/logo.png" alt="Logo Kaypacha"
-        class="max-h-10 sm:max-h-12 w-auto object-contain transition-transform hover:scale-105" />
-    </div>
-
-    <!-- Derecha: Botones de acción auxiliares (Limpiar Todo, Tour Guiado) -->
-    <div class="z-10 flex items-center justify-end gap-2">
-      <!-- Botón Limpiar Todo (Solo Ícono) -->
-      <p-button id="tour-kaypacha-limpiar-btn" icon="pi pi-refresh" [rounded]="true" [outlined]="true"
-        severity="secondary" size="small" pTooltip="Limpiar todo / Restablecer" tooltipPosition="bottom"
-        (onClick)="limpiarTodo()"></p-button>
-
-      <!-- Botón Tour Guiado Driver.js (Solo Ícono) -->
-      <p-button id="tour-kaypacha-tour-btn" icon="pi pi-question-circle" [rounded]="true" [outlined]="true"
-        severity="help" size="small" pTooltip="Iniciar tour guiado interactivo" tooltipPosition="bottom"
-        (onClick)="iniciarTour()"></p-button>
-    </div>
-  </header>
-
   <!-- Ficha Asesor, Cargo, Medalla al costado y Tarjetas KPI compactas con PrimeNG -->
   <section class="bg-[var(--mis-surface)] rounded-2xl p-4 sm:p-5 shadow-sm border border-[var(--mis-border)]">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
@@ -294,4 +292,4 @@
   <!-- Modal Dialog Buscador Colaborador -->
   <app-buscador-colaborador-dialog [(visible)]="mostrarDialogBuscador"
     (colaboradorSeleccionado)="onColaboradorSeleccionado($event)" />
-</div>
+</app-window-panel>

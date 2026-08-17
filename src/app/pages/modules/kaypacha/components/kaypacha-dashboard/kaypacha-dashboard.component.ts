@@ -11,6 +11,7 @@ import { KaypachaTourService } from '../../services/kaypacha-tour.service';
 import { BuscadorColaboradorDialogComponent } from '../../ui/buscador-colaborador-dialog/buscador-colaborador-dialog.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.model';
 
 /** Componente principal del tablero Kaypacha. */
@@ -27,6 +28,7 @@ import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.
     NgStyle,
     ListSkeletonComponent,
     InlineErrorComponent,
+    WindowPanelComponent,
     BuscadorColaboradorDialogComponent,
   ],
   templateUrl: './kaypacha-dashboard.component.html',

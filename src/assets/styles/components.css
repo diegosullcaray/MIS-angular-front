@@ -44,6 +44,234 @@
   min-height: 0;
 }
 
+/* ── Ventana de módulo (cromo macOS) ──────────────────────────
+   Cromo del panel de módulo: barra de título pegada al borde (semáforo,
+   título centrado y "Actualizar" en la esquina) sobre el cuerpo de vidrio.
+   Lo renderiza `app-window-panel` (shared/ui/window-panel); las clases viven
+   acá —y no en el CSS del componente— porque las acciones proyectadas por
+   cada módulo pertenecen al scope de la plantilla que las escribe. */
+.mis-window {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  /* Mismo alto de referencia que `.mis-page`: llena la zona de contenido del
+     shell sin forzar scroll cuando el módulo trae poco contenido. */
+  min-height: calc(100vh - 130px);
+  overflow: hidden;
+  background: var(--mis-glass-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--mis-glass-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: var(--mis-shadow-lg);
+}
+
+/* Barra de título. `grid` de 3 columnas (no flex) para que el título quede
+   ópticamente centrado en la ventana aunque el semáforo y las acciones tengan
+   anchos distintos, igual que en una ventana de macOS. */
+.mis-window-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--mis-space-2);
+  height: var(--mis-window-bar-h);
+  min-height: var(--mis-window-bar-h);
+  padding: 0 var(--mis-space-2) 0 var(--mis-space-3);
+  background: var(--mis-window-bar-bg);
+  border-bottom: 1px solid var(--mis-window-bar-border);
+  user-select: none;
+}
+
+/* ── Semáforo ─────────────────────────────────────────────── */
+.mis-window-lights {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mis-window-light {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--mis-radius-full);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Aro interior: separa la luz del fondo claro sin usar un borde real. */
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.18);
+  transition: filter var(--mis-transition-fast);
+}
+
+.mis-window-light::before {
+  content: attr(data-glifo);
+  font-size: 8px;
+  line-height: 1;
+  font-weight: var(--mis-font-bold);
+  color: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity var(--mis-transition-fast);
+}
+
+/* Los glifos aparecen al pasar por el grupo, no por cada luz (macOS). */
+.mis-window-lights:hover .mis-window-light::before,
+.mis-window-light:focus-visible::before {
+  opacity: 1;
+}
+
+.mis-window-light:active {
+  filter: brightness(0.85);
+}
+
+.mis-window-light--cerrar { background: #ff5f57; }
+.mis-window-light--minimizar { background: #febc2e; }
+.mis-window-light--zoom { background: #28c840; }
+
+/* ── Título ───────────────────────────────────────────────── */
+.mis-window-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mis-space-2);
+  min-width: 0;
+}
+
+.mis-window-logo {
+  height: 22px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.mis-window-icon {
+  font-size: 14px;
+  color: var(--mis-primary-text);
+  flex-shrink: 0;
+}
+
+.mis-window-titulo {
+  margin: 0;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mis-window-subtitulo {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* En pantallas angostas el título cede espacio a las acciones. */
+@media (max-width: 640px) {
+  .mis-window-subtitulo {
+    display: none;
+  }
+}
+
+/* ── Acciones de la barra ─────────────────────────────────── */
+.mis-window-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--mis-space-1);
+  min-width: 0;
+}
+
+/* Botón de la barra de título (también para las acciones que proyecta cada
+   módulo, ej. el tour guiado de Kaypacha). */
+.mis-window-btn {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--mis-radius-sm);
+  background: transparent;
+  color: var(--mis-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast), color var(--mis-transition-fast);
+}
+
+.mis-window-btn:hover:not(:disabled) {
+  background: var(--mis-window-btn-hover);
+  color: var(--mis-text-primary);
+}
+
+.mis-window-btn:active:not(:disabled) {
+  background: var(--mis-window-btn-active);
+}
+
+.mis-window-btn:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
+/* El de la esquina se pega al borde derecho de la ventana. */
+.mis-window-btn--esquina {
+  margin-right: calc(-1 * var(--mis-space-1));
+}
+
+.mis-window-girando {
+  animation: mis-window-girar 0.9s linear infinite;
+}
+
+@keyframes mis-window-girar {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Cuerpo ───────────────────────────────────────────────── */
+.mis-window-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--mis-space-4);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.mis-window-body--relleno {
+  padding: var(--mis-space-3);
+}
+
+@media (min-width: 640px) {
+  .mis-window-body {
+    gap: var(--mis-space-5);
+  }
+  .mis-window-body--relleno {
+    padding: var(--mis-space-5);
+  }
+}
+
+/* Minimizado: queda solo la barra de título. Se oculta con CSS (no con @if)
+   para conservar el estado del contenido — scroll, filtros, tablas cargadas. */
+.mis-window-body--oculto {
+  display: none;
+}
+
+.mis-window--minimizada {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mis-window-girando {
+    animation-duration: 2.4s;
+  }
+}
+
 /* ── Panel de navegación (Col 2 del sidebar) ──────────────────
    Estilo de superficie para el panel secundario de navegación. */
 .mis-nav-panel {

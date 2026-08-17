@@ -1,0 +1,25 @@
+/* El cromo (`.mis-window*`) vive en `assets/styles/components.css`: es un
+   estilo del sistema de diseño reutilizable por cualquier módulo, y las
+   acciones proyectadas (`[ventana-acciones]`) pertenecen al scope del padre,
+   así que no las alcanzarían estilos encapsulados de este componente. */
+:host {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+/* En pantalla completa el panel pasa a ser la ventana entera: sin bordes
+   redondeados ni sombra flotante, y ocupando todo el alto disponible. */
+:host(:fullscreen) {
+  background: var(--mis-bg);
+  padding: 0;
+}
+
+:host(:fullscreen) .mis-window {
+  height: 100%;
+  min-height: 0;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  box-shadow: none;
+}

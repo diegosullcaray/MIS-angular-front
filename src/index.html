@@ -14,6 +14,24 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="MIS">
+
+  <!-- Tema antes del primer frame: sin esto se ve un destello claro entre que
+       el navegador pinta el CSS y Angular arranca `ThemeService`. Replica su
+       lógica (preferencia guardada, o `oscuro` por defecto) — si cambia el
+       modo por defecto del servicio, hay que cambiarlo también acá. -->
+  <script>
+    (function () {
+      var oscuro = true;
+      try {
+        var guardado = localStorage.getItem('mis-tema');
+        if (guardado === 'claro') oscuro = false;
+        else if (guardado === 'sistema') oscuro = matchMedia('(prefers-color-scheme: dark)').matches;
+      } catch (e) { /* storage bloqueado: se queda con el tema por defecto */ }
+
+      if (oscuro) document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = oscuro ? 'dark' : 'light';
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>
