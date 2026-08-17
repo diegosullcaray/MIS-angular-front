@@ -3,19 +3,24 @@ import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
 import { TooltipModule } from 'primeng/tooltip';
+import { ShellStateService } from '../../../core/services/shell-state.service';
+
+/** Destino de la luz roja: el inicio del shell. */
+const RUTA_HOME = '/app/dashboard';
 
 /**
  * Panel de módulo con cromo de ventana macOS (estilo explorador de archivos).
  *
  * Reemplaza al patrón anterior de "banner de módulo" (una tarjeta interna con
- * márgenes propios) por una barra de título pegada al borde del panel:
- * semáforo a la izquierda, título centrado y acciones a la derecha, con el
- * botón de actualizar en la esquina.
+ * márgenes propios) por una barra de título pegada al borde del panel: solo
+ * texto centrado —sin íconos ni logos— con el semáforo a la izquierda y
+ * "Actualizar" en la esquina.
  *
- * El semáforo no es decorativo — cada luz hace lo que hace en macOS, adaptado
- * a una pantalla del shell:
- *   - rojo     → cerrar la vista (navega a `rutaAlCerrar`),
- *   - amarillo → minimizar (colapsa el cuerpo y deja solo la barra),
+ * El semáforo no es decorativo — cada luz hace lo que hace en macOS, traducido
+ * a la navegación del shell:
+ *   - rojo     → cerrar la pantalla y volver al inicio,
+ *   - amarillo → minimizar: deja el panel neutro ("selecciona una opción…") con
+ *                el menú secundario abierto, para elegir otra pantalla,
  *   - verde    → zoom (pantalla completa del panel).
  *
  * Uso:
@@ -37,17 +42,12 @@ import { TooltipModule } from 'primeng/tooltip';
 export class WindowPanelComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly router = inject(Router);
+  private readonly shell = inject(ShellStateService);
 
   /** Título de la ventana (centrado en la barra, como en Finder). */
   readonly titulo = input<string>('');
-  /** Texto secundario bajo el título (ej. "Actualizado hace 2 min"). */
+  /** Texto secundario junto al título (ej. "Consultas y referencias"). */
   readonly subtitulo = input<string>('');
-  /** Clase de ícono PrimeIcons a la izquierda del título (ej. `pi pi-chart-bar`). */
-  readonly icono = input<string>('');
-  /** Logo del módulo; tiene prioridad sobre `icono` si vienen ambos. */
-  readonly logo = input<string>('');
-  /** Texto alternativo del logo (accesibilidad). */
-  readonly logoAlt = input<string>('');
 
   /** Muestra el botón de actualizar en la esquina. */
   readonly permitirActualizar = input<boolean>(true);
@@ -61,21 +61,14 @@ export class WindowPanelComponent {
   /** Padding interno del cuerpo; `false` para contenido a sangre (tablas). */
   readonly conRelleno = input<boolean>(true);
 
-  /**
-   * Destino de la luz roja. Vacío desactiva la navegación: el panel solo emite
-   * `cerrar` y el módulo decide qué hacer.
-   */
-  readonly rutaAlCerrar = input<string>('/app/dashboard');
-
   readonly actualizar = output<void>();
+  /** Se emite al pulsar la luz roja, antes de navegar al inicio. */
   readonly cerrar = output<void>();
+  /** Se emite al pulsar la luz amarilla, antes de volver al panel neutro. */
+  readonly minimizar = output<void>();
 
-  protected readonly minimizada = signal(false);
   protected readonly pantallaCompleta = signal(false);
 
-  protected readonly etiquetaMinimizar = computed(() =>
-    this.minimizada() ? 'Restaurar el contenido del panel' : 'Minimizar el panel'
-  );
   protected readonly etiquetaZoom = computed(() =>
     this.pantallaCompleta() ? 'Salir de pantalla completa' : 'Ver en pantalla completa'
   );
@@ -91,16 +84,24 @@ export class WindowPanelComponent {
     });
   }
 
-  /** Luz roja: cierra la vista y vuelve a la ruta configurada. */
+  /** Luz roja: cierra la pantalla y vuelve al inicio del shell. */
   protected onCerrar(): void {
     this.cerrar.emit();
-    const destino = this.rutaAlCerrar();
-    if (destino) void this.router.navigateByUrl(destino);
+    void this.router.navigateByUrl(RUTA_HOME);
   }
 
-  /** Luz amarilla: colapsa el cuerpo dejando visible solo la barra de título. */
-  protected alternarMinimizado(): void {
-    this.minimizada.update((v) => !v);
+  /**
+   * Luz amarilla: "minimizar" la pantalla dentro del shell.
+   *
+   * No colapsa el panel: deja el estado de espera del shell —el panel neutro
+   * con "Selecciona una opción del panel secundario a la izquierda"— y abre ese
+   * menú, que es de donde se elige la siguiente pantalla del módulo. La ruta no
+   * cambia, así que el contenido vuelve intacto al elegir una opción.
+   */
+  protected onMinimizar(): void {
+    this.minimizar.emit();
+    this.shell.setNavPanelColapsado(false);
+    this.shell.setContenidoPendienteSeleccion(true);
   }
 
   /**

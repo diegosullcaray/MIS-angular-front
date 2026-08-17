@@ -1,4 +1,4 @@
-<div class="mis-window" [class.mis-window--minimizada]="minimizada()">
+<div class="mis-window">
   <!-- Barra de título: pegada al borde del panel, sin márgenes propios. -->
   <header class="mis-window-bar">
     <!-- Semáforo (izquierda) -->
@@ -9,18 +9,17 @@
           class="mis-window-light mis-window-light--cerrar"
           data-glifo="✕"
           (click)="onCerrar()"
-          aria-label="Cerrar el panel"
-          pTooltip="Cerrar"
+          aria-label="Cerrar y volver al inicio"
+          pTooltip="Cerrar y volver al inicio"
           tooltipPosition="bottom"
         ></button>
         <button
           type="button"
           class="mis-window-light mis-window-light--minimizar"
           data-glifo="−"
-          (click)="alternarMinimizado()"
-          [attr.aria-label]="etiquetaMinimizar()"
-          [attr.aria-pressed]="minimizada()"
-          [pTooltip]="etiquetaMinimizar()"
+          (click)="onMinimizar()"
+          aria-label="Minimizar y elegir otra opción del menú lateral"
+          pTooltip="Minimizar: elegir otra opción del menú"
           tooltipPosition="bottom"
         ></button>
         <button
@@ -36,13 +35,8 @@
       }
     </div>
 
-    <!-- Título centrado, con el ícono/logo del módulo como "proxy icon" de Finder -->
+    <!-- Título centrado: solo texto, sin ícono ni logo -->
     <div class="mis-window-title">
-      @if (logo()) {
-        <img class="mis-window-logo" [src]="logo()" [alt]="logoAlt() || titulo()" />
-      } @else if (icono()) {
-        <i class="mis-window-icon" [class]="icono()" aria-hidden="true"></i>
-      }
       @if (titulo()) {
         <h1 class="mis-window-titulo">{{ titulo() }}</h1>
       }
@@ -72,13 +66,7 @@
     </div>
   </header>
 
-  <!-- Cuerpo: se oculta con CSS al minimizar (no se destruye) para no perder
-       el estado del contenido proyectado — filtros, scroll, tablas cargadas. -->
-  <div
-    class="mis-window-body"
-    [class.mis-window-body--relleno]="conRelleno()"
-    [class.mis-window-body--oculto]="minimizada()"
-  >
+  <div class="mis-window-body" [class.mis-window-body--relleno]="conRelleno()">
     <ng-content />
   </div>
 </div>

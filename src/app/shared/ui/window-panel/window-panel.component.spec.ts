@@ -2,16 +2,20 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { WindowPanelComponent } from './window-panel.component';
+import { ShellStateService } from '../../../core/services/shell-state.service';
 
 @Component({ template: '', standalone: true })
 class BlankComponent {}
 
 describe('WindowPanelComponent', () => {
+  let shell: ShellStateService;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [WindowPanelComponent],
       providers: [provideRouter([{ path: '**', component: BlankComponent }])],
     });
+    shell = TestBed.inject(ShellStateService);
   });
 
   function crear(inputs: Record<string, unknown> = {}) {
@@ -32,6 +36,14 @@ describe('WindowPanelComponent', () => {
 
     expect(elemento(fixture, '.mis-window-titulo')?.textContent?.trim()).toBe('Kaypacha');
     expect(elemento(fixture, '.mis-window-btn--esquina')).not.toBeNull();
+  });
+
+  it('el título va sin ícono ni logo', () => {
+    const fixture = crear({ titulo: 'Kaypacha', subtitulo: 'Plataforma de desempeño' });
+    const barra = elemento(fixture, '.mis-window-bar')!;
+
+    expect(barra.querySelector('img')).toBeNull();
+    expect(barra.querySelector('.mis-window-title i')).toBeNull();
   });
 
   it('emite `actualizar` al pulsar el botón de la esquina', () => {
@@ -60,23 +72,9 @@ describe('WindowPanelComponent', () => {
     expect(elemento(fixture, '.mis-window-btn--esquina')).toBeNull();
   });
 
-  it('la luz amarilla colapsa el cuerpo sin quitarlo del DOM', () => {
+  it('la luz roja vuelve al inicio del shell', () => {
     const fixture = crear();
-    const cuerpo = elemento(fixture, '.mis-window-body')!;
-
-    elemento(fixture, '.mis-window-light--minimizar')!.click();
-    fixture.detectChanges();
-
-    // Sigue siendo el mismo nodo: minimizar no puede perder el estado del
-    // contenido proyectado (scroll, filtros, tablas ya cargadas).
-    expect(elemento(fixture, '.mis-window-body')).toBe(cuerpo);
-    expect(cuerpo.classList.contains('mis-window-body--oculto')).toBe(true);
-  });
-
-  it('la luz roja navega a la ruta de cierre y avisa al módulo', () => {
-    const fixture = crear({ rutaAlCerrar: '/app/dashboard' });
-    const router = TestBed.inject(Router);
-    const navegar = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     const emitido = vi.fn();
     fixture.componentInstance.cerrar.subscribe(emitido);
 
@@ -86,12 +84,19 @@ describe('WindowPanelComponent', () => {
     expect(navegar).toHaveBeenCalledWith('/app/dashboard');
   });
 
-  it('con `rutaAlCerrar` vacía deja el cierre en manos del módulo', () => {
-    const fixture = crear({ rutaAlCerrar: '' });
+  it('la luz amarilla deja el panel neutro con el menú lateral abierto, sin navegar', () => {
+    const fixture = crear();
     const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
+    shell.setNavPanelColapsado(true);
+    const emitido = vi.fn();
+    fixture.componentInstance.minimizar.subscribe(emitido);
 
-    elemento(fixture, '.mis-window-light--cerrar')!.click();
+    elemento(fixture, '.mis-window-light--minimizar')!.click();
 
+    expect(emitido).toHaveBeenCalled();
+    expect(shell.contenidoPendienteSeleccion()).toBe(true);
+    expect(shell.navPanelColapsado()).toBe(false);
+    // La ruta no cambia: el contenido sigue montado y vuelve al elegir opción.
     expect(navegar).not.toHaveBeenCalled();
   });
 

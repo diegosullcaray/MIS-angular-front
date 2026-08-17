@@ -139,20 +139,6 @@
   min-width: 0;
 }
 
-.mis-window-logo {
-  height: 22px;
-  width: auto;
-  max-width: 140px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.mis-window-icon {
-  font-size: 14px;
-  color: var(--mis-primary-text);
-  flex-shrink: 0;
-}
-
 .mis-window-titulo {
   margin: 0;
   font-size: var(--mis-text-sm);
@@ -253,17 +239,6 @@
   .mis-window-body--relleno {
     padding: var(--mis-space-5);
   }
-}
-
-/* Minimizado: queda solo la barra de título. Se oculta con CSS (no con @if)
-   para conservar el estado del contenido — scroll, filtros, tablas cargadas. */
-.mis-window-body--oculto {
-  display: none;
-}
-
-.mis-window--minimizada {
-  flex: 0 0 auto;
-  min-height: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
