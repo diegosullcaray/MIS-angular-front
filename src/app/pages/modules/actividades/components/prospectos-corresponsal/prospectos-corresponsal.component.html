@@ -1,23 +1,20 @@
-<div class="mis-page">
-  <!-- Encabezado minimalista -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-[#9C3B47]/10 text-[#9C3B47] flex items-center justify-center font-bold text-lg shrink-0">
-        <i class="pi pi-users"></i>
-      </div>
-      <div>
-        <h1 class="text-base sm:text-lg font-bold text-[var(--mis-text-primary)] m-0 leading-tight">Registro de Prospectos Corresponsal</h1>
-        <p class="text-xs text-[var(--mis-text-secondary)] m-0 mt-0.5">Gestión y seguimiento de prospectos del sistema corresponsal</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-2.5">
-      <p-iconfield iconPosition="left" styleClass="w-full sm:w-72">
-        <p-inputicon styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]"></p-inputicon>
-        <input type="text" pInputText placeholder="Buscar por nombre o DNI..." (input)="onSearchInput($event)" class="w-full text-xs py-1.5" />
-      </p-iconfield>
-      <p-button icon="pi pi-refresh" [rounded]="true" [outlined]="true" severity="secondary" size="small" pTooltip="Actualizar" (onClick)="cargarDatos()"></p-button>
-      <p-button icon="pi pi-plus" label="Nuevo" severity="primary" size="small" (onClick)="abrirNuevoRegistro()"></p-button>
-    </div>
+<app-window-panel
+  titulo="Registro de Prospectos Corresponsal"
+  subtitulo="Sistema corresponsal"
+  icono="pi pi-users"
+  rutaAlCerrar="/app/actividades"
+  [actualizando]="loading()"
+  etiquetaActualizar="Actualizar prospectos"
+  (actualizar)="cargarDatos()"
+>
+  <!-- Barra de trabajo de la pantalla: buscar y alta. El refrescar ya no vive
+       acá — es el botón de la esquina de la ventana. -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+    <p-iconfield iconPosition="left" styleClass="w-full sm:w-72">
+      <p-inputicon styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]"></p-inputicon>
+      <input type="text" pInputText placeholder="Buscar por nombre o DNI..." (input)="onSearchInput($event)" class="w-full text-xs py-1.5" />
+    </p-iconfield>
+    <p-button icon="pi pi-plus" label="Nuevo" severity="primary" size="small" (onClick)="abrirNuevoRegistro()"></p-button>
   </div>
 
   @if (loading()) {
@@ -201,4 +198,4 @@
       </div>
     </ng-template>
   </p-dialog>
-</div>
+</app-window-panel>

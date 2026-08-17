@@ -1,16 +1,13 @@
-<div class="mis-page">
-  <!-- Encabezado minimalista -->
-  <div class="flex items-center gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="w-9 h-9 rounded-lg bg-[#035096]/10 text-[#035096] flex items-center justify-center font-bold text-lg shrink-0">
-      <i class="pi pi-compass"></i>
-    </div>
-    <div>
-      <h1 class="text-base sm:text-lg font-bold text-[var(--mis-text-primary)] m-0 leading-tight flex items-center gap-1.5">
-        Seguimiento de Destino de Crédito
-        <app-destino-credito-info-dialog />
-      </h1>
-    </div>
-  </div>
+<app-window-panel
+  titulo="Seguimiento de Destino de Crédito"
+  icono="pi pi-compass"
+  rutaAlCerrar="/app/actividades"
+  [actualizando]="loading()"
+  etiquetaActualizar="Actualizar registros"
+  (actualizar)="cargarDatos()"
+>
+  <!-- Criterios de monitoreo: acción propia de la pantalla, junto al botón de la esquina -->
+  <app-destino-credito-info-dialog ventana-acciones />
 
   <!-- Estado de carga / error -->
   @if (loading()) {
@@ -25,8 +22,6 @@
       [searchFields]="['HDESSEC', 'HCODSEC']"
       searchPlaceholder="Buscar asesor..."
       emptyMessage="No se encontraron registros de destino de crédito."
-      [showRefreshButton]="true"
-      (refrescar)="cargarDatos()"
     >
       <ng-template appDataTableCell="HCODSEC" let-row>
         <span class="font-mono text-[var(--mis-text-primary)] font-semibold">{{ row.HCODSEC }}</span>
@@ -45,7 +40,7 @@
       </ng-template>
 
       <ng-template appDataTableCell="HCODOPE" let-row>
-        <span class="font-mono font-bold text-[#035096]">{{ row.HCODOPE }}</span>
+        <span class="font-mono font-bold text-[var(--mis-primary-text)]">{{ row.HCODOPE }}</span>
       </ng-template>
 
       <ng-template appDataTableCell="HFECDES" let-row>
@@ -92,4 +87,4 @@
     [itemData]="selectedItem()"
     (onGuardar)="guardarEdicion($event)"
   />
-</div>
+</app-window-panel>

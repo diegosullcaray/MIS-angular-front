@@ -100,7 +100,10 @@
   --mis-text-secondary: #5A6A85;
   --mis-text-tertiary: #94A3B8;
   --mis-text-on-primary: #FFFFFF;
-  --mis-text-on-secondary: #FFFFFF;
+  /* Navy oscuro, no blanco: el secundario es un celeste brillante (#00A2FF en
+     claro, #4DC3FF en oscuro) y el texto blanco encima daba 2.8:1. El mismo
+     valor sirve para los dos temas, por eso no se redefine en `.dark`. */
+  --mis-text-on-secondary: #0F1E2E;
 
   /* ------------------------------------- */
   /* Espaciado base y bordes             */
@@ -172,8 +175,11 @@
   --mis-scrollbar-thumb: rgba(0,162,255,0.25);
   --mis-scrollbar-thumb-hover: rgba(0,162,255,0.45);
 
-  --mis-primary: #2A4E8F;
-  --mis-primary-hover: #37619F;
+  /* Sigue siendo navy, pero más claro que el #2A4E8F anterior: como fondo de
+     un botón sólido, aquel quedaba a 2:1 del panel oscuro — por debajo del
+     3:1 que pide WCAG 1.4.11 para el contorno de un control. */
+  --mis-primary: #3E6FB5;
+  --mis-primary-hover: #4C81CC;
   --mis-primary-light: #1D2D45;
   --mis-primary-text: #8FBEF5;
 
@@ -194,7 +200,6 @@
   --mis-text-secondary: #A3B2C9;
   --mis-text-tertiary: #6F819C;
   --mis-text-on-primary: #FFFFFF;
-  --mis-text-on-secondary: #0F1E2E;
 
   /* Sombras: sobre fondo oscuro el negro no se ve — más opacidad y difusión. */
   --mis-shadow-sm:    0 1px 3px rgba(0,0,0,0.40), 0 1px 2px rgba(0,0,0,0.30);

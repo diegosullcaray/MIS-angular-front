@@ -12,6 +12,7 @@ import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/li
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-table.model';
 
 const COLUMNAS: DataTableColumn[] = [
@@ -51,6 +52,7 @@ const COLUMNAS: DataTableColumn[] = [
     DestinoCreditoInfoDialogComponent,
     DataTableComponent,
     DataTableCellDirective,
+    WindowPanelComponent,
   ],
   templateUrl: './destino-credito.component.html',
   styleUrl: './destino-credito.component.css',

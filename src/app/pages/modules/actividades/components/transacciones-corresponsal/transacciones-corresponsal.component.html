@@ -1,23 +1,17 @@
-<div class="mis-page">
-  <!-- Encabezado minimalista -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-emerald-600/10 text-emerald-700 flex items-center justify-center font-bold text-lg shrink-0">
-        <i class="pi pi-bolt"></i>
-      </div>
-      <div>
-        <h1 class="text-base sm:text-lg font-bold text-[var(--mis-text-primary)] m-0 leading-tight">Transacciones de Corresponsal</h1>
-        <p class="text-xs text-[var(--mis-text-secondary)] m-0 mt-0.5">Consulta de transacciones y referencias del corresponsal</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-2.5">
-      <p-iconfield iconPosition="left" styleClass="w-full sm:w-72">
-        <p-inputicon styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]"></p-inputicon>
-        <input type="text" pInputText placeholder="Buscar por nombre, DNI o consulta RCC..." (input)="onSearchInput($event)" class="w-full text-xs py-1.5" />
-      </p-iconfield>
-      <p-button icon="pi pi-refresh" [rounded]="true" [outlined]="true" severity="secondary" size="small" pTooltip="Actualizar" (onClick)="cargarDatos()"></p-button>
-    </div>
-  </div>
+<app-window-panel
+  titulo="Transacciones de Corresponsal"
+  subtitulo="Consultas y referencias"
+  icono="pi pi-bolt"
+  rutaAlCerrar="/app/actividades"
+  [actualizando]="loading()"
+  etiquetaActualizar="Actualizar transacciones"
+  (actualizar)="cargarDatos()"
+>
+  <!-- Buscador de la pantalla; el refrescar vive en la esquina de la ventana. -->
+  <p-iconfield iconPosition="left" styleClass="w-full sm:w-72">
+    <p-inputicon styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]"></p-inputicon>
+    <input type="text" pInputText placeholder="Buscar por nombre, DNI o consulta RCC..." (input)="onSearchInput($event)" class="w-full text-xs py-1.5" />
+  </p-iconfield>
 
   <!-- Estado de carga / error -->
   @if (loading()) {
@@ -93,4 +87,4 @@
       </p-table>
     </div>
   }
-</div>
+</app-window-panel>

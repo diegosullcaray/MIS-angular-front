@@ -1,25 +1,15 @@
-<div class="mis-page">
-  <!-- Banner del módulo -->
-  <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#035096] via-[#0466c8] to-[#0353a4] p-5 sm:p-6 text-white shadow-md">
-    <div class="relative z-10">
-      <div class="flex items-center gap-3 mb-1.5">
-        <div class="w-10 h-10 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center">
-          <i class="pi pi-calendar-clock text-xl text-white"></i>
-        </div>
-        <div>
-          <h1 class="text-lg sm:text-xl font-bold m-0 leading-tight">Módulo de Actividades</h1>
-          <p class="text-xs text-blue-100 m-0">Gestión integral de actividades y seguimiento comercial</p>
-        </div>
-      </div>
-      <p class="text-xs text-blue-100 m-0 mt-2 max-w-xl leading-relaxed">
-        Acceda a las herramientas de seguimiento de destino de crédito, registro de prospectos
-        y monitoreo de transacciones del sistema corresponsal.
-      </p>
-    </div>
-    <!-- Decoración de fondo -->
-    <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white/5 pointer-events-none"></div>
-    <div class="absolute -right-4 bottom-0 w-28 h-28 rounded-full bg-white/5 pointer-events-none"></div>
-  </div>
+<!-- Ventana del módulo: la barra de título reemplaza al banner con ícono,
+     nombre y bajada que estaba dentro del panel. -->
+<app-window-panel
+  titulo="Actividades"
+  subtitulo="Seguimiento comercial"
+  icono="pi pi-calendar-clock"
+  [permitirActualizar]="false"
+>
+  <p class="text-xs text-[var(--mis-text-secondary)] m-0 max-w-2xl leading-relaxed">
+    Acceda a las herramientas de seguimiento de destino de crédito, registro de prospectos
+    y monitoreo de transacciones del sistema corresponsal.
+  </p>
 
   <!-- Cards de navegación -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -38,13 +28,13 @@
               <i [class]="card.icono" [style.color]="card.colorIcon"></i>
             </div>
             @if (card.badge) {
-              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[var(--mis-primary-light)] text-[#035096]">{{ card.badge }}</span>
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)]">{{ card.badge }}</span>
             }
           </div>
 
           <!-- Texto -->
           <div>
-            <h2 class="text-sm font-bold text-[var(--mis-text-primary)] m-0 leading-tight group-hover:text-[#035096] transition-colors duration-150">
+            <h2 class="text-sm font-bold text-[var(--mis-text-primary)] m-0 leading-tight group-hover:text-[var(--mis-primary-text)] transition-colors duration-150">
               {{ card.titulo }}
             </h2>
             <p class="text-xs text-[var(--mis-text-secondary)] m-0 mt-1 leading-relaxed">{{ card.descripcion }}</p>
@@ -52,7 +42,7 @@
 
           <!-- Acción -->
           <div class="flex items-center justify-end mt-auto pt-2 border-t border-[var(--mis-border)]">
-            <span class="text-xs text-[#035096] font-semibold flex items-center gap-1 group-hover:gap-2 transition-all duration-150">
+            <span class="text-xs text-[var(--mis-primary-text)] font-semibold flex items-center gap-1 group-hover:gap-2 transition-all duration-150">
               Acceder <i class="pi pi-arrow-right text-[10px]"></i>
             </span>
           </div>
@@ -60,4 +50,4 @@
       </a>
     }
   </div>
-</div>
+</app-window-panel>

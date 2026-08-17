@@ -14,6 +14,7 @@ import { ActividadesService } from '../../services/actividades.service';
 import type { NuevoProspecto, ProspectoCorresponsalItem } from '../../models/actividades.model';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { inputValue } from '../../../../../shared/utils/dom.util';
 
 @Component({
@@ -33,6 +34,7 @@ import { inputValue } from '../../../../../shared/utils/dom.util';
     SelectModule,
     ListSkeletonComponent,
     InlineErrorComponent,
+    WindowPanelComponent,
   ],
   templateUrl: './prospectos-corresponsal.component.html',
   styleUrl: './prospectos-corresponsal.component.css',

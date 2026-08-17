@@ -54,11 +54,17 @@ function botonesSemaforo(colorTexto: string) {
 }
 
 const BOTONES_OUTLINED_Y_TEXT = {
+  /**
+   * Sin fondo sólido, el severity `primary` se dibuja SOBRE el fondo de la
+   * página: va con `--mis-primary-text`, no con `--mis-primary`. Ese último es
+   * un color de superficie y en oscuro sigue siendo navy (#2A4E8F) — como
+   * texto/borde sobre el panel oscuro daba 2:1, o sea ilegible.
+   */
   primary: {
     hoverBackground: 'var(--mis-primary-light)',
     activeBackground: 'var(--mis-primary-light)',
-    borderColor: 'var(--mis-primary)',
-    color: 'var(--mis-primary)'
+    borderColor: 'var(--mis-primary-text)',
+    color: 'var(--mis-primary-text)'
   },
   // El outline/text "secondary" de marca usa el borde/fondo de --mis-secondary
   // pero el texto en --mis-primary-text (navy), no en --mis-secondary — así
