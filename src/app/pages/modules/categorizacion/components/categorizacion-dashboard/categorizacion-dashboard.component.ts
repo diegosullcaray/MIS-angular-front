@@ -1,9 +1,10 @@
 import { Component, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { SelectorSectoristaDialogComponent } from '../../ui/selector-sectorista-dialog/selector-sectorista-dialog.component';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { CategorizacionService } from '../../services/categorizacion.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import type { ComisionTarjeta, PerfilColaborador, RequisitoTarjeta } from '../../models/dashboard.model';
@@ -20,7 +21,14 @@ import type { NodoJerarquiaAncla, SectoristaItem } from '../../models/colaborado
 @Component({
   selector: 'app-categorizacion-dashboard',
   standalone: true,
-  imports: [ButtonModule, ListSkeletonComponent, InlineErrorComponent, EmptyStateComponent, SelectorSectoristaDialogComponent],
+  imports: [
+    TooltipModule,
+    ListSkeletonComponent,
+    InlineErrorComponent,
+    EmptyStateComponent,
+    SelectorSectoristaDialogComponent,
+    WindowPanelComponent,
+  ],
   templateUrl: './categorizacion-dashboard.component.html',
   styleUrl: './categorizacion-dashboard.component.css',
 })
@@ -42,7 +50,9 @@ export class CategorizacionDashboardComponent implements OnInit {
 
   private readonly ancla = signal<NodoJerarquiaAncla | null>(null);
   private readonly cargandoAncla = signal(false);
-  private codBtActual: string | null = null;
+  /** Colaborador en pantalla; es signal porque la barra de la ventana decide
+      con él si el botón "Actualizar" tiene algo que recargar. */
+  protected readonly codBtActual = signal<string | null>(null);
 
   constructor() {
     // Dispara la carga de sectoristas en cuanto el diálogo esté abierto Y el
@@ -103,11 +113,12 @@ export class CategorizacionDashboardComponent implements OnInit {
   }
 
   protected reintentar(): void {
-    if (this.codBtActual) this.cargar(this.codBtActual);
+    const codBt = this.codBtActual();
+    if (codBt) this.cargar(codBt);
   }
 
   private cargar(codBt: string): void {
-    this.codBtActual = codBt;
+    this.codBtActual.set(codBt);
     this.cargando.set(true);
     this.error.set(null);
 

@@ -1,11 +1,26 @@
-<div class="mis-page">
-  <div class="flex items-center justify-between gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Categorización</h2>
-
-    @if (esAdmin()) {
-      <p-button label="Buscar colaborador" icon="pi pi-search" size="small" (onClick)="abrirSelector()" />
-    }
-  </div>
+<!-- Panel de módulo como ventana macOS: el colaborador en pantalla va como
+     subtítulo de la barra, igual que una ventana muestra qué tiene abierto. -->
+<app-window-panel
+  titulo="Categorización"
+  [subtitulo]="perfil()?.nombre ?? ''"
+  [actualizando]="cargando()"
+  [permitirActualizar]="codBtActual() !== null"
+  etiquetaActualizar="Actualizar categorización"
+  (actualizar)="reintentar()"
+>
+  @if (esAdmin()) {
+    <button
+      ventana-acciones
+      type="button"
+      class="mis-window-btn"
+      (click)="abrirSelector()"
+      aria-label="Buscar colaborador"
+      pTooltip="Buscar colaborador"
+      tooltipPosition="bottom"
+    >
+      <i class="pi pi-search text-[14px]"></i>
+    </button>
+  }
 
   @if (cargando()) {
     <div class="p-2">
@@ -130,12 +145,12 @@
       </div>
     </div>
   }
-</div>
 
-<app-selector-sectorista-dialog
-  [visible]="dialogAbierto()"
-  [sectoristas]="sectoristas()"
-  [cargando]="cargandoSectoristas()"
-  (visibleChange)="dialogAbierto.set($event)"
-  (sectoristaSeleccionado)="onSectoristaSeleccionado($event)"
-/>
+  <app-selector-sectorista-dialog
+    [visible]="dialogAbierto()"
+    [sectoristas]="sectoristas()"
+    [cargando]="cargandoSectoristas()"
+    (visibleChange)="dialogAbierto.set($event)"
+    (sectoristaSeleccionado)="onSectoristaSeleccionado($event)"
+  />
+</app-window-panel>
