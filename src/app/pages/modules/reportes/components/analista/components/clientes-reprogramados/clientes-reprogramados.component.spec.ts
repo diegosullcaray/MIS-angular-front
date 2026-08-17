@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { ClientesReprogramadosComponent } from './clientes-reprogramados.component';
-import { ClientesReprogramadosService } from '../../../services/analista/clientes-reprogramados.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';
+import { ClientesReprogramadosService } from '../../services/clientes-reprogramados.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
 
 const ASESOR: AsesorSec = { nombre: 'Juan Pérez', dni: '12345678' };
 const CLIENTE: FilaReporte = { nom_cli: 'María López', num_doc: '87654321' };

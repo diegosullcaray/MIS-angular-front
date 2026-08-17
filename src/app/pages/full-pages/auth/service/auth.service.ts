@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, isDevMode, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
@@ -52,9 +52,21 @@ export class AuthService {
     if (!this.oauthService.hasValidIdToken()) return null;
 
     const claims = this.oauthService.getIdentityClaims() as Record<string, any>;
-    const email = !environment.production && environment.devUser ? environment.devUser : claims['email'];
+    const email = this.emailDePrueba() ?? claims['email'];
 
     return this.autenticar({ email, nombre: claims['name'], avatarUrl: claims['picture'] });
+  }
+
+  /**
+   * Identidad suplantada para pruebas locales, o `null` fuera de desarrollo.
+   *
+   * No sustituir `isDevMode()` por `environment.production`: el primero se
+   * resuelve en compilación, el segundo es un dato del archivo de entorno — y
+   * si el archivo es el equivocado, el guardián se abre solo.
+   */
+  private emailDePrueba(): string | null {
+    if (!isDevMode()) return null;
+    return localStorage.getItem('mis.devUser') || environment.devUser || null;
   }
 
   // ─── Ciclo de vida de la sesión ──────────────────────────────────────────

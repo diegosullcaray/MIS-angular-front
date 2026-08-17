@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
-import { ModSeccionesService } from '../../../../../core/winder/instances/mod-secciones.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
+import { ModSeccionesService } from '../../../../../../core/winder/instances/mod-secciones.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
-import { formularioAJson } from '../../models/analista/datos-clientes.model';
-import type { TablaReporteResultado, FilaReporte } from '../../models/tabla-reporte.model';
-import type { AsesorSec } from '../../models/analista/asesor-sec.model';
-import type { DatosClienteForm, OpcionDato, ReferenciaBantotal } from '../../models/analista/datos-clientes.model';
+import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import { formularioAJson } from '../models/datos-clientes.model';
+import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';
+import type { AsesorSec } from '../models/asesor-sec.model';
+import type { DatosClienteForm, OpcionDato, ReferenciaBantotal } from '../models/datos-clientes.model';
 
 /** Datos de "Datos Clientes" (legado `leg/com/rda/sec/cli-act`, `crs-cli-act.component.ts`). */
 @Injectable({ providedIn: 'root' })

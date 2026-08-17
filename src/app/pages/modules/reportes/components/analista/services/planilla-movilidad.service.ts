@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, forkJoin, map, of } from 'rxjs';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
-import { fechaUltimoDia } from '../../utils/fecha-reporte.util';
-import type { AsesorSec } from '../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
-import type { ReportePlanillaMovilidad } from '../../models/analista/planilla-movilidad.model';
+import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import { fechaUltimoDia } from '../../../utils/fecha-reporte.util';
+import type { AsesorSec } from '../models/asesor-sec.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import type { ReportePlanillaMovilidad } from '../models/planilla-movilidad.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 

@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
-import { ModSeccionesService } from '../../../../../core/winder/instances/mod-secciones.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
+import { ModSeccionesService } from '../../../../../../core/winder/instances/mod-secciones.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
-import type { TablaReporteResultado, FilaReporte } from '../../models/tabla-reporte.model';
-import type { AsesorSec } from '../../models/analista/asesor-sec.model';
-import { formularioAJson } from '../../models/analista/encuesta-clientes.model';
-import type { CiiuOpcion, EncuestaClienteForm } from '../../models/analista/encuesta-clientes.model';
+import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';
+import type { AsesorSec } from '../models/asesor-sec.model';
+import { formularioAJson } from '../models/encuesta-clientes.model';
+import type { CiiuOpcion, EncuestaClienteForm } from '../models/encuesta-clientes.model';
 
 /** Datos de "Encuesta Clientes" (legado `leg/com/rda/sec/cap-ret`, `crs-cap-ret.component.ts`). */
 @Injectable({ providedIn: 'root' })

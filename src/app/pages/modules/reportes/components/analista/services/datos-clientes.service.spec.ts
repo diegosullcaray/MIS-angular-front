@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { DatosClientesService } from './datos-clientes.service';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
-import { ModSeccionesService } from '../../../../../core/winder/instances/mod-secciones.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
+import { ModSeccionesService } from '../../../../../../core/winder/instances/mod-secciones.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { DATOS_CLIENTE_FORM_VACIO } from '../../models/analista/datos-clientes.model';
-import type { IWinderResponse } from '../../../../../core/winder/winder/winder.interface';
+import { DATOS_CLIENTE_FORM_VACIO } from '../models/datos-clientes.model';
+import type { IWinderResponse } from '../../../../../../core/winder/winder/winder.interface';
 
 describe('DatosClientesService', () => {
   let service: DatosClientesService;

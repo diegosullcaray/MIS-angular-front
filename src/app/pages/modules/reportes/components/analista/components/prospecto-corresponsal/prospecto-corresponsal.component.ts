@@ -3,13 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
+import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { AgregarProspectoDialogComponent } from './agregar-prospecto-dialog/agregar-prospecto-dialog.component';
-import { ProspectoCorresponsalService } from '../../../services/analista/prospecto-corresponsal.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { ProspectoCorresponsalService } from '../../services/prospecto-corresponsal.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../../core/services/message.service';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 

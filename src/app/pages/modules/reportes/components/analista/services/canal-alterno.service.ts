@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
-import type { AsesorSec } from '../../models/analista/asesor-sec.model';
-import type { ReporteCanalAlterno } from '../../models/analista/canal-alterno.model';
+import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import type { AsesorSec } from '../models/asesor-sec.model';
+import type { ReporteCanalAlterno } from '../models/canal-alterno.model';
 
 /**
  * Datos de "Canal Alterno" (legado `leg/com/rda/sec/canal_alt`,

@@ -3,20 +3,20 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { MonitorEfectividadesService } from '../../../services/analista/monitor-efectividades.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
+import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { MonitorEfectividadesService } from '../../services/monitor-efectividades.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO,
   OPCIONES_PRODUCTO,
   OPCIONES_SI_NO,
   OPCIONES_TRAMO,
   OPCIONES_TRAMO_DIAS_GESTION,
-} from '../../../models/analista/monitor-efectividades.model';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
-import type { FiltrosMonitorEfectividades } from '../../../models/analista/monitor-efectividades.model';
+} from '../../models/monitor-efectividades.model';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import type { FiltrosMonitorEfectividades } from '../../models/monitor-efectividades.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 

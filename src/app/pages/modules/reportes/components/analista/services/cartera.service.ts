@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
-import type { AsesorSec } from '../../models/analista/asesor-sec.model';
-import type { ReporteCartera } from '../../models/analista/cartera.model';
+import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import type { AsesorSec } from '../models/asesor-sec.model';
+import type { ReporteCartera } from '../models/cartera.model';
 
 /**
  * Datos de "Cartera" (legado `leg/com/rda/sec/cartera`,

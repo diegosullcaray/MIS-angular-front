@@ -1,4 +1,4 @@
-import type { TablaReporteResultado } from '../tabla-reporte.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
 /** Tarjeta KPI del bloque `_01` (`additional`, "Monitor de Desembolsos" de analista/sectorista). */
 export interface KpiOperacionesDesembolsadas {

@@ -103,6 +103,55 @@ export class TablaReporteComponent {
     return fila[columna.columnDef];
   }
 
+  /**
+   * Fondo del `<th>` — `c.style?.background` del legado. `style` es un objeto
+   * estructurado (`{ background, desktop: { width } }`), NO un bloque de CSS
+   * inline: volcarlo entero sobre la celda pintaba de color las columnas de
+   * datos y tapaba los números. Sin color del backend, el azul del tema.
+   */
+  protected fondoEncabezado(columna: ColumnaReporte): string {
+    return columna.style?.background ?? 'var(--mis-primary)';
+  }
+
+  /** Ancho fijo del encabezado si el backend lo indica — `c.style?.desktop?.width` del legado. */
+  protected anchoEncabezado(columna: ColumnaReporte): string | null {
+    return columna.style?.desktop?.width ?? null;
+  }
+
+  /**
+   * Fondo de una celda del cuerpo: viene por FILA, no por columna —
+   * `row['background_' + c.columnDef]` del legado. Así el backend puede pintar
+   * una celda suelta (ej. un valor fuera de meta) sin teñir la columna entera.
+   */
+  protected fondoCelda(fila: FilaReporte, columna: ColumnaReporte): string | null {
+    return (fila[`background_${columna.columnDef}`] as string | undefined) ?? null;
+  }
+
+  /** Color del texto de una celda suelta — `row['color_' + c.columnDef]` del legado. */
+  protected colorCelda(fila: FilaReporte, columna: ColumnaReporte): string | null {
+    return (fila[`color_${columna.columnDef}`] as string | undefined) ?? null;
+  }
+
+  /**
+   * Énfasis del texto de una celda suelta — `row['style_' + c.columnDef]` del
+   * legado (`green-text`/`red-text`/`orange-text`), misma convención de signo
+   * que el semáforo: `1` bien, `0` alerta, `-1` mal.
+   */
+  protected claseTextoCelda(fila: FilaReporte, columna: ColumnaReporte): string {
+    const estilo = fila[`style_${columna.columnDef}`];
+    if (estilo === null || estilo === undefined || estilo === '') return '';
+    const num = Number(estilo);
+    if (num === 1) return 'text-[var(--mis-success)] font-semibold';
+    if (num === 0) return 'text-orange-500 font-semibold';
+    if (num === -1) return 'text-[var(--mis-danger)] font-semibold';
+    return '';
+  }
+
+  /** Fondo de la fila completa — `row.background` del legado. */
+  protected fondoFila(fila: FilaReporte): string | null {
+    return (fila['background'] as string | undefined) ?? null;
+  }
+
   protected onClickFila(fila: FilaReporte): void {
     if (this.seleccionable()) this.filaSeleccionada.emit(fila);
   }
@@ -124,9 +173,14 @@ export class TablaReporteComponent {
     return valor !== null && valor !== undefined && valor !== '';
   }
 
-  /** Alineación de la celda de datos: números/porcentajes a la derecha, todo lo demás (texto, fechas) a la izquierda; semáforos centrados. */
+  /**
+   * Alineación de la celda de datos: números/porcentajes a la derecha, todo lo
+   * demás (texto, fechas) a la izquierda; semáforos centrados y estrechos
+   * (`width_gt_xs_tl` del legado) — sin acotar el ancho, el punto queda
+   * perdido en una columna tan ancha como las de datos.
+   */
   protected alineacion(columna: ColumnaReporte): string {
-    if (this.esSemaforo(columna)) return 'text-center';
+    if (this.esSemaforo(columna)) return 'text-center w-8 px-1';
     const tipo = columna.format?.['type'];
     return tipo === 'number' || tipo === 'percent' ? 'text-right' : 'text-left';
   }

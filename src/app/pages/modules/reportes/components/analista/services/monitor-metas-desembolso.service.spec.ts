@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MonitorMetasDesembolsoService } from './monitor-metas-desembolso.service';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import type { IWinderResponse } from '../../../../../core/winder/winder/winder.interface';
+import type { IWinderResponse } from '../../../../../../core/winder/winder/winder.interface';
 
 function respuesta(additional: Record<string, unknown> = {}): IWinderResponse {
   return { code: '0', headers: {}, body: { result: { headers: [], body: [], additional } } };

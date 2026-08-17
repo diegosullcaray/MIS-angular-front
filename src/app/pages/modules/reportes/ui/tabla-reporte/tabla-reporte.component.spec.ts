@@ -160,7 +160,8 @@ describe('TablaReporteComponent', () => {
     expect(fixture.componentInstance['alineacion']({ columnDef: 'DESVAL', header: 'Variable', format: { type: 'string' } })).toBe(
       'text-left',
     );
-    expect(fixture.componentInstance['alineacion']({ columnDef: 'estado', header: 'Estado', format: { type: 'traffic-light' } })).toBe(
+    // El semáforo además va estrecho (`w-8 px-1`) — ver "la columna de semáforo queda estrecha y centrada".
+    expect(fixture.componentInstance['alineacion']({ columnDef: 'estado', header: 'Estado', format: { type: 'traffic-light' } })).toContain(
       'text-center',
     );
   });
@@ -241,5 +242,64 @@ describe('TablaReporteComponent', () => {
     filaDom.click();
 
     expect(emitidas).toEqual([FILAS[0]]);
+  });
+
+  // ─── Estilos: encabezado vs. cuerpo ──────────────────────────────────────
+  // El `style` de una columna es del ENCABEZADO (legado: `'background-color':
+  // c.style?.background` en el `<th>`). Volcarlo sobre las celdas de datos
+  // pintaba columnas enteras y tapaba los números.
+
+  it('el color de la columna pinta el encabezado, nunca las celdas de datos', () => {
+    const fixture = crear(
+      [
+        {
+          columns: [
+            { columnDef: 'nom', header: 'Nombre', isdata: 1, style: { background: '#1B7A3D' } },
+            { columnDef: 'monto', header: 'Monto', isdata: 2, format: { type: 'number' } },
+          ],
+        },
+      ],
+      [{ nom: 'Agencia 1', monto: 1500 }],
+    );
+
+    const th = (fixture.nativeElement as HTMLElement).querySelector('thead th') as HTMLElement;
+    expect(th.style.backgroundColor).toBe('rgb(27, 122, 61)');
+
+    // Ninguna celda del cuerpo hereda ese color.
+    for (const td of Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('tbody td'))) {
+      expect((td as HTMLElement).style.background).toBe('');
+    }
+  });
+
+  it('sin color del backend, el encabezado usa el azul del tema', () => {
+    const fixture = crear();
+    const th = (fixture.nativeElement as HTMLElement).querySelector('thead th') as HTMLElement;
+    expect(th.style.backgroundColor).toBe('var(--mis-primary)');
+  });
+
+  it('el fondo de una celda del cuerpo viene por fila (background_<columnDef>), no por columna', () => {
+    const fixture = crear(ENCABEZADOS, [{ ...FILAS[0], background_monto: '#FDE68A' }]);
+
+    const celdas = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('tbody td')) as HTMLElement[];
+    expect(celdas[1].style.background).toBe('rgb(253, 230, 138)');
+    expect(celdas[0].style.background).toBe('');
+  });
+
+  it('style_<columnDef> tiñe el texto de una celda suelta según el signo', () => {
+    const fixture = crear(ENCABEZADOS, [FILAS[0]]);
+    const instancia = fixture.componentInstance;
+    const columnaMonto = instancia['columnasDato']()[1];
+
+    expect(instancia['claseTextoCelda']({ style_monto: 1 }, columnaMonto)).toContain('--mis-success');
+    expect(instancia['claseTextoCelda']({ style_monto: -1 }, columnaMonto)).toContain('--mis-danger');
+    expect(instancia['claseTextoCelda']({ style_monto: 0 }, columnaMonto)).toContain('orange');
+    expect(instancia['claseTextoCelda']({}, columnaMonto)).toBe('');
+  });
+
+  it('la columna de semáforo queda estrecha y centrada', () => {
+    const fixture = crear();
+    const columnaEstado = fixture.componentInstance['columnasDato']()[3];
+    expect(fixture.componentInstance['alineacion'](columnaEstado)).toContain('text-center');
+    expect(fixture.componentInstance['alineacion'](columnaEstado)).toContain('w-8');
   });
 });

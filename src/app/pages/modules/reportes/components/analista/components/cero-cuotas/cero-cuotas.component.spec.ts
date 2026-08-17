@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { CeroCuotasComponent } from './cero-cuotas.component';
-import { CeroCuotasService } from '../../../services/analista/cero-cuotas.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { CeroCuotasService } from '../../services/cero-cuotas.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../../core/services/message.service';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
 const ASESOR: AsesorSec = { nombre: 'Juan Pérez', dni: '12345678' };
 

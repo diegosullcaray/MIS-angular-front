@@ -3,12 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
-import { GraficoReporteComponent } from '../../../ui/grafico-reporte/grafico-reporte.component';
-import { InversionStockMoraService } from '../../../services/analista/inversion-stock-mora.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { BloqueGrafico } from '../../../models/grafico-reporte.model';
+import { GraficoReporteComponent } from '../../../../ui/grafico-reporte/grafico-reporte.component';
+import { InversionStockMoraService } from '../../services/inversion-stock-mora.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../../core/services/message.service';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { BloqueGrafico } from '../../../../models/grafico-reporte.model';
 
 /**
  * "Inversión y Stock de Mora" — migrado de la ruta `leg/com/rda/sec/inv-stk`

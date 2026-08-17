@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
-import type { AsesorSec } from '../../models/analista/asesor-sec.model';
-import type { ReporteRecuperacionPreventiva } from '../../models/analista/recuperacion-preventiva.model';
+import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import type { AsesorSec } from '../models/asesor-sec.model';
+import type { ReporteRecuperacionPreventiva } from '../models/recuperacion-preventiva.model';
 
 /**
  * Datos de "Recuperación Preventiva" (legado `leg/com/rda/sec/rec-prev`,

@@ -1,4 +1,4 @@
-import type { TablaReporteResultado } from '../tabla-reporte.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
 /** Resultado de "Plan de Datos" (`PlanDatosService.obtenerPlanDatos`) — único bloque del legado (`P_Datos_02` — el `id` real es `_02`, no `_01`). */
 export interface ReportePlanDatos {

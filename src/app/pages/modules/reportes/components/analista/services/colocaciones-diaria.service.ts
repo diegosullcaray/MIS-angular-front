@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
-import type { AsesorSec } from '../../models/analista/asesor-sec.model';
-import type { ReporteColocacionesDiaria } from '../../models/analista/colocaciones-diaria.model';
+import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import type { AsesorSec } from '../models/asesor-sec.model';
+import type { ReporteColocacionesDiaria } from '../models/colocaciones-diaria.model';
 
 /**
  * Datos de "Colocaciones diaria Operación, Monto y Recuperación" (legado

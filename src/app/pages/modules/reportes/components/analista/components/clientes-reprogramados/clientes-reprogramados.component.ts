@@ -4,20 +4,20 @@ import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { ClientesReprogramadosService } from '../../../services/analista/clientes-reprogramados.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
+import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { ClientesReprogramadosService } from '../../services/clientes-reprogramados.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   REPROGRAMACION_FORM_VACIO,
   OPCIONES_PREG_01,
   OPCIONES_PREG_02,
   OPCIONES_PREG_03,
   OPCIONES_PREG_04,
-} from '../../../models/analista/clientes-reprogramados.model';
-import type { ReprogramacionForm } from '../../../models/analista/clientes-reprogramados.model';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';
+} from '../../models/clientes-reprogramados.model';
+import type { ReprogramacionForm } from '../../models/clientes-reprogramados.model';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 

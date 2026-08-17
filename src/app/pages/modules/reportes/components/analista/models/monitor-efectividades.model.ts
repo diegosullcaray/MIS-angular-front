@@ -1,4 +1,4 @@
-import type { TablaReporteResultado } from '../tabla-reporte.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
 /** Resultado de "Detalle Monitor de Efectividades Asesor" (`MonitorEfectividadesService.obtenerMonitorEfectividades`) — único bloque del legado (`RS_MON_EFEC_SEC_01`), "Expresado en PEN y %" (`content.higher` del legado). */
 export interface ReporteMonitorEfectividades {

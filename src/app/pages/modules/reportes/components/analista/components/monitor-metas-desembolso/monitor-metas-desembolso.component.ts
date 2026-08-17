@@ -3,13 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { MonitorMetasDesembolsoService } from '../../../services/analista/monitor-metas-desembolso.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
-import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../../models/analista/monitor-metas-desembolso.model';
+import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { MonitorMetasDesembolsoService } from '../../services/monitor-metas-desembolso.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../../core/services/message.service';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../models/monitor-metas-desembolso.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 

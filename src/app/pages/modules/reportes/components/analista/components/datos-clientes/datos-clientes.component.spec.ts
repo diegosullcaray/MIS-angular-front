@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { DatosClientesComponent } from './datos-clientes.component';
-import { DatosClientesService } from '../../../services/analista/datos-clientes.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { DATOS_CLIENTE_FORM_VACIO } from '../../../models/analista/datos-clientes.model';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';
+import { DatosClientesService } from '../../services/datos-clientes.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { DATOS_CLIENTE_FORM_VACIO } from '../../models/datos-clientes.model';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
 
 const ASESOR: AsesorSec = { nombre: 'Juan Pérez', dni: '12345678' };
 const CLIENTE: FilaReporte = { nom_cli: 'María López', num_doc: '87654321' };

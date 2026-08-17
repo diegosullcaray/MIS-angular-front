@@ -84,10 +84,32 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     sessionStorage.clear();
+    // Sin limpiarla, la prueba que la fija cambiaría la identidad de las siguientes.
+    localStorage.removeItem('mis.devUser');
   });
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it('la configuración de producción no declara ninguna identidad de prueba', async () => {
+    const { environment: produccion } = await import('../../../../../environments/environment.prod');
+
+    expect(produccion.production).toBe(true);
+    expect(produccion.devUser).toBeUndefined();
+    expect(produccion.redirectUri).not.toContain('localhost');
+  });
+
+  it('localStorage("mis.devUser") tiene prioridad sobre environment.devUser en desarrollo', async () => {
+    localStorage.setItem('mis.devUser', 'flor.garcia@confianza.pe');
+    configurar({
+      hasValidIdToken: vi.fn().mockReturnValue(true),
+      getIdentityClaims: vi.fn().mockReturnValue({ email: 'ana.torres@confianza.pe', name: 'Ana Torres' }),
+    });
+
+    await service.completarLoginGoogle();
+
+    expect(modSysLoginService.login).toHaveBeenCalledWith('flor.garcia@confianza.pe');
   });
 
   it('completarLoginGoogle() devuelve null si todavía no hay un id_token válido de Google', async () => {
@@ -108,11 +130,8 @@ describe('AuthService', () => {
 
     const usuario = await service.completarLoginGoogle();
 
-    // Fuera de producción, environment.devUser reemplaza al email real de
-    // Google — el mismo mecanismo "login hardcodeado para desarrollo" que
-    // usa UserService en STG, para no depender de una cuenta Google real.
-    expect(environment.production).toBe(false);
-    expect(environment.devUser).toBeTruthy();
+    // Se afirma el comportamiento, no `environment.production`: afirmar el valor
+    // de esa bandera es lo que dejó en verde la fuga de `devUser` a producción.
     expect(modSysLoginService.login).toHaveBeenCalledWith(environment.devUser);
 
     expect(usuario?.id).toBe(environment.devUser);

@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { EncuestaClientesComponent } from './encuesta-clientes.component';
-import { EncuestaClientesService } from '../../../services/analista/encuesta-clientes.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { CiiuOpcion } from '../../../models/analista/encuesta-clientes.model';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';
+import { EncuestaClientesService } from '../../services/encuesta-clientes.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import type { CiiuOpcion } from '../../models/encuesta-clientes.model';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
 
 const ASESOR: AsesorSec = { nombre: 'Juan Pérez', dni: '12345678' };
 const CIIU: CiiuOpcion[] = [

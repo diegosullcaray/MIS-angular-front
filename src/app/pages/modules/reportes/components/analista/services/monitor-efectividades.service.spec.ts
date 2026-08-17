@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MonitorEfectividadesService } from './monitor-efectividades.service';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO } from '../../models/analista/monitor-efectividades.model';
-import type { IWinderResponse } from '../../../../../core/winder/winder/winder.interface';
+import { FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO } from '../models/monitor-efectividades.model';
+import type { IWinderResponse } from '../../../../../../core/winder/winder/winder.interface';
 
 describe('MonitorEfectividadesService', () => {
   let service: MonitorEfectividadesService;

@@ -5,15 +5,15 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
-import { ProspectoCorresponsalService } from '../../../../services/analista/prospecto-corresponsal.service';
-import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { ProspectoCorresponsalService } from '../../../services/prospecto-corresponsal.service';
+import { ToastService } from '../../../../../../../../shared/services/toast.service';
 import {
   OPCIONES_CANAL_CAPTACION,
   OPCIONES_CTA_LICENCIA,
   OPCIONES_TIPO_AGENTE,
   PROSPECTO_CORRESPONSAL_FORM_VACIO,
-} from '../../../../models/analista/prospecto-corresponsal.model';
-import type { OpcionJerarquia, ProspectoCorresponsalForm } from '../../../../models/analista/prospecto-corresponsal.model';
+} from '../../../models/prospecto-corresponsal.model';
+import type { OpcionJerarquia, ProspectoCorresponsalForm } from '../../../models/prospecto-corresponsal.model';
 
 /**
  * Diálogo "Registro Prospecto" — botón "Nuevo" de `crs-prospe.component.ts`

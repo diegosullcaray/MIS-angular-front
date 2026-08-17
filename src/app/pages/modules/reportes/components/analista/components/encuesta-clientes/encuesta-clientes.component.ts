@@ -5,10 +5,10 @@ import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { EncuestaClientesService } from '../../../services/analista/encuesta-clientes.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
+import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { EncuestaClientesService } from '../../services/encuesta-clientes.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   ENCUESTA_CLIENTE_FORM_VACIO,
   OPCIONES_AFEC_NEG,
@@ -17,10 +17,10 @@ import {
   OPCIONES_RED_NEG,
   OPCIONES_SEC_ECO,
   jsonAFormulario,
-} from '../../../models/analista/encuesta-clientes.model';
-import type { CiiuOpcion, EncuestaClienteForm } from '../../../models/analista/encuesta-clientes.model';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';
+} from '../../models/encuesta-clientes.model';
+import type { CiiuOpcion, EncuestaClienteForm } from '../../models/encuesta-clientes.model';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 

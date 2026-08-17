@@ -5,10 +5,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { DatosClientesService } from '../../../services/analista/datos-clientes.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
+import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { DatosClientesService } from '../../services/datos-clientes.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   DATOS_CLIENTE_FORM_VACIO,
   REFERENCIA_BANTOTAL_VACIA,
@@ -21,10 +21,10 @@ import {
   OPCIONES_VERIFICADOR_CIIU,
   filaAFormulario,
   filaAReferencia,
-} from '../../../models/analista/datos-clientes.model';
-import type { CelForm, DatosClienteForm, OpcionDato } from '../../../models/analista/datos-clientes.model';
-import type { AsesorSec } from '../../../models/analista/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';
+} from '../../models/datos-clientes.model';
+import type { CelForm, DatosClienteForm, OpcionDato } from '../../models/datos-clientes.model';
+import type { AsesorSec } from '../../models/asesor-sec.model';
+import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

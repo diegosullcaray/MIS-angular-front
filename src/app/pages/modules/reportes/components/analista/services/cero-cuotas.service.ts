@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { AsesorSecService } from './asesor-sec.service';
-import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
-import type { AsesorSec } from '../../models/analista/asesor-sec.model';
-import type { ReporteCeroCuotas } from '../../models/analista/cero-cuotas.model';
+import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import type { AsesorSec } from '../models/asesor-sec.model';
+import type { ReporteCeroCuotas } from '../models/cero-cuotas.model';
 
 /**
  * Datos de "Cero Cuotas" (legado `leg/com/rda/sec/zu-cuo`, título real

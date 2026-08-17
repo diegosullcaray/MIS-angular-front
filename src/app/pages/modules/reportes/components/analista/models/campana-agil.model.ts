@@ -1,4 +1,4 @@
-import type { TablaReporteResultado } from '../tabla-reporte.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
 /** Resultado de "Campaña Ágil" (`CampanaAgilService.obtenerCampanaAgil`) — único bloque del legado (`rda/sectorista/campania_agil/campana_agil_sec_01`). */
 export interface ReporteCampanaAgil {
