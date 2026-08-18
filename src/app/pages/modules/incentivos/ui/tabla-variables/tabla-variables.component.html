@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-2 h-full">
-  <div class="flex-1 min-h-0 rounded-lg border border-[var(--mis-border)] overflow-hidden">
-    <p-table [value]="incentivos.tablaVariables()" [scrollable]="true" scrollHeight="flex" styleClass="p-datatable-sm">
+<div class="flex flex-col gap-2">
+  <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+    <p-table [value]="incentivos.tablaVariables()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
           <th rowspan="2" class="text-[11px]" style="width: 44px;"></th>
@@ -19,15 +19,15 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-fila>
-        <tr class="text-[12px] cursor-pointer hover:bg-black/5 transition-colors" (click)="onClicFila(fila.cod_var)">
-          <td class="text-center"><i [class]="iconoVariable(fila.cod_var) + ' text-[16px]'"></i></td>
-          <td [class]="claseCelda(fila, 'ini')">{{ fila.ini_n | number: '.0-2' }}</td>
-          <td [class]="claseCelda(fila, 'real')">{{ fila.cie_n | number: '.0-2' }}</td>
-          <td [class]="claseCelda(fila, 'ini')">{{ fila.cie_n_o | number: '.0-2' }}</td>
-          <td [class]="claseCelda(fila, 'ini')">{{ fila.cie_n_d | number: '.0-2' }}</td>
-          <td [class]="claseCelda(fila, 'real')">{{ fila.var_real | number: '.0-2' }}</td>
-          <td [class]="claseCelda(fila, 'met')">{{ fila.met | number: '.0-2' }}</td>
-          <td [class]="claseCelda(fila, 'mon')">S/. {{ fila.mon | number: '.0-2' }}</td>
+        <tr class="text-[12px] cursor-pointer hover:bg-[var(--mis-hover-bg)] transition-colors" (click)="onClicFila(fila.cod_var)">
+          <td class="text-center"><i [class]="iconoVariable(fila.cod_var) + ' text-[16px] text-[var(--mis-text-secondary)]'"></i></td>
+          <td><span [class]="claseCelda(fila, 'ini')">{{ fila.ini_n | number: '.0-2' }}</span></td>
+          <td><span [class]="claseCelda(fila, 'real')">{{ fila.cie_n | number: '.0-2' }}</span></td>
+          <td><span [class]="claseCelda(fila, 'ini')">{{ fila.cie_n_o | number: '.0-2' }}</span></td>
+          <td><span [class]="claseCelda(fila, 'ini')">{{ fila.cie_n_d | number: '.0-2' }}</span></td>
+          <td><span [class]="claseCelda(fila, 'real')">{{ fila.var_real | number: '.0-2' }}</span></td>
+          <td><span [class]="claseCelda(fila, 'met')">{{ fila.met | number: '.0-2' }}</span></td>
+          <td><span [class]="claseCelda(fila, 'mon')">S/. {{ fila.mon | number: '.0-2' }}</span></td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -38,8 +38,8 @@
     </p-table>
   </div>
 
-  <div class="flex-1 min-h-0 rounded-lg border border-[var(--mis-border)] overflow-hidden">
-    <p-table [value]="incentivos.tablaEfectividad()" [scrollable]="true" scrollHeight="flex" styleClass="p-datatable-sm">
+  <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+    <p-table [value]="incentivos.tablaEfectividad()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
           <th class="text-[11px]" style="width: 44px;"></th>
@@ -52,14 +52,14 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-fila>
-        <tr class="text-[12px] cursor-pointer hover:bg-black/5 transition-colors" (click)="onClicFila(fila.cod_var)">
-          <td class="text-center"><i [class]="iconoVariable(fila.cod_var) + ' text-[16px]'"></i></td>
-          <td [class]="claseCelda(fila, 'ini')">{{ fila.ini | number: '.0-2' }}</td>
-          <td [class]="claseCelda(fila, 'real')">{{ fila.man_efe | number: '.0-2' }}</td>
-          <td [class]="claseCelda(fila, 'real')">{{ fila.rec | number: '.0-2' }}</td>
-          <td [class]="claseCelda(fila, 'real')">{{ fila.efec * 100 | number: '.0-2' }}%</td>
-          <td [class]="claseCelda(fila, 'met')">{{ fila.met * 100 | number: '.0-2' }}%</td>
-          <td [class]="claseCelda(fila, 'mon')">S/. {{ fila.mon | number: '.0-2' }}</td>
+        <tr class="text-[12px] cursor-pointer hover:bg-[var(--mis-hover-bg)] transition-colors" (click)="onClicFila(fila.cod_var)">
+          <td class="text-center"><i [class]="iconoVariable(fila.cod_var) + ' text-[16px] text-[var(--mis-text-secondary)]'"></i></td>
+          <td><span [class]="claseCelda(fila, 'ini')">{{ fila.ini | number: '.0-2' }}</span></td>
+          <td><span [class]="claseCelda(fila, 'real')">{{ fila.man_efe | number: '.0-2' }}</span></td>
+          <td><span [class]="claseCelda(fila, 'real')">{{ fila.rec | number: '.0-2' }}</span></td>
+          <td><span [class]="claseCelda(fila, 'real')">{{ fila.efec * 100 | number: '.0-2' }}%</span></td>
+          <td><span [class]="claseCelda(fila, 'met')">{{ fila.met * 100 | number: '.0-2' }}%</span></td>
+          <td><span [class]="claseCelda(fila, 'mon')">S/. {{ fila.mon | number: '.0-2' }}</span></td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">

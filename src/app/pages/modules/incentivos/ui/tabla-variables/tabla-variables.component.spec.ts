@@ -33,21 +33,37 @@ describe('TablaVariablesComponent', () => {
     expect(fixture.componentInstance['iconoVariable'](99)).toBe('pi pi-circle');
   });
 
-  it('claseCelda(fila, "met") resalta con el token de éxito cuando avan_fix>=1 y el de peligro en cualquier otro caso', () => {
+  // Cada celda numérica es un "chip" con fondo de color (`chipFn1`/`chipFn2`
+  // del legado). Antes estos colores se aplicaban como color de TEXTO, así que
+  // las cifras salían del color del fondo de la página — invisibles.
+  it('claseCelda(fila, "met") usa el chip verde cuando avan_fix>=1 y el rojo en cualquier otro caso', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['claseCelda']({ cod_var: 1, avan_fix: 1 }, 'met')).toContain('--mis-success');
-    expect(fixture.componentInstance['claseCelda']({ cod_var: 1, avan_fix: 0.5 }, 'met')).toContain('--mis-danger');
-    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'met')).toContain('--mis-danger');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1, avan_fix: 1 }, 'met')).toBe('chip chip--meta-ok');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1, avan_fix: 0.5 }, 'met')).toBe('chip chip--meta-baja');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'met')).toBe('chip chip--meta-baja');
   });
 
-  it('claseCelda(fila, "mon") siempre usa el token primario, sin importar avan_fix', () => {
+  it('claseCelda(fila, "mon") siempre usa el chip de monetización, sin importar avan_fix', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'mon')).toContain('--mis-primary');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'mon')).toBe('chip chip--mon');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1, avan_fix: 1 }, 'mon')).toBe('chip chip--mon');
   });
 
-  it('claseCelda(fila, "real")/"ini" usan los tokens secundario/neutro del sistema', () => {
+  it('claseCelda(fila, "real")/"ini" distinguen el valor real del de referencia', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'real')).toContain('--mis-secondary-light');
-    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'ini')).toContain('--mis-bg');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'real')).toBe('chip chip--real');
+    expect(fixture.componentInstance['claseCelda']({ cod_var: 1 }, 'ini')).toBe('chip chip--neutro');
+  });
+
+  it('onClicFila() traduce el cod_var de la tabla al que espera el detalle (Cartera 1 → 91)', () => {
+    const fixture = crear();
+    const emitido = vi.fn();
+    fixture.componentInstance.abrirDetalle.subscribe(emitido);
+
+    fixture.componentInstance['onClicFila'](1);
+    expect(emitido).toHaveBeenCalledWith(expect.objectContaining({ codVar: 91 }));
+
+    fixture.componentInstance['onClicFila'](5);
+    expect(emitido).toHaveBeenLastCalledWith(expect.objectContaining({ codVar: 5 }));
   });
 });

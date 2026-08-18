@@ -1,0 +1,71 @@
+/* "Chips" de las celdas numéricas — port de `chipFn1`/`chipFn2` de
+   `tabla.util.ts` (legado), donde cada valor va sobre un fondo de color con
+   el número alineado a la derecha. La versión anterior aplicaba esos colores
+   como color de TEXTO, así que las cifras quedaban del color del fondo de la
+   página (invisibles). Acá vuelven a ser fondos, con un texto de contraste
+   propio para cada uno. */
+:host {
+  --chip-neutro-bg: #E2E8F0;
+  --chip-neutro-fg: #304156;
+  --chip-real-bg: #A0D2FA;
+  --chip-real-fg: #14314F;
+  --chip-meta-ok-bg: #86EFAC;
+  --chip-meta-ok-fg: #14532D;
+  --chip-meta-baja-bg: #F3A9AF;
+  --chip-meta-baja-fg: #5B1A20;
+  --chip-mon-bg: #125386;
+  --chip-mon-fg: #FFFFFF;
+  --chip-borde: rgba(18, 83, 134, 0.35);
+}
+
+:host-context(.dark) {
+  --chip-neutro-bg: #33415A;
+  --chip-neutro-fg: #DDE5F2;
+  --chip-real-bg: #1E4C74;
+  --chip-real-fg: #CDE7FF;
+  --chip-meta-ok-bg: #1B5133;
+  --chip-meta-ok-fg: #B7F0CC;
+  --chip-meta-baja-bg: #5D2328;
+  --chip-meta-baja-fg: #FFC9CE;
+  --chip-mon-bg: #0E3D63;
+  --chip-mon-fg: #FFFFFF;
+  --chip-borde: rgba(0, 162, 255, 0.28);
+}
+
+.chip {
+  display: block;
+  text-align: right;
+  padding: 0 4px;
+  border: 1px solid var(--chip-borde);
+  border-radius: var(--mis-radius-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.chip--neutro {
+  background: var(--chip-neutro-bg);
+  color: var(--chip-neutro-fg);
+}
+
+.chip--real {
+  background: var(--chip-real-bg);
+  color: var(--chip-real-fg);
+}
+
+.chip--meta-ok {
+  background: var(--chip-meta-ok-bg);
+  color: var(--chip-meta-ok-fg);
+  font-weight: var(--mis-font-semibold);
+}
+
+.chip--meta-baja {
+  background: var(--chip-meta-baja-bg);
+  color: var(--chip-meta-baja-fg);
+  font-weight: var(--mis-font-semibold);
+}
+
+.chip--mon {
+  background: var(--chip-mon-bg);
+  color: var(--chip-mon-fg);
+  font-weight: var(--mis-font-semibold);
+}

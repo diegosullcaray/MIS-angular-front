@@ -4,6 +4,11 @@
       <p-skeleton height="1.75rem" />
     }
   </div>
+} @else if (errorPaso(); as error) {
+  <div class="flex items-center gap-2 py-4 text-[12px] text-[var(--mis-danger)]">
+    <i class="pi pi-exclamation-triangle"></i>
+    <span>{{ error }}</span>
+  </div>
 } @else if (frameActual(); as frame) {
   <div class="flex flex-col gap-3.5">
     @if (puedeVolver()) {
@@ -44,7 +49,7 @@
           <div class="flex items-baseline gap-1.5 flex-wrap">
             <span class="text-[16px] font-bold text-[var(--mis-text-primary)]">{{ formatearMeta() }}</span>
             <span class="text-[11px] font-bold px-2 py-0.5 rounded-full" [class]="frame.resultado.card.avan >= 1 ? 'bg-[var(--mis-success-light)] text-[var(--mis-success)] border border-[var(--mis-success)]/30' : 'bg-[var(--mis-warning-light)] text-[var(--mis-warning)] border border-[var(--mis-warning)]/30'">
-              ({{ frame.resultado.card.avan * 100 | number: '.0-1' }}%)
+              ({{ formatearAvance(frame.resultado.card.avan) }})
             </span>
           </div>
         </div>
@@ -104,18 +109,18 @@
         <p-table [value]="frame.resultado.rank" styleClass="p-datatable-sm" scrollHeight="360px" [scrollable]="true" [stripedRows]="true">
           <ng-template pTemplate="header">
             <tr class="bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)]">
-              <th class="whitespace-nowrap text-[12px] uppercase bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Nivel</th>
-              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Real</th>
-              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Meta</th>
-              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Distancia</th>
+              <th class="whitespace-nowrap text-[12px] uppercase bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">{{ encabezadosRanking().nivel }}</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">{{ encabezadosRanking().real }}</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">{{ encabezadosRanking().meta }}</th>
+              <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">{{ encabezadosRanking().distancia }}</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-fila>
             <tr class="text-[12px] cursor-pointer hover:bg-[var(--mis-primary-light)]/40 transition-colors">
               <td class="underline font-medium text-[var(--mis-secondary)] hover:text-[var(--mis-secondary-hover)]" (click)="drillRanking(fila)">{{ fila.des_rel }}</td>
-              <td class="text-right font-semibold">{{ fila.var_real | number: '.0-0' }}</td>
-              <td class="text-right font-medium">{{ fila.met | number: '.0-0' }}</td>
-              <td class="text-right font-semibold" [class]="fila.diff < 0 ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-success)]'">{{ fila.diff | number: '.0-0' }}</td>
+              <td class="text-right font-semibold">{{ formatearRanking(fila.var_real, formatosRanking().real) }}</td>
+              <td class="text-right font-medium">{{ formatearRanking(fila.met, formatosRanking().meta) }}</td>
+              <td class="text-right font-semibold" [class]="fila.diff < 0 ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-success)]'">{{ formatearRanking(fila.diff, formatosRanking().distancia) }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">

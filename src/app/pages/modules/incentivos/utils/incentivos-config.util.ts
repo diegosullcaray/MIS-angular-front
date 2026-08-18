@@ -217,6 +217,29 @@ export function crearCalculadoraPlusDefault(): PlusCalculadora[] {
 /** Índice (1-based) del ítem dentro de `IDS_SUPER_PLUS` — mismo orden fijo que usaba `superPlusConfig.data` del legado para calcular `idx` en `showDetail(item, i+1)`. */
 export const INDICE_SUPER_PLUS: Record<string, number> = Object.fromEntries(IDS_SUPER_PLUS.map((id, i) => [id, i + 1]));
 
+/**
+ * `cod_var` que espera `incentivos3.detalle_var3` por cada variable — mapa
+ * `midx` de `avances.component.ts` (legado). Cartera es el caso especial: su
+ * detalle vive en el `cod_var` 91 ("cartera vigente"), no en el 1 con el que
+ * viaja en las tablas del Cuadro de Mando.
+ */
+export const COD_VAR_DETALLE: Record<string, number> = {
+  car: 91,
+  cli: 2,
+  sc1: 3,
+  efec1: 4,
+  efec2: 5,
+  efec3: 6,
+};
+
+/** `cod_var` con el que viaja cada variable en `ds1`/`ds2` (1-based, mismo orden que el `incentivos3IconSet` del legado). */
+export const ID_POR_COD_VAR = ['car', 'cli', 'sc1', 'efec1', 'efec2', 'efec3'];
+
+/** Normaliza el `cod_var` del detalle para buscar etiquetas y formatos — `idx == 91 ? 1 : idx` del legado. */
+export function normalizarCodVarDetalle(codVar: number): number {
+  return codVar === 91 ? 1 : codVar;
+}
+
 /** Etiquetas de las 3 tarjetas KPI + nota al pie del diálogo de detalle, por `cod_var` — `detalleConfig.items`/`.items2` del legado (título/ícono ya no se duplican acá: se usan directo del ítem de origen, ver `DetalleVariableDialogComponent`). */
 
 

@@ -1,0 +1,33 @@
+/* Medidor circular de avance — reemplaza el `circle-pie.scss` del legado.
+   El anillo se recorta con `mask` en vez de tapar el centro con un disco
+   opaco: así el hueco deja ver el vidrio del panel en cualquiera de los dos
+   temas, sin tener que adivinar el color de fondo. */
+.avance-medidor {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+}
+
+.avance-anillo {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--mis-radius-full);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
+}
+
+.avance-valor {
+  position: relative;
+  font-size: 12px;
+  font-weight: var(--mis-font-bold);
+  color: var(--mis-text-primary);
+}
+
+@media (max-width: 959px) {
+  .avance-medidor {
+    width: 54px;
+    height: 54px;
+  }
+}

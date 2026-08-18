@@ -1,25 +1,15 @@
 import { Component, inject, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { KnobModule } from 'primeng/knob';
 import { DecimalPipe } from '@angular/common';
 import { IncentivosService } from '../../services/incentivos.service';
+import { COD_VAR_DETALLE } from '../../utils/incentivos-config.util';
 import type { ItemAvance } from '../../models/incentivos-tablas.model';
 import type { DetalleAvanceEvent } from '../../models/incentivos-eventos.model';
-
-const COD_VAR_POR_ID: Record<string, number> = {
-  car: 1,
-  cli: 2,
-  sc1: 3,
-  efec1: 4,
-  efec2: 5,
-  efec3: 6,
-};
 
 /** Grilla de Avances del Cuadro de Mando. */
 @Component({
   selector: 'app-avances-grid',
   standalone: true,
-  imports: [FormsModule, KnobModule, DecimalPipe],
+  imports: [DecimalPipe],
   templateUrl: './avances-grid.component.html',
   styleUrl: './avances-grid.component.css',
 })
@@ -30,7 +20,7 @@ export class AvancesGridComponent {
 
   protected solicitarDetalle(item: ItemAvance): void {
     if (!item.enab) return;
-    const codVar = COD_VAR_POR_ID[item.id] ?? 1;
+    const codVar = COD_VAR_DETALLE[item.id] ?? 1;
     this.abrirDetalle.emit({ item, codVar });
   }
 
@@ -38,13 +28,24 @@ export class AvancesGridComponent {
     this.solicitarDetalle(item);
   }
 
+  /**
+   * Color del arco según el avance — mismos cortes que `pieStyle()` del legado:
+   * ámbar entre 65% y 100%, rojo por debajo de 65% y verde al llegar a la meta
+   * (el 0 también cae en verde, igual que en el legado, porque ahí todavía no
+   * hay avance que calificar).
+   */
   protected colorAvance(item: ItemAvance): string {
-    if (item.sit === 1) return 'var(--mis-success)';
-    return 'var(--mis-primary-text)';
+    if (item.val >= 0.65 && item.val < 1) return 'var(--mis-warning)';
+    if (item.val > 0 && item.val < 0.65) return 'var(--mis-danger)';
+    return 'var(--mis-success)';
   }
 
-  protected colorEstado(item: ItemAvance): string {
-    if (item.sit === 1) return 'text-[var(--mis-success)]';
-    return 'text-[var(--mis-text-tertiary)]';
+  /** Relleno del anillo (`per` = `${id}_avan_floor`), tope 100 para avances por encima de la meta. */
+  protected porcentajeAnillo(item: ItemAvance): number {
+    return Math.min(Math.max(item.per ?? 0, 0), 100);
+  }
+
+  protected fondoAnillo(item: ItemAvance): string {
+    return `conic-gradient(${this.colorAvance(item)} ${this.porcentajeAnillo(item)}%, var(--mis-border-strong) 0)`;
   }
 }

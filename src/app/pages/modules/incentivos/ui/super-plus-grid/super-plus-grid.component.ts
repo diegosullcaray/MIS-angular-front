@@ -28,9 +28,15 @@ export class SuperPlusGridComponent {
     this.solicitarDetalle(item);
   }
 
+  /**
+   * Fondo de la caja — `getBoxCls()` del legado (`bg3` inactivo, `bg2` en
+   * negativo, `bg1` normal). Los tokens `--mis-*-text` que usaba esta función
+   * antes no existen en `tokens.css`, así que las cajas se quedaban sin fondo
+   * ni color de texto.
+   */
   protected claseCaja(item: ItemSuperPlus): string {
-    if (item.estado === 0) return 'bg-[var(--mis-surface-variant)] text-[var(--mis-text-tertiary)]';
-    if (item.val < 0) return 'bg-[var(--mis-danger-light)] text-[var(--mis-danger-text)]';
-    return 'bg-[var(--mis-secondary-light)] text-[var(--mis-secondary-text)]';
+    if (item.estado === 0) return 'bg-[var(--mis-panel-bg)] text-[var(--mis-text-tertiary)]';
+    if (item.val < 0) return 'bg-[var(--mis-danger-light)] text-[var(--mis-danger)]';
+    return 'bg-[var(--mis-secondary-light)] text-[var(--mis-text-primary)]';
   }
 }

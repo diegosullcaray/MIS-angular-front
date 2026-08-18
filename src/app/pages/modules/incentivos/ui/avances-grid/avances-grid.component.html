@@ -4,16 +4,24 @@
       @if (item.show) {
         <button
           type="button"
+          data-qa="avance"
           class="flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors"
-          [class]="item.enab ? 'cursor-pointer hover:bg-black/5' : ''"
+          [class]="item.enab ? 'cursor-pointer hover:bg-[var(--mis-hover-bg)]' : ''"
           [disabled]="!item.enab"
           (click)="onClic(item)"
         >
-          <p-knob [ngModel]="item.per" [readonly]="true" [size]="52" [valueColor]="colorAvance(item)" rangeColor="#e5e7eb" [showValue]="false" [strokeWidth]="8" />
-          <span class="text-[11px] font-bold text-[var(--mis-text-primary)]">{{ item.val * 100 | number: '.0-1' }}%</span>
-          <div class="flex items-center justify-center gap-1.5 mt-0.5">
-            <i [class]="item.icono + ' text-[14px] ' + colorEstado(item)"></i>
+          <!-- Ícono + descripción arriba del anillo, como en el legado. -->
+          <div class="flex items-center justify-center gap-1.5">
+            <i [class]="item.icono + ' text-[13px] text-[var(--mis-text-secondary)]'"></i>
             <span class="text-[12px] font-medium text-center leading-tight text-[var(--mis-text-primary)]">{{ item.des }}</span>
+          </div>
+
+          <!-- Anillo de avance: el porcentaje va adentro (mismo lugar que la
+               `.pie-box` del legado) y el arco se pinta con un `conic-gradient`
+               —no con un SVG— para que los tokens de color resuelvan en ambos temas. -->
+          <div class="avance-medidor">
+            <div class="avance-anillo" [style.background]="fondoAnillo(item)"></div>
+            <span class="avance-valor">{{ item.val * 100 | number: '.0-1' }}%</span>
           </div>
         </button>
       }
