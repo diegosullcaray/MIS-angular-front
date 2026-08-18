@@ -1,10 +1,8 @@
 <app-window-panel
   titulo="Control de Cargas"
+  [subtitulo]="'Actualizado al ' + actualizadoAl()"
   [permitirActualizar]="false"
 >
-  <span class="text-[10px] text-[var(--mis-text-tertiary)]">
-    <i class="pi pi-clock text-[9px] mr-1"></i>Actualizado al {{ actualizadoAl() }}
-  </span>
   <div class="flex flex-col gap-2">
     <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)] uppercase">Carga de Fuentes Producción</h3>
     <div class="mis-card p-3 overflow-x-auto">

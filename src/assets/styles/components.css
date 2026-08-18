@@ -162,6 +162,14 @@
   text-overflow: ellipsis;
 }
 
+/* Separa título y subtítulo (nombre del colaborador, fecha de actualización,
+   etc.) — el mismo guión que usa una ventana de macOS para "Documento — Carpeta". */
+.mis-window-separador {
+  color: var(--mis-text-tertiary);
+  font-size: var(--mis-text-xs);
+  flex-shrink: 0;
+}
+
 .mis-window-subtitulo {
   font-size: var(--mis-text-xs);
   color: var(--mis-text-tertiary);
@@ -172,6 +180,7 @@
 
 /* En pantallas angostas el título cede espacio a las acciones. */
 @media (max-width: 640px) {
+  .mis-window-separador,
   .mis-window-subtitulo {
     display: none;
   }
