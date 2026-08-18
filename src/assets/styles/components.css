@@ -508,86 +508,6 @@
   color: var(--mis-text-on-secondary);
 }
 
-/* ── Migas de pan ───────────────────────────────────────────── */
-.mis-explorador-ruta {
-  display: flex;
-  align-items: center;
-  gap: var(--mis-space-2);
-  min-width: 0;
-}
-
-.mis-explorador-subir {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 1px solid var(--mis-border);
-  border-radius: var(--mis-radius-sm);
-  background: var(--mis-surface);
-  color: var(--mis-text-secondary);
-  font-size: 12px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.mis-explorador-subir:hover:not(:disabled) {
-  background: var(--mis-hover-bg);
-  color: var(--mis-text-primary);
-}
-
-.mis-explorador-subir:disabled {
-  cursor: default;
-  opacity: 0.45;
-}
-
-.mis-explorador-migas {
-  display: flex;
-  align-items: center;
-  gap: var(--mis-space-1);
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.mis-explorador-migas::-webkit-scrollbar {
-  display: none;
-}
-
-.mis-explorador-miga {
-  padding: 2px var(--mis-space-2);
-  border: 0;
-  border-radius: var(--mis-radius-sm);
-  background: transparent;
-  font-family: inherit;
-  font-size: var(--mis-text-sm);
-  color: var(--mis-text-secondary);
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.mis-explorador-miga:hover {
-  background: var(--mis-hover-bg);
-  color: var(--mis-text-primary);
-}
-
-.mis-explorador-miga--actual {
-  font-weight: var(--mis-font-semibold);
-  color: var(--mis-text-primary);
-  cursor: default;
-}
-
-.mis-explorador-miga--actual:hover {
-  background: transparent;
-}
-
-.mis-explorador-miga-sep {
-  font-size: 12px;
-  color: var(--mis-text-tertiary);
-  flex-shrink: 0;
-}
-
 /* ── Cuadrícula de iconos ───────────────────────────────────── */
 .mis-explorador-cuadricula {
   display: grid;
@@ -632,8 +552,8 @@
   color: var(--mis-secondary);
 }
 
-.mis-explorador-icono--archivo {
-  color: var(--mis-text-tertiary);
+.mis-explorador-icono--reporte {
+  color: var(--mis-primary-text);
 }
 
 .mis-explorador-nombre {

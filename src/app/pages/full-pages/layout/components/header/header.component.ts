@@ -22,6 +22,7 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 import { ThemeService } from '../../services/theme.service';
 import { AuthService } from '../../../auth/service/auth.service';
 import { MenuStgService } from '../../services/menu-stg.service';
+import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { CambiarUsuarioDialogComponent } from '../dialogs/cambiar-usuario-dialog/cambiar-usuario-dialog.component';
 import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
@@ -49,6 +50,7 @@ export class HeaderComponent {
   protected readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
   private readonly menuStg = inject(MenuStgService);
+  private readonly navegacion = inject(NavegacionSistemasService);
   private readonly kaypacha = inject(KaypachaService);
 
   // ─── Estado Local (Signals) ───────────────────────────────────────────────
@@ -82,8 +84,14 @@ export class HeaderComponent {
   // ─── Configuración de Breadcrumb ──────────────────────────────────────────
   protected readonly breadcrumbHome: MenuItem = { icon: 'pi pi-home', routerLink: '/app/dashboard' };
 
-  /** Construye la ruta de navegación superior basándose en la URL activa. */
+  /**
+   * Ruta de navegación superior. Mientras está a la vista el explorador del
+   * sistema, refleja la carpeta abierta ahí (que no es una URL); si no, se
+   * deriva de la URL activa.
+   */
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
+    if (this.shell.contenidoPendienteSeleccion()) return this.breadcrumbExplorador();
+
     const url = this.urlActual().split('?')[0].split('#')[0];
     const segmentos = url.split('/').filter(Boolean);
 
@@ -128,6 +136,20 @@ export class HeaderComponent {
   private cerrarDropdownYAbrir(modalSignal: typeof this.confirmarSalirOpen): void {
     this.dropdownOpen.set(false);
     modalSignal.set(true);
+  }
+
+  /** Ubicación dentro del explorador; cada miga vuelve a su nivel. */
+  private breadcrumbExplorador(): MenuItem[] {
+    const panel = this.navegacion.panelActivo();
+    if (!panel) return [];
+
+    return [
+      { label: panel.titulo, command: () => this.navegacion.irANivel(-1) },
+      ...this.navegacion.rutaExplorador().map((carpeta, i) => ({
+        label: carpeta.etiqueta,
+        command: () => this.navegacion.irANivel(i),
+      })),
+    ];
   }
 
   /** Genera el breadcrumb mapeando los segmentos nativos. */

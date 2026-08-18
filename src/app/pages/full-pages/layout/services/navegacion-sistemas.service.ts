@@ -1,20 +1,22 @@
-import { Injectable, computed, inject } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { MenuStgService } from './menu-stg.service';
 import { KaypachaService } from '../../../modules/ranking-k/services/kaypacha.service';
 import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../interfaces/sidebar.model';
 
 /**
- * Árbol de navegación de cada sistema, extraído de `SidebarComponent` para que
- * lo compartan las dos superficies que hoy lo consumen: el rail de sistemas
- * (Col 1) y el explorador de archivos del área de contenido
- * (`ExploradorSistemaComponent`), que reemplazó al panel de links de la Col 2.
+ * Árbol de navegación de cada sistema y ubicación actual dentro de él. Lo
+ * comparten el rail de sistemas (Col 1), el explorador del área de contenido y
+ * el breadcrumb del header, que es donde se refleja esa ubicación.
  */
 @Injectable({ providedIn: 'root' })
 export class NavegacionSistemasService {
   private readonly shell = inject(ShellStateService);
   private readonly menuStg = inject(MenuStgService);
   private readonly kaypacha = inject(KaypachaService);
+
+  /** Carpetas abiertas en el explorador, de la más externa a la actual. */
+  readonly rutaExplorador = signal<SidebarNavRuta[]>([]);
 
   /** Lista combinada de íconos base y los que provienen del backend STG. */
   readonly iconos = computed<SidebarIcon[]>(() => {
@@ -57,18 +59,36 @@ export class NavegacionSistemasService {
   });
 
   /**
-   * Nodos raíz del sistema activo, ya filtrados por permisos y aplanados: el
-   * explorador muestra un solo nivel por vez, así que las secciones del panel
-   * (que solo agrupaban visualmente) se concatenan en una sola carpeta raíz.
+   * Contenido de la carpeta abierta. En la raíz se aplanan las secciones del
+   * panel, que solo agrupaban visualmente.
    */
-  readonly nodosRaiz = computed<SidebarNavRuta[]>(() => {
+  readonly nodosActuales = computed<SidebarNavRuta[]>(() => {
+    const ruta = this.rutaExplorador();
+    if (ruta.length) return this.filtrarVisibles(ruta[ruta.length - 1].hijos ?? []);
+
     const panel = this.panelActivo();
-    if (!panel) return [];
-    return panel.secciones.flatMap((seccion) => this.filtrarVisibles(seccion.rutas));
+    return panel ? panel.secciones.flatMap((s) => this.filtrarVisibles(s.rutas)) : [];
   });
 
+  constructor() {
+    // Cambiar de sistema vuelve a la raíz: la ubicación del anterior no aplica.
+    effect(() => {
+      this.panelActivo();
+      this.rutaExplorador.set([]);
+    });
+  }
+
+  entrarCarpeta(nodo: SidebarNavRuta): void {
+    this.rutaExplorador.update((r) => [...r, nodo]);
+  }
+
+  /** Vuelve al nivel indicado; `-1` es la raíz del sistema. */
+  irANivel(indice: number): void {
+    this.rutaExplorador.update((r) => r.slice(0, indice + 1));
+  }
+
   /** Descarta los nodos que el rol del usuario no puede ver. */
-  filtrarVisibles(rutas: SidebarNavRuta[]): SidebarNavRuta[] {
+  private filtrarVisibles(rutas: SidebarNavRuta[]): SidebarNavRuta[] {
     return rutas.filter((ruta) => {
       if (ruta.soloAdminSistema && !this.shell.esAdminSistema()) return false;
       if (ruta.soloAdmin && !this.shell.esAdmin()) return false;
