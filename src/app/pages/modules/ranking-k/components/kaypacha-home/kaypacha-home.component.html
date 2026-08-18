@@ -1,28 +1,26 @@
-<div class="flex flex-col gap-6 w-full">
-  <div class="flex items-center gap-3">
-    <ng-icon name="lucideTrophy" size="24" class="text-[var(--mis-warning)]" />
-    <h1 class="text-[var(--mis-text-xl)] font-semibold text-[var(--mis-text-primary)] m-0">Ranking Kaypacha</h1>
-  </div>
-
-  <div class="mis-card">
-    @if (kaypacha.cargando()) {
-      <div class="p-5">
-        <app-list-skeleton [rows]="[1, 2]" [cols]="[1]" />
-      </div>
-    } @else if (kaypacha.error()) {
-      <div class="p-5">
-        <app-inline-error
-          titulo="No se pudo cargar el ranking"
-          [detalle]="kaypacha.error()!"
-          (reintentar)="kaypacha.recargarCategorias()"
-        />
-      </div>
-    } @else if (kaypacha.categorias().length === 0) {
-      <app-empty-state titulo="Sin categorías" descripcion="Todavía no hay categorías de ranking disponibles." />
-    } @else {
-      <div class="p-5">
-        <app-list-skeleton [rows]="[1, 2]" [cols]="[1]" />
-      </div>
-    }
-  </div>
-</div>
+<!-- Pantalla puente: carga las categorías y salta al detalle de la primera
+     (ver el `effect` del componente). Lo único que llega a verse es el estado
+     de esa carga, así que la ventana va con alto natural. -->
+<app-window-panel
+  titulo="Ranking Kaypacha"
+  [altoAuto]="true"
+  [actualizando]="kaypacha.cargando()"
+  etiquetaActualizar="Reintentar la carga de categorías"
+  (actualizar)="kaypacha.recargarCategorias()"
+>
+  @if (kaypacha.cargando()) {
+    <app-list-skeleton [rows]="[1, 2]" [cols]="[1]" />
+  } @else if (kaypacha.error()) {
+    <app-inline-error
+      titulo="No se pudo cargar el ranking"
+      [detalle]="kaypacha.error()!"
+      (reintentar)="kaypacha.recargarCategorias()"
+    />
+  } @else if (kaypacha.categorias().length === 0) {
+    <app-empty-state titulo="Sin categorías" descripcion="Todavía no hay categorías de ranking disponibles." />
+  } @else {
+    <!-- Ya hay categorías: el `effect` está navegando al detalle en este mismo
+         instante, así que se mantiene el esqueleto hasta que la ruta cambie. -->
+    <app-list-skeleton [rows]="[1, 2]" [cols]="[1]" />
+  }
+</app-window-panel>
