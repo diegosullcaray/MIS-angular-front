@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DataTableComponent } from './data-table.component';
@@ -27,7 +27,7 @@ function filas(): Fila[] {
   standalone: true,
   imports: [DataTableComponent, DataTableCellDirective],
   template: `
-    <app-data-table [columns]="columnas" [data]="data" [searchFields]="searchFields" emptyMessage="Sin registros">
+    <app-data-table [columns]="columnas" [data]="data()" [searchFields]="searchFields()" emptyMessage="Sin registros">
       <ng-template appDataTableCell="nombre" let-row>
         <span class="celda-nombre">{{ row.nombre }}</span>
       </ng-template>
@@ -36,8 +36,12 @@ function filas(): Fila[] {
 })
 class HostComponent {
   columnas = COLUMNAS;
-  data = filas();
-  searchFields: string[] = [];
+  // Signals: bajo zoneless, una reasignación de propiedad plana en el host
+  // de test no dispara `fixture.detectChanges()` (no marca ninguna vista
+  // como "requiere refresh"), así que los tests que mutan estos valores a
+  // mitad de camino necesitan un `.set(...)` real.
+  data = signal(filas());
+  searchFields = signal<string[]>([]);
 }
 
 const COLUMNAS_CON_FILTRO: DataTableColumn[] = [
@@ -96,7 +100,7 @@ describe('DataTableComponent', () => {
 
   it('con searchFields, filtra solo al hacer clic en "Buscar" (no en cada tecla)', () => {
     const fixture = crear();
-    fixture.componentInstance.searchFields = ['nombre'];
+    fixture.componentInstance.searchFields.set(['nombre']);
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
@@ -117,7 +121,7 @@ describe('DataTableComponent', () => {
 
   it('muestra emptyMessage cuando no hay filas', () => {
     const fixture = crear();
-    fixture.componentInstance.data = [];
+    fixture.componentInstance.data.set([]);
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Sin registros');
@@ -342,7 +346,13 @@ describe('DataTableComponent — filtro de fecha', () => {
     tabla['aplicarFiltroColumna']('fecha', new Date(2026, 0, 3));
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelectorAll('tbody tr').length).toBe(0);
+    // p-table renderiza su fila de `emptymessage` como un <tr> real cuando
+    // el `[value]` filtrado queda vacío, así que no hay 0 <tr>: hay 1, y
+    // ninguno de los códigos de las filas originales debe aparecer en ella.
+    const filas = fixture.nativeElement.querySelectorAll('tbody tr');
+    expect(filas.length).toBe(1);
+    expect(filas[0].textContent).not.toContain('A1');
+    expect(filas[0].textContent).not.toContain('B2');
   });
 });
 

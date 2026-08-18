@@ -40,7 +40,9 @@ describe('SidebarComponent', () => {
     // jsdom no implementa matchMedia por defecto y los specs de este proyecto
     // corren con --isolate=false (globals compartidos entre archivos) — sin
     // este stub, si ningún otro spec lo definió antes en la misma corrida,
-    // esMobil() revienta con "window.matchMedia is not a function".
+    // cualquier dependencia que lo llame revienta con "window.matchMedia is
+    // not a function" (esMobil() usa `window.innerWidth`, no esto — ver
+    // mockInnerWidth() más abajo).
     if (typeof window.matchMedia !== 'function') {
       window.matchMedia = vi.fn().mockReturnValue({ matches: false } as MediaQueryList);
     }
@@ -275,7 +277,10 @@ describe('SidebarComponent', () => {
   it('seleccionarIcono() no navega cuando el ícono sí tiene panel propio', () => {
     const navSpy = vi.spyOn(router, 'navigateByUrl');
     const fixture = crear();
-    const icono: SidebarIcon = { id: 'host-inicio', tipo: 'host-inicio', icono: 'pi', etiqueta: 'Inicio', tienePanel: true };
+    // "host-inicio" es un caso especial que siempre navega a /app/dashboard
+    // (ver el `if (icon.id === 'host-inicio')` de seleccionarIcono()); acá
+    // interesa un ícono CUALQUIERA con panel propio, no ese caso especial.
+    const icono: SidebarIcon = { id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true };
 
     fixture.componentInstance['seleccionarIcono'](icono);
 
@@ -394,12 +399,14 @@ describe('SidebarComponent', () => {
     expect(shell.menuItemActivo()).toEqual({ ruta: '/app/ranking-k/categoria/cat-1', etiqueta: 'cat-1' });
   });
 
-  function mockMatchMedia(matches: boolean): void {
-    vi.spyOn(window, 'matchMedia').mockReturnValue({ matches } as MediaQueryList);
+  // `esMobil()` decide por `window.innerWidth` (no por `matchMedia`, que acá
+  // no se usa para nada) — hay que mockear esa propiedad puntualmente.
+  function mockInnerWidth(width: number): void {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
   }
 
   it('onRutaSeleccionada() colapsa el panel automáticamente en mobile (flota sobre el contenido)', () => {
-    mockMatchMedia(true);
+    mockInnerWidth(390);
     shell.setNavPanelColapsado(false);
     const fixture = crear();
 
@@ -409,7 +416,7 @@ describe('SidebarComponent', () => {
   });
 
   it('onRutaSeleccionada() no colapsa el panel en desktop (se queda fijo al costado)', () => {
-    mockMatchMedia(false);
+    mockInnerWidth(1280);
     shell.setNavPanelColapsado(false);
     const fixture = crear();
 
@@ -477,7 +484,9 @@ describe('SidebarComponent', () => {
     const panel = (fixture.nativeElement as HTMLElement).querySelector('app-sidebar-nav-panel');
     expect(panel).not.toBeNull();
     const contenedor = panel!.parentElement!;
-    expect(contenedor.classList.contains('w-0')).toBe(true);
+    // La clase real que aplica `[class.sm:w-0]` es el literal "sm:w-0" (Angular
+    // no separa el prefijo de breakpoint), no "w-0".
+    expect(contenedor.classList.contains('sm:w-0')).toBe(true);
     expect(contenedor.classList.contains('opacity-0')).toBe(true);
     expect(contenedor.classList.contains('pointer-events-none')).toBe(true);
   });
