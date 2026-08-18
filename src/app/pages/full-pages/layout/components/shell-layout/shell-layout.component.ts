@@ -7,7 +7,7 @@ import { RedirectOverlayComponent } from '../../../../../shared/ui/redirect-over
 import { LoadingOverlayComponent } from '../../../../../shared/ui/loading-overlay/loading-overlay.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 
-import { PanelNeutroComponent } from '../panel-neutro/panel-neutro.component';
+import { ExploradorSistemaComponent } from '../explorador-sistema/explorador-sistema.component';
 
 @Component({
   selector: 'app-shell-layout',
@@ -19,7 +19,7 @@ import { PanelNeutroComponent } from '../panel-neutro/panel-neutro.component';
     RedirectOverlayComponent,
     LoadingOverlayComponent,
     ProgressSpinnerModule,
-    PanelNeutroComponent,
+    ExploradorSistemaComponent,
   ],
   templateUrl: './shell-layout.component.html',
   styleUrl: './shell-layout.component.css',

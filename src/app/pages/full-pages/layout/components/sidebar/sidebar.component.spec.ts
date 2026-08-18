@@ -282,16 +282,19 @@ describe('SidebarComponent', () => {
     expect(navSpy).not.toHaveBeenCalled();
   });
 
-  it('seleccionarIcono() muestra el panel por defecto al cambiar de sistema, aunque estuviera colapsado del sistema anterior', () => {
+  // La navegación dentro de un sistema pasó al explorador del área de contenido,
+  // así que cambiar de sistema ya no abre el panel de links por su cuenta: si el
+  // usuario lo tenía cerrado, sigue cerrado.
+  it('seleccionarIcono() respeta el panel colapsado al cambiar de sistema, sin forzar su apertura', () => {
     vi.useFakeTimers();
     menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true }]);
     menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });
     const fixture = crear();
-    shell.setNavPanelColapsado(true); // quedó colapsado del sistema anterior
+    shell.setNavPanelColapsado(true);
 
     fixture.componentInstance['seleccionarIcono']({ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Reportes', tienePanel: true });
 
-    expect(shell.navPanelColapsado()).toBe(false);
+    expect(shell.navPanelColapsado()).toBe(true);
     vi.useRealTimers();
   });
 
@@ -420,6 +423,7 @@ describe('SidebarComponent', () => {
     menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });
     const fixture = crear();
     shell.setSidebarIconActivo('sist-1');
+    shell.setNavPanelColapsado(false); // el panel arranca colapsado; acá se abre a mano
     fixture.detectChanges();
 
     const fondo = (fixture.nativeElement as HTMLElement).querySelector('[aria-hidden="true"]') as HTMLElement;
@@ -444,6 +448,7 @@ describe('SidebarComponent', () => {
 
   it('mientras cambiandoPanel está activo, muestra el esqueleto en vez del panel real (y también el fondo oscuro)', () => {
     const fixture = crear();
+    shell.setNavPanelColapsado(false); // el panel arranca colapsado; acá se abre a mano
     fixture.componentInstance['cambiandoPanel'].set(true);
     fixture.detectChanges();
 
@@ -458,6 +463,7 @@ describe('SidebarComponent', () => {
     menuStgFalso.hijosPorSistema.set({ 'sist-1': [{ etiqueta: 'Reporte A', ruta: '/reportes/a' }] });
     const fixture = crear();
     shell.setSidebarIconActivo('sist-1');
+    shell.setNavPanelColapsado(false); // el panel arranca colapsado; acá se abre a mano
     fixture.detectChanges();
 
     expect(fixture.componentInstance['panelActivo']()).not.toBeNull();

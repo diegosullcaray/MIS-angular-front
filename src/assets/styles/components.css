@@ -354,3 +354,393 @@
   padding: 0.875rem 1.25rem !important;
 }
 
+
+/* ── Explorador de archivos de un sistema ─────────────────────
+   Superficie de navegación dentro de un módulo (reemplazó al panel de links
+   de la Col 2). Vive acá y no en el CSS del componente por el mismo motivo
+   que `.mis-window-*`: son clases de una superficie del shell, y el archivo
+   por componente se pasaba del presupuesto de 4 kB. Lo renderiza
+   `ExploradorSistemaComponent` (layout/components/explorador-sistema). */
+.mis-explorador {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: var(--mis-space-3);
+}
+
+/* ── Barra de herramientas ──────────────────────────────────── */
+.mis-explorador-barra {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  flex-wrap: wrap;
+}
+
+.mis-explorador-buscador {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.mis-explorador-buscador > .pi-search {
+  position: absolute;
+  left: var(--mis-space-3);
+  font-size: 14px;
+  color: var(--mis-text-tertiary);
+  pointer-events: none;
+}
+
+.mis-explorador-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 var(--mis-space-8) 0 var(--mis-space-8);
+  font-family: inherit;
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-primary);
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-secondary);
+  border-radius: var(--mis-radius-md);
+  outline: none;
+  transition: box-shadow var(--mis-transition-fast);
+}
+
+.mis-explorador-input::placeholder {
+  color: var(--mis-text-tertiary);
+}
+
+.mis-explorador-input:focus-visible {
+  box-shadow: var(--mis-shadow-focus);
+}
+
+/* El clear nativo de `type=search` no se puede tematizar; se usa el propio. */
+.mis-explorador-input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.mis-explorador-limpiar {
+  position: absolute;
+  right: var(--mis-space-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--mis-radius-full);
+  background: transparent;
+  color: var(--mis-text-tertiary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mis-explorador-limpiar:hover {
+  background: var(--mis-hover-bg);
+  color: var(--mis-text-primary);
+}
+
+.mis-explorador-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  height: 38px;
+  padding: 0 var(--mis-space-3);
+  font-family: inherit;
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-secondary);
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-border-strong);
+  border-radius: var(--mis-radius-md);
+  white-space: nowrap;
+}
+
+.mis-explorador-filtro:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.mis-explorador-filtro .pi {
+  font-size: 12px;
+  color: var(--mis-text-tertiary);
+}
+
+.mis-explorador-vistas {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: var(--mis-panel-bg);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+}
+
+.mis-explorador-vista {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--mis-radius-sm);
+  background: transparent;
+  color: var(--mis-text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast), color var(--mis-transition-fast);
+}
+
+.mis-explorador-vista:hover {
+  background: var(--mis-hover-bg);
+  color: var(--mis-text-primary);
+}
+
+.mis-explorador-vista--activa {
+  background: var(--mis-secondary);
+  color: var(--mis-text-on-secondary);
+}
+
+.mis-explorador-vista--activa:hover {
+  background: var(--mis-secondary);
+  color: var(--mis-text-on-secondary);
+}
+
+/* ── Migas de pan ───────────────────────────────────────────── */
+.mis-explorador-ruta {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  min-width: 0;
+}
+
+.mis-explorador-subir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-sm);
+  background: var(--mis-surface);
+  color: var(--mis-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mis-explorador-subir:hover:not(:disabled) {
+  background: var(--mis-hover-bg);
+  color: var(--mis-text-primary);
+}
+
+.mis-explorador-subir:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.mis-explorador-migas {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-1);
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.mis-explorador-migas::-webkit-scrollbar {
+  display: none;
+}
+
+.mis-explorador-miga {
+  padding: 2px var(--mis-space-2);
+  border: 0;
+  border-radius: var(--mis-radius-sm);
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mis-explorador-miga:hover {
+  background: var(--mis-hover-bg);
+  color: var(--mis-text-primary);
+}
+
+.mis-explorador-miga--actual {
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+  cursor: default;
+}
+
+.mis-explorador-miga--actual:hover {
+  background: transparent;
+}
+
+.mis-explorador-miga-sep {
+  font-size: 12px;
+  color: var(--mis-text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ── Cuadrícula de iconos ───────────────────────────────────── */
+.mis-explorador-cuadricula {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+  gap: var(--mis-space-2);
+  align-content: start;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.mis-explorador-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mis-space-2);
+  padding: var(--mis-space-3) var(--mis-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--mis-radius-md);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast), border-color var(--mis-transition-fast);
+}
+
+.mis-explorador-item:hover {
+  background: var(--mis-hover-bg);
+  border-color: var(--mis-border);
+}
+
+.mis-explorador-item:focus-visible {
+  outline: none;
+  box-shadow: var(--mis-shadow-focus);
+}
+
+.mis-explorador-icono {
+  width: 62px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.mis-explorador-icono--carpeta {
+  color: var(--mis-secondary);
+}
+
+.mis-explorador-icono--archivo {
+  color: var(--mis-text-tertiary);
+}
+
+.mis-explorador-nombre {
+  font-size: var(--mis-text-sm);
+  line-height: var(--mis-leading-tight);
+  color: var(--mis-text-primary);
+  text-align: center;
+  /* Como en el explorador: hasta dos líneas y después elipsis. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* ── Vista de lista ─────────────────────────────────────────── */
+.mis-explorador-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+}
+
+.mis-explorador-lista > li + li .mis-explorador-fila {
+  border-top: 1px solid var(--mis-border);
+}
+
+.mis-explorador-fila {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-3);
+  width: 100%;
+  padding: var(--mis-space-2) var(--mis-space-3);
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast);
+}
+
+.mis-explorador-fila:hover {
+  background: var(--mis-hover-bg);
+}
+
+.mis-explorador-icono-mini {
+  width: 20px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.mis-explorador-fila-nombre {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mis-explorador-fila-tipo {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ── Vacío ──────────────────────────────────────────────────── */
+.mis-explorador-vacio {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mis-space-2);
+  min-height: 160px;
+  color: var(--mis-text-tertiary);
+}
+
+.mis-explorador-vacio .pi {
+  font-size: 28px;
+}
+
+.mis-explorador-vacio p {
+  margin: 0;
+  font-size: var(--mis-text-sm);
+}
+
+/* ── Barra de estado ────────────────────────────────────────── */
+.mis-explorador-estado {
+  margin-top: auto;
+  padding-top: var(--mis-space-2);
+  border-top: 1px solid var(--mis-border);
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-secondary);
+  text-align: center;
+}
+
+/* El host tiene que estirarse para que la ventana del explorador llene el
+   área de contenido (antes era el `:host` de la hoja del componente). */
+app-explorador-sistema {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}

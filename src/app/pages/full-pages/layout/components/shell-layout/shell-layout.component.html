@@ -17,10 +17,11 @@
     <main class="flex-1 overflow-y-auto bg-transparent">
       <!-- Mientras se elige un sub-ítem tras cambiar de sistema, se oculta el
            router-outlet (todavía tiene montada la pantalla anterior) y se
-           muestra este loader — ver ShellStateService.contenidoPendienteSeleccion. -->
+           muestra el explorador del sistema, que es desde donde se navega —
+           ver ShellStateService.contenidoPendienteSeleccion. -->
       @if (shell.contenidoPendienteSeleccion()) {
-        <div class="w-full p-3 pb-20 sm:p-4">
-          <app-panel-neutro />
+        <div class="w-full p-3 pb-20 sm:p-4 flex">
+          <app-explorador-sistema />
         </div>
       }
       <!-- pb-20: reserva espacio para la barra inferior fija del sidebar en mobile (h-16 + margen) -->

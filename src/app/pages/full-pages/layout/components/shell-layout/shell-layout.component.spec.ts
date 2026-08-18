@@ -23,8 +23,8 @@ class StubRedirectOverlayComponent {}
 @Component({ selector: 'app-loading-overlay', standalone: true, template: '' })
 class StubLoadingOverlayComponent {}
 
-@Component({ selector: 'app-panel-neutro', standalone: true, template: '<div class="stub-panel-neutro"></div>' })
-class StubPanelNeutroComponent {}
+@Component({ selector: 'app-explorador-sistema', standalone: true, template: '<div class="stub-explorador"></div>' })
+class StubExploradorSistemaComponent {}
 
 describe('ShellLayoutComponent', () => {
   beforeEach(() => {
@@ -39,7 +39,7 @@ describe('ShellLayoutComponent', () => {
           StubSidebarComponent,
           StubRedirectOverlayComponent,
           StubLoadingOverlayComponent,
-          StubPanelNeutroComponent,
+          StubExploradorSistemaComponent,
         ],
       },
     });
@@ -64,23 +64,23 @@ describe('ShellLayoutComponent', () => {
     expect(raiz.className).toContain("sm:bg-[url('/assets/images/fc/fondos/wallpaper.png')]");
   });
 
-  it('mientras contenidoPendienteSeleccion está activo, oculta el router-outlet (contenido del sistema anterior) y muestra el panel neutro', () => {
+  it('mientras contenidoPendienteSeleccion está activo, oculta el router-outlet (contenido del sistema anterior) y muestra el explorador del sistema', () => {
     const fixture = TestBed.createComponent(ShellLayoutComponent);
     const shell = TestBed.inject(ShellStateService);
     shell.setContenidoPendienteSeleccion(true);
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('app-panel-neutro')).not.toBeNull();
+    expect(el.querySelector('app-explorador-sistema')).not.toBeNull();
     expect(el.querySelector('.shell-content-inner')?.classList.contains('hidden')).toBe(true);
   });
 
-  it('sin contenidoPendienteSeleccion, no muestra el panel neutro y deja visible el router-outlet', () => {
+  it('sin contenidoPendienteSeleccion, no muestra el explorador y deja visible el router-outlet', () => {
     const fixture = TestBed.createComponent(ShellLayoutComponent);
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('app-panel-neutro')).toBeNull();
+    expect(el.querySelector('app-explorador-sistema')).toBeNull();
     expect(el.querySelector('.shell-content-inner')?.classList.contains('hidden')).toBe(false);
   });
 });

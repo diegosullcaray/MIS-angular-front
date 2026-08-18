@@ -23,7 +23,10 @@ export class ShellStateService {
   private readonly _menuItemActivo = signal<MenuItemActivo | null>(null);
   private readonly _sidebarIconActivo = signal<string>('host-inicio');
   private readonly _cerrandoSesion = signal(false);
-  private readonly _navPanelColapsado = signal(false);
+  // Arranca colapsado: la navegación dentro de un sistema pasó al explorador
+  // de archivos del área de contenido (`ExploradorSistemaComponent`), y este
+  // panel quedó como pane opcional que el usuario abre con el botón de menú.
+  private readonly _navPanelColapsado = signal(true);
   private readonly _sidebarTienePanel = signal(false);
   private readonly _contenidoPendienteSeleccion = signal(false);
 

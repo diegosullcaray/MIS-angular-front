@@ -1,0 +1,167 @@
+@if (panel(); as sistema) {
+  <app-window-panel [titulo]="sistema.titulo" [permitirActualizar]="false">
+    <!-- Los filtros todavía no hacen nada: el botón queda como affordance de la
+         barra, deshabilitado, hasta que se defina el criterio de filtrado. -->
+    <button
+      ventana-acciones
+      type="button"
+      class="mis-window-btn"
+      disabled
+      aria-label="Filtros (próximamente)"
+      pTooltip="Filtros — próximamente"
+      tooltipPosition="bottom"
+    >
+      <i class="pi pi-filter text-[14px]"></i>
+    </button>
+
+    <div class="mis-explorador">
+      <!-- ── Barra de herramientas ─────────────────────────────────── -->
+      <div class="mis-explorador-barra">
+        <div class="mis-explorador-buscador">
+          <i class="pi pi-search" aria-hidden="true"></i>
+          <input
+            type="search"
+            class="mis-explorador-input"
+            placeholder="Buscar reportes o carpetas…"
+            [value]="busqueda()"
+            (input)="onBusqueda($event)"
+            aria-label="Buscar dentro de esta carpeta"
+          />
+          @if (busqueda()) {
+            <button type="button" class="mis-explorador-limpiar" (click)="limpiarBusqueda()" aria-label="Limpiar búsqueda">
+              <i class="pi pi-times"></i>
+            </button>
+          }
+        </div>
+
+        <!-- Filtros sin funcionalidad todavía (pendiente de definir criterios). -->
+        <button type="button" class="mis-explorador-filtro" disabled pTooltip="Próximamente" tooltipPosition="bottom">
+          <span>Tipo de Reporte</span>
+          <i class="pi pi-chevron-down"></i>
+        </button>
+
+        <button type="button" class="mis-explorador-filtro" disabled pTooltip="Próximamente" tooltipPosition="bottom">
+          <i class="pi pi-calendar"></i>
+          <span>Fecha</span>
+          <i class="pi pi-chevron-down"></i>
+        </button>
+
+        <!-- Alternador de vista: cuadrícula (por defecto) o lista de detalles. -->
+        <div class="mis-explorador-vistas" role="group" aria-label="Modo de vista">
+          <button
+            type="button"
+            class="mis-explorador-vista"
+            [class.mis-explorador-vista--activa]="vista() === 'cuadricula'"
+            [attr.aria-pressed]="vista() === 'cuadricula'"
+            (click)="cambiarVista('cuadricula')"
+            aria-label="Vista de iconos"
+            pTooltip="Iconos"
+            tooltipPosition="bottom"
+          >
+            <i class="pi pi-th-large"></i>
+          </button>
+          <button
+            type="button"
+            class="mis-explorador-vista"
+            [class.mis-explorador-vista--activa]="vista() === 'lista'"
+            [attr.aria-pressed]="vista() === 'lista'"
+            (click)="cambiarVista('lista')"
+            aria-label="Vista de lista"
+            pTooltip="Lista"
+            tooltipPosition="bottom"
+          >
+            <i class="pi pi-list"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Migas de pan + subir un nivel ─────────────────────────── -->
+      <div class="mis-explorador-ruta">
+        <button
+          type="button"
+          class="mis-explorador-subir"
+          [disabled]="!puedeSubir()"
+          (click)="subirNivel()"
+          aria-label="Subir un nivel"
+          pTooltip="Subir un nivel"
+          tooltipPosition="bottom"
+        >
+          <i class="pi pi-arrow-up"></i>
+        </button>
+
+        <nav class="mis-explorador-migas" aria-label="Ubicación">
+          @for (miga of migas(); track miga.indice; let ultima = $last) {
+            @if (!$first) {
+              <i class="pi pi-angle-right mis-explorador-miga-sep" aria-hidden="true"></i>
+            }
+            @if (ultima) {
+              <span class="mis-explorador-miga mis-explorador-miga--actual" aria-current="page">{{ miga.etiqueta }}</span>
+            } @else {
+              <button type="button" class="mis-explorador-miga" (click)="irAMiga(miga.indice)">{{ miga.etiqueta }}</button>
+            }
+          }
+        </nav>
+      </div>
+
+      <!-- ── Contenido ─────────────────────────────────────────────── -->
+      @if (nodosVisibles().length === 0) {
+        <div class="mis-explorador-vacio">
+          <i [class]="hayBusquedaSinResultados() ? 'pi pi-search' : 'pi pi-folder-open'"></i>
+          <p>
+            {{ hayBusquedaSinResultados() ? 'Ningún elemento coincide con la búsqueda.' : 'Esta carpeta está vacía.' }}
+          </p>
+        </div>
+      } @else if (vista() === 'cuadricula') {
+        <div class="mis-explorador-cuadricula">
+          @for (nodo of nodosVisibles(); track nodo.etiqueta) {
+            <button type="button" class="mis-explorador-item" (click)="abrir(nodo)" [attr.aria-label]="nodo.etiqueta">
+              @if (esCarpeta(nodo)) {
+                <svg class="mis-explorador-icono mis-explorador-icono--carpeta" viewBox="0 0 64 52" aria-hidden="true">
+                  <path
+                    d="M0 8a8 8 0 0 1 8-8h13.4a8 8 0 0 1 5.66 2.34L31.3 6.6H56a8 8 0 0 1 8 8v29.4a8 8 0 0 1-8 8H8a8 8 0 0 1-8-8V8Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              } @else {
+                <svg class="mis-explorador-icono mis-explorador-icono--archivo" viewBox="0 0 52 64" aria-hidden="true">
+                  <path d="M6 0h26l14 14v44a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6V6a6 6 0 0 1 6-6Z" fill="currentColor" />
+                  <path d="M32 0l14 14H36a4 4 0 0 1-4-4V0Z" fill="#000" fill-opacity="0.22" />
+                </svg>
+              }
+              <span class="mis-explorador-nombre">{{ nodo.etiqueta }}</span>
+            </button>
+          }
+        </div>
+      } @else {
+        <ul class="mis-explorador-lista">
+          @for (nodo of nodosVisibles(); track nodo.etiqueta) {
+            <li>
+              <button type="button" class="mis-explorador-fila" (click)="abrir(nodo)">
+                @if (esCarpeta(nodo)) {
+                  <svg class="mis-explorador-icono-mini mis-explorador-icono--carpeta" viewBox="0 0 64 52" aria-hidden="true">
+                    <path
+                      d="M0 8a8 8 0 0 1 8-8h13.4a8 8 0 0 1 5.66 2.34L31.3 6.6H56a8 8 0 0 1 8 8v29.4a8 8 0 0 1-8 8H8a8 8 0 0 1-8-8V8Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                } @else {
+                  <svg class="mis-explorador-icono-mini mis-explorador-icono--archivo" viewBox="0 0 52 64" aria-hidden="true">
+                    <path d="M6 0h26l14 14v44a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6V6a6 6 0 0 1 6-6Z" fill="currentColor" />
+                    <path d="M32 0l14 14H36a4 4 0 0 1-4-4V0Z" fill="#000" fill-opacity="0.22" />
+                  </svg>
+                }
+                <span class="mis-explorador-fila-nombre">{{ nodo.etiqueta }}</span>
+                <span class="mis-explorador-fila-tipo">{{ esCarpeta(nodo) ? 'Carpeta' : 'Reporte' }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+
+      <!-- ── Barra de estado ───────────────────────────────────────── -->
+      <div class="mis-explorador-estado">
+        {{ nodosVisibles().length }} {{ nodosVisibles().length === 1 ? 'elemento mostrado' : 'elementos mostrados' }}
+      </div>
+    </div>
+  </app-window-panel>
+}

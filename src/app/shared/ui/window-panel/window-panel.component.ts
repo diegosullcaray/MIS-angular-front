@@ -19,8 +19,8 @@ const RUTA_HOME = '/app/dashboard';
  * El semáforo no es decorativo — cada luz hace lo que hace en macOS, traducido
  * a la navegación del shell:
  *   - rojo     → cerrar la pantalla y volver al inicio,
- *   - amarillo → minimizar: deja el panel neutro ("selecciona una opción…") con
- *                el menú secundario abierto, para elegir otra pantalla,
+ *   - amarillo → minimizar: deja a la vista el explorador del sistema, para
+ *                abrir otra pantalla del módulo,
  *   - verde    → zoom (pantalla completa del panel).
  *
  * Uso:
@@ -96,14 +96,13 @@ export class WindowPanelComponent {
   /**
    * Luz amarilla: "minimizar" la pantalla dentro del shell.
    *
-   * No colapsa el panel: deja el estado de espera del shell —el panel neutro
-   * con "Selecciona una opción del panel secundario a la izquierda"— y abre ese
-   * menú, que es de donde se elige la siguiente pantalla del módulo. La ruta no
-   * cambia, así que el contenido vuelve intacto al elegir una opción.
+   * Deja el estado de espera del shell, que ahora muestra el explorador de
+   * archivos del sistema (`ExploradorSistemaComponent`) — de ahí se elige la
+   * siguiente pantalla del módulo. La ruta no cambia, así que el contenido
+   * vuelve intacto al abrir otra opción.
    */
   protected onMinimizar(): void {
     this.minimizar.emit();
-    this.shell.setNavPanelColapsado(false);
     this.shell.setContenidoPendienteSeleccion(true);
   }
 

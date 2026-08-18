@@ -1,4 +1,4 @@
-import { Component, inject, computed, effect, signal, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import { Component, inject, effect, signal, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, Router } from '@angular/router';
 import { filter } from 'rxjs';
@@ -7,9 +7,10 @@ import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel
 import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { MenuStgService } from '../../services/menu-stg.service';
+import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
-import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta, SidebarNavSeccion } from '../../interfaces/sidebar.model';
+import type { SidebarIcon } from '../../interfaces/sidebar.model';
 
 /** Duración de la transición (esqueleto) al cambiar de sistema. */
 const DURACION_TRANSICION_PANEL_MS = 300;
@@ -26,6 +27,7 @@ export class SidebarComponent implements AfterViewInit {
 
   protected readonly shell = inject(ShellStateService);
   private readonly menuStg = inject(MenuStgService);
+  private readonly navegacion = inject(NavegacionSistemasService);
   private readonly kaypacha = inject(KaypachaService);
   private readonly redirect = inject(RedirectOverlayService);
   private readonly router = inject(Router);
@@ -93,44 +95,10 @@ export class SidebarComponent implements AfterViewInit {
   }
 
   /** Lista combinada de íconos base y los que provienen del backend STG. */
-  protected readonly iconos = computed<SidebarIcon[]>(() => {
-    const base: SidebarIcon[] = [
-      { id: 'host-inicio', tipo: 'host-inicio', icono: 'pi pi-home', etiqueta: 'Inicio', tienePanel: true }
-    ];
+  protected readonly iconos = this.navegacion.iconos;
 
-    const sistemasStg = this.menuStg.sistemas().map((sistema) => {
-      if (sistema.ruta === this.kaypacha.ruta || this.esAnalista(sistema)) return { ...sistema, tienePanel: true };
-      // "Dashboards Integrados" (`reportes-e` del legado) todavía manda un hijo
-      // "usuarios" en el árbol del backend (`menu-stg.service.ts`), pero esa
-      // pantalla ya no es una ruta — se migró a un diálogo responsive
-      // (`UsuariosReporteDialogComponent`, ver `dashboard.routes.ts`). Sin este
-      // override, `tienePanel: !!hijos` abre un panel secundario con un único
-      // link muerto para un sistema que en realidad no tiene subnavegación.
-      // `ruta` también hay que fijarla acá: `menu-stg.service.ts` solo la
-      // completa cuando `hijos` es falsy, así que mientras el backend siga
-      // mandando ese nodo llega undefined — sin esto el clic no navegaría
-      // a ningún lado (`DASHBOARD_ROUTES` monta en `/app/dashboards`).
-      if (this.esDashboardsIntegrados(sistema)) return { ...sistema, tienePanel: false, ruta: '/app/dashboards' };
-      return sistema;
-    });
-
-    return [...base, ...sistemasStg];
-  });
-
-  /** Configuración del panel secundario activo (Col 2). Es `null` si no aplica. */
-  protected readonly panelActivo = computed<SidebarNavPanelConfig | null>(() => {
-    const id = this.shell.sidebarIconActivo();
-
-    if (id === 'host-inicio') return this.getPanelHost();
-
-    const icono = this.iconos().find(i => i.id === id);
-    if (!icono?.tienePanel) return null;
-
-    if (icono.ruta === this.kaypacha.ruta) return this.kaypacha.panelPara(icono.etiqueta, icono.icono);
-    if (this.esAnalista(icono)) return this.getPanelAnalista(icono.etiqueta, icono.icono);
-
-    return this.getPanelStg(id);
-  });
+  /** Navegación del sistema activo. Es `null` si el sistema no tiene subnavegación. */
+  protected readonly panelActivo = this.navegacion.panelActivo;
 
   /** Acción al hacer clic en un ícono de la columna principal (Col 1). */
   protected seleccionarIcono(icon: SidebarIcon): void {
@@ -148,10 +116,11 @@ export class SidebarComponent implements AfterViewInit {
       return;
     }
 
-    // Transición visual para sistemas con panel
-    if (icon.tienePanel && (eraActivo !== icon.id || this.shell.navPanelColapsado())) {
+    // Transición visual para sistemas con panel. Ya no se fuerza a abrir la
+    // Col 2: la navegación pasó al explorador del área de contenido y el panel
+    // de links quedó como pane opcional, que el usuario abre si lo quiere.
+    if (icon.tienePanel && eraActivo !== icon.id) {
       this.cambiandoPanel.set(true);
-      this.shell.setNavPanelColapsado(false);
       setTimeout(() => this.cambiandoPanel.set(false), DURACION_TRANSICION_PANEL_MS);
     }
 
@@ -171,9 +140,10 @@ export class SidebarComponent implements AfterViewInit {
       return;
     }
 
-    // Sistemas con panel secundario: abren el panel y muestran el loader/spinner neutro
-    // en el área de contenido a la espera de que el usuario elija un sub-ítem.
-    // Permanece ahí de forma indefinida (sin auto-redirecciones ni reseteo por tiempo).
+    // Sistemas con subnavegación: el área de contenido muestra el explorador
+    // del sistema (`ExploradorSistemaComponent`) hasta que el usuario abra una
+    // de sus pantallas. Permanece ahí de forma indefinida (sin
+    // auto-redirecciones ni reseteo por tiempo).
     if (icon.tienePanel) {
       this.shell.setContenidoPendienteSeleccion(true);
     }
@@ -199,66 +169,6 @@ export class SidebarComponent implements AfterViewInit {
   /** Detecta si el ancho de pantalla corresponde al breakpoint `sm` (640px). */
   private esMobil(): boolean {
     return typeof window !== 'undefined' && window.innerWidth < 640;
-  }
-
-  private getPanelHost(): SidebarNavPanelConfig {
-    return {
-      tipo: 'host-admin',
-      titulo: 'Host Principal',
-      icono: 'pi pi-home',
-      secciones: [
-        {
-          titulo: 'Acceso directo',
-          rutas: [{ etiqueta: 'Mi espacio', ruta: '/app/dashboard', icono: 'lucideGrid' }],
-        },
-      ],
-    };
-  }
-
-  private esAnalista(icono: SidebarIcon): boolean {
-    return (icono.etiqueta || '').trim().toLowerCase() === 'analista';
-  }
-
-  private esDashboardsIntegrados(icono: SidebarIcon): boolean {
-    return (icono.etiqueta || '').trim().toLowerCase() === 'dashboards integrados';
-  }
-
-  private getPanelAnalista(titulo: string, icono: string): SidebarNavPanelConfig {
-    return {
-      tipo: 'host-admin',
-      titulo,
-      icono,
-      secciones: [
-        {
-          rutas: [
-            { etiqueta: 'Principal', ruta: '/app/analista', icono: 'pi pi-home' },
-            { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
-            {
-              etiqueta: 'Listas',
-              icono: 'pi pi-list',
-              hijos: [
-                { etiqueta: 'Priorización de Leads', ruta: '/app/analista/listas/priorizacion-leads' },
-                { etiqueta: 'Becas Financiera Confianza', ruta: '/app/analista/listas/becas' },
-              ],
-            },
-          ],
-        },
-      ],
-    };
-  }
-
-  /** Genera el panel para módulos legacy no migrados, basándose en la data del menú STG. */
-  private getPanelStg(slug: string): SidebarNavPanelConfig {
-    const hijosStg = this.menuStg.hijosPorSistema()[slug] ?? [];
-    const stg = this.menuStg.sistemas().find(s => s.id === slug);
-    const titulo = stg?.etiqueta ?? slug;
-
-    return {
-      tipo: 'remote',
-      titulo,
-      icono: stg?.icono ?? 'pi pi-th-large',
-      secciones: [{ titulo, rutas: hijosStg }],
-    };
   }
 
   ngAfterViewInit(): void {
