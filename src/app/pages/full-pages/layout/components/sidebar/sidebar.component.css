@@ -12,13 +12,21 @@
   -webkit-backdrop-filter: var(--mis-sidebar-blur);
 }
 
-/* Flechas de desplazamiento de la barra inferior (mobile): mismo material que
-   el rail, pero difuminando los íconos que quedan debajo para que se lea el
-   corte del scroll en vez de un choque de íconos. */
+/* Flechas de desplazamiento de la barra inferior (mobile). Van con el mismo
+   navy SÓLIDO que el fallback de `.sidebar-rail` sin backdrop-filter (no el
+   token translúcido `--mis-sidebar-bg`): un `backdrop-filter` propio encima
+   del que ya tiene el rail sampleaba el wallpaper de una tonalidad más clara
+   en vez del navy compuesto del rail, así que la flecha se veía como un
+   parche de otro color en vez de fundirse con la barra. El blur queda solo
+   para difuminar los íconos que asoman debajo. */
 .sidebar-rail-edge {
-  background: var(--mis-sidebar-bg);
+  background: #1d396e;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+}
+
+:host-context(.dark) .sidebar-rail-edge {
+  background: #09101d;
 }
 
 /* Sin soporte de backdrop-filter la translucidez dejaría el rail ilegible:

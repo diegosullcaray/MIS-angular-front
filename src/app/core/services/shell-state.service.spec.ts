@@ -88,16 +88,6 @@ describe('ShellStateService', () => {
     expect(service.navPanelColapsado()).toBe(false);
   });
 
-  it('sidebarTienePanel empieza en false y setSidebarTienePanel() lo actualiza', () => {
-    expect(service.sidebarTienePanel()).toBe(false);
-
-    service.setSidebarTienePanel(true);
-    expect(service.sidebarTienePanel()).toBe(true);
-
-    service.setSidebarTienePanel(false);
-    expect(service.sidebarTienePanel()).toBe(false);
-  });
-
   it('contenidoPendienteSeleccion empieza en false y setContenidoPendienteSeleccion() lo actualiza', () => {
     expect(service.contenidoPendienteSeleccion()).toBe(false);
 

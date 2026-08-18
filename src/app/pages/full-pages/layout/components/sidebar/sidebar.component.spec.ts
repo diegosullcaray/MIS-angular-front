@@ -482,19 +482,6 @@ describe('SidebarComponent', () => {
     expect(contenedor.classList.contains('pointer-events-none')).toBe(true);
   });
 
-  it('sincroniza shell.sidebarTienePanel() con panelActivo(), para que el header sepa si mostrar su botón en mobile', () => {
-    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Sin panel', tienePanel: false, ruta: '/algo' }]);
-    const fixture = crear();
-
-    // "Inicio" (host-inicio) siempre tiene panel propio (Mi espacio).
-    expect(shell.sidebarTienePanel()).toBe(true);
-
-    shell.setSidebarIconActivo('sist-1');
-    fixture.detectChanges();
-
-    expect(shell.sidebarTienePanel()).toBe(false);
-  });
-
   it('el botón de hamburguesa del rail (Col 1) queda oculto en mobile — en mobile ese botón vive en el header', () => {
     const fixture = crear();
 

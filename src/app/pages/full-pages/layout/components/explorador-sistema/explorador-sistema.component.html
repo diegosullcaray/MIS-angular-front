@@ -59,6 +59,21 @@
         </div>
       </div>
 
+      @if (migas().length > 1) {
+        <nav class="mis-explorador-migas sm:hidden" aria-label="Ubicación">
+          @for (miga of migas(); track miga.indice; let ultima = $last) {
+            @if (!$first) {
+              <i class="pi pi-angle-right mis-explorador-miga-sep" aria-hidden="true"></i>
+            }
+            @if (ultima) {
+              <span class="mis-explorador-miga mis-explorador-miga--actual" aria-current="page">{{ miga.etiqueta }}</span>
+            } @else {
+              <button type="button" class="mis-explorador-miga" (click)="irANivel(miga.indice)">{{ miga.etiqueta }}</button>
+            }
+          }
+        </nav>
+      }
+
       @if (nodosVisibles().length === 0) {
         <div class="mis-explorador-vacio">
           <i [class]="busqueda() ? 'pi pi-search' : 'pi pi-folder-open'"></i>

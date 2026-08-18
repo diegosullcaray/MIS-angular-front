@@ -21,9 +21,11 @@
   transition: background var(--mis-transition-base);
 }
 
+/* `flex flex-col` va como utilidad en la plantilla, no acá: una regla propia
+   con `display:flex` tiene más especificidad que la utilidad `.hidden` de
+   Tailwind y se la comía —`[class.hidden]` dejaba de ocultar este div, y la
+   pantalla anterior seguía viéndose (con blur) detrás del explorador. */
 .shell-content-inner {
-  display: flex;
-  flex-direction: column;
   animation: routeFadeIn var(--mis-transition-base) ease;
 }
 

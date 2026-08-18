@@ -4,8 +4,9 @@ import { inyectarSesionVigente, mockearBackendAnt } from './fixtures/session';
 
 /**
  * Cubre a nivel E2E el rediseño responsive del shell (Col 1 del sidebar
- * como barra inferior fija en mobile, estilo Facebook; breadcrumb oculto en
- * mobile; botón de alternar Col 2 movido al header solo en mobile) — ver
+ * como barra inferior fija en mobile, estilo Facebook; breadcrumb del header
+ * oculto en mobile; Col 2 sin ningún botón que la abra en mobile, porque ahí
+ * la navegación vive enteramente en el explorador del sistema) — ver
  * `sidebar.component.html` y `header.component.html`.
  *
  * El viewport se fija explícitamente en cada bloque (en vez de depender del
@@ -39,11 +40,11 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     await expect(shell.breadcrumb).toBeHidden();
   });
 
-  test('el botón de alternar el panel (Col 2) vive en el header, no en el rail', async ({ page }) => {
+  test('no hay ningún botón para abrir la Col 2: en mobile la navegación vive en el explorador del sistema', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.ir();
 
-    await expect(shell.botonHamburguesaDelHeader).toBeVisible();
+    await expect(shell.botonHamburguesaDelHeader).toHaveCount(0);
     await expect(shell.botonHamburguesaDelRail).toBeHidden();
   });
 

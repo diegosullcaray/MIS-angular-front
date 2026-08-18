@@ -27,7 +27,6 @@ export class ShellStateService {
   // de archivos del área de contenido (`ExploradorSistemaComponent`), y este
   // panel quedó como pane opcional que el usuario abre con el botón de menú.
   private readonly _navPanelColapsado = signal(true);
-  private readonly _sidebarTienePanel = signal(false);
   private readonly _contenidoPendienteSeleccion = signal(false);
 
   // ─── Signals de solo lectura (expuestos — Remotes solo leen) ────────────
@@ -55,14 +54,6 @@ export class ShellStateService {
    * estado sin ser padre/hijo entre sí.
    */
   readonly navPanelColapsado = this._navPanelColapsado.asReadonly();
-
-  /**
-   * True cuando el sistema activo tiene panel de navegación propio (Col 2).
-   * `SidebarComponent` (dueño del cálculo real, `panelActivo()`) lo mantiene
-   * sincronizado acá; `HeaderComponent` lo lee para no mostrar el botón de
-   * alternar el panel en mobile si no hay nada que mostrar/ocultar.
-   */
-  readonly sidebarTienePanel = this._sidebarTienePanel.asReadonly();
 
   /**
    * True mientras se cambió a un sistema con panel propio (Col 2) pero el
@@ -130,10 +121,6 @@ export class ShellStateService {
 
   setNavPanelColapsado(valor: boolean): void {
     this._navPanelColapsado.set(valor);
-  }
-
-  setSidebarTienePanel(valor: boolean): void {
-    this._sidebarTienePanel.set(valor);
   }
 
   setContenidoPendienteSeleccion(valor: boolean): void {

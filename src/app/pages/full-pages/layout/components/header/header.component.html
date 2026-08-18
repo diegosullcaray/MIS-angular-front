@@ -1,15 +1,4 @@
 <div class="flex items-center gap-3 h-full w-full px-4 relative">
-  <!-- Botón para alternar el panel de navegación (Col 2) — solo en mobile -->
-  @if (shell.sidebarTienePanel()) {
-    <button
-      class="sm:hidden w-8 h-8 rounded-md bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-all duration-150 focus:outline-none"
-      (click)="shell.toggleNavPanel()"
-      aria-label="Alternar menú lateral"
-    >
-      <i class="pi pi-bars text-[16px]"></i>
-    </button>
-  }
-
   <!-- Logo / Wordmark + Breadcrumb Minimalista -->
   <div class="flex items-center gap-2.5 shrink-0 min-w-0">
     <!-- El wordmark navy es ilegible en oscuro: se cambia por la versión blanca. -->

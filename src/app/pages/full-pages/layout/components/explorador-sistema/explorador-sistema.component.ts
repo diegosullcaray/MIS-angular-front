@@ -7,11 +7,22 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
 
+/** Un nivel de la ruta actual del explorador; `-1` es la raíz del sistema. */
+interface MigaExplorador {
+  etiqueta: string;
+  indice: number;
+}
+
 /**
  * Explorador de archivos del sistema activo — reemplaza al panel de links de
  * la Col 2. Las ramas del árbol son carpetas en las que se entra y las hojas
- * son reportes que abren su pantalla. La ubicación se refleja en el breadcrumb
- * del header, no acá.
+ * son reportes que abren su pantalla.
+ *
+ * La ruta se muestra en dos lugares a la vez, sin que se pisen: acá adentro
+ * (siempre visible, es la única forma de subir de nivel en mobile, donde el
+ * breadcrumb del header se oculta por espacio) y en el breadcrumb del header
+ * (útil al estar viendo un reporte ya abierto, para volver a la carpeta de
+ * la que salió — ver `HeaderComponent.breadcrumbRemote`).
  */
 @Component({
   selector: 'app-explorador-sistema',
@@ -47,8 +58,18 @@ export class ExploradorSistemaComponent {
     );
   });
 
+  /** Migas de la ruta actual — solo se usan en mobile (ver template): en desktop esa misma ruta ya vive en el breadcrumb del header. */
+  protected readonly migas = computed<MigaExplorador[]>(() => [
+    { etiqueta: this.panel()?.titulo ?? '', indice: -1 },
+    ...this.navegacion.rutaExplorador().map((carpeta, i) => ({ etiqueta: carpeta.etiqueta, indice: i })),
+  ]);
+
   protected esCarpeta(nodo: SidebarNavRuta): boolean {
     return (nodo.hijos?.length ?? 0) > 0;
+  }
+
+  protected irANivel(indice: number): void {
+    this.navegacion.irANivel(indice);
   }
 
   /** Entra a la carpeta, o abre la pantalla si el nodo es una hoja. */

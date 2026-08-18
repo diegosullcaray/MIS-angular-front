@@ -233,15 +233,7 @@ describe('HeaderComponent', () => {
     expect(authFalso.cerrarSesion).toHaveBeenCalled();
   });
 
-  it('muestra el botón de alternar el panel (mobile) cuando el sistema activo tiene panel propio', async () => {
-    shell.setSidebarTienePanel(true);
-    const fixture = await crear('/app/dashboard');
-
-    expect((fixture.nativeElement as HTMLElement).querySelector('button[aria-label="Alternar menú lateral"]')).not.toBeNull();
-  });
-
-  it('oculta el botón de alternar el panel cuando el sistema activo no tiene panel propio', async () => {
-    shell.setSidebarTienePanel(false);
+  it('no tiene botón de alternar el panel: en mobile la Col 2 ya no es alcanzable, la navegación vive en el explorador', async () => {
     const fixture = await crear('/app/dashboard');
 
     expect((fixture.nativeElement as HTMLElement).querySelector('button[aria-label="Alternar menú lateral"]')).toBeNull();

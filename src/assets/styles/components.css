@@ -514,6 +514,51 @@
   color: var(--mis-text-on-secondary);
 }
 
+/* ── Migas de la ruta (solo mobile — ver `sm:hidden` en la plantilla) ──
+   Solo el nodo actual va completo; los anteriores se truncan con "…" y
+   ceden ancho al achicarse `max-width`, para que la fila nunca ocupe más
+   de una línea aunque la ruta sea profunda. Al bajar un nivel, el nodo que
+   antes era "actual" pasa a ser uno más de la lista y hereda ese mismo
+   recorte automáticamente — no hace falta lógica aparte para eso. */
+.mis-explorador-migas {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mis-explorador-miga {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 88px;
+  padding: 3px 5px;
+  border: 0;
+  border-radius: var(--mis-radius-sm);
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.mis-explorador-miga--actual {
+  flex-shrink: 0;
+  max-width: none;
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+  cursor: default;
+}
+
+.mis-explorador-miga-sep {
+  font-size: 8px;
+  color: var(--mis-text-tertiary);
+  flex-shrink: 0;
+}
+
 /* ── Cuadrícula de iconos ───────────────────────────────────── */
 .mis-explorador-cuadricula {
   display: grid;

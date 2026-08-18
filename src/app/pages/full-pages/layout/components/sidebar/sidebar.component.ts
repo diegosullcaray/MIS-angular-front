@@ -50,11 +50,6 @@ export class SidebarComponent implements AfterViewInit {
       setTimeout(() => this.verificarScroll(), 150);
     });
 
-    // Sincroniza el estado del header: oculta el botón de menú si el sistema actual no tiene panel.
-    effect(() => {
-      this.shell.setSidebarTienePanel(this.panelActivo() !== null);
-    });
-
     // Recarga el árbol del menú STG si el usuario activo cambia (ej. modo alterno).
     effect(() => {
       const email = this.shell.usuarioActivo()?.email;
