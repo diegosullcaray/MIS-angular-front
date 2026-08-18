@@ -7,9 +7,10 @@ import { HeaderComponent } from './header.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { AuthService } from '../../../auth/service/auth.service';
 import { MenuStgService } from '../../services/menu-stg.service';
+import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
-import type { SidebarIcon } from '../../interfaces/sidebar.model';
+import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sidebar.model';
 
 @Component({ template: '', standalone: true })
 class BlankComponent {}
@@ -38,6 +39,12 @@ describe('HeaderComponent', () => {
   };
   let menuStgFalso: { sistemas: ReturnType<typeof signal<SidebarIcon[]>>; buscarPorRuta: ReturnType<typeof vi.fn> };
   let kaypachaFalso: { buscarCategoria: ReturnType<typeof vi.fn> };
+  let navegacionFalso: {
+    panelActivo: ReturnType<typeof signal<SidebarNavPanelConfig | null>>;
+    rutaExplorador: ReturnType<typeof signal<SidebarNavRuta[]>>;
+    abrirEnCarpeta: ReturnType<typeof vi.fn>;
+    irANivel: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     authFalso = {
@@ -50,6 +57,12 @@ describe('HeaderComponent', () => {
     };
     menuStgFalso = { sistemas: signal<SidebarIcon[]>([]), buscarPorRuta: vi.fn().mockReturnValue(null) };
     kaypachaFalso = { buscarCategoria: vi.fn().mockReturnValue(undefined) };
+    navegacionFalso = {
+      panelActivo: signal<SidebarNavPanelConfig | null>(null),
+      rutaExplorador: signal<SidebarNavRuta[]>([]),
+      abrirEnCarpeta: vi.fn(),
+      irANivel: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       imports: [HeaderComponent],
@@ -58,6 +71,7 @@ describe('HeaderComponent', () => {
         { provide: AuthService, useValue: authFalso },
         { provide: MenuStgService, useValue: menuStgFalso },
         { provide: KaypachaService, useValue: kaypachaFalso },
+        { provide: NavegacionSistemasService, useValue: navegacionFalso },
         MessageService,
       ],
     });
@@ -118,17 +132,42 @@ describe('HeaderComponent', () => {
     expect(items[items.length - 1]).toEqual({ label: 'Detalle' });
   });
 
-  it('breadcrumb de un sistema remoto de STG usa el árbol de MenuStgService cuando lo encuentra', async () => {
-    menuStgFalso.buscarPorRuta.mockReturnValue({ sistemaId: 'sist-1', etiquetas: ['Clientes', 'CMG Clientes Flujo'] });
+  it('breadcrumb de un sistema remoto de STG usa el árbol de MenuStgService, con cada nivel salvo el actual clickeable', async () => {
+    const nodoClientes: SidebarNavRuta = { etiqueta: 'Clientes', hijos: [{ etiqueta: 'CMG Clientes Flujo', ruta: '/app/actividad-mensual/clientes/cmg' }] };
+    const nodoHoja = nodoClientes.hijos![0];
+    menuStgFalso.buscarPorRuta.mockReturnValue({ sistemaId: 'sist-1', nodos: [nodoClientes, nodoHoja] });
     menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Actividad Mensual', tienePanel: true }]);
 
     const fixture = await crear('/app/actividad-mensual/clientes/cmg');
+    const items = fixture.componentInstance['breadcrumbItems']();
 
-    expect(fixture.componentInstance['breadcrumbItems']()).toEqual([
-      { label: 'Actividad Mensual' },
-      { label: 'Clientes' },
-      { label: 'CMG Clientes Flujo' },
-    ]);
+    expect(items.map((i) => i.label)).toEqual(['Actividad Mensual', 'Clientes', 'CMG Clientes Flujo']);
+    // El último (la pantalla actual) no navega a ningún lado; los anteriores sí.
+    expect(items[2].command).toBeUndefined();
+
+    items[0].command!({} as never);
+    expect(navegacionFalso.abrirEnCarpeta).toHaveBeenCalledWith('sist-1', []);
+
+    items[1].command!({} as never);
+    expect(navegacionFalso.abrirEnCarpeta).toHaveBeenCalledWith('sist-1', [nodoClientes]);
+  });
+
+  it('mientras se muestra el explorador del sistema, el breadcrumb refleja la carpeta abierta y vuelve a su nivel al hacer clic', async () => {
+    const carpetaA: SidebarNavRuta = { etiqueta: 'Avance Comercial', hijos: [] };
+    navegacionFalso.panelActivo.set({ tipo: 'remote', titulo: 'Reportes', icono: 'pi', secciones: [] });
+    navegacionFalso.rutaExplorador.set([carpetaA]);
+    shell.setContenidoPendienteSeleccion(true);
+
+    const fixture = await crear('/app/reportes/leg/com/rda/adm/mon-desem');
+    const items = fixture.componentInstance['breadcrumbItems']();
+
+    expect(items.map((i) => i.label)).toEqual(['Reportes', 'Avance Comercial']);
+
+    items[0].command!({} as never);
+    expect(navegacionFalso.irANivel).toHaveBeenCalledWith(-1);
+
+    items[1].command!({} as never);
+    expect(navegacionFalso.irANivel).toHaveBeenCalledWith(0);
   });
 
   it('breadcrumb de un sistema remoto cae a un fallback legible si el árbol de STG aún no encontró la hoja', async () => {

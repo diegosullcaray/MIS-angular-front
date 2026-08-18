@@ -89,6 +89,7 @@ export class SidebarComponent implements AfterViewInit {
           const esInicio = url === '/app/dashboard' || url.startsWith('/app/dashboard/') || url.startsWith('/error') || url === '/app';
           if (esInicio) {
             this.shell.setSidebarIconActivo('host-inicio');
+            this.navegacion.rutaExplorador.set([]);
           }
         }
       });
@@ -120,6 +121,7 @@ export class SidebarComponent implements AfterViewInit {
     // Col 2: la navegación pasó al explorador del área de contenido y el panel
     // de links quedó como pane opcional, que el usuario abre si lo quiere.
     if (icon.tienePanel && eraActivo !== icon.id) {
+      this.navegacion.rutaExplorador.set([]);
       this.cambiandoPanel.set(true);
       setTimeout(() => this.cambiandoPanel.set(false), DURACION_TRANSICION_PANEL_MS);
     }

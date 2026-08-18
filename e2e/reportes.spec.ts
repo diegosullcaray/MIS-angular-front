@@ -38,7 +38,7 @@ test.describe('Reportes — smoke de Avance Comercial', () => {
 
   test('"Monitor Metas Desembolso" pide elegir un nivel antes de mostrar el reporte', async ({ page }) => {
     await page.goto(RUTA_DESEMBOLSO);
-    // En mobile, Col 2 (panel de navegación) arranca abierta y tapa el contenido.
+    // En mobile, si Col 2 (panel de navegación) llegara a estar abierta, tapa el contenido.
     await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
 
     await expect(page.getByRole('heading', { name: 'Monitor Metas Desembolso' })).toBeVisible();

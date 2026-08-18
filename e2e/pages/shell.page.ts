@@ -59,22 +59,27 @@ export class ShellPage {
   }
 
   /**
-   * En mobile, Col 2 (panel de navegación) arranca abierta al entrar y su
-   * fondo oscuro tapa el header entero — igual que un drawer nativo, primero
-   * hay que descartarlo (tocar el fondo) antes de poder usar el header. En
-   * desktop no existe ese fondo, así que no hace nada.
-   *
-   * No se puede resolver con un `isVisible()` inmediato: el fondo recién
-   * existe una vez que Angular hidrata la página, así que un chequeo
-   * disparado justo después de `goto()` casi siempre lo encuentra ausente
-   * todavía — se espera (`waitFor`) en vez de solo consultar el estado actual.
+   * En mobile, Col 2 (panel de navegación) es un drawer con fondo oscuro que
+   * tapa el header entero mientras está abierta — hay que descartarla (tocar
+   * el fondo) antes de poder usar el header. Ya NO arranca abierta al entrar
+   * (la navegación de un sistema vive en el explorador del área de
+   * contenido; Col 2 es un pane opcional, colapsado por defecto — ver
+   * `ShellStateService.navPanelColapsado`), así que lo normal es que este
+   * fondo nunca aparezca: se prueba con un timeout corto en vez de esperar
+   * indefinidamente, y no hace nada si no aparece. En desktop no existe ese
+   * fondo, así que tampoco hace nada.
    */
   async cerrarPanelSiEstaTapandoElHeader(): Promise<void> {
     const anchoViewport = this.page.viewportSize()?.width ?? 1280;
     const esMobil = anchoViewport < 640;
     if (!esMobil) return;
 
-    await this.fondoOscuroPanel.waitFor({ state: 'visible' });
+    const abierta = await this.fondoOscuroPanel
+      .waitFor({ state: 'visible', timeout: 1000 })
+      .then(() => true)
+      .catch(() => false);
+    if (!abierta) return;
+
     // El panel (`#tour-sidebar-panel`, z-50) se superpone al fondo en su
     // franja izquierda (w-[85vw]) y tapa el centro del viewport — hay que
     // clickear el fondo fuera de esa franja, cerca del borde derecho.

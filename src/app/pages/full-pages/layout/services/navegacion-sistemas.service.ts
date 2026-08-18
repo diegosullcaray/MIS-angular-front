@@ -1,4 +1,4 @@
-import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { MenuStgService } from './menu-stg.service';
 import { KaypachaService } from '../../../modules/ranking-k/services/kaypacha.service';
@@ -70,21 +70,24 @@ export class NavegacionSistemasService {
     return panel ? panel.secciones.flatMap((s) => this.filtrarVisibles(s.rutas)) : [];
   });
 
-  constructor() {
-    // Cambiar de sistema vuelve a la raíz: la ubicación del anterior no aplica.
-    effect(() => {
-      this.panelActivo();
-      this.rutaExplorador.set([]);
-    });
-  }
-
   entrarCarpeta(nodo: SidebarNavRuta): void {
     this.rutaExplorador.update((r) => [...r, nodo]);
   }
 
-  /** Vuelve al nivel indicado; `-1` es la raíz del sistema. */
+  /** Vuelve al nivel indicado dentro del sistema activo; `-1` es su raíz. */
   irANivel(indice: number): void {
     this.rutaExplorador.update((r) => r.slice(0, indice + 1));
+  }
+
+  /**
+   * Reabre el explorador de `sistemaId` posicionado en `carpetas` — usado por
+   * el breadcrumb del header para volver desde una pantalla ya abierta a la
+   * carpeta de la que salió (`HeaderComponent.breadcrumbRemote`).
+   */
+  abrirEnCarpeta(sistemaId: string, carpetas: SidebarNavRuta[]): void {
+    this.shell.setSidebarIconActivo(sistemaId);
+    this.rutaExplorador.set(carpetas);
+    this.shell.setContenidoPendienteSeleccion(true);
   }
 
   /** Descarta los nodos que el rol del usuario no puede ver. */

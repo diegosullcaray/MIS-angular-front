@@ -22,6 +22,8 @@
 }
 
 .shell-content-inner {
+  display: flex;
+  flex-direction: column;
   animation: routeFadeIn var(--mis-transition-base) ease;
 }
 

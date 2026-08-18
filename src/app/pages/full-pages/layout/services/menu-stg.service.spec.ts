@@ -147,7 +147,10 @@ describe('MenuStgService', () => {
 
     expect(service.buscarPorRuta('/app/a/clientes/cmg')).toEqual({
       sistemaId: 'A',
-      etiquetas: ['Clientes', 'CMG Clientes Flujo'],
+      nodos: [
+        { etiqueta: 'Clientes', ruta: undefined, hijos: [{ etiqueta: 'CMG Clientes Flujo', ruta: '/app/a/clientes/cmg', hijos: undefined }] },
+        { etiqueta: 'CMG Clientes Flujo', ruta: '/app/a/clientes/cmg', hijos: undefined },
+      ],
     });
   });
 

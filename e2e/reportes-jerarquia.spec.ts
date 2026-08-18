@@ -56,7 +56,7 @@ test('arranca en Financiera, sin pedir reporte, y baja de a un nivel', async ({ 
 
   await page.goto('/app/reportes/leg/com/rda/adm/mon-desem');
   await page.waitForLoadState('networkidle');
-  // En mobile, Col 2 (panel de navegación) arranca abierta y tapa el contenido.
+  // En mobile, si Col 2 (panel de navegación) llegara a estar abierta, tapa el contenido.
   await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
   await page.waitForTimeout(600);
 
