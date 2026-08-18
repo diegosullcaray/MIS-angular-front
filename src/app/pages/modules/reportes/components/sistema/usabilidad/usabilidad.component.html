@@ -1,11 +1,7 @@
-<div class="mis-page mis-page--alta">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center gap-2">
-      <i class="pi pi-chart-line text-[var(--mis-primary-text)]"></i>
-      <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Reporte de Usabilidad</h2>
-    </div>
-  </div>
-
+<app-window-panel
+  titulo="Reporte de Usabilidad"
+  [permitirActualizar]="false"
+>
   <div class="flex flex-col gap-2">
     <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)] uppercase">{{ reportesDiarios.titulo }}</h3>
     <div class="mis-card p-3 overflow-x-auto">
@@ -19,4 +15,4 @@
       <app-heatmap [datos]="reportesMensuales" />
     </div>
   </div>
-</div>
+</app-window-panel>

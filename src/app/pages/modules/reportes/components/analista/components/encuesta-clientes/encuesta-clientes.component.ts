@@ -18,6 +18,8 @@ import {
   OPCIONES_SEC_ECO,
   jsonAFormulario,
 } from '../../models/encuesta-clientes.model';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { CiiuOpcion, EncuestaClienteForm } from '../../models/encuesta-clientes.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
@@ -45,7 +47,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-encuesta-clientes',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent],
+  imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './encuesta-clientes.component.html',
   styleUrl: './encuesta-clientes.component.css',
 })

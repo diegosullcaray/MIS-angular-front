@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
-import { ButtonModule } from 'primeng/button';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../ui/tabla-dinamica/tabla-dinamica.component';
 import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
@@ -12,6 +11,8 @@ import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { OPCIONES_PRODUCTO_MISIONAL_PANEL } from '../../../models/desarrollo-sostenible/desarrollo-sostenible.model';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
 
@@ -33,7 +34,7 @@ const TABLA_VACIA: TablaDinamicaResultado = { columnas: [], filas: [] };
 @Component({
   selector: 'app-productos-misionales',
   standalone: true,
-  imports: [FormsModule, HierSelectorComponent, TablaDinamicaComponent, SelectModule, TabsModule, SkeletonModule, ButtonModule],
+  imports: [FormsModule, HierSelectorComponent, TablaDinamicaComponent, SelectModule, TabsModule, SkeletonModule, TooltipModule, WindowPanelComponent],
   templateUrl: './productos-misionales.component.html',
   styleUrl: './productos-misionales.component.css',
 })

@@ -1,5 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
 import { HierSelectorComponent } from '../../../../../ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../ui/tabla-reporte/tabla-reporte.component';
 import { EmptyStateComponent } from '../../../../../../../../shared/ui/empty-state/empty-state.component';
@@ -8,6 +7,8 @@ import { CmgCaptacionesService } from '../../../services/cmg-captaciones.service
 import { ToastService } from '../../../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../../../utils/hier-selector-error.util';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
 
@@ -27,7 +28,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-cmg-captaciones',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, ButtonModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './cmg-captaciones.component.html',
   styleUrl: './cmg-captaciones.component.css',
 })

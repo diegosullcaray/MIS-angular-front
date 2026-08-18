@@ -1,13 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
-import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { PlanDatosService } from '../../services/plan-datos.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../../core/services/message.service';
 import { fechaBasePorDefecto, generarOpcionesFechaBase } from '../../models/plan-datos.model';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -25,7 +26,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-plan-datos',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './plan-datos.component.html',
   styleUrl: './plan-datos.component.css',
 })

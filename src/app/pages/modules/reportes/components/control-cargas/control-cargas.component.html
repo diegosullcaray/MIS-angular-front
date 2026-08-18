@@ -1,16 +1,10 @@
-<div class="mis-page mis-page--alta">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex flex-col gap-0.5">
-      <div class="flex items-center gap-2">
-        <i class="pi pi-server text-[var(--mis-primary-text)]"></i>
-        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Control de Cargas</h2>
-      </div>
-      <span class="text-[10px] text-[var(--mis-text-tertiary)] ml-6">
-        <i class="pi pi-clock text-[9px] mr-1"></i>Actualizado al {{ actualizadoAl() }}
-      </span>
-    </div>
-  </div>
-
+<app-window-panel
+  titulo="Control de Cargas"
+  [permitirActualizar]="false"
+>
+  <span class="text-[10px] text-[var(--mis-text-tertiary)]">
+    <i class="pi pi-clock text-[9px] mr-1"></i>Actualizado al {{ actualizadoAl() }}
+  </span>
   <div class="flex flex-col gap-2">
     <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)] uppercase">Carga de Fuentes Producción</h3>
     <div class="mis-card p-3 overflow-x-auto">
@@ -24,4 +18,4 @@
       <app-tabla-reporte [encabezados]="tablaProcesos().headers" [filas]="tablaProcesos().body" [cargando]="cargando()" />
     </div>
   </div>
-</div>
+</app-window-panel>

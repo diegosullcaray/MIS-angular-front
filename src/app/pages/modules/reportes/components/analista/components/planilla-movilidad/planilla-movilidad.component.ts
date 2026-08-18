@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
-import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabsModule } from 'primeng/tabs';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
@@ -9,6 +8,8 @@ import { PlanillaMovilidadService } from '../../services/planilla-movilidad.serv
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../../core/services/message.service';
 import { fechaUltimoDia } from '../../../../utils/fecha-reporte.util';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -42,7 +43,7 @@ const CRITERIOS_MOVILIDAD: string[] = [
 @Component({
   selector: 'app-planilla-movilidad',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TabsModule, TablaReporteComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TabsModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './planilla-movilidad.component.html',
   styleUrl: './planilla-movilidad.component.css',
 })

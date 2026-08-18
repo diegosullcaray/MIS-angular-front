@@ -1,20 +1,19 @@
-<div class="mis-page mis-page--alta">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center justify-between flex-wrap gap-3">
-      <div class="flex items-center gap-2">
-        <i class="pi pi-briefcase text-[var(--mis-primary-text)]"></i>
-        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Cartera</h2>
-      </div>
-
-      <p-button
-        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
-        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-        severity="secondary"
-        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
-      />
-    </div>
-  </div>
-
+<app-window-panel
+  titulo="Cartera"
+  [permitirActualizar]="false"
+>
+  <button
+    ventana-acciones
+    type="button"
+    class="mis-window-btn"
+    (click)="mostrarFiltros.set(!mostrarFiltros())"
+    [attr.aria-pressed]="mostrarFiltros()"
+    [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    tooltipPosition="bottom"
+  >
+    <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
+  </button>
   <div class="flex flex-col gap-1" [class.hidden]="!mostrarFiltros()">
     <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
     <p-select
@@ -43,4 +42,4 @@
       </div>
     </div>
   }
-</div>
+</app-window-panel>

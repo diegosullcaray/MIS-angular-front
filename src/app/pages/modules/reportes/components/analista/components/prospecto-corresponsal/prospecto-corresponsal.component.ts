@@ -8,6 +8,8 @@ import { AgregarProspectoDialogComponent } from './agregar-prospecto-dialog/agre
 import { ProspectoCorresponsalService } from '../../services/prospecto-corresponsal.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../../core/services/message.service';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -28,7 +30,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-prospecto-corresponsal',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent, AgregarProspectoDialogComponent],
+  imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent, AgregarProspectoDialogComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './prospecto-corresponsal.component.html',
   styleUrl: './prospecto-corresponsal.component.css',
 })

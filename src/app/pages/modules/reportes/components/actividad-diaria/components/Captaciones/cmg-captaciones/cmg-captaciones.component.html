@@ -1,20 +1,19 @@
-<div class="mis-page mis-page--alta">
-  <div class="flex flex-col gap-3 pb-3.5 border-b border-[var(--mis-border)]">
-    <div class="flex items-center justify-between flex-wrap gap-3">
-      <div class="flex items-center gap-2">
-        <i class="pi pi-wallet text-[var(--mis-primary-text)]"></i>
-        <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">CMG Captaciones - Agencias</h2>
-      </div>
-
-      <p-button
-        [icon]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'"
-        [label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-        severity="secondary"
-        (onClick)="mostrarFiltros.set(!mostrarFiltros())"
-      />
-    </div>
-  </div>
-
+<app-window-panel
+  titulo="CMG Captaciones - Agencias"
+  [permitirActualizar]="false"
+>
+  <button
+    ventana-acciones
+    type="button"
+    class="mis-window-btn"
+    (click)="mostrarFiltros.set(!mostrarFiltros())"
+    [attr.aria-pressed]="mostrarFiltros()"
+    [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    tooltipPosition="bottom"
+  >
+    <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
+  </button>
   <div class="flex items-center gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
     <app-hier-selector
       [paramsHier]="paramsHier"
@@ -34,4 +33,4 @@
       <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
     </div>
   }
-</div>
+</app-window-panel>

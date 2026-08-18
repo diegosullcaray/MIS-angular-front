@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ButtonModule } from 'primeng/button';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
 import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
@@ -9,6 +8,8 @@ import { DesarrolloSostenibleService } from '../../../services/desarrollo-sosten
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
@@ -25,7 +26,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-desempeno-social',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule, ButtonModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule, TooltipModule, WindowPanelComponent],
   templateUrl: './desempeno-social.component.html',
   styleUrl: './desempeno-social.component.css',
 })

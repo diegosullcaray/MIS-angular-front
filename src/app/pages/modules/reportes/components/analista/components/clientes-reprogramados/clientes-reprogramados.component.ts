@@ -15,6 +15,8 @@ import {
   OPCIONES_PREG_03,
   OPCIONES_PREG_04,
 } from '../../models/clientes-reprogramados.model';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { ReprogramacionForm } from '../../models/clientes-reprogramados.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
@@ -36,7 +38,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-clientes-reprogramados',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent],
+  imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './clientes-reprogramados.component.html',
   styleUrl: './clientes-reprogramados.component.css',
 })

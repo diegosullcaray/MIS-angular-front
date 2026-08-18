@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
-import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
@@ -9,6 +8,8 @@ import { CanalAlternoService } from '../../services/canal-alterno.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { MessageService } from '../../../../../../../core/services/message.service';
 import { filtrarFilas } from '../../../../utils/reportes-mapeo.util';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -26,7 +27,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-canal-alterno',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, InputTextModule, SkeletonModule, TablaReporteComponent],
+  imports: [FormsModule, SelectModule, InputTextModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './canal-alterno.component.html',
   styleUrl: './canal-alterno.component.css',
 })

@@ -4,6 +4,7 @@ import { interval, startWith, switchMap } from 'rxjs';
 import { TablaReporteComponent } from '../../ui/tabla-reporte/tabla-reporte.component';
 import { ControlCargasService } from '../../services/control-cargas.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
@@ -22,7 +23,7 @@ const INTERVALO_REFRESCO_MS = 30 * 1000;
 @Component({
   selector: 'app-control-cargas',
   standalone: true,
-  imports: [TablaReporteComponent],
+  imports: [TablaReporteComponent, WindowPanelComponent],
   templateUrl: './control-cargas.component.html',
   styleUrl: './control-cargas.component.css',
 })

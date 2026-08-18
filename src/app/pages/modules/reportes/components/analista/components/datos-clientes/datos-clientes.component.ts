@@ -22,6 +22,8 @@ import {
   filaAFormulario,
   filaAReferencia,
 } from '../../models/datos-clientes.model';
+import { TooltipModule } from 'primeng/tooltip';
+import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { CelForm, DatosClienteForm, OpcionDato } from '../../models/datos-clientes.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
@@ -47,7 +49,7 @@ const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 @Component({
   selector: 'app-datos-clientes',
   standalone: true,
-  imports: [FormsModule, SelectModule, InputTextModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent],
+  imports: [FormsModule, SelectModule, InputTextModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './datos-clientes.component.html',
   styleUrl: './datos-clientes.component.css',
 })
