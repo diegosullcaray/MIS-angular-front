@@ -38,9 +38,6 @@
       @if (gruposVisibles().length) {
         <div class="mis-buscador-facetas">
           @for (grupo of gruposVisibles(); track grupo.faceta) {
-            <!-- La etiqueta del grupo no es decorativa: "Reportes" (módulo) y
-                 "Reporte" (tipo) son valores de facetas distintas y sin ella se
-                 leen como el mismo filtro repetido. -->
             <div class="mis-buscador-faceta" role="group" [attr.aria-label]="'Filtrar por ' + grupo.etiqueta">
               <span class="mis-buscador-faceta-titulo" aria-hidden="true">{{ grupo.etiqueta }}</span>
               @for (chip of grupo.valores; track chip.valor) {

@@ -4,10 +4,7 @@ import { FUENTE_BUSQUEDA } from './fuente-busqueda';
 import type { ConfiguracionIndice, RegistroBuscable } from './buscador.model';
 
 /** Facetas que se ofrecen como chips, con la etiqueta del grupo. */
-const FACETAS = [
-  { nombre: 'origen', etiqueta: 'Módulo' },
-  { nombre: 'tipo', etiqueta: 'Tipo' },
-] as const;
+const FACETAS = [{ nombre: 'tipo', etiqueta: 'Tipo' }] as const;
 
 type Faceta = (typeof FACETAS)[number]['nombre'];
 
@@ -21,10 +18,7 @@ const CONFIG: ConfiguracionIndice<RegistroBuscable> = {
     { nombre: 'etiqueta', valor: (r) => r.etiqueta },
     { nombre: 'ubicacion', valor: (r) => r.ubicacion },
   ],
-  atributosFacetables: [
-    { nombre: 'origen', valor: (r) => r.origen },
-    { nombre: 'tipo', valor: (r) => r.tipo },
-  ],
+  atributosFacetables: [{ nombre: 'tipo', valor: (r) => r.tipo }],
   // Con los 5 criterios textuales empatados: primero lo accionable (abrir una
   // pantalla) y después las carpetas, que solo llevan a otra lista.
   rankingPersonalizado: (a, b) => Number(a.tipo === 'Carpeta') - Number(b.tipo === 'Carpeta'),
@@ -53,7 +47,7 @@ export class BuscadorComponent {
 
   protected readonly consulta = signal('');
   protected readonly enfocado = signal(false);
-  protected readonly filtros = signal<Record<Faceta, string[]>>({ origen: [], tipo: [] });
+  protected readonly filtros = signal<Record<Faceta, string[]>>({ tipo: [] });
 
   /**
    * Registros de todas las fuentes. Es un `computed`, así que si un módulo
@@ -91,10 +85,11 @@ export class BuscadorComponent {
   });
 
   /**
-   * Chips de refinamiento agrupados por faceta. Cada grupo lleva su etiqueta
-   * ("Módulo", "Tipo") porque sin ella dos valores parecidos de facetas
-   * distintas —"Reportes" el módulo y "Reporte" el tipo— se leen como
-   * repetidos.
+   * Chips de refinamiento agrupados por faceta, cada grupo con su etiqueta.
+   *
+   * Solo se ofrece "Tipo". Antes había también una faceta por módulo, pero sus
+   * valores se confundían con los del tipo ("Reportes" el módulo contra
+   * "Reporte" el tipo) y el módulo ya se lee en la ubicación de cada resultado.
    */
   protected readonly grupos = computed(() => {
     const facetas = this.respuesta().facetas;
@@ -131,7 +126,7 @@ export class BuscadorComponent {
 
   protected limpiar(): void {
     this.consulta.set('');
-    this.filtros.set({ origen: [], tipo: [] });
+    this.filtros.set({ tipo: [] });
   }
 
   protected cerrar(): void {

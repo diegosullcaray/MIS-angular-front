@@ -639,7 +639,11 @@
   color: var(--mis-text-primary);
 }
 
-.mis-buscador-chip--activo {
+/* El `:hover` de arriba tiene más especificidad que una sola clase, así que sin
+   repetirlo acá le pisaba el color al chip activo y el texto quedaba gris
+   oscuro sobre el fondo navy —ilegible— justo mientras el mouse estaba encima. */
+.mis-buscador-chip--activo,
+.mis-buscador-chip--activo:hover {
   color: var(--mis-text-on-primary);
   background: var(--mis-primary);
   border-color: var(--mis-primary);

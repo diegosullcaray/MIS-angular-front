@@ -278,31 +278,33 @@ describe('BuscadorComponent', () => {
       return chips(fixture).map((c) => c.textContent?.replace(/\s+/g, ' ').trim() ?? '');
     }
 
-    it('cada grupo de facetas lleva su etiqueta, para no leerse como filtros repetidos', () => {
+    it('la única faceta ofrecida es "Tipo": no hay chips por módulo', () => {
       const fixture = crear();
       teclear(fixture, 'cartera');
 
       const titulos = Array.from(fixture.nativeElement.querySelectorAll('.mis-buscador-faceta-titulo')).map(
         (e) => (e as HTMLElement).textContent
       );
-      expect(titulos).toEqual(['Módulo', 'Tipo']);
+      expect(titulos).toEqual(['Tipo']);
+      expect(textoChips(fixture)).not.toContain('Reportes 1');
+      expect(textoChips(fixture)).not.toContain('Presupuesto 2');
     });
 
-    it('distingue un valor de "Módulo" de uno homónimo de "Tipo" con su aria-label', () => {
+    it('ofrece un chip por valor de tipo con su conteo', () => {
       const fixture = crear();
       teclear(fixture, 'cartera');
 
-      const etiquetasAria = chips(fixture).map((c) => c.getAttribute('aria-label'));
-      expect(etiquetasAria).toContain('Módulo: Reportes (1)');
-      expect(etiquetasAria).toContain('Tipo: Reporte (2)');
+      expect(textoChips(fixture)).toEqual(['Reporte 2', 'Carpeta 1']);
     });
 
-    it('ofrece un chip por valor de faceta con su conteo', () => {
+    it('nombra el grupo en el aria-label de cada chip', () => {
       const fixture = crear();
       teclear(fixture, 'cartera');
 
-      expect(textoChips(fixture)).toContain('Presupuesto 2');
-      expect(textoChips(fixture)).toContain('Reportes 1');
+      expect(chips(fixture).map((c) => c.getAttribute('aria-label'))).toEqual([
+        'Tipo: Reporte (2)',
+        'Tipo: Carpeta (1)',
+      ]);
     });
 
     it('al activar un chip, refina los resultados', () => {
@@ -310,47 +312,35 @@ describe('BuscadorComponent', () => {
       teclear(fixture, 'cartera');
       expect(opciones(fixture).length).toBe(3);
 
-      chips(fixture).find((c) => c.textContent?.includes('Reportes'))!.click();
+      chips(fixture).find((c) => c.textContent?.includes('Carpeta'))!.click();
       fixture.detectChanges();
 
-      expect(etiquetas(fixture)).toEqual(['Cartera Vigente']);
+      expect(etiquetas(fixture)).toEqual(['Cartera']);
     });
 
     it('un segundo clic sobre el mismo chip lo desactiva', () => {
       const fixture = crear();
       teclear(fixture, 'cartera');
 
-      const chipReportes = () => chips(fixture).find((c) => c.textContent?.includes('Reportes'))!;
-      chipReportes().click();
+      const chipCarpeta = () => chips(fixture).find((c) => c.textContent?.includes('Carpeta'))!;
+      chipCarpeta().click();
       fixture.detectChanges();
       expect(opciones(fixture).length).toBe(1);
 
-      chipReportes().click();
+      chipCarpeta().click();
       fixture.detectChanges();
       expect(opciones(fixture).length).toBe(3);
     });
 
-    it('combina módulo y tipo con AND', () => {
+    it('no oculta las demás opciones de la faceta ya filtrada, para poder cambiar de una a otra', () => {
       const fixture = crear();
       teclear(fixture, 'cartera');
 
-      chips(fixture).find((c) => c.textContent?.includes('Presupuesto'))!.click();
-      fixture.detectChanges();
-      chips(fixture).find((c) => c.getAttribute('aria-label')?.startsWith('Tipo: Carpeta'))!.click();
+      chips(fixture).find((c) => c.textContent?.includes('Carpeta'))!.click();
       fixture.detectChanges();
 
-      expect(etiquetas(fixture)).toEqual(['Cartera']);
-    });
-
-    it('no oculta las demás opciones de una faceta ya filtrada, para poder cambiar de una a otra', () => {
-      const fixture = crear();
-      teclear(fixture, 'cartera');
-
-      chips(fixture).find((c) => c.textContent?.includes('Reportes'))!.click();
-      fixture.detectChanges();
-
-      // "Presupuesto" sigue ofreciéndose con su conteo pese al filtro activo.
-      expect(textoChips(fixture)).toContain('Presupuesto 2');
+      // "Reporte" sigue ofreciéndose con su conteo pese al filtro activo.
+      expect(textoChips(fixture)).toContain('Reporte 2');
     });
   });
 });
