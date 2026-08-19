@@ -16,7 +16,17 @@
     <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
   </button>
   <div class="flex items-center gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
-    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
+    <!-- `autoSeleccionar: false`: la raíz ("Financiera") queda a la vista como
+         punto de partida, pero NO se emite. Con el default en `true` el
+         selector emitía la raíz al cargar y esta pantalla pedía su reporte
+         sola, sin que nadie lo eligiera — ver `reportes-jerarquia.spec.ts`. -->
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      [autoSeleccionar]="false"
+      placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
   </div>
 
   @if (!nivelActual()) {

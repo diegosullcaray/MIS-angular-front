@@ -47,11 +47,17 @@ test.describe('Reportes — smoke de Avance Comercial', () => {
     await expect(page.getByText('Operaciones Desembolsadas')).toBeHidden();
   });
 
-  test('"Monitor Reprogramados" muestra su título y el filtro "Tipo"', async ({ page }) => {
+  test('"Monitor Reprogramados" muestra su título y, al abrir los filtros, el de "Tipo"', async ({ page }) => {
     await page.goto(RUTA_REPROGRAMADOS);
     await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
 
     await expect(page.getByRole('heading', { name: 'Monitor Reprogramados' })).toBeVisible();
+
+    // Los filtros arrancan plegados detrás del botón de la barra de ventana
+    // (`mostrarFiltros`), así que "Tipo" recién aparece al desplegarlos.
+    await expect(page.getByLabel('Tipo')).toBeHidden();
+    await page.getByRole('button', { name: 'Mostrar filtros' }).click();
+
     await expect(page.getByLabel('Tipo')).toBeVisible();
   });
 });

@@ -1,8 +1,12 @@
+<!-- Mientras la selección sea obligatoria el diálogo no ofrece salida: ni la X
+     ni Escape. `cerrar()` saca al usuario al dashboard, así que dejarlo
+     cerrable era darle una puerta para quedarse sin ningún nivel elegido. -->
 <p-dialog
   [visible]="visible()"
   (visibleChange)="cerrar()"
   [modal]="true"
-  [closable]="true"
+  [closable]="!obligatorio()"
+  [closeOnEscape]="!obligatorio()"
   [style]="{ width: '92vw', maxWidth: '520px' }"
   [draggable]="false"
   [resizable]="false"

@@ -68,6 +68,11 @@ test('arranca en Financiera, sin pedir reporte, y baja de a un nivel', async ({ 
   await expect(combos).toHaveCount(2);
   await expect(page.getByText('Elige un nivel de la jerarquía')).toBeVisible();
 
+  // El selector vive dentro del panel de filtros, que arranca plegado: hay que
+  // desplegarlo para poder operar los combos.
+  await page.getByRole('button', { name: 'Mostrar filtros' }).click();
+  await expect(combos.nth(1)).toBeVisible();
+
   // Elegir "ZONA SELVA" en el segundo combo.
   await combos.nth(1).click();
   await page.getByRole('option', { name: 'ZONA SELVA' }).click();
