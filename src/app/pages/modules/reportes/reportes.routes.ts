@@ -24,11 +24,7 @@ export const REPORTES_ROUTE: Routes = [
     loadComponent: () =>
       import('./components/control-cargas/control-cargas.component').then((m) => m.ControlCargasComponent),
   },
-  {
-    path: 'leg/sis',
-    loadComponent: () =>
-      import('./components/sistema/usabilidad/usabilidad.component').then((m) => m.UsabilidadComponent),
-  },
+
   ...ANALISTA_ROUTES,
   {
     path: '**',
