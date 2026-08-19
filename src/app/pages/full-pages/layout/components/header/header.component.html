@@ -76,9 +76,19 @@
             <div class="text-[11px] text-[var(--mis-text-tertiary)] truncate max-w-[150px]">{{ shell.usuarioActivo()?.email }}</div>
           </div>
         </div>
-        
+
+        <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
+
+        <button
+          class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] active:bg-[var(--mis-panel-bg)]"
+          role="menuitem"
+          (click)="abrirConfiguracion()"
+        >
+          <ng-icon name="lucideSettings" size="14" />
+          Configuración
+        </button>
+
         @if (auth.puedeCambiarUsuario()) {
-          <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
           <button
             class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] active:bg-[var(--mis-panel-bg)]"
             role="menuitem"
@@ -90,7 +100,6 @@
         }
         
         @if (auth.esUsuarioAlterno()) {
-          <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
           <button
             class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] active:bg-[var(--mis-panel-bg)]"
             role="menuitem"
@@ -154,5 +163,11 @@
   <app-cambiar-usuario-dialog
     [visible]="cambiarUsuarioOpen()"
     (visibleChange)="cambiarUsuarioOpen.set($event)"
+  />
+
+  <!-- Configuración del sistema -->
+  <app-configuracion-dialog
+    [visible]="configuracionOpen()"
+    (visibleChange)="configuracionOpen.set($event)"
   />
 </div>

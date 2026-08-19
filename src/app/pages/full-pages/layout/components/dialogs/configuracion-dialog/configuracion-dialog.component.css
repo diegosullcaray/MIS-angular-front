@@ -1,0 +1,267 @@
+/* Alto fijo para que el diálogo no salte de tamaño al cambiar de item: cada
+   columna scrollea por dentro, igual que la plantilla original. */
+.mis-config {
+  display: flex;
+  height: min(70vh, 520px);
+  overflow: hidden;
+  font-size: var(--mis-text-xs);
+}
+
+.mis-config-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mis-config-secciones {
+  width: 200px;
+  flex: 0 0 200px;
+  border-right: 1px solid var(--mis-border);
+}
+
+.mis-config-items {
+  width: 220px;
+  flex: 0 0 220px;
+  border-right: 1px solid var(--mis-border);
+}
+
+.mis-config-contenido {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ── Buscador ───────────────────────────────────────────────────────────── */
+.mis-config-buscar {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  margin: var(--mis-space-3);
+  padding: 0 var(--mis-space-2);
+  height: 30px;
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  background: var(--mis-panel-bg);
+  color: var(--mis-text-tertiary);
+}
+
+.mis-config-buscar:focus-within {
+  border-color: var(--mis-primary);
+  box-shadow: var(--mis-shadow-focus);
+}
+
+.mis-config-buscar i {
+  font-size: 12px;
+}
+
+.mis-config-buscar input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--mis-text-primary);
+  font-family: inherit;
+  font-size: var(--mis-text-xs);
+}
+
+.mis-config-buscar input::placeholder {
+  color: var(--mis-text-tertiary);
+}
+
+/* Quita la "x" nativa de `type=search`, que en Chrome no respeta el tema. */
+.mis-config-buscar input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+/* ── Menús (Col 1 y Col 2) ──────────────────────────────────────────────── */
+.mis-config-menu {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0 var(--mis-space-2) var(--mis-space-2);
+  list-style: none;
+}
+
+.mis-config-opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  width: 100%;
+  padding: var(--mis-space-2);
+  border: 0;
+  border-radius: var(--mis-radius-md);
+  background: transparent;
+  color: var(--mis-text-secondary);
+  font-family: inherit;
+  font-size: var(--mis-text-xs);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast), color var(--mis-transition-fast);
+}
+
+.mis-config-opcion:hover {
+  background: var(--mis-hover-bg);
+  color: var(--mis-text-primary);
+}
+
+/* Se repite el `:hover` para que el estado activo no lo pierda por
+   especificidad al pasar el mouse por encima. */
+.mis-config-opcion--activa,
+.mis-config-opcion--activa:hover {
+  background: var(--mis-primary-light);
+  color: var(--mis-primary-text);
+  font-weight: var(--mis-font-semibold);
+}
+
+.mis-config-opcion i {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.mis-config-opcion-texto {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El chevron solo orienta el drill-down de mobile; en desktop sobra. */
+.mis-config-chevron {
+  display: none;
+  opacity: 0.6;
+}
+
+.mis-config-vacio {
+  padding: var(--mis-space-3) var(--mis-space-2);
+  color: var(--mis-text-tertiary);
+}
+
+/* ── Cabeceras de columna ───────────────────────────────────────────────── */
+.mis-config-cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mis-space-2);
+  padding: var(--mis-space-3) var(--mis-space-3) var(--mis-space-2);
+  border-bottom: 1px solid var(--mis-border);
+}
+
+.mis-config-cabecera-texto {
+  min-width: 0;
+}
+
+.mis-config-titulo {
+  margin: 0;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+}
+
+.mis-config-descripcion {
+  margin: 2px 0 0;
+  color: var(--mis-text-tertiary);
+  line-height: var(--mis-leading-normal);
+}
+
+/* Botón de volver: solo existe en mobile, donde se ve una columna a la vez. */
+.mis-config-atras {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--mis-radius-full);
+  background: transparent;
+  color: var(--mis-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast);
+}
+
+.mis-config-atras:hover {
+  background: var(--mis-hover-bg);
+}
+
+/* ── Contenido de ejemplo ───────────────────────────────────────────────── */
+.mis-config-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--mis-space-3);
+}
+
+.mis-config-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mis-space-2);
+  padding: var(--mis-space-2) var(--mis-space-3);
+  border: 1px dashed var(--mis-border-strong);
+  border-radius: var(--mis-radius-md);
+  background: var(--mis-panel-bg);
+  color: var(--mis-text-tertiary);
+  line-height: var(--mis-leading-normal);
+}
+
+.mis-config-ejemplos {
+  margin: var(--mis-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-2);
+}
+
+.mis-config-ejemplo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mis-space-3);
+  padding: var(--mis-space-3);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  background: var(--mis-surface);
+}
+
+.mis-config-ejemplo-nombre {
+  color: var(--mis-text-primary);
+  font-weight: var(--mis-font-medium);
+}
+
+.mis-config-ejemplo-estado {
+  flex-shrink: 0;
+  padding: 2px var(--mis-space-2);
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-panel-bg);
+  color: var(--mis-text-tertiary);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Mobile: una columna a la vez, guiada por `data-nivel` ──────────────── */
+@media (max-width: 767px) {
+  .mis-config {
+    height: min(70vh, 460px);
+  }
+
+  .mis-config-col {
+    display: none;
+    width: 100%;
+    flex: 1 1 auto;
+    border-right: 0;
+  }
+
+  .mis-config[data-nivel='0'] .mis-config-secciones,
+  .mis-config[data-nivel='1'] .mis-config-items,
+  .mis-config[data-nivel='2'] .mis-config-contenido {
+    display: flex;
+  }
+
+  .mis-config-chevron,
+  .mis-config-atras {
+    display: inline-flex;
+  }
+}

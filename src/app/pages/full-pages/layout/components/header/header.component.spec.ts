@@ -239,6 +239,27 @@ describe('HeaderComponent', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('button[aria-label="Alternar menú lateral"]')).toBeNull();
   });
 
+  describe('Configuración', () => {
+    it('el menú de perfil ofrece "Configuración" a cualquier usuario, sin depender de alternates', async () => {
+      const fixture = await crear('/app/dashboard');
+      fixture.componentInstance['toggleDropdown']();
+      fixture.detectChanges();
+
+      expect((fixture.nativeElement as HTMLElement).textContent).toContain('Configuración');
+    });
+
+    it('abrirConfiguracion() cierra el dropdown y abre el diálogo de configuración', async () => {
+      const fixture = await crear('/app/dashboard');
+      const instancia = fixture.componentInstance;
+      instancia['toggleDropdown']();
+
+      instancia['abrirConfiguracion']();
+
+      expect(instancia['dropdownOpen']()).toBe(false);
+      expect(instancia['configuracionOpen']()).toBe(true);
+    });
+  });
+
   describe('Cambiar usuario', () => {
     it('no muestra "Cambiar usuario" ni "Mi usuario" cuando no aplica ninguno', async () => {
       const fixture = await crear('/app/dashboard');

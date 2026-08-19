@@ -44,7 +44,7 @@ export class ShellPage {
     return this.page.locator('div.h-screen.flex.overflow-hidden');
   }
 
-  /** URL del wallpaper actualmente aplicado (mobile: wallpaper_cell.jpg, desktop: wallpaper.png — ver clases responsive de la raíz). */
+  /** URL del wallpaper actualmente aplicado (mobile: wallpaper_cell.jpg, desktop: wallpaper.jpg — ver clases responsive de la raíz). */
   async wallpaperAplicado(): Promise<string> {
     return this.raiz.evaluate((el) => getComputedStyle(el).backgroundImage);
   }

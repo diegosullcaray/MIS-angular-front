@@ -97,12 +97,12 @@ test.describe('Shell responsive — desktop (>= 640px)', () => {
     await expect(shell.botonHamburguesaDelHeader).toHaveCount(0);
   });
 
-  test('usa el wallpaper de escritorio (wallpaper.png), no el de mobile', async ({ page }) => {
+  test('usa el wallpaper de escritorio (wallpaper.jpg), no el de mobile', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.ir();
 
     const wallpaper = await shell.wallpaperAplicado();
-    expect(wallpaper).toContain('wallpaper.png');
+    expect(wallpaper).toContain('wallpaper.jpg');
     expect(wallpaper).not.toContain('wallpaper_cell.jpg');
   });
 });
