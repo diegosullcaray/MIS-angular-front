@@ -21,6 +21,21 @@
   font-size: var(--mis-text-sm);
 }
 
+/* En pantallas angostas una ruta profunda no debe empujar el menú de usuario
+   fuera del header: la fila se desplaza en horizontal, sin barra a la vista. */
+.header-breadcrumb {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.header-breadcrumb::-webkit-scrollbar {
+  display: none;
+}
+
+.header-breadcrumb ::ng-deep .p-breadcrumb ol {
+  flex-wrap: nowrap;
+}
+
 .header-breadcrumb ::ng-deep .p-breadcrumb .p-breadcrumb-item-link,
 .header-breadcrumb ::ng-deep .p-breadcrumb .p-menuitem-link {
   color: var(--mis-text-secondary);

@@ -1,9 +1,11 @@
 <div class="flex items-center gap-3 h-full w-full px-4 relative">
-  <!-- Breadcrumb minimalista. El wordmark MIS ya no vive acá: se movió al tope
-       del rail de sistemas (Col 1), ver `sidebar.component.html`. -->
-  <div class="flex items-center gap-2.5 shrink-0 min-w-0">
+  <!-- Breadcrumb minimalista. El wordmark MIS ya no vive acá (se movió al tope
+       del rail, ver `sidebar.component.html`), y ese espacio liberado es el que
+       permite mostrarlo también en mobile: es el ÚNICO lugar donde se ve la
+       ubicación y desde donde se sube de nivel en el explorador. -->
+  <div class="flex items-center gap-2.5 min-w-0 overflow-hidden">
     <p-breadcrumb
-      class="header-breadcrumb hidden sm:block text-xs"
+      class="header-breadcrumb block min-w-0 text-xs"
       [model]="breadcrumbItems()"
       [home]="breadcrumbHome"
     />

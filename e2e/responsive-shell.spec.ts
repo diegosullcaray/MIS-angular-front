@@ -5,7 +5,8 @@ import { inyectarSesionVigente, mockearBackendAnt } from './fixtures/session';
 /**
  * Cubre a nivel E2E el rediseño responsive del shell (Col 1 del sidebar
  * como barra inferior fija en mobile, estilo Facebook; breadcrumb del header
- * oculto en mobile; Col 2 eliminada en todo viewport, porque la navegación
+ * visible en todo viewport, que es el único lugar donde vive la ubicación;
+ * Col 2 eliminada en todo viewport, porque la navegación
  * vive enteramente en el explorador del sistema) — ver `sidebar.component.html`
  * y `header.component.html`.
  *
@@ -33,11 +34,15 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     expect(cajaRail!.y + cajaRail!.height).toBeGreaterThanOrEqual(alturaViewport - 2);
   });
 
-  test('el breadcrumb del header queda oculto', async ({ page }) => {
+  // Antes se ocultaba por espacio y la ubicación se dibujaba dentro del panel
+  // del explorador. Esa copia se eliminó (el breadcrumb vive solo en el header)
+  // y el hueco que dejó el wordmark al mudarse al rail alcanza para mostrarlo:
+  // es la única forma de subir de nivel, así que en mobile tiene que estar.
+  test('el breadcrumb del header es visible: es el único lugar donde vive la ubicación', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.ir();
 
-    await expect(shell.breadcrumb).toBeHidden();
+    await expect(shell.breadcrumb).toBeVisible();
   });
 
   test('no hay ningún botón para abrir la Col 2: la navegación vive en el explorador del sistema', async ({ page }) => {
