@@ -1,0 +1,179 @@
+/* ============================================
+   FORM GROUPS
+   ============================================ */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: var(--font-size-medium, 0.875rem);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--texto-content-color, #374151);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.form-label i {
+  color: var(--p-secondary-color, #4a7aff);
+  font-size: 1rem;
+}
+
+/* ============================================
+   TOGGLE SWITCHES
+   ============================================ */
+.toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.toggle-item:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.toggle-label-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.text-small {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* ============================================
+   SETTING SECTIONS
+   ============================================ */
+.setting-section {
+  margin-bottom: 2rem;
+}
+
+.setting-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--texto-content-color, #374151);
+  margin-bottom: 1rem;
+}
+
+/* Form groups dentro de setting-section */
+.setting-section .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.setting-section .form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* Toggle items dentro de setting-section */
+.setting-section .toggle-item {
+  margin-bottom: 1rem;
+}
+
+.setting-section .toggle-item:last-child {
+  margin-bottom: 0;
+}
+
+.setting-description {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+/* Custom lightweight fieldset used only in this component */
+.custom-fieldset {
+  border: 1px solid var(--fieldset-border-color, #e6e9ef);
+  background: var(--fieldset-bg, #fff);
+  border-radius: var(--fieldset-radius, 6px);
+  padding: var(--fieldset-padding, 0.75rem 1rem);
+  margin-bottom: 1rem;
+}
+
+.custom-fieldset-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: var(--font-weight-semibold, 600);
+  margin-bottom: 0.5rem;
+  color: var(--fieldset-legend-color, var(--texto-content-color, #222));
+}
+
+.custom-fieldset-legend .pi {
+  font-size: 1rem;
+  color: var(--p-secondary-color, #4a7aff);
+}
+
+.custom-fieldset-content {
+  padding: 0.25rem 0;
+}
+
+/* Small gap between the label and the control inside the custom fieldset */
+.custom-fieldset .form-label {
+  margin-bottom: var(--fieldset-label-gap, 0.25rem);
+}
+
+/* ============================================
+   ACTION BUTTONS
+   ============================================ */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+  .toggle-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .action-buttons .p-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-label {
+    font-size: 0.875rem;
+  }
+
+  .preferencias-content {
+    padding: 1rem;
+  }
+}
+
+/* Forzar que los botones de acción muestren su label en móvil */
+@media (max-width: 576px) {
+  :host ::ng-deep .action-buttons .p-button .btn-label {
+    display: inline-block !important;
+  }
+
+  :host ::ng-deep .action-buttons .p-button .btn-icon {
+    margin-right: 0.5rem !important;
+  }
+}

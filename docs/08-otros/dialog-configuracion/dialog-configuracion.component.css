@@ -1,0 +1,132 @@
+.config-body {
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+.config-body.row {
+  margin: 0;
+}
+
+.config-sidebar {
+  border-right: 1px solid #e5e7eb;
+  padding-right: 0.2rem;
+  padding-top: 0.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.config-submenu {
+  border-right: 1px solid #e5e7eb;
+  padding-left: 0.5rem;
+  padding-top: 0.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.config-menu {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-top: 0.5rem;
+}
+
+/* Estilos para items seleccionados - NO dependas de p-focus */
+:host ::ng-deep .config-menu.p-menu .p-menu-item.menu-item-selected > .p-menu-item-content > .p-menu-item-link {
+  background-color:  color-mix(in srgb, var(--p-secondary-color) 12%, transparent)!important;
+  border-left: 3px solid var(--p-primary-color) !important;
+  font-weight: 600 !important;
+}
+
+:host ::ng-deep .config-menu.p-menu .p-menu-item.menu-item-selected > .p-menu-item-content > .p-menu-item-link .p-menu-item-icon,
+:host ::ng-deep .config-menu.p-menu .p-menu-item.menu-item-selected > .p-menu-item-content > .p-menu-item-link .p-menu-item-text {
+  color: var(--p-primary-color) !important;
+}
+
+/* Hover normal */
+:host ::ng-deep .config-menu.p-menu .p-menu-item:not(.menu-item-selected) > .p-menu-item-content > .p-menu-item-link:hover {
+  background-color: color-mix(in srgb, rgba(74, 122, 255, 0.15) 12%, transparent) !important;
+}
+
+
+.config-content {
+  padding-left: 0.1rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* En tema oscuro, usar el tono corporativo solicitado para este diálogo. */
+:host-context(.my-app-dark) .config-sidebar,
+:host-context(.my-app-dark) .config-submenu,
+:host-context(.my-app-dark) .config-content {
+  background-color: #232c35;
+}
+
+:host-context(.my-app-dark) ::ng-deep .config-menu.p-menu,
+:host-context(.my-app-dark) ::ng-deep .config-content .p-panel,
+:host-context(.my-app-dark) ::ng-deep .config-content .p-panel-header,
+:host-context(.my-app-dark) ::ng-deep .config-content .p-panel-content {
+  background-color: #232c35 !important;
+}
+
+@media (max-width: 767.98px) {
+  .config-body {
+    flex-direction: column;
+  }
+
+  .config-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding-right: 0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    height: auto;
+  }
+
+  .config-submenu {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding-left: 0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    height: auto;
+  }
+
+  .config-content {
+    padding-left: 0;
+    height: auto;
+  }
+}
+
+/* Mobile tabs: make p-tabs distribute tabs fluidly across container */
+:host ::ng-deep .config-mobile-tabs .p-tablist {
+  display: flex;
+  padding: 0;
+}
+
+:host ::ng-deep .config-mobile-tabs .p-tablist .p-tab {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+:host ::ng-deep .config-mobile-tabs .p-tablist .p-tab .p-tab-label,
+:host ::ng-deep .config-mobile-tabs .p-tablist .p-tab i {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+:host ::ng-deep .config-mobile-tabs .p-tablist .p-tab .p-tab-label i,
+:host ::ng-deep .config-mobile-tabs .p-tablist .p-tab i {
+  font-size: 1.2rem;
+}
+
+
+

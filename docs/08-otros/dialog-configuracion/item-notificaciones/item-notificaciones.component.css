@@ -1,0 +1,255 @@
+/* ============================================
+   CONTENEDOR PRINCIPAL
+   ============================================ */
+.notification-preferences {
+  width: 100%;
+  padding: 0;
+}
+
+/* ============================================
+   FORMULARIO Y SECCIONES
+   ============================================ */
+.setting-section {
+  margin-bottom: 2rem;
+}
+
+.setting-section:last-child {
+  margin-bottom: 1rem;
+}
+
+.setting-title {
+  font-size: var(--font-size-h5);
+  font-weight: var(--font-weight-semibold);
+  color: var(--texto-content-color);
+  margin-bottom: 0.5rem;
+}
+
+.setting-description {
+  color: var(--color-gray-medium);
+  font-size: var(--font-size-medium);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+/* ============================================
+   FORM GROUPS
+   ============================================ */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  font-size: var(--font-size-medium, 0.875rem);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--texto-content-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.form-label i {
+  color: var(--p-secondary-color);
+  font-size: 1rem;
+}
+
+/* ============================================
+   TOGGLE SWITCHES
+   ============================================ */
+.toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.toggle-item:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.toggle-label-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.text-small {
+  font-size: var(--font-size-small, 0.8rem);
+  color: var(--color-gray-medium);
+}
+
+/* ============================================
+   CHECKBOXES
+   ============================================ */
+.categories-grid,
+.priorities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.checkbox-item:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.checkbox-label {
+  flex: 1;
+  font-size: var(--font-size-medium);
+  color: var(--texto-content-color);
+  cursor: pointer;
+  margin: 0;
+}
+
+.priority-badge {
+  margin-left: 0.5rem;
+}
+
+/* ============================================
+   QUIET HOURS GRID
+   ============================================ */
+.quiet-hours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+/* ============================================
+   ACCIONES
+   ============================================ */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ============================================
+   DESKTOP NOTIFICATIONS
+   ============================================ */
+.desktop-status {
+  margin-top: 0.5rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-granted {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.status-denied {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-default {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.toggle-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.button-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.button-outlined {
+  background: transparent;
+  border: 1px solid var(--p-primary-color);
+  color: var(--p-primary-color);
+  transition: all 0.2s ease;
+}
+
+.button-outlined:hover {
+  background: var(--p-primary-color);
+  color: white;
+}
+
+.button-outlined i {
+  margin-right: 0.5rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .categories-grid,
+  .priorities-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quiet-hours-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .action-buttons p-button {
+    width: 100%;
+  }
+
+  .toggle-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .toggle-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .button-sm {
+    width: 100%;
+  }
+}

@@ -1,0 +1,159 @@
+.sesiones-content {
+  padding: 0.25rem 0;
+}
+
+.setting-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.setting-description {
+  font-size: 0.875rem;
+  color: var(--text-muted, #6b7280);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.action-buttons-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.action-buttons-top .p-button {
+  margin: 0;
+}
+
+.sesiones-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.sesiones-empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.sesiones-empty i {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  opacity: 0.6;
+}
+
+.sesiones-empty p {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.sesiones-list :host ::ng-deep .sesiones-card.p-card {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sesiones-list :host ::ng-deep .sesiones-card .p-card-body,
+.sesiones-list :host ::ng-deep .sesiones-card .p-card-content {
+  padding: 0;
+}
+
+.sesiones-list-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.sesion-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--p-surface-border, #e5e7eb);
+  gap: 1rem;
+}
+
+.sesion-row:last-of-type {
+  border-bottom: none;
+}
+
+.sesion-row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.sesion-icon {
+  font-size: 1.25rem;
+  color: var(--text-muted, #6b7280);
+  flex-shrink: 0;
+}
+
+.sesion-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.sesion-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sesion-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--texto-content-color, #374151);
+}
+
+.sesion-browser {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted, #6b7280);
+  font-weight: 400;
+}
+
+.sesion-browser::before {
+  content: '·';
+  margin-right: 0.15rem;
+  color: var(--text-muted, #9ca3af);
+}
+
+.sesion-browser-icon {
+  font-size: 0.875rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.sesion-created {
+  font-size: 0.8125rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.sesion-row-right {
+  flex-shrink: 0;
+}
+
+.sesiones-list :host ::ng-deep .sesiones-card .p-card-footer {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--p-surface-border, #e5e7eb);
+  background: var(--p-surface-ground, #f9fafb);
+}
+
+.sesiones-footer-hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted, #6b7280);
+}
+

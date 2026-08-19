@@ -1,0 +1,109 @@
+<div *ngIf="!isMobile" class="config-body row">
+  <!-- Menú principal (izquierda) -->
+  <div class="col-12 col-md-2 config-sidebar">
+    <!-- Buscador -->
+    <div class="config-search mb-3">
+      <p-iconField iconPosition="left">
+        <p-inputIcon>
+          <i class="pi pi-search"></i>
+        </p-inputIcon>
+        <input type="text" pInputText [(ngModel)]="searchValue" (input)="onSearch($event)"
+          [placeholder]="t('content.layout.dialogConfiguration.search.placeholder', 'Buscar configuración')"
+          class="w-100" />
+      </p-iconField>
+    </div>
+
+    <!-- Menú principal -->
+    <p-menu [model]="mainMenuItems" styleClass="config-menu"></p-menu>
+  </div>
+
+  <!-- Submenú (centro) - siempre visible -->
+  <div class="col-12 col-md-2 config-submenu">
+    <p-menu [model]="currentSubMenuItems" styleClass="config-menu"></p-menu>
+  </div>
+
+  <!-- Contenido principal (derecha) -->
+  <div *ngIf="!isMobile" class="col-12 col-md-8 config-content">
+    <p-panel [style]="{'height': '100% , overflow: auto'}">
+      <ng-template pTemplate="header">
+        <h3>{{ selectedSubItem?.label || selectedMainItem?.label || t('content.layout.dialogConfiguration.title',
+          'Configuración') }}</h3>
+      </ng-template>
+
+      <!-- Render components based on selected subitem key -->
+      <ng-container *ngIf="selectedSubItem" class="p-3">
+        <app-item-temas *ngIf="selectedSubItemKey === 'appearance'"></app-item-temas>
+        <app-item-estructura *ngIf="selectedSubItemKey === 'structure'"></app-item-estructura>
+        <app-item-preferencias *ngIf="selectedSubItemKey === 'preferences'"></app-item-preferencias>
+        <app-item-notificaciones *ngIf="selectedSubItemKey === 'notifications'"></app-item-notificaciones>
+        <app-item-idiomas *ngIf="selectedSubItemKey === 'language'"></app-item-idiomas>
+        <app-item-sesiones *ngIf="selectedSubItemKey === 'activeSessions'"></app-item-sesiones>
+        <app-item-mfa *ngIf="selectedSubItemKey === 'mfa' && !isMobile"></app-item-mfa>
+
+      </ng-container>
+
+      <div *ngIf="selectedMainItem && !selectedSubItem">
+        <p>{{ t('content.layout.dialogConfiguration.messages.selectSubMenu', 'Seleccione una opción del submenú para ver
+          su contenido.') }}</p>
+      </div>
+
+      <div *ngIf="!selectedMainItem">
+        <p>{{ t('content.layout.dialogConfiguration.messages.selectMainMenu', 'Seleccione una opción del menú principal
+          para comenzar.') }}</p>
+      </div>
+    </p-panel>
+  </div>
+</div>
+
+<div *ngIf="isMobile" class="config-mobile-message p-3">
+  <ng-container *ngIf="!mobileViewActive && accordionReady; else mobileComponentView">
+    <p-accordion [multiple]="false" [value]="activeAccordionIndex">
+      <p-accordion-panel *ngFor="let item of mainMenuItems; let i = index" [value]="i">
+        <p-accordion-header>
+          <i class="{{ item.icon }}" style="margin-right:0.5rem"></i>
+          <span>{{ item.label }}</span>
+        </p-accordion-header>
+        <p-accordion-content>
+          <div class="p-2">
+            <ng-container *ngIf="subMenus[item['data']?.key]?.length; else noSubs">
+              <div *ngFor="let sub of subMenus[item['data'].key]" class="submenu-item p-2"
+                (click)="selectMainItem(item['data'].key); selectSubItem(sub.key)"
+                style="cursor:pointer; display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:center; width:100%">
+                  <i class="{{ sub.icon }}" style="margin-right:0.5rem"></i>
+                  <span>{{ t(getTranslationKeyForSubItem(item['data'].key, sub.key), sub.label) }}</span>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #noSubs>
+              <div class="text-muted">{{ t('content.layout.dialogConfiguration.messages.noOptions', 'Sin opciones') }}
+              </div>
+            </ng-template>
+          </div>
+        </p-accordion-content>
+      </p-accordion-panel>
+    </p-accordion>
+  </ng-container>
+
+  <ng-template #mobileComponentView>
+    <div class="mobile-subcomponent p-2">
+      <div class="d-flex align-items-center mb-2">
+        <p-button icon="pi pi-chevron-left" styleClass="btn-text" (onClick)="closeMobileView()"></p-button>
+        <div class="flex-grow-1 text-center">
+          <i class="{{ selectedSubItem?.icon }}" style="margin-right:0.5rem"></i>
+          <strong>{{ selectedSubItem?.label }}</strong>
+        </div>
+      </div>
+
+      <app-item-idiomas *ngIf="selectedSubItemKey === 'language'"></app-item-idiomas>
+      <app-item-preferencias *ngIf="selectedSubItemKey === 'preferences'"></app-item-preferencias>
+      <app-item-notificaciones *ngIf="selectedSubItemKey === 'notifications'"></app-item-notificaciones>
+      <app-item-temas *ngIf="selectedSubItemKey === 'appearance'"></app-item-temas>
+      <app-item-estructura *ngIf="selectedSubItemKey === 'structure'"></app-item-estructura>
+      <app-item-sesiones *ngIf="selectedSubItemKey === 'activeSessions'"></app-item-sesiones>
+      <app-item-mfa *ngIf="selectedSubItemKey === 'mfa' && isMobile"></app-item-mfa>
+
+
+    </div>
+  </ng-template>
+</div>

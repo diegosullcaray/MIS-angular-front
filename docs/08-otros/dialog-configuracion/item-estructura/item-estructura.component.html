@@ -1,0 +1,46 @@
+<div class="item-estructura">
+  <div class="estructura-header">
+    <h5 class="estructura-title">{{ t('content.layout.dialogConfiguration.item.itemEstructura.title', 'Estructura del
+      menú lateral') }}</h5>
+    <p class="estructura-subtitle">
+      {{ t('content.layout.dialogConfiguration.item.itemEstructura.subtitle', 'Elija cómo desea que se muestre el menú
+      de navegación. Los cambios se aplican al hacer clic en') }} <strong>{{
+        t('content.layout.dialogConfiguration.item.itemEstructura.actions.save', 'Guardar') }}</strong>.
+    </p>
+  </div>
+
+  <div class="estructura-grid">
+    <div class="estructura-grid-item" *ngFor="let option of menuTypeOptions">
+      <div class="estructura-card" [class.selected]="selectedMenuType === option.value"
+        [class.disabled]="option.disabled" (click)="!option.disabled && selectMenuType(option.value)">
+
+        <div class="estructura-card__check" *ngIf="selectedMenuType === option.value">
+          <i class="pi pi-check"></i>
+        </div>
+
+        <div class="estructura-card__icon-wrapper">
+          <div class="estructura-card__icon">
+            <i [class]="getIconForType(option.value)"></i>
+          </div>
+        </div>
+
+        <div class="estructura-card__content">
+          <h6 class="estructura-card__title">{{ t('content.layout.dialogConfiguration.item.itemEstructura.options.' +
+            option.value + '.label', option.label) }}</h6>
+          <p class="estructura-card__description" *ngIf="option.description">{{
+            t('content.layout.dialogConfiguration.item.itemEstructura.options.' + option.value + '.description',
+            option.description) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 justify-content-end mt-4 pt-3 border-top">
+    <p-button [label]="t('content.layout.dialogConfiguration.item.itemEstructura.actions.reset', 'Restablecer Valores')"
+      styleClass="btn-danger btn-md" icon="pi pi-refresh" (onClick)="resetToDefault()">
+    </p-button>
+    <p-button [label]="t('content.layout.dialogConfiguration.item.itemEstructura.actions.save', 'Guardar')"
+      styleClass="btn-primary btn-md" icon="pi pi-check" [disabled]="!hasChanges" (onClick)="save()">
+    </p-button>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<div class="temas-container">
+  <div class="presets-section mb-2">
+    <h5 class="theme-subsection-title">{{ t('content.layout.dialogConfiguration.item.itemTemas.presets.title',
+      'Presets')
+      }}</h5>
+    <div class="d-flex gap-2 flex-wrap">
+      <button *ngFor="let preset of presets" type="button" class="btn preset-btn"
+        [class.active]="selectedPreset === preset" (click)="selectPreset(preset)">
+        {{ preset }}
+      </button>
+    </div>
+  </div>
+  <!-- Sección Modo Oscuro -->
+  <div class="dark-mode-section">
+    <h5 class="theme-subsection-title">{{ t('content.layout.dialogConfiguration.item.itemTemas.mode.title', 'Modo') }}
+    </h5>
+    <p class="theme-description">{{ t('content.layout.dialogConfiguration.item.itemTemas.mode.description', 'Elija un
+      modo
+      de visualización para su sistema.') }}</p>
+    <div class="dark-mode-options">
+      <div class="dark-mode-option" tabindex="0" role="button" [ngClass]="{ selected: selectedDarkMode === 'light' }"
+        (click)="selectDarkMode('light')" (keydown.enter)="selectDarkMode('light')"
+        (keydown.space)="selectDarkMode('light')">
+        <div class="dark-mode-preview" style="background-color: #ffffff;"></div>
+        <span class="dark-mode-label">{{ t('content.layout.dialogConfiguration.item.itemTemas.mode.options.light',
+          'Claro') }}</span>
+      </div>
+      <div class="dark-mode-option" tabindex="0" role="button" [ngClass]="{ selected: selectedDarkMode === 'dark' }"
+        (click)="selectDarkMode('dark')" (keydown.enter)="selectDarkMode('dark')"
+        (keydown.space)="selectDarkMode('dark')">
+        <div class="dark-mode-preview" style="background-color: #1f2937;"></div>
+        <span class="dark-mode-label">{{ t('content.layout.dialogConfiguration.item.itemTemas.mode.options.dark',
+          'Oscuro') }}</span>
+      </div>
+      <div class="dark-mode-option" tabindex="0" role="button" [ngClass]="{ selected: selectedDarkMode === 'mint' }"
+        (click)="selectDarkMode('mint')" (keydown.enter)="selectDarkMode('mint')"
+        (keydown.space)="selectDarkMode('mint')">
+        <div class="dark-mode-preview" style="background-color: #176973;"></div>
+        <span class="dark-mode-label">{{ t('content.layout.dialogConfiguration.item.itemTemas.mode.options.mint',
+          'Menta')
+          }}</span>
+      </div>
+      <div class="dark-mode-option" tabindex="0" role="button" [ngClass]="{ selected: selectedDarkMode === 'system' }"
+        (click)="selectDarkMode('system')" (keydown.enter)="selectDarkMode('system')"
+        (keydown.space)="selectDarkMode('system')">
+        <div class="dark-mode-preview" style="background: linear-gradient(to right, #ffffff 50%, #1f2937 50%);"></div>
+        <span class="dark-mode-label">{{ t('content.layout.dialogConfiguration.item.itemTemas.mode.options.system', 'Por
+          defecto') }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección Temas Modernos -->
+  <div class="modern-themes-section">
+
+    <!-- Subsección Imagen -->
+    <div class="theme-subsection">
+      <h5 class="theme-subsection-title">{{ t('content.layout.dialogConfiguration.item.itemTemas.image.title', 'Imagen')
+        }}</h5>
+      <p class="theme-description">{{ t('content.layout.dialogConfiguration.item.itemTemas.image.description', 'Elija
+        una
+        imagen de fondo para su sistema.') }}</p>
+      <div class="image-grid">
+        <!-- Opción 'Ninguno' para no seleccionar imagen (ahora primera) -->
+        <div class="image-box none-thumbnail" tabindex="0" role="button"
+          [ngClass]="{ selected: selectedImage === null }" (click)="selectImage(null)"
+          (keydown.enter)="selectImage(null)" (keydown.space)="selectImage(null)">
+          <i class="pi pi-ban"></i>
+        </div>
+        <div *ngFor="let image of backgroundImages; let i = index" class="image-box" tabindex="0" role="button"
+          [ngClass]="{ selected: selectedImage === i }" (click)="selectImage(i)" (keydown.enter)="selectImage(i)"
+          (keydown.space)="selectImage(i)">
+          <img [src]="image"
+            [alt]="t('content.layout.dialogConfiguration.item.itemTemas.image.altPrefix', 'Imagen') + ' ' + (i + 1)"
+            class="image-thumbnail" (load)="onImageLoad(i)" (error)="onImageError(i)" />
+          <div class="image-spinner" *ngIf="imageLoading[i]"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subsección Color -->
+    <div class="theme-subsection">
+      <h5 class="theme-subsection-title">{{ t('content.layout.dialogConfiguration.item.itemTemas.color.title', 'Color')
+        }}
+      </h5>
+      <div class="color-grid">
+        <!-- Opción 'Ninguno' para no seleccionar color (ahora primera) -->
+        <div class="color-swatch none-swatch" tabindex="0" role="button" [ngClass]="{ selected: selectedColor === -1 }"
+          (click)="selectColor(-1)" (keydown.enter)="selectColor(-1)" (keydown.space)="selectColor(-1)">
+          <i class="pi pi-ban"></i>
+        </div>
+        <div *ngFor="let color of themeColors; let i = index" class="color-swatch" tabindex="0" role="button"
+          [ngClass]="{ selected: selectedColor === i }" [style.background-color]="color" (click)="selectColor(i)"
+          (keydown.enter)="selectColor(i)" (keydown.space)="selectColor(i)"></div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <p-button [label]="t('content.layout.dialogConfiguration.item.itemTemas.actions.discard', 'Descartar')"
+        styleClass="btn-danger" (click)="discard()"></p-button>
+      <p-button [label]="t('content.layout.dialogConfiguration.item.itemTemas.actions.save', 'Guardar')"
+        styleClass="btn-primary" (click)="save()"></p-button>
+    </div>
+
+  </div>
+
+</div>

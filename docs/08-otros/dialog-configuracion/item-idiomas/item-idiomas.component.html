@@ -1,0 +1,72 @@
+<div class="idiomas-contentr">
+  <form [formGroup]="idiomasForm">
+
+    <!-- Sección: Configuración regional -->
+    <div class="setting-section">
+
+      <div class="form-group">
+        <label class="form-label" for="idioma">
+          <i class="pi pi-globe"></i>
+          {{ t('content.layout.dialogConfiguration.item.itemIdiomas.language.label', 'Idioma (país o región)') }}
+        </label>
+        <p-select id="idioma" formControlName="idioma" [options]="idiomasOpciones" optionLabel="label"
+          optionValue="value"
+          [placeholder]="t('content.layout.dialogConfiguration.item.itemIdiomas.language.placeholder', 'Seleccione un idioma')"
+          styleClass="w-100">
+        </p-select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="formato_fecha">
+          <i class="pi pi-calendar"></i>
+          {{ t('content.layout.dialogConfiguration.item.itemIdiomas.dateFormat.label', 'Formato de fecha') }}
+        </label>
+        <p-select id="formato_fecha" formControlName="formato_fecha" [options]="formatosFechaOpciones"
+          optionLabel="label" optionValue="value"
+          [placeholder]="t('content.layout.dialogConfiguration.item.itemIdiomas.dateFormat.placeholder', 'Seleccione un formato de fecha')"
+          styleClass="w-100">
+        </p-select>
+        <span class="form-hint text-small text-muted">{{ getFechaEjemplo() }}</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="formato_hora">
+          <i class="pi pi-clock"></i>
+          {{ t('content.layout.dialogConfiguration.item.itemIdiomas.timeFormat.label', 'Formato de hora') }}
+        </label>
+        <p-select id="formato_hora" formControlName="formato_hora" [options]="formatosHoraOpciones" optionLabel="label"
+          optionValue="value"
+          [placeholder]="t('content.layout.dialogConfiguration.item.itemIdiomas.timeFormat.placeholder', 'Seleccione un formato de hora')"
+          styleClass="w-100">
+        </p-select>
+        <span class="form-hint text-small text-muted">{{ getHoraEjemplo() }}</span>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Sección: Zona horaria -->
+    <div class="setting-section">
+      <div class="timezone-section">
+        <div class="timezone-info">
+          <span class="timezone-text">{{ getZonaHorariaActual() }}</span>
+          <a href="#" class="info-link" (click)="onCambiarZonaHoraria($event)">
+            {{ t('content.layout.dialogConfiguration.item.itemIdiomas.timezone.change', 'Cambiar') }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <p-button [label]="t('content.layout.dialogConfiguration.item.itemIdiomas.actions.reset', 'Restablecer valores')"
+        icon="pi pi-refresh" (click)="resetearIdiomas()" [loading]="guardando" styleClass="btn-danger">
+      </p-button>
+      <p-button [label]="t('content.layout.dialogConfiguration.item.itemIdiomas.actions.save', 'Guardar cambios')"
+        icon="pi pi-save" (click)="guardarIdiomas()" [loading]="guardando" [disabled]="idiomasForm.invalid"
+        styleClass="btn-primary">
+      </p-button>
+    </div>
+  </form>
+
+</div>
