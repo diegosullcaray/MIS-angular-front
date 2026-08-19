@@ -4,18 +4,6 @@
   class="sidebar-rail fixed bottom-0 inset-x-0 z-40 w-full h-16 flex flex-row items-center justify-between gap-0 px-1 pb-[env(safe-area-inset-bottom)] overflow-hidden scrollbar-none sm:static sm:inset-auto sm:z-auto sm:w-[var(--mis-sidebar-col1-w)] sm:h-full sm:flex-col sm:items-center sm:justify-start sm:gap-0 sm:px-0 sm:py-1 sm:pb-1 sm:border-r sm:border-[var(--mis-border)]"
   aria-label="Sistemas"
 >
-  <!-- Botón Menú Hamburguesa — solo en el rail vertical de desktop; en mobile el botón vive en el header (arriba) -->
-  <button
-    class="hidden sm:flex w-9 h-9 rounded-[10px] bg-transparent hover:bg-white/10 text-white/70 hover:text-white items-center justify-center shrink-0 sm:mb-1 border-0 cursor-pointer transition-all duration-150 active:bg-white/15 focus:outline-none"
-    (click)="shell.toggleNavPanel()"
-    aria-label="Alternar menú lateral"
-    pTooltip="Alternar menú"
-  >
-    <i class="pi pi-bars text-[20px]"></i>
-  </button>
-
-  <div class="hidden sm:block sm:w-7 sm:h-[1px] sm:mx-0 sm:my-1 bg-white/12 shrink-0"></div>
-
   <!-- Contenedor relativo en mobile para alojar los íconos y las flechas de desplazamiento; rail vertical scrollable en desktop -->
   <div class="relative flex-1 flex flex-row items-center overflow-hidden w-full h-full sm:flex-col sm:min-h-0 sm:overflow-hidden">
     <!-- Flecha izquierda en mobile -->
@@ -64,50 +52,3 @@
     }
   </div>
 </aside>
-
-<!-- Col 2: Panel de navegación flotante/overlay en mobile, rail secundario en desktop -->
-@if (panelActivo(); as panel) {
-  <!-- Fondo oscuro que bloquea el layout en mobile mientras el panel está abierto -->
-  @if (!shell.navPanelColapsado()) {
-    <div
-      class="sm:hidden fixed inset-0 bottom-16 z-40 bg-black/50 transition-opacity duration-300 ease-in-out"
-      (click)="shell.setNavPanelColapsado(true)"
-      aria-hidden="true"
-    ></div>
-  }
-
-  <div
-    class="fixed top-0 left-0 bottom-16 z-50 w-[85vw] max-w-[300px] transition-all duration-300 ease-in-out overflow-hidden shadow-2xl sm:static sm:inset-auto sm:z-auto sm:h-full sm:shadow-none sm:translate-x-0"
-    [class.-translate-x-full]="shell.navPanelColapsado()"
-    [class.opacity-0]="shell.navPanelColapsado()"
-    [class.pointer-events-none]="shell.navPanelColapsado()"
-    [class.sm:w-0]="shell.navPanelColapsado()"
-    [class.translate-x-0]="!shell.navPanelColapsado()"
-    [class.opacity-100]="!shell.navPanelColapsado()"
-    [class.sm:w-[220px]]="!shell.navPanelColapsado()"
-  >
-    @if (cambiandoPanel()) {
-      <!-- Esqueleto de transición al cambiar de sistema -->
-      <div
-        class="w-full h-full bg-[var(--mis-nav-panel-bg)] backdrop-blur-md border-r border-[var(--mis-border)] overflow-hidden"
-        aria-label="Cargando navegación del sistema"
-      >
-        <div class="flex items-center gap-3 px-3 h-[44px] min-h-[44px] border-b border-[var(--mis-border)] shrink-0 box-border">
-          <p-skeleton shape="circle" width="1.75rem" height="1.75rem" />
-          <p-skeleton width="60%" height="1rem" />
-        </div>
-        <div class="flex flex-col gap-3 p-3">
-          @for (i of [1, 2, 3, 4, 5]; track i) {
-            <p-skeleton height="1.1rem" />
-          }
-        </div>
-      </div>
-    } @else {
-      <app-sidebar-nav-panel
-        class="w-full h-full block"
-        [panelConfig]="panel"
-        (rutaSeleccionada)="onRutaSeleccionada($event)"
-      />
-    }
-  </div>
-}

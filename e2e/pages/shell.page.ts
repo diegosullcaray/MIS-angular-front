@@ -39,10 +39,6 @@ export class ShellPage {
     return this.page.locator('[role="menu"]');
   }
 
-  get panelNavegacion() {
-    return this.page.locator('#tour-sidebar-panel');
-  }
-
   /** Contenedor raíz del shell (ver `shell-layout.component.html`) — el selector usa solo clases simples, no las de fondo (que traen paréntesis/comillas). */
   get raiz() {
     return this.page.locator('div.h-screen.flex.overflow-hidden');
@@ -53,36 +49,14 @@ export class ShellPage {
     return this.raiz.evaluate((el) => getComputedStyle(el).backgroundImage);
   }
 
-  /** Fondo oscuro que bloquea toda la pantalla (header incluido) mientras Col 2 está abierta en mobile — ver `sidebar.component.html`. */
-  get fondoOscuroPanel() {
-    return this.page.locator('[aria-hidden="true"].fixed.inset-0');
-  }
-
   /**
-   * En mobile, Col 2 (panel de navegación) es un drawer con fondo oscuro que
-   * tapa el header entero mientras está abierta — hay que descartarla (tocar
-   * el fondo) antes de poder usar el header. Ya NO arranca abierta al entrar
-   * (la navegación de un sistema vive en el explorador del área de
-   * contenido; Col 2 es un pane opcional, colapsado por defecto — ver
-   * `ShellStateService.navPanelColapsado`), así que lo normal es que este
-   * fondo nunca aparezca: se prueba con un timeout corto en vez de esperar
-   * indefinidamente, y no hace nada si no aparece. En desktop no existe ese
-   * fondo, así que tampoco hace nada.
+   * Col 2 (el antiguo panel de navegación de la Col 2, con su fondo oscuro
+   * en mobile) ya no existe: la navegación de un sistema vive enteramente en
+   * el explorador del área de contenido — ver `sidebar.component.html`. Este
+   * método queda como no-op para no tener que tocar los specs que todavía lo
+   * llaman defensivamente antes de interactuar con el header.
    */
   async cerrarPanelSiEstaTapandoElHeader(): Promise<void> {
-    const anchoViewport = this.page.viewportSize()?.width ?? 1280;
-    const esMobil = anchoViewport < 640;
-    if (!esMobil) return;
-
-    const abierta = await this.fondoOscuroPanel
-      .waitFor({ state: 'visible', timeout: 1000 })
-      .then(() => true)
-      .catch(() => false);
-    if (!abierta) return;
-
-    // El panel (`#tour-sidebar-panel`, z-50) se superpone al fondo en su
-    // franja izquierda (w-[85vw]) y tapa el centro del viewport — hay que
-    // clickear el fondo fuera de esa franja, cerca del borde derecho.
-    await this.fondoOscuroPanel.click({ position: { x: anchoViewport - 10, y: 20 } });
+    return;
   }
 }

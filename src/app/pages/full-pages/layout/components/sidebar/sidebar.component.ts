@@ -3,22 +3,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { SidebarNavPanelComponent } from '../sidebar-nav-panel/sidebar-nav-panel.component';
 import { TooltipModule } from 'primeng/tooltip';
-import { SkeletonModule } from 'primeng/skeleton';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
 import type { SidebarIcon } from '../../interfaces/sidebar.model';
 
-/** Duración de la transición (esqueleto) al cambiar de sistema. */
-const DURACION_TRANSICION_PANEL_MS = 300;
-
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [SidebarNavPanelComponent, TooltipModule, SkeletonModule],
+  imports: [TooltipModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
@@ -32,9 +27,6 @@ export class SidebarComponent implements AfterViewInit {
   private readonly redirect = inject(RedirectOverlayService);
   private readonly router = inject(Router);
 
-  /** Indica si el panel está en transición (muestra el esqueleto de carga). */
-  protected readonly cambiandoPanel = signal(false);
-  
   protected readonly iconActivoId = this.shell.sidebarIconActivo;
 
   /** Estado de visibilidad de las flechas de scroll horizontal en mobile. */
@@ -93,9 +85,6 @@ export class SidebarComponent implements AfterViewInit {
   /** Lista combinada de íconos base y los que provienen del backend STG. */
   protected readonly iconos = this.navegacion.iconos;
 
-  /** Navegación del sistema activo. Es `null` si el sistema no tiene subnavegación. */
-  protected readonly panelActivo = this.navegacion.panelActivo;
-
   /** Acción al hacer clic en un ícono de la columna principal (Col 1). */
   protected seleccionarIcono(icon: SidebarIcon): void {
     const eraActivo = this.shell.sidebarIconActivo();
@@ -112,13 +101,9 @@ export class SidebarComponent implements AfterViewInit {
       return;
     }
 
-    // Transición visual para sistemas con panel. Ya no se fuerza a abrir la
-    // Col 2: la navegación pasó al explorador del área de contenido y el panel
-    // de links quedó como pane opcional, que el usuario abre si lo quiere.
+    // Al cambiar a un sistema con subnavegación, reinicia el explorador a su raíz.
     if (icon.tienePanel && eraActivo !== icon.id) {
       this.navegacion.rutaExplorador.set([]);
-      this.cambiandoPanel.set(true);
-      setTimeout(() => this.cambiandoPanel.set(false), DURACION_TRANSICION_PANEL_MS);
     }
 
     // Caso especial: Inicio navega directamente al dashboard
@@ -144,28 +129,6 @@ export class SidebarComponent implements AfterViewInit {
     if (icon.tienePanel) {
       this.shell.setContenidoPendienteSeleccion(true);
     }
-  }
-
-  /** Acción al seleccionar un sub-ítem del panel (Col 2). */
-  protected onRutaSeleccionada(ruta: string): void {
-    this.shell.setMenuItemActivo({ ruta, etiqueta: ruta.split('/').pop() ?? '' });
-    this.shell.setContenidoPendienteSeleccion(false);
-
-    if (ruta) {
-      this.router.navigateByUrl(ruta).catch((err) => {
-        console.warn(`Ruta no encontrada: ${ruta}`, err);
-      });
-    }
-
-    // En pantallas pequeñas, el panel se oculta tras la selección para dejar ver el contenido.
-    if (this.esMobil()) {
-      this.shell.setNavPanelColapsado(true);
-    }
-  }
-
-  /** Detecta si el ancho de pantalla corresponde al breakpoint `sm` (640px). */
-  private esMobil(): boolean {
-    return typeof window !== 'undefined' && window.innerWidth < 640;
   }
 
   ngAfterViewInit(): void {

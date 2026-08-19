@@ -84,10 +84,9 @@ describe('WindowPanelComponent', () => {
     expect(navegar).toHaveBeenCalledWith('/app/dashboard');
   });
 
-  it('la luz amarilla deja a la vista el explorador del sistema, sin navegar ni tocar el panel lateral', () => {
+  it('la luz amarilla deja a la vista el explorador del sistema, sin navegar', () => {
     const fixture = crear();
     const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
-    shell.setNavPanelColapsado(true);
     const emitido = vi.fn();
     fixture.componentInstance.minimizar.subscribe(emitido);
 
@@ -95,8 +94,6 @@ describe('WindowPanelComponent', () => {
 
     expect(emitido).toHaveBeenCalled();
     expect(shell.contenidoPendienteSeleccion()).toBe(true);
-    // Minimizar ya no fuerza a abrir la Col 2: la navegación vive en el explorador.
-    expect(shell.navPanelColapsado()).toBe(true);
     // La ruta no cambia: el contenido sigue montado y vuelve al elegir opción.
     expect(navegar).not.toHaveBeenCalled();
   });
