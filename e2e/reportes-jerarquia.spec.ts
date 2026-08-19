@@ -4,11 +4,12 @@ import { inyectarSesionVigente } from './fixtures/session';
 import { ShellPage } from './pages/shell.page';
 
 /**
- * El selector de jerarquía de reportes debe bajar de a un nivel: arranca en la
- * raíz ("Financiera") sin pedir ningún reporte, y recién consulta cuando el
- * usuario elige. Antes autoseleccionaba el primer nodo de cada nivel y
- * cascadeaba hasta el fondo, así que al entrar mostraba el reporte de la
- * primera agencia (Tingo María) sin que nadie lo pidiera.
+ * El selector de jerarquía de reportes baja de a un nivel: al entrar emite la
+ * raíz ("Financiera") —así el reporte del total ya se ve, como en el legado— y
+ * ofrece el nivel siguiente SIN preseleccionar. El bug original era otro: se
+ * autoseleccionaba el primer nodo de CADA nivel y cascadeaba hasta el fondo,
+ * con lo que al entrar se mostraba el reporte de la primera agencia (Tingo
+ * María) en vez del consolidado.
  *
  * Jerarquía falsa: Financiera (raíz) -> 2 zonas -> 2 agencias.
  */
@@ -50,7 +51,7 @@ async function mockJerarquia(page: Page) {
   });
 }
 
-test('arranca en Financiera, sin pedir reporte, y baja de a un nivel', async ({ page }) => {
+test('arranca mostrando el consolidado de Financiera y baja de a un nivel', async ({ page }) => {
   await inyectarSesionVigente(page);
   await mockJerarquia(page);
 
@@ -62,40 +63,29 @@ test('arranca en Financiera, sin pedir reporte, y baja de a un nivel', async ({ 
 
   const combos = page.locator('p-select');
 
-  // Al entrar: ningún reporte pedido.
-  expect(reportesPedidos).toEqual([]);
+  // Al entrar ya se pidió el consolidado de la raíz — no hay que elegir nada
+  // para ver el reporte, igual que en el legado.
+  expect(reportesPedidos).toContain('FC');
+  await expect(page.getByText('Elige un nivel de la jerarquía')).toBeHidden();
+
+  // Pero NO cascadeó hasta el fondo: no se pidió ninguna zona ni agencia.
+  expect(reportesPedidos.filter((r) => r !== 'FC')).toEqual([]);
+
   // Financiera fijada + el nivel siguiente disponible para elegir.
   await expect(combos).toHaveCount(2);
-  await expect(page.getByText('Elige un nivel de la jerarquía')).toBeVisible();
 
-  // El selector vive dentro del panel de filtros. Ese panel se colapsa por
-  // defecto una vez que hay reporte a la vista, pero mientras no se eligió
-  // ningún nivel es la ÚNICA forma de ver algo, así que queda forzado visible
-  // sin que haga falta ningún clic — de lo contrario el usuario queda varado
-  // en "Elige un nivel de la jerarquía" sin ver cómo salir de ahí.
+  // El selector vive dentro del panel de filtros, que arranca plegado para no
+  // restarle espacio al reporte: hay que desplegarlo para operar los combos.
+  await page.getByRole('button', { name: 'Mostrar filtros' }).click();
   await expect(combos.nth(1)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Mostrar filtros' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Ocultar filtros' })).toHaveCount(0);
 
   // Elegir "ZONA SELVA" en el segundo combo.
   await combos.nth(1).click();
   await page.getByRole('option', { name: 'ZONA SELVA' }).click();
   await page.waitForTimeout(600);
 
-
   // Se pidió el reporte de la zona elegida, y apareció el nivel de agencia sin elegir.
   expect(reportesPedidos).toContain('Z-SELVA');
   expect(reportesPedidos).not.toContain('AG-TM');
   await expect(combos).toHaveCount(3);
-
-  // Ya con reporte a la vista, los filtros se colapsan solos para no
-  // restarle espacio a la tabla — y ahí sí aparece el botón para volver a
-  // abrirlos, con el reporte quedándose visible mientras tanto.
-  await expect(combos.first()).toBeHidden();
-  const botonFiltros = page.getByRole('button', { name: 'Mostrar filtros' });
-  await expect(botonFiltros).toBeVisible();
-
-  await botonFiltros.click();
-  await expect(combos.first()).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Ocultar filtros' })).toBeVisible();
 });

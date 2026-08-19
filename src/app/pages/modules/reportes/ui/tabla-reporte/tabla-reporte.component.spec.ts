@@ -302,4 +302,27 @@ describe('TablaReporteComponent', () => {
     expect(fixture.componentInstance['alineacion'](columnaEstado)).toContain('text-center');
     expect(fixture.componentInstance['alineacion'](columnaEstado)).toContain('w-8');
   });
+
+  // Estos `computed` se evalúan dentro de la detección de cambios: si tiran una
+  // excepción no se rompe solo la tabla, se aborta el ciclo entero y la app
+  // queda congelada con el spinner global tapando la pantalla. Una fila de
+  // encabezado rara tiene que degradar, no colgar.
+  describe('encabezados malformados del backend', () => {
+    it('no revienta si una fila viene sin `columns`', () => {
+      const encabezadosRotos = [{ columnDef: 'nom', header: 'Nombre' }] as unknown as FilaEncabezadoReporte[];
+
+      expect(() => crear(encabezadosRotos, FILAS)).not.toThrow();
+    });
+
+    it('no revienta si una fila trae huecos entre sus columnas', () => {
+      const conHuecos = [
+        { columns: [null, { columnDef: 'nom', header: 'Nombre', isdata: 1 }, undefined] },
+      ] as unknown as FilaEncabezadoReporte[];
+
+      const fixture = crear(conHuecos, FILAS);
+
+      // La columna sana sobrevive; los huecos simplemente se ignoran.
+      expect(fixture.componentInstance['columnasDato']().map((c) => c.columnDef)).toEqual(['nom']);
+    });
+  });
 });

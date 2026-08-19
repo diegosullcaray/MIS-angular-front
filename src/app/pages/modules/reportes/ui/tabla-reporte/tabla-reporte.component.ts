@@ -80,9 +80,23 @@ export class TablaReporteComponent {
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<FilaReporte>();
 
+  /**
+   * Columnas de una fila de encabezado, tolerando que el backend mande la fila
+   * sin `columns` (o con huecos).
+   *
+   * No es paranoia: estos `computed` se evalúan DENTRO de la detección de
+   * cambios, así que una excepción acá no rompe solo la tabla — aborta el
+   * ciclo entero y deja la app congelada, con el spinner global tapando la
+   * pantalla y sin volver a renderizar nada. Una fila de encabezado rara tiene
+   * que degradar a "esta tabla se ve incompleta", no a "la pantalla se colgó".
+   */
+  private columnasDe(fila: FilaEncabezadoReporte | undefined): ColumnaReporte[] {
+    return (fila?.columns ?? []).filter((columna): columna is ColumnaReporte => columna != null);
+  }
+
   /** Columnas "hoja" (con datos) de todas las filas de encabezado, en el orden que indica `isdata` — `setdisplayedData()` del legado. */
   protected readonly columnasDato = computed(() => {
-    const todas = this.encabezados().flatMap((fila) => fila.columns);
+    const todas = this.encabezados().flatMap((fila) => this.columnasDe(fila));
     return todas.filter((c) => c.isdata != null).sort((a, b) => (a.isdata ?? 0) - (b.isdata ?? 0));
   });
 
@@ -96,7 +110,7 @@ export class TablaReporteComponent {
    * columna oculta.
    */
   protected readonly filasEncabezado = computed(() =>
-    this.encabezados().map((filaEnc) => filaEncabezadoVisible(filaEnc.columns))
+    this.encabezados().map((filaEnc) => filaEncabezadoVisible(this.columnasDe(filaEnc)))
   );
 
   protected valor(fila: FilaReporte, columna: ColumnaReporte): unknown {
