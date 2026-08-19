@@ -1,0 +1,118 @@
+<div class="mis-buscador">
+  <!-- Patrón ARIA combobox: el foco no se mueve de la caja de texto; la opción
+       marcada se comunica con `aria-activedescendant`. -->
+  <div
+    class="mis-buscador-caja"
+    role="combobox"
+    aria-haspopup="listbox"
+    aria-owns="mis-buscador-lista"
+    [attr.aria-expanded]="desplegado()"
+  >
+    <i class="pi pi-search mis-buscador-lupa" aria-hidden="true"></i>
+    <input
+      type="search"
+      class="mis-buscador-input"
+      placeholder="Buscar en todos los sistemas…"
+      autocomplete="off"
+      aria-label="Buscar reportes y carpetas en todos los sistemas"
+      aria-autocomplete="list"
+      aria-controls="mis-buscador-lista"
+      [attr.aria-activedescendant]="desplegado() && resultados().length ? idOpcion(indiceActivo()) : null"
+      [value]="consulta()"
+      (input)="onConsulta($event)"
+      (focus)="enfocado.set(true)"
+      (keydown)="onTeclado($event)"
+    />
+    @if (consulta()) {
+      <button type="button" class="mis-buscador-limpiar" (click)="limpiar()" aria-label="Limpiar búsqueda">
+        <i class="pi pi-times"></i>
+      </button>
+    }
+  </div>
+
+  @if (desplegado()) {
+    <!-- Capa para cerrar al hacer clic afuera, igual que el dropdown del header. -->
+    <div class="mis-buscador-fondo" (click)="cerrar()" aria-hidden="true"></div>
+
+    <div class="mis-buscador-panel">
+      @if (chipsVisibles().length) {
+        <div class="mis-buscador-facetas">
+          @for (grupo of chipsVisibles(); track grupo.faceta) {
+            <div class="mis-buscador-faceta" role="group" [attr.aria-label]="'Filtrar por ' + grupo.faceta">
+              @for (chip of grupo.valores; track chip.valor) {
+                <button
+                  type="button"
+                  class="mis-buscador-chip"
+                  [class.mis-buscador-chip--activo]="chip.activo"
+                  [attr.aria-pressed]="chip.activo"
+                  (click)="alternarFaceta(grupo.faceta, chip.valor)"
+                >
+                  {{ chip.valor }}
+                  <span class="mis-buscador-chip-conteo">{{ chip.conteo }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      @if (resultados().length === 0) {
+        <p class="mis-buscador-vacio">
+          Sin resultados para <strong>{{ consulta() }}</strong
+          >@if (hayFiltros()) { con los filtros aplicados }.
+        </p>
+      } @else {
+        @if (consultaRelajada()) {
+          <p class="mis-buscador-aviso">
+            No hubo coincidencias con la búsqueda completa; se muestran las de las primeras
+            {{ respuesta().palabrasUsadas }} palabra(s).
+          </p>
+        }
+
+        <ul id="mis-buscador-lista" class="mis-buscador-lista" role="listbox" aria-label="Resultados">
+          @for (resultado of resultados(); track resultado.objeto.id) {
+            <li
+              class="mis-buscador-opcion"
+              [class.mis-buscador-opcion--activa]="$index === indiceActivo()"
+              role="option"
+              [id]="idOpcion($index)"
+              [attr.aria-selected]="$index === indiceActivo()"
+              (click)="abrir(resultado.objeto)"
+              (mouseenter)="indiceActivo.set($index)"
+            >
+              <i
+                class="mis-buscador-icono"
+                [class.pi]="true"
+                [class.pi-folder]="resultado.objeto.tipo === 'Carpeta'"
+                [class.pi-chart-bar]="resultado.objeto.tipo === 'Reporte'"
+                aria-hidden="true"
+              ></i>
+
+              <span class="mis-buscador-textos">
+                <!-- `innerHTML` porque el motor devuelve el texto ya escapado y con
+                     las coincidencias envueltas en <mark> (ver `IndiceBuscador.resaltar`). -->
+                <span class="mis-buscador-etiqueta" [innerHTML]="resultado.resaltado['etiqueta'].valor"></span>
+                <span class="mis-buscador-ubicacion" [innerHTML]="resultado.resaltado['ubicacion'].valor"></span>
+              </span>
+
+              <span class="mis-buscador-tipo">{{ resultado.objeto.tipo }}</span>
+            </li>
+          }
+        </ul>
+      }
+
+      <footer class="mis-buscador-pie">
+        <span aria-live="polite">
+          {{ respuesta().total }} {{ respuesta().total === 1 ? 'resultado' : 'resultados' }}
+          @if (respuesta().total > resultados().length) {
+            (se muestran {{ resultados().length }})
+          }
+          en {{ respuesta().duracionMs.toFixed(1) }} ms
+        </span>
+        <span class="mis-buscador-atajos" aria-hidden="true">
+          <kbd>↑</kbd><kbd>↓</kbd> moverse · <kbd>↵</kbd> abrir · <kbd>esc</kbd> cerrar
+        </span>
+      </footer>
+    </div>
+  }
+</div>

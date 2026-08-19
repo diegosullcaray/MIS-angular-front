@@ -383,71 +383,6 @@
   flex-wrap: wrap;
 }
 
-.mis-explorador-buscador {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex: 1 1 260px;
-  min-width: 0;
-}
-
-.mis-explorador-buscador > .pi-search {
-  position: absolute;
-  left: var(--mis-space-3);
-  font-size: 14px;
-  color: var(--mis-text-tertiary);
-  pointer-events: none;
-}
-
-.mis-explorador-input {
-  width: 100%;
-  height: 38px;
-  padding: 0 var(--mis-space-8) 0 var(--mis-space-8);
-  font-family: inherit;
-  font-size: var(--mis-text-sm);
-  color: var(--mis-text-primary);
-  background: var(--mis-surface);
-  border: 1px solid var(--mis-secondary);
-  border-radius: var(--mis-radius-md);
-  outline: none;
-  transition: box-shadow var(--mis-transition-fast);
-}
-
-.mis-explorador-input::placeholder {
-  color: var(--mis-text-tertiary);
-}
-
-.mis-explorador-input:focus-visible {
-  box-shadow: var(--mis-shadow-focus);
-}
-
-/* El clear nativo de `type=search` no se puede tematizar; se usa el propio. */
-.mis-explorador-input::-webkit-search-cancel-button {
-  appearance: none;
-}
-
-.mis-explorador-limpiar {
-  position: absolute;
-  right: var(--mis-space-2);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--mis-radius-full);
-  background: transparent;
-  color: var(--mis-text-tertiary);
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.mis-explorador-limpiar:hover {
-  background: var(--mis-hover-bg);
-  color: var(--mis-text-primary);
-}
-
 .mis-explorador-filtro {
   display: inline-flex;
   align-items: center;
@@ -557,6 +492,278 @@
   font-size: 8px;
   color: var(--mis-text-tertiary);
   flex-shrink: 0;
+}
+
+/* ── Buscador instantáneo (app-buscador) ────────────────────── */
+
+.mis-buscador {
+  position: relative;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.mis-buscador-caja {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mis-buscador-lupa {
+  position: absolute;
+  left: var(--mis-space-3);
+  font-size: 14px;
+  color: var(--mis-text-tertiary);
+  pointer-events: none;
+}
+
+.mis-buscador-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 var(--mis-space-8);
+  font-family: inherit;
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-primary);
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-secondary);
+  border-radius: var(--mis-radius-md);
+  outline: none;
+  transition: box-shadow var(--mis-transition-fast);
+}
+
+.mis-buscador-input::placeholder {
+  color: var(--mis-text-tertiary);
+}
+
+.mis-buscador-input:focus-visible {
+  box-shadow: var(--mis-shadow-focus);
+}
+
+/* El clear nativo de `type=search` no se puede tematizar; se usa el propio. */
+.mis-buscador-input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.mis-buscador-limpiar {
+  position: absolute;
+  right: var(--mis-space-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--mis-radius-full);
+  background: transparent;
+  color: var(--mis-text-tertiary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mis-buscador-limpiar:hover {
+  background: var(--mis-hover-bg);
+  color: var(--mis-text-primary);
+}
+
+/* Capa transparente que cierra el panel al hacer clic afuera. Va por debajo
+   del panel pero por encima del resto, igual que el dropdown del header. */
+.mis-buscador-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--mis-z-dropdown) - 1);
+}
+
+/* El panel NO se ata al ancho del input: en la barra del explorador ese input
+   compite con los filtros y queda angosto, y los nombres de reporte —largos por
+   naturaleza— salían todos cortados con puntos suspensivos. */
+.mis-buscador-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: max(100%, min(460px, 90vw));
+  z-index: var(--mis-z-dropdown);
+  display: flex;
+  flex-direction: column;
+  max-height: min(60vh, 460px);
+  overflow: hidden;
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: var(--mis-shadow-lg);
+}
+
+.mis-buscador-facetas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-2);
+  padding: var(--mis-space-3);
+  border-bottom: 1px solid var(--mis-border);
+}
+
+.mis-buscador-faceta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mis-space-2);
+}
+
+.mis-buscador-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font-family: inherit;
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-secondary);
+  background: var(--mis-panel-bg);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-full);
+  cursor: pointer;
+  transition: all var(--mis-transition-fast);
+}
+
+.mis-buscador-chip:hover {
+  border-color: var(--mis-border-strong);
+  color: var(--mis-text-primary);
+}
+
+.mis-buscador-chip--activo {
+  color: var(--mis-text-on-primary);
+  background: var(--mis-primary);
+  border-color: var(--mis-primary);
+}
+
+.mis-buscador-chip-conteo {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+
+.mis-buscador-lista {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: var(--mis-space-2);
+  overflow-y: auto;
+  list-style: none;
+}
+
+.mis-buscador-opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-3);
+  padding: var(--mis-space-2) var(--mis-space-3);
+  border-radius: var(--mis-radius-md);
+  cursor: pointer;
+}
+
+/* Una sola clase para hover y teclado: el mouseenter mueve el índice activo,
+   así nunca quedan dos filas resaltadas a la vez. */
+.mis-buscador-opcion--activa {
+  background: var(--mis-hover-bg);
+}
+
+.mis-buscador-icono {
+  font-size: 15px;
+  color: var(--mis-text-tertiary);
+  flex-shrink: 0;
+}
+
+.mis-buscador-opcion--activa .mis-buscador-icono {
+  color: var(--mis-primary-text);
+}
+
+.mis-buscador-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.mis-buscador-etiqueta {
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mis-buscador-ubicacion {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Resaltado de las coincidencias — es el <mark> que emite el motor. */
+.mis-buscador-etiqueta mark,
+.mis-buscador-ubicacion mark {
+  padding: 0 1px;
+  border-radius: 2px;
+  background: var(--mis-primary-light);
+  color: var(--mis-primary-text);
+  font-weight: var(--mis-font-semibold);
+}
+
+.mis-buscador-tipo {
+  flex-shrink: 0;
+  padding: 1px 8px;
+  font-size: 10px;
+  color: var(--mis-text-tertiary);
+  background: var(--mis-panel-bg);
+  border-radius: var(--mis-radius-full);
+}
+
+.mis-buscador-vacio,
+.mis-buscador-aviso {
+  margin: 0;
+  padding: var(--mis-space-4);
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-secondary);
+  text-align: center;
+}
+
+.mis-buscador-aviso {
+  padding: var(--mis-space-2) var(--mis-space-3);
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+  text-align: left;
+  border-bottom: 1px solid var(--mis-border);
+}
+
+.mis-buscador-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mis-space-3);
+  padding: var(--mis-space-2) var(--mis-space-3);
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+  border-top: 1px solid var(--mis-border);
+  white-space: nowrap;
+}
+
+.mis-buscador-atajos {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.mis-buscador-atajos kbd {
+  padding: 1px 5px;
+  font-family: inherit;
+  font-size: 10px;
+  background: var(--mis-panel-bg);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-sm);
+}
+
+/* En mobile los atajos de teclado no aplican. */
+@media (max-width: 639px) {
+  .mis-buscador-atajos {
+    display: none;
+  }
 }
 
 /* ── Cuadrícula de iconos ───────────────────────────────────── */

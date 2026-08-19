@@ -2,22 +2,9 @@
   <app-window-panel [titulo]="sistema.titulo" [permitirActualizar]="false">
     <div class="mis-explorador">
       <div class="mis-explorador-barra">
-        <div class="mis-explorador-buscador">
-          <i class="pi pi-search" aria-hidden="true"></i>
-          <input
-            type="search"
-            class="mis-explorador-input"
-            placeholder="Buscar reportes o carpetas…"
-            [value]="busqueda()"
-            (input)="onBusqueda($event)"
-            aria-label="Buscar dentro de esta carpeta"
-          />
-          @if (busqueda()) {
-            <button type="button" class="mis-explorador-limpiar" (click)="busqueda.set('')" aria-label="Limpiar búsqueda">
-              <i class="pi pi-times"></i>
-            </button>
-          }
-        </div>
+        <!-- Busca en TODOS los sistemas y a cualquier profundidad, no solo en
+             la carpeta abierta — ver `BuscadorComponent`. -->
+        <app-buscador />
 
         <!-- Filtros sin funcionalidad todavía (pendiente de definir criterios). -->
         <button type="button" class="mis-explorador-filtro" disabled pTooltip="Próximamente" tooltipPosition="bottom">
@@ -76,8 +63,8 @@
 
       @if (nodosVisibles().length === 0) {
         <div class="mis-explorador-vacio">
-          <i [class]="busqueda() ? 'pi pi-search' : 'pi pi-folder-open'"></i>
-          <p>{{ busqueda() ? 'Ningún elemento coincide con la búsqueda.' : 'Esta carpeta está vacía.' }}</p>
+          <i class="pi pi-folder-open"></i>
+          <p>Esta carpeta está vacía.</p>
         </div>
       } @else if (vista() === 'cuadricula') {
         <div class="mis-explorador-cuadricula">

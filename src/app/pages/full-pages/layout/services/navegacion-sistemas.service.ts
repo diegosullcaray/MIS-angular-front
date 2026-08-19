@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { MenuStgService } from './menu-stg.service';
 import { KaypachaService } from '../../../modules/ranking-k/services/kaypacha.service';
-import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../interfaces/sidebar.model';
+import type { RegistroNavegacion, SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../interfaces/sidebar.model';
 
 /**
  * Árbol de navegación de cada sistema y ubicación actual dentro de él. Lo
@@ -44,9 +44,13 @@ export class NavegacionSistemasService {
   });
 
   /** Navegación del sistema activo. Es `null` si el sistema no tiene subnavegación. */
-  readonly panelActivo = computed<SidebarNavPanelConfig | null>(() => {
-    const id = this.shell.sidebarIconActivo();
+  readonly panelActivo = computed<SidebarNavPanelConfig | null>(() => this.panelDe(this.shell.sidebarIconActivo()));
 
+  /**
+   * Navegación de un sistema cualquiera, no solo del activo. El buscador la
+   * necesita para todos a la vez; el explorador la consume vía `panelActivo`.
+   */
+  panelDe(id: string): SidebarNavPanelConfig | null {
     if (id === 'host-inicio') return this.getPanelHost();
 
     const icono = this.iconos().find((i) => i.id === id);
@@ -56,6 +60,67 @@ export class NavegacionSistemasService {
     if (this.esAnalista(icono)) return this.getPanelAnalista(icono.etiqueta, icono.icono);
 
     return this.getPanelStg(id);
+  }
+
+  /**
+   * Todo el árbol de navegación aplanado —cada sistema, a cualquier
+   * profundidad— para que el buscador pueda encontrar un reporte sin que el
+   * usuario sepa en qué carpeta vive. Respeta los permisos del rol, porque
+   * reusa el mismo `filtrarVisibles` que el explorador.
+   */
+  readonly registros = computed<RegistroNavegacion[]>(() => {
+    const registros: RegistroNavegacion[] = [];
+
+    for (const icono of this.iconos()) {
+      const panel = this.panelDe(icono.id);
+
+      // Sistema sin subnavegación: el propio ícono es el destino, así que se
+      // indexa él (buscar "dashboards" tiene que encontrarlo igual).
+      if (!panel) {
+        if (!icono.ruta) continue;
+        registros.push({
+          id: icono.id,
+          etiqueta: icono.etiqueta,
+          sistema: icono.etiqueta,
+          sistemaId: icono.id,
+          tipo: 'Reporte',
+          ruta: icono.ruta,
+          icono: icono.icono,
+          carpetas: [],
+          nodo: { etiqueta: icono.etiqueta, ruta: icono.ruta },
+          ubicacion: icono.etiqueta,
+        });
+        continue;
+      }
+
+      const recorrer = (nodos: SidebarNavRuta[], carpetas: SidebarNavRuta[]): void => {
+        for (const nodo of this.filtrarVisibles(nodos)) {
+          const esCarpeta = (nodo.hijos?.length ?? 0) > 0;
+
+          registros.push({
+            id: `${icono.id}/${[...carpetas, nodo].map((c) => c.etiqueta).join('/')}`,
+            etiqueta: nodo.etiqueta,
+            sistema: panel.titulo,
+            sistemaId: icono.id,
+            tipo: esCarpeta ? 'Carpeta' : 'Reporte',
+            ruta: nodo.ruta,
+            icono: nodo.icono,
+            carpetas,
+            nodo,
+            ubicacion: [panel.titulo, ...carpetas.map((c) => c.etiqueta)].join(' › '),
+          });
+
+          if (esCarpeta) recorrer(nodo.hijos ?? [], [...carpetas, nodo]);
+        }
+      };
+
+      recorrer(
+        panel.secciones.flatMap((s) => s.rutas),
+        []
+      );
+    }
+
+    return registros;
   });
 
   /**
