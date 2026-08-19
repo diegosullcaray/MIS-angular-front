@@ -53,11 +53,11 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     await expect(shell.botonHamburguesaDelRail).toHaveCount(0);
   });
 
-  test('usa el wallpaper de mobile (wallpaper_cell.png)', async ({ page }) => {
+  test('usa el wallpaper de mobile (wallpaper_cell.jpg)', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.ir();
 
-    expect(await shell.wallpaperAplicado()).toContain('wallpaper_cell.png');
+    expect(await shell.wallpaperAplicado()).toContain('wallpaper_cell.jpg');
   });
 });
 
@@ -103,6 +103,6 @@ test.describe('Shell responsive — desktop (>= 640px)', () => {
 
     const wallpaper = await shell.wallpaperAplicado();
     expect(wallpaper).toContain('wallpaper.png');
-    expect(wallpaper).not.toContain('wallpaper_cell.png');
+    expect(wallpaper).not.toContain('wallpaper_cell.jpg');
   });
 });

@@ -305,19 +305,8 @@ export /*abstract*/ class usabilidadMisComponent {
             data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 17.6, 16.5, 12.0, 6.5,
                 2.0, -0.9]
         }
-    
-    
-    
+
         ]
     }
     
-
-
-
-
-
-
-
-
-
 }
