@@ -68,10 +68,6 @@ export class HeaderComponent {
   );
 
   // ─── Estado Computado ─────────────────────────────────────────────────────
-  protected readonly logoMis = computed(() =>
-    this.theme.oscuro() ? 'assets/images/fc/logos/mis_white.png' : 'assets/images/fc/logos/mis.png'
-  );
-
   protected readonly rolLabel = computed(() => {
     const roles: Record<string, string> = {
       'admin-sistema': 'Admin Sistema',

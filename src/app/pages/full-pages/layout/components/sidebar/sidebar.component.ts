@@ -1,6 +1,6 @@
 import { Component, inject, effect, signal, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, Router } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { TooltipModule } from 'primeng/tooltip';
@@ -13,7 +13,7 @@ import type { SidebarIcon } from '../../interfaces/sidebar.model';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [TooltipModule],
+  imports: [TooltipModule, RouterLink],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })

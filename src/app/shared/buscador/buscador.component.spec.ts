@@ -1,55 +1,42 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
-import { Component } from '@angular/core';
 import { BuscadorComponent } from './buscador.component';
-import { NavegacionSistemasService } from '../../pages/full-pages/layout/services/navegacion-sistemas.service';
-import { ShellStateService } from '../../core/services/shell-state.service';
-import type { RegistroNavegacion } from '../../pages/full-pages/layout/interfaces/sidebar.model';
+import { FUENTE_BUSQUEDA } from './fuente-busqueda';
+import type { FuenteBusqueda, RegistroBuscable } from './buscador.model';
 
-@Component({ selector: 'app-blank', standalone: true, template: '' })
-class BlankComponent {}
-
-function registro(overrides: Partial<RegistroNavegacion> = {}): RegistroNavegacion {
+function registro(overrides: Partial<RegistroBuscable> = {}): RegistroBuscable {
   const etiqueta = overrides.etiqueta ?? 'Monitor Metas Desembolso';
   return {
-    id: overrides.id ?? `reportes/${etiqueta}`,
+    id: overrides.id ?? `nav/${etiqueta}`,
     etiqueta,
-    sistema: 'Reportes',
-    sistemaId: 'sist-rep',
+    ubicacion: 'Reportes › Avance Comercial',
+    origen: 'Reportes',
     tipo: 'Reporte',
-    ruta: '/app/reportes/mon-desem',
-    carpetas: [],
-    nodo: { etiqueta, ruta: '/app/reportes/mon-desem' },
-    ubicacion: 'Reportes',
+    abrir: vi.fn(),
     ...overrides,
   };
 }
 
+/** Fuente de mentira controlada por un signal, como lo son las reales. */
+function fuente(id: string, registros: ReturnType<typeof signal<RegistroBuscable[]>>): FuenteBusqueda {
+  return { id, registros: () => registros() };
+}
+
 describe('BuscadorComponent', () => {
-  let shell: ShellStateService;
-  let router: Router;
-  let navegacionFalsa: {
-    registros: ReturnType<typeof signal<RegistroNavegacion[]>>;
-    abrirEnCarpeta: ReturnType<typeof vi.fn>;
-  };
+  let navegacion: ReturnType<typeof signal<RegistroBuscable[]>>;
+  let modulo: ReturnType<typeof signal<RegistroBuscable[]>>;
 
   beforeEach(() => {
-    navegacionFalsa = {
-      registros: signal<RegistroNavegacion[]>([registro()]),
-      abrirEnCarpeta: vi.fn(),
-    };
+    navegacion = signal<RegistroBuscable[]>([registro()]);
+    modulo = signal<RegistroBuscable[]>([]);
 
     TestBed.configureTestingModule({
       imports: [BuscadorComponent],
       providers: [
-        provideRouter([{ path: '**', component: BlankComponent }]),
-        { provide: NavegacionSistemasService, useValue: navegacionFalsa },
+        { provide: FUENTE_BUSQUEDA, useValue: fuente('navegacion', navegacion), multi: true },
+        { provide: FUENTE_BUSQUEDA, useValue: fuente('modulo', modulo), multi: true },
       ],
     });
-
-    shell = TestBed.inject(ShellStateService);
-    router = TestBed.inject(Router);
   });
 
   function crear() {
@@ -76,6 +63,12 @@ describe('BuscadorComponent', () => {
     return Array.from(fixture.nativeElement.querySelectorAll('.mis-buscador-opcion'));
   }
 
+  function etiquetas(fixture: ReturnType<typeof crear>): string[] {
+    return Array.from(fixture.nativeElement.querySelectorAll('.mis-buscador-etiqueta')).map(
+      (e) => (e as HTMLElement).textContent ?? ''
+    );
+  }
+
   it('no despliega el panel sin nada tecleado', () => {
     const fixture = crear();
     (elemento(fixture, '.mis-buscador-input') as HTMLInputElement).dispatchEvent(new Event('focus'));
@@ -90,18 +83,6 @@ describe('BuscadorComponent', () => {
 
     expect(opciones(fixture).length).toBe(1);
     expect(elemento(fixture, '.mis-buscador-etiqueta')?.innerHTML).toContain('<mark>Metas</mark>');
-  });
-
-  it('busca en todos los sistemas, no solo en la carpeta abierta', () => {
-    navegacionFalsa.registros.set([
-      registro({ id: 'a', etiqueta: 'Cartera Créditos', sistema: 'Presupuesto', ubicacion: 'Presupuesto › Activos' }),
-      registro({ id: 'b', etiqueta: 'Categorización', sistema: 'Analista', ubicacion: 'Analista' }),
-    ]);
-    const fixture = crear();
-    teclear(fixture, 'categ');
-
-    expect(opciones(fixture).length).toBe(1);
-    expect(elemento(fixture, '.mis-buscador-etiqueta')?.textContent).toBe('Categorización');
   });
 
   it('tolera typos, como el motor de Algolia', () => {
@@ -126,9 +107,60 @@ describe('BuscadorComponent', () => {
     expect(elemento(fixture, '.mis-buscador-pie')?.textContent).toMatch(/1 resultado .* ms/);
   });
 
+  describe('fuentes de datos', () => {
+    it('busca en todas las fuentes registradas a la vez', () => {
+      modulo.set([registro({ id: 'd-1', etiqueta: 'Metas Comerciales', origen: 'Dashboards Integrados', tipo: 'Dashboard' })]);
+      const fixture = crear();
+      teclear(fixture, 'metas');
+
+      expect(etiquetas(fixture)).toEqual(['Monitor Metas Desembolso', 'Metas Comerciales']);
+    });
+
+    it('incorpora la data de un módulo que termina de cargar con el buscador ya abierto', () => {
+      const fixture = crear();
+      teclear(fixture, 'metas');
+      expect(opciones(fixture).length).toBe(1);
+
+      // El módulo resuelve su carga después de que el usuario ya tecleó.
+      modulo.set([registro({ id: 'd-1', etiqueta: 'Metas Comerciales', origen: 'Dashboards Integrados' })]);
+      fixture.detectChanges();
+
+      expect(opciones(fixture).length).toBe(2);
+    });
+
+    it('un módulo sin data cargada simplemente no aporta resultados', () => {
+      const fixture = crear();
+      teclear(fixture, 'metas');
+
+      expect(opciones(fixture).length).toBe(1);
+    });
+
+    it('delega el abrir en la fuente, que es la que sabe qué significa su registro', () => {
+      const abrir = vi.fn();
+      navegacion.set([registro({ abrir })]);
+      const fixture = crear();
+      teclear(fixture, 'metas');
+
+      opciones(fixture)[0].click();
+
+      expect(abrir).toHaveBeenCalledTimes(1);
+    });
+
+    it('cierra el panel y vacía la consulta al elegir', () => {
+      const fixture = crear();
+      teclear(fixture, 'metas');
+
+      opciones(fixture)[0].click();
+      fixture.detectChanges();
+
+      expect(elemento(fixture, '.mis-buscador-panel')).toBeNull();
+      expect((elemento(fixture, '.mis-buscador-input') as HTMLInputElement).value).toBe('');
+    });
+  });
+
   describe('navegación por teclado', () => {
     beforeEach(() => {
-      navegacionFalsa.registros.set([
+      navegacion.set([
         registro({ id: 'a', etiqueta: 'Cartera Vigente' }),
         registro({ id: 'b', etiqueta: 'Cartera Vencida' }),
       ]);
@@ -163,8 +195,12 @@ describe('BuscadorComponent', () => {
       expect(opciones(fixture)[1].getAttribute('aria-selected')).toBe('true');
     });
 
-    it('Enter abre la opción marcada', async () => {
-      const navegar = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    it('Enter abre la opción marcada', () => {
+      const abrirSegundo = vi.fn();
+      navegacion.set([
+        registro({ id: 'a', etiqueta: 'Cartera Vigente' }),
+        registro({ id: 'b', etiqueta: 'Cartera Vencida', abrir: abrirSegundo }),
+      ]);
       const fixture = crear();
       const input = teclear(fixture, 'cartera');
 
@@ -172,7 +208,7 @@ describe('BuscadorComponent', () => {
       fixture.detectChanges();
       teclaEn(input, 'Enter');
 
-      expect(navegar).toHaveBeenCalledWith('/app/reportes/mon-desem');
+      expect(abrirSegundo).toHaveBeenCalledTimes(1);
     });
 
     it('Escape limpia la consulta', () => {
@@ -185,7 +221,7 @@ describe('BuscadorComponent', () => {
       expect(elemento(fixture, '.mis-buscador-panel')).toBeNull();
     });
 
-    it('mantiene la opción marcada si el árbol de navegación se recarga de fondo', () => {
+    it('mantiene la opción marcada si una fuente se recarga de fondo', () => {
       const fixture = crear();
       const input = teclear(fixture, 'cartera');
 
@@ -193,13 +229,9 @@ describe('BuscadorComponent', () => {
       fixture.detectChanges();
       expect(opciones(fixture)[1].getAttribute('aria-selected')).toBe('true');
 
-      // El menú STG (o las categorías de Kaypacha) termina de resolver y
-      // reemplaza la lista por otra equivalente: eso rearma el índice, pero no
-      // es un cambio pedido por el usuario y no debe moverle la selección.
-      navegacionFalsa.registros.set([
-        registro({ id: 'a', etiqueta: 'Cartera Vigente' }),
-        registro({ id: 'b', etiqueta: 'Cartera Vencida' }),
-      ]);
+      // Un módulo termina de cargar: eso rearma el índice, pero no es un cambio
+      // pedido por el usuario y no debe moverle la selección de abajo.
+      modulo.set([registro({ id: 'z', etiqueta: 'Otra cosa', origen: 'Dashboards Integrados' })]);
       fixture.detectChanges();
 
       expect(opciones(fixture)[1].getAttribute('aria-selected')).toBe('true');
@@ -229,64 +261,12 @@ describe('BuscadorComponent', () => {
     });
   });
 
-  describe('abrir un resultado', () => {
-    it('un Reporte navega a su ruta y marca su sistema como activo', () => {
-      const navegar = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
-      shell.setContenidoPendienteSeleccion(true);
-      const fixture = crear();
-      teclear(fixture, 'metas');
-
-      opciones(fixture)[0].click();
-      fixture.detectChanges();
-
-      expect(navegar).toHaveBeenCalledWith('/app/reportes/mon-desem');
-      expect(shell.sidebarIconActivo()).toBe('sist-rep');
-      expect(shell.contenidoPendienteSeleccion()).toBe(false);
-    });
-
-    it('una Carpeta abre el explorador posicionado en ella, sin navegar', () => {
-      const navegar = vi.spyOn(router, 'navigateByUrl');
-      const carpetaPadre = { etiqueta: 'Avance Comercial' };
-      const nodo = { etiqueta: 'Colocaciones', hijos: [{ etiqueta: 'Hoja', ruta: '/x' }] };
-      navegacionFalsa.registros.set([
-        registro({
-          id: 'c',
-          etiqueta: 'Colocaciones',
-          tipo: 'Carpeta',
-          ruta: undefined,
-          carpetas: [carpetaPadre],
-          nodo,
-          ubicacion: 'Reportes › Avance Comercial',
-        }),
-      ]);
-      const fixture = crear();
-      teclear(fixture, 'coloca');
-
-      opciones(fixture)[0].click();
-
-      expect(navegacionFalsa.abrirEnCarpeta).toHaveBeenCalledWith('sist-rep', [carpetaPadre, nodo]);
-      expect(navegar).not.toHaveBeenCalled();
-    });
-
-    it('cierra el panel y vacía la consulta al elegir', () => {
-      vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
-      const fixture = crear();
-      teclear(fixture, 'metas');
-
-      opciones(fixture)[0].click();
-      fixture.detectChanges();
-
-      expect(elemento(fixture, '.mis-buscador-panel')).toBeNull();
-      expect((elemento(fixture, '.mis-buscador-input') as HTMLInputElement).value).toBe('');
-    });
-  });
-
   describe('facetas', () => {
     beforeEach(() => {
-      navegacionFalsa.registros.set([
-        registro({ id: 'a', etiqueta: 'Cartera Vigente', sistema: 'Reportes' }),
-        registro({ id: 'b', etiqueta: 'Cartera Vencida', sistema: 'Presupuesto' }),
-        registro({ id: 'c', etiqueta: 'Cartera Total', sistema: 'Presupuesto' }),
+      navegacion.set([
+        registro({ id: 'a', etiqueta: 'Cartera Vigente', origen: 'Reportes', tipo: 'Reporte' }),
+        registro({ id: 'b', etiqueta: 'Cartera Vencida', origen: 'Presupuesto', tipo: 'Reporte' }),
+        registro({ id: 'c', etiqueta: 'Cartera', origen: 'Presupuesto', tipo: 'Carpeta' }),
       ]);
     });
 
@@ -294,13 +274,35 @@ describe('BuscadorComponent', () => {
       return Array.from(fixture.nativeElement.querySelectorAll('.mis-buscador-chip'));
     }
 
+    function textoChips(fixture: ReturnType<typeof crear>): string[] {
+      return chips(fixture).map((c) => c.textContent?.replace(/\s+/g, ' ').trim() ?? '');
+    }
+
+    it('cada grupo de facetas lleva su etiqueta, para no leerse como filtros repetidos', () => {
+      const fixture = crear();
+      teclear(fixture, 'cartera');
+
+      const titulos = Array.from(fixture.nativeElement.querySelectorAll('.mis-buscador-faceta-titulo')).map(
+        (e) => (e as HTMLElement).textContent
+      );
+      expect(titulos).toEqual(['Módulo', 'Tipo']);
+    });
+
+    it('distingue un valor de "Módulo" de uno homónimo de "Tipo" con su aria-label', () => {
+      const fixture = crear();
+      teclear(fixture, 'cartera');
+
+      const etiquetasAria = chips(fixture).map((c) => c.getAttribute('aria-label'));
+      expect(etiquetasAria).toContain('Módulo: Reportes (1)');
+      expect(etiquetasAria).toContain('Tipo: Reporte (2)');
+    });
+
     it('ofrece un chip por valor de faceta con su conteo', () => {
       const fixture = crear();
       teclear(fixture, 'cartera');
 
-      const textos = chips(fixture).map((c) => c.textContent?.replace(/\s+/g, ' ').trim());
-      expect(textos).toContain('Presupuesto 2');
-      expect(textos).toContain('Reportes 1');
+      expect(textoChips(fixture)).toContain('Presupuesto 2');
+      expect(textoChips(fixture)).toContain('Reportes 1');
     });
 
     it('al activar un chip, refina los resultados', () => {
@@ -311,8 +313,7 @@ describe('BuscadorComponent', () => {
       chips(fixture).find((c) => c.textContent?.includes('Reportes'))!.click();
       fixture.detectChanges();
 
-      expect(opciones(fixture).length).toBe(1);
-      expect(elemento(fixture, '.mis-buscador-etiqueta')?.textContent).toBe('Cartera Vigente');
+      expect(etiquetas(fixture)).toEqual(['Cartera Vigente']);
     });
 
     it('un segundo clic sobre el mismo chip lo desactiva', () => {
@@ -329,6 +330,18 @@ describe('BuscadorComponent', () => {
       expect(opciones(fixture).length).toBe(3);
     });
 
+    it('combina módulo y tipo con AND', () => {
+      const fixture = crear();
+      teclear(fixture, 'cartera');
+
+      chips(fixture).find((c) => c.textContent?.includes('Presupuesto'))!.click();
+      fixture.detectChanges();
+      chips(fixture).find((c) => c.getAttribute('aria-label')?.startsWith('Tipo: Carpeta'))!.click();
+      fixture.detectChanges();
+
+      expect(etiquetas(fixture)).toEqual(['Cartera']);
+    });
+
     it('no oculta las demás opciones de una faceta ya filtrada, para poder cambiar de una a otra', () => {
       const fixture = crear();
       teclear(fixture, 'cartera');
@@ -337,7 +350,7 @@ describe('BuscadorComponent', () => {
       fixture.detectChanges();
 
       // "Presupuesto" sigue ofreciéndose con su conteo pese al filtro activo.
-      expect(chips(fixture).map((c) => c.textContent?.replace(/\s+/g, ' ').trim())).toContain('Presupuesto 2');
+      expect(textoChips(fixture)).toContain('Presupuesto 2');
     });
   });
 });

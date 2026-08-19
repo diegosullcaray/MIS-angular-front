@@ -8,6 +8,39 @@
 /** Cuánto cubrió la consulta a un atributo (`matchLevel` de Algolia). */
 export type NivelCoincidencia = 'ninguna' | 'parcial' | 'total';
 
+/**
+ * Un ítem indexable, venga de donde venga. Es el denominador común entre el
+ * árbol de navegación y la data que carga cada módulo, para que el buscador no
+ * tenga que conocer a ninguno de los dos.
+ */
+export interface RegistroBuscable {
+  /** Identidad estable; también evita indexar dos veces lo mismo. */
+  id: string;
+  /** Lo que se busca y se muestra en grande. */
+  etiqueta: string;
+  /** Contexto legible: `Reportes › Avance Comercial`. */
+  ubicacion: string;
+  /** Faceta: de qué módulo salió (`Reportes`, `Dashboards Integrados`…). */
+  origen: string;
+  /** Faceta: qué clase de ítem es (`Reporte`, `Carpeta`, `Dashboard`…). */
+  tipo: string;
+  /** Qué hacer al elegirlo. Lo define la fuente, que es la que sabe navegar. */
+  abrir: () => void;
+}
+
+/**
+ * Fuente de registros para el buscador. Cada módulo implementa una y aporta la
+ * data que tiene cargada en ese momento: si el módulo todavía no cargó nada,
+ * devuelve una lista vacía y simplemente no aparece en los resultados.
+ *
+ * Se registran con el multi-token `FUENTE_BUSQUEDA` (ver `fuente-busqueda.ts`).
+ */
+export interface FuenteBusqueda {
+  readonly id: string;
+  /** Debe ser reactivo (leer signals): el buscador lo evalúa dentro de un `computed`. */
+  registros(): RegistroBuscable[];
+}
+
 /** Cómo se matchea la última palabra de la consulta (`queryType`). */
 export type TipoConsulta =
   /** Solo la última palabra admite prefijo — es el default de Algolia (`prefixLast`). */

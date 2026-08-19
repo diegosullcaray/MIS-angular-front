@@ -603,7 +603,20 @@
 .mis-buscador-faceta {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--mis-space-2);
+}
+
+/* Nombra la dimensión del grupo ("Módulo", "Tipo"): sin esto, valores parecidos
+   de facetas distintas se leen como el mismo filtro repetido. */
+.mis-buscador-faceta-titulo {
+  flex-shrink: 0;
+  min-width: 48px;
+  font-size: 10px;
+  font-weight: var(--mis-font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mis-text-tertiary);
 }
 
 .mis-buscador-chip {

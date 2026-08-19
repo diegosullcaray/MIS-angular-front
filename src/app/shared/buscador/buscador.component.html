@@ -35,16 +35,21 @@
     <div class="mis-buscador-fondo" (click)="cerrar()" aria-hidden="true"></div>
 
     <div class="mis-buscador-panel">
-      @if (chipsVisibles().length) {
+      @if (gruposVisibles().length) {
         <div class="mis-buscador-facetas">
-          @for (grupo of chipsVisibles(); track grupo.faceta) {
-            <div class="mis-buscador-faceta" role="group" [attr.aria-label]="'Filtrar por ' + grupo.faceta">
+          @for (grupo of gruposVisibles(); track grupo.faceta) {
+            <!-- La etiqueta del grupo no es decorativa: "Reportes" (módulo) y
+                 "Reporte" (tipo) son valores de facetas distintas y sin ella se
+                 leen como el mismo filtro repetido. -->
+            <div class="mis-buscador-faceta" role="group" [attr.aria-label]="'Filtrar por ' + grupo.etiqueta">
+              <span class="mis-buscador-faceta-titulo" aria-hidden="true">{{ grupo.etiqueta }}</span>
               @for (chip of grupo.valores; track chip.valor) {
                 <button
                   type="button"
                   class="mis-buscador-chip"
                   [class.mis-buscador-chip--activo]="chip.activo"
                   [attr.aria-pressed]="chip.activo"
+                  [attr.aria-label]="grupo.etiqueta + ': ' + chip.valor + ' (' + chip.conteo + ')'"
                   (click)="alternarFaceta(grupo.faceta, chip.valor)"
                 >
                   {{ chip.valor }}
@@ -81,10 +86,9 @@
               (mouseenter)="indiceActivo.set($index)"
             >
               <i
-                class="mis-buscador-icono"
-                [class.pi]="true"
+                class="mis-buscador-icono pi"
                 [class.pi-folder]="resultado.objeto.tipo === 'Carpeta'"
-                [class.pi-chart-bar]="resultado.objeto.tipo === 'Reporte'"
+                [class.pi-chart-bar]="resultado.objeto.tipo !== 'Carpeta'"
                 aria-hidden="true"
               ></i>
 

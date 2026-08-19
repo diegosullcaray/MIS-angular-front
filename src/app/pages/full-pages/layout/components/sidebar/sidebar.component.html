@@ -4,6 +4,22 @@
   class="sidebar-rail fixed bottom-0 inset-x-0 z-40 w-full h-16 flex flex-row items-center justify-between gap-0 px-1 pb-[env(safe-area-inset-bottom)] overflow-hidden scrollbar-none sm:static sm:inset-auto sm:z-auto sm:w-[var(--mis-sidebar-col1-w)] sm:h-full sm:flex-col sm:items-center sm:justify-start sm:gap-0 sm:px-0 sm:py-1 sm:pb-1 sm:border-r sm:border-[var(--mis-border)]"
   aria-label="Sistemas"
 >
+  <!-- Wordmark MIS. Vive acá y no en el header desde que el rail es la
+       constante visual del shell. Va siempre en su versión BLANCA —en claro y
+       en oscuro— porque el rail es navy en los dos temas (`--mis-sidebar-bg`),
+       donde el wordmark navy sería ilegible.
+       Solo en el rail vertical: en mobile la Col 1 es una barra inferior de
+       64px y ahí el alto es para los íconos. -->
+  <a
+    class="hidden sm:flex items-center justify-center w-full h-9 shrink-0 mb-1 no-underline"
+    routerLink="/app/dashboard"
+    aria-label="MIS — ir al inicio"
+  >
+    <img src="assets/images/fc/logos/mis_white.png" alt="MIS" class="h-4 w-auto opacity-90 hover:opacity-100 transition-opacity" />
+  </a>
+
+  <div class="hidden sm:block sm:w-7 sm:h-[1px] sm:mx-0 sm:mb-1 bg-white/12 shrink-0"></div>
+
   <!-- Contenedor relativo en mobile para alojar los íconos y las flechas de desplazamiento; rail vertical scrollable en desktop -->
   <div class="relative flex-1 flex flex-row items-center overflow-hidden w-full h-full sm:flex-col sm:min-h-0 sm:overflow-hidden">
     <!-- Flecha izquierda en mobile -->
