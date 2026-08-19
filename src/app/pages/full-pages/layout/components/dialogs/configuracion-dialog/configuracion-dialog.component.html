@@ -1,0 +1,118 @@
+<p-dialog
+  header="Configuración"
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  appendTo="body"
+  [style]="{ width: '920px', maxWidth: '95vw' }"
+  [contentStyle]="{ padding: '0' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <!-- `data-nivel` es lo único que el CSS necesita para el drill-down de mobile;
+       en desktop las tres columnas se ven siempre y el atributo no hace nada. -->
+  <div class="mis-config" [attr.data-nivel]="nivelMovil()">
+    <!-- Col 1 — secciones -->
+    <aside class="mis-config-col mis-config-secciones" aria-label="Secciones de configuración">
+      <div class="mis-config-buscar">
+        <i class="pi pi-search" aria-hidden="true"></i>
+        <input
+          type="search"
+          placeholder="Buscar ajuste"
+          aria-label="Buscar ajuste"
+          [value]="filtro()"
+          (input)="filtrar($event)"
+        />
+      </div>
+
+      <ul class="mis-config-menu">
+        @for (seccion of seccionesVisibles(); track seccion.clave) {
+          <li>
+            <button
+              type="button"
+              class="mis-config-opcion"
+              [class.mis-config-opcion--activa]="seccion.clave === seccionActiva()"
+              [attr.aria-current]="seccion.clave === seccionActiva() ? 'true' : null"
+              (click)="elegirSeccion(seccion)"
+            >
+              <i [class]="seccion.icono" aria-hidden="true"></i>
+              <span class="mis-config-opcion-texto">{{ seccion.etiqueta }}</span>
+              <i class="pi pi-angle-right mis-config-chevron" aria-hidden="true"></i>
+            </button>
+          </li>
+        } @empty {
+          <li class="mis-config-vacio">Sin coincidencias.</li>
+        }
+      </ul>
+    </aside>
+
+    <!-- Col 2 — items de la sección abierta -->
+    <aside class="mis-config-col mis-config-items" [attr.aria-label]="seccion().etiqueta">
+      <div class="mis-config-cabecera">
+        <button type="button" class="mis-config-atras" (click)="volver()" aria-label="Volver a las secciones">
+          <i class="pi pi-angle-left" aria-hidden="true"></i>
+        </button>
+        <h3 class="mis-config-titulo">{{ seccion().etiqueta }}</h3>
+      </div>
+
+      <ul class="mis-config-menu">
+        @for (item of itemsVisibles(); track item.clave) {
+          <li>
+            <button
+              type="button"
+              class="mis-config-opcion"
+              [class.mis-config-opcion--activa]="item.clave === itemActivo()"
+              [attr.aria-current]="item.clave === itemActivo() ? 'true' : null"
+              (click)="elegirItem(item)"
+            >
+              <i [class]="item.icono" aria-hidden="true"></i>
+              <span class="mis-config-opcion-texto">{{ item.etiqueta }}</span>
+              <i class="pi pi-angle-right mis-config-chevron" aria-hidden="true"></i>
+            </button>
+          </li>
+        } @empty {
+          <li class="mis-config-vacio">Sin coincidencias en esta sección.</li>
+        }
+      </ul>
+    </aside>
+
+    <!-- Col 3 — contenido del item -->
+    <section class="mis-config-col mis-config-contenido" [attr.aria-label]="item().etiqueta">
+      <div class="mis-config-cabecera">
+        <button
+          type="button"
+          class="mis-config-atras"
+          (click)="volver()"
+          [attr.aria-label]="'Volver a ' + seccion().etiqueta"
+        >
+          <i class="pi pi-angle-left" aria-hidden="true"></i>
+        </button>
+        <div class="mis-config-cabecera-texto">
+          <h3 class="mis-config-titulo">{{ item().etiqueta }}</h3>
+          <p class="mis-config-descripcion">{{ item().descripcion }}</p>
+        </div>
+      </div>
+
+      <!-- Contenido de ejemplo: la pantalla real de cada ajuste todavía no existe. -->
+      <div class="mis-config-panel">
+        <div class="mis-config-aviso">
+          <i class="pi pi-info-circle" aria-hidden="true"></i>
+          <span>Vista de ejemplo. Los controles reales de este ajuste se conectan más adelante.</span>
+        </div>
+
+        <ul class="mis-config-ejemplos">
+          @for (ejemplo of item().ejemplos; track $index) {
+            <li class="mis-config-ejemplo">
+              <span class="mis-config-ejemplo-nombre">{{ ejemplo }}</span>
+              <span class="mis-config-ejemplo-estado">Pendiente</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cerrar" [text]="true" severity="secondary" (click)="cerrar()" />
+  </ng-template>
+</p-dialog>

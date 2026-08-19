@@ -55,13 +55,13 @@ describe('ShellLayoutComponent', () => {
     expect(el.querySelector('app-redirect-overlay')).not.toBeNull();
   });
 
-  it('usa el wallpaper de mobile (wallpaper_cell.jpg) por defecto, y el de escritorio (wallpaper.png) desde sm:', () => {
+  it('usa el wallpaper de mobile (wallpaper_cell.jpg) por defecto, y el de escritorio (wallpaper.jpg) desde sm:', () => {
     const fixture = TestBed.createComponent(ShellLayoutComponent);
     fixture.detectChanges();
 
     const raiz = (fixture.nativeElement as HTMLElement).firstElementChild as HTMLElement;
     expect(raiz.className).toContain("bg-[url('/assets/images/fc/fondos/wallpaper_cell.jpg')]");
-    expect(raiz.className).toContain("sm:bg-[url('/assets/images/fc/fondos/wallpaper.png')]");
+    expect(raiz.className).toContain("sm:bg-[url('/assets/images/fc/fondos/wallpaper.jpg')]");
   });
 
   it('mientras contenidoPendienteSeleccion está activo, oculta el router-outlet (contenido del sistema anterior) y muestra el explorador del sistema', () => {

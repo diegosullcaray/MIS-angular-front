@@ -25,6 +25,7 @@ import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { CambiarUsuarioDialogComponent } from '../dialogs/cambiar-usuario-dialog/cambiar-usuario-dialog.component';
+import { ConfiguracionDialogComponent } from '../dialogs/configuracion-dialog/configuracion-dialog.component';
 import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
 
 
@@ -32,7 +33,7 @@ import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule, CambiarUsuarioDialogComponent],
+  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule, CambiarUsuarioDialogComponent, ConfiguracionDialogComponent],
   viewProviders: [
     provideIcons({
       lucideChevronDown, lucideUser, lucideSettings,
@@ -57,6 +58,7 @@ export class HeaderComponent {
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
   protected readonly cambiarUsuarioOpen = signal(false);
+  protected readonly configuracionOpen = signal(false);
 
   /** URL actual capturada para reaccionar a cambios de ruta. */
   private readonly urlActual = toSignal(
@@ -111,6 +113,10 @@ export class HeaderComponent {
 
   protected abrirCambiarUsuario(): void {
     this.cerrarDropdownYAbrir(this.cambiarUsuarioOpen);
+  }
+
+  protected abrirConfiguracion(): void {
+    this.cerrarDropdownYAbrir(this.configuracionOpen);
   }
 
   protected volverAUsuarioOriginal(): void {

@@ -1,62 +1,61 @@
-import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
 import { InicioComponent } from './inicio.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { KaypachaService } from '../../../ranking-k/services/kaypacha.service';
 import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
-import type { CategoriaRanking } from '../../../ranking-k/models/categoria-ranking.model';
+
+function usuario(nombre: string): UsuarioActivo {
+  return {
+    id: 'u-1',
+    nombre,
+    email: 'ana.torres@confianza.pe',
+    rol: 'admin-sistema',
+    subsistemas: [],
+  } as UsuarioActivo;
+}
 
 describe('InicioComponent', () => {
   let shell: ShellStateService;
-  let kaypachaFalso: { categorias: ReturnType<typeof signal<CategoriaRanking[]>>; cargarCategorias: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    kaypachaFalso = { categorias: signal<CategoriaRanking[]>([]), cargarCategorias: vi.fn() };
-
-    TestBed.configureTestingModule({
-      imports: [InicioComponent],
-      providers: [provideRouter([]), { provide: KaypachaService, useValue: kaypachaFalso }],
-    });
+    TestBed.configureTestingModule({ imports: [InicioComponent] });
     shell = TestBed.inject(ShellStateService);
   });
 
-  it('carga las categorías de ranking-k al construirse', () => {
-    TestBed.createComponent(InicioComponent).detectChanges();
-    expect(kaypachaFalso.cargarCategorias).toHaveBeenCalled();
-  });
-
-  it('primerNombre() toma solo el primer nombre del usuario activo', () => {
-    shell.setUsuarioActivo({
-      id: 'u-1',
-      nombre: 'Ana María Torres',
-      email: 'ana.torres@confianza.pe',
-      rol: 'admin-sistema',
-      subsistemas: [],
-    } as UsuarioActivo);
-
+  function crear() {
     const fixture = TestBed.createComponent(InicioComponent);
     fixture.detectChanges();
+    return fixture;
+  }
 
-    expect(fixture.componentInstance['primerNombre']()).toBe('Ana');
+  // El backend manda el nombre completo en orden registral
+  // (apellido paterno, apellido materno, nombres); el saludo usa el trato
+  // corriente: primer nombre + segundo apellido.
+  it('nombreCorto() saluda con el primer nombre y el segundo apellido', () => {
+    shell.setUsuarioActivo(usuario('SANCHEZ QUISPE OSCAR ANDRE'));
+
+    const fixture = crear();
+
+    expect(fixture.componentInstance['nombreCorto']()).toBe('OSCAR QUISPE');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('¡Hola, OSCAR QUISPE!');
+  });
+
+  it('nombreCorto() devuelve el texto tal cual si no trae los tres componentes del nombre', () => {
+    shell.setUsuarioActivo(usuario('Ana Torres'));
+
+    expect(crear().componentInstance['nombreCorto']()).toBe('Ana Torres');
+  });
+
+  // Algunos endpoints ya devuelven el saludo armado; no debe quedar duplicado.
+  it('nombreCorto() descarta el "¡Hola, ...!" que pueda venir en la data', () => {
+    shell.setUsuarioActivo(usuario('¡Hola, Ana!'));
+
+    const fixture = crear();
+
+    expect(fixture.componentInstance['nombreCorto']()).toBe('Ana');
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('¡Hola, Ana!');
   });
 
-  it('primerNombre() es vacío sin usuario activo', () => {
-    const fixture = TestBed.createComponent(InicioComponent);
-    fixture.detectChanges();
-
-    expect(fixture.componentInstance['primerNombre']()).toBe('');
-  });
-
-  it('muestra la cantidad de categorías de ranking-k y enlaza a /app/ranking-k', () => {
-    kaypachaFalso.categorias.set([{ name: 'A', reportType: 'x', rdestip: '1' }, { name: 'B', reportType: 'x', rdestip: '2' }]);
-
-    const fixture = TestBed.createComponent(InicioComponent);
-    fixture.detectChanges();
-
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.textContent).toContain('2 categorías');
-    expect(el.querySelector('a')?.getAttribute('href')).toBe('/app/ranking-k');
+  it('nombreCorto() es vacío sin usuario activo', () => {
+    expect(crear().componentInstance['nombreCorto']()).toBe('');
   });
 });
