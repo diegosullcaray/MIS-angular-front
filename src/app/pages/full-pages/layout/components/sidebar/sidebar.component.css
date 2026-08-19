@@ -12,21 +12,30 @@
   -webkit-backdrop-filter: var(--mis-sidebar-blur);
 }
 
-/* Flechas de desplazamiento de la barra inferior (mobile). Van con el mismo
-   navy SÓLIDO que el fallback de `.sidebar-rail` sin backdrop-filter (no el
-   token translúcido `--mis-sidebar-bg`): un `backdrop-filter` propio encima
-   del que ya tiene el rail sampleaba el wallpaper de una tonalidad más clara
-   en vez del navy compuesto del rail, así que la flecha se veía como un
-   parche de otro color en vez de fundirse con la barra. El blur queda solo
-   para difuminar los íconos que asoman debajo. */
+/* Flechas de desplazamiento de la barra inferior (mobile).
+   NO llevan color propio. El rail es navy translúcido sobre el wallpaper
+   borroso, así que su color ya compuesto es más claro que el token y además
+   cambia a lo largo de la barra (medido: de rgb(45,79,130) a rgb(61,86,132)
+   en claro) — ningún color fijo puede coincidir, y por eso el navy sólido que
+   tenían antes se veía como un parche oscuro. Sin fondo propio, el
+   `backdrop-filter` samplea lo que el rail ya pintó y la flecha queda del
+   mismo tono que la barra; el blur alcanza para difuminar los íconos que
+   pasan por debajo. */
 .sidebar-rail-edge {
-  background: #1d396e;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-:host-context(.dark) .sidebar-rail-edge {
-  background: #09101d;
+/* Sin backdrop-filter no hay nada que difumine los íconos: ahí sí se cae al
+   navy sólido, que es también el fallback del propio rail. */
+@supports not (backdrop-filter: blur(1px)) {
+  .sidebar-rail-edge {
+    background: #1d396e;
+  }
+
+  :host-context(.dark) .sidebar-rail-edge {
+    background: #09101d;
+  }
 }
 
 /* Sin soporte de backdrop-filter la translucidez dejaría el rail ilegible:
