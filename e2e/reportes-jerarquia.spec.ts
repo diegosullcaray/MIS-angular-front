@@ -56,7 +56,7 @@ test('arranca en Financiera, sin pedir reporte, y baja de a un nivel', async ({ 
 
   await page.goto('/app/reportes/leg/com/rda/adm/mon-desem');
   await page.waitForLoadState('networkidle');
-  // En mobile, Col 2 (panel de navegación) arranca abierta y tapa el contenido.
+  // En mobile, si Col 2 (panel de navegación) llegara a estar abierta, tapa el contenido.
   await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
   await page.waitForTimeout(600);
 
@@ -67,6 +67,11 @@ test('arranca en Financiera, sin pedir reporte, y baja de a un nivel', async ({ 
   // Financiera fijada + el nivel siguiente disponible para elegir.
   await expect(combos).toHaveCount(2);
   await expect(page.getByText('Elige un nivel de la jerarquía')).toBeVisible();
+
+  // El selector vive dentro del panel de filtros, que arranca plegado: hay que
+  // desplegarlo para poder operar los combos.
+  await page.getByRole('button', { name: 'Mostrar filtros' }).click();
+  await expect(combos.nth(1)).toBeVisible();
 
   // Elegir "ZONA SELVA" en el segundo combo.
   await combos.nth(1).click();

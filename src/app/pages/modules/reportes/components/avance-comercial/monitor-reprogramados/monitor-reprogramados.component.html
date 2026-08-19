@@ -15,7 +15,15 @@
     <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
   </button>
   <div class="flex flex-col gap-3" [class.hidden]="!mostrarFiltros()">
-    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
+    <!-- Mismo criterio que su hermano de Avance Comercial: la raíz se muestra
+         pero no se emite, así no se pide un reporte que nadie eligió. -->
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      [autoSeleccionar]="false"
+      placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Tipo</span>

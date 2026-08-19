@@ -23,11 +23,6 @@ export class ShellStateService {
   private readonly _menuItemActivo = signal<MenuItemActivo | null>(null);
   private readonly _sidebarIconActivo = signal<string>('host-inicio');
   private readonly _cerrandoSesion = signal(false);
-  // Arranca colapsado: la navegación dentro de un sistema pasó al explorador
-  // de archivos del área de contenido (`ExploradorSistemaComponent`), y este
-  // panel quedó como pane opcional que el usuario abre con el botón de menú.
-  private readonly _navPanelColapsado = signal(true);
-  private readonly _sidebarTienePanel = signal(false);
   private readonly _contenidoPendienteSeleccion = signal(false);
 
   // ─── Signals de solo lectura (expuestos — Remotes solo leen) ────────────
@@ -47,22 +42,6 @@ export class ShellStateService {
    * cualquier ancestro con `backdrop-filter`/`transform` (rompen `position: fixed`).
    */
   readonly cerrandoSesion = this._cerrandoSesion.asReadonly();
-
-  /**
-   * True cuando el panel de navegación (Col 2 del sidebar) está colapsado.
-   * Compartido entre `SidebarComponent` (dueño del panel) y `HeaderComponent`
-   * (botón para alternarlo en mobile): ambos necesitan leer/mutar el mismo
-   * estado sin ser padre/hijo entre sí.
-   */
-  readonly navPanelColapsado = this._navPanelColapsado.asReadonly();
-
-  /**
-   * True cuando el sistema activo tiene panel de navegación propio (Col 2).
-   * `SidebarComponent` (dueño del cálculo real, `panelActivo()`) lo mantiene
-   * sincronizado acá; `HeaderComponent` lo lee para no mostrar el botón de
-   * alternar el panel en mobile si no hay nada que mostrar/ocultar.
-   */
-  readonly sidebarTienePanel = this._sidebarTienePanel.asReadonly();
 
   /**
    * True mientras se cambió a un sistema con panel propio (Col 2) pero el
@@ -122,18 +101,6 @@ export class ShellStateService {
 
   setCerrandoSesion(valor: boolean): void {
     this._cerrandoSesion.set(valor);
-  }
-
-  toggleNavPanel(): void {
-    this._navPanelColapsado.update((colapsado) => !colapsado);
-  }
-
-  setNavPanelColapsado(valor: boolean): void {
-    this._navPanelColapsado.set(valor);
-  }
-
-  setSidebarTienePanel(valor: boolean): void {
-    this._sidebarTienePanel.set(valor);
   }
 
   setContenidoPendienteSeleccion(valor: boolean): void {

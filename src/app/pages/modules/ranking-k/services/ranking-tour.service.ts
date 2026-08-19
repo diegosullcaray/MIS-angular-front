@@ -12,10 +12,10 @@ export class RankingTourService {
   iniciarTourGuiado(): void {
     const pasos: DriveStep[] = [
       {
-        element: '#tour-sidebar-panel',
+        element: '#tour-sidebar-icons',
         popover: {
           title: '🗂️ Categorías del Ranking',
-          description: 'Explora y cambia rápidamente entre las diferentes categorías del Ranking Kaypacha desde este panel de navegación.',
+          description: 'Vuelve a hacer clic en el ícono de Ranking Kaypacha cuando quieras para explorar y cambiar entre sus diferentes categorías.',
           side: 'right',
           align: 'start',
         },

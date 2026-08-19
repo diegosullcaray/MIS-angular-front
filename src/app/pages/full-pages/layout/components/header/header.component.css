@@ -21,6 +21,36 @@
   font-size: var(--mis-text-sm);
 }
 
+/* En mobile solo el nodo actual va con su nombre; los antecedentes se colapsan
+   a ".." para que la ruta entre en una línea por profunda que sea. Se oculta la
+   etiqueta en vez de quitarla del DOM, así el enlace sigue siendo clickeable y
+   se puede subir de nivel tocando los puntos. */
+@media (max-width: 639px) {
+  .header-breadcrumb ::ng-deep .p-breadcrumb-item:not(:last-child) .p-breadcrumb-item-label {
+    display: none;
+  }
+
+  .header-breadcrumb ::ng-deep .p-breadcrumb-item:not(:last-child) .p-breadcrumb-item-link::after {
+    content: '..';
+    letter-spacing: 1px;
+  }
+}
+
+/* En pantallas angostas una ruta profunda no debe empujar el menú de usuario
+   fuera del header: la fila se desplaza en horizontal, sin barra a la vista. */
+.header-breadcrumb {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.header-breadcrumb::-webkit-scrollbar {
+  display: none;
+}
+
+.header-breadcrumb ::ng-deep .p-breadcrumb ol {
+  flex-wrap: nowrap;
+}
+
 .header-breadcrumb ::ng-deep .p-breadcrumb .p-breadcrumb-item-link,
 .header-breadcrumb ::ng-deep .p-breadcrumb .p-menuitem-link {
   color: var(--mis-text-secondary);

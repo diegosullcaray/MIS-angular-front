@@ -100,23 +100,25 @@ export class MenuStgService {
 
   /**
    * Busca en el árbol una ruta activa para resolver el breadcrumb dinámicamente.
-   * Retorna el ID del sistema y el arreglo de etiquetas de la jerarquía.
+   * Retorna el ID del sistema y la cadena de nodos hasta la hoja (incluida),
+   * para poder mostrar sus etiquetas y también reabrir el explorador en
+   * cualquier carpeta intermedia (`NavegacionSistemasService.abrirEnCarpeta`).
    */
-  buscarPorRuta(ruta: string): { sistemaId: string; etiquetas: string[] } | null {
+  buscarPorRuta(ruta: string): { sistemaId: string; nodos: SidebarNavRuta[] } | null {
     for (const [sistemaId, hijos] of Object.entries(this.hijosPorSistema())) {
-      const etiquetas = this.buscarCadena(hijos, ruta);
-      if (etiquetas) return { sistemaId, etiquetas };
+      const nodos = this.buscarCadena(hijos, ruta);
+      if (nodos) return { sistemaId, nodos };
     }
     return null;
   }
 
-  private buscarCadena(nodos: SidebarNavRuta[], ruta: string): string[] | null {
+  private buscarCadena(nodos: SidebarNavRuta[], ruta: string): SidebarNavRuta[] | null {
     for (const nodo of nodos) {
-      if (nodo.ruta === ruta) return [nodo.etiqueta];
-      
+      if (nodo.ruta === ruta) return [nodo];
+
       if (nodo.hijos) {
         const subCadena = this.buscarCadena(nodo.hijos, ruta);
-        if (subCadena) return [nodo.etiqueta, ...subCadena];
+        if (subCadena) return [nodo, ...subCadena];
       }
     }
     return null;

@@ -68,10 +68,6 @@ export class HeaderComponent {
   );
 
   // ─── Estado Computado ─────────────────────────────────────────────────────
-  protected readonly logoMis = computed(() =>
-    this.theme.oscuro() ? 'assets/images/fc/logos/mis_white.png' : 'assets/images/fc/logos/mis.png'
-  );
-
   protected readonly rolLabel = computed(() => {
     const roles: Record<string, string> = {
       'admin-sistema': 'Admin Sistema',
@@ -172,14 +168,24 @@ export class HeaderComponent {
     });
   }
 
-  /** Genera el breadcrumb dinámico extrayendo datos del árbol del menú STG (sistemas remotos). */
+  /**
+   * Genera el breadcrumb dinámico extrayendo datos del árbol del menú STG
+   * (sistemas remotos). Cada nivel salvo el actual reabre el explorador en esa
+   * carpeta (`NavegacionSistemasService.abrirEnCarpeta`) — es la única forma
+   * de volver, ya que esas carpetas no son rutas.
+   */
   private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
     const hallazgo = this.menuStg.buscarPorRuta(url);
 
     if (hallazgo) {
+      const carpetas = hallazgo.nodos.slice(0, -1);
       return [
-        { label: this.labelDeRemote(hallazgo.sistemaId) },
-        ...hallazgo.etiquetas.map(label => ({ label }))
+        { label: this.labelDeRemote(hallazgo.sistemaId), command: () => this.navegacion.abrirEnCarpeta(hallazgo.sistemaId, []) },
+        ...carpetas.map((nodo, i) => ({
+          label: nodo.etiqueta,
+          command: () => this.navegacion.abrirEnCarpeta(hallazgo.sistemaId, carpetas.slice(0, i + 1)),
+        })),
+        { label: hallazgo.nodos[hallazgo.nodos.length - 1].etiqueta },
       ];
     }
 

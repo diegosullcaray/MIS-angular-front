@@ -19,6 +19,9 @@ import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
 import { ThemeService } from './pages/full-pages/layout/services/theme.service';
+import { FUENTE_BUSQUEDA } from './shared/buscador/fuente-busqueda';
+import { FuenteNavegacionService } from './pages/full-pages/layout/services/fuente-navegacion.service';
+import { FuenteDashboardsService } from './pages/modules/dashboard/services/fuente-dashboards.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -56,6 +59,12 @@ export const appConfig: ApplicationConfig = {
       ripple: false, // Sin ripple — estilo macOS
     }),
     MessageService,
+
+    // Fuentes del buscador. Cada una aporta la data que tiene cargada y filtra
+    // por los permisos del usuario; agregar un módulo al buscador es sumar acá
+    // su `FuenteBusqueda` (ver `shared/buscador/fuente-busqueda.ts`).
+    { provide: FUENTE_BUSQUEDA, useExisting: FuenteNavegacionService, multi: true },
+    { provide: FUENTE_BUSQUEDA, useExisting: FuenteDashboardsService, multi: true },
 
     // PWA: cachea el app-shell (JS/CSS/íconos) para carga instantánea e
     // instalación en el dispositivo. Nunca cachea respuestas del backend

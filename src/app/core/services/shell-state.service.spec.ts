@@ -65,39 +65,6 @@ describe('ShellStateService', () => {
     expect(service.esAdmin()).toBe(false);
   });
 
-  // Arranca colapsado desde que la navegación dentro de un sistema pasó al
-  // explorador del área de contenido: el panel de links es un pane opcional.
-  it('navPanelColapsado empieza en true y toggleNavPanel() lo alterna', () => {
-    expect(service.navPanelColapsado()).toBe(true);
-
-    service.toggleNavPanel();
-    expect(service.navPanelColapsado()).toBe(false);
-
-    service.toggleNavPanel();
-    expect(service.navPanelColapsado()).toBe(true);
-  });
-
-  it('setNavPanelColapsado() fuerza el valor sin importar el estado previo', () => {
-    service.setNavPanelColapsado(true);
-    expect(service.navPanelColapsado()).toBe(true);
-
-    service.setNavPanelColapsado(true); // repetir el mismo valor no debe alternar
-    expect(service.navPanelColapsado()).toBe(true);
-
-    service.setNavPanelColapsado(false);
-    expect(service.navPanelColapsado()).toBe(false);
-  });
-
-  it('sidebarTienePanel empieza en false y setSidebarTienePanel() lo actualiza', () => {
-    expect(service.sidebarTienePanel()).toBe(false);
-
-    service.setSidebarTienePanel(true);
-    expect(service.sidebarTienePanel()).toBe(true);
-
-    service.setSidebarTienePanel(false);
-    expect(service.sidebarTienePanel()).toBe(false);
-  });
-
   it('contenidoPendienteSeleccion empieza en false y setContenidoPendienteSeleccion() lo actualiza', () => {
     expect(service.contenidoPendienteSeleccion()).toBe(false);
 

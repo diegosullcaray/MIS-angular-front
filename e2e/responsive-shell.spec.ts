@@ -4,9 +4,11 @@ import { inyectarSesionVigente, mockearBackendAnt } from './fixtures/session';
 
 /**
  * Cubre a nivel E2E el rediseño responsive del shell (Col 1 del sidebar
- * como barra inferior fija en mobile, estilo Facebook; breadcrumb oculto en
- * mobile; botón de alternar Col 2 movido al header solo en mobile) — ver
- * `sidebar.component.html` y `header.component.html`.
+ * como barra inferior fija en mobile, estilo Facebook; breadcrumb del header
+ * visible en todo viewport, que es el único lugar donde vive la ubicación;
+ * Col 2 eliminada en todo viewport, porque la navegación
+ * vive enteramente en el explorador del sistema) — ver `sidebar.component.html`
+ * y `header.component.html`.
  *
  * El viewport se fija explícitamente en cada bloque (en vez de depender del
  * proyecto de Playwright) para que el spec sea autocontenido sin importar
@@ -32,19 +34,23 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     expect(cajaRail!.y + cajaRail!.height).toBeGreaterThanOrEqual(alturaViewport - 2);
   });
 
-  test('el breadcrumb del header queda oculto', async ({ page }) => {
+  // Antes se ocultaba por espacio y la ubicación se dibujaba dentro del panel
+  // del explorador. Esa copia se eliminó (el breadcrumb vive solo en el header)
+  // y el hueco que dejó el wordmark al mudarse al rail alcanza para mostrarlo:
+  // es la única forma de subir de nivel, así que en mobile tiene que estar.
+  test('el breadcrumb del header es visible: es el único lugar donde vive la ubicación', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.ir();
 
-    await expect(shell.breadcrumb).toBeHidden();
+    await expect(shell.breadcrumb).toBeVisible();
   });
 
-  test('el botón de alternar el panel (Col 2) vive en el header, no en el rail', async ({ page }) => {
+  test('no hay ningún botón para abrir la Col 2: la navegación vive en el explorador del sistema', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.ir();
 
-    await expect(shell.botonHamburguesaDelHeader).toBeVisible();
-    await expect(shell.botonHamburguesaDelRail).toBeHidden();
+    await expect(shell.botonHamburguesaDelHeader).toHaveCount(0);
+    await expect(shell.botonHamburguesaDelRail).toHaveCount(0);
   });
 
   test('usa el wallpaper de mobile (wallpaper_cell.png)', async ({ page }) => {
@@ -83,12 +89,12 @@ test.describe('Shell responsive — desktop (>= 640px)', () => {
     await expect(shell.breadcrumb).toBeVisible();
   });
 
-  test('el botón de alternar el panel (Col 2) vive en el rail, no en el header', async ({ page }) => {
+  test('no hay ningún botón para abrir la Col 2: la navegación vive en el explorador del sistema', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.ir();
 
-    await expect(shell.botonHamburguesaDelRail).toBeVisible();
-    await expect(shell.botonHamburguesaDelHeader).toBeHidden();
+    await expect(shell.botonHamburguesaDelRail).toHaveCount(0);
+    await expect(shell.botonHamburguesaDelHeader).toHaveCount(0);
   });
 
   test('usa el wallpaper de escritorio (wallpaper.png), no el de mobile', async ({ page }) => {

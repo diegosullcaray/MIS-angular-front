@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { of } from 'rxjs';
 import { HerramientasHomeComponent } from './herramientas-home.component';
 import { BaseNegativaService } from '../../services/base-negativa.service';
 import type { BaseNegativaBusquedaFila, TableHeaderDef } from '../../models/base-negativa.model';
@@ -11,6 +12,7 @@ function cliente(overrides: Partial<BaseNegativaBusquedaFila> = {}): BaseNegativ
 
 describe('HerramientasHomeComponent', () => {
   let serviceFalso: {
+    buscar: ReturnType<typeof vi.fn>;
     consultar: ReturnType<typeof vi.fn>;
     limpiar: ReturnType<typeof vi.fn>;
     resultados: ReturnType<typeof signal<Record<string, unknown>[]>>;
@@ -22,6 +24,9 @@ describe('HerramientasHomeComponent', () => {
 
   beforeEach(() => {
     serviceFalso = {
+      // El diálogo `app-consulta-riesgo-dialog` que renderiza esta pantalla
+      // llama `buscar('')` en su constructor para precargar la lista.
+      buscar: vi.fn().mockReturnValue(of([])),
       consultar: vi.fn(),
       limpiar: vi.fn(),
       resultados: signal([]),

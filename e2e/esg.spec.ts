@@ -50,7 +50,7 @@ test.describe('ESG — smoke del Cuadro de Mando', () => {
 
   test('la tabla de una categoría muestra la columna "Acciones" (sin la columna del lápiz)', async ({ page }) => {
     await page.goto('/app/esg');
-    // En mobile, Col 2 (panel de navegación) arranca abierta y tapa el resto de la pantalla — ver `ShellPage`.
+    // En mobile, si Col 2 (panel de navegación) llegara a estar abierta, tapa el resto de la pantalla — ver `ShellPage`.
     await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
     await page.getByRole('tab', { name: 'Medioambiente' }).click();
 
