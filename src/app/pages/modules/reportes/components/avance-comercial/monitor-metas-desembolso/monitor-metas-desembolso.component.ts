@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
@@ -43,9 +43,16 @@ export class MonitorMetasDesembolsoComponent {
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
-  protected readonly mostrarFiltros = signal(false);
-
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
+
+  /**
+   * Colapsado por defecto una vez que hay reporte a la vista, para no restarle
+   * espacio a las tablas. Pero mientras no se eligió ningún nivel, el selector
+   * de jerarquía —que vive ahí adentro— es la ÚNICA forma de ver algo: forzarlo
+   * visible evita quedar en "Elige un nivel de la jerarquía" sin ver cómo.
+   */
+  protected readonly filtrosAbiertos = signal(false);
+  protected readonly mostrarFiltros = computed(() => !this.nivelActual() || this.filtrosAbiertos());
   protected readonly cargando = signal(false);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 

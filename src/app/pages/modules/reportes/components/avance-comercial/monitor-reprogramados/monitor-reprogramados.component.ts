@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -46,8 +46,16 @@ export class MonitorReprogramadosComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesTipo = OPCIONES_TIPO_MON_REP;
 
-  protected readonly mostrarFiltros = signal(false);
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
+
+  /**
+   * Colapsado por defecto una vez que hay reporte a la vista. Pero mientras
+   * no se eligió ningún nivel, el selector de jerarquía —que vive ahí
+   * adentro— es la ÚNICA forma de ver algo: forzarlo visible evita quedar en
+   * "Elige un nivel de la jerarquía" sin ver cómo salir de ahí.
+   */
+  protected readonly filtrosAbiertos = signal(false);
+  protected readonly mostrarFiltros = computed(() => !this.nivelActual() || this.filtrosAbiertos());
   protected readonly tipoSeleccionado = signal<1 | 2>(1);
   protected readonly cargando = signal(false);
   protected readonly tablaReprogramados = signal<TablaReporteResultado>(TABLA_VACIA);

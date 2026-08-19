@@ -68,10 +68,14 @@ test('arranca en Financiera, sin pedir reporte, y baja de a un nivel', async ({ 
   await expect(combos).toHaveCount(2);
   await expect(page.getByText('Elige un nivel de la jerarquía')).toBeVisible();
 
-  // El selector vive dentro del panel de filtros, que arranca plegado: hay que
-  // desplegarlo para poder operar los combos.
-  await page.getByRole('button', { name: 'Mostrar filtros' }).click();
+  // El selector vive dentro del panel de filtros. Ese panel se colapsa por
+  // defecto una vez que hay reporte a la vista, pero mientras no se eligió
+  // ningún nivel es la ÚNICA forma de ver algo, así que queda forzado visible
+  // sin que haga falta ningún clic — de lo contrario el usuario queda varado
+  // en "Elige un nivel de la jerarquía" sin ver cómo salir de ahí.
   await expect(combos.nth(1)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Mostrar filtros' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Ocultar filtros' })).toHaveCount(0);
 
   // Elegir "ZONA SELVA" en el segundo combo.
   await combos.nth(1).click();
@@ -83,4 +87,15 @@ test('arranca en Financiera, sin pedir reporte, y baja de a un nivel', async ({ 
   expect(reportesPedidos).toContain('Z-SELVA');
   expect(reportesPedidos).not.toContain('AG-TM');
   await expect(combos).toHaveCount(3);
+
+  // Ya con reporte a la vista, los filtros se colapsan solos para no
+  // restarle espacio a la tabla — y ahí sí aparece el botón para volver a
+  // abrirlos, con el reporte quedándose visible mientras tanto.
+  await expect(combos.first()).toBeHidden();
+  const botonFiltros = page.getByRole('button', { name: 'Mostrar filtros' });
+  await expect(botonFiltros).toBeVisible();
+
+  await botonFiltros.click();
+  await expect(combos.first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Ocultar filtros' })).toBeVisible();
 });
