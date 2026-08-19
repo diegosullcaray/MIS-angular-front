@@ -25,7 +25,13 @@ const CONFIG: ConfiguracionIndice<RegistroBuscable> = {
   id: (r) => r.id,
 };
 
-const MAXIMO_RESULTADOS = 8;
+/**
+ * Tope de resultados renderizados. Es alto a propósito: la lista scrollea, así
+ * que recortarla antes hacía que el pie dijera "32 resultados" mientras solo se
+ * podía llegar a 8. Sirve nada más de red de contención para no dibujar cientos
+ * de filas de una; el corpus real son unos cientos de nodos.
+ */
+const MAXIMO_RESULTADOS = 50;
 
 /**
  * Búsqueda instantánea con la relevancia de Algolia (ver `BuscadorService`):

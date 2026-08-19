@@ -107,6 +107,44 @@ describe('BuscadorComponent', () => {
     expect(elemento(fixture, '.mis-buscador-pie')?.textContent).toMatch(/1 resultado .* ms/);
   });
 
+  describe('cantidad de resultados listados', () => {
+    /** Más de los 8 que se listaban antes, para que el total y lo visible coincidan. */
+    function muchos(cantidad: number) {
+      navegacion.set(
+        Array.from({ length: cantidad }, (_, i) => registro({ id: `n-${i}`, etiqueta: `Cartera ${i}` }))
+      );
+    }
+
+    it('lista todos los resultados, no un recorte: el total del pie es alcanzable scrolleando', () => {
+      muchos(32);
+      const fixture = crear();
+      teclear(fixture, 'cartera');
+
+      expect(opciones(fixture).length).toBe(32);
+    });
+
+    it('no dice "se muestran N" cuando no recortó nada', () => {
+      muchos(32);
+      const fixture = crear();
+      teclear(fixture, 'cartera');
+
+      const pie = elemento(fixture, '.mis-buscador-pie')?.textContent?.replace(/\s+/g, ' ') ?? '';
+      expect(pie).toContain('32 resultados');
+      expect(pie).not.toContain('se muestran');
+    });
+
+    it('recién avisa del recorte al pasarse del tope, informando el total real', () => {
+      muchos(60);
+      const fixture = crear();
+      teclear(fixture, 'cartera');
+
+      expect(opciones(fixture).length).toBe(50);
+      const pie = elemento(fixture, '.mis-buscador-pie')?.textContent?.replace(/\s+/g, ' ') ?? '';
+      expect(pie).toContain('60 resultados');
+      expect(pie).toContain('se muestran 50');
+    });
+  });
+
   describe('fuentes de datos', () => {
     it('busca en todas las fuentes registradas a la vez', () => {
       modulo.set([registro({ id: 'd-1', etiqueta: 'Metas Comerciales', origen: 'Dashboards Integrados', tipo: 'Dashboard' })]);
