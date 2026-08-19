@@ -2,18 +2,23 @@
   titulo="Monitor Reprogramados"
   [permitirActualizar]="false"
 >
-  <button
-    ventana-acciones
-    type="button"
-    class="mis-window-btn"
-    (click)="mostrarFiltros.set(!mostrarFiltros())"
-    [attr.aria-pressed]="mostrarFiltros()"
-    [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-    tooltipPosition="bottom"
-  >
-    <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
-  </button>
+  @if (nivelActual()) {
+    <!-- Solo tiene sentido alternar una vez que hay reporte a la vista: sin
+         nivel elegido el panel queda forzado abierto (ver `mostrarFiltros`),
+         así que ocultarlo no haría nada. -->
+    <button
+      ventana-acciones
+      type="button"
+      class="mis-window-btn"
+      (click)="filtrosAbiertos.set(!filtrosAbiertos())"
+      [attr.aria-pressed]="mostrarFiltros()"
+      [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+      [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+      tooltipPosition="bottom"
+    >
+      <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
+    </button>
+  }
   <div class="flex flex-col gap-3" [class.hidden]="!mostrarFiltros()">
     <!-- Mismo criterio que su hermano de Avance Comercial: la raíz se muestra
          pero no se emite, así no se pide un reporte que nadie eligió. -->
