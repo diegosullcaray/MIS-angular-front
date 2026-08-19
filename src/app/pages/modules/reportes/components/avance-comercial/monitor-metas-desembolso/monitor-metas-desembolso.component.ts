@@ -14,6 +14,7 @@ import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/w
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../../models/avance-comercial/avance-comercial.model';
+import { TabsModule } from 'primeng/tabs';
 
 const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 
@@ -36,7 +37,7 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, TooltipModule, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, TooltipModule, WindowPanelComponent, TabsModule],
   templateUrl: './monitor-metas-desembolso.component.html',
   styleUrl: './monitor-metas-desembolso.component.css',
 })
@@ -75,15 +76,6 @@ export class MonitorMetasDesembolsoComponent {
         this.tabla4.set(tabla4);
         this.cargando.set(false);
 
-        // eslint-disable-next-line no-console
-        console.log('[DEBUG headers tabla1]', JSON.stringify(tabla1.headers, null, 2));
-        // eslint-disable-next-line no-console
-        console.log('[DEBUG headers tabla2]', JSON.stringify(tabla2.headers, null, 2));
-        // eslint-disable-next-line no-console
-        console.log('[DEBUG headers tabla3]', JSON.stringify(tabla3.headers, null, 2));
-        // eslint-disable-next-line no-console
-        console.log('[DEBUG headers tabla4]', JSON.stringify(tabla4.headers, null, 2));
-
         if ([tabla1, tabla2, tabla3, tabla4].every((t) => t.body.length === 0)) {
           this.mensajes.warn(
             'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.',
@@ -97,4 +89,17 @@ export class MonitorMetasDesembolsoComponent {
       },
     });
   }
+  // Agrega esto en tu componente TypeScript
+  protected readonly tabs = [
+    {
+      id: 'tab1',
+      titulo: 'Operaciones Desembolsadas',
+      tablas: [this.tabla1] // Solo una tabla
+    },
+    {
+      id: 'tab2',
+      titulo: 'Monto Desembolsado',
+      tablas: [this.tabla2, this.tabla3, this.tabla4] // Tres tablas
+    }
+  ];
 }

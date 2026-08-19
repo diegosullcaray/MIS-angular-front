@@ -1,37 +1,21 @@
-<app-window-panel
-  titulo="Monitor Metas Desembolso"
+<app-window-panel titulo="Monitor Metas Desembolso"
   [subtitulo]="kpiOperaciones()?.fecha ? 'Actualizado al ' + kpiOperaciones()?.fecha + ' ' + kpiOperaciones()?.hora : ''"
-  [permitirActualizar]="false"
->
-  <button
-    ventana-acciones
-    type="button"
-    class="mis-window-btn"
-    (click)="mostrarFiltros.set(!mostrarFiltros())"
-    [attr.aria-pressed]="mostrarFiltros()"
-    [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-    tooltipPosition="bottom"
-  >
+  [permitirActualizar]="false">
+  
+  <button ventana-acciones type="button" class="mis-window-btn" (click)="mostrarFiltros.set(!mostrarFiltros())"
+    [attr.aria-pressed]="mostrarFiltros()" [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'" tooltipPosition="bottom">
     <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
   </button>
+  
   <div class="flex items-center gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
-    <!-- Sin `autoSeleccionar`: la raíz ("Financiera") se emite al cargar, así
-         al entrar ya se ve el reporte del total —igual que el legado— y desde
-         ahí se baja de a un nivel. -->
-    <app-hier-selector
-      [paramsHier]="paramsHier"
-      placeholder="Elegir nivel"
-      (nodoSeleccionado)="onNivelSeleccionado($event)"
-      (error)="onErrorJerarquia()"
-    />
+    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
   </div>
 
   @if (!nivelActual()) {
-    <app-empty-state
-      titulo="Elige un nivel de la jerarquía"
-      descripcion="Selecciona una unidad en los filtros de arriba para ver el reporte."
-    />
+    <app-empty-state titulo="Elige un nivel de la jerarquía"
+      descripcion="Selecciona una unidad en los filtros de arriba para ver el reporte." />
   } @else {
     <!-- Tarjetas KPI Compactas -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -56,23 +40,33 @@
       </div>
     </div>
 
-    <!-- Las 4 Tablas del Reporte (Bloques _01, _02, _03 y _04 del legado) -->
-    <div class="flex flex-col gap-4">
-      <div class="mis-card p-3 overflow-x-auto">
-        <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="false" />
-      </div>
-
-      <div class="mis-card p-3 overflow-x-auto">
-        <app-tabla-reporte [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="false" />
-      </div>
-
-      <div class="mis-card p-3 overflow-x-auto">
-        <app-tabla-reporte [encabezados]="tabla3().headers" [filas]="tabla3().body" [cargando]="false" />
-      </div>
-
-      <div class="mis-card p-3 overflow-x-auto">
-        <app-tabla-reporte [encabezados]="tabla4().headers" [filas]="tabla4().body" [cargando]="false" />
-      </div>
-    </div>
+    <!-- Implementación Dinámica de Tabs -->
+    <p-tabs value="tab1">
+      <p-tablist>
+        @for (tab of tabs; track tab.id) {
+          <p-tab [value]="tab.id" class="flex items-center gap-2! !py-2 !px-3">
+            {{ tab.titulo }}
+          </p-tab>
+        }
+      </p-tablist>
+      
+      <p-tabpanels>
+        @for (tab of tabs; track tab.id) {
+          <p-tabpanel [value]="tab.id">
+            <div class="flex flex-col gap-4">
+              <!-- Iteramos sobre las tablas configuradas para esta pestaña -->
+              @for (tabla of tab.tablas; track $index) {
+                <div class="mis-card p-3 overflow-x-auto">
+                  <app-tabla-reporte 
+                    [encabezados]="tabla().headers" 
+                    [filas]="tabla().body" 
+                    [cargando]="false" />
+                </div>
+              }
+            </div>
+          </p-tabpanel>
+        }
+      </p-tabpanels>
+    </p-tabs>
   }
 </app-window-panel>
