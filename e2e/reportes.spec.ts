@@ -36,28 +36,30 @@ test.describe('Reportes — smoke de Avance Comercial', () => {
     expect(erroresConsola).toEqual([]);
   });
 
-  test('"Monitor Metas Desembolso" pide elegir un nivel antes de mostrar el reporte', async ({ page }) => {
+  test('"Monitor Metas Desembolso" cae al estado vacío si el backend no devuelve jerarquía', async ({ page }) => {
     await page.goto(RUTA_DESEMBOLSO);
     // En mobile, si Col 2 (panel de navegación) llegara a estar abierta, tapa el contenido.
     await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
 
     await expect(page.getByRole('heading', { name: 'Monitor Metas Desembolso' })).toBeVisible();
-    // Sin nivel elegido no se pinta el reporte — ver `reportes-jerarquia.spec.ts`.
+    // El backend está mockeado con éxito vacío: sin raíz que emitir, el
+    // selector no elige nada y la pantalla queda invitando a hacerlo. Con
+    // jerarquía real se ve el consolidado al entrar — ver `reportes-jerarquia.spec.ts`.
     await expect(page.getByText('Elige un nivel de la jerarquía')).toBeVisible();
     await expect(page.getByText('Operaciones Desembolsadas')).toBeHidden();
   });
 
-  test('"Monitor Reprogramados" muestra su título y el filtro "Tipo" sin nivel elegido', async ({ page }) => {
+  test('"Monitor Reprogramados" muestra su título y, al abrir los filtros, el de "Tipo"', async ({ page }) => {
     await page.goto(RUTA_REPROGRAMADOS);
     await new ShellPage(page).cerrarPanelSiEstaTapandoElHeader();
 
     await expect(page.getByRole('heading', { name: 'Monitor Reprogramados' })).toBeVisible();
 
-    // El panel de filtros se colapsa por defecto una vez que hay reporte a la
-    // vista, pero mientras no se eligió ningún nivel de la jerarquía —que
-    // vive en ese mismo panel— es la ÚNICA forma de ver algo, así que queda
-    // forzado visible sin que haga falta ningún clic.
+    // Los filtros arrancan plegados detrás del botón de la barra de ventana
+    // (`mostrarFiltros`), así que "Tipo" recién aparece al desplegarlos.
+    await expect(page.getByLabel('Tipo')).toBeHidden();
+    await page.getByRole('button', { name: 'Mostrar filtros' }).click();
+
     await expect(page.getByLabel('Tipo')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Mostrar filtros' })).toHaveCount(0);
   });
 });

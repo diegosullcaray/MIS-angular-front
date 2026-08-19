@@ -3,31 +3,24 @@
   [subtitulo]="kpiOperaciones()?.fecha ? 'Actualizado al ' + kpiOperaciones()?.fecha + ' ' + kpiOperaciones()?.hora : ''"
   [permitirActualizar]="false"
 >
-  @if (nivelActual()) {
-    <!-- Solo tiene sentido alternar una vez que hay reporte a la vista: sin
-         nivel elegido el panel queda forzado abierto (ver `mostrarFiltros`),
-         así que ocultarlo no haría nada. -->
-    <button
-      ventana-acciones
-      type="button"
-      class="mis-window-btn"
-      (click)="filtrosAbiertos.set(!filtrosAbiertos())"
-      [attr.aria-pressed]="mostrarFiltros()"
-      [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-      [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-      tooltipPosition="bottom"
-    >
-      <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
-    </button>
-  }
+  <button
+    ventana-acciones
+    type="button"
+    class="mis-window-btn"
+    (click)="mostrarFiltros.set(!mostrarFiltros())"
+    [attr.aria-pressed]="mostrarFiltros()"
+    [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
+    tooltipPosition="bottom"
+  >
+    <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
+  </button>
   <div class="flex items-center gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
-    <!-- `autoSeleccionar: false`: la raíz ("Financiera") queda a la vista como
-         punto de partida, pero NO se emite. Con el default en `true` el
-         selector emitía la raíz al cargar y esta pantalla pedía su reporte
-         sola, sin que nadie lo eligiera — ver `reportes-jerarquia.spec.ts`. -->
+    <!-- Sin `autoSeleccionar`: la raíz ("Financiera") se emite al cargar, así
+         al entrar ya se ve el reporte del total —igual que el legado— y desde
+         ahí se baja de a un nivel. -->
     <app-hier-selector
       [paramsHier]="paramsHier"
-      [autoSeleccionar]="false"
       placeholder="Elegir nivel"
       (nodoSeleccionado)="onNivelSeleccionado($event)"
       (error)="onErrorJerarquia()"

@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { LoadingService, type LoadingState } from '../../services/loading.service';
+import { LoadingService } from '../../services/loading.service';
 
 /** Spinner de pantalla completa — cubre cualquier contenido (incluidos diálogos) mientras `LoadingService.isLoading` es `true`. */
 @Component({
@@ -15,7 +14,5 @@ import { LoadingService, type LoadingState } from '../../services/loading.servic
 export class LoadingOverlayComponent {
   private readonly loading = inject(LoadingService);
 
-  protected readonly estado = toSignal(this.loading.loading$, {
-    initialValue: { isLoading: false, requestCount: 0 } as LoadingState,
-  });
+  protected readonly estado = this.loading.estado;
 }

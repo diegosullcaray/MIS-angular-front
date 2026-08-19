@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -23,13 +23,17 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
  * "Monitor Reprogramados" — migrado de la ruta `mon-rep` (legado STG,
  * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'RS_MON_REP'`).
  *
- * La carga inicial la dispara únicamente `app-hier-selector` (evento
- * `nodoSeleccionado`) — igual que `ReportCraV1p1Component` en el legado,
- * que no hace su propio `getBaseHierarchy()`: solo reacciona a
- * `(onSelectHier)` de `hier-rem-selector`. Tener acá un fetch inicial propio
- * duplicaba la llamada a `obtenerJerarquiaBase` y competía en carrera con el
- * cascadeo interno del selector (root → nivel por nivel hasta `maxLvl`), que
- * también dispara `onNivelSeleccionado` en cada paso.
+ * La carga la dispara únicamente `app-hier-selector` (evento
+ * `nodoSeleccionado`) — igual que `ReportCraV1p1Component` en el legado, que
+ * no hace su propio `getBaseHierarchy()`: solo reacciona a `(onSelectHier)`
+ * de `hier-rem-selector`. Tener acá un fetch inicial propio duplicaría la
+ * llamada a `obtenerJerarquiaBase`.
+ *
+ * El selector emite la raíz al terminar de cargarla, así que al entrar ya se
+ * ve el reporte del total y desde ahí se baja de a un nivel — como el legado.
+ * Lo que NO hace es cascadear hasta el fondo: los niveles siguientes se
+ * ofrecen sin preselección, para no terminar mostrando el reporte de una
+ * agencia cualquiera.
  */
 @Component({
   selector: 'app-monitor-reprogramados',
@@ -48,14 +52,8 @@ export class MonitorReprogramadosComponent {
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
 
-  /**
-   * Colapsado por defecto una vez que hay reporte a la vista. Pero mientras
-   * no se eligió ningún nivel, el selector de jerarquía —que vive ahí
-   * adentro— es la ÚNICA forma de ver algo: forzarlo visible evita quedar en
-   * "Elige un nivel de la jerarquía" sin ver cómo salir de ahí.
-   */
-  protected readonly filtrosAbiertos = signal(false);
-  protected readonly mostrarFiltros = computed(() => !this.nivelActual() || this.filtrosAbiertos());
+  /** Los filtros arrancan plegados: al entrar ya se ve el reporte de la raíz. */
+  protected readonly mostrarFiltros = signal(false);
   protected readonly tipoSeleccionado = signal<1 | 2>(1);
   protected readonly cargando = signal(false);
   protected readonly tablaReprogramados = signal<TablaReporteResultado>(TABLA_VACIA);

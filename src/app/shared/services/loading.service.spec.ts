@@ -52,13 +52,18 @@ describe('LoadingService', () => {
     expect(service.currentState.requestCount).toBe(0);
   });
 
-  it('loading$ emite cada cambio de estado', () => {
-    const emisiones: boolean[] = [];
-    service.loading$.subscribe((state) => emisiones.push(state.isLoading));
+  // El estado es un signal y no un observable: en modo zoneless una emisión de
+  // RxJS no marca la vista para refresco y el overlay quedaba pintado con el
+  // estado ya apagado, tapando la pantalla entera.
+  it('estado es un signal que refleja cada cambio', () => {
+    expect(service.estado()).toEqual({ isLoading: false, requestCount: 0 });
 
     service.show();
-    service.hide();
+    expect(service.estado().isLoading).toBe(true);
+    expect(service.cargando()).toBe(true);
 
-    expect(emisiones).toEqual([false, true, false]);
+    service.hide();
+    expect(service.estado()).toEqual({ isLoading: false, requestCount: 0 });
+    expect(service.cargando()).toBe(false);
   });
 });
