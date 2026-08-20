@@ -11,7 +11,7 @@ import type { FilaSegurosOperaciones } from '../models/seguros-operaciones.model
 import type { FilaCarteraCreditosVariables, ResumenCarteraCreditos } from '../models/cartera-creditos.model';
 import type { LogVerificacionFila } from '../models/tablero-verificacion.model';
 import type { ResponsableFila } from '../models/responsables.model';
-import type { JerarquiaResponseBody, ListaResponseBody, ResumenResponseBody } from '../models/presupuesto-api.model';
+import type { JerarquiaResponseBody, ResumenResponseBody } from '../models/presupuesto-api.model';
 
 /** Fachada del módulo `presupuesto` — traduce las respuestas crudas del backend Ant (`ModPresupuestoService`, puerto 6302) a los modelos tipados que consumen las pantallas, y expone la jerarquía organizativa compartida (`ModSysAdminService`, puerto 6301 — el mismo servicio que ya usa el menú lateral) para el selector de jerarquía de cada pantalla. */
 @Injectable({ providedIn: 'root' })

@@ -1,5 +1,4 @@
 import { Component, inject, input, OnInit, output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { map } from 'rxjs';
 import { SelectModule } from 'primeng/select';
@@ -14,7 +13,7 @@ import type { JerarquiaResponseBody } from '../../models/reportes-api.model';
 @Component({
   selector: 'app-hier-selector',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectModule, ButtonModule],
+  imports: [FormsModule, SelectModule, ButtonModule],
   templateUrl: './hier-selector.component.html',
   styleUrl: './hier-selector.component.css',
 })

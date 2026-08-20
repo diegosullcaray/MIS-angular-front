@@ -1,5 +1,4 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../service/auth.service';
@@ -13,7 +12,7 @@ import { APP_VERSION } from '../../../../../app.global';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ButtonModule, LoadSpinnerComponent],
+  imports: [ButtonModule, LoadSpinnerComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

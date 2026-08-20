@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, input, output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
@@ -10,7 +9,7 @@ import type { HierarquiaNodo, NivelJerarquiaDropdown, ParamsJerarquia } from '..
 @Component({
   selector: 'app-hier-selector',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectModule, ButtonModule],
+  imports: [FormsModule, SelectModule, ButtonModule],
   templateUrl: './hier-selector.component.html',
   styleUrl: './hier-selector.component.css',
 })

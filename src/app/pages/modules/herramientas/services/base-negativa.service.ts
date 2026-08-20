@@ -41,7 +41,7 @@ export class BaseNegativaService {
         this.headers.set(resultado?.headers ? (JSON.parse(resultado.headers) as TableHeaderDef[]) : []);
         this.cargando.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.error.set('No se pudo cargar el resultado de la consulta.');
         this.cargando.set(false);
       },

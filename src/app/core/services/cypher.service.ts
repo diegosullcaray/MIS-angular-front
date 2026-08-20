@@ -79,10 +79,6 @@ export class CypherService {
     }
   }
 
-  private xtime(a: number): number {
-    return ((a << 1) ^ ((a & 0x80) ? 0x1b : 0x00)) & 0xff;
-  }
-
   private gmul(a: number, b: number): number {
     let p = 0;
     for (let i = 0; i < 8; i++) {

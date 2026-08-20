@@ -133,7 +133,7 @@ export class CategoriaDetalleComponent {
         this.fechaActualizacion.set(fechaActualizacion);
         this.cargando.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.error.set('No se pudo cargar el detalle de esta categoría.');
         this.cargando.set(false);
       },

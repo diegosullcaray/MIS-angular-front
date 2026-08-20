@@ -10,8 +10,3 @@ export function formatearNumero(valor: number, decimales = 2): string {
 export function formatearPorcentaje(valor: number, decimales = 2): string {
   return `${formatearNumero(valor * 100, decimales)}%`;
 }
-
-/** Monto en soles: `1234.5` → `"S/. 1,234.5"`. */
-export function formatearSoles(valor: number, decimales = 2): string {
-  return `S/. ${formatearNumero(valor, decimales)}`;
-}

@@ -105,7 +105,7 @@ export class KaypachaDashboardService {
         this.permitirBusqueda.set(res.puntos?.HACTBOTON !== '0');
         this.loading.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.error.set('No se pudo cargar la información del tablero Kaypacha.');
         this.loading.set(false);
       },
@@ -128,7 +128,7 @@ export class KaypachaDashboardService {
         this.colaboradores.set(list);
         this.cargandoColaboradores.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.errorColaboradores.set('No se pudo cargar la lista de colaboradores.');
         this.cargandoColaboradores.set(false);
       },

@@ -59,7 +59,7 @@ export class KaypachaService {
         this.categorias.set(json ? (JSON.parse(json) as CategoriaRanking[]) : []);
         this.cargando.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.error.set('No se pudo cargar la lista de categorías.');
         this.cargando.set(false);
         this.cargado = false;

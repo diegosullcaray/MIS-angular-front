@@ -87,7 +87,7 @@ export class DestinoCreditoComponent implements OnInit {
         this.data.set(list);
         this.loading.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.error.set('No se pudo cargar la información de Destino de Crédito.');
         this.loading.set(false);
       },
