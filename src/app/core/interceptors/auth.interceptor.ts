@@ -69,7 +69,6 @@ export const authInterceptor: HttpInterceptorFn = (
   return next(authReq).pipe(
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse && error.status === 401 && !esLogin) {
-        console.warn('[AuthInterceptor] Sesión no válida o expirada (401). Redirigiendo al login...');
         auth.cerrarSesion();
       }
       return throwError(() => error);

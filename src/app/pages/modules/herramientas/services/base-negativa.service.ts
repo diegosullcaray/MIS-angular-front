@@ -50,7 +50,6 @@ export class BaseNegativaService {
         this.cargando.set(false);
       },
       error: (err) => {
-        console.error('Error al consultar la base negativa:', err);
         this.error.set('No se pudo cargar el resultado de la consulta.');
         this.cargando.set(false);
       },

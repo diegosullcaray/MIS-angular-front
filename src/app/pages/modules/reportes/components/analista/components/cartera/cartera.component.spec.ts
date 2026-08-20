@@ -4,7 +4,6 @@ import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { CarteraComponent } from './cartera.component';
 import { CarteraService } from '../../services/cartera.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -24,7 +23,7 @@ describe('CarteraComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [CarteraComponent],
-      providers: [{ provide: CarteraService, useValue: servicioFalso }, ToastService, MessageService, PrimeNgMessageService],
+      providers: [{ provide: CarteraService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 
@@ -68,7 +67,7 @@ describe('CarteraComponent', () => {
   it('muestra una advertencia si ambas tablas vienen vacías', () => {
     servicioFalso.obtenerCartera.mockReturnValue(of({ tabla1: tabla(), tabla2: tabla() }));
     const fixture = crear();
-    const warnSpy = vi.spyOn(TestBed.inject(MessageService), 'warn');
+    const warnSpy = vi.spyOn(TestBed.inject(ToastService), 'advertencia');
 
     fixture.componentInstance['onAsesorSeleccionado'](ASESOR);
 

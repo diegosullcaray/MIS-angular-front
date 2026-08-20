@@ -5,7 +5,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { MonitorEfectividadesService } from '../../services/monitor-efectividades.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO,
   OPCIONES_PRODUCTO,
@@ -16,10 +15,8 @@ import {
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import type { FiltrosMonitorEfectividades } from '../../models/monitor-efectividades.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 
 /**
  * "Detalle Monitor de Efectividades Asesor" — migrado de la ruta
@@ -42,7 +39,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class MonitorEfectividadesComponent {
   private readonly servicio = inject(MonitorEfectividadesService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly opcionesTramo = OPCIONES_TRAMO;
   protected readonly opcionesProducto = OPCIONES_PRODUCTO;
@@ -90,7 +86,7 @@ export class MonitorEfectividadesComponent {
         this.cargando.set(false);
 
         if (tabla1.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene efectividades para los filtros elegidos.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene efectividades para los filtros elegidos.');
         }
       },
       error: () => {

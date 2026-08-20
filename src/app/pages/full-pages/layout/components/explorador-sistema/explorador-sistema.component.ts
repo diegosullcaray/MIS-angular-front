@@ -53,6 +53,6 @@ export class ExploradorSistemaComponent {
 
     this.shell.setMenuItemActivo({ ruta: nodo.ruta, etiqueta: nodo.etiqueta });
     this.shell.setContenidoPendienteSeleccion(false);
-    this.router.navigateByUrl(nodo.ruta).catch((err) => console.warn(`Ruta no encontrada: ${nodo.ruta}`, err));
+    this.router.navigateByUrl(nodo.ruta).catch(() => {});
   }
 }

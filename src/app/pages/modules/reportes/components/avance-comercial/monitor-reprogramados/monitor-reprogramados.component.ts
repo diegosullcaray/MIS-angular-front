@@ -9,15 +9,12 @@ import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/emp
 import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
 import { AvanceComercialService } from '../../../services/avance-comercial.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { OPCIONES_TIPO_MON_REP } from '../../../models/avance-comercial/avance-comercial.model';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
 /**
  * "Monitor Reprogramados" — migrado de la ruta `mon-rep` (legado STG,
@@ -45,7 +42,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class MonitorReprogramadosComponent {
   private readonly servicio = inject(AvanceComercialService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesTipo = OPCIONES_TIPO_MON_REP;
@@ -82,10 +78,7 @@ export class MonitorReprogramadosComponent {
           this.cargando.set(false);
 
           if (resultado.body.length === 0) {
-            this.mensajes.warn(
-              'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.',
-              'Carga en proceso',
-            );
+            this.toast.advertencia('Carga en proceso', 'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.');
           }
         },
         error: () => {

@@ -5,13 +5,10 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { ClientesNuevosRecurrentesService } from '../../services/clientes-nuevos-recurrentes.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
 /**
  * "Clientes Nuevos y Recurrentes" — migrado de la ruta `leg/com/rda/sec/cli-nue-rec`
@@ -31,7 +28,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class ClientesNuevosRecurrentesComponent {
   private readonly servicio = inject(ClientesNuevosRecurrentesService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly mostrarFiltros = signal(false);
 
@@ -63,7 +59,7 @@ export class ClientesNuevosRecurrentesComponent {
         this.cargando.set(false);
 
         if (tabla1.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene clientes nuevos ni recurrentes, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene clientes nuevos ni recurrentes, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {

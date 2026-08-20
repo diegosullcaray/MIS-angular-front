@@ -4,7 +4,6 @@ import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { InversionStockMoraComponent } from './inversion-stock-mora.component';
 import { InversionStockMoraService } from '../../services/inversion-stock-mora.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { BloqueGrafico } from '../../../../models/grafico-reporte.model';
 
@@ -29,7 +28,6 @@ describe('InversionStockMoraComponent', () => {
       providers: [
         { provide: InversionStockMoraService, useValue: servicioFalso },
         ToastService,
-        MessageService,
         PrimeNgMessageService,
       ],
     });
@@ -73,7 +71,7 @@ describe('InversionStockMoraComponent', () => {
   it('muestra una advertencia si no hay gráficos', () => {
     servicioFalso.obtenerGraficos.mockReturnValue(of({ graficos: [] }));
     const fixture = crear();
-    const warnSpy = vi.spyOn(TestBed.inject(MessageService), 'warn');
+    const warnSpy = vi.spyOn(TestBed.inject(ToastService), 'advertencia');
 
     fixture.componentInstance['onAsesorSeleccionado'](ASESOR);
 

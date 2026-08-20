@@ -8,15 +8,12 @@ import { TablaDinamicaComponent } from '../../../ui/tabla-dinamica/tabla-dinamic
 import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
 import { DesarrolloSostenibleService } from '../../../services/desarrollo-sostenible.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { OPCIONES_PRODUCTO_MISIONAL_PANEL } from '../../../models/desarrollo-sostenible/desarrollo-sostenible.model';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import type { TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
-
-const TABLA_VACIA: TablaDinamicaResultado = { columnas: [], filas: [] };
+import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
 
 /**
  * "Productos Misionales" — migrado de la ruta
@@ -41,7 +38,6 @@ const TABLA_VACIA: TablaDinamicaResultado = { columnas: [], filas: [] };
 export class ProductosMisionalesComponent {
   private readonly servicio = inject(DesarrolloSostenibleService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesProducto = OPCIONES_PRODUCTO_MISIONAL_PANEL;
@@ -53,11 +49,11 @@ export class ProductosMisionalesComponent {
   protected readonly cargando = signal(true);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
-  protected readonly resumen = signal<TablaDinamicaResultado>(TABLA_VACIA);
-  protected readonly territorio = signal<TablaDinamicaResultado>(TABLA_VACIA);
-  protected readonly corredores = signal<TablaDinamicaResultado>(TABLA_VACIA);
-  protected readonly unidad = signal<TablaDinamicaResultado>(TABLA_VACIA);
-  protected readonly asesores = signal<TablaDinamicaResultado>(TABLA_VACIA);
+  protected readonly resumen = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
+  protected readonly territorio = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
+  protected readonly corredores = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
+  protected readonly unidad = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
+  protected readonly asesores = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
@@ -85,10 +81,7 @@ export class ProductosMisionalesComponent {
         this.cargando.set(false);
 
         if ([resumen, territorio, corredores, unidad, asesores].every((t) => t.filas.length === 0)) {
-          this.mensajes.warn(
-            'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.',
-            'Carga en proceso',
-          );
+          this.toast.advertencia('Carga en proceso', 'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.');
         }
       },
       error: () => {

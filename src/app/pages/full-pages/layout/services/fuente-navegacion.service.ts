@@ -46,6 +46,6 @@ export class FuenteNavegacionService implements FuenteBusqueda {
     this.shell.setSidebarIconActivo(registro.sistemaId);
     this.shell.setMenuItemActivo({ ruta: registro.ruta, etiqueta: registro.etiqueta });
     this.shell.setContenidoPendienteSeleccion(false);
-    this.router.navigateByUrl(registro.ruta).catch((err) => console.warn(`Ruta no encontrada: ${registro.ruta}`, err));
+    this.router.navigateByUrl(registro.ruta).catch(() => {});
   }
 }

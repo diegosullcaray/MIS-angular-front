@@ -8,16 +8,13 @@ import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.c
 import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
 import { DesarrolloSostenibleService } from '../../../services/desarrollo-sostenible.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { OPCIONES_PRODUCTO_MISIONAL } from '../../../models/desarrollo-sostenible/desarrollo-sostenible.model';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type { KpiOperacionesDesembolsadas } from '../../../models/avance-comercial/avance-comercial.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 
 /**
  * "Monitor Productos Misionales" — migrado de la ruta `mon-desem-misi` (legado STG,
@@ -39,7 +36,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class MonitorProductosMisionalesComponent {
   private readonly servicio = inject(DesarrolloSostenibleService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesProducto = OPCIONES_PRODUCTO_MISIONAL;
@@ -78,10 +74,7 @@ export class MonitorProductosMisionalesComponent {
         this.cargando.set(false);
 
         if (tablaSimple.body.length === 0 && !kpiOperaciones) {
-          this.mensajes.warn(
-            'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.',
-            'Carga en proceso',
-          );
+          this.toast.advertencia('Carga en proceso', 'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.');
         }
       },
       error: () => {

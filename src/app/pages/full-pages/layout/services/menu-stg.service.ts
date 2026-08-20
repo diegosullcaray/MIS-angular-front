@@ -70,7 +70,7 @@ export class MenuStgService {
         this.sistemas.set(sistemas);
         this.hijosPorSistema.set(hijosPorId);
       },
-      error: (err) => console.error('Error al cargar el menú de sistemas (STG):', err),
+      error: () => this.sistemas.set([]),
     });
   }
 

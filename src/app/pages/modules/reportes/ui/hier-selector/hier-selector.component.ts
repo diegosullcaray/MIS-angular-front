@@ -140,11 +140,7 @@ export class HierSelectorComponent implements OnInit {
             this.nodosNivel.set([...this.nodosNivel(), dp]);
           }
         },
-        error: (err) => {
-          console.error(
-            `[app-hier-selector] getLevelHierarchy() falló — params: ${JSON.stringify({ code: this.paramsHier().code, lvl, tip_cod, cod_rels, paramsFec })}`,
-            err
-          );
+        error: () => {
           this.cargando.set(false);
           if (esCargaInicial) this.error.emit();
         },

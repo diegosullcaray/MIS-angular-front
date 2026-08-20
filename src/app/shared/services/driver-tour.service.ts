@@ -86,11 +86,9 @@ export class DriverTourService {
       const instance = this.driverObj;
       this.driverObj = null;
       try {
-        if (typeof instance.destroy === 'function') {
-          instance.destroy();
-        }
-      } catch (error) {
-        console.warn('Error al destruir el tour:', error);
+        instance.destroy?.();
+      } catch {
+        // El tour ya estaba destruido: no hay nada que limpiar.
       }
     }
   }

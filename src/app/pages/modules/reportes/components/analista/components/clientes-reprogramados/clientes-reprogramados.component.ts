@@ -7,7 +7,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { ClientesReprogramadosService } from '../../services/clientes-reprogramados.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   REPROGRAMACION_FORM_VACIO,
   OPCIONES_PREG_01,
@@ -19,9 +18,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { ReprogramacionForm } from '../../models/clientes-reprogramados.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../../../../models/tabla-reporte.model';
 
 /**
  * "Clientes Reprogramados" — migrado de la ruta `leg/com/rda/sec/repro`
@@ -45,7 +42,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class ClientesReprogramadosComponent {
   private readonly servicio = inject(ClientesReprogramadosService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly opcionesPreg01 = OPCIONES_PREG_01;
   protected readonly opcionesPreg02 = OPCIONES_PREG_02;
@@ -89,7 +85,7 @@ export class ClientesReprogramadosComponent {
         this.tablaClientes.set(tabla);
         this.cargando.set(false);
         if (tabla.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {

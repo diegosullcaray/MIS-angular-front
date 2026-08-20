@@ -16,6 +16,7 @@ import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/li
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { inputValue } from '../../../../../shared/utils/dom.util';
+import { ToastService } from '../../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-prospectos-corresponsal',
@@ -41,6 +42,7 @@ import { inputValue } from '../../../../../shared/utils/dom.util';
 })
 export class ProspectosCorresponsalComponent implements OnInit {
   private readonly service = inject(ActividadesService);
+  private readonly toast = inject(ToastService);
 
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
@@ -109,8 +111,7 @@ export class ProspectosCorresponsalComponent implements OnInit {
         this.data.set(body?.resultado?.result ?? []);
         this.loading.set(false);
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         this.error.set('No se pudo cargar la información de Prospectos de Corresponsal.');
         this.loading.set(false);
       },
@@ -137,8 +138,8 @@ export class ProspectosCorresponsalComponent implements OnInit {
         this.modalVisible.set(false);
         this.cargarDatos();
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
+        this.toast.error('No se pudo registrar el prospecto', 'Inténtalo de nuevo en unos segundos.');
         this.guardando.set(false);
       },
     });

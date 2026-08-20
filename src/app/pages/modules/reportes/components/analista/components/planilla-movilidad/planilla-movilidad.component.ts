@@ -6,14 +6,11 @@ import { TabsModule } from 'primeng/tabs';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { PlanillaMovilidadService } from '../../services/planilla-movilidad.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { fechaUltimoDia } from '../../../../utils/fecha-reporte.util';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
 /** Criterios de depuración de puntos geolocalizados — mismo texto en las pestañas "Válidos" y "Depurados" del legado. */
 const CRITERIOS_MOVILIDAD: string[] = [
@@ -50,7 +47,6 @@ const CRITERIOS_MOVILIDAD: string[] = [
 export class PlanillaMovilidadComponent {
   private readonly servicio = inject(PlanillaMovilidadService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly periodo = this.formatearPeriodo(fechaUltimoDia());
   protected readonly tabCascada = signal('cascada');
@@ -96,7 +92,7 @@ export class PlanillaMovilidadComponent {
         this.cargando.set(false);
 
         if ([tabla1, tabla2, tabla3, tabla4].every((t) => t.body.length === 0)) {
-          this.mensajes.warn('Este asesor no tiene planilla de movilidad para el período, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene planilla de movilidad para el período, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {

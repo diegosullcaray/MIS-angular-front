@@ -35,3 +35,6 @@ export interface TablaReporteResultado {
   body: FilaReporte[];
   additional: Record<string, unknown>;
 }
+
+/** Estado inicial de un bloque aún sin cargar. */
+export const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };

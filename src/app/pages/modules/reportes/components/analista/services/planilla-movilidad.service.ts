@@ -5,10 +5,8 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import { fechaUltimoDia } from '../../../utils/fecha-reporte.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type { ReportePlanillaMovilidad } from '../models/planilla-movilidad.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 
 /**
  * Datos de "Planilla de Movilidad" (legado `leg/com/rda/sec/plan-mov-sec`,
@@ -47,7 +45,6 @@ export class PlanillaMovilidadService {
       this.reportes.getRegularData(codRep, params).pipe(
         map(mapearBloqueReporte),
         catchError((err: unknown) => {
-          console.error(`No se pudo cargar ${codRep}`, err);
           return of(TABLA_VACIA);
         })
       );

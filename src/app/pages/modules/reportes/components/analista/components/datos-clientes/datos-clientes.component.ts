@@ -8,7 +8,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { DatosClientesService } from '../../services/datos-clientes.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   DATOS_CLIENTE_FORM_VACIO,
   REFERENCIA_BANTOTAL_VACIA,
@@ -26,9 +25,8 @@ import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { CelForm, DatosClienteForm, OpcionDato } from '../../models/datos-clientes.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
@@ -56,7 +54,6 @@ const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export class DatosClientesComponent {
   private readonly servicio = inject(DatosClientesService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly opcionesTipoTele = OPCIONES_TIPO_TELE;
   protected readonly opcionesOpeTele = OPCIONES_OPE_TELE;
@@ -121,7 +118,7 @@ export class DatosClientesComponent {
         this.tablaClientes.set(tabla);
         this.cargando.set(false);
         if (tabla.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {

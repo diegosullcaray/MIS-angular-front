@@ -134,7 +134,6 @@ export class CategoriaDetalleComponent {
         this.cargando.set(false);
       },
       error: (err) => {
-        console.error('Error al cargar el detalle de la categoría:', err);
         this.error.set('No se pudo cargar el detalle de esta categoría.');
         this.cargando.set(false);
       },

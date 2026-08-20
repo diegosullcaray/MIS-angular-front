@@ -5,14 +5,11 @@ import { EmptyStateComponent } from '../../../../../../../../shared/ui/empty-sta
 import { PARAMS_HIER_OFICINA } from '../../../../../models/jerarquia.model';
 import { CmgCaptacionesService } from '../../../services/cmg-captaciones.service';
 import { ToastService } from '../../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../../../utils/hier-selector-error.util';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
 
 /**
  * "CMG Captaciones - Agencias" — migrado de la ruta `cmg-capta01` (legado STG,
@@ -35,7 +32,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class CmgCaptacionesComponent {
   private readonly servicio = inject(CmgCaptacionesService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly paramsHier = PARAMS_HIER_OFICINA;
 
@@ -56,10 +52,7 @@ export class CmgCaptacionesComponent {
         this.cargando.set(false);
 
         if (tabla1.body.length === 0) {
-          this.mensajes.warn(
-            'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.',
-            'Carga en proceso',
-          );
+          this.toast.advertencia('Carga en proceso', 'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.');
         }
       },
       error: () => {

@@ -116,9 +116,7 @@ export class SidebarComponent implements AfterViewInit {
     // Módulos simples sin panel secundario que tienen ruta propia
     if (!icon.tienePanel && ruta) {
       this.shell.setContenidoPendienteSeleccion(false);
-      this.router.navigateByUrl(ruta).catch(() => {
-        console.warn(`Ruta no encontrada: ${ruta}`);
-      });
+      this.router.navigateByUrl(ruta).catch(() => {});
       return;
     }
 

@@ -47,14 +47,12 @@ describe('KaypachaService', () => {
 
   it('cargarCategorias() no pide nada sin cod_bt', () => {
     shell.setUsuarioActivo(usuario({ codBt: undefined }));
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     service.cargarCategorias();
 
     expect(getListRankingSpy).not.toHaveBeenCalled();
     expect(service.error()).toBe('No se pudo determinar tu código de negocio/agencia.');
     expect(service.cargando()).toBe(false);
-    expect(consoleSpy).toHaveBeenCalled();
   });
 
   it('cargarCategorias() pide la lista con el cod_bt del usuario activo y la parsea', () => {
@@ -91,7 +89,6 @@ describe('KaypachaService', () => {
   it('en caso de error, permite reintentar', () => {
     shell.setUsuarioActivo(usuario());
     getListRankingSpy.mockReturnValue(throwError(() => new Error('backend caído')));
-    vi.spyOn(console, 'error').mockImplementation(() => {});
 
     service.cargarCategorias();
     expect(service.error()).toBe('No se pudo cargar la lista de categorías.');

@@ -4,7 +4,6 @@ import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { GruposPorVencerComponent } from './grupos-por-vencer.component';
 import { GruposPorVencerService } from '../../services/grupos-por-vencer.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -24,7 +23,7 @@ describe('GruposPorVencerComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [GruposPorVencerComponent],
-      providers: [{ provide: GruposPorVencerService, useValue: servicioFalso }, ToastService, MessageService, PrimeNgMessageService],
+      providers: [{ provide: GruposPorVencerService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 
@@ -61,7 +60,7 @@ describe('GruposPorVencerComponent', () => {
   it('muestra una advertencia si la tabla viene vacía', () => {
     servicioFalso.obtenerGruposPorVencer.mockReturnValue(of({ tabla1: tabla() }));
     const fixture = crear();
-    const warnSpy = vi.spyOn(TestBed.inject(MessageService), 'warn');
+    const warnSpy = vi.spyOn(TestBed.inject(ToastService), 'advertencia');
 
     fixture.componentInstance['onAsesorSeleccionado'](ASESOR);
 

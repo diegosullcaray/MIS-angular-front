@@ -68,7 +68,6 @@ export class TransaccionesCorresponsalComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error al cargar Transacciones de Corresponsal:', err);
         this.error.set('No se pudo cargar la información de Transacciones.');
         this.loading.set(false);
       },

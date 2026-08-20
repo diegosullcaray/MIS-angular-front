@@ -5,14 +5,11 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { PlanDatosService } from '../../services/plan-datos.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { fechaBasePorDefecto, generarOpcionesFechaBase } from '../../models/plan-datos.model';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
 /**
  * "Plan de Datos" — migrado de la ruta `leg/com/rda/sec/plan-datos-sec`
@@ -33,7 +30,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class PlanDatosComponent {
   private readonly servicio = inject(PlanDatosService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly opcionesFechaBase = generarOpcionesFechaBase();
 
@@ -78,7 +74,7 @@ export class PlanDatosComponent {
         this.cargando.set(false);
 
         if (tabla1.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene plan de datos para el período elegido.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene plan de datos para el período elegido.');
         }
       },
       error: () => {

@@ -7,16 +7,13 @@ import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/emp
 import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
 import { AvanceComercialService } from '../../../services/avance-comercial.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../../models/avance-comercial/avance-comercial.model';
 import { TabsModule } from 'primeng/tabs';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 
 /**
  * "Monitor Metas Desembolso" — migrado de la ruta `mon-desem` (legado STG,
@@ -44,7 +41,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class MonitorMetasDesembolsoComponent {
   private readonly servicio = inject(AvanceComercialService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
@@ -77,10 +73,7 @@ export class MonitorMetasDesembolsoComponent {
         this.cargando.set(false);
 
         if ([tabla1, tabla2, tabla3, tabla4].every((t) => t.body.length === 0)) {
-          this.mensajes.warn(
-            'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.',
-            'Carga en proceso',
-          );
+          this.toast.advertencia('Carga en proceso', 'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.');
         }
       },
       error: () => {

@@ -14,6 +14,7 @@ import { DataTableComponent } from '../../../../../shared/ui/data-table/data-tab
 import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-table.model';
+import { ToastService } from '../../../../../shared/services/toast.service';
 
 const COLUMNAS: DataTableColumn[] = [
   { field: 'HCODSEC', header: 'Cod. Asesor', align: 'center', width: '7rem', filterType: 'text' },
@@ -59,6 +60,7 @@ const COLUMNAS: DataTableColumn[] = [
 })
 export class DestinoCreditoComponent implements OnInit {
   private readonly actividadesService = inject(ActividadesService);
+  private readonly toast = inject(ToastService);
 
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
@@ -86,7 +88,6 @@ export class DestinoCreditoComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error al cargar Destino de Crédito:', err);
         this.error.set('No se pudo cargar la información de Destino de Crédito.');
         this.loading.set(false);
       },
@@ -114,8 +115,8 @@ export class DestinoCreditoComponent implements OnInit {
           })
         );
       },
-      error: (err) => {
-        console.error('Error al guardar registro:', err);
+      error: () => {
+        this.toast.error('No se pudo guardar el registro', 'Inténtalo de nuevo en unos segundos.');
       },
     });
   }

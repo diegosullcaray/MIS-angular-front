@@ -5,9 +5,8 @@ import { TablaReporteComponent } from '../../ui/tabla-reporte/tabla-reporte.comp
 import { ControlCargasService } from '../../services/control-cargas.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
-import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 const INTERVALO_REFRESCO_MS = 30 * 1000;
 
 /**

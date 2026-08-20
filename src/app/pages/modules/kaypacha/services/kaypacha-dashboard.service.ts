@@ -106,7 +106,6 @@ export class KaypachaDashboardService {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error al cargar datos del tablero Kaypacha:', err);
         this.error.set('No se pudo cargar la información del tablero Kaypacha.');
         this.loading.set(false);
       },
@@ -130,7 +129,6 @@ export class KaypachaDashboardService {
         this.cargandoColaboradores.set(false);
       },
       error: (err) => {
-        console.error('Error al cargar la lista de colaboradores:', err);
         this.errorColaboradores.set('No se pudo cargar la lista de colaboradores.');
         this.cargandoColaboradores.set(false);
       },

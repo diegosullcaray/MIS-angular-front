@@ -40,7 +40,7 @@ export class FuenteDashboardsService implements FuenteBusqueda {
         // es el reporte activo y después se entra a la pantalla que lo dibuja.
         this.dashboard.seleccionarReporte(reporte);
         this.shell.setContenidoPendienteSeleccion(false);
-        this.router.navigateByUrl(RUTA_POWER_BI).catch((err) => console.warn(`No se pudo abrir el dashboard`, err));
+        this.router.navigateByUrl(RUTA_POWER_BI).catch(() => {});
       },
     }));
   }

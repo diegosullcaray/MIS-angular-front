@@ -8,7 +8,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { EncuestaClientesService } from '../../services/encuesta-clientes.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   ENCUESTA_CLIENTE_FORM_VACIO,
   OPCIONES_AFEC_NEG,
@@ -22,9 +21,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { CiiuOpcion, EncuestaClienteForm } from '../../models/encuesta-clientes.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../../../../models/tabla-reporte.model';
 
 /**
  * "Encuesta Clientes" — migrado de la ruta `leg/com/rda/sec/cap-ret` (legado
@@ -54,7 +51,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class EncuestaClientesComponent {
   private readonly servicio = inject(EncuestaClientesService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly opcionesAfecNeg = OPCIONES_AFEC_NEG;
   protected readonly opcionesFunNeg = OPCIONES_FUN_NEG;
@@ -155,7 +151,7 @@ export class EncuestaClientesComponent {
         this.tablaClientes.set(tabla);
         this.cargando.set(false);
         if (tabla.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {

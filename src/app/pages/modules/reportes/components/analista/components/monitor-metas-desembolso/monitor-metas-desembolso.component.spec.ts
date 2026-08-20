@@ -4,7 +4,6 @@ import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { MonitorMetasDesembolsoAnalistaComponent } from './monitor-metas-desembolso.component';
 import { MonitorMetasDesembolsoService } from '../../services/monitor-metas-desembolso.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -38,7 +37,6 @@ describe('MonitorMetasDesembolsoAnalistaComponent', () => {
       providers: [
         { provide: MonitorMetasDesembolsoService, useValue: servicioFalso },
         ToastService,
-        MessageService,
         PrimeNgMessageService,
       ],
     });
@@ -81,7 +79,7 @@ describe('MonitorMetasDesembolsoAnalistaComponent', () => {
       of(reporte({ tabla1: tabla(), tabla2: tabla(), tabla3: tabla() })),
     );
     const fixture = crear();
-    const warnSpy = vi.spyOn(TestBed.inject(MessageService), 'warn');
+    const warnSpy = vi.spyOn(TestBed.inject(ToastService), 'advertencia');
 
     fixture.componentInstance['onAsesorSeleccionado'](ASESOR);
 

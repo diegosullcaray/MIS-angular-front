@@ -5,14 +5,11 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { MonitorMetasDesembolsoService } from '../../services/monitor-metas-desembolso.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../models/monitor-metas-desembolso.model';
-
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 
 /**
  * "Monitor de Desembolsos" — migrado de la ruta `leg/com/rda/sec/mon-desem`
@@ -36,7 +33,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class MonitorMetasDesembolsoAnalistaComponent {
   private readonly servicio = inject(MonitorMetasDesembolsoService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly mostrarFiltros = signal(false);
 
@@ -76,7 +72,7 @@ export class MonitorMetasDesembolsoAnalistaComponent {
         this.cargando.set(false);
 
         if ([tabla1, tabla2, tabla3].every((t) => t.body.length === 0)) {
-          this.mensajes.warn('Este asesor no tiene datos de desembolsos, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene datos de desembolsos, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {
