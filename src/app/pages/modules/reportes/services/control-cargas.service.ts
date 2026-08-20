@@ -6,11 +6,7 @@ import type { ReporteControlCargas } from '../models/control-cargas/control-carg
 
 const COD_REP = 'RS_MON_CAR_01';
 
-/**
- * Datos de "Control de Cargas" (`leg/prd`, legado `cod_rep: RS_MON_CAR_01`) —
- * mismo `cod_rep` para ambas tablas, diferenciadas por `opt`
- * (`opt:2` = fuentes de producción, `opt:1` = procesos diarios).
- */
+/** Datos de "Control de Cargas" (`leg/prd`, legado `cod_rep: RS_MON_CAR_01`) — mismo `cod_rep` para ambas tablas, diferenciadas por `opt` (`opt:2` = fuentes de producción, `opt:1` = procesos diarios). */
 @Injectable({ providedIn: 'root' })
 export class ControlCargasService {
   private readonly ant = inject(ModReportesService);

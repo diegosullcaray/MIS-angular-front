@@ -1,13 +1,6 @@
 import { Routes } from '@angular/router';
 
-/**
- * Rutas de los reportes de "Analista" (legado STG `rda/sectorista` +
- * `rda/administracion`) — separadas de `reportes.routes.ts` para que ese
- * archivo no se sature a medida que se migran los ~25 reportes de esta
- * categoría uno por uno. Se agregan acá, no en el módulo `analista/`
- * (dashboard/listas) que ya existía: son reportes del motor "mixto", mismo
- * patrón que el resto de `reportes`.
- */
+/** Rutas de los reportes de "Analista" (legado STG `rda/sectorista` + `rda/administracion`) — separadas de `reportes.routes.ts` para que ese archivo no se sature a medida que se migran los ~25 reportes de esta categoría uno por uno. */
 export const ANALISTA_ROUTES: Routes = [
   {
     path: 'leg/com/rda/sec/cap-ret',

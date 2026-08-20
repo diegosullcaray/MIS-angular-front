@@ -11,13 +11,7 @@ const ALTO_FILA_PX = 16;
 const ALTO_MINIMO_PX = 420;
 const ALTO_EXTRA_PX = 140;
 
-/**
- * Heatmap semana×reporte — reemplaza `highcharts-chart` (tipo `heatmap`) del
- * legado por Chart.js + `chartjs-chart-matrix` (única combinación disponible
- * en el proyecto: Highcharts no está instalado). Color secuencial validado
- * con la skill `dataviz` (`heatmap-color.util.ts`), reactivo a
- * `ThemeService.oscuro`.
- */
+/** Heatmap semana×reporte — reemplaza `highcharts-chart` (tipo `heatmap`) del legado por Chart.js + `chartjs-chart-matrix` (única combinación disponible en el proyecto: Highcharts no está instalado). */
 @Component({
   selector: 'app-heatmap',
   standalone: true,

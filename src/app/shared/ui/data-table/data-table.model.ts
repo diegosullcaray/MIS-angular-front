@@ -1,13 +1,7 @@
 /** Tipo de filtro de columna en la fila de filtros (oculta por defecto, se activa con "Filtrar"). */
 export type DataTableFilterType = 'text' | 'number' | 'dropdown' | 'date';
 
-/**
- * Definición de una columna de `DataTableComponent`. Controla encabezado,
- * maquetación, orden y — si define `filterType` — su filtro propio en la
- * fila de filtros. El contenido de cada celda lo decide el consumidor vía
- * `<ng-template appDataTableCell="...">` (o, si no se provee ninguna, se
- * muestra el valor crudo de `field`).
- */
+/** Definición de una columna de `DataTableComponent`. */
 export interface DataTableColumn {
   /** Clave del dato en cada fila, o un id propio para columnas sin dato real (ej. una columna de acciones). */
   field: string;

@@ -15,12 +15,7 @@ import type { EsgConfiguracionModulo } from '../../models/configuracion.model';
 import type { EsgMetricaFila, EsgMetricaListItem, EsgResumenCategoria, EsgResumenPortadaFila } from '../../models/metrica.model';
 import type { TabCategoria } from '../../models/ui.model';
 
-/**
- * Orden de pestañas y mapeo de `cod_cat` — igual que `arrOrd`/el
- * `mat-tab-group` del legado STG (`principal.component.html`): el orden
- * visual (Medioambiente, Social Empleado, Social Cliente, Gobierno) NO
- * coincide con el orden numérico de `cod_cat` (1, 3, 2, 4).
- */
+/** Orden de pestañas y mapeo de `cod_cat` — igual que `arrOrd`/el `mat-tab-group` del legado STG (`principal.component.html`): el orden visual (Medioambiente, Social Empleado, Social Cliente, Gobierno) NO coincide con el orden numérico de `cod_cat` (1, 3, 2, 4). */
 const TABS_CATEGORIAS: TabCategoria[] = [
   { codCat: 1, titulo: 'Medioambiente' },
   { codCat: 3, titulo: 'Social | Empleado' },
@@ -28,27 +23,7 @@ const TABS_CATEGORIAS: TabCategoria[] = [
   { codCat: 4, titulo: 'Gobierno' },
 ];
 
-/**
- * Cuadro de Mando ESG (`/app/esg`) — migrado de `PrincipalComponent`
- * (legado STG, `pages/modules/framework-esg/principal`). Reemplaza
- * `mat-tab-group`/`stg-table2` (Angular Material + tabla custom) por
- * `p-tabs`/`p-table` (PrimeNG) + Tailwind, y `MatDialog` por diálogos
- * standalone (`EditarMetricaDialogComponent`/`UsuariosMetricaDialogComponent`)
- * — sin la variante enrutada para mobile del legado (`showE()`/`showUse()`
- * navegaban a `./editar`/`./usuarios` en mobile): el layout de este Host ya
- * es responsive.
- *
- * El `is_admin` que viaja a `esg.res_cat` es el admin del Host
- * (`ShellStateService.esAdmin()`, equivalente al `profile.tip_use===0` del
- * legado) — el flag `mod_admin.cfg` de `esg.cfg_mod` solo controla la
- * visibilidad del botón "Usuarios" en esta pantalla y de "Editar" por fila
- * (ver `esAdmin` computed), igual que en el legado.
- *
- * Los botones "Editar"/"Detalles" vivían en el toolbar (habilitados por
- * selección de fila, ver `disableEditMet`/`disableDetMet` del legado); acá
- * viven como acciones por fila dentro de la propia tabla
- * (`CategoriaMetricasTablaComponent`, columna "Acciones").
- */
+/** Cuadro de Mando ESG (`/app/esg`) — migrado de `PrincipalComponent` (legado STG, `pages/modules/framework-esg/principal`). */
 @Component({
   selector: 'app-esg-principal',
   standalone: true,

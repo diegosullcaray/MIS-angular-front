@@ -12,21 +12,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import type { DataTableColumn, DataTableFilterType } from './data-table.model';
 import { DataTableCellDirective } from './data-table-cell.directive';
 
-/**
- * Tabla genérica sobre `p-table`: arma encabezado, orden por columna y
- * paginador a partir de `columns`, con búsqueda manual opcional en el
- * `caption` (solo filtra al hacer clic en "Buscar" o Enter, no en cada
- * tecla) y una fila de filtros por columna (texto/número/dropdown/fecha,
- * togglable con "Filtrar") para las columnas que definen `filterType`. El
- * contenido de cada celda se proyecta por columna con `DataTableCellDirective`;
- * sin plantilla, se muestra el valor crudo del campo.
- *
- * Base tomada de `docs/data-table` (tabla compartida del STG legado) —
- * reimplementada en standalone/signals y recortada a lo que este Host
- * necesita hoy (sin export a Excel, selección, menú contextual, edición
- * inline, expansión móvil ni footer; se puede ampliar cuando algún
- * consumidor lo requiera).
- */
+/** Tabla genérica sobre `p-table`: arma encabezado, orden por columna y paginador a partir de `columns`, con búsqueda manual opcional en el `caption` (solo filtra al hacer clic en "Buscar" o Enter, no en cada tecla) y una fila de filtros por columna (texto/número/dropdown/fecha, togglable con "Filtrar") para las columnas que definen `filterType`. */
 @Component({
   selector: 'app-data-table',
   standalone: true,
@@ -122,14 +108,7 @@ export class DataTableComponent<T extends Record<string, unknown> = Record<strin
       .includes(String(valorFiltro).toLowerCase().trim());
   }
 
-  /**
-   * Clave `YYYY-MM-DD` de un valor de fecha, comparando solo el día
-   * calendario (sin hora). Si el valor ya es un string `YYYY-MM-DD[...]`
-   * (el formato que devuelve el backend Ant), se toma tal cual — evita
-   * pasar por `new Date('YYYY-MM-DD')`, que ECMA-262 interpreta como
-   * medianoche UTC y que, al leerla luego en hora local (América,
-   * UTC negativo), corre la fecha un día hacia atrás.
-   */
+  /** Clave `YYYY-MM-DD` de un valor de fecha, comparando solo el día calendario (sin hora). */
   private claveFecha(valor: unknown): string | null {
     if (valor instanceof Date) {
       if (isNaN(valor.getTime())) return null;

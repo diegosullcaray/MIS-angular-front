@@ -33,12 +33,7 @@ function ubicarPorNivel(columnas: ColumnaDinamica[], nivel: number, filas: Colum
   });
 }
 
-/**
- * Aplana un árbol de columnas (`subs` anidados, formato del `stg-table2` legado)
- * en filas de encabezado con colspan/rowspan — puerto puro de
- * `headerDefs()/evalHn()/fixSpans()/rowDefs()` de `stg-table2.component.ts`.
- * Si ninguna columna trae `subs`, degrada a una sola fila de encabezado plana.
- */
+/** Aplana un árbol de columnas (`subs` anidados, formato del `stg-table2` legado) en filas de encabezado con colspan/rowspan — puerto puro de `headerDefs()/evalHn()/fixSpans()/rowDefs()` de `stg-table2.component.ts`. */
 export function aplanarEncabezados(columnas: ColumnaDinamica[]): EncabezadosAplanados {
   const filas: ColumnaEncabezadoCalculada[][] = [];
   ubicarPorNivel(columnas, 0, filas);

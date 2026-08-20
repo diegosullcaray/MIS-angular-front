@@ -28,12 +28,7 @@ export class AvancesGridComponent {
     this.solicitarDetalle(item);
   }
 
-  /**
-   * Color del arco según el avance — mismos cortes que `pieStyle()` del legado:
-   * ámbar entre 65% y 100%, rojo por debajo de 65% y verde al llegar a la meta
-   * (el 0 también cae en verde, igual que en el legado, porque ahí todavía no
-   * hay avance que calificar).
-   */
+  /** Color del arco según el avance — mismos cortes que `pieStyle()` del legado: ámbar entre 65% y 100%, rojo por debajo de 65% y verde al llegar a la meta (el 0 también cae en verde, igual que en el legado, porque ahí todavía no hay avance que calificar). */
   protected colorAvance(item: ItemAvance): string {
     if (item.val >= 0.65 && item.val < 1) return 'var(--mis-warning)';
     if (item.val > 0 && item.val < 0.65) return 'var(--mis-danger)';

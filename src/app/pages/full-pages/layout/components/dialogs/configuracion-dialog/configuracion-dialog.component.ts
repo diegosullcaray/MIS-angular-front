@@ -12,25 +12,7 @@ function normalizar(texto: string): string {
   return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
-/**
- * Diálogo "Configuración" — adaptación de la plantilla que vive en
- * `docs/08-otros/dialog-configuracion`: maestro-detalle de tres columnas
- * (secciones → items → contenido) con un buscador sobre el árbol de ajustes.
- *
- * Diferencias con la plantilla, por las convenciones de este proyecto:
- *
- * - Standalone + signals en vez de NgModule + `ChangeDetectorRef` (la app corre
- *   zoneless, así que las mutaciones de propiedades sueltas no repintan).
- * - `p-dialog` con `[visible]`/`(visibleChange)` como el resto de diálogos del
- *   layout (ver `CambiarUsuarioDialogComponent`), en vez de `DynamicDialog`.
- * - El responsive es puramente CSS: la plantilla escuchaba `window.resize` y
- *   guardaba un `isMobile`; acá las tres columnas se pintan siempre y el CSS
- *   decide cuál se ve, guiado por `data-nivel`. Un solo árbol para ambos
- *   viewports, sin listeners que limpiar.
- *
- * El contenido de cada item todavía es de ejemplo: la estructura de navegación
- * ya es la definitiva, lo que falta es la pantalla real de cada ajuste.
- */
+/** Diálogo "Configuración" — adaptación de la plantilla que vive en `docs/08-otros/dialog-configuracion`: maestro-detalle de tres columnas (secciones → items → contenido) con un buscador sobre el árbol de ajustes. */
 @Component({
   selector: 'app-configuracion-dialog',
   standalone: true,
@@ -62,10 +44,7 @@ export class ConfiguracionDialogComponent {
     () => this.seccion().items.find((i) => i.clave === this.itemActivo()) ?? this.seccion().items[0],
   );
 
-  /**
-   * El filtro se aplica sobre el árbol completo: una sección sigue visible si
-   * ella misma coincide o si le queda al menos un item.
-   */
+  /** El filtro se aplica sobre el árbol completo: una sección sigue visible si ella misma coincide o si le queda al menos un item. */
   protected readonly seccionesVisibles = computed(() => {
     const termino = normalizar(this.filtro().trim());
     if (!termino) return SECCIONES_CONFIGURACION;

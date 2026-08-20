@@ -4,13 +4,7 @@ import { AntService } from '../ant/ant-service.class';
 import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * Módulo de Reporting del backend Ant (puerto 5304, appId `reporting`).
- *
- * `table.regular` y `regularData` son motores **distintos** pese al nombre
- * parecido: el primero devuelve una tabla genérica (lo usa Herramientas), el
- * segundo el motor de reportes "mixtos" (tablas multi-encabezado + tarjetas KPI).
- */
+/** Módulo de Reporting del backend Ant (puerto 5304, appId `reporting`). */
 @Injectable({ providedIn: 'root' })
 export class ModReportesService extends AntService {
   constructor() {
@@ -44,25 +38,12 @@ export class ModReportesService extends AntService {
     return this.getSimpleResponseString('regularData', { ...params, cod_rep: codRep }, 'result');
   }
 
-  /**
-   * Variante "deprecada" del motor de reportes "mixtos" (strand `reportData`
-   * en vez de `regularData`) — el propio legado la marca como obsoleta
-   * (`ComercialService.getReportData()`: "está usando un método depreciado")
-   * pero algunos reportes todavía no fueron migrados a `regularData` del
-   * lado del backend (ej. "Cartera", `rda/sectorista/cartera/cartera_sec`).
-   * Misma forma de respuesta (`result.headers`/`body`/`additional`).
-   */
+  /** Variante "deprecada" del motor de reportes "mixtos" (strand `reportData` en vez de `regularData`) — el propio legado la marca como obsoleta (`ComercialService.getReportData()`: "está usando un método depreciado") pero algunos reportes todavía no fueron migrados a `regularData` del lado del backend (ej. "Cartera", `rda/sectorista/cartera/cartera_sec`). */
   public getDeprecatedData(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
     return this.getSimpleResponseString('reportData', { ...params, cod_rep: codRep }, 'result');
   }
 
-  /**
-   * Bloques de gráfico del motor de reportes "mixtos" (strand `graphicData`,
-   * `ReportType.GRAPHIC` del legado — `ReportCrsV2Component`/`GraphicService`).
-   * A diferencia de `getRegularData()`, `result` es un array: un mismo
-   * `cod_rep` puede devolver varios gráficos en una sola respuesta (ej.
-   * "Inversión" y "Stock de Mora" del mismo bloque `brecha_inversion_sec`).
-   */
+  /** Bloques de gráfico del motor de reportes "mixtos" (strand `graphicData`, `ReportType.GRAPHIC` del legado — `ReportCrsV2Component`/`GraphicService`). */
   public getGraphicData(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
     return this.getSimpleResponseString('graphicData', { ...params, cod_rep: codRep }, 'result');
   }

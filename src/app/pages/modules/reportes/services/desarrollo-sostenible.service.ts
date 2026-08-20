@@ -13,14 +13,7 @@ import type {
 } from '../models/desarrollo-sostenible/desarrollo-sostenible.model';
 import type { KpiOperacionesDesembolsadas } from '../models/avance-comercial/avance-comercial.model';
 
-/**
- * `DESEMP_SOC_01` ata cada semáforo oculto a la columna que le SIGUE en el
- * arreglo, no a la que tiene delante: el semáforo pegado a "META" (`col_8`)
- * en realidad colorea "TMM"; el pegado a "TMM" (`col_10`) colorea "TAM" — y
- * "META" nunca tiene semáforo propio (confirmado contra el legado). Se
- * reordena la fila de encabezado nivel 1 para que cada semáforo quede junto
- * a la columna de valor que de verdad colorea.
- */
+/** `DESEMP_SOC_01` ata cada semáforo oculto a la columna que le SIGUE en el arreglo, no a la que tiene delante: el semáforo pegado a "META" (`col_8`) en realidad colorea "TMM"; el pegado a "TMM" (`col_10`) colorea "TAM" — y "META" nunca tiene semáforo propio (confirmado contra el legado). */
 export function corregirSemaforosDesempenoSocial(resultado: TablaReporteResultado): TablaReporteResultado {
   const filaNivel1 = resultado.headers[0];
   if (!filaNivel1) return resultado;
@@ -49,11 +42,7 @@ export function corregirSemaforosDesempenoSocial(resultado: TablaReporteResultad
   return { ...resultado, headers: [{ ...filaNivel1, columns: encabezado }, ...resultado.headers.slice(1)] };
 }
 
-/**
- * Datos de los reportes del dominio "Desarrollo Sostenible": Monitor
- * Productos Misionales, Desempeño Social, Productos Misionales y
- * Poblaciones Misionales.
- */
+/** Datos de los reportes del dominio "Desarrollo Sostenible": Monitor Productos Misionales, Desempeño Social, Productos Misionales y Poblaciones Misionales. */
 @Injectable({ providedIn: 'root' })
 export class DesarrolloSostenibleService {
   private readonly ant = inject(ModReportesService);
@@ -85,12 +74,7 @@ export class DesarrolloSostenibleService {
       .pipe(map(mapearBloqueReporte), map(corregirSemaforosDesempenoSocial));
   }
 
-  /**
-   * "Productos Misionales" (`prod_misi_01..05`) para un nivel de jerarquía +
-   * producto — mapeo tabla↔bloque confirmado leyendo el legado completo
-   * (`panel-misionales.component.ts`/`.html`): resumen=`_05`, territorio=`_04`,
-   * corredores=`_01`, unidad=`_02`, asesores=`_03`.
-   */
+  /** "Productos Misionales" (`prod_misi_01..05`) para un nivel de jerarquía + producto — mapeo tabla↔bloque confirmado leyendo el legado completo (`panel-misionales.component.ts`/`.html`): resumen=`_05`, territorio=`_04`, corredores=`_01`, unidad=`_02`, asesores=`_03`. */
   obtenerProductosMisionales(nivel: Pick<HierarquiaNodo, 'tip_cod' | 'cod_rel'>, prod: string): Observable<ReporteProductosMisionales> {
     const params = { tip_cod: nivel.tip_cod, cod_rel: nivel.cod_rel, fec: fechaCorte(this.shell.usuarioActivo()?.fechaCorte), prod };
 

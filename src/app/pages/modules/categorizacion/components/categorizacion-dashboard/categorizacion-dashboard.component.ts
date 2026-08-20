@@ -10,14 +10,7 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 import type { ComisionTarjeta, PerfilColaborador, RequisitoTarjeta } from '../../models/dashboard.model';
 import type { NodoJerarquiaAncla, SectoristaItem } from '../../models/colaborador.model';
 
-/**
- * Categorización (`/app/analista/categorizacion`) — tablero de un
- * colaborador: perfil, estado de 4 requisitos y resultados de comisión de 6
- * periodos. Un colaborador ve la propia al entrar; un admin/supervisor
- * primero elige a quién ver desde un selector de sectoristas, reconstruido
- * con la jerarquía `base_hier`/`list_pick_01` (el `SecPickerDialog2` legado
- * no está en el volcado de referencia).
- */
+/** Categorización (`/app/analista/categorizacion`) — tablero de un colaborador: perfil, estado de 4 requisitos y resultados de comisión de 6 periodos. */
 @Component({
   selector: 'app-categorizacion-dashboard',
   standalone: true,
@@ -55,11 +48,7 @@ export class CategorizacionDashboardComponent implements OnInit {
   protected readonly codBtActual = signal<string | null>(null);
 
   constructor() {
-    // Dispara la carga de sectoristas en cuanto el diálogo esté abierto Y el
-    // nodo ancla haya terminado de resolverse — antes se intentaba una sola
-    // vez al abrir el diálogo (`abrirSelector`), así que si el admin hacía
-    // click antes de que `obtenerAnclaAdmin()` respondiera, el diálogo
-    // quedaba vacío para siempre (sin spinner ni reintento).
+    // Carga los sectoristas cuando el diálogo esté abierto Y el ancla resuelta: intentarlo una sola vez al abrir dejaba el diálogo vacío para siempre.
     effect(() => {
       const abierto = this.dialogAbierto();
       if (!abierto || this.sectoristas().length > 0) return;

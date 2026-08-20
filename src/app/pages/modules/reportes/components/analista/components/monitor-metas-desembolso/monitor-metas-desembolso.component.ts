@@ -11,18 +11,7 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../models/monitor-metas-desembolso.model';
 
-/**
- * "Monitor de Desembolsos" — migrado de la ruta `leg/com/rda/sec/mon-desem`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`,
- * config `rda/sectorista/monitor_metas_desembolsos/monitor_metas_desem_sec`
- * en `crs-map.ts`).
- *
- * No confundir con "Monitor Metas Desembolso" de `avance-comercial`
- * (`leg/com/rda/adm/mon-desem`, por jerarquía) — este es el mismo reporte
- * pero con alcance por asesor, otro `cod_rep`. Mismas 2 tarjetas KPI que la
- * versión de administración, mismo criterio de mostrarlas con el estilo fijo
- * de la tarjeta en vez de la clase CSS dinámica del legado (`style_cumpl_*`).
- */
+/** "Monitor de Desembolsos" — migrado de la ruta `leg/com/rda/sec/mon-desem` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/monitor_metas_desembolsos/monitor_metas_desem_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-monitor-metas-desembolso-analista',
   standalone: true,

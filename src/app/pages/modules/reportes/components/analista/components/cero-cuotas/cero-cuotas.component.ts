@@ -10,16 +10,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Cero Cuotas" — migrado de la ruta `leg/com/rda/sec/zu-cuo` (legado STG,
- * título real "Cero y Una Cuota",
- * `reportes/legacy/support/components/template/crs/report-crs-v1`, config
- * `rda/sectorista/cero_cuota/cero_cuota_sec` en `crs-map.ts`).
- *
- * Solo lectura: asesor → 1 tabla. El mensaje `content.lower` del legado
- * ("¡Urgente gestión! estos son los clientes de tu cartera que no han
- * pagado ni una cuota.") se muestra como nota debajo de la tabla.
- */
+/** "Cero Cuotas" — migrado de la ruta `leg/com/rda/sec/zu-cuo` (legado STG, título real "Cero y Una Cuota", `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/cero_cuota/cero_cuota_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-cero-cuotas',
   standalone: true,

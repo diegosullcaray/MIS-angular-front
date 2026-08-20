@@ -5,10 +5,7 @@ import { calcularFilaDeposito } from '../../../utils/deposito-calculo.util';
 import { COLUMNAS_DEPOSITO, type FilaDeposito } from '../../../models/deposito.model';
 import type { LineaSimpleConfig } from '../../../models/linea-simple.model';
 
-/**
- * Depósitos Banca Preferente (`/app/presupuesto/lineas/pasivos-patrimonio/car-dep-bp`)
- * — migrado de `PrePasPatCarteraDepositosBpComponent` (legado STG).
- */
+/** Depósitos Banca Preferente (`/app/presupuesto/lineas/pasivos-patrimonio/car-dep-bp`) — migrado de `PrePasPatCarteraDepositosBpComponent` (legado STG). */
 @Component({
   selector: 'app-deposito-bp',
   standalone: true,

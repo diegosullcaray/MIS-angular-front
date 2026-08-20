@@ -12,14 +12,7 @@ import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/w
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
-/**
- * "Desempeño Social" — migrado de la ruta `desemp-social` (legado STG,
- * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'DESEMP_SOC'`).
- *
- * El reporte más simple del módulo: sin filtros adicionales ni tarjeta KPI,
- * solo jerarquía + una tabla. El título/leyenda del legado son texto estático
- * (`content.higher`/`lower` sin placeholders `:$...`), así que van fijos en el HTML.
- */
+/** "Desempeño Social" — migrado de la ruta `desemp-social` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'DESEMP_SOC'`). */
 @Component({
   selector: 'app-desempeno-social',
   standalone: true,

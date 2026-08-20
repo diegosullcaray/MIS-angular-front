@@ -16,12 +16,7 @@ export function celVacio(): CelForm {
   return { numTele: '', tipoTele: '', opeTele: '', planTele: '', whatshap: null };
 }
 
-/**
- * Modelo del formulario "Actualizar Datos". El legado usa 2 `FormArray`
- * (`cels`/`cius`), pero de tamaño fijo — `addCels()` solo se llama 2 veces y
- * el botón para agregar más está comentado/muerto en el `.html` — así que acá
- * son tuplas de tamaño fijo, sin necesidad de un array dinámico real.
- */
+/** Modelo del formulario "Actualizar Datos". */
 export interface DatosClienteForm {
   email: string;
   verificadorNumTele: string;
@@ -86,12 +81,7 @@ export const OPCIONES_VERIFICADOR_CIIU: OpcionDato[] = [
   { id: 'NO OK', desc: 'NO OK' },
 ];
 
-/**
- * El legado guarda/lee con las claves snake_case originales del `FormGroup`
- * (`formG.getRawValue()`), no camelCase. `referencia` (`bantotal.ciu/cel`) va
- * incluida tal cual en el payload, aunque sea de solo lectura — así lo manda
- * el legado (`getRawValue()` incluye los controles `disabled`).
- */
+/** El legado guarda/lee con las claves snake_case originales del `FormGroup` (`formG.getRawValue()`), no camelCase. */
 export function formularioAJson(form: DatosClienteForm, referencia: ReferenciaBantotal): Record<string, unknown> {
   return {
     email: form.email,

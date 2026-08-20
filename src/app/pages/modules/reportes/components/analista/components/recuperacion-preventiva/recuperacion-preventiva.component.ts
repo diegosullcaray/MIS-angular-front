@@ -10,16 +10,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Recuperación Preventiva" — migrado de la ruta `leg/com/rda/sec/rec-prev`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`,
- * config `rda/sectorista/recuperacion_preventiva/recuperacion_preventiva` en
- * `crs-map.ts`).
- *
- * Solo lectura: asesor → 1 tabla. El mensaje `content.lower` del legado
- * ("Esta es la lista de tus créditos que vencen en los próximos días...")
- * se muestra como nota debajo de la tabla.
- */
+/** "Recuperación Preventiva" — migrado de la ruta `leg/com/rda/sec/rec-prev` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/recuperacion_preventiva/recuperacion_preventiva` en `crs-map.ts`). */
 @Component({
   selector: 'app-recuperacion-preventiva',
   standalone: true,

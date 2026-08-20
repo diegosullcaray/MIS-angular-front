@@ -17,9 +17,7 @@ export class DriverTourService {
 
   constructor() {}
 
-  /**
-   * Inicia un tour interactivo utilizando Driver.js
-   */
+  /** Inicia un tour interactivo utilizando Driver.js */
   startTour(config: TourConfig): void {
     this.destroyCurrentTour();
 
@@ -66,9 +64,7 @@ export class DriverTourService {
     this.driverObj.drive();
   }
 
-  /**
-   * Crea un tour rápido a partir de un arreglo de pasos (DriveStep)
-   */
+  /** Crea un tour rápido a partir de un arreglo de pasos (DriveStep) */
   createQuickTour(steps: DriveStep[], options?: Partial<TourConfig>): void {
     const config: TourConfig = {
       steps,
@@ -78,9 +74,7 @@ export class DriverTourService {
     this.startTour(config);
   }
 
-  /**
-   * Destruye el tour activo limpiando referencias y el DOM
-   */
+  /** Destruye el tour activo limpiando referencias y el DOM */
   destroyCurrentTour(): void {
     if (this.driverObj) {
       const instance = this.driverObj;
@@ -93,18 +87,14 @@ export class DriverTourService {
     }
   }
 
-  /**
-   * Fuerza el cierre del tour y elimina popovers residuales si los hubiera
-   */
+  /** Fuerza el cierre del tour y elimina popovers residuales si los hubiera */
   forceClose(): void {
     this.destroyCurrentTour();
     const overlays = document.querySelectorAll('.driver-overlay, .driver-popover');
     overlays.forEach((overlay) => overlay.remove());
   }
 
-  /**
-   * Verifica si existe un tour activo
-   */
+  /** Verifica si existe un tour activo */
   isActive(): boolean {
     return this.driverObj !== null;
   }

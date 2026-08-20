@@ -15,22 +15,7 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-r
 import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../../models/avance-comercial/avance-comercial.model';
 import { TabsModule } from 'primeng/tabs';
 
-/**
- * "Monitor Metas Desembolso" — migrado de la ruta `mon-desem` (legado STG,
- * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese'`).
- *
- * La carga la dispara únicamente `app-hier-selector` (evento
- * `nodoSeleccionado`) — igual que `ReportCraV1p1Component` en el legado, que
- * no hace su propio `getBaseHierarchy()`: solo reacciona a `(onSelectHier)`
- * de `hier-rem-selector`. Tener acá un fetch inicial propio duplicaría la
- * llamada a `obtenerJerarquiaBase`.
- *
- * El selector emite la raíz al terminar de cargarla, así que al entrar ya se
- * ve el reporte del total y desde ahí se baja de a un nivel — como el legado.
- * Lo que NO hace es cascadear hasta el fondo: los niveles siguientes se
- * ofrecen sin preselección, para no terminar mostrando el reporte de una
- * agencia cualquiera.
- */
+/** "Monitor Metas Desembolso" — migrado de la ruta `mon-desem` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese'`). */
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,

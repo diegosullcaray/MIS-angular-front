@@ -6,15 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReportePlanDatos } from '../models/plan-datos.model';
 
-/**
- * Datos de "Plan de Datos" (legado `leg/com/rda/sec/plan-datos-sec`,
- * `ReportCrsV1Component` + `crs-map.ts`: `P_Datos`).
- *
- * `reportType: ReportType.REGULAR` en `crs-map.ts` ⇒ strand moderno
- * `regularData`; el único bloque declarado tiene `id: '_02'` (no `_01`), así
- * que el `cod_rep` real es `P_Datos_02`. Filtro real "Fecha Base" (`fec`,
- * `renderDates_3()`) — ver `generarOpcionesFechaBase()`.
- */
+/** Datos de "Plan de Datos" (legado `leg/com/rda/sec/plan-datos-sec`, `ReportCrsV1Component` + `crs-map.ts`: `P_Datos`). */
 @Injectable({ providedIn: 'root' })
 export class PlanDatosService {
   private readonly reportes = inject(ModReportesService);

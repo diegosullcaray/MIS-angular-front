@@ -1,18 +1,9 @@
-/**
- * Contratos del buscador. Están calcados del motor de Algolia (mismos
- * criterios, mismos defaults, misma forma de respuesta) pero con nombres en
- * español, como el resto del código. Entre paréntesis va el nombre original
- * de Algolia para poder cruzarlo con su documentación.
- */
+/** Contratos del buscador, calcados de Algolia con nombres en español; entre paréntesis va el nombre original. */
 
 /** Cuánto cubrió la consulta a un atributo (`matchLevel` de Algolia). */
 export type NivelCoincidencia = 'ninguna' | 'parcial' | 'total';
 
-/**
- * Un ítem indexable, venga de donde venga. Es el denominador común entre el
- * árbol de navegación y la data que carga cada módulo, para que el buscador no
- * tenga que conocer a ninguno de los dos.
- */
+/** Ítem indexable: denominador común entre el árbol de navegación y la data de cada módulo. */
 export interface RegistroBuscable {
   /** Identidad estable; también evita indexar dos veces lo mismo. */
   id: string;
@@ -28,13 +19,7 @@ export interface RegistroBuscable {
   abrir: () => void;
 }
 
-/**
- * Fuente de registros para el buscador. Cada módulo implementa una y aporta la
- * data que tiene cargada en ese momento: si el módulo todavía no cargó nada,
- * devuelve una lista vacía y simplemente no aparece en los resultados.
- *
- * Se registran con el multi-token `FUENTE_BUSQUEDA` (ver `fuente-busqueda.ts`).
- */
+/** Fuente de registros: cada módulo aporta la data que ya tiene cargada (vacía si no cargó nada). Se registran con el multi-token `FUENTE_BUSQUEDA`. */
 export interface FuenteBusqueda {
   readonly id: string;
   /** Debe ser reactivo (leer signals): el buscador lo evalúa dentro de un `computed`. */
@@ -70,14 +55,7 @@ export interface ResaltadoAtributo {
   resaltadoCompleto: boolean;
 }
 
-/**
- * Los 5 criterios de desempate que aplican acá, en el orden en que Algolia los
- * evalúa. Se comparan de a uno: solo si dos registros empatan en el primero se
- * mira el segundo, y así. Los criterios `geo` y `filters` de Algolia no
- * aplican (no hay coordenadas ni filtros opcionales con peso).
- *
- * Ver https://www.algolia.com/doc/guides/managing-results/relevance-overview/in-depth/ranking-criteria/
- */
+/** Los 5 criterios de desempate de Algolia que aplican acá, en su orden de evaluación (`geo` y `filters` no aplican). */
 export interface CriteriosRanking {
   /** Typos acumulados de todas las palabras que matchearon. Menos es mejor. */
   typos: number;
@@ -112,10 +90,7 @@ export interface RespuestaBusqueda<T> {
   total: number;
   /** La consulta tal cual se pidió. */
   consulta: string;
-  /**
-   * Cuántas palabras de la consulta se terminaron exigiendo. Es menor que el
-   * total cuando `estrategiaSinResultados` tuvo que soltar palabras.
-   */
+  /** Palabras de la consulta finalmente exigidas; menor que el total si `estrategiaSinResultados` soltó alguna. */
   palabrasUsadas: number;
   /** Conteos por faceta sobre el conjunto de resultados (`facets`). */
   facetas: Facetas;
@@ -125,11 +100,7 @@ export interface RespuestaBusqueda<T> {
 
 /** Configuración de un índice, equivalente a los `settings` de un índice de Algolia. */
 export interface ConfiguracionIndice<T> {
-  /**
-   * Atributos donde se busca, del más al menos importante. El orden es
-   * significativo: alimenta el criterio `atributo` del ranking, igual que
-   * `searchableAttributes` en Algolia.
-   */
+  /** Atributos donde se busca, del más al menos importante; el orden alimenta el criterio `atributo` del ranking. */
   atributosBuscables: {
     nombre: string;
     /** Extrae el texto del registro. */
@@ -140,10 +111,7 @@ export interface ConfiguracionIndice<T> {
     nombre: string;
     valor: (objeto: T) => string;
   }[];
-  /**
-   * Desempate final, cuando los 5 criterios textuales empataron
-   * (`customRanking`). Devuelve <0 si `a` va antes que `b`.
-   */
+  /** Desempate final si los 5 criterios textuales empataron (`customRanking`); <0 si `a` va antes que `b`. */
   rankingPersonalizado?: (a: T, b: T) => number;
   /** Identidad estable del registro, para `track` en las listas (`objectID`). */
   id: (objeto: T) => string;
@@ -157,11 +125,7 @@ export interface ParametrosBusqueda {
   estrategiaSinResultados?: EstrategiaSinResultados;
   /** Corta la lista de resultados (`hitsPerPage`). Default 20, igual que Algolia. */
   maximoResultados?: number;
-  /**
-   * Refinamientos por faceta: `{ sistema: ['Reportes'] }`. Dentro de una misma
-   * faceta los valores son un OR; entre facetas distintas, un AND — igual que
-   * los `facetFilters` de Algolia.
-   */
+  /** Refinamientos por faceta (`{ sistema: ['Reportes'] }`): OR dentro de una faceta, AND entre facetas distintas. */
   filtrosFaceta?: Record<string, string[]>;
   /** Etiquetas de resaltado. Algolia usa `<em>`; acá `<mark>`, que es el elemento semántico de "coincidencia de búsqueda". */
   etiquetaResaltadoInicio?: string;

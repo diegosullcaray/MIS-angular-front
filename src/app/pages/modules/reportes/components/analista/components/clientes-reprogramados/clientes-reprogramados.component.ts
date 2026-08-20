@@ -20,18 +20,7 @@ import type { ReprogramacionForm } from '../../models/clientes-reprogramados.mod
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Clientes Reprogramados" — migrado de la ruta `leg/com/rda/sec/repro`
- * (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-repro`,
- * `cod_rep: 'RES_SEC_REP'`/`'UP_REPRO_01'`).
- *
- * Mismo patrón que "Encuesta Clientes" (buscador de asesor → lista de
- * clientes → elegir uno → formulario → guardar), pero más simple: acá el
- * formulario no tiene cascada condicional (4 preguntas independientes, sin
- * validación — el legado no deshabilita "Guardar" en ningún caso) y las
- * respuestas se guardan como columnas sueltas del cliente, no anidadas bajo
- * un campo `reaccion` (ver `ClientesReprogramadosService.guardar()`).
- */
+/** "Clientes Reprogramados" — migrado de la ruta `leg/com/rda/sec/repro` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-repro`, `cod_rep: 'RES_SEC_REP'`/`'UP_REPRO_01'`). */
 @Component({
   selector: 'app-clientes-reprogramados',
   standalone: true,

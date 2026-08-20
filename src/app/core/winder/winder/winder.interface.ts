@@ -1,13 +1,6 @@
 import type { Strand } from './strand.class';
 
-/**
- * Respuesta estándar del backend Ant (Winder protocol).
- *
- * - `code`: código de resultado devuelto por el backend.
- * - `headers`: metadatos de la respuesta.
- * - `body`: payload principal (datos de negocio).
- * - `errors`: detalle de errores si los hay.
- */
+/** Respuesta estándar del backend Ant (protocolo Winder). */
 export interface IWinderResponse {
   code: string;
   headers: unknown;
@@ -15,12 +8,7 @@ export interface IWinderResponse {
   errors?: unknown;
 }
 
-/**
- * Configuración de conexión al módulo del backend Ant.
- *
- * Cada módulo de negocio (login, admin, reporting…) tiene su
- * propio `port`, `secret` y `appId`.
- */
+/** Conexión a un módulo del backend Ant; cada uno tiene su propio `port`, `secret` y `appId`. */
 export interface IWinderConnectionConf {
   /** Puerto lógico del módulo en el backend (ej: 6300 = session). */
   port: number;
@@ -30,13 +18,7 @@ export interface IWinderConnectionConf {
   appId: string;
 }
 
-/**
- * Configuración de una request individual.
- *
- * - `responseType`: `'JSON'` | `'resource'` (blob).
- * - `strands`: uno o varios Strands que componen la petición.
- * - `options`: opciones adicionales de HttpClient (headers, etc.).
- */
+/** Configuración de una request individual (`resource` = blob). */
 export interface IWinderRequestConfig {
   responseType: 'JSON' | 'resource';
   options?: Record<string, unknown>;

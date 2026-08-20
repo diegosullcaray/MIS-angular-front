@@ -4,10 +4,7 @@ import { AntService } from '../ant/ant-service.class';
 import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * Módulo "Secciones" del backend Ant (puerto 5301, appId `secciones`).
- * Cubre las rutas que usan Categorización y Analista (Principal/Listas).
- */
+/** Módulo "Secciones" del backend Ant (puerto 5301, appId `secciones`). Cubre las rutas que usan Categorización y Analista (Principal/Listas). */
 @Injectable({ providedIn: 'root' })
 export class ModSeccionesService extends AntService {
   constructor() {
@@ -68,12 +65,7 @@ export class ModSeccionesService extends AntService {
     return this.getSimpleResponseString('sec_list2', { email }, 'result_sectorista');
   }
 
-  /**
-   * Actualiza un reporte del motor "mixto" (`cod_rep`) — legado
-   * `ModSecService.updateData()`. Pese al nombre, el propio legado la manda
-   * como GET-encoded (`getResponseString`), no como POST real — se respeta
-   * ese mismo mecanismo acá (`getSimpleResponseString`).
-   */
+  /** Actualiza un reporte del motor "mixto" (`cod_rep`) — legado `ModSecService.updateData()`. */
   public postRegularUpdate(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
     return this.getSimpleResponseString('regularUpdate', { ...params, cod_rep: codRep }, 'result');
   }

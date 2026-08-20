@@ -1,9 +1,4 @@
-/**
- * El backend representa las 4 categorías ESG con códigos fijos que NO
- * coinciden con el orden de las pestañas de la pantalla (heredado del
- * legado, ver `PrincipalComponent`): `cod_cat` 1 = Medioambiente,
- * 2 = Social Clientes, 3 = Social Empleados, 4 = Gobierno.
- */
+/** El backend representa las 4 categorías ESG con códigos fijos que NO coinciden con el orden de las pestañas de la pantalla (heredado del legado, ver `PrincipalComponent`): `cod_cat` 1 = Medioambiente, 2 = Social Clientes, 3 = Social Empleados, 4 = Gobierno. */
 
 /** Fila de la tabla resumen de "Portada" — `esg.res_por`. */
 export interface EsgResumenPortadaFila {

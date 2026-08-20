@@ -2,10 +2,7 @@ import { Component, input, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideAlertCircle } from '@ng-icons/lucide';
 
-/**
- * Error inline de API — se muestra dentro de la vista donde ocurrió el fallo.
- * No interrumpe el layout de la página.
- */
+/** Error inline de API — se muestra dentro de la vista donde ocurrió el fallo. No interrumpe el layout de la página. */
 @Component({
   selector: 'app-inline-error',
   standalone: true,

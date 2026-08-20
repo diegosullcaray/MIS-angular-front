@@ -3,11 +3,7 @@ import { MessageService } from 'primeng/api';
 
 const DURACION_MS = 4500;
 
-/**
- * Fachada de notificaciones del Host sobre el Toast de PrimeNG.
- * El stack se renderiza una sola vez con `<p-toast />` en el root (`app.ts`);
- * `MessageService` se provee globalmente en `app.config.ts`.
- */
+/** Fachada de notificaciones del Host sobre el Toast de PrimeNG. */
 @Injectable({ providedIn: 'root' })
 export class ToastService {
   private readonly messages = inject(MessageService);

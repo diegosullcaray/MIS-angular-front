@@ -12,15 +12,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Canal Alterno" — migrado de la ruta `leg/com/rda/sec/canal_alt` (legado
- * STG, `reportes/legacy/support/components/template/crs/report-crs-v1`,
- * config `rda/sectorista/canal_alt/canal_alt_sec` en `crs-map.ts`).
- *
- * Solo lectura: asesor → 1 tabla, con buscador de texto libre
- * (`filter_input: true` del legado, filtra localmente por substring en
- * cualquier columna — legado `table-multiheader.component.html`, `applyFilter()`).
- */
+/** "Canal Alterno" — migrado de la ruta `leg/com/rda/sec/canal_alt` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/canal_alt/canal_alt_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-canal-alterno',
   standalone: true,

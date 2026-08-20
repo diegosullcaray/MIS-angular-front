@@ -59,12 +59,7 @@ export class DetalleVariableContentComponent {
   /** Los botones Indicadores/Ranking solo aplican por encima del nivel individual — `showButtons()` del legado. */
   protected readonly muestraBotonesToggle = computed(() => (this.frameActual()?.tipCod ?? 1) !== 1);
 
-  /**
-   * Filas de primer nivel de la tabla de indicadores: las del bloque 1. Los
-   * bloques 2..`card.blocks` son los sub-detalles que cuelgan de una fila con
-   * `cod_bdd` (ver `subVars`). Antes se filtraba por `!cod_block`, que no
-   * coincide con ninguna fila real y dejaba la tabla siempre vacía.
-   */
+  /** Filas de primer nivel de la tabla de indicadores: las del bloque 1. */
   protected readonly varsMostradas = computed(
     () => this.frameActual()?.resultado.vars.filter((v) => v.cod_block === 1) ?? []
   );
@@ -201,11 +196,7 @@ export class DetalleVariableContentComponent {
     return 'Total';
   }
 
-  /**
-   * Valor de una tarjeta KPI — `getCardsCie()`/`getCardsVar()` del legado:
-   * Cartera lleva soles, Clientes va en enteros, las efectividades en
-   * porcentaje y los Super Plus con dos decimales.
-   */
+  /** Valor de una tarjeta KPI — `getCardsCie()`/`getCardsVar()` del legado: Cartera lleva soles, Clientes va en enteros, las efectividades en porcentaje y los Super Plus con dos decimales. */
   protected formatearValorTarjeta(val: number | undefined): string {
     if (val === undefined || val === null) return '--';
     const cv = this.codVarNormalizado();
@@ -225,10 +216,7 @@ export class DetalleVariableContentComponent {
     return this.formatearValorTarjeta(card.met);
   }
 
-  /**
-   * Celda de la tabla de indicadores — `ctFn2` del legado: sin `fmt` la fila
-   * se muestra como entero, no con decimales.
-   */
+  /** Celda de la tabla de indicadores — `ctFn2` del legado: sin `fmt` la fila se muestra como entero, no con decimales. */
   protected formatearCelda(val: number | undefined, fmt?: string): string {
     if (val === undefined || val === null) return '--';
     if (fmt === 'p' || fmt === 'percent') return `${this.numero(val * 100, 0, 1)}%`;

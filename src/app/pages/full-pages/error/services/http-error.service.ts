@@ -4,10 +4,7 @@ import { Router } from '@angular/router';
 import { HTTP_ERROR_FALLBACK, HTTP_ERROR_MESSAGES } from '../models/http-error.constants';
 import type { HttpErrorInfo, KnownHttpErrorCode } from '../models/http-error.model';
 
-/**
- * Punto único de traducción de errores HTTP → `HttpErrorInfo` mapeado.
- * Centralizado dentro del módulo de errores (`pages/full-pages/error`).
- */
+/** Punto único de traducción de errores HTTP → `HttpErrorInfo` mapeado. Centralizado dentro del módulo de errores (`pages/full-pages/error`). */
 @Injectable({ providedIn: 'root' })
 export class HttpErrorService {
   private readonly router = inject(Router);

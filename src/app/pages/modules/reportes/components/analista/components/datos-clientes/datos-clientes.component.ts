@@ -29,21 +29,7 @@ import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../..
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/**
- * "Datos Clientes" — migrado de la ruta `leg/com/rda/sec/cli-act` (legado
- * STG, `reportes/legacy/comercial/rda/sectorista/crs-cli-act`,
- * `cod_rep: 'DET_CLI'`/`'UPD_CLI_01'`).
- *
- * Mismo patrón que "Encuesta Clientes"/"Clientes Reprogramados", con el
- * formulario más complejo de los tres: 2 teléfonos (con sus propios
- * tipo/operador/plan/whatsapp) + 3 CIIU, sin cascada condicional pero con
- * auto-completado cruzado — al marcar "Verificador Teléfono"/"Verificador
- * CIIU", si el primer teléfono/CIIU editable está vacío, se copia ahí la
- * referencia ya registrada en BanTotal (`bantotal.cel`/`bantotal.ciu`,
- * `num_tele_0`/`ciiu_0_id` de la fila — de solo lectura, nunca editable).
- * El legado usa 2 `FormArray` (`cels`/`cius`), pero de tamaño fijo (ver
- * `datos-clientes.model.ts`) — acá son tuplas simples.
- */
+/** "Datos Clientes" — migrado de la ruta `leg/com/rda/sec/cli-act` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-cli-act`, `cod_rep: 'DET_CLI'`/`'UPD_CLI_01'`). */
 @Component({
   selector: 'app-datos-clientes',
   standalone: true,

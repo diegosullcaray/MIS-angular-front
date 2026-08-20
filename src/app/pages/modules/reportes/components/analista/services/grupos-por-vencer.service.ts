@@ -6,14 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteGruposPorVencer } from '../models/grupos-por-vencer.model';
 
-/**
- * Datos de "Grupos por Vencer" (legado `leg/com/rda/sec/pdm`,
- * `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/grupo_pdm/grupo_pdm_sec`).
- *
- * Mismo patrón que "Cartera"/"Cero Cuotas" (solo lectura, sin `reportType`
- * declarado en `crs-map.ts` ⇒ strand deprecado `reportData`, `cod_rep` =
- * `module` + sufijo), con un único bloque.
- */
+/** Datos de "Grupos por Vencer" (legado `leg/com/rda/sec/pdm`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/grupo_pdm/grupo_pdm_sec`). */
 @Injectable({ providedIn: 'root' })
 export class GruposPorVencerService {
   private readonly reportes = inject(ModReportesService);

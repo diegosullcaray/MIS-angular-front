@@ -16,16 +16,7 @@ import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type { KpiOperacionesDesembolsadas } from '../../../models/avance-comercial/avance-comercial.model';
 
-/**
- * "Monitor Productos Misionales" — migrado de la ruta `mon-desem-misi` (legado STG,
- * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese_misi'`).
- *
- * Variante de "Monitor Metas Desembolso" con filtro de producto misional
- * (`SPRODUCTOMISI`, variable `prod`) y solo 2 bloques en vez de los 4 de
- * `Monitor_Dese`: `_02` (tabla simple) y `_01`, que — igual que el `_01` de
- * `Monitor_Dese` — trae tanto la tarjeta KPI (`additional`) como su propia
- * tabla diaria completa (`headers`/`body`, `tablaDetalle`).
- */
+/** "Monitor Productos Misionales" — migrado de la ruta `mon-desem-misi` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese_misi'`). */
 @Component({
   selector: 'app-monitor-productos-misionales',
   standalone: true,

@@ -26,13 +26,7 @@ const PALETA_TRAMOS = ['#16A34A', '#00A2FF', '#B45309', '#DC2626', '#7C3AED', '#
 
 const OPCIONES_BASE = { responsive: true, maintainAspectRatio: false };
 
-/**
- * Principal (`/app/analista`) — dashboard del analista: KPIs, perfil, 3
- * gráficos y tabla de clientes con detalle. Migrado de `PrincipalComponent`
- * (legado STG): el legado redirigía solo a `./listas` apenas cargaba,
- * dejando el propio dashboard inalcanzable; acá se preserva el botón
- * "Listas" pero sin el redirect automático.
- */
+/** Principal (`/app/analista`) — dashboard del analista: KPIs, perfil, 3 gráficos y tabla de clientes con detalle. */
 @Component({
   selector: 'app-principal-analista',
   standalone: true,

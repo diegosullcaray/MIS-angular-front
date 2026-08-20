@@ -10,14 +10,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Clientes Producto" — migrado de la ruta `leg/com/rda/sec/cli-prod`
- * (legado STG, `ReportCrsV1Component`, config
- * `rda/sectorista/cliente_producto/cliente_producto_sec` en `crs-map.ts`).
- *
- * Mismo patrón que "Cartera": solo lectura, asesor → tablas, sin pestañas ni
- * formulario de edición. Acá son 3 bloques en vez de 2.
- */
+/** "Clientes Producto" — migrado de la ruta `leg/com/rda/sec/cli-prod` (legado STG, `ReportCrsV1Component`, config `rda/sectorista/cliente_producto/cliente_producto_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-clientes-producto',
   standalone: true,

@@ -60,9 +60,7 @@ export const appConfig: ApplicationConfig = {
     }),
     MessageService,
 
-    // Fuentes del buscador. Cada una aporta la data que tiene cargada y filtra
-    // por los permisos del usuario; agregar un módulo al buscador es sumar acá
-    // su `FuenteBusqueda` (ver `shared/buscador/fuente-busqueda.ts`).
+    // Fuentes del buscador: sumar un módulo es agregar acá su `FuenteBusqueda`.
     { provide: FUENTE_BUSQUEDA, useExisting: FuenteNavegacionService, multi: true },
     { provide: FUENTE_BUSQUEDA, useExisting: FuenteDashboardsService, multi: true },
 

@@ -37,15 +37,7 @@ export const COD_JERARQUIA_OFICINA = 2;
 /** Profundidad máxima de `OFI_1` — `getHierarchyConfig('OFI_1').max_lvl` del legado. */
 export const NIVEL_MAXIMO_JERARQUIA_OFICINA = 5;
 
-/**
- * `paramsHier` para la jerarquía de oficinas (`OFI_1`) — la usan los reportes
- * de captaciones por agencia (ej. "CMG Captaciones - Agencias").
- *
- * A diferencia de `UNI_1`, el legado no declara `params` para esta jerarquía;
- * `app-hier-selector` manda `fec` igualmente en `level_hier`, porque el
- * parámetro es común al resto de reportes y el backend lo ignora cuando no
- * aplica.
- */
+/** `paramsHier` para la jerarquía de oficinas (`OFI_1`) — la usan los reportes de captaciones por agencia (ej. "CMG Captaciones - Agencias"). */
 export const PARAMS_HIER_OFICINA: ParamsJerarquia = {
   code: COD_JERARQUIA_OFICINA,
   maxLvl: NIVEL_MAXIMO_JERARQUIA_OFICINA,

@@ -6,14 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteColocacionesDiaria } from '../models/colocaciones-diaria.model';
 
-/**
- * Datos de "Colocaciones diaria Operación, Monto y Recuperación" (legado
- * `leg/com/rda/sec/proy_M6`, `ReportCrsV1Component` + `crs-map.ts`:
- * `PROYEC_DIACOLREC_AS`).
- *
- * `reportType: ReportType.REGULAR` en `crs-map.ts` ⇒ strand moderno
- * `regularData` (`getRegularData`), `cod_rep` corto, 3 bloques.
- */
+/** Datos de "Colocaciones diaria Operación, Monto y Recuperación" (legado `leg/com/rda/sec/proy_M6`, `ReportCrsV1Component` + `crs-map.ts`: `PROYEC_DIACOLREC_AS`). */
 @Injectable({ providedIn: 'root' })
 export class ColocacionesDiariaService {
   private readonly reportes = inject(ModReportesService);

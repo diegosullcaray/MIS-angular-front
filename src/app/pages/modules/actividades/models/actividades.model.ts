@@ -1,7 +1,4 @@
-/**
- * Modelos e interfaces para el módulo de Actividades.
- * Migradas desde el legado STG (stg-app-mis-r22).
- */
+/** Modelos e interfaces para el módulo de Actividades. Migradas desde el legado STG (stg-app-mis-r22). */
 
 // ─── Actividades Home (tarjetas de navegación) ─────────────────────────────
 

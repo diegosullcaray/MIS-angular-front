@@ -6,46 +6,22 @@ import { RESTService } from '../rest/rest.service';
 import { RESTPacket } from '../rest/rest-packet.class';
 import type { IWinderConnectionConf, IWinderRequestConfig, IWinderResponse } from './winder.interface';
 
-/**
- * Orquestador del protocolo Winder/Ant: serializa los Strands en el header
- * `Winder-Params`, cifra `{key, port, id, responseType}` con AES-128-CBC en el
- * parámetro `w`, y delega el HTTP a `RESTService`.
- *
- * | Tipo        | URL                                          |
- * |-------------|----------------------------------------------|
- * | GET (JSON)  | `/v1/g?w=<cipher>`                           |
- * | POST (JSON) | `/v1/p` body: `{w: <cipher>}`                |
- * | POST (file) | `/v1/pf` multipart, campo `w` + `winder-file`|
- *
- * ```typescript
- * const strand = new Strand('list_sec', 'menu_response');
- * strand.pushToPayload('email', 'user@confianza.pe');
- * winderService.prepare(conn, { responseType: 'JSON', strands: strand }).get();
- * ```
- */
+/** Protocolo Winder/Ant: serializa los Strands en el header `Winder-Params`, cifra la config en el parámetro `w` y delega el HTTP a `RESTService`. */
 @Injectable({ providedIn: 'root' })
 export class WinderService {
   private readonly cypher = inject(CypherService);
   private readonly restService = inject(RESTService);
 
-  // Estado interno de la request en preparación
   private strands: Strand[] = [];
   private formData: FormData | undefined;
   private options: Record<string, unknown> = {};
   private config: Record<string, unknown> = {};
 
-  /**
-   * Prepara el servicio para ejecutar una request.
-   *
-   * @param conn  Configuración del módulo de conexión (port, secret, appId).
-   * @param conf  Configuración de la request (strands, responseType, options).
-   * @returns     La misma instancia para encadenar `.get()` o `.post()`.
-   */
+  /** Prepara la request y devuelve la instancia para encadenar `.get()` o `.post()`. */
   public prepare(conn: IWinderConnectionConf, conf: IWinderRequestConfig): WinderService {
     this.strands = [];
     this.formData = undefined;
 
-    // Registrar strands
     if (conf.strands instanceof Strand) {
       this.addStrand(conf.strands);
     } else {
@@ -56,13 +32,7 @@ export class WinderService {
     return this;
   }
 
-  // ─── HTTP Methods ────────────────────────────────────────────────────────
-
-  /**
-   * Ejecuta un GET al backend Ant.
-   * URL: `<rootUrl>/v1/g?w=<cipher>`
-   * Header: `Winder-Params: <strands_json>`
-   */
+  /** GET a `<rootUrl>/v1/g?w=<cipher>`. */
   public get(): Observable<IWinderResponse> {
     const rp = new RESTPacket();
     rp.baseRoute = 'v1/g';
@@ -71,11 +41,7 @@ export class WinderService {
     return this.restService.get<IWinderResponse>(rp);
   }
 
-  /**
-   * Ejecuta un POST al backend Ant.
-   * - Sin archivo: `<rootUrl>/v1/p` body JSON `{w: <cipher>}`
-   * - Con archivo:  `<rootUrl>/v1/pf` multipart, campo `w` + `winder-file`
-   */
+  /** POST a `/v1/p` (JSON) o a `/v1/pf` (multipart) si hay archivo. */
   public post<T = unknown>(): Observable<T> {
     const rp = new RESTPacket();
 
@@ -93,8 +59,6 @@ export class WinderService {
     return this.restService.post<T>(rp);
   }
 
-  // ─── Privados ─────────────────────────────────────────────────────────────
-
   private init(conn: IWinderConnectionConf, conf: IWinderRequestConfig): void {
     this.config = {
       key: conn.secret,
@@ -103,20 +67,15 @@ export class WinderService {
       responseType: conf.responseType,
     };
 
-    // Serializar Strands en JSON (excluyendo la propiedad formData)
-    const strandsJson = JSON.stringify(this.strands, (k, v) => {
-      if (k === 'formData') return undefined;
-      return v;
-    });
+    // `formData` viaja en el multipart, no en el header.
+    const strandsJson = JSON.stringify(this.strands, (k, v) => (k === 'formData' ? undefined : v));
 
     this.options = conf.options ? { ...conf.options } : {};
 
-    // Modo recurso (descarga de archivos) → responseType blob
     if (this.config['responseType'] === 'resource') {
       this.options['responseType'] = 'blob';
     }
 
-    // Inyectar Strands en el header HTTP
     const existingHeaders = this.options['headers'] as Record<string, string> | undefined;
     if (existingHeaders) {
       existingHeaders['Winder-Params'] = strandsJson;
@@ -132,11 +91,7 @@ export class WinderService {
     this.strands.push(strand);
   }
 
-  /**
-   * Cifra la config del módulo y la deja lista para ser enviada como
-   * parámetro URL `w`. Los `+` se reemplazan por `$` para evitar
-   * que el browser los interprete como espacios en la query string.
-   */
+  /** Cifra la config para el parámetro `w`; los `+` van como `$` para que el browser no los lea como espacios. */
   private winderConfig(): string {
     const encrypted = this.cypher.encrypt(JSON.stringify(this.config));
     return encrypted.replace(/\+/gi, '$');

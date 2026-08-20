@@ -24,13 +24,7 @@ export const ENCUESTA_CLIENTE_FORM_VACIO: EncuestaClienteForm = {
   girNeg: '',
 };
 
-/**
- * El legado guarda/lee `reaccion` con las `variable` originales del
- * `FormGroup` (`afec_neg`/`fun_neg`/`sit_neg`/`sec_eco`/`red_neg`/`gir_neg`,
- * snake_case) como un string JSON en la fila del cliente — no camelCase como
- * el modelo de acá. Estos mapeos evitan que se guarde/lea con las claves
- * equivocadas.
- */
+/** El legado guarda/lee `reaccion` con las `variable` originales del `FormGroup` (`afec_neg`/`fun_neg`/`sit_neg`/`sec_eco`/`red_neg`/`gir_neg`, snake_case) como un string JSON en la fila del cliente — no camelCase como el modelo de acá. */
 export function formularioAJson(form: EncuestaClienteForm): Record<string, string> {
   return {
     afec_neg: form.afecNeg,

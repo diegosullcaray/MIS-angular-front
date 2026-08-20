@@ -10,13 +10,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Clientes Potenciales" — migrado de la ruta `leg/com/rda/sec/cli_pot`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`,
- * config `rda/sectorista/cli_pot/cli_pot_sec` en `crs-map.ts`).
- *
- * Solo lectura: asesor → 1 tabla.
- */
+/** "Clientes Potenciales" — migrado de la ruta `leg/com/rda/sec/cli_pot` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/cli_pot/cli_pot_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-clientes-potenciales',
   standalone: true,

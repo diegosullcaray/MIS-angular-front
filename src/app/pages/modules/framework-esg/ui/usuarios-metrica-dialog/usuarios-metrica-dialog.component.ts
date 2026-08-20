@@ -13,18 +13,7 @@ import type { EsgMetricaListItem, EsgUsuariosPorMetrica } from '../../models/met
 const TODOS_ID_PREFIJO = '-';
 const TODOS_NOMBRE = 'Todos';
 
-/**
- * Diálogo de administración de usuarios con acceso por métrica ESG —
- * reemplaza a `UsuariosComponent`/`UsuariosDialogComponent` (legado STG,
- * ambos extendían `UsuariosBaseComponent`; acá se resuelve como un único
- * componente con `p-dialog`, sin la variante enrutada para mobile del
- * legado, igual que `EditarMetricaDialogComponent`).
- *
- * Simplificación consciente respecto al legado: "Agregar usuario" ya no
- * abre un segundo diálogo genérico (`InFormDialogService`) — es un input +
- * botón inline en este mismo diálogo, con el mismo efecto de negocio
- * (agregar un `cod_bt` a la lista de la métrica seleccionada).
- */
+/** Diálogo de administración de usuarios con acceso por métrica ESG — reemplaza a `UsuariosComponent`/`UsuariosDialogComponent` (legado STG, ambos extendían `UsuariosBaseComponent`; acá se resuelve como un único componente con `p-dialog`, sin la variante enrutada para mobile del legado, igual que `EditarMetricaDialogComponent`). */
 @Component({
   selector: 'app-usuarios-metrica-dialog',
   standalone: true,
@@ -51,12 +40,7 @@ export class UsuariosMetricaDialogComponent {
   protected readonly cargandoUsuarios = signal(false);
   protected readonly guardando = signal(false);
 
-  /**
-   * `id` de métrica → lista de `cod_bt` editada — solo entradas modificadas en
-   * esta sesión del diálogo. Es un `signal` (no un `Map` mutado in-place) para
-   * que `huboCambios` (un `computed`) se recalcule al cambiar: Angular no
-   * rastrea mutaciones de un `Map` — solo reescrituras de la referencia del signal.
-   */
+  /** `id` de métrica → lista de `cod_bt` editada — solo entradas modificadas en esta sesión del diálogo. */
   private readonly cambiosPorMetrica = signal<Record<string, string[]>>({});
   /** Snapshot original devuelto por el backend, para poder "Refrescar" (deshacer cambios de la métrica actual) — no se lee desde ningún `computed`, un `Map` alcanza. */
   private readonly originalPorMetrica = new Map<string, string[]>();

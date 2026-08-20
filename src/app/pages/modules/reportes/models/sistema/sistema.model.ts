@@ -12,13 +12,7 @@ export interface DatosHeatmap {
   puntos: PuntoHeatmap[];
 }
 
-/**
- * Datos del reporte de Usabilidad — migrados tal cual del legado
- * (`reportes/legacy/usabilidad/dashboard/dashboard.component.ts`), que no
- * consulta ningún backend: son datos de ejemplo fijos (semanas 27–37 de una
- * captura histórica). Se preservan como placeholder visual hasta que exista
- * un endpoint real de tracking de uso de reportes.
- */
+/** Datos del reporte de Usabilidad — migrados tal cual del legado (`reportes/legacy/usabilidad/dashboard/dashboard.component.ts`), que no consulta ningún backend: son datos de ejemplo fijos (semanas 27–37 de una captura histórica). */
 const SEMANAS: string[] = ['27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37'];
 
 const CATEGORIAS_RDA: string[] = [

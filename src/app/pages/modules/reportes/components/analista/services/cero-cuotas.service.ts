@@ -6,15 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteCeroCuotas } from '../models/cero-cuotas.model';
 
-/**
- * Datos de "Cero Cuotas" (legado `leg/com/rda/sec/zu-cuo`, título real
- * "Cero y Una Cuota", `ReportCrsV1Component` + `crs-map.ts`:
- * `rda/sectorista/cero_cuota/cero_cuota_sec`).
- *
- * Mismo patrón que "Cartera"/"Recuperación Preventiva" (solo lectura, sin
- * `reportType` declarado en `crs-map.ts` ⇒ strand deprecado `reportData`,
- * `cod_rep` = `module` + sufijo), con un único bloque.
- */
+/** Datos de "Cero Cuotas" (legado `leg/com/rda/sec/zu-cuo`, título real "Cero y Una Cuota", `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/cero_cuota/cero_cuota_sec`). */
 @Injectable({ providedIn: 'root' })
 export class CeroCuotasService {
   private readonly reportes = inject(ModReportesService);

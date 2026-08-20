@@ -32,17 +32,7 @@ function formatoYYYYMMDD(fecha: Date): string {
   return `${anio}${mes}${dia}`;
 }
 
-/**
- * Opciones del filtro real "Fecha Base" (legado `renderDates_3()`,
- * `filter-locale.module.ts`, variable `fec`) — los últimos 11 fin-de-mes
- * completos antes del mes actual, más "ayer" (el mes en curso, aunque no
- * haya terminado), de más reciente a más antiguo. El legado usa
- * `DateService.dataRange()` (moment.js); acá se reimplementa con `Date`
- * nativo, mismo resultado: `id` = fecha en `YYYYMMDD`, `desc` = "mes - año"
- * en español. Los 11 meses generados son siempre estrictamente anteriores al
- * mes de "ayer" (por construcción), así que nunca coinciden con él — no hace
- * falta deduplicar.
- */
+/** Opciones del filtro real "Fecha Base" (legado `renderDates_3()`, `filter-locale.module.ts`, variable `fec`) — los últimos 11 fin-de-mes completos antes del mes actual, más "ayer" (el mes en curso, aunque no haya terminado), de más reciente a más antiguo. */
 export function generarOpcionesFechaBase(hoy: Date = new Date()): OpcionFechaBase[] {
   const ayer = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() - 1);
   const mesBase = new Date(ayer.getFullYear(), ayer.getMonth(), 1);

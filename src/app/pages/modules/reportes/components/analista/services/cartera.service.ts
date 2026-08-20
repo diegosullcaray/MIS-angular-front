@@ -6,18 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteCartera } from '../models/cartera.model';
 
-/**
- * Datos de "Cartera" (legado `leg/com/rda/sec/cartera`,
- * `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/cartera/cartera_sec`).
- *
- * A diferencia de "Encuesta Clientes"/"Clientes Reprogramados"/"Datos
- * Clientes", este reporte es de solo lectura (sin formulario ni guardado) y
- * el `cod_rep` real es el propio `module` del legado + sufijo (`_01`/`_02`),
- * no un código corto — así arma `ReportT.getRNameCompleted()`. Además esta
- * entrada de `crs-map.ts` no declara `reportType`, así que el legado la
- * manda por el strand "deprecado" (`reportData`), no `regularData` — ver
- * `ModReportesService.getDeprecatedData()`.
- */
+/** Datos de "Cartera" (legado `leg/com/rda/sec/cartera`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/cartera/cartera_sec`). */
 @Injectable({ providedIn: 'root' })
 export class CarteraService {
   private readonly reportes = inject(ModReportesService);

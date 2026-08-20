@@ -1,13 +1,6 @@
 import { environment } from '../../../../environments/environment';
 
-/**
- * RESTPacket — Construye la URL y opciones para una petición al backend Ant.
- *
- * La URL base se toma del environment (`requestConfigRootURL`).
- * Los parámetros de ruta se serializan como query string (`?k=v&k2=v2`).
- *
- * Migrado del STG (stg-app-mis-r22) con tipos TypeScript estrictos.
- */
+/** RESTPacket — Construye la URL y opciones para una petición al backend Ant. */
 export class RESTPacket {
   private readonly rootUrl: string = environment.requestConfigRootURL;
 
@@ -51,10 +44,7 @@ export class RESTPacket {
     this.optionsParams = opts;
   }
 
-  /**
-   * Construye la URL completa: `<rootUrl>/<baseRoute>?k=v&k2=v2`.
-   * Ejemplo: `https://stg.confianza.pe/cores2/ant/v1/g?w=<cipher>`
-   */
+  /** Construye la URL completa: `<rootUrl>/<baseRoute>?k=v&k2=v2`. Ejemplo: `https://stg.confianza.pe/cores2/ant/v1/g?w=<cipher>` */
   public computeURL(): string {
     let pms = '';
     this.routeParams.forEach((element) => {

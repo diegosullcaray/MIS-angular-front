@@ -3,14 +3,7 @@ import { DialogModule } from 'primeng/dialog';
 import { SkeletonModule } from 'primeng/skeleton';
 import type { FilaLabelValor } from '../../models/comun.model';
 
-/**
- * Diálogo genérico de detalle "etiqueta/valor" — reutilizado por el detalle
- * de cliente de Principal (`dashboard.cliente`) y el detalle de prospecto de
- * Becas (fila ya en memoria, sin pedir nada al backend). Reconstrucción de
- * `DetalleDialogComponent`/`app-cliente-detalle-analista` y del detalle de
- * `listas/becas/detalle` del legado — ambos eran, en el fondo, la misma
- * tabla de 2 columnas.
- */
+/** Diálogo genérico de detalle "etiqueta/valor" — reutilizado por el detalle de cliente de Principal (`dashboard.cliente`) y el detalle de prospecto de Becas (fila ya en memoria, sin pedir nada al backend). */
 @Component({
   selector: 'app-detalle-tabla-dialog',
   standalone: true,

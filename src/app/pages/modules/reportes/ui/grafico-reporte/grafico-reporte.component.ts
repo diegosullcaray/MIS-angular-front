@@ -8,17 +8,7 @@ Chart.register(...registerables);
 /** Mismos colores que el legado `theme_gp1()` (`theme.module.ts`): primera serie, segunda serie, y refuerzos si hay más. */
 const PALETA = ['#0191CE', '#164D90', '#2E9E5B', '#D97706', '#DC2626'];
 
-/**
- * Gráfico de línea de un bloque del motor de reportes "mixtos"
- * (`graphicData`) — reemplaza `app-graphic-basic`/Highcharts del legado.
- * Mismo patrón que `app-heatmap` (Chart.js + `effect()` reactivo al tema,
- * única librería de gráficos disponible en el proyecto — Highcharts no está
- * instalado y requiere licencia comercial).
- *
- * No migra el carousel de tarjetas KPI del legado (`GraphicService.carousel`,
- * último valor + variación "Real" vs "Meta") — decorativo, el propio gráfico
- * ya muestra esa comparación con las dos series visibles.
- */
+/** Gráfico de línea de un bloque del motor de reportes "mixtos" (`graphicData`) — reemplaza `app-graphic-basic`/Highcharts del legado. */
 @Component({
   selector: 'app-grafico-reporte',
   standalone: true,

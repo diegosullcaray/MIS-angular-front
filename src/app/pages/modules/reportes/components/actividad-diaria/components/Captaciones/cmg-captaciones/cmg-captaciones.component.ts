@@ -11,17 +11,7 @@ import { WindowPanelComponent } from '../../../../../../../../shared/ui/window-p
 import type { HierarquiaNodo } from '../../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
 
-/**
- * "CMG Captaciones - Agencias" — migrado de la ruta `cmg-capta01` (legado STG,
- * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'GCMGCAP'`).
- *
- * Igual que `MonitorMetasDesembolsoComponent`, la carga la dispara únicamente
- * `app-hier-selector` (`nodoSeleccionado`): el legado `ReportCraV1p1Component`
- * tampoco hace su propio `getBaseHierarchy()`, solo reacciona al selector.
- *
- * Usa `OFI_1` (jerarquía de oficinas) y no `UNI_1` — es lo que declara
- * `cra-map.ts` para este reporte.
- */
+/** "CMG Captaciones - Agencias" — migrado de la ruta `cmg-capta01` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'GCMGCAP'`). */
 @Component({
   selector: 'app-cmg-captaciones',
   standalone: true,

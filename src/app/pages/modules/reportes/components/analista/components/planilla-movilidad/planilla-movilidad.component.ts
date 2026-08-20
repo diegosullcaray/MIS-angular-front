@@ -22,21 +22,7 @@ const CRITERIOS_MOVILIDAD: string[] = [
   '(6) Desplazamientos diarios no totalizan como mínimo 400mts',
 ];
 
-/**
- * "Planilla de Movilidad" — migrado de la ruta `leg/com/rda/sec/plan-mov-sec`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v5`,
- * config `PLANMOV` en `crs-map.ts`).
- *
- * Solo lectura: asesor → 4 tablas, el período (`fec`) es fijo ("ayer",
- * `fechaUltimoDia()`), sin selector — igual que el legado (`fec_day_ult`
- * hardcodeado en `crs-map.ts`, no un filtro elegible).
- *
- * Los 4 bloques forman en el legado una única grilla de pestañas — "Cascada",
- * "Válidos" y "Depurados" (confirmado por captura del legado). La pestaña
- * "Cascada" apila `_01` ("Planilla de Gastos por Movilidad - Asesores") y
- * `_02` ("Cascada de filtros aplicados"); "Válidos" (`_03`) y "Depurados"
- * (`_04`) van solas en su propia pestaña.
- */
+/** "Planilla de Movilidad" — migrado de la ruta `leg/com/rda/sec/plan-mov-sec` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v5`, config `PLANMOV` en `crs-map.ts`). */
 @Component({
   selector: 'app-planilla-movilidad',
   standalone: true,

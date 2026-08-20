@@ -15,16 +15,7 @@ import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/w
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
 
-/**
- * "Poblaciones Misionales" — migrado de la ruta
- * `repositorio/actividad-diaria/poblacion-misional/poblacion-misional`
- * (legado STG, `reportes/repositorio/poblacion-misional`, `cod_rep: pob_misi_01..04`).
- *
- * Mismo motor y patrón que `ProductosMisionalesComponent` (`table.regular` +
- * `p-tabs`/`app-tabla-dinamica`), sin tabla de resumen suelta. Mapeo
- * tabla↔pestaña confirmado leyendo el `.ts`/`.html` legado completos:
- * Territorio=`_01`, Corredores=`_02`, Unidad=`_03`, Asesores=`_04`.
- */
+/** "Poblaciones Misionales" — migrado de la ruta `repositorio/actividad-diaria/poblacion-misional/poblacion-misional` (legado STG, `reportes/repositorio/poblacion-misional`, `cod_rep: pob_misi_01..04`). */
 @Component({
   selector: 'app-poblacion-misional',
   standalone: true,

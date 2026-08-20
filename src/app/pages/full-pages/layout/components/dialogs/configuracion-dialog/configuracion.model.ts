@@ -1,11 +1,4 @@
-/**
- * Estructura del menú de configuración — equivalente tipado del `menu-config.json`
- * de la plantilla (`docs/08-otros/dialog-configuracion`), que ahí se leía por
- * HTTP a través de un `MenuConfigService`.
- *
- * Acá vive como constante: el árbol es fijo, no depende del backend y así el
- * diálogo no necesita esperar una request para pintar la primera sección.
- */
+/** Estructura del menú de configuración — equivalente tipado del `menu-config.json` de la plantilla (`docs/08-otros/dialog-configuracion`), que ahí se leía por HTTP a través de un `MenuConfigService`. */
 
 /** Hoja del menú: una pantalla concreta de configuración. */
 export interface ItemConfiguracion {
@@ -14,10 +7,7 @@ export interface ItemConfiguracion {
   /** Clase de PrimeIcons (`pi pi-...`). */
   readonly icono: string;
   readonly descripcion: string;
-  /**
-   * Ajustes de muestra que se dibujan mientras la pantalla real no existe.
-   * Cuando cada item tenga su propio componente, esta lista desaparece.
-   */
+  /** Ajustes de muestra que se dibujan mientras la pantalla real no existe. Cuando cada item tenga su propio componente, esta lista desaparece. */
   readonly ejemplos: readonly string[];
 }
 

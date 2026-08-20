@@ -1,9 +1,6 @@
 import { Component, input } from '@angular/core';
 
-/**
- * Skeleton pulsante para tablas y listas de datos.
- * Simula filas de una tabla mientras cargan los datos.
- */
+/** Skeleton pulsante para tablas y listas de datos. Simula filas de una tabla mientras cargan los datos. */
 @Component({
   selector: 'app-list-skeleton',
   standalone: true,

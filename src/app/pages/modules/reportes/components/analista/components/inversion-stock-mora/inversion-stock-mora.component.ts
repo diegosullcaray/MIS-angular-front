@@ -10,15 +10,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { BloqueGrafico } from '../../../../models/grafico-reporte.model';
 
-/**
- * "Inversión y Stock de Mora" — migrado de la ruta `leg/com/rda/sec/inv-stk`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v2`,
- * config `rda/sectorista/brecha/brecha_inversion_sec` en `crs-map.ts`).
- *
- * A diferencia del resto de `reportes` (tablas), este es el primer reporte
- * migrado con gráficos (`app-grafico-reporte`, Chart.js) — el legado usaba
- * Highcharts (`app-graphic-basic`), no disponible en el proyecto nuevo.
- */
+/** "Inversión y Stock de Mora" — migrado de la ruta `leg/com/rda/sec/inv-stk` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v2`, config `rda/sectorista/brecha/brecha_inversion_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-inversion-stock-mora',
   standalone: true,

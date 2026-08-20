@@ -4,11 +4,7 @@ import { AntService } from '../ant/ant-service.class';
 import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * Módulo "Dashboards Integrados" (`reportes2`) del backend Ant (puerto 6302,
- * appId `app`). No confundir con `ModReportesService` (puerto 5304, appId
- * `reporting`): pese al nombre parecido son dos módulos de negocio distintos.
- */
+/** Módulo "Dashboards Integrados" (`reportes2`) del backend Ant (puerto 6302, appId `app`). */
 @Injectable({ providedIn: 'root' })
 export class ModDashboardService extends AntService {
   constructor() {

@@ -16,14 +16,7 @@ const COLUMNAS: DataTableColumn[] = [
   { field: 'accion', header: '', align: 'center', width: '8rem', sortable: false },
 ];
 
-/**
- * Diálogo de "Consulta Base Negativa" — lista todos los clientes de la base
- * de riesgos con `app-data-table` (búsqueda y filtros por columna en el
- * cliente), igual que `destino-credito.component`, en vez de la búsqueda en
- * vivo contra el servidor que tenía antes. `BaseNegativaService.buscar('')`
- * ya devuelve el listado completo (el legado usa el mismo endpoint para
- * búsqueda y detalle).
- */
+/** Diálogo de "Consulta Base Negativa" — lista todos los clientes de la base de riesgos con `app-data-table` (búsqueda y filtros por columna en el cliente), igual que `destino-credito.component`, en vez de la búsqueda en vivo contra el servidor que tenía antes. */
 @Component({
   selector: 'app-consulta-riesgo-dialog',
   standalone: true,

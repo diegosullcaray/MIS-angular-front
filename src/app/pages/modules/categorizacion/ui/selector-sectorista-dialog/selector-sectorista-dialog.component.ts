@@ -8,13 +8,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import type { SectoristaItem } from '../../models/colaborador.model';
 
-/**
- * Diálogo de selección de colaborador ("sectorista") — reconstrucción del
- * `SecPickerDialog2` legado (servicio compartido de otro paquete de STG, no
- * incluido en el volcado de referencia de `docs/07-modulos/analista`), con
- * el mismo patrón de tabla + buscador que `BuscadorColaboradorDialogComponent`
- * de Kaypacha (`pages/modules/kaypacha`).
- */
+/** Diálogo de selección de colaborador ("sectorista") — reconstrucción del `SecPickerDialog2` legado (servicio compartido de otro paquete de STG, no incluido en el volcado de referencia de `docs/07-modulos/analista`), con el mismo patrón de tabla + buscador que `BuscadorColaboradorDialogComponent` de Kaypacha (`pages/modules/kaypacha`). */
 @Component({
   selector: 'app-selector-sectorista-dialog',
   standalone: true,

@@ -15,17 +15,7 @@ import {
 } from '../../../models/prospecto-corresponsal.model';
 import type { OpcionJerarquia, ProspectoCorresponsalForm } from '../../../models/prospecto-corresponsal.model';
 
-/**
- * Diálogo "Registro Prospecto" — botón "Nuevo" de `crs-prospe.component.ts`
- * (legado `AddProspecomponent`/`add-prospe.component.html`).
- *
- * Solo los campos realmente visibles en el legado (ver
- * `ProspectoCorresponsalForm`); la única cascada real es `HLICFUNCI`
- * (visible/requerido solo si `HCTALICEF === 'SI'`, legado
- * `ctaLicenciaF.valueChanges`). Mismo patrón híbrido que "Encuesta Clientes":
- * `p-select`/`input pInputText` con `[ngModel]`/`(ngModelChange)` sobre
- * `model`, Signal Forms (`prospectoForm`) solo para validez/visibilidad.
- */
+/** Diálogo "Registro Prospecto" — botón "Nuevo" de `crs-prospe.component.ts` (legado `AddProspecomponent`/`add-prospe.component.html`). */
 @Component({
   selector: 'app-agregar-prospecto-dialog',
   standalone: true,

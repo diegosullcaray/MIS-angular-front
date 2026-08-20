@@ -10,15 +10,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Reporte de Autonomía de Tasas" — migrado de la ruta `leg/com/rda/sec/aut-tasa`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`,
- * config `rda/sectorista/Reporte_Autonomia_Tasas/reporte_autonomia_tasa_sec`
- * en `crs-map.ts`).
- *
- * Solo lectura: asesor → 4 tablas, cada una con su propio título y nota
- * (`content.higher`/`content.lower` del legado).
- */
+/** "Reporte de Autonomía de Tasas" — migrado de la ruta `leg/com/rda/sec/aut-tasa` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/Reporte_Autonomia_Tasas/reporte_autonomia_tasa_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-autonomia-tasas',
   standalone: true,

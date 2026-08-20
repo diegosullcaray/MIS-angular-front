@@ -3,19 +3,7 @@ import { TableModule } from 'primeng/table';
 import { aplanarEncabezados } from '../../utils/tabla-dinamica.util';
 import type { ColumnaDinamica } from '../../models/tabla-dinamica.model';
 
-/**
- * Tabla del motor `table.regular` (columnas dinámicas) — reemplaza a
- * `stg-table2` del legado (`shared/components/stg-table2`). A diferencia de
- * `app-tabla-reporte` (motor "mixto", encabezados ya aplanados por el
- * backend), acá el backend puede enviar un árbol de columnas anidadas
- * (`subs`) que se aplana en el cliente con `aplanarEncabezados()`.
- *
- * No migra el buscador/paginador custom de la pestaña "Asesores" del legado
- * (`eventSearch`/`StgPaginatorComponent`): en el HTML legado ese código nunca
- * estaba conectado a ningún control visible, así que en producción esas
- * tablas siempre mostraban la lista completa sin buscar ni paginar — igual
- * que las demás pestañas.
- */
+/** Tabla del motor `table.regular` (columnas dinámicas) — reemplaza a `stg-table2` del legado (`shared/components/stg-table2`). */
 @Component({
   selector: 'app-tabla-dinamica',
   standalone: true,

@@ -7,11 +7,7 @@ export interface SesionPersistida {
     expiraEn: number;
     /** Usuarios alternos disponibles para `usuario` (backend, `alternates`). */
     alternates?: AlternateUsuario[];
-    /**
-     * Identidad original mientras `usuario` es un usuario alterno (ver
-     * `cambiarAUsuarioAlterno`). El token de sesión NO cambia al alternar —
-     * solo lo que se muestra/opera, igual que STG (`UserService.original()`).
-     */
+    /** Identidad original mientras `usuario` es un usuario alterno (ver `cambiarAUsuarioAlterno`). */
     usuarioOriginal?: UsuarioActivo;
 }
 

@@ -11,17 +11,7 @@ import type { ReporteDashboard, ReporteListItem, UsuariosPorReporte } from '../.
 const TODOS_ID = '_ALL_';
 const TODOS_NOMBRE = 'Todos';
 
-/**
- * Diálogo de administración de usuarios con acceso por reporte —
- * reemplaza a `UsuariosComponent`/`UsuariosDialogComponent` (legado STG,
- * `pages/modules/reportes-e/usuarios`, ambos extendían
- * `UsuariosBaseComponent`). Más simple que el equivalente de ESG
- * (`UsuariosMetricaDialogComponent`): acá los reportes son una sola lista
- * plana (sin selector de categoría intermedio), igual que el legado.
- *
- * Misma simplificación consciente que en ESG: "Agregar usuario" es un
- * input + botón inline en vez de un segundo diálogo genérico.
- */
+/** Diálogo de administración de usuarios con acceso por reporte — reemplaza a `UsuariosComponent`/`UsuariosDialogComponent` (legado STG, `pages/modules/reportes-e/usuarios`, ambos extendían `UsuariosBaseComponent`). */
 @Component({
   selector: 'app-usuarios-reporte-dialog',
   standalone: true,

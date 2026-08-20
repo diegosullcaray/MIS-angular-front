@@ -12,18 +12,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Prospecto Corresponsal" — migrado de la ruta `leg/com/rda/sec/sec-prosp`
- * (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-prospe`, título
- * real "Prospectos Corresponsales", `cod_rep: 'LIS_PROSPE'`).
- *
- * Asesor → lista de prospectos + botón "Nuevo" que abre un diálogo con el
- * formulario de registro (`AgregarProspectoDialogComponent`). La pestaña
- * "Actualizar Prospectos" del legado (click en una fila) está comentada en
- * su `.html` — código muerto, no se migra; tampoco las 4 selects
- * "Tipo Teléfono/Operador/Plan/Whatsapp" del `.ts` (declaradas pero nunca
- * usadas en el template, mismo patrón ya visto en "Encuesta Clientes").
- */
+/** "Prospecto Corresponsal" — migrado de la ruta `leg/com/rda/sec/sec-prosp` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-prospe`, título real "Prospectos Corresponsales", `cod_rep: 'LIS_PROSPE'`). */
 @Component({
   selector: 'app-prospecto-corresponsal',
   standalone: true,

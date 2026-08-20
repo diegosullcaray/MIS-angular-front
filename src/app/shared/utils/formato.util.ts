@@ -1,10 +1,4 @@
-/**
- * Formato de cifras para las tablas y tarjetas de los módulos.
- *
- * Ojo al adoptarlo en código existente: `toFixed(n)` siempre muestra `n`
- * decimales y no agrupa miles, mientras que estas funciones agrupan y recortan
- * los decimales sobrantes. No son intercambiables sin revisar el resultado.
- */
+/** Formato de cifras para las tablas y tarjetas de los módulos. */
 const LOCALE = 'es-PE';
 
 /** Número con separador de miles; `decimales` es el máximo, no el fijo. */

@@ -1,12 +1,6 @@
 import type { FilaDeposito } from '../models/deposito.model';
 
-/**
- * Fórmula de cascada de Depósitos BP/Red (`calculateRow` del legado) — idéntica
- * para los 3 productos (Ahorros `a*`, CTS `b*`, Plazo Fijo `c*`):
- *
- * `Saldo Final = Saldo Inicial + Variación`, y el saldo de cierre pasa a ser
- * el saldo inicial del periodo siguiente (arrastre).
- */
+/** Fórmula de cascada de Depósitos BP/Red (`calculateRow` del legado) — idéntica para los 3 productos (Ahorros `a*`, CTS `b*`, Plazo Fijo `c*`): `Saldo Final = Saldo Inicial + Variación`, y el saldo de cierre pasa a ser el saldo inicial del periodo siguiente (arrastre). */
 export function calcularFilaDeposito(filas: FilaDeposito[], idx: number): void {
   for (const prefijo of ['a', 'b', 'c'] as const) {
     const claveInicial = `${prefijo}1`;

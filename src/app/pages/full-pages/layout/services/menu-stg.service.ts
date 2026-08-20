@@ -98,12 +98,7 @@ export class MenuStgService {
       });
   }
 
-  /**
-   * Busca en el árbol una ruta activa para resolver el breadcrumb dinámicamente.
-   * Retorna el ID del sistema y la cadena de nodos hasta la hoja (incluida),
-   * para poder mostrar sus etiquetas y también reabrir el explorador en
-   * cualquier carpeta intermedia (`NavegacionSistemasService.abrirEnCarpeta`).
-   */
+  /** Busca en el árbol una ruta activa para resolver el breadcrumb dinámicamente. */
   buscarPorRuta(ruta: string): { sistemaId: string; nodos: SidebarNavRuta[] } | null {
     for (const [sistemaId, hijos] of Object.entries(this.hijosPorSistema())) {
       const nodos = this.buscarCadena(hijos, ruta);

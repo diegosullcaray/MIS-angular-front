@@ -1,10 +1,4 @@
-/**
- * Fecha local en formato `YYYY-MM-DD`, a partir de los componentes de
- * calendario locales (`getFullYear`/`getMonth`/`getDate`) — nunca
- * `toISOString()`, que convierte a UTC: en Perú (UTC-5), desde ~19:00 hora
- * local en adelante, sumar esas 5 horas para llegar a UTC "cruza" al día
- * siguiente y termina devolviendo la fecha de mañana en vez de la de hoy.
- */
+/** Fecha local en formato `YYYY-MM-DD`, a partir de los componentes de calendario locales (`getFullYear`/`getMonth`/`getDate`) — nunca `toISOString()`, que convierte a UTC: en Perú (UTC-5), desde ~19:00 hora local en adelante, sumar esas 5 horas para llegar a UTC "cruza" al día siguiente y termina devolviendo la fecha de mañana en vez de la de hoy. */
 function fechaLocal(fecha: Date): string {
   const parte = (n: number) => String(n).padStart(2, '0');
   return `${fecha.getFullYear()}-${parte(fecha.getMonth() + 1)}-${parte(fecha.getDate())}`;

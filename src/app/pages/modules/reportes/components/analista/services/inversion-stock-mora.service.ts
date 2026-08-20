@@ -6,15 +6,7 @@ import { mapearBloquesGrafico } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteInversionStockMora } from '../models/inversion-stock-mora.model';
 
-/**
- * Datos de "Inversión y Stock de Mora" (legado `leg/com/rda/sec/inv-stk`,
- * `ReportCrsV2Component` + `crs-map.ts`: `rda/sectorista/brecha/brecha_inversion_sec`,
- * bloque `graphic` en vez de `table`).
- *
- * Strand `graphicData` siempre (`ReportCrsV2Component.renderGrafico()` llama
- * `getGraphicData()` directo, sin pasar por `getReportType()`/deprecado como
- * los reportes de tabla) — ver `ModReportesService.getGraphicData()`.
- */
+/** Datos de "Inversión y Stock de Mora" (legado `leg/com/rda/sec/inv-stk`, `ReportCrsV2Component` + `crs-map.ts`: `rda/sectorista/brecha/brecha_inversion_sec`, bloque `graphic` en vez de `table`). */
 @Injectable({ providedIn: 'root' })
 export class InversionStockMoraService {
   private readonly reportes = inject(ModReportesService);

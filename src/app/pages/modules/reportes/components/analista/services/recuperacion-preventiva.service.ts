@@ -6,15 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteRecuperacionPreventiva } from '../models/recuperacion-preventiva.model';
 
-/**
- * Datos de "Recuperación Preventiva" (legado `leg/com/rda/sec/rec-prev`,
- * `ReportCrsV1Component` + `crs-map.ts`:
- * `rda/sectorista/recuperacion_preventiva/recuperacion_preventiva`).
- *
- * Mismo patrón que "Cartera"/"Seguros" (solo lectura, sin `reportType`
- * declarado en `crs-map.ts` ⇒ strand deprecado `reportData`, `cod_rep` =
- * `module` + sufijo), con un único bloque.
- */
+/** Datos de "Recuperación Preventiva" (legado `leg/com/rda/sec/rec-prev`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/recuperacion_preventiva/recuperacion_preventiva`). */
 @Injectable({ providedIn: 'root' })
 export class RecuperacionPreventivaService {
   private readonly reportes = inject(ModReportesService);

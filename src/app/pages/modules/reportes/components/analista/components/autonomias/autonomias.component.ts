@@ -10,13 +10,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Autonomías" — migrado de la ruta `leg/com/rda/sec/aut` (legado STG,
- * `reportes/legacy/support/components/template/crs/report-crs-v1`, config
- * `LST_AUT` en `crs-map.ts`).
- *
- * Solo lectura: asesor → 1 tabla.
- */
+/** "Autonomías" — migrado de la ruta `leg/com/rda/sec/aut` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `LST_AUT` en `crs-map.ts`). */
 @Component({
   selector: 'app-autonomias',
   standalone: true,

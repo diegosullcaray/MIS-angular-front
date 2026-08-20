@@ -16,22 +16,7 @@ import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/w
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
-/**
- * "Monitor Reprogramados" — migrado de la ruta `mon-rep` (legado STG,
- * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'RS_MON_REP'`).
- *
- * La carga la dispara únicamente `app-hier-selector` (evento
- * `nodoSeleccionado`) — igual que `ReportCraV1p1Component` en el legado, que
- * no hace su propio `getBaseHierarchy()`: solo reacciona a `(onSelectHier)`
- * de `hier-rem-selector`. Tener acá un fetch inicial propio duplicaría la
- * llamada a `obtenerJerarquiaBase`.
- *
- * El selector emite la raíz al terminar de cargarla, así que al entrar ya se
- * ve el reporte del total y desde ahí se baja de a un nivel — como el legado.
- * Lo que NO hace es cascadear hasta el fondo: los niveles siguientes se
- * ofrecen sin preselección, para no terminar mostrando el reporte de una
- * agencia cualquiera.
- */
+/** "Monitor Reprogramados" — migrado de la ruta `mon-rep` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'RS_MON_REP'`). */
 @Component({
   selector: 'app-monitor-reprogramados',
   standalone: true,

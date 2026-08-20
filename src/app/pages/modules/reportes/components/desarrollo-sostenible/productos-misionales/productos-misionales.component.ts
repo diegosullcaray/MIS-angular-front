@@ -15,19 +15,7 @@ import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/w
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
 
-/**
- * "Productos Misionales" — migrado de la ruta
- * `repositorio/actividad-diaria/prod-misionales/productos-misionales`
- * (legado STG, `reportes/repositorio/panel-misionales`, `cod_rep: prod_misi_01..05`).
- *
- * Motor `table.regular` (columnas dinámicas) en vez del motor "mixto" que
- * usan los demás reportes del módulo — reemplaza `mat-tab-group`/`stg-table2`
- * por `p-tabs`/`app-tabla-dinamica`, igual patrón que ya usa
- * `framework-esg/principal.component`. El mapeo tabla↔pestaña se confirmó
- * leyendo el `.ts`/`.html` legado completos (el orden de las llamadas NO
- * coincide con el de las pestañas): resumen=`_05`, Territorio=`_04`,
- * Corredores=`_01`, Unidad=`_02`, Asesores=`_03`.
- */
+/** "Productos Misionales" — migrado de la ruta `repositorio/actividad-diaria/prod-misionales/productos-misionales` (legado STG, `reportes/repositorio/panel-misionales`, `cod_rep: prod_misi_01..05`). */
 @Component({
   selector: 'app-productos-misionales',
   standalone: true,

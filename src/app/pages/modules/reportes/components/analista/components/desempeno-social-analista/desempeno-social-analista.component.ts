@@ -10,15 +10,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Desempeño Social" (analista/sectorista) — migrado de la ruta
- * `leg/com/rda/sec/desempeno-social-as` (legado STG,
- * `reportes/legacy/support/components/template/crs/report-crs-v1`, config
- * `DESE_SOC_AS` en `crs-map.ts`).
- *
- * Solo lectura: asesor → 1 tabla. No confundir con "Desempeño Social" de
- * administración (`desarrollo-sostenible`, otro `cod_rep`).
- */
+/** "Desempeño Social" (analista/sectorista) — migrado de la ruta `leg/com/rda/sec/desempeno-social-as` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `DESE_SOC_AS` en `crs-map.ts`). */
 @Component({
   selector: 'app-desempeno-social-analista',
   standalone: true,

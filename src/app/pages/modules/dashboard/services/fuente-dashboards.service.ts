@@ -7,19 +7,7 @@ import type { FuenteBusqueda, RegistroBuscable } from '../../../../shared/buscad
 /** Dónde vive la pantalla que renderiza un reporte de Power BI (ver `dashboard.routes.ts`). */
 const RUTA_POWER_BI = '/app/dashboards/power-bi';
 
-/**
- * Aporta al buscador los reportes de "Dashboards Integrados".
- *
- * Son data del módulo, no del árbol de menús: la navegación solo tiene el
- * sistema entero como una hoja (`/app/dashboards`), así que sin esta fuente un
- * dashboard puntual sería inencontrable salvo entrando al módulo y mirando la
- * lista a ojo.
- *
- * Los permisos ya vienen resueltos: `DashboardService.cargarReportes()` le pide
- * la lista al backend con el `codBt` del usuario y su flag de admin, y solo
- * guarda lo que ese usuario puede abrir. Mientras el módulo no se haya visitado
- * la lista está vacía y esta fuente simplemente no aporta nada.
- */
+/** Aporta al buscador los reportes de "Dashboards Integrados". */
 @Injectable({ providedIn: 'root' })
 export class FuenteDashboardsService implements FuenteBusqueda {
   readonly id = 'dashboards';

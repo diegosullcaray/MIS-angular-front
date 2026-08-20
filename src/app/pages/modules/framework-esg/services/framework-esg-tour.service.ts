@@ -6,9 +6,7 @@ import type { DriveStep } from 'driver.js';
 export class FrameworkEsgTourService {
   private readonly driverTour = inject(DriverTourService);
 
-  /**
-   * Inicia el tutorial guiado interactivo para el módulo Cuadro de Mando ESG.
-   */
+  /** Inicia el tutorial guiado interactivo para el módulo Cuadro de Mando ESG. */
   iniciarTourGuiado(): void {
     const pasos: DriveStep[] = [
       {

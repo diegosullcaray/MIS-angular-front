@@ -4,11 +4,7 @@ import { MenuStgService } from './menu-stg.service';
 import { KaypachaService } from '../../../modules/ranking-k/services/kaypacha.service';
 import type { RegistroNavegacion, SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../interfaces/sidebar.model';
 
-/**
- * Árbol de navegación de cada sistema y ubicación actual dentro de él. Lo
- * comparten el rail de sistemas (Col 1), el explorador del área de contenido y
- * el breadcrumb del header, que es donde se refleja esa ubicación.
- */
+/** Árbol de navegación de cada sistema y ubicación actual; lo comparten el rail de sistemas, el explorador y el breadcrumb del header. */
 @Injectable({ providedIn: 'root' })
 export class NavegacionSistemasService {
   private readonly shell = inject(ShellStateService);
@@ -26,16 +22,8 @@ export class NavegacionSistemasService {
 
     const sistemasStg = this.menuStg.sistemas().map((sistema) => {
       if (sistema.ruta === this.kaypacha.ruta || this.esAnalista(sistema)) return { ...sistema, tienePanel: true };
-      // "Dashboards Integrados" (`reportes-e` del legado) todavía manda un hijo
-      // "usuarios" en el árbol del backend (`menu-stg.service.ts`), pero esa
-      // pantalla ya no es una ruta — se migró a un diálogo responsive
-      // (`UsuariosReporteDialogComponent`, ver `dashboard.routes.ts`). Sin este
-      // override, `tienePanel: !!hijos` abre un explorador con un único ítem
-      // muerto para un sistema que en realidad no tiene subnavegación.
-      // `ruta` también hay que fijarla acá: `menu-stg.service.ts` solo la
-      // completa cuando `hijos` es falsy, así que mientras el backend siga
-      // mandando ese nodo llega undefined — sin esto el clic no navegaría
-      // a ningún lado (`DASHBOARD_ROUTES` monta en `/app/dashboards`).
+      // El backend sigue mandando un hijo "usuarios" que ya es un diálogo, no una ruta:
+      // sin este override el sistema abriría un explorador con un único ítem muerto y sin `ruta`.
       if (this.esDashboardsIntegrados(sistema)) return { ...sistema, tienePanel: false, ruta: '/app/dashboards' };
       return sistema;
     });
@@ -46,10 +34,7 @@ export class NavegacionSistemasService {
   /** Navegación del sistema activo. Es `null` si el sistema no tiene subnavegación. */
   readonly panelActivo = computed<SidebarNavPanelConfig | null>(() => this.panelDe(this.shell.sidebarIconActivo()));
 
-  /**
-   * Navegación de un sistema cualquiera, no solo del activo. El buscador la
-   * necesita para todos a la vez; el explorador la consume vía `panelActivo`.
-   */
+  /** Navegación de cualquier sistema: el buscador los necesita todos a la vez. */
   panelDe(id: string): SidebarNavPanelConfig | null {
     if (id === 'host-inicio') return this.getPanelHost();
 
@@ -62,20 +47,14 @@ export class NavegacionSistemasService {
     return this.getPanelStg(id);
   }
 
-  /**
-   * Todo el árbol de navegación aplanado —cada sistema, a cualquier
-   * profundidad— para que el buscador pueda encontrar un reporte sin que el
-   * usuario sepa en qué carpeta vive. Respeta los permisos del rol, porque
-   * reusa el mismo `filtrarVisibles` que el explorador.
-   */
+  /** Árbol aplanado a cualquier profundidad para que el buscador encuentre un reporte sin saber su carpeta; respeta permisos vía `filtrarVisibles`. */
   readonly registros = computed<RegistroNavegacion[]>(() => {
     const registros: RegistroNavegacion[] = [];
 
     for (const icono of this.iconos()) {
       const panel = this.panelDe(icono.id);
 
-      // Sistema sin subnavegación: el propio ícono es el destino, así que se
-      // indexa él (buscar "dashboards" tiene que encontrarlo igual).
+      // Sin subnavegación el propio ícono es el destino, así que se indexa él.
       if (!panel) {
         if (!icono.ruta) continue;
         registros.push({
@@ -123,10 +102,7 @@ export class NavegacionSistemasService {
     return registros;
   });
 
-  /**
-   * Contenido de la carpeta abierta. En la raíz se aplanan las secciones del
-   * panel, que solo agrupaban visualmente.
-   */
+  /** Contenido de la carpeta abierta; en la raíz se aplanan las secciones, que solo agrupaban visualmente. */
   readonly nodosActuales = computed<SidebarNavRuta[]>(() => {
     const ruta = this.rutaExplorador();
     if (ruta.length) return this.filtrarVisibles(ruta[ruta.length - 1].hijos ?? []);
@@ -144,11 +120,7 @@ export class NavegacionSistemasService {
     this.rutaExplorador.update((r) => r.slice(0, indice + 1));
   }
 
-  /**
-   * Reabre el explorador de `sistemaId` posicionado en `carpetas` — usado por
-   * el breadcrumb del header para volver desde una pantalla ya abierta a la
-   * carpeta de la que salió (`HeaderComponent.breadcrumbRemote`).
-   */
+  /** Reabre el explorador de `sistemaId` en `carpetas`; lo usa el breadcrumb para volver a la carpeta de la que salió la pantalla. */
   abrirEnCarpeta(sistemaId: string, carpetas: SidebarNavRuta[]): void {
     this.shell.setSidebarIconActivo(sistemaId);
     this.rutaExplorador.set(carpetas);

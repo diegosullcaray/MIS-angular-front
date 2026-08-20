@@ -1,9 +1,4 @@
-/**
- * Columna dinámica del motor `table.regular` (`resultado.headers`, JSON string
- * en el backend). `subs` es opcional — cubre el caso de encabezados anidados
- * multi-fila que el `stg-table2` legado soporta; si el backend nunca los usa,
- * la columna se trata como hoja de un único nivel.
- */
+/** Columna dinámica del motor `table.regular` (`resultado.headers`, JSON string en el backend). */
 export interface ColumnaDinamica {
   key: string;
   label: string;

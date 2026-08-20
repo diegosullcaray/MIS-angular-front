@@ -18,17 +18,7 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import type { FiltrosMonitorEfectividades } from '../../models/monitor-efectividades.model';
 
-/**
- * "Detalle Monitor de Efectividades Asesor" — migrado de la ruta
- * `leg/com/rda/sec/mon_efec_sec` (legado STG,
- * `reportes/legacy/support/components/template/crs/report-crs-v3`, config
- * `RS_MON_EFEC_SEC` en `crs-map.ts`).
- *
- * Solo lectura: asesor + 6 filtros reales (Tramo, Producto, Compromiso Roto,
- * 0 Cuota, 1 Cuota, Tramo Días Gestión, todos `TODO` por defecto) → 1 tabla,
- * "Expresado en PEN y %". Cambiar cualquier filtro recarga la tabla si ya
- * hay un asesor elegido.
- */
+/** "Detalle Monitor de Efectividades Asesor" — migrado de la ruta `leg/com/rda/sec/mon_efec_sec` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v3`, config `RS_MON_EFEC_SEC` en `crs-map.ts`). */
 @Component({
   selector: 'app-monitor-efectividades',
   standalone: true,

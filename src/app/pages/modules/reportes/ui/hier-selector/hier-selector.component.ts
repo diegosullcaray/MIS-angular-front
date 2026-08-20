@@ -10,13 +10,7 @@ import { fechaCorte } from '../../utils/fecha-reporte.util';
 import type { HierarquiaNodo, NivelJerarquiaDropdown, ParamsJerarquia } from '../../models/jerarquia.model';
 import type { JerarquiaResponseBody } from '../../models/reportes-api.model';
 
-/**
- * Selector de jerarquía organizativa en cascada horizontal (mismo patrón que
- * `hier-rem-selector` del legado STG) mediante desplegables p-select por cada
- * nivel jerárquico obtenido dinámicamente desde el backend. Único consumidor
- * de `ModSysAdminService` en el módulo `reportes` — habla directo con el
- * backend de jerarquía, sin un service intermedio.
- */
+/** Selector de jerarquía organizativa en cascada horizontal (mismo patrón que `hier-rem-selector` del legado STG) mediante desplegables p-select por cada nivel jerárquico obtenido dinámicamente desde el backend. */
 @Component({
   selector: 'app-hier-selector',
   standalone: true,
@@ -30,12 +24,7 @@ export class HierSelectorComponent implements OnInit {
 
   readonly paramsHier = input.required<ParamsJerarquia>();
   readonly placeholder = input('Elegir jerarquía');
-  /**
-   * `true` (default): la raíz queda preseleccionada y se emite al cargar.
-   * `false`: la raíz se muestra como punto de partida pero NO se emite —
-   * lo usan los reportes, donde entrar a la pantalla no debe disparar la
-   * consulta de un nodo que nadie eligió.
-   */
+  /** `true` (default): la raíz queda preseleccionada y se emite al cargar. */
   readonly autoSeleccionar = input(true);
   readonly nodoSeleccionado = output<HierarquiaNodo>();
   /** Solo se emite si falla o queda vacía la carga inicial (raíz o su primer nivel) — el único caso en que este componente nunca llega a emitir `nodoSeleccionado`, así el contenedor puede apagar su propio loading en vez de quedarse esperando para siempre. */

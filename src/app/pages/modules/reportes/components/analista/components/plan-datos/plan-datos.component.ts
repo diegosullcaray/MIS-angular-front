@@ -11,15 +11,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Plan de Datos" — migrado de la ruta `leg/com/rda/sec/plan-datos-sec`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`,
- * config `P_Datos` en `crs-map.ts`).
- *
- * Solo lectura: asesor + filtro real "Fecha Base" (mes cerrado más reciente
- * por defecto, `generarOpcionesFechaBase()`) → 1 tabla. Cambiar la fecha
- * recarga la tabla si ya hay un asesor elegido.
- */
+/** "Plan de Datos" — migrado de la ruta `leg/com/rda/sec/plan-datos-sec` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `P_Datos` en `crs-map.ts`). */
 @Component({
   selector: 'app-plan-datos',
   standalone: true,

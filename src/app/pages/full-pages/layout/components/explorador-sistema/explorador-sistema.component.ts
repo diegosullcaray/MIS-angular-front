@@ -8,16 +8,7 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
 
-/**
- * Explorador de archivos del sistema activo — reemplaza al panel de links de
- * la Col 2. Las ramas del árbol son carpetas en las que se entra y las hojas
- * son reportes que abren su pantalla.
- *
- * La ubicación actual NO se dibuja acá: vive solo en el breadcrumb del header
- * (`HeaderComponent.breadcrumbRemote`), que es también desde donde se sube de
- * nivel. Tener una segunda copia adentro del panel duplicaba el control y
- * ocupaba una franja del panel para nada.
- */
+/** Explorador de archivos del sistema activo — reemplaza al panel de links de la Col 2. */
 @Component({
   selector: 'app-explorador-sistema',
   standalone: true,

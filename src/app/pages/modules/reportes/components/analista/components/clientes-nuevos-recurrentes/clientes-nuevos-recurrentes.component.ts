@@ -10,14 +10,7 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-/**
- * "Clientes Nuevos y Recurrentes" — migrado de la ruta `leg/com/rda/sec/cli-nue-rec`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`,
- * config `rda/sectorista/clientes_nuevos_recurrente/cliente_nuevo_rec` en `crs-map.ts`).
- *
- * Mismo patrón de solo lectura que "Cartera"/"Clientes Producto" (asesor → N
- * tablas, sin pestañas ni formulario), pero con una única tabla.
- */
+/** "Clientes Nuevos y Recurrentes" — migrado de la ruta `leg/com/rda/sec/cli-nue-rec` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/clientes_nuevos_recurrente/cliente_nuevo_rec` en `crs-map.ts`). */
 @Component({
   selector: 'app-clientes-nuevos-recurrentes',
   standalone: true,

@@ -2,15 +2,7 @@ import { Routes } from '@angular/router';
 import { ShellLayoutComponent } from './pages/full-pages/layout/components/shell-layout/shell-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 
-/**
- * Rutas del Host.
- *
- * Los segmentos bajo `app/` NO son libres: cada uno debe coincidir carácter por
- * carácter con el `act_sec` que devuelve `list_sec` para ese ítem del menú (los
- * mismos que usaba el sistema legado STG). Por eso varios no coinciden con el
- * nombre de la carpeta del módulo, y hay que anotar la equivalencia caso a caso.
- * Renombrar un segmento rompe la navegación desde el menú del backend.
- */
+/** Rutas del Host. Los segmentos bajo `app/` NO son libres: cada uno debe coincidir carácter por carácter con el `act_sec` que devuelve `list_sec` para ese ítem del menú (los mismos que usaba el sistema legado STG). */
 export const APP_ROUTES: Routes = [
   {
     path: '',
@@ -75,11 +67,7 @@ export const APP_ROUTES: Routes = [
           import('./pages/modules/presupuesto/presupuesto.routes').then((m) => m.PRESUPUESTO_ROUTES)
       },
       {
-        /**
-         * Módulo `categorizacion`. Va antes que `analista`: si no, la ruta
-         * `analista` de abajo captura este path y busca `categorizacion`
-         * dentro de ANALISTA_ROUTES, donde no existe.
-         */
+        /** Módulo `categorizacion`. Va antes que `analista`: si no, la ruta `analista` de abajo captura este path y busca `categorizacion` dentro de ANALISTA_ROUTES, donde no existe. */
         path: 'analista/categorizacion',
         loadChildren: () =>
           import('./pages/modules/categorizacion/categorizacion.routes').then((m) => m.CATEGORIZACION_ROUTES)

@@ -9,13 +9,7 @@ import { ToastService } from '../../../../../shared/services/toast.service';
 import { ThemeService } from '../../../layout/services/theme.service';
 import { APP_VERSION } from '../../../../../app.global';
 
-/**
- * Login del Host — Google Sign-In + Winder.
- *
- * `/login` cumple doble función, igual que en STG: es la pantalla que
- * ofrece el botón "Continuar con Google" y también el `redirectUri` al que
- * Google devuelve al usuario tras autenticarse.
- */
+/** Login del Host — Google Sign-In + Winder. */
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -36,11 +30,7 @@ export class LoginComponent implements OnInit {
     this.theme.oscuro() ? 'assets/images/fc/logos/mis_white.png' : 'assets/images/fc/logos/mis.png'
   );
 
-  /**
-   * `verificando`: revisando si venimos de un redirect de Google.
-   * `inicial`: sin sesión de Google — se muestra el botón de acceso.
-   * `cargando`: login OK — pantalla de carga branded antes de navegar.
-   */
+  /** `verificando`: revisando si venimos de un redirect de Google. */
   protected paso = signal<'verificando' | 'inicial' | 'cargando'>('verificando');
 
   async ngOnInit(): Promise<void> {

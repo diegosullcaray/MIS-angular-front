@@ -6,14 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteClientesPotenciales } from '../models/clientes-potenciales.model';
 
-/**
- * Datos de "Clientes Potenciales" (legado `leg/com/rda/sec/cli_pot`,
- * `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/cli_pot/cli_pot_sec`).
- *
- * Mismo patrón que "Cartera"/"Canal Alterno" (solo lectura, sin `reportType`
- * declarado en `crs-map.ts` ⇒ strand deprecado `reportData`, `cod_rep` =
- * `module` + sufijo), con un único bloque.
- */
+/** Datos de "Clientes Potenciales" (legado `leg/com/rda/sec/cli_pot`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/cli_pot/cli_pot_sec`). */
 @Injectable({ providedIn: 'root' })
 export class ClientesPotencialesService {
   private readonly reportes = inject(ModReportesService);

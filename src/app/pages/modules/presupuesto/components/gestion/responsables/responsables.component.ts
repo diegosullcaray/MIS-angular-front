@@ -29,14 +29,7 @@ const COLUMNAS: ColumnaTabla[] = [
   { label: 'Hora Registro', key: 'tim_log', tipo: 'text' },
 ];
 
-/**
- * Responsables (`/app/presupuesto/gestion/sistema/resp`) — migrado de
- * `PreGesSisResponsablesComponent` (legado STG). Sin selector de jerarquía
- * tipo árbol: usa 6 niveles fijos (`dataLvls`), "Administrador" por defecto.
- * Única columna editable: el correo del responsable (`cod_res`) — a
- * diferencia de las pantallas de línea simple, no depende de nivel
- * editable/admin: el legado la deja editable siempre.
- */
+/** Responsables (`/app/presupuesto/gestion/sistema/resp`) — migrado de `PreGesSisResponsablesComponent` (legado STG). */
 @Component({
   selector: 'app-responsables',
   standalone: true,

@@ -11,10 +11,7 @@ import { HttpErrorService } from '../../services/http-error.service';
 import type { HttpErrorAction } from '../../models/http-error.model';
 import { ButtonModule } from 'primeng/button';
 
-/**
- * Página de error genérica.
- * Resuelve y muestra información según el código HTTP recibido en la ruta (ej: /error/404).
- */
+/** Página de error genérica. Resuelve y muestra información según el código HTTP recibido en la ruta (ej: /error/404). */
 @Component({
   selector: 'app-error-page',
   standalone: true,

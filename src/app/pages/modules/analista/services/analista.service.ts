@@ -17,26 +17,10 @@ import type {
   PostBecaResponseBody,
 } from '../models/analista-api.model';
 
-/**
- * `cod_jer` de la jerarquía usada para ubicar el nodo ancla del admin — mismo
- * código (9, "Admin. Comercial") que Categorización y que Cartera
- * Créditos/Seguros Comercial en Presupuesto.
- */
+/** `cod_jer` de la jerarquía usada para ubicar el nodo ancla del admin — mismo código (9, "Admin. */
 const COD_JERARQUIA_ANCLA = 9;
 
-/**
- * Fachada del módulo `analista` — migrado de `AnalistaService` + `ModSecService`
- * (legado STG, `docs/07-modulos/analista`). Cubre Principal (dashboard) y
- * Listas (Becas/Priorización de Leads); "Detalle" reutiliza
- * `obtenerDetalleCliente`. La sección "Prospecto" del legado (CRUD de
- * "Prospecto Corresponsal") queda fuera — se asume cubierta por
- * `pages/modules/actividades/components/prospectos-corresponsal`.
- *
- * El legado guardaba el colaborador activo como propiedades mutables sueltas
- * (`cod_bt`/`nom_sec`) y avisaba los cambios con un `Subject` (`selectedSec$`)
- * al que cada pantalla se suscribía. Acá es un solo signal (`colaboradorActivo`)
- * — cada componente reacciona con un `effect()` en vez de una subscripción RxJS.
- */
+/** Fachada del módulo `analista` — migrado de `AnalistaService` + `ModSecService` (legado STG, `docs/07-modulos/analista`). */
 @Injectable({ providedIn: 'root' })
 export class AnalistaService {
   private readonly ant = inject(ModSeccionesService);
@@ -109,13 +93,7 @@ export class AnalistaService {
 
   // ─── Selector de colaborador (admin) ────────────────────────────────────
 
-  /**
-   * Nodo ancla del admin en la jerarquía (`base_hier`, `cod_jer=9`) — primer
-   * nodo con `flag_1` en `{0,1}`, tal cual el filtro del legado
-   * (`PrincipalComponent.ngOnInit`) — un valor posible menos que el de
-   * Categorización (`{0,1,2}`), se preserva la diferencia tal cual está en
-   * cada pantalla del legado.
-   */
+  /** Nodo ancla del admin en la jerarquía (`base_hier`, `cod_jer=9`) — primer nodo con `flag_1` en `{0,1}`, tal cual el filtro del legado (`PrincipalComponent.ngOnInit`) — un valor posible menos que el de Categorización (`{0,1,2}`), se preserva la diferencia tal cual está en cada pantalla del legado. */
   obtenerAnclaAdmin(): Observable<NodoJerarquiaAncla | null> {
     return this.antAdmin.getBaseHierarchy(this.email, COD_JERARQUIA_ANCLA).pipe(
       map((response) => {

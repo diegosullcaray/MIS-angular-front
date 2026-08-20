@@ -31,17 +31,7 @@ const MODELO_CAMPANIA = '2026';
 /** Forma cruda de `incentivos4.resultados4`/`.resultados5` (`resultado`). */
 
 
-/**
- * Fachada + estado del módulo `incentivos` (Cuadro de Mando, `/app/incentivos3`).
- * Traduce las respuestas del backend Ant a los modelos tipados del módulo y
- * mantiene el estado compartido (`signal`s) entre `PrincipalComponent` y los
- * diálogos (Calculadora/Detalle/Selector de Nivel).
- *
- * Gap conocido: `UsuarioActivo` todavía no expone `niv`/`cla_use`/`tip_use`
- * del legado, así que el acceso se aproxima con `ShellStateService.esAdmin()`:
- * admin ⇒ ve el selector de nivel (como STAFF); no-admin ⇒ carga directo su
- * propio perfil (`tip_cod=1`, `codRel=codBt`, como SECTORISTA individual).
- */
+/** Fachada + estado del módulo `incentivos` (Cuadro de Mando, `/app/incentivos3`). */
 @Injectable({ providedIn: 'root' })
 export class IncentivosService {
   private readonly ant = inject(ModIncentivosService);
