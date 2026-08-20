@@ -10,15 +10,7 @@ export interface OpcionProspecto {
   desc: string;
 }
 
-/**
- * Formulario "Registro Prospecto" (diálogo "Nuevo" de `crs-prospe`,
- * `add-prospe.component.ts`) — solo los campos realmente visibles en el
- * legado. No se migran los campos envueltos en `[hidden]="isHidden"`
- * (`HAPERTCTA`, `HESTDCORE`, `HMESINST`, `HINSTALAD`, `HFECINSTAL`, `HZONA`,
- * `HPROSPEC`, `HFIRMADN`, `HVINFAMI`, `HTIPVINC`, `HIDCORRES`): `isHidden`
- * arranca en `true` y ningún método del componente lo cambia — quedan
- * ocultos siempre, código muerto.
- */
+/** Formulario "Registro Prospecto" (diálogo "Nuevo" de `crs-prospe`, `add-prospe.component.ts`) — solo los campos realmente visibles en el legado. */
 export interface ProspectoCorresponsalForm {
   HAPENOMB: string;
   HNUMDOC: string;

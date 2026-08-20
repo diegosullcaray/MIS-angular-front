@@ -6,14 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteCanalAlterno } from '../models/canal-alterno.model';
 
-/**
- * Datos de "Canal Alterno" (legado `leg/com/rda/sec/canal_alt`,
- * `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/canal_alt/canal_alt_sec`).
- *
- * Mismo patrón que "Cartera"/"Cero Cuotas" (solo lectura, sin `reportType`
- * declarado en `crs-map.ts` ⇒ strand deprecado `reportData`, `cod_rep` =
- * `module` + sufijo), con un único bloque.
- */
+/** Datos de "Canal Alterno" (legado `leg/com/rda/sec/canal_alt`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/canal_alt/canal_alt_sec`). */
 @Injectable({ providedIn: 'root' })
 export class CanalAlternoService {
   private readonly reportes = inject(ModReportesService);

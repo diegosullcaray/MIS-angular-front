@@ -82,11 +82,7 @@ export class HeaderComponent {
   // ─── Configuración de Breadcrumb ──────────────────────────────────────────
   protected readonly breadcrumbHome: MenuItem = { icon: 'pi pi-home', routerLink: '/app/dashboard' };
 
-  /**
-   * Ruta de navegación superior. Mientras está a la vista el explorador del
-   * sistema, refleja la carpeta abierta ahí (que no es una URL); si no, se
-   * deriva de la URL activa.
-   */
+  /** Ruta de navegación superior. Mientras está a la vista el explorador del sistema, refleja la carpeta abierta ahí (que no es una URL); si no, se deriva de la URL activa. */
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
     if (this.shell.contenidoPendienteSeleccion()) return this.breadcrumbExplorador();
 
@@ -174,12 +170,7 @@ export class HeaderComponent {
     });
   }
 
-  /**
-   * Genera el breadcrumb dinámico extrayendo datos del árbol del menú STG
-   * (sistemas remotos). Cada nivel salvo el actual reabre el explorador en esa
-   * carpeta (`NavegacionSistemasService.abrirEnCarpeta`) — es la única forma
-   * de volver, ya que esas carpetas no son rutas.
-   */
+  /** Genera el breadcrumb dinámico extrayendo datos del árbol del menú STG (sistemas remotos). */
   private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
     const hallazgo = this.menuStg.buscarPorRuta(url);
 

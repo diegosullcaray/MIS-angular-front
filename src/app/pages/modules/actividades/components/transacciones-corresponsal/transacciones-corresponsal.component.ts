@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -18,7 +17,6 @@ import { inputValue } from '../../../../../shared/utils/dom.util';
   selector: 'app-transacciones-corresponsal',
   standalone: true,
   imports: [
-    CommonModule,
     TableModule,
     ButtonModule,
     InputTextModule,
@@ -67,8 +65,7 @@ export class TransaccionesCorresponsalComponent implements OnInit {
         this.data.set(list);
         this.loading.set(false);
       },
-      error: (err) => {
-        console.error('Error al cargar Transacciones de Corresponsal:', err);
+      error: () => {
         this.error.set('No se pudo cargar la información de Transacciones.');
         this.loading.set(false);
       },

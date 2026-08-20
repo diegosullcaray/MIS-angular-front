@@ -1,10 +1,6 @@
 import { Routes } from '@angular/router';
 
-/**
- * Rutas de "Actividad Diaria" — separadas de `reportes.routes.ts` por la misma
- * razón que `analista.routes.ts`. Los segmentos replican los del legado STG
- * (`rda-administracion-routing.module.ts`), que es lo que manda el menú.
- */
+/** Rutas de "Actividad Diaria" — separadas de `reportes.routes.ts` por la misma razón que `analista.routes.ts`. */
 export const ACTIVIDAD_DIARIA_ROUTES: Routes = [
   {
     /** "CMG Captaciones - Agencias" (legado `cmg-capta01`, `report: GCMGCAP`). */

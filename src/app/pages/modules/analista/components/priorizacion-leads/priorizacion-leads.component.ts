@@ -13,13 +13,7 @@ import { crearSelectorColaborador } from '../../utils/colaborador-selector.util'
 import type { ColaboradorItem } from '../../models/colaborador.model';
 import type { FilaLead } from '../../models/listas.model';
 
-/**
- * Priorización de Leads (`/app/analista/listas/priorizacion-leads`) — tabla
- * de solo lectura con encabezado agrupado en 3 niveles (Campaña / Cliente /
- * Gestión). Migrado de `PriorizacionLeadsComponent` (legado STG): sus
- * checkboxes "Ocultar Desembolsados/en Mora" nunca aplicaban nada (lógica de
- * filtrado comentada) — se omiten por ser funcionalidad muerta.
- */
+/** Priorización de Leads (`/app/analista/listas/priorizacion-leads`) — tabla de solo lectura con encabezado agrupado en 3 niveles (Campaña / Cliente / Gestión). */
 @Component({
   selector: 'app-priorizacion-leads-analista',
   standalone: true,

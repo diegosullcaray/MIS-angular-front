@@ -166,20 +166,8 @@ function normalizar(nombre: string): string {
   return nombre.trim().toLowerCase().replace(/[\s-]+/g, '_');
 }
 
-/** Caché de íconos no mapeados para evitar logs duplicados en consola. */
-const sinMapear = new Set<string>();
-
-/** Convierte un Material Icon a su equivalente en PrimeIcons. */
+/** Convierte un Material Icon a su equivalente en PrimeIcons; cae al genérico si no hay mapeo. */
 export function mapMaterialIconToPrimeIcons(materialIconName: string | undefined | null): string {
   if (!materialIconName) return PRIMEICONS_FALLBACK;
-
-  const clave = normalizar(materialIconName);
-  const icono = NORMALIZED_INDEX[clave];
-  if (icono) return icono;
-
-  if (!sinMapear.has(clave)) {
-    sinMapear.add(clave);
-    console.warn(`[sidebar] icon_sec "${materialIconName}" sin mapeo a PrimeIcons — usando ícono genérico.`);
-  }
-  return PRIMEICONS_FALLBACK;
+  return NORMALIZED_INDEX[normalizar(materialIconName)] ?? PRIMEICONS_FALLBACK;
 }

@@ -1,10 +1,6 @@
 import type { Environment } from './environment.model';
 
-/**
- * Configuración de PRODUCCIÓN, inyectada por `fileReplacements`.
- * No declares `devUser` acá: su ausencia es la barrera que impide que una
- * identidad de prueba llegue a producción.
- */
+/** Configuración de PRODUCCIÓN, inyectada por `fileReplacements`. */
 export const environment: Environment = {
   production: true,
 

@@ -5,24 +5,12 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { CarteraService } from '../../services/cartera.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Cartera" — migrado de la ruta `leg/com/rda/sec/cartera` (legado STG,
- * `reportes/legacy/support/components/template/crs/report-crs-v1`, config
- * `rda/sectorista/cartera/cartera_sec` en `crs-map.ts`).
- *
- * A diferencia de "Encuesta Clientes"/"Clientes Reprogramados"/"Datos
- * Clientes", este reporte es de solo lectura: asesor → 2 tablas, sin
- * pestañas ni formulario de edición (`ReportCrsV1Component` no tiene
- * `update()`/`save()`).
- */
+/** "Cartera" — migrado de la ruta `leg/com/rda/sec/cartera` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/cartera/cartera_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-cartera',
   standalone: true,
@@ -33,7 +21,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class CarteraComponent {
   private readonly servicio = inject(CarteraService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly mostrarFiltros = signal(false);
 
@@ -67,7 +54,7 @@ export class CarteraComponent {
         this.cargando.set(false);
 
         if (tabla1.body.length === 0 && tabla2.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {

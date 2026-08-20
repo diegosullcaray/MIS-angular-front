@@ -1,19 +1,15 @@
 import { Component, OnInit, inject, input, output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../services/presupuesto.service';
 import type { HierarquiaNodo, NivelJerarquiaDropdown, ParamsJerarquia } from '../../models/jerarquia.model';
 
-/**
- * Selector de jerarquía organizativa mediante desplegables `<p-select>` por nivel jerárquico.
- * Muestra siempre el texto descriptivo del nodo (ej. "FINANCIERA CONFIANZA") en lugar del código numérico.
- */
+/** Selector de jerarquía organizativa mediante desplegables `<p-select>` por nivel jerárquico. */
 @Component({
   selector: 'app-hier-selector',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectModule, ButtonModule],
+  imports: [FormsModule, SelectModule, ButtonModule],
   templateUrl: './hier-selector.component.html',
   styleUrl: './hier-selector.component.css',
 })
@@ -23,23 +19,10 @@ export class HierSelectorComponent implements OnInit {
   readonly paramsHier = input.required<ParamsJerarquia>();
   readonly placeholder = input('Elegir jerarquía');
   readonly raizFija = input<HierarquiaNodo[] | null>(null);
-  /**
-   * `true` (default): la raíz queda preseleccionada y se emite al cargar, así la
-   * pantalla muestra datos de entrada — es lo que esperan las de Presupuesto.
-   *
-   * `false`: la raíz se muestra como punto de partida pero NO se emite, y el
-   * usuario baja de a un nivel. Lo usan los reportes, donde entrar a la pantalla
-   * no debe disparar la consulta de un nodo que nadie eligió.
-   */
+  /** `true` (default): la raíz queda preseleccionada y se emite al cargar, así la pantalla muestra datos de entrada — es lo que esperan las de Presupuesto. */
   readonly autoSeleccionar = input(true);
   readonly nodoSeleccionado = output<HierarquiaNodo>();
-  /**
-   * Ruta completa seleccionada, de la raíz al nivel elegido — el equivalente
-   * del array que emitía `hier-rem-selector` en el legado. La usan las
-   * pantallas que necesitan más de un nodo a la vez (Tablero de Verificación
-   * consulta con los DOS primeros niveles), en vez de montar un segundo
-   * selector sobre la misma jerarquía.
-   */
+  /** Ruta completa seleccionada, de la raíz al nivel elegido — el equivalente del array que emitía `hier-rem-selector` en el legado. */
   readonly rutaSeleccionada = output<HierarquiaNodo[]>();
   /** Emite cuando la jerarquía no pudo cargarse o vino vacía (ni error HTTP ni nodo alguno) — único caso en que este componente nunca llega a emitir `nodoSeleccionado`. */
   readonly error = output<void>();

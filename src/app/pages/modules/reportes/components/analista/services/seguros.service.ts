@@ -6,14 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteSeguros } from '../models/seguros.model';
 
-/**
- * Datos de "Seguros" (legado `leg/com/rda/sec/seg`, `ReportCrsV1Component` +
- * `crs-map.ts`: `rda/sectorista/seguros/seguros_sec`).
- *
- * Mismo patrón que "Cartera"/"Clientes Nuevos y Recurrentes" (solo lectura,
- * sin `reportType` declarado en `crs-map.ts` ⇒ strand deprecado `reportData`,
- * `cod_rep` = `module` + sufijo), con un único bloque.
- */
+/** Datos de "Seguros" (legado `leg/com/rda/sec/seg`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/seguros/seguros_sec`). */
 @Injectable({ providedIn: 'root' })
 export class SegurosService {
   private readonly reportes = inject(ModReportesService);

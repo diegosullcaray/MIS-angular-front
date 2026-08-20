@@ -5,24 +5,12 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { CeroCuotasService } from '../../services/cero-cuotas.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Cero Cuotas" — migrado de la ruta `leg/com/rda/sec/zu-cuo` (legado STG,
- * título real "Cero y Una Cuota",
- * `reportes/legacy/support/components/template/crs/report-crs-v1`, config
- * `rda/sectorista/cero_cuota/cero_cuota_sec` en `crs-map.ts`).
- *
- * Solo lectura: asesor → 1 tabla. El mensaje `content.lower` del legado
- * ("¡Urgente gestión! estos son los clientes de tu cartera que no han
- * pagado ni una cuota.") se muestra como nota debajo de la tabla.
- */
+/** "Cero Cuotas" — migrado de la ruta `leg/com/rda/sec/zu-cuo` (legado STG, título real "Cero y Una Cuota", `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/cero_cuota/cero_cuota_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-cero-cuotas',
   standalone: true,
@@ -33,7 +21,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class CeroCuotasComponent {
   private readonly servicio = inject(CeroCuotasService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly mostrarFiltros = signal(false);
 
@@ -65,7 +52,7 @@ export class CeroCuotasComponent {
         this.cargando.set(false);
 
         if (tabla1.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene clientes con cero o una cuota impaga.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene clientes con cero o una cuota impaga.');
         }
       },
       error: () => {

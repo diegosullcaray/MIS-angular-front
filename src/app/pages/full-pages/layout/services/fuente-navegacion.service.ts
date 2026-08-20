@@ -4,16 +4,7 @@ import { NavegacionSistemasService } from './navegacion-sistemas.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type { FuenteBusqueda, RegistroBuscable } from '../../../../shared/buscador/buscador.model';
 
-/**
- * Aporta al buscador el árbol de navegación completo: todos los sistemas, a
- * cualquier profundidad.
- *
- * Los permisos ya vienen resueltos de `NavegacionSistemasService.registros`,
- * que filtra cada nivel con el mismo criterio que el explorador
- * (`soloAdmin` / `soloAdminSistema`) y solo recorre los sistemas que el backend
- * devolvió para ese usuario. Al ser un `computed`, si cambia el usuario activo
- * —por ejemplo con "Cambiar usuario"— el índice se rearma solo.
- */
+/** Aporta al buscador el árbol de navegación completo: todos los sistemas, a cualquier profundidad. */
 @Injectable({ providedIn: 'root' })
 export class FuenteNavegacionService implements FuenteBusqueda {
   readonly id = 'navegacion';
@@ -46,6 +37,6 @@ export class FuenteNavegacionService implements FuenteBusqueda {
     this.shell.setSidebarIconActivo(registro.sistemaId);
     this.shell.setMenuItemActivo({ ruta: registro.ruta, etiqueta: registro.etiqueta });
     this.shell.setContenidoPendienteSeleccion(false);
-    this.router.navigateByUrl(registro.ruta).catch((err) => console.warn(`Ruta no encontrada: ${registro.ruta}`, err));
+    this.router.navigateByUrl(registro.ruta).catch(() => {});
   }
 }

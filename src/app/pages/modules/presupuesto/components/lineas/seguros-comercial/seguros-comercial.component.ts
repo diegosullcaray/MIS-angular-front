@@ -15,11 +15,7 @@ const COLUMNAS: ColumnaTabla[] = [
   { label: 'Protección Total', key: 'a6', tipo: 'comp_f' },
 ];
 
-/**
- * Seguros Comercial (`/app/presupuesto/lineas/pasivos-patrimonio/seg-com`) —
- * migrado de `PrePasPatSegurosComercialComponent` (legado STG). Sin fórmula
- * derivada: cada columna es un valor independiente (`inputCols: 'all'`).
- */
+/** Seguros Comercial (`/app/presupuesto/lineas/pasivos-patrimonio/seg-com`) — migrado de `PrePasPatSegurosComercialComponent` (legado STG). */
 @Component({
   selector: 'app-seguros-comercial',
   standalone: true,

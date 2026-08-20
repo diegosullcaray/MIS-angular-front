@@ -6,14 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteResumenMovilidad } from '../models/resumen-movilidad.model';
 
-/**
- * Datos de "Resumen de Movilidad" (legado `leg/com/rda/sec/res-mov-sec`,
- * `ReportCrsV1Component` + `crs-map.ts`: `RESNMOV`).
- *
- * `reportType: ReportType.REGULAR` en `crs-map.ts` ⇒ strand moderno
- * `regularData` (`getRegularData`); el único bloque declarado tiene `id: '_02'`
- * (no `_01`), así que el `cod_rep` real es `RESNMOV_02`.
- */
+/** Datos de "Resumen de Movilidad" (legado `leg/com/rda/sec/res-mov-sec`, `ReportCrsV1Component` + `crs-map.ts`: `RESNMOV`). */
 @Injectable({ providedIn: 'root' })
 export class ResumenMovilidadService {
   private readonly reportes = inject(ModReportesService);

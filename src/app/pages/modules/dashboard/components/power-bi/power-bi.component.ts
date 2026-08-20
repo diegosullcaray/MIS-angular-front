@@ -8,19 +8,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 
-/**
- * Visor de un reporte Power BI embebido (`/app/dashboards/power-bi`) —
- * migrado de `PowerbiComponent` (legado STG, `pages/modules/reportes-e/powerbi`).
- *
- * Lee el reporte activo de `DashboardService.reporteSeleccionado` (fijado
- * por `PrincipalComponent.abrirReporte()` antes de navegar acá) en vez del
- * `ReplaySubject` del legado (`ReportesEService.selectedReportObs$`). Si se
- * entra a esta ruta sin haber seleccionado un reporte antes (ej. refresh de
- * página), vuelve directo a la lista — no hay nada que embeber sin el `id`.
- *
- * `PowerBIEmbedModule` es un `NgModule` de terceros, pero no requiere
- * `forRoot()` — permitido por el TRD (§2.3) para componentes standalone.
- */
+/** Visor de un reporte Power BI embebido (`/app/dashboards/power-bi`) — migrado de `PowerbiComponent` (legado STG, `pages/modules/reportes-e/powerbi`). */
 @Component({
   selector: 'app-dashboard-power-bi',
   standalone: true,

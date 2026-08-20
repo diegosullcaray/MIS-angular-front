@@ -6,9 +6,7 @@ import type { DriveStep } from 'driver.js';
 export class RankingTourService {
   private readonly driverTour = inject(DriverTourService);
 
-  /**
-   * Inicia el tutorial guiado interactivo para el módulo Ranking Kaypacha.
-   */
+  /** Inicia el tutorial guiado interactivo para el módulo Ranking Kaypacha. */
   iniciarTourGuiado(): void {
     const pasos: DriveStep[] = [
       {

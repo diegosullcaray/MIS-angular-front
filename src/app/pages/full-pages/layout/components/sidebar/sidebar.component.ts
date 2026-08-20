@@ -69,10 +69,7 @@ export class SidebarComponent implements AfterViewInit {
 
         if (evento instanceof NavigationEnd) {
           const url = evento.urlAfterRedirects || evento.url;
-          // `startsWith('/app/dashboard/')` (con la barra) en vez de `includes('/dashboard')`:
-          // ese `includes` también hacía match con `/app/dashboards` (Dashboards Integrados,
-          // otro sistema con su propio ícono) por ser substring, así que después de navegar
-          // ahí este handler pisaba `sidebarIconActivo` de vuelta a "host-inicio".
+          // Con la barra final: `includes('/dashboard')` también matcheaba `/app/dashboards`, otro sistema, y le pisaba el ícono activo.
           const esInicio = url === '/app/dashboard' || url.startsWith('/app/dashboard/') || url.startsWith('/error') || url === '/app';
           if (esInicio) {
             this.shell.setSidebarIconActivo('host-inicio');
@@ -116,16 +113,11 @@ export class SidebarComponent implements AfterViewInit {
     // Módulos simples sin panel secundario que tienen ruta propia
     if (!icon.tienePanel && ruta) {
       this.shell.setContenidoPendienteSeleccion(false);
-      this.router.navigateByUrl(ruta).catch(() => {
-        console.warn(`Ruta no encontrada: ${ruta}`);
-      });
+      this.router.navigateByUrl(ruta).catch(() => {});
       return;
     }
 
-    // Sistemas con subnavegación: el área de contenido muestra el explorador
-    // del sistema (`ExploradorSistemaComponent`) hasta que el usuario abra una
-    // de sus pantallas. Permanece ahí de forma indefinida (sin
-    // auto-redirecciones ni reseteo por tiempo).
+    // Con subnavegación el área de contenido muestra el explorador del sistema hasta que se abra una pantalla, sin auto-redirección.
     if (icon.tienePanel) {
       this.shell.setContenidoPendienteSeleccion(true);
     }

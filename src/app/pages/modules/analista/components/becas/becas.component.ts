@@ -20,13 +20,7 @@ import type { ColaboradorItem } from '../../models/colaborador.model';
 import type { FilaLabelValor } from '../../models/comun.model';
 import type { FilaBeca } from '../../models/listas.model';
 
-/**
- * Becas Financiera Confianza (`/app/analista/listas/becas`) — lista de
- * postulantes a prospectar; seleccionar una fila habilita "Prospectar" (si
- * no está prospectada) y "Detalle". Migrado de `BecasComponent` (legado
- * STG): el legado usaba dos diálogos (confirmación + formulario de
- * comentario); acá es uno solo con ambos controles.
- */
+/** Becas Financiera Confianza (`/app/analista/listas/becas`) — lista de postulantes a prospectar; seleccionar una fila habilita "Prospectar" (si no está prospectada) y "Detalle". */
 @Component({
   selector: 'app-becas-analista',
   standalone: true,

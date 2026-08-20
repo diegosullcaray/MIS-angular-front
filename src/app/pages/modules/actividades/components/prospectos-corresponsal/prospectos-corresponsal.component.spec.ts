@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { ProspectosCorresponsalComponent } from './prospectos-corresponsal.component';
 import { ActividadesService } from '../../services/actividades.service';
 import type { ProspectoCorresponsalItem } from '../../models/actividades.model';
@@ -19,7 +20,7 @@ describe('ProspectosCorresponsalComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [ProspectosCorresponsalComponent],
-      providers: [{ provide: ActividadesService, useValue: { getRegResultadosListProsp: getSpy, postRegResultadosProsp: postSpy } }],
+      providers: [{ provide: ActividadesService, useValue: { getRegResultadosListProsp: getSpy, postRegResultadosProsp: postSpy } }, MessageService],
     });
   });
 

@@ -1,17 +1,7 @@
 import { definePreset } from '@primeng/themes';
 import Aura from '@primeng/themes/aura';
 
-/**
- * Colores de botón compartidos por `success`/`warn`/`danger` (root sólido,
- * outlined y text) entre modo claro y oscuro: usan `var(--mis-*)`, así que el
- * mismo bloque sirve para ambos — es la propia variable CSS la que cambia de
- * valor con `.dark` en <html>. Lo único que difiere de verdad entre claro y
- * oscuro es el color de texto sobre el fondo sólido (`root.success.color`,
- * etc.): `tokens.css` no define un `--mis-text-on-success/-warning/-danger`
- * como sí lo hace para primary/secondary, y en oscuro esos colores se
- * aclaran (`--mis-success: #4ADE80`, etc.) — con texto blanco fijo el
- * contraste sería malo, por eso ese único valor si se separa por modo.
- */
+/** Colores de botón compartidos por `success`/`warn`/`danger` (root sólido, outlined y text) entre modo claro y oscuro: usan `var(--mis-*)`, así que el mismo bloque sirve para ambos — es la propia variable CSS la que cambia de valor con `.dark` en <html>. */
 function botonesSemaforo(colorTexto: string) {
   return {
     success: {
@@ -54,21 +44,14 @@ function botonesSemaforo(colorTexto: string) {
 }
 
 const BOTONES_OUTLINED_Y_TEXT = {
-  /**
-   * Sin fondo sólido, el severity `primary` se dibuja SOBRE el fondo de la
-   * página: va con `--mis-primary-text`, no con `--mis-primary`. Ese último es
-   * un color de superficie y en oscuro sigue siendo navy (#2A4E8F) — como
-   * texto/borde sobre el panel oscuro daba 2:1, o sea ilegible.
-   */
+  /** Sin fondo sólido, el severity `primary` se dibuja SOBRE el fondo de la página: va con `--mis-primary-text`, no con `--mis-primary`. */
   primary: {
     hoverBackground: 'var(--mis-primary-light)',
     activeBackground: 'var(--mis-primary-light)',
     borderColor: 'var(--mis-primary-text)',
     color: 'var(--mis-primary-text)'
   },
-  // El outline/text "secondary" de marca usa el borde/fondo de --mis-secondary
-  // pero el texto en --mis-primary-text (navy), no en --mis-secondary — así
-  // luce en el panel de estilos de botones.
+  // El "secondary" de marca toma borde/fondo de --mis-secondary pero el texto navy de --mis-primary-text.
   secondary: {
     hoverBackground: 'var(--mis-secondary-light)',
     activeBackground: 'var(--mis-secondary-light)',
@@ -204,9 +187,7 @@ export const MisTheme = definePreset(Aura, {
     }
   },
   components: {
-    // El borderColor por defecto de Aura (surface.200, #E2E8F0) es casi
-    // invisible sobre fondo blanco/translúcido — separadores de fila con
-    // más contraste (mismo tinte navy que --mis-border-strong).
+    // El borderColor de Aura es casi invisible sobre fondo translúcido: separadores con el tinte navy de --mis-border-strong.
     datatable: {
       colorScheme: {
         light: {
@@ -217,17 +198,7 @@ export const MisTheme = definePreset(Aura, {
         }
       }
     },
-    /**
-     * Paleta de marca (panel de estilos de botones) en vez de la escala
-     * green/orange/red/sky por defecto de Aura para success/warn/danger, y de
-     * surface.100-800 para secondary. Se referencian las variables de
-     * `tokens.css` (`var(--mis-*)`) en vez de hardcodear hex acá, para no
-     * duplicar la fuente de verdad ni tener que repetir valores por
-     * light/dark — la propia variable ya cambia con `.dark` en <html>.
-     *
-     * `info`/`help`/`contrast` quedan con la paleta de Aura: `tokens.css` no
-     * define un color de marca para esos severities.
-     */
+    /** Paleta de marca (panel de estilos de botones) en vez de la escala green/orange/red/sky por defecto de Aura para success/warn/danger, y de surface.100-800 para secondary. */
     button: {
       colorScheme: {
         light: botonColorScheme('#ffffff'),

@@ -8,30 +8,7 @@ import { ShellStateService } from '../../../core/services/shell-state.service';
 /** Destino de la luz roja: el inicio del shell. */
 const RUTA_HOME = '/app/dashboard';
 
-/**
- * Panel de módulo con cromo de ventana macOS (estilo explorador de archivos).
- *
- * Reemplaza al patrón anterior de "banner de módulo" (una tarjeta interna con
- * márgenes propios) por una barra de título pegada al borde del panel: solo
- * texto centrado —sin íconos ni logos— con el semáforo a la izquierda y
- * "Actualizar" en la esquina.
- *
- * El semáforo no es decorativo — cada luz hace lo que hace en macOS, traducido
- * a la navegación del shell:
- *   - rojo     → cerrar la pantalla y volver al inicio,
- *   - amarillo → minimizar: deja a la vista el explorador del sistema, para
- *                abrir otra pantalla del módulo,
- *   - verde    → zoom (pantalla completa del panel).
- *
- * Uso:
- * ```html
- * <app-window-panel titulo="Kaypacha" [actualizando]="loading()" (actualizar)="recargar()">
- *   <button ventana-navegacion …>…</button>  <!-- volver, junto al semáforo -->
- *   <button ventana-acciones …>…</button>    <!-- acciones extra, a la izquierda de Actualizar -->
- *   …contenido…
- * </app-window-panel>
- * ```
- */
+/** Panel de módulo con cromo de ventana macOS; el semáforo navega de verdad: rojo cierra al inicio, amarillo minimiza al explorador del sistema y verde hace zoom. */
 @Component({
   selector: 'app-window-panel',
   standalone: true,
@@ -93,26 +70,13 @@ export class WindowPanelComponent {
     void this.router.navigateByUrl(RUTA_HOME);
   }
 
-  /**
-   * Luz amarilla: "minimizar" la pantalla dentro del shell.
-   *
-   * Deja el estado de espera del shell, que ahora muestra el explorador de
-   * archivos del sistema (`ExploradorSistemaComponent`) — de ahí se elige la
-   * siguiente pantalla del módulo. La ruta no cambia, así que el contenido
-   * vuelve intacto al abrir otra opción.
-   */
+  /** Luz amarilla: deja el shell en espera mostrando el explorador del sistema; la ruta no cambia, así que el contenido vuelve intacto. */
   protected onMinimizar(): void {
     this.minimizar.emit();
     this.shell.setContenidoPendienteSeleccion(true);
   }
 
-  /**
-   * Luz verde: pantalla completa del panel.
-   *
-   * La API es asíncrona y puede rechazar (permiso denegado, navegador sin
-   * soporte); el estado real lo confirma `fullscreenchange`, así que acá solo
-   * se pide el cambio y se ignora el rechazo.
-   */
+  /** Luz verde: pide pantalla completa e ignora el rechazo — el estado real lo confirma `fullscreenchange`. */
   protected alternarPantallaCompleta(): void {
     if (this.esElementoEnPantallaCompleta()) {
       void document.exitFullscreen?.().catch(() => undefined);

@@ -12,21 +12,7 @@ const COLUMNAS_FIJAS: ColumnaFija[] = [
   { key: 'des_dis', label: 'Esta disponible?', headerBg: '#4472c4' },
 ];
 
-/**
- * Tabla de métricas de una categoría ESG (Medioambiente, Social Empleados,
- * Social Clientes, Gobierno) — reemplaza al `stg-table2` legado
- * (`headOpt2`/`tblOpts2`, ver `framework-esg.util.ts` del legado STG).
- *
- * Columnas fijas (metrica/medida/disponibilidad) + columnas históricas
- * dinámicas que llegan por categoría (`resultado.cab.cols` de `esg.res_cat`,
- * ver `FrameworkEsgService.cargarResumenCategoria()`) + una columna de
- * Acciones con los botones "Editar"/"Ver detalle" por fila (antes vivían en
- * el toolbar de `PrincipalComponent`, habilitados por selección).
- *
- * Las filas de agrupación (`is_nod===1`, ver `EsgMetricaFila`) se resaltan
- * con el mismo color que usaba el legado para distinguirlas como
- * subcabeceras de sección (`rsFn1` de `framework-esg.util.ts`).
- */
+/** Tabla de métricas de una categoría ESG (Medioambiente, Social Empleados, Social Clientes, Gobierno) — reemplaza al `stg-table2` legado (`headOpt2`/`tblOpts2`, ver `framework-esg.util.ts` del legado STG). */
 @Component({
   selector: 'app-categoria-metricas-tabla',
   standalone: true,

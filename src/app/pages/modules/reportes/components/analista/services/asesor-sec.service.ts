@@ -4,12 +4,7 @@ import { ModSeccionesService } from '../../../../../../core/winder/instances/mod
 import { ShellStateService } from '../../../../../../core/services/shell-state.service';
 import type { AsesorSec } from '../models/asesor-sec.model';
 
-/**
- * Buscador de asesor/sectorista — legado `app-auto-complete-sec`, usado por
- * varios reportes de `rda/sectorista` ("Encuesta Clientes", "Clientes
- * Reprogramados", y previsiblemente más a medida que se migran). Compartido
- * acá para no duplicar el mapeo `result_sectorista` en cada servicio.
- */
+/** Buscador de asesor/sectorista — legado `app-auto-complete-sec`, usado por varios reportes de `rda/sectorista` ("Encuesta Clientes", "Clientes Reprogramados", y previsiblemente más a medida que se migran). */
 @Injectable({ providedIn: 'root' })
 export class AsesorSecService {
   private readonly secciones = inject(ModSeccionesService);

@@ -4,17 +4,7 @@ import { Observable } from 'rxjs';
 import { RESTPacket } from './rest-packet.class';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * RESTService — Capa HTTP de bajo nivel que ejecuta las peticiones al backend Ant.
- *
- * Wrappea `HttpClient` de Angular 22 y opera sobre `RESTPacket`
- * para construir las URLs y el body correctamente.
- *
- * En Angular 22 los servicios son `providedIn: 'root'` por defecto.
- * Se usa `inject()` en lugar del constructor para compatibilidad con Zoneless.
- *
- * Migrado del STG (stg-app-mis-r22).
- */
+/** RESTService — Capa HTTP de bajo nivel que ejecuta las peticiones al backend Ant. */
 @Injectable({ providedIn: 'root' })
 export class RESTService {
   private readonly http = inject(HttpClient);

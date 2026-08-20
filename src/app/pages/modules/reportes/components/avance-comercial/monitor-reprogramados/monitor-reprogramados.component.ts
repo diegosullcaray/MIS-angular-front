@@ -9,32 +9,14 @@ import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/emp
 import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
 import { AvanceComercialService } from '../../../services/avance-comercial.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { OPCIONES_TIPO_MON_REP } from '../../../models/avance-comercial/avance-comercial.model';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Monitor Reprogramados" — migrado de la ruta `mon-rep` (legado STG,
- * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'RS_MON_REP'`).
- *
- * La carga la dispara únicamente `app-hier-selector` (evento
- * `nodoSeleccionado`) — igual que `ReportCraV1p1Component` en el legado, que
- * no hace su propio `getBaseHierarchy()`: solo reacciona a `(onSelectHier)`
- * de `hier-rem-selector`. Tener acá un fetch inicial propio duplicaría la
- * llamada a `obtenerJerarquiaBase`.
- *
- * El selector emite la raíz al terminar de cargarla, así que al entrar ya se
- * ve el reporte del total y desde ahí se baja de a un nivel — como el legado.
- * Lo que NO hace es cascadear hasta el fondo: los niveles siguientes se
- * ofrecen sin preselección, para no terminar mostrando el reporte de una
- * agencia cualquiera.
- */
+/** "Monitor Reprogramados" — migrado de la ruta `mon-rep` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'RS_MON_REP'`). */
 @Component({
   selector: 'app-monitor-reprogramados',
   standalone: true,
@@ -45,7 +27,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class MonitorReprogramadosComponent {
   private readonly servicio = inject(AvanceComercialService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesTipo = OPCIONES_TIPO_MON_REP;
@@ -82,10 +63,7 @@ export class MonitorReprogramadosComponent {
           this.cargando.set(false);
 
           if (resultado.body.length === 0) {
-            this.mensajes.warn(
-              'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.',
-              'Carga en proceso',
-            );
+            this.toast.advertencia('Carga en proceso', 'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.');
           }
         },
         error: () => {

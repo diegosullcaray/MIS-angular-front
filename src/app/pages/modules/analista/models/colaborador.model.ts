@@ -1,8 +1,4 @@
-/**
- * Nodo crudo de `base_hier` (`ModSysAdminService`) — necesita `flag_1`, igual
- * que en Categorización (`categorizacion/models`, mismo campo, copia
- * independiente por módulo).
- */
+/** Nodo crudo de `base_hier` (`ModSysAdminService`) — necesita `flag_1`, igual que en Categorización (`categorizacion/models`, mismo campo, copia independiente por módulo). */
 export interface NodoJerarquiaAncla {
   tip_cod: number;
   cod_rel: string;

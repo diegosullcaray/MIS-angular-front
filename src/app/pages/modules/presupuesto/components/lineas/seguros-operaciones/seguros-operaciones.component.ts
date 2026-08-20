@@ -14,11 +14,7 @@ const COLUMNAS: ColumnaTabla[] = [
   { label: 'OncoAhorros', key: 'seg_ope_onco_ahorros', tipo: 'comp_f' },
 ];
 
-/**
- * Seguros Operaciones (`/app/presupuesto/lineas/pasivos-patrimonio/seg-ope`) —
- * migrado de `PrePasPatSegurosOperacionesComponent` (legado STG). Sin fórmula
- * derivada, igual que Seguros Comercial (`inputCols: 'all'`).
- */
+/** Seguros Operaciones (`/app/presupuesto/lineas/pasivos-patrimonio/seg-ope`) — migrado de `PrePasPatSegurosOperacionesComponent` (legado STG). */
 @Component({
   selector: 'app-seguros-operaciones',
   standalone: true,

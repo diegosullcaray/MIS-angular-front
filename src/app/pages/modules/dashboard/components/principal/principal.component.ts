@@ -8,18 +8,7 @@ import { UsuariosReporteDialogComponent } from '../../ui/usuarios-reporte-dialog
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { ReporteDashboard } from '../../models/reporte.model';
 
-/**
- * Dashboards Integrados (`/app/dashboards`) — migrado de `PrincipalComponent`
- * (legado STG, `pages/modules/reportes-e/principal`). Reemplaza `stg-table2`
- * (tabla custom) por `p-table` (PrimeNG) + Tailwind.
- *
- * Sin filtros de tipo/búsqueda — la tabla muestra `dashboard.reportes()`
- * directo, tal cual llega del backend.
- *
- * Solo los reportes `reportType==='PowerBIReport'` son embebibles hoy —
- * clic en el nombre de cualquier otro tipo no hace nada, igual que
- * `actionLink()` del legado (que solo reaccionaba a ese tipo).
- */
+/** Dashboards Integrados (`/app/dashboards`) — migrado de `PrincipalComponent` (legado STG, `pages/modules/reportes-e/principal`). */
 @Component({
   selector: 'app-dashboard-principal',
   standalone: true,

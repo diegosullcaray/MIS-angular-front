@@ -6,23 +6,13 @@ import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.c
 import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
 import { DesarrolloSostenibleService } from '../../../services/desarrollo-sostenible.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../core/services/message.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Desempeño Social" — migrado de la ruta `desemp-social` (legado STG,
- * `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'DESEMP_SOC'`).
- *
- * El reporte más simple del módulo: sin filtros adicionales ni tarjeta KPI,
- * solo jerarquía + una tabla. El título/leyenda del legado son texto estático
- * (`content.higher`/`lower` sin placeholders `:$...`), así que van fijos en el HTML.
- */
+/** "Desempeño Social" — migrado de la ruta `desemp-social` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'DESEMP_SOC'`). */
 @Component({
   selector: 'app-desempeno-social',
   standalone: true,
@@ -33,7 +23,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class DesempenoSocialComponent {
   private readonly servicio = inject(DesarrolloSostenibleService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
@@ -54,10 +43,7 @@ export class DesempenoSocialComponent {
         this.cargando.set(false);
 
         if (resultado.body.length === 0) {
-          this.mensajes.warn(
-            'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.',
-            'Carga en proceso',
-          );
+          this.toast.advertencia('Carga en proceso', 'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.');
         }
       },
       error: () => {

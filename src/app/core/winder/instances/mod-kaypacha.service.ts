@@ -35,16 +35,12 @@ export class ModKaypachaService extends AntService {
     return this.getSimpleResponseString('kaypacha.DetalleRanking', { cod_bt: rdestip }, 'resultado');
   }
 
-  /**
-   * Obtiene la información detallada del colaborador para el tablero Kaypacha (puntos acumulados y variables históricas).
-   */
+  /** Obtiene la información detallada del colaborador para el tablero Kaypacha (puntos acumulados y variables históricas). */
   public getColaboradoresData(codBT?: string): Observable<IWinderResponse> {
     return this.getSimpleResponseString('kaypacha.colaboradoresData', { cod_bt: codBT }, 'resultado');
   }
 
-  /**
-   * Obtiene la lista global de colaboradores para el buscador de Kaypacha.
-   */
+  /** Obtiene la lista global de colaboradores para el buscador de Kaypacha. */
   public getUserLists(): Observable<IWinderResponse> {
     return this.getSimpleResponseString('kaypacha.colaboradores', {}, 'resultado');
   }

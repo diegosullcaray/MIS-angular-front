@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { DestinoCreditoComponent } from './destino-credito.component';
 import { ActividadesService } from '../../services/actividades.service';
 import type { DestinoCreditoItem } from '../../models/actividades.model';
@@ -28,7 +29,7 @@ describe('DestinoCreditoComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [DestinoCreditoComponent],
-      providers: [{ provide: ActividadesService, useValue: { getRegResultadosDestCred: getSpy, postRegResultadosDestCred: postSpy } }],
+      providers: [{ provide: ActividadesService, useValue: { getRegResultadosDestCred: getSpy, postRegResultadosDestCred: postSpy } }, MessageService],
     });
   });
 

@@ -47,11 +47,7 @@ export class TablaVariablesComponent {
     this.solicitarDetalle(codVar);
   }
 
-  /**
-   * Chip de cada celda numérica — `chipFn1`/`chipFn2` de `tabla.util.ts`
-   * (legado): la meta va en verde o rojo según `avan_fix`, la monetización en
-   * navy, los valores "reales" en celeste y el resto en gris.
-   */
+  /** Chip de cada celda numérica — `chipFn1`/`chipFn2` de `tabla.util.ts` (legado): la meta va en verde o rojo según `avan_fix`, la monetización en navy, los valores "reales" en celeste y el resto en gris. */
   protected claseCelda(fila: FilaTablaVariable | FilaTablaEfectividad, tipo: string): string {
     if (tipo === 'met') {
       const avance = fila.avan_fix;

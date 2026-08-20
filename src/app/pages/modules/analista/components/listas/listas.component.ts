@@ -19,11 +19,7 @@ const ENLACES: EnlaceListaAnalista[] = [
   },
 ];
 
-/**
- * Listas (`/app/analista/listas`) — migrado de `ListasComponent` (legado
- * STG, `docs/07-modulos/analista/listas`). Solo un menú de 2 tarjetas que
- * navegan a Priorización de Leads y Becas.
- */
+/** Listas (`/app/analista/listas`) — migrado de `ListasComponent` (legado STG, `docs/07-modulos/analista/listas`). */
 @Component({
   selector: 'app-listas-analista',
   standalone: true,

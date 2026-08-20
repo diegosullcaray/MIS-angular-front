@@ -6,16 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteAutonomiaTasas } from '../models/autonomia-tasas.model';
 
-/**
- * Datos de "Reporte de Autonomía de Tasas" (legado `leg/com/rda/sec/aut-tasa`,
- * `ReportCrsV1Component` + `crs-map.ts`:
- * `rda/sectorista/Reporte_Autonomia_Tasas/reporte_autonomia_tasa_sec`).
- *
- * Mismo patrón que "Cartera"/"Cero Cuotas" (solo lectura, sin `reportType`
- * declarado en `crs-map.ts` ⇒ strand deprecado `reportData`, `cod_rep` =
- * `module` + sufijo), con 4 bloques — cada uno lleva un parámetro fijo `var`
- * distinto (`crs-map.ts`: `_01→"4"`, `_02→"1"`, `_03→"3"`, `_04→"2"`).
- */
+/** Datos de "Reporte de Autonomía de Tasas" (legado `leg/com/rda/sec/aut-tasa`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/Reporte_Autonomia_Tasas/reporte_autonomia_tasa_sec`). */
 @Injectable({ providedIn: 'root' })
 export class AutonomiaTasasService {
   private readonly reportes = inject(ModReportesService);

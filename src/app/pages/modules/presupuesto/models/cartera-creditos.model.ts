@@ -18,11 +18,7 @@ export interface FilaCarteraCreditosVariables extends FilaLineaSimple {
 /** Ids de negocio de los 11 productos de la composición por producto — no son consecutivos (`18`/`99`). */
 export type IdProductoComposicion = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '18' | '99';
 
-/**
- * Fila de las tabs "Comp. Prod. Monto"/"Comp. Prod. Ratio" de Cartera Créditos —
- * `d_<id>` (monto, calculado) y `g_<id>` (ratio, dato de entrada) por cada
- * producto de `IdProductoComposicion`.
- */
+/** Fila de las tabs "Comp. Prod. Monto"/"Comp. */
 export type FilaCarteraCreditosComposicion = FilaLineaSimple &
   { [K in IdProductoComposicion as `d_${K}`]?: number } &
   { [K in IdProductoComposicion as `g_${K}`]?: number };

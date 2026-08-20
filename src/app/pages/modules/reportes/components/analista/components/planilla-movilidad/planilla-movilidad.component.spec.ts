@@ -4,7 +4,6 @@ import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { PlanillaMovilidadComponent } from './planilla-movilidad.component';
 import { PlanillaMovilidadService } from '../../services/planilla-movilidad.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -29,7 +28,6 @@ describe('PlanillaMovilidadComponent', () => {
       providers: [
         { provide: PlanillaMovilidadService, useValue: servicioFalso },
         ToastService,
-        MessageService,
         PrimeNgMessageService,
       ],
     });
@@ -69,7 +67,7 @@ describe('PlanillaMovilidadComponent', () => {
   it('muestra una advertencia si las 4 tablas vienen vacías', () => {
     servicioFalso.obtenerPlanillaMovilidad.mockReturnValue(of({ tabla1: tabla(), tabla2: tabla(), tabla3: tabla(), tabla4: tabla() }));
     const fixture = crear();
-    const warnSpy = vi.spyOn(TestBed.inject(MessageService), 'warn');
+    const warnSpy = vi.spyOn(TestBed.inject(ToastService), 'advertencia');
 
     fixture.componentInstance['onAsesorSeleccionado'](ASESOR);
 

@@ -5,24 +5,7 @@ import { Strand } from '../winder/strand.class';
 import { WinderService } from '../winder/winder.service';
 import type { IWinderConnectionConf, IWinderRequestConfig, IWinderResponse } from '../winder/winder.interface';
 
-/**
- * Clase base de los módulos de negocio del backend Ant. Cada módulo (login,
- * admin, reporting…) la extiende con su `IWinderConnectionConf` y usa los
- * helpers protegidos, que ocultan el protocolo Winder.
- *
- * ```typescript
- * \@Injectable({ providedIn: 'root' })
- * export class ModSysAdminService extends AntService {
- *   constructor() {
- *     super({ port: 6301, secret: environment.moduleSecrets.admin, appId: 'admin' });
- *   }
- *
- *   getMenuItems(email: string): Observable<IWinderResponse> {
- *     return this.getSimpleResponseString('list_sec', { email }, 'menu_response');
- *   }
- * }
- * ```
- */
+/** Clase base de los módulos del backend Ant: cada uno la extiende con su `IWinderConnectionConf` y usa estos helpers, que ocultan el protocolo Winder. */
 export abstract class AntService {
   private readonly connectionConf: IWinderConnectionConf;
   protected readonly winderService = inject(WinderService);
@@ -30,8 +13,6 @@ export abstract class AntService {
   constructor(conn: IWinderConnectionConf) {
     this.connectionConf = conn;
   }
-
-  // ─── GET helpers ──────────────────────────────────────────────────────────
 
   protected get(requestConf: IWinderRequestConfig): Observable<IWinderResponse> {
     return this.winderService.prepare(this.connectionConf, requestConf).get().pipe(first());
@@ -45,13 +26,7 @@ export abstract class AntService {
     return this.get({ responseType: 'resource', strands: s });
   }
 
-  /**
-   * Shortcut para GET con un solo Strand, parámetros simples y respuesta JSON.
-   *
-   * @param strandName   Nombre del actionRoute en el backend (ej: `'list_sec'`).
-   * @param params       Objeto con los parámetros del payload.
-   * @param responseName Nombre del campo de respuesta (default: `'response'`).
-   */
+  /** GET con un solo Strand, parámetros simples y respuesta JSON. */
   protected getSimpleResponseString(
     strandName: string,
     params: Record<string, unknown>,
@@ -62,9 +37,7 @@ export abstract class AntService {
     return this.getResponseString(s);
   }
 
-  /**
-   * Shortcut para GET sin parámetros de payload.
-   */
+  /** GET sin parámetros de payload. */
   protected getSimpleResponseStringNP(
     strandName: string,
     responseName = 'response'
@@ -73,9 +46,7 @@ export abstract class AntService {
     return this.getResponseString(s);
   }
 
-  /**
-   * Shortcut para GET de recurso binario (blob).
-   */
+  /** GET de recurso binario (blob). */
   protected getSimpleResponseResource(
     strandName: string,
     params: Record<string, unknown>,
@@ -86,8 +57,6 @@ export abstract class AntService {
     return this.getResponseResource(s);
   }
 
-  // ─── POST helpers ─────────────────────────────────────────────────────────
-
   protected post(requestConf: IWinderRequestConfig): Observable<unknown> {
     return this.winderService.prepare(this.connectionConf, requestConf).post();
   }
@@ -96,9 +65,7 @@ export abstract class AntService {
     return this.post({ responseType: 'JSON', strands: s }).pipe(first());
   }
 
-  /**
-   * Shortcut para POST con un solo Strand y parámetros simples.
-   */
+  /** POST con un solo Strand y parámetros simples. */
   protected postSimpleResponseString(
     strandName: string,
     params: Record<string, unknown>
@@ -108,9 +75,7 @@ export abstract class AntService {
     return this.postResponseString(s);
   }
 
-  /**
-   * Shortcut para POST de archivo con parámetros adicionales.
-   */
+  /** POST de archivo con parámetros adicionales. */
   protected postFileSimpleResponseString(
     strandName: string,
     params: Record<string, unknown>,
@@ -123,9 +88,7 @@ export abstract class AntService {
     return this.postResponseString(s);
   }
 
-  /**
-   * Shortcut para POST de archivo sin parámetros adicionales.
-   */
+  /** POST de archivo sin parámetros adicionales. */
   protected postFileSimpleResponseStringNP(
     strandName: string,
     fileId: string,

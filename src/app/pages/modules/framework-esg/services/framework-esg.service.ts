@@ -21,19 +21,7 @@ function parseCfg<T>(bloque: { cfg?: string } | undefined, fallback: T): T {
   }
 }
 
-/**
- * Fachada del módulo `framework-esg` (Cuadro de Mando ESG, `/app/esg`) —
- * traduce las respuestas crudas del backend Ant (`ModFrameworkEsgService`,
- * puerto 6302) a los modelos tipados que consumen las pantallas.
- *
- * Migrado de `FrameworkEsgService`/`ModFrameworkEsgService` (legado STG,
- * `pages/modules/framework-esg/compartido/servicios`). El legado guardaba
- * `selectedRow`/`histEditKeys`/`editMode` como estado mutable compartido en
- * este mismo servicio; en esta migración esos datos son responsabilidad de
- * `PrincipalComponent` (dueño de la pantalla) y viajan como `@Input()` hacia
- * los diálogos de Editar/Usuarios — más cerca de cómo ya lo hacen
- * `CarteraCreditosComponent`/`BuscadorColaboradorDialogComponent`.
- */
+/** Fachada del módulo `framework-esg` (Cuadro de Mando ESG, `/app/esg`) — traduce las respuestas crudas del backend Ant (`ModFrameworkEsgService`, puerto 6302) a los modelos tipados que consumen las pantallas. */
 @Injectable({ providedIn: 'root' })
 export class FrameworkEsgService {
   private readonly ant = inject(ModFrameworkEsgService);

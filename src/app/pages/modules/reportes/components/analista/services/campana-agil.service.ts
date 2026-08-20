@@ -6,18 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteCampanaAgil } from '../models/campana-agil.model';
 
-/**
- * Datos de "Campaña Ágil" (legado `leg/com/rda/sec/cam-agl`,
- * `ReportCrsV1Component` + `crs-map.ts`:
- * `rda/sectorista/campania_agil/campana_agil_sec`).
- *
- * Mismo patrón que "Cartera"/"Cero Cuotas" (solo lectura, sin `reportType`
- * declarado en `crs-map.ts` ⇒ strand deprecado `reportData`, `cod_rep` =
- * `module` + sufijo), único bloque, pero con un filtro real (`Semana01()`
- * en `crs-map.ts` → variable `sem`) — a diferencia de los filtros muertos
- * vistos en otros reportes bespoke, acá sí se renderiza (`ReportCrsV1Component`
- * sí pinta `report.getFilters()` vía `app-select-multiple`).
- */
+/** Datos de "Campaña Ágil" (legado `leg/com/rda/sec/cam-agl`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/campania_agil/campana_agil_sec`). */
 @Injectable({ providedIn: 'root' })
 export class CampanaAgilService {
   private readonly reportes = inject(ModReportesService);

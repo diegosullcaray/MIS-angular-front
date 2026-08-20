@@ -5,21 +5,12 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { GraficoReporteComponent } from '../../../../ui/grafico-reporte/grafico-reporte.component';
 import { InversionStockMoraService } from '../../services/inversion-stock-mora.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { BloqueGrafico } from '../../../../models/grafico-reporte.model';
 
-/**
- * "Inversión y Stock de Mora" — migrado de la ruta `leg/com/rda/sec/inv-stk`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v2`,
- * config `rda/sectorista/brecha/brecha_inversion_sec` en `crs-map.ts`).
- *
- * A diferencia del resto de `reportes` (tablas), este es el primer reporte
- * migrado con gráficos (`app-grafico-reporte`, Chart.js) — el legado usaba
- * Highcharts (`app-graphic-basic`), no disponible en el proyecto nuevo.
- */
+/** "Inversión y Stock de Mora" — migrado de la ruta `leg/com/rda/sec/inv-stk` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v2`, config `rda/sectorista/brecha/brecha_inversion_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-inversion-stock-mora',
   standalone: true,
@@ -30,7 +21,6 @@ import type { BloqueGrafico } from '../../../../models/grafico-reporte.model';
 export class InversionStockMoraComponent {
   private readonly servicio = inject(InversionStockMoraService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly mostrarFiltros = signal(false);
 
@@ -62,7 +52,7 @@ export class InversionStockMoraComponent {
         this.cargando.set(false);
 
         if (graficos.length === 0) {
-          this.mensajes.warn('Este asesor no tiene datos de inversión y stock de mora.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene datos de inversión y stock de mora.');
         }
       },
       error: () => {

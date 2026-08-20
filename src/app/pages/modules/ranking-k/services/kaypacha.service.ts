@@ -46,7 +46,6 @@ export class KaypachaService {
 
     const codBt = this.shell.usuarioActivo()?.codBt;
     if (!codBt) {
-      console.error('No se puede cargar el ranking Kaypacha: sin cod_bt en el usuario activo.');
       this.error.set('No se pudo determinar tu código de negocio/agencia.');
       this.cargando.set(false);
       this.cargado = false;
@@ -60,8 +59,7 @@ export class KaypachaService {
         this.categorias.set(json ? (JSON.parse(json) as CategoriaRanking[]) : []);
         this.cargando.set(false);
       },
-      error: (err) => {
-        console.error('Error al cargar las categorías del ranking Kaypacha:', err);
+      error: () => {
         this.error.set('No se pudo cargar la lista de categorías.');
         this.cargando.set(false);
         this.cargado = false;

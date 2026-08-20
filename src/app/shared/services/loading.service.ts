@@ -8,18 +8,7 @@ export interface LoadingState {
 
 const INACTIVO: LoadingState = { isLoading: false, requestCount: 0 };
 
-/**
- * Spinner global: cuenta las peticiones en vuelo y se apaga cuando no queda
- * ninguna.
- *
- * El estado es un signal y NO un `BehaviorSubject`. La app corre en modo
- * zoneless (`provideZonelessChangeDetection`), donde una emisión de RxJS por
- * sí sola no marca ninguna vista para refresco: el overlay lo consumía con
- * `toSignal` y quedaba pintado aunque el estado ya fuera `isLoading: false`
- * —bloqueando toda la pantalla— cuando varias peticiones se resolvían juntas
- * durante el arranque. Un signal sí notifica al planificador de detección de
- * cambios, así que la vista se actualiza sola.
- */
+/** Spinner global: cuenta las peticiones en vuelo. */
 @Injectable({
   providedIn: 'root'
 })
@@ -34,10 +23,7 @@ export class LoadingService {
 
   private requestCounter = 0;
 
-  /**
-   * Muestra el loading spinner
-   * @param message - Mensaje opcional a mostrar
-   */
+  /** Muestra el spinner, con un mensaje opcional. */
   show(message?: string): void {
     this.requestCounter++;
     this.estadoInterno.set({
@@ -47,10 +33,7 @@ export class LoadingService {
     });
   }
 
-  /**
-   * Oculta el loading spinner
-   * Solo oculta cuando no hay más requests pendientes
-   */
+  /** Oculta el spinner, solo si no quedan peticiones pendientes. */
   hide(): void {
     this.requestCounter = Math.max(0, this.requestCounter - 1);
 
@@ -64,24 +47,18 @@ export class LoadingService {
     }
   }
 
-  /**
-   * Fuerza el ocultamiento del loading (útil para casos de error)
-   */
+  /** Fuerza el ocultamiento del spinner (para casos de error). */
   forceHide(): void {
     this.requestCounter = 0;
     this.estadoInterno.set(INACTIVO);
   }
 
-  /**
-   * Obtiene el estado actual del loading
-   */
+  /** Estado actual del spinner. */
   get currentState(): LoadingState {
     return this.estadoInterno();
   }
 
-  /**
-   * Verifica si está cargando actualmente
-   */
+  /** True si hay algo en vuelo. */
   get isLoading(): boolean {
     return this.estadoInterno().isLoading;
   }

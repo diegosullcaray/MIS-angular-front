@@ -6,16 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteDesempenoSocialAnalista } from '../models/desempeno-social-analista.model';
 
-/**
- * Datos de "Desempeño Social" de analista/sectorista (legado
- * `leg/com/rda/sec/desempeno-social-as`, `ReportCrsV1Component` +
- * `crs-map.ts`: `DESE_SOC_AS`).
- *
- * `reportType: ReportType.REGULAR` en `crs-map.ts` ⇒ strand moderno
- * `regularData`. No confundir con "Desempeño Social" de administración
- * (`DesarrolloSostenibleService.obtenerDesempenoSocial()`, `cod_rep:
- * 'DESEMP_SOC_01'`) — es un reporte y `cod_rep` distinto del legado.
- */
+/** Datos de "Desempeño Social" de analista/sectorista (legado `leg/com/rda/sec/desempeno-social-as`, `ReportCrsV1Component` + `crs-map.ts`: `DESE_SOC_AS`). */
 @Injectable({ providedIn: 'root' })
 export class DesempenoSocialAnalistaService {
   private readonly reportes = inject(ModReportesService);

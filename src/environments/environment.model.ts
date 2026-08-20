@@ -1,7 +1,4 @@
-/**
- * Contrato de configuración por entorno. Tipar ambos archivos con esta interfaz
- * impide que vuelvan a divergir sin que el compilador lo note.
- */
+/** Contrato de configuración por entorno. Tipar ambos archivos con esta interfaz impide que vuelvan a divergir sin que el compilador lo note. */
 export interface Environment {
   production: boolean;
 

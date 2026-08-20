@@ -8,11 +8,7 @@ const FACETAS = [{ nombre: 'tipo', etiqueta: 'Tipo' }] as const;
 
 type Faceta = (typeof FACETAS)[number]['nombre'];
 
-/**
- * Configuración del índice. El orden de `atributosBuscables` importa: alimenta
- * el criterio "atributo" del ranking, así que un match en el nombre del ítem
- * pesa más que el mismo match en su ubicación.
- */
+/** Configuración del índice; el orden de `atributosBuscables` importa: un match en el nombre pesa más que en la ubicación. */
 const CONFIG: ConfiguracionIndice<RegistroBuscable> = {
   atributosBuscables: [
     { nombre: 'etiqueta', valor: (r) => r.etiqueta },
@@ -25,23 +21,10 @@ const CONFIG: ConfiguracionIndice<RegistroBuscable> = {
   id: (r) => r.id,
 };
 
-/**
- * Tope de resultados renderizados. Es alto a propósito: la lista scrollea, así
- * que recortarla antes hacía que el pie dijera "32 resultados" mientras solo se
- * podía llegar a 8. Sirve nada más de red de contención para no dibujar cientos
- * de filas de una; el corpus real son unos cientos de nodos.
- */
+/** Tope de resultados renderizados; alto a propósito porque la lista scrollea — es solo una red de contención. */
 const MAXIMO_RESULTADOS = 50;
 
-/**
- * Búsqueda instantánea con la relevancia de Algolia (ver `BuscadorService`):
- * tolera typos, matchea por prefijo la palabra que se está tecleando, resalta
- * lo que coincidió y deja refinar por módulo y por tipo.
- *
- * No conoce ningún módulo: se alimenta de las fuentes registradas en
- * `FUENTE_BUSQUEDA`, cada una responsable de aportar la data que tiene cargada
- * y de respetar los permisos del usuario.
- */
+/** Búsqueda instantánea con la relevancia de Algolia; no conoce ningún módulo, se alimenta de las fuentes registradas en `FUENTE_BUSQUEDA`. */
 @Component({
   selector: 'app-buscador',
   standalone: true,
@@ -55,10 +38,7 @@ export class BuscadorComponent {
   protected readonly enfocado = signal(false);
   protected readonly filtros = signal<Record<Faceta, string[]>>({ tipo: [] });
 
-  /**
-   * Registros de todas las fuentes. Es un `computed`, así que si un módulo
-   * carga su data mientras el buscador está abierto, entra sola al índice.
-   */
+  /** Registros de todas las fuentes; al ser `computed`, la data que carga un módulo entra sola al índice. */
   private readonly registros = computed<RegistroBuscable[]>(() => this.fuentes.flatMap((fuente) => fuente.registros()));
 
   /** El índice se rearma solo cuando cambian los registros, no en cada tecla. */
@@ -79,24 +59,13 @@ export class BuscadorComponent {
   /** El panel solo aparece con algo tecleado: sin consulta no hay nada que sugerir. */
   protected readonly desplegado = computed(() => this.enfocado() && this.consulta().trim().length > 0);
 
-  /**
-   * Opción marcada para el teclado. Vuelve a la primera cuando cambia lo que el
-   * usuario pidió —la consulta o los filtros—, y NO cuando se rearma el índice:
-   * un módulo puede terminar de cargar su data de fondo y eso no debería
-   * moverle la selección de abajo.
-   */
+  /** Opción marcada para el teclado; vuelve a la primera al cambiar consulta o filtros, pero no al rearmarse el índice de fondo. */
   protected readonly indiceActivo = linkedSignal<string, number>({
     source: () => `${this.consulta()} ${JSON.stringify(this.filtros())}`,
     computation: () => 0,
   });
 
-  /**
-   * Chips de refinamiento agrupados por faceta, cada grupo con su etiqueta.
-   *
-   * Solo se ofrece "Tipo". Antes había también una faceta por módulo, pero sus
-   * valores se confundían con los del tipo ("Reportes" el módulo contra
-   * "Reporte" el tipo) y el módulo ya se lee en la ubicación de cada resultado.
-   */
+  /** Chips de refinamiento por faceta. Solo se ofrece "Tipo": la faceta por módulo se confundía con ella y el módulo ya se lee en la ubicación. */
   protected readonly grupos = computed(() => {
     const facetas = this.respuesta().facetas;
     const activos = this.filtros();
@@ -117,10 +86,7 @@ export class BuscadorComponent {
 
   protected readonly hayFiltros = computed(() => Object.values(this.filtros()).some((v) => v.length > 0));
 
-  /**
-   * True cuando hubo que soltar palabras para encontrar algo, así se avisa que
-   * lo que se está viendo no matchea la consulta entera.
-   */
+  /** True si hubo que soltar palabras para encontrar algo: lo mostrado no matchea la consulta entera. */
   protected readonly consultaRelajada = computed(() => {
     const { palabrasUsadas, consulta } = this.respuesta();
     return palabrasUsadas > 0 && palabrasUsadas < tokenizarConsulta(consulta).length;

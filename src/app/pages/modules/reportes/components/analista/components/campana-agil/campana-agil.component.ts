@@ -5,25 +5,13 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { CampanaAgilService } from '../../services/campana-agil.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { OPCIONES_SEMANA, SEMANA_POR_DEFECTO } from '../../models/campana-agil.model';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Campaña Ágil" — migrado de la ruta `leg/com/rda/sec/cam-agl` (legado STG,
- * `reportes/legacy/support/components/template/crs/report-crs-v1`, config
- * `rda/sectorista/campania_agil/campana_agil_sec` en `crs-map.ts`).
- *
- * Solo lectura: asesor + filtro "Semana" (real, `Semana01()` en `crs-map.ts`,
- * semana 1 por defecto) → 1 tabla. Cambiar la semana recarga la tabla si ya
- * hay un asesor elegido, igual que el legado (`mergeParams()`: `combineLatest`
- * de filtro + nivel).
- */
+/** "Campaña Ágil" — migrado de la ruta `leg/com/rda/sec/cam-agl` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/campania_agil/campana_agil_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-campana-agil',
   standalone: true,
@@ -34,7 +22,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class CampanaAgilComponent {
   private readonly servicio = inject(CampanaAgilService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly opcionesSemana = OPCIONES_SEMANA;
 
@@ -79,7 +66,7 @@ export class CampanaAgilComponent {
         this.cargando.set(false);
 
         if (tabla1.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene datos de campaña ágil para la semana elegida.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene datos de campaña ágil para la semana elegida.');
         }
       },
       error: () => {

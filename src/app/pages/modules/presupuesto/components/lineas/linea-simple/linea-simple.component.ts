@@ -11,16 +11,7 @@ import type { CeldaEditadaEvent } from '../../../models/tabla.model';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { FilaLineaSimple, LineaSimpleConfig, ResumenMetadata } from '../../../models/linea-simple.model';
 
-/**
- * Pantalla genérica "línea simple" — reemplaza a `PreLineaSimpleComponent`
- * (clase base abstracta del legado), usada tal cual por Depósitos BP/Red y
- * Seguros Comercial/Operaciones (cada una solo aporta su propia
- * `LineaSimpleConfig`, ver los 4 componentes delgados en `components/`).
- *
- * Ciclo: elegir nivel de jerarquía → cargar resumen (`ws`/`bp`) → editar
- * celdas (con cascada opcional vía `config().calcularFila`) → guardar (solo
- * las filas desde `bp.ord_ini_edi`) / reiniciar / verificar.
- */
+/** Pantalla genérica "línea simple" — reemplaza a `PreLineaSimpleComponent` (clase base abstracta del legado), usada tal cual por Depósitos BP/Red y Seguros Comercial/Operaciones (cada una solo aporta su propia `LineaSimpleConfig`, ver los 4 componentes delgados en `components/`). */
 @Component({
   selector: 'app-linea-simple',
   standalone: true,

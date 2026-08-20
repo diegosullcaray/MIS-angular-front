@@ -1,15 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
-/**
- * Cifrado AES-128-CBC del protocolo Winder. El backend espera exactamente:
- * key de 128 bits (hex de 32 caracteres), IV de 16 bytes en cero, padding
- * PKCS#7 y salida en Base64 estándar — cambiar cualquiera rompe el handshake.
- *
- * `encryptSync`/`decryptSync` existen porque `WinderService` arma la URL de
- * forma síncrona y SubtleCrypto es asíncrona; caen a una implementación
- * AES-CBC en JS puro cuando SubtleCrypto no está disponible (SSR/Node).
- */
+/** Cifrado AES-128-CBC del protocolo Winder. */
 @Injectable({ providedIn: 'root' })
 export class CypherService {
   private readonly secret = environment.cypherSecret;
@@ -85,10 +77,6 @@ export class CypherService {
     for (let i = 0; i < 256; i++) {
       this.invSBox[this.sBox[i]] = i;
     }
-  }
-
-  private xtime(a: number): number {
-    return ((a << 1) ^ ((a & 0x80) ? 0x1b : 0x00)) & 0xff;
   }
 
   private gmul(a: number, b: number): number {
@@ -187,9 +175,7 @@ export class CypherService {
 
   /** Cifra un bloque de 16 bytes con AES-128 (ECB). */
   private aesEncryptBlock(block: Uint8Array, w: Uint32Array): Uint8Array {
-    // El layout column-major del state (state[col*4+row]) coincide con el
-    // orden natural de bytes de entrada (in[r+4c] === in[c*4+r]), por lo
-    // que no se requiere ninguna transposición al copiar el bloque.
+    // El layout column-major del state coincide con el orden natural de los bytes de entrada: no hace falta transponer.
     const state = new Uint8Array(16);
     state.set(block);
 
@@ -234,10 +220,7 @@ export class CypherService {
 
   // ─── API pública ───────────────────────────────────────────────────────────
 
-  /**
-   * Cifra un string con AES-128-CBC (IV de 16 bytes en cero).
-   * Devuelve el ciphertext en Base64, igual que CryptoJS del STG.
-   */
+  /** Cifra un string con AES-128-CBC (IV de 16 bytes en cero). Devuelve el ciphertext en Base64, igual que CryptoJS del STG. */
   public encrypt(plainText: string, secretHex?: string): string {
     const keyHex = secretHex ?? this.secret;
     const key = this.hexToBytes(keyHex);
@@ -260,9 +243,7 @@ export class CypherService {
     return this.bytesToBase64(cipher);
   }
 
-  /**
-   * Descifra un string Base64 cifrado con AES-128-CBC (IV de 16 bytes en cero).
-   */
+  /** Descifra un string Base64 cifrado con AES-128-CBC (IV de 16 bytes en cero). */
   public decrypt(cipherText: string, secretHex?: string): string {
     const keyHex = secretHex ?? this.secret;
     const key = this.hexToBytes(keyHex);
@@ -285,17 +266,12 @@ export class CypherService {
     return new TextDecoder().decode(this.pkcs7Unpad(plain));
   }
 
-  /**
-   * Cifra para uso en parámetros de URL:
-   * reemplaza `+` por `$` para evitar conflictos con query strings.
-   */
+  /** Cifra para uso en parámetros de URL: reemplaza `+` por `$` para evitar conflictos con query strings. */
   public encryptForRoute(key: string, secret?: string): string {
     return this.encrypt(key, secret).replace(/\+/g, '$');
   }
 
-  /**
-   * Descifra un valor cifrado con `encryptForRoute`.
-   */
+  /** Descifra un valor cifrado con `encryptForRoute`. */
   public decryptFromRoute(key: string, secret?: string): string {
     return this.decrypt(key.replace(/\$/g, '+'), secret);
   }

@@ -16,22 +16,10 @@ import type {
 /** Etiquetas fijas de las 4 tarjetas de "Estado Requisitos" (legado, sin traer nombre del backend). */
 const ETIQUETAS_REQUISITOS = ['Disciplina', 'Calificación', 'Permanencia', 'Formación'] as const;
 
-/**
- * `cod_jer` de la jerarquía usada para ubicar el nodo ancla del admin —
- * mismo código (9, "Admin. Comercial") que usan Cartera Créditos y Seguros
- * Comercial en Presupuesto (ver `ParamsJerarquia`, `presupuesto/models`).
- */
+/** `cod_jer` de la jerarquía usada para ubicar el nodo ancla del admin — mismo código (9, "Admin. */
 const COD_JERARQUIA_ANCLA = 9;
 
-/**
- * Fachada del módulo `categorizacion` — migrado de `CategorizacionComponent`
- * + `AnalistaService` (legado STG, `docs/07-modulos/analista/categorizacion`).
- *
- * El legado resolvía "quién puede ver la categorización de otro
- * colaborador" con `profile.tip_use !== 1`; este Host no tiene ese campo,
- * así que se usa `esAdmin` (admin-sistema/admin-general) como equivalente
- * más cercano — mismo criterio ya documentado en `PresupuestoService.esAdmin()`.
- */
+/** Fachada del módulo `categorizacion` — migrado de `CategorizacionComponent` + `AnalistaService` (legado STG, `docs/07-modulos/analista/categorizacion`). */
 @Injectable({ providedIn: 'root' })
 export class CategorizacionService {
   private readonly ant = inject(ModSeccionesService);
@@ -71,12 +59,7 @@ export class CategorizacionService {
     );
   }
 
-  /**
-   * Nodo ancla del admin en la jerarquía (`base_hier`, `cod_jer=9`) — primer
-   * nodo con `flag_1` en `{0,1,2}`, tal cual el filtro del legado
-   * (`CategorizacionComponent.ngOnInit`), sin poder confirmar contra el
-   * backend real qué representa cada valor de `flag_1`.
-   */
+  /** Nodo ancla del admin en la jerarquía (`base_hier`, `cod_jer=9`) — primer nodo con `flag_1` en `{0,1,2}`, tal cual el filtro del legado (`CategorizacionComponent.ngOnInit`), sin poder confirmar contra el backend real qué representa cada valor de `flag_1`. */
   obtenerAnclaAdmin(): Observable<NodoJerarquiaAncla | null> {
     return this.antAdmin.getBaseHierarchy(this.email, COD_JERARQUIA_ANCLA).pipe(
       map((response) => {

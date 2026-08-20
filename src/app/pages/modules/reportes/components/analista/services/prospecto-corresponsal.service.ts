@@ -10,20 +10,7 @@ import type { AsesorSec } from '../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type { OpcionJerarquia, ProspectoCorresponsalForm } from '../models/prospecto-corresponsal.model';
 
-/**
- * Datos de "Prospecto Corresponsal" (legado `leg/com/rda/sec/sec-prosp`,
- * `crs-prospe.component.ts` + `add-prospe.component.ts`).
- *
- * A diferencia de "Cartera"/"Clientes Producto" (bloques `crs-map` + strand
- * deprecado), esta pantalla es un componente bespoke del legado que llama
- * `getRegularData`/`postRegularUpdate` directo, sin pasar por `ReportT` — por
- * eso `cod_rep` es un código corto (`LIS_PROSPE_01`), strand moderno
- * `regularData`, igual que "Encuesta Clientes".
- *
- * La pestaña "Actualizar Prospectos" (editar uno ya creado) está comentada en
- * el `.html` legado y `save()` del componente principal también — código
- * muerto, no se migra. Solo quedan: la lista y el diálogo "Nuevo" (`+Agregar`).
- */
+/** Datos de "Prospecto Corresponsal" (legado `leg/com/rda/sec/sec-prosp`, `crs-prospe.component.ts` + `add-prospe.component.ts`). */
 @Injectable({ providedIn: 'root' })
 export class ProspectoCorresponsalService {
   private readonly reportes = inject(ModReportesService);

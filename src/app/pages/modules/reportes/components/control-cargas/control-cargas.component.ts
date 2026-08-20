@@ -5,21 +5,11 @@ import { TablaReporteComponent } from '../../ui/tabla-reporte/tabla-reporte.comp
 import { ControlCargasService } from '../../services/control-cargas.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
-import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 const INTERVALO_REFRESCO_MS = 30 * 1000;
 
-/**
- * "Control de Cargas" — migrado de la ruta `leg/prd` (legado STG,
- * `reportes/legacy/control-cargas`, `cod_rep: 'RS_MON_CAR_01'`).
- *
- * Sin jerarquía ni filtros: monitor de estado de cargas que se refresca solo
- * cada 30s (`setInterval` en el legado) — acá con `interval()` +
- * `takeUntilDestroyed()` en vez de `ReplaySubject`/`ngOnDestroy` manual. El
- * mismo `cod_rep` sirve para ambas tablas, diferenciadas por `opt`
- * (`opt:2` = fuentes de producción, `opt:1` = procesos diarios).
- */
+/** "Control de Cargas" — migrado de la ruta `leg/prd` (legado STG, `reportes/legacy/control-cargas`, `cod_rep: 'RS_MON_CAR_01'`). */
 @Component({
   selector: 'app-control-cargas',
   standalone: true,

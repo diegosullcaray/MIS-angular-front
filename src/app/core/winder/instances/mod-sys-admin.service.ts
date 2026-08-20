@@ -5,11 +5,7 @@ import { Strand } from '../winder/strand.class';
 import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * Módulo de Administración del backend Ant (puerto 6301, appId `admin`).
- * Provee el menú del usuario (`list_sec`), la jerarquía organizativa
- * (`base_hier`/`level_hier`), la lista de sectoristas y el tracking de navegación.
- */
+/** Módulo de Administración del backend Ant (puerto 6301, appId `admin`). */
 @Injectable({ providedIn: 'root' })
 export class ModSysAdminService extends AntService {
   constructor() {

@@ -10,27 +10,7 @@ import type {
   ReporteMonitorMetasDesembolso,
 } from '../models/monitor-metas-desembolso.model';
 
-/**
- * Datos de "Monitor de Desembolsos" (legado `leg/com/rda/sec/mon-desem`,
- * `ReportCrsV1Component` + `crs-map.ts`:
- * `rda/sectorista/monitor_metas_desembolsos/monitor_metas_desem_sec`).
- *
- * No confundir con "Monitor Metas Desembolso" de `avance-comercial`
- * (`rda/administracion`, `cod_rep: 'Monitor_Dese'`, por jerarquía) — es un
- * reporte distinto del legado, con su propio `cod_rep` y alcance por asesor
- * en vez de por nivel de jerarquía; ambos comparten la misma estructura de
- * tarjetas KPI + tablas.
- *
- * Los bloques `_01`/`_02` llevan el parámetro fijo `tipmet: 1`
- * (`crs-map.ts`); su `additional` trae los datos de las tarjetas KPI
- * ("Operaciones Desembolsadas"/"Monto Desembolsado", ambas con
- * "Cumplimiento de Meta") — mismo mecanismo que el legado
- * (`TableMHService.addExt()`) usa para sustituir `:$campo` en el HTML de
- * `content.higher`, acá simplemente se muestra el valor con el estilo fijo
- * de la tarjeta en vez de parsear la clase CSS dinámica del legado
- * (`style_cumpl_*`), igual que ya se resolvió en la versión de administración
- * (`AvanceComercialService.obtenerMonitorMetasDesembolso`).
- */
+/** Datos de "Monitor de Desembolsos" (legado `leg/com/rda/sec/mon-desem`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/monitor_metas_desembolsos/monitor_metas_desem_sec`). */
 @Injectable({ providedIn: 'root' })
 export class MonitorMetasDesembolsoService {
   private readonly reportes = inject(ModReportesService);

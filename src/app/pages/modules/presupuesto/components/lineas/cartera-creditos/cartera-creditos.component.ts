@@ -54,14 +54,7 @@ function columnasComposicion(prefijo: 'd' | 'g', tipo: TipoColumna): ColumnaTabl
   ];
 }
 
-/**
- * Cartera de Créditos (`/app/presupuesto/lineas/activos/car-cre`) — migrado
- * de `PreActCarteraCreditosComponent` (legado STG). A diferencia de
- * Depósitos/Seguros, no usa `LineaSimpleComponent`: tiene 3 tabs (Variables +
- * dos de composición por producto de solo lectura) y una fórmula de cascada
- * propia con un paso previo especial para Asesores Nuevos/en Producción (ver
- * `utils/cartera-creditos-calculo.util.ts`).
- */
+/** Cartera de Créditos (`/app/presupuesto/lineas/activos/car-cre`) — migrado de `PreActCarteraCreditosComponent` (legado STG). */
 @Component({
   selector: 'app-cartera-creditos',
   standalone: true,

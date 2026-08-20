@@ -1,10 +1,4 @@
-/**
- * Helpers puros de transformación de datos — migrados de los métodos
- * privados `resetCfg`/`updateCfg`/`updateCfg2`/`sumFromIds`/`round` de
- * `incentivos3.service.ts` (legado STG). Versión inmutable (devuelven
- * arreglos nuevos en vez de mutar in-place) para poder guardarlos
- * directamente en `signal()`s.
- */
+/** Helpers puros de transformación de datos — migrados de los métodos privados `resetCfg`/`updateCfg`/`updateCfg2`/`sumFromIds`/`round` de `incentivos3.service.ts` (legado STG). */
 
 /** Marca `show=true` en los ítems cuyo `id` está en `idsVisibles` (y `false` en el resto) — `updateCfg(arr, ids, 'show')` del legado. */
 export function marcarVisibles<T extends { id: string; show: boolean }>(items: T[], idsVisibles: string[]): T[] {
@@ -18,10 +12,7 @@ export function marcarHabilitados<T extends { id: string; enab: boolean }>(items
   return items.map((item) => ({ ...item, enab: set.has(item.id) }));
 }
 
-/**
- * Copia el valor de `origen[\`${prefijo}${item.id}${sufijo}\`]` al campo `campo` de cada
- * ítem cuyo `id` arme una clave presente en `origen` — `updateCfg2()` del legado.
- */
+/** Copia el valor de `origen[\`${prefijo}${item.id}${sufijo}\`]` al campo `campo` de cada ítem cuyo `id` arme una clave presente en `origen` — `updateCfg2()` del legado. */
 export function asignarValores<T extends { id: string }>(
   items: T[],
   origen: Record<string, unknown>,

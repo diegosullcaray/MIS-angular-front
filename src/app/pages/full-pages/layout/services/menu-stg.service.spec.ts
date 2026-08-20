@@ -161,13 +161,11 @@ describe('MenuStgService', () => {
     expect(service.buscarPorRuta('/ruta/inexistente')).toBeNull();
   });
 
-  it('en caso de error del backend, deja sistemas vacíos y registra el error en consola', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  it('en caso de error del backend, deja sistemas vacíos', () => {
     getMenuItemsSpy.mockReturnValue(throwError(() => new Error('backend caído')));
 
     service.cargar('ana.torres@confianza.pe');
 
     expect(service.sistemas()).toEqual([]);
-    expect(consoleSpy).toHaveBeenCalled();
   });
 });

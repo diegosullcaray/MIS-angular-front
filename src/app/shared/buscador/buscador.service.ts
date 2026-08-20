@@ -27,12 +27,7 @@ const RE_DIACRITICO = /\p{Diacritic}/gu;
 
 // ─── Texto ─────────────────────────────────────────────────────────────────
 
-/**
- * Normaliza (sin acentos, en minúsculas) devolviendo además el mapa de
- * posiciones al texto original. Hace falta el mapa porque normalizar cambia el
- * largo —`ﬁ` se abre en `fi`, `é` pierde su tilde combinante— y el resaltado
- * tiene que recortar sobre el texto ORIGINAL, no sobre el normalizado.
- */
+/** Normaliza (sin acentos, minúsculas) con mapa al texto original: normalizar cambia el largo y el resaltado recorta sobre el original. */
 function normalizarConMapa(texto: string): { normalizado: string; mapa: number[] } {
   let normalizado = '';
   const mapa: number[] = [];
@@ -97,12 +92,7 @@ function escaparHtml(texto: string): string {
 
 // ─── Tolerancia a typos ────────────────────────────────────────────────────
 
-/**
- * Distancia de Damerau-Levenshtein (variante OSA: cuenta la transposición de
- * dos letras adyacentes como UN error, que es lo que hace que "recetas" matchee
- * "recetsa"). Corta apenas se pasa de `maximo` y devuelve `maximo + 1`, así no
- * se paga el costo completo por pares que ya se sabe que no van a matchear.
- */
+/** Damerau-Levenshtein (OSA: una transposición cuenta como un error). Corta al pasarse de `maximo` y devuelve `maximo + 1`. */
 export function distanciaEdicion(a: string, b: string, maximo: number): number {
   if (a === b) return 0;
   if (Math.abs(a.length - b.length) > maximo) return maximo + 1;
@@ -167,11 +157,7 @@ function compararPalabra(palabra: string, token: string, maxTypos: number, permi
     const distancia = distanciaEdicion(palabra, token, maxTypos);
     if (distancia <= maxTypos) return { typos: distancia, exacta: false, largo: token.length };
 
-    // Prefijo con typos: se prueba contra prefijos del token de largo parecido
-    // al de la palabra, porque un typo puede correr el corte una posición. Se
-    // recorren todos y se elige el MEJOR (menos typos y, a igualdad, el prefijo
-    // más largo): quedarse con el primero que entra deja resaltados cortados a
-    // mitad de palabra aunque exista una coincidencia mejor un carácter más allá.
+    // Prefijo con typos: se prueban varios largos (un typo corre el corte) y gana el mejor — quedarse con el primero corta el resaltado a mitad de palabra.
     if (permitePrefijo && token.length > palabra.length) {
       const desde = Math.max(1, palabra.length - maxTypos);
       const hasta = Math.min(token.length, palabra.length + maxTypos);
@@ -210,13 +196,7 @@ interface MejorEnAtributo extends Coincidencia {
   token: Token;
 }
 
-/**
- * Índice en memoria: mismo contrato que un índice de Algolia (se crea con la
- * configuración y los objetos, y se le hacen consultas), pero resolviendo todo
- * en el cliente. La navegación del MIS son unos cientos de nodos, así que el
- * costo de buscar es despreciable y evita mandar el árbol de menús —que es
- * información interna— a un servicio de terceros.
- */
+/** Índice en memoria con el contrato de un índice de Algolia, resuelto en el cliente: el corpus son unos cientos de nodos y no sale de la app. */
 export class IndiceBuscador<T> {
   private readonly documentos: Documento<T>[];
 
@@ -283,14 +263,7 @@ export class IndiceBuscador<T> {
     };
   }
 
-  /**
-   * Corre la consulta completa y, si no devuelve nada y la estrategia lo
-   * permite, la reintenta soltando palabras (`removeWordsIfNoResults`).
-   *
-   * Devuelve dos conjuntos: el filtrado por facetas (los resultados que se
-   * muestran) y el que ignora esos filtros, que es el que hace falta para
-   * poder contar las facetas de forma disyuntiva.
-   */
+  /** Corre la consulta, reintentando sin algunas palabras si la estrategia lo permite; devuelve el conjunto filtrado y el sin filtrar (para contar facetas). */
   private buscarSoltandoPalabras(
     palabras: string[],
     tipoConsulta: TipoConsulta,
@@ -322,14 +295,7 @@ export class IndiceBuscador<T> {
     return { coincidentes: [], sinFiltrarFacetas: [], palabrasUsadas: 0 };
   }
 
-  /**
-   * Calcula los criterios de ranking de un registro, o `null` si no matchea
-   * todas las palabras exigidas.
-   *
-   * `palabrasExigidas` puede ser un subconjunto de `palabrasOriginales` cuando
-   * la estrategia soltó palabras; el prefijo solo aplica a la última palabra de
-   * la consulta ORIGINAL, que es la que el usuario todavía está tecleando.
-   */
+  /** Criterios de ranking del registro, o `null` si no matchea todas las palabras exigidas; el prefijo solo aplica a la última palabra de la consulta original. */
   private evaluar(
     doc: Documento<T>,
     palabrasExigidas: string[],
@@ -402,11 +368,7 @@ export class IndiceBuscador<T> {
     return palabra === ultima;
   }
 
-  /**
-   * Suma de distancias entre palabras consecutivas dentro de un mismo atributo,
-   * tomando el mejor atributo. Que "metas desembolso" aparezca pegado pesa más
-   * que si están a diez palabras de distancia.
-   */
+  /** Suma de distancias entre palabras consecutivas en el mejor atributo: que aparezcan pegadas pesa más. */
   private proximidad(mejores: (MejorEnAtributo | null)[][]): number {
     let mejorProximidad = Infinity;
 
@@ -430,10 +392,7 @@ export class IndiceBuscador<T> {
     return mejorProximidad === Infinity ? 0 : mejorProximidad;
   }
 
-  /**
-   * El desempate de Algolia: se comparan los criterios de a uno y se corta en
-   * el primero que difiere. Solo si todos empatan entra el ranking personalizado.
-   */
+  /** Desempate de Algolia: compara los criterios de a uno y corta en el primero que difiere; si todos empatan entra el ranking personalizado. */
   private comparar(a: { doc: Documento<T>; ranking: CriteriosRanking }, b: { doc: Documento<T>; ranking: CriteriosRanking }): number {
     if (a.ranking.typos !== b.ranking.typos) return a.ranking.typos - b.ranking.typos;
     if (a.ranking.palabras !== b.ranking.palabras) return b.ranking.palabras - a.ranking.palabras;
@@ -452,11 +411,7 @@ export class IndiceBuscador<T> {
     return Object.entries(filtros).every(([faceta, valores]) => !valores.length || valores.includes(doc.facetas[faceta]));
   }
 
-  /**
-   * Conteos por faceta. Cada faceta se cuenta ignorando su PROPIO filtro
-   * (faceteo disyuntivo): si no, al elegir "Reportes" el resto de los sistemas
-   * quedaría en 0 y sería imposible cambiar de opción sin limpiar el filtro.
-   */
+  /** Conteos por faceta, cada una ignorando su propio filtro (disyuntivo): si no, elegir un valor dejaría el resto en 0 y sin salida. */
   private contarFacetas(docs: Documento<T>[], filtros: Record<string, string[]>): Facetas {
     const facetas: Facetas = {};
 
@@ -541,9 +496,7 @@ export class IndiceBuscador<T> {
 
       palabrasCoincidentes.add(mejorPalabra);
       tokensCoincidentes.add(token.posicion);
-      // `largo` está en caracteres normalizados; el token puede ocupar más en el
-      // original (una `ﬁ` cuenta 2 normalizada y 1 original), así que se recorta
-      // contra el fin real del token para no invadir el texto de al lado.
+      // `largo` está en caracteres normalizados y el token puede ocupar más en el original, así que se recorta contra su fin real.
       tramos.push({ desde: token.inicio, hasta: Math.min(token.inicio + mejor.largo, token.fin) });
     }
 
@@ -570,21 +523,7 @@ export class IndiceBuscador<T> {
   }
 }
 
-/**
- * Fábrica de índices en memoria con la relevancia de Algolia.
- *
- * Se replica el motor en el cliente en vez de pegarle a la API de Algolia
- * porque el corpus es el árbol de menús del usuario (unos cientos de nodos,
- * ya cargados y filtrados por permisos) y mandarlo a un tercero no aportaría
- * nada. Los contratos de `buscador.model.ts` sí están calcados de su API, así
- * que si algún día el corpus crece, migrar es reimplementar este servicio sin
- * tocar los componentes.
- *
- * ```typescript
- * const indice = buscador.crearIndice({ atributosBuscables: […], id: (r) => r.id }, registros);
- * const { resultados, total, duracionMs } = indice.buscar('metas desem');
- * ```
- */
+/** Fábrica de índices en memoria con la relevancia de Algolia; los contratos están calcados de su API, así que migrar sería reimplementar solo este servicio. */
 @Injectable({ providedIn: 'root' })
 export class BuscadorService {
   crearIndice<T>(config: ConfiguracionIndice<T>, objetos: readonly T[]): IndiceBuscador<T> {

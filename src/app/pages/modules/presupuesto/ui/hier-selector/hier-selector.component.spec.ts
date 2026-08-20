@@ -34,7 +34,7 @@ describe('HierSelectorComponent', () => {
   }
 
   it('se inicializa y carga la raíz organizativa', () => {
-    const fixture = crear();
+    crear();
     expect(presupuestoFalso.obtenerJerarquiaBase).toHaveBeenCalledWith(9);
   });
 

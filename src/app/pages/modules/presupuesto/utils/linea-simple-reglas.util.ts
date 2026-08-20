@@ -23,12 +23,7 @@ export function calcularPuedeVerificar(
   return !calcularPuedeGuardar(metadata, nivel, esAdmin) && adm;
 }
 
-/**
- * `customComponent()` del legado — decide si una celda es editable. `inputCols[0]`/`inputCols[3]`
- * (si existen) tienen una ventana de edición corta especial (`ord_ini_edi`..`ord_ini_edi_ASESPROD`,
- * solo usada por Cartera Créditos para "Asesores Nuevos"/"Asesores en Producción"); el resto de
- * columnas de `inputCols` son editables desde `ord_ini_edi` en adelante sin techo.
- */
+/** `customComponent()` del legado — decide si una celda es editable. */
 export function esCeldaEditable(
   fila: FilaLineaSimple,
   key: string,

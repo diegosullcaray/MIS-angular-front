@@ -1,9 +1,6 @@
 import type { NodoJerarquiaAncla, SectoristaItem } from './colaborador.model';
 
-/**
- * Detalle crudo de `categorizacion.detalle` (backend Ant, módulo `secciones`)
- * — nombres de campo tal cual el legado (`docs/07-modulos/analista/categorizacion`, variable `res`).
- */
+/** Detalle crudo de `categorizacion.detalle` (backend Ant, módulo `secciones`) — nombres de campo tal cual el legado (`docs/07-modulos/analista/categorizacion`, variable `res`). */
 export interface DetalleCategorizacionRaw {
   nom: string;
   car: string;

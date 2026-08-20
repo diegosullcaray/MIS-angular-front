@@ -5,12 +5,7 @@ export interface SerieGrafico {
   color?: string;
 }
 
-/**
- * Un bloque de gráfico del motor de reportes "mixtos" (legado
- * `ReportCrsV2Component`/`GraphicService`) — un mismo `cod_rep` puede
- * devolver varios de estos en un array (`result`), cada uno un gráfico
- * independiente (ej. "Inversión" y "Stock de Mora" del mismo bloque).
- */
+/** Un bloque de gráfico del motor de reportes "mixtos" (legado `ReportCrsV2Component`/`GraphicService`) — un mismo `cod_rep` puede devolver varios de estos en un array (`result`), cada uno un gráfico independiente (ej. "Inversión" y "Stock de Mora" del mismo bloque). */
 export interface BloqueGrafico {
   titulo: string;
   subtitulo?: string;

@@ -57,13 +57,7 @@ export class AuthService {
     return this.autenticar({ email, nombre: claims['name'], avatarUrl: claims['picture'] });
   }
 
-  /**
-   * Identidad suplantada para pruebas locales, o `null` fuera de desarrollo.
-   *
-   * No sustituir `isDevMode()` por `environment.production`: el primero se
-   * resuelve en compilación, el segundo es un dato del archivo de entorno — y
-   * si el archivo es el equivocado, el guardián se abre solo.
-   */
+  /** Identidad suplantada para pruebas locales, o `null` fuera de desarrollo. */
   private emailDePrueba(): string | null {
     if (!isDevMode()) return null;
     return localStorage.getItem('mis.devUser') || environment.devUser || null;

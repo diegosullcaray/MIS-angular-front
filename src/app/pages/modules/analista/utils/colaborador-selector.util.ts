@@ -2,12 +2,7 @@ import { Signal, WritableSignal, computed, effect, signal, untracked } from '@an
 import { AnalistaService } from '../services/analista.service';
 import type { ColaboradorActivo, ColaboradorItem, NodoJerarquiaAncla } from '../models/colaborador.model';
 
-/**
- * Selector de colaborador (admin), compartido por Principal, Becas y
- * Priorización de Leads — antes copiado y pegado en cada componente. Se crea
- * una vez en el constructor de cada pantalla (necesita contexto de inyección
- * por el `effect()` interno) y `inicializar()` se llama desde `ngOnInit()`.
- */
+/** Selector de colaborador (admin), compartido por Principal, Becas y Priorización de Leads — antes copiado y pegado en cada componente. */
 export interface SelectorColaborador {
   readonly esAdmin: Signal<boolean>;
   readonly colaboradorActivo: Signal<ColaboradorActivo | null>;
@@ -37,10 +32,7 @@ export function crearSelectorColaborador(analista: AnalistaService): SelectorCol
     });
   }
 
-  // Carga apenas el diálogo esté abierto Y el nodo ancla haya resuelto: si el
-  // admin abre el diálogo antes de que `obtenerAnclaAdmin()` responda, este
-  // effect reacciona solo cuando `ancla` finalmente llega (antes se
-  // intentaba una única vez al abrir y quedaba vacío para siempre).
+  // Carga cuando el diálogo esté abierto Y el ancla resuelta: intentarlo una sola vez al abrir dejaba el diálogo vacío para siempre.
   effect(() => {
     if (!dialogAbierto() || colaboradores().length > 0 || cargandoAncla()) return;
 

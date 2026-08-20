@@ -4,13 +4,7 @@ import { AntService } from '../ant/ant-service.class';
 import { environment } from '../../../../environments/environment';
 import type { IWinderResponse } from '../winder/winder.interface';
 
-/**
- * Módulo "Incentivos" del backend Ant (puerto 6302, appId `app`).
- *
- * Los namespaces no se corresponden con el nombre del módulo: el motor de
- * cálculo vive en `incentivos4.*`, mientras que `incentivos3.*` solo cubre las
- * pantallas de detalle y el listado de niveles del selector de jerarquía.
- */
+/** Módulo "Incentivos" del backend Ant (puerto 6302, appId `app`). */
 @Injectable({ providedIn: 'root' })
 export class ModIncentivosService extends AntService {
   constructor() {

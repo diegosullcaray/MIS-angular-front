@@ -4,7 +4,6 @@ import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { AgregarProspectoDialogComponent } from './agregar-prospecto-dialog.component';
 import { ProspectoCorresponsalService } from '../../../services/prospecto-corresponsal.service';
 import { ToastService } from '../../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../../core/services/message.service';
 import { PROSPECTO_CORRESPONSAL_FORM_VACIO } from '../../../models/prospecto-corresponsal.model';
 import type { OpcionJerarquia, ProspectoCorresponsalForm } from '../../../models/prospecto-corresponsal.model';
 
@@ -55,7 +54,6 @@ describe('AgregarProspectoDialogComponent', () => {
       providers: [
         { provide: ProspectoCorresponsalService, useValue: servicioFalso },
         ToastService,
-        MessageService,
         PrimeNgMessageService,
       ],
     });

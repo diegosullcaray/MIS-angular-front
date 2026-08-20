@@ -4,12 +4,7 @@ import type { CalculadoraConfig, PlusCalculadora, VariableCalculadora } from '..
 import type { NivelSelectorJerarquia } from '../models/incentivos-jerarquia.model';
 import type { EtiquetasDetalle } from '../models/incentivos-detalle.model';
 
-/**
- * Config estática del módulo Incentivos — migrado de `incentivos3.util.ts` +
- * `avances.util.ts`/`super-plus.util.ts`/`perfil.util.ts`/`calculadora.util.ts`
- * (legado STG). Iconos Material Symbols convertidos a su PrimeIcon más
- * cercano (PG-07 del TRD: PrimeIcons para el resto de iconografía).
- */
+/** Config estática del módulo Incentivos — migrado de `incentivos3.util.ts` + `avances.util.ts`/`super-plus.util.ts`/`perfil.util.ts`/`calculadora.util.ts` (legado STG). */
 export const ICONOS_INCENTIVOS: Record<string, string> = {
   car: 'pi pi-wallet', // cartera
   cli: 'pi pi-users', // clientes
@@ -55,12 +50,7 @@ export const DESCRIPCIONES: Record<string, string> = {
   areu: 'Asis. Reuniones',
 };
 
-/**
- * Matriz de configuración por perfil de usuario (`indSecCfg`/`indUniCfg`/
- * `indCorCfg`/`gruSecCfg`/`gruUniCfg` del legado) — qué variables se
- * muestran/habilitan en cada pantalla según el tipo de cargo (`tip_cod`) y
- * clase de usuario (`cla_usu`, 1 individual / 2 grupal).
- */
+/** Matriz de configuración por perfil de usuario (`indSecCfg`/`indUniCfg`/ `indCorCfg`/`gruSecCfg`/`gruUniCfg` del legado) — qué variables se muestran/habilitan en cada pantalla según el tipo de cargo (`tip_cod`) y clase de usuario (`cla_usu`, 1 individual / 2 grupal). */
 
 
 export const CFG_INDIVIDUAL_SECTORISTA: ConfiguracionUsuarioIncentivos = {
@@ -118,10 +108,7 @@ export const CFG_GRUPAL_UNIDAD: ConfiguracionUsuarioIncentivos = {
   calS: ['tgru', 'areu'],
 };
 
-/**
- * Resuelve la matriz de configuración aplicable — igual `if/else` que
- * `setDs()` del legado (`incentivos3.service.ts`).
- */
+/** Resuelve la matriz de configuración aplicable — igual `if/else` que `setDs()` del legado (`incentivos3.service.ts`). */
 export function resolverConfiguracionUsuario(tipCod: number, claUsu: number): ConfiguracionUsuarioIncentivos {
   if (tipCod === 1) {
     return claUsu === 1 ? CFG_INDIVIDUAL_SECTORISTA : CFG_GRUPAL_SECTORISTA;
@@ -217,12 +204,7 @@ export function crearCalculadoraPlusDefault(): PlusCalculadora[] {
 /** Índice (1-based) del ítem dentro de `IDS_SUPER_PLUS` — mismo orden fijo que usaba `superPlusConfig.data` del legado para calcular `idx` en `showDetail(item, i+1)`. */
 export const INDICE_SUPER_PLUS: Record<string, number> = Object.fromEntries(IDS_SUPER_PLUS.map((id, i) => [id, i + 1]));
 
-/**
- * `cod_var` que espera `incentivos3.detalle_var3` por cada variable — mapa
- * `midx` de `avances.component.ts` (legado). Cartera es el caso especial: su
- * detalle vive en el `cod_var` 91 ("cartera vigente"), no en el 1 con el que
- * viaja en las tablas del Cuadro de Mando.
- */
+/** `cod_var` que espera `incentivos3.detalle_var3` por cada variable — mapa `midx` de `avances.component.ts` (legado). */
 export const COD_VAR_DETALLE: Record<string, number> = {
   car: 91,
   cli: 2,

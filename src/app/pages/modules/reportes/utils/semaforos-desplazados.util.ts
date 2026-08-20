@@ -2,34 +2,14 @@ import type { ColumnaReporte, TablaReporteResultado } from '../models/tabla-repo
 
 const esSemaforo = (columna: ColumnaReporte): boolean => columna.format?.['type'] === 'traffic-light';
 
-/**
- * Corrige los reportes del motor "mixto" que emiten los semáforos corridos una
- * columna: el backend pega cada semáforo a la columna que tiene DELANTE, pero
- * en realidad colorea la que va DESPUÉS.
- *
- * Confirmado contra el legado en `DESEMP_SOC_01`: el semáforo pegado a "META"
- * colorea "TMM", el pegado a "TMM" colorea "TAM", y "META" nunca tiene semáforo
- * propio. `GCMGCAP_01` ("CMG Captaciones - Agencias") emite la misma forma:
- * "METAS" es el rótulo sin punto y los puntos son de "TMM"/"TAM"/"TFM".
- *
- * Sin esta corrección la primera columna del bloque se queda el punto de la
- * segunda y toda la fila se ve desplazada una columna a la izquierda, dejando
- * la última métrica vacía.
- *
- * Reordena solo la fila de encabezado de nivel 1, dejando cada valor seguido
- * del semáforo que de verdad le corresponde y renumerando `isdata` para que el
- * cuerpo se alinee. Es la versión genérica del ajuste que ya hacía a mano
- * `corregirSemaforosDesempenoSocial()`: no depende de los `columnDef`.
- */
+/** Corrige los reportes del motor "mixto" que emiten los semáforos corridos una columna: el backend pega cada semáforo a la columna que tiene DELANTE, pero en realidad colorea la que va DESPUÉS. */
 export function corregirSemaforosDesplazados(resultado: TablaReporteResultado): TablaReporteResultado {
   const filaNivel1 = resultado.headers[0];
   if (!filaNivel1) return resultado;
 
   const columnas = filaNivel1.columns;
 
-  // El bloque de métricas empieza en el primer valor con dato al que le sigue
-  // un semáforo; todo lo anterior (ej. "Variable", los grupos "2025"/"2026")
-  // se conserva tal cual.
+  // El bloque de métricas arranca en el primer dato seguido de un semáforo; lo anterior se conserva tal cual.
   const inicio = columnas.findIndex(
     (columna, i) => columna.isdata != null && !esSemaforo(columna) && !!columnas[i + 1] && esSemaforo(columnas[i + 1]),
   );

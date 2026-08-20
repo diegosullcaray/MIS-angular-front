@@ -5,12 +5,7 @@ import { calcularFilaDeposito } from '../../../utils/deposito-calculo.util';
 import { COLUMNAS_DEPOSITO, type FilaDeposito } from '../../../models/deposito.model';
 import type { LineaSimpleConfig } from '../../../models/linea-simple.model';
 
-/**
- * Depósitos Red (`/app/presupuesto/lineas/pasivos-patrimonio/car-dep-red`) —
- * migrado de `PrePasPatCarteraDepositosRedComponent` (legado STG). Mismas
- * columnas (`COLUMNAS_DEPOSITO`) y fórmula que Depósitos BP; solo cambia la
- * jerarquía y el get/post del backend.
- */
+/** Depósitos Red (`/app/presupuesto/lineas/pasivos-patrimonio/car-dep-red`) — migrado de `PrePasPatCarteraDepositosRedComponent` (legado STG). */
 @Component({
   selector: 'app-deposito-red',
   standalone: true,

@@ -9,16 +9,7 @@ import { ToastService } from '../../../../../shared/services/toast.service';
 import type { EsgAtributoConfig, EsgSituacionOpcion } from '../../models/configuracion.model';
 import type { EsgMetricaFila } from '../../models/metrica.model';
 
-/**
- * Diálogo de Editar/Detalle de una métrica ESG — reemplaza a
- * `EditarComponent`/`EditarDialogComponent` (legado STG, ambos extendían
- * `EditarBaseComponent`; acá se resuelve como un único componente con
- * `p-dialog`, sin la variante enrutada para mobile del legado — el layout
- * de este Host ya es responsive, ver `ShellLayoutComponent`).
- *
- * En modo detalle (`modoEdicion=false`) los campos son de solo lectura y no
- * se muestra el botón "Guardar" — igual que `editForm.disable()` del legado.
- */
+/** Diálogo de Editar/Detalle de una métrica ESG — reemplaza a `EditarComponent`/`EditarDialogComponent` (legado STG, ambos extendían `EditarBaseComponent`; acá se resuelve como un único componente con `p-dialog`, sin la variante enrutada para mobile del legado — el layout de este Host ya es responsive, ver `ShellLayoutComponent`). */
 @Component({
   selector: 'app-editar-metrica-dialog',
   standalone: true,

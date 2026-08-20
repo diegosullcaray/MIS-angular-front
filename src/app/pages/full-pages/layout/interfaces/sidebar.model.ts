@@ -36,12 +36,7 @@ export interface SidebarNavRuta {
   hijos?: SidebarNavRuta[];
 }
 
-/**
- * Un nodo de la navegación aplanado, con su sistema y su ubicación resueltos.
- * Es lo que indexa el buscador: el árbol de menús se recorre entero —todos los
- * sistemas, a cualquier profundidad— para poder encontrar un reporte sin saber
- * en qué carpeta vive (ver `NavegacionSistemasService.registros`).
- */
+/** Un nodo de la navegación aplanado, con su sistema y su ubicación resueltos. */
 export interface RegistroNavegacion {
   /** Identidad estable dentro del árbol: sistema + cadena de carpetas + etiqueta. */
   id: string;

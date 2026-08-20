@@ -10,15 +10,7 @@ import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inli
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import type { BaseNegativaBusquedaFila } from '../../models/base-negativa.model';
 
-/**
- * "Consulta Base Negativa" (`/app/cons_base_negativa`, módulo Herramientas).
- *
- * Migrado de `basenegativa.component.ts` (legado STG,
- * `docs/07-modulos/basenegativa/`): al entrar, abre directo el buscador de
- * clientes; al elegir uno, muestra el detalle (venta/castigo) en esta misma
- * página; si cierran el buscador sin elegir, vuelve al dashboard — igual
- * que el legado navegaba a `app/desktop`.
- */
+/** "Consulta Base Negativa" (`/app/cons_base_negativa`, módulo Herramientas). */
 @Component({
   selector: 'app-herramientas-home',
   standalone: true,

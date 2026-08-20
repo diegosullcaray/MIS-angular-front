@@ -1,9 +1,6 @@
 import type { FilaLabelValor } from './comun.model';
 
-/**
- * KPIs y datos base del dashboard (`dashboard.resumen` → `resultado.data`).
- * Nombres de campo tal cual el legado (`docs/07-modulos/analista/principal`).
- */
+/** KPIs y datos base del dashboard (`dashboard.resumen` → `resultado.data`). Nombres de campo tal cual el legado (`docs/07-modulos/analista/principal`). */
 export interface DatosResumenAnalista {
   nom: string;
   car: string;

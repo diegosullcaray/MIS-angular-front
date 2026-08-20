@@ -7,15 +7,7 @@ import type { BaseNegativaResponseBody } from '../models/base-negativa-api.model
 /** Código de reporte del SP `RS_BASE_NEG_01` (legado: `basenegativa.component.ts`/`buscador.component.ts`). */
 const COD_REP = 'RS_BASE_NEG_01';
 
-/**
- * Fachada de "Consulta Base Negativa" (`/app/cons_base_negativa`, herramientas) —
- * busca un cliente en la base de riesgos y muestra su detalle (venta/castigo).
- *
- * Migrado de `basenegativa.component.ts` + `buscador.component.ts` (legado
- * STG, `docs/07-modulos/basenegativa/`): el mismo SP se usa en dos modos —
- * búsqueda (columnas fijas, para el diálogo) y detalle (columnas dinámicas
- * que llegan en `resultado.headers`, para la tabla de resultados).
- */
+/** Fachada de "Consulta Base Negativa" (`/app/cons_base_negativa`, herramientas) — busca un cliente en la base de riesgos y muestra su detalle (venta/castigo). */
 @Injectable({ providedIn: 'root' })
 export class BaseNegativaService {
   private readonly ant = inject(ModReportesService);
@@ -49,8 +41,7 @@ export class BaseNegativaService {
         this.headers.set(resultado?.headers ? (JSON.parse(resultado.headers) as TableHeaderDef[]) : []);
         this.cargando.set(false);
       },
-      error: (err) => {
-        console.error('Error al consultar la base negativa:', err);
+      error: () => {
         this.error.set('No se pudo cargar el resultado de la consulta.');
         this.cargando.set(false);
       },

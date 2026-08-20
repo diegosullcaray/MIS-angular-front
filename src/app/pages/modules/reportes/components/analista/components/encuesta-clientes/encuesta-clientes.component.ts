@@ -8,7 +8,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { EncuestaClientesService } from '../../services/encuesta-clientes.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   ENCUESTA_CLIENTE_FORM_VACIO,
   OPCIONES_AFEC_NEG,
@@ -22,28 +21,9 @@ import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { CiiuOpcion, EncuestaClienteForm } from '../../models/encuesta-clientes.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Encuesta Clientes" — migrado de la ruta `leg/com/rda/sec/cap-ret` (legado
- * STG, `reportes/legacy/comercial/rda/sectorista/crs-cap-ret`, título real
- * "Capacidad de Minorista", `cod_rep: 'LIS_CAPRET'`/`'UPD_CAPRET_01'`).
- *
- * A diferencia del resto de `reportes` (solo lectura), esta pantalla permite
- * elegir un cliente de la cartera de un asesor y guardar una encuesta de
- * impacto/situación de negocio contra el backend (`ModSeccionesService`,
- * módulo "secciones" — no "reporting" — porque así lo hace el legado
- * `ComercialService.postRegularUpdate` → `ModSecService.updateData`).
- *
- * No se replican las 4 selects "Tipo Teléfono/Operador/Plan/Whatsapp" del
- * `.ts` legado: confirmado que no se renderizan en su `.html` (código muerto).
- * Tampoco el modo dual "auto-selección si sos asesor" de
- * `app-auto-complete-sec` (requeriría exponer `tip_use` en
- * `ShellStateService`, no disponible) — acá el buscador de asesores está
- * siempre visible.
- */
+/** "Encuesta Clientes" — migrado de la ruta `leg/com/rda/sec/cap-ret` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-cap-ret`, título real "Capacidad de Minorista", `cod_rep: 'LIS_CAPRET'`/`'UPD_CAPRET_01'`). */
 @Component({
   selector: 'app-encuesta-clientes',
   standalone: true,
@@ -54,7 +34,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class EncuestaClientesComponent {
   private readonly servicio = inject(EncuestaClientesService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly opcionesAfecNeg = OPCIONES_AFEC_NEG;
   protected readonly opcionesFunNeg = OPCIONES_FUN_NEG;
@@ -77,16 +56,7 @@ export class EncuestaClientesComponent {
 
   protected readonly model = signal<EncuestaClienteForm>({ ...ENCUESTA_CLIENTE_FORM_VACIO });
 
-  /**
-   * Cascada condicional 1:1 con `initForm()` del legado (`valueChanges` +
-   * `setValidators()`/`.hidden`), acá vía `hidden()`/`required(..., {when})`
-   * de Signal Forms:
-   * - `funNeg==='Si'` ⇒ `sitNeg` visible+requerido; `secEco`/`girNeg` ocultos.
-   * - `funNeg==='Cambio Giro'` ⇒ `sitNeg` y `secEco` visibles+requeridos;
-   *   `girNeg` requerido pero oculto hasta que `secEco` tenga valor.
-   * - `funNeg==='No presenta Negocio'` ⇒ todo lo demás oculto, nada requerido.
-   * - `sitNeg==='Se redujo'` ⇒ `redNeg` visible+requerido.
-   */
+  /** Cascada condicional 1:1 con `initForm()` del legado (`valueChanges` + `setValidators()`/`.hidden`), acá vía `hidden()`/`required(..., {when})` de Signal Forms: - `funNeg==='Si'` ⇒ `sitNeg` visible+requerido; `secEco`/`girNeg` ocultos. */
   protected readonly encuestaForm = form(this.model, (schemaPath) => {
     required(schemaPath.afecNeg, { message: 'Este campo es requerido' });
     required(schemaPath.funNeg, { message: 'Este campo es requerido' });
@@ -155,7 +125,7 @@ export class EncuestaClientesComponent {
         this.tablaClientes.set(tabla);
         this.cargando.set(false);
         if (tabla.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {
@@ -165,14 +135,7 @@ export class EncuestaClientesComponent {
     });
   }
 
-  /**
-   * Actualiza un campo del modelo — los `p-select` del formulario se atan con
-   * `[ngModel]`/`(ngModelChange)` (mismo patrón híbrido que ya usa
-   * `ranking-filtros.component.ts`: PrimeNG no tiene precedente confirmado en
-   * este repo de integrar `[formField]` directo, así que Signal Forms
-   * (`encuestaForm`) se usa solo para la validez/visibilidad derivadas del
-   * mismo `model`, no para el binding de valor en sí).
-   */
+  /** Actualiza un campo del modelo — los `p-select` del formulario se atan con `[ngModel]`/`(ngModelChange)` (mismo patrón híbrido que ya usa `ranking-filtros.component.ts`: PrimeNG no tiene precedente confirmado en este repo de integrar `[formField]` directo, así que Signal Forms (`encuestaForm`) se usa solo para la validez/visibilidad derivadas del mismo `model`, no para el binding de valor en sí). */
   protected actualizarCampo<K extends keyof EncuestaClienteForm>(campo: K, valor: EncuestaClienteForm[K]): void {
     this.model.update((m) => ({ ...m, [campo]: valor }));
   }

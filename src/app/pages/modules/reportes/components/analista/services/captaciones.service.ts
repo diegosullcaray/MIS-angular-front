@@ -6,15 +6,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteCaptaciones } from '../models/captaciones.model';
 
-/**
- * Datos de "Captaciones" (legado `leg/com/rda/sec/capta`,
- * `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/captaciones/captacion_sec`).
- *
- * Mismo patrón que "Cartera"/"Clientes Producto" (solo lectura, sin
- * `reportType` declarado en `crs-map.ts` ⇒ strand deprecado `reportData`,
- * `cod_rep` = `module` + sufijo), con 3 bloques — el tercero es "Ahorro
- * Programado" (`content.higher` del legado).
- */
+/** Datos de "Captaciones" (legado `leg/com/rda/sec/capta`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/captaciones/captacion_sec`). */
 @Injectable({ providedIn: 'root' })
 export class CaptacionesService {
   private readonly reportes = inject(ModReportesService);

@@ -14,31 +14,7 @@ import { filtrarPorDescripcion } from '../../../utils/texto.util';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../../models/jerarquia.model';
 import type { LogVerificacionFila } from '../../../models/tablero-verificacion.model';
 
-/**
- * Tablero de Verificación (`/app/presupuesto/gestion/seguimiento/tbl-ver`) —
- * migrado de `PreGesSegTableroVerificacionComponent` (legado STG). Es de solo
- * lectura, sin edición ni guardado.
- *
- * Necesita DOS nodos para consultar, pero salen de UN solo selector: son los
- * dos primeros niveles de la misma ruta, no dos selecciones independientes.
- * El legado montaba un único `hier-rem-selector` y consultaba solo cuando la
- * ruta emitida traía exactamente 2 nodos (`if (evt.length == 2)`, con
- * `lv = evt[0]` y `tv = evt[1]`); bajar a un tercer nivel vaciaba la tabla.
- * Se preserva tal cual — ver `HierSelectorComponent.rutaSeleccionada`.
- *
- * El legado hardcodeaba la raíz del árbol (`roots: [{ tip_cod: 7, cod_rel:
- * '231', lvl: 1 }]`, "Financiera Confianza") en vez de pedirla con
- * `getBaseHierarchy` — único caso del módulo que lo hace así (el resto de
- * pantallas sí pide la raíz al backend). Se preserva acá vía `raizFija`
- * (ver `HierSelectorComponent`), en vez de las 2 llamadas a `base_hier` que
- * haría el genérico por defecto.
- *
- * El orden de argumentos de `getLogVerificaciones` en el legado
- * (`tv.cod_rel, lv.cod_rel` — ambos códigos relacionales, ninguno el
- * `tip_cod` que el nombre del parámetro sugiere) no se pudo verificar contra
- * el componente real (no estaba en el volcado de referencia); se preserva
- * tal cual lo documentó la auditoría del legado.
- */
+/** Tablero de Verificación (`/app/presupuesto/gestion/seguimiento/tbl-ver`) — migrado de `PreGesSegTableroVerificacionComponent` (legado STG). */
 @Component({
   selector: 'app-tablero-verificacion',
   standalone: true,
@@ -61,7 +37,7 @@ export class TableroVerificacionComponent {
   private readonly toast = inject(ToastService);
 
   protected readonly paramsHier: ParamsJerarquia = { code: 9, maxLvl: 6, dlgTitulo: 'LINEAS PRESUPUESTO' };
-  /** Raíz fija del legado — ver comentario de clase. */
+  /** El legado hardcodeaba esta raíz ("Financiera Confianza") en vez de pedirla con `getBaseHierarchy`; se preserva. */
   protected readonly raizFija: HierarquiaNodo[] = [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }];
 
   protected readonly mostrarFiltros = signal(true);

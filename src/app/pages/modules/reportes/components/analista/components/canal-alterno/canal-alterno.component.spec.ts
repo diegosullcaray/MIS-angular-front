@@ -4,7 +4,6 @@ import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { CanalAlternoComponent } from './canal-alterno.component';
 import { CanalAlternoService } from '../../services/canal-alterno.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -24,7 +23,7 @@ describe('CanalAlternoComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [CanalAlternoComponent],
-      providers: [{ provide: CanalAlternoService, useValue: servicioFalso }, ToastService, MessageService, PrimeNgMessageService],
+      providers: [{ provide: CanalAlternoService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 
@@ -69,7 +68,7 @@ describe('CanalAlternoComponent', () => {
   it('muestra una advertencia si la tabla viene vacía', () => {
     servicioFalso.obtenerCanalAlterno.mockReturnValue(of({ tabla1: tabla() }));
     const fixture = crear();
-    const warnSpy = vi.spyOn(TestBed.inject(MessageService), 'warn');
+    const warnSpy = vi.spyOn(TestBed.inject(ToastService), 'advertencia');
 
     fixture.componentInstance['onAsesorSeleccionado'](ASESOR);
 

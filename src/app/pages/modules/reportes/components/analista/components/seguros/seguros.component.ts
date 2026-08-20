@@ -5,22 +5,12 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { SegurosService } from '../../services/seguros.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Seguros" — migrado de la ruta `leg/com/rda/sec/seg` (legado STG,
- * `reportes/legacy/support/components/template/crs/report-crs-v1`, config
- * `rda/sectorista/seguros/seguros_sec` en `crs-map.ts`).
- *
- * Solo lectura: asesor → 1 tabla, "Expresado en PEN y %" (`content.higher`
- * del legado).
- */
+/** "Seguros" — migrado de la ruta `leg/com/rda/sec/seg` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/seguros/seguros_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-seguros',
   standalone: true,
@@ -31,7 +21,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class SegurosComponent {
   private readonly servicio = inject(SegurosService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly mostrarFiltros = signal(false);
 
@@ -63,7 +52,7 @@ export class SegurosComponent {
         this.cargando.set(false);
 
         if (tabla1.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene seguros registrados, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene seguros registrados, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {

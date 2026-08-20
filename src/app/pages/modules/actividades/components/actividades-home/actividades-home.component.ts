@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
@@ -8,7 +7,7 @@ import type { ActividadCard } from '../../models/actividades.model';
 @Component({
   selector: 'app-actividades-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonModule, WindowPanelComponent],
+  imports: [RouterLink, ButtonModule, WindowPanelComponent],
   templateUrl: './actividades-home.component.html',
   styleUrl: './actividades-home.component.css',
 })

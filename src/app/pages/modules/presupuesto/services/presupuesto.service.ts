@@ -11,26 +11,9 @@ import type { FilaSegurosOperaciones } from '../models/seguros-operaciones.model
 import type { FilaCarteraCreditosVariables, ResumenCarteraCreditos } from '../models/cartera-creditos.model';
 import type { LogVerificacionFila } from '../models/tablero-verificacion.model';
 import type { ResponsableFila } from '../models/responsables.model';
-import type { JerarquiaResponseBody, ListaResponseBody, ResumenResponseBody } from '../models/presupuesto-api.model';
+import type { JerarquiaResponseBody, ResumenResponseBody } from '../models/presupuesto-api.model';
 
-/**
- * Fachada del módulo `presupuesto` — traduce las respuestas crudas del
- * backend Ant (`ModPresupuestoService`, puerto 6302) a los modelos tipados
- * que consumen las pantallas, y expone la jerarquía organizativa compartida
- * (`ModSysAdminService`, puerto 6301 — el mismo servicio que ya usa el menú
- * lateral) para el selector de jerarquía de cada pantalla.
- *
- * Migrado de `ModBudgetService` (legado STG,
- * `docs/07-modulos/presupuesto/compartido/servicios/mod-budget.service.ts`).
- *
- * No necesita registrar nada en el sidebar ni en el breadcrumb "a mano": a
- * diferencia de Kaypacha (que carga sus categorías desde una ruta propia),
- * la navegación de Presupuesto (Líneas/Gestión) sale íntegra de `list_sec` —
- * el mismo árbol genérico que ya arma `MenuStgService` para cualquier
- * sistema de STG — así que el panel de Col 2 y el ítem de Col 1 los resuelve
- * el mecanismo genérico existente (`SidebarComponent.getPanelStg`), siempre
- * que las rutas Angular calcen con el `act_sec` real del backend.
- */
+/** Fachada del módulo `presupuesto` — traduce las respuestas crudas del backend Ant (`ModPresupuestoService`, puerto 6302) a los modelos tipados que consumen las pantallas, y expone la jerarquía organizativa compartida (`ModSysAdminService`, puerto 6301 — el mismo servicio que ya usa el menú lateral) para el selector de jerarquía de cada pantalla. */
 @Injectable({ providedIn: 'root' })
 export class PresupuestoService {
   private readonly ant = inject(ModPresupuestoService);
@@ -47,23 +30,12 @@ export class PresupuestoService {
     return this.shell.usuarioActivo()?.codBt;
   }
 
-  /**
-   * Habilita edición: responsable vigente del nodo (`bp.act_res`, ver cada
-   * pantalla) O administrador. El legado usa `profile.tip_use === 0`; este
-   * Host no tiene ese campo — se usa `esAdmin` (admin-sistema/admin-general)
-   * como equivalente más cercano. Pendiente de confirmar con negocio/backend
-   * si son realmente el mismo nivel de acceso.
-   */
+  /** Habilita edición: responsable vigente del nodo (`bp.act_res`, ver cada pantalla) O administrador. */
   esAdmin(): boolean {
     return this.shell.esAdmin();
   }
 
-  /**
-   * Fecha de corte de negocio usada por `baseInit` en el legado
-   * (`profile.curr_fec`, vía `UserService`) — este Host todavía no expone ese
-   * campo en `UsuarioActivo`, así que se usa la fecha real como aproximación
-   * hasta confirmar el campo real con el backend.
-   */
+  /** Fecha de corte de negocio usada por `baseInit` en el legado (`profile.curr_fec`, vía `UserService`) — este Host todavía no expone ese campo en `UsuarioActivo`, así que se usa la fecha real como aproximación hasta confirmar el campo real con el backend. */
   fechaCorte(): string {
     const currFec = this.shell.usuarioActivo()?.fechaCorte;
     if (currFec && /^\d{8}$/.test(currFec)) {

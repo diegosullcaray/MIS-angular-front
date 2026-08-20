@@ -10,10 +10,7 @@ export interface FilaLineaSimple {
   [key: string]: unknown;
 }
 
-/**
- * Metadata de edición que acompaña cada `resumen` (`bp` en el legado) — define
- * qué nivel jerárquico y qué rango de periodos son editables.
- */
+/** Metadata de edición que acompaña cada `resumen` (`bp` en el legado) — define qué nivel jerárquico y qué rango de periodos son editables. */
 export interface ResumenMetadata {
   /** Nivel jerárquico (`tip_cod`) en el que el usuario puede editar. */
   tip_cod_edi: number;
@@ -41,10 +38,6 @@ export interface LineaSimpleConfig<F extends FilaLineaSimple = FilaLineaSimple> 
   inputCols: string[] | 'all';
   obtenerResumen(tipCod: number, codRel: string): Observable<ResumenLineaSimple<F>>;
   guardarResumen(tipCod: number, codRel: string, filas: F[]): Observable<unknown>;
-  /**
-   * Fórmula de cascada al editar una celda (`calculateRow` del legado) — recibe
-   * el array completo de filas (para leer periodos vecinos) y muta la fila en
-   * `idx` in-place. Ausente en Seguros (no hay fórmula derivada, cada celda es independiente).
-   */
+  /** Fórmula de cascada al editar una celda (`calculateRow` del legado) — recibe el array completo de filas (para leer periodos vecinos) y muta la fila en `idx` in-place. */
   calcularFila?(filas: F[], idx: number): void;
 }

@@ -1,12 +1,4 @@
-/**
- * Strand — unidad de petición al backend Ant.
- *
- * Cada Strand representa un "actionRoute" del backend con su
- * payload de parámetros. Múltiples Strands pueden enviarse en
- * una misma request (batch).
- *
- * Migrado del STG (stg-app-mis-r22) al nuevo stack Angular 22.
- */
+/** Strand — unidad de petición al backend Ant. */
 export class Strand {
   private actionRoute: string;
   private name: string;

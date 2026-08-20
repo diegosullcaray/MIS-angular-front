@@ -7,7 +7,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { ClientesReprogramadosService } from '../../services/clientes-reprogramados.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import {
   REPROGRAMACION_FORM_VACIO,
   OPCIONES_PREG_01,
@@ -19,22 +18,9 @@ import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { ReprogramacionForm } from '../../models/clientes-reprogramados.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado, FilaReporte } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Clientes Reprogramados" — migrado de la ruta `leg/com/rda/sec/repro`
- * (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-repro`,
- * `cod_rep: 'RES_SEC_REP'`/`'UP_REPRO_01'`).
- *
- * Mismo patrón que "Encuesta Clientes" (buscador de asesor → lista de
- * clientes → elegir uno → formulario → guardar), pero más simple: acá el
- * formulario no tiene cascada condicional (4 preguntas independientes, sin
- * validación — el legado no deshabilita "Guardar" en ningún caso) y las
- * respuestas se guardan como columnas sueltas del cliente, no anidadas bajo
- * un campo `reaccion` (ver `ClientesReprogramadosService.guardar()`).
- */
+/** "Clientes Reprogramados" — migrado de la ruta `leg/com/rda/sec/repro` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-repro`, `cod_rep: 'RES_SEC_REP'`/`'UP_REPRO_01'`). */
 @Component({
   selector: 'app-clientes-reprogramados',
   standalone: true,
@@ -45,7 +31,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class ClientesReprogramadosComponent {
   private readonly servicio = inject(ClientesReprogramadosService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly opcionesPreg01 = OPCIONES_PREG_01;
   protected readonly opcionesPreg02 = OPCIONES_PREG_02;
@@ -89,7 +74,7 @@ export class ClientesReprogramadosComponent {
         this.tablaClientes.set(tabla);
         this.cargando.set(false);
         if (tabla.body.length === 0) {
-          this.mensajes.warn('Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {

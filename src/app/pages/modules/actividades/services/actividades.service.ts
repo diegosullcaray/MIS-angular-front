@@ -5,10 +5,7 @@ import { environment } from '../../../../../environments/environment';
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 
-/**
- * ActividadesService — Servicio Winder de comunicación con el backend Ant (puerto 6302, app)
- * para el módulo de Actividades (Destino de Crédito, Registro de Prospectos y Transacciones).
- */
+/** ActividadesService — Servicio Winder de comunicación con el backend Ant (puerto 6302, app) para el módulo de Actividades (Destino de Crédito, Registro de Prospectos y Transacciones). */
 @Injectable({ providedIn: 'root' })
 export class ActividadesService extends AntService {
   private readonly shell = inject(ShellStateService);

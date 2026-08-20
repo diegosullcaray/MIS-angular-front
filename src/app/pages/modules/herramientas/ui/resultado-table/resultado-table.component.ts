@@ -3,11 +3,7 @@ import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import type { TableHeaderDef } from '../../models/base-negativa.model';
 
-/**
- * Tabla de resultados de "Consulta Base Negativa" — columnas dinámicas
- * (`resultado.headers` del backend), igual que el `stg-table` genérico del
- * legado (`basenegativa.component.ts`: `this.headerDefs = JSON.parse(r.headers)`).
- */
+/** Tabla de resultados de "Consulta Base Negativa" — columnas dinámicas (`resultado.headers` del backend), igual que el `stg-table` genérico del legado (`basenegativa.component.ts`: `this.headerDefs = JSON.parse(r.headers)`). */
 @Component({
   selector: 'app-resultado-table',
   standalone: true,

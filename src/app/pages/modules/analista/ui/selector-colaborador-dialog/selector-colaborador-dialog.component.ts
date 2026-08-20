@@ -8,13 +8,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import type { ColaboradorItem } from '../../models/colaborador.model';
 
-/**
- * Diálogo de selección de colaborador — reconstrucción del `SecPickerDialog2`
- * legado (servicio compartido de otro paquete de STG, no incluido en el
- * volcado de referencia de `docs/07-modulos/analista`), mismo patrón que
- * `SelectorSectoristaDialogComponent` de Categorización (copia independiente,
- * cada módulo self-contained).
- */
+/** Diálogo de selección de colaborador — reconstrucción del `SecPickerDialog2` legado (servicio compartido de otro paquete de STG, no incluido en el volcado de referencia de `docs/07-modulos/analista`), mismo patrón que `SelectorSectoristaDialogComponent` de Categorización (copia independiente, cada módulo self-contained). */
 @Component({
   selector: 'app-selector-colaborador-dialog',
   standalone: true,

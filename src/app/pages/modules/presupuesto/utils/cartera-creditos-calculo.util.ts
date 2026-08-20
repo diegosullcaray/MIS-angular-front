@@ -1,14 +1,6 @@
 import type { FilaCarteraCreditosComposicion, FilaCarteraCreditosVariables, IdProductoComposicion } from '../models/cartera-creditos.model';
 
-/**
- * Ids de negocio de los 11 productos de la composición por producto (tabs
- * "Comp. Prod. Monto"/"Comp. Prod. Ratio", claves `d_<id>`/`g_<id>`) — no son
- * consecutivos (`18`/`99` en vez de `10`/`11`), tal cual el legado
- * (`pre-act-cartera-creditos.util.ts`). La correspondencia etiqueta↔id se
- * preserva en el mismo orden en que aparecía en el legado, pero no hay forma
- * de verificarla 1:1 contra el código fuente real (no estaba en el volcado
- * de referencia) — ajustar si el backend real no calza.
- */
+/** Ids de negocio de los 11 productos de la composición por producto (tabs "Comp. */
 export const PRODUCTOS_COMPOSICION: ReadonlyArray<{ id: IdProductoComposicion; label: string }> = [
   { id: '1', label: 'Agropecuario' },
   { id: '2', label: 'Construyendo Confianza' },
@@ -23,16 +15,7 @@ export const PRODUCTOS_COMPOSICION: ReadonlyArray<{ id: IdProductoComposicion; l
   { id: '99', label: 'Otros' },
 ];
 
-/**
- * Replica el `editCell(evt)` especial de Cartera Créditos para "Asesores
- * Nuevos" (`b1`) / "Asesores en Producción" (`b2`): un asesor nuevo tarda 2
- * periodos en convertirse en "en producción", y el acumulado se arrastra
- * periodo a periodo (`b2[i] = b1[i-2] + b2[i-1]`).
- *
- * Devuelve el índice desde el cual debe correr la cascada principal
- * (`calcularFilaCarteraCreditos`) — distinto según la columna editada, igual
- * que `this.calculate(...)` en el legado.
- */
+/** Replica el `editCell(evt)` especial de Cartera Créditos para "Asesores Nuevos" (`b1`) / "Asesores en Producción" (`b2`): un asesor nuevo tarda 2 periodos en convertirse en "en producción", y el acumulado se arrastra periodo a periodo (`b2[i] = b1[i-2] + b2[i-1]`). */
 export function aplicarCascadaAsesores(
   filas: FilaCarteraCreditosVariables[],
   idxEditado: number,
@@ -59,11 +42,7 @@ export function aplicarCascadaAsesores(
   return idxEditado;
 }
 
-/**
- * Fórmula de negocio completa de una fila de Cartera Créditos
- * (`calculateRow` del legado) — recalcula las columnas derivadas de
- * Variables y, con el mismo monto desembolsado, la composición por producto.
- */
+/** Fórmula de negocio completa de una fila de Cartera Créditos (`calculateRow` del legado) — recalcula las columnas derivadas de Variables y, con el mismo monto desembolsado, la composición por producto. */
 export function calcularFilaCarteraCreditos(
   filasVariables: FilaCarteraCreditosVariables[],
   filasComposicion: FilaCarteraCreditosComposicion[],

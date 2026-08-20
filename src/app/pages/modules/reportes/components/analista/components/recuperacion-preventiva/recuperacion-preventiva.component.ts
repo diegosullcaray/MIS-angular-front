@@ -5,24 +5,12 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { RecuperacionPreventivaService } from '../../services/recuperacion-preventiva.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Recuperación Preventiva" — migrado de la ruta `leg/com/rda/sec/rec-prev`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`,
- * config `rda/sectorista/recuperacion_preventiva/recuperacion_preventiva` en
- * `crs-map.ts`).
- *
- * Solo lectura: asesor → 1 tabla. El mensaje `content.lower` del legado
- * ("Esta es la lista de tus créditos que vencen en los próximos días...")
- * se muestra como nota debajo de la tabla.
- */
+/** "Recuperación Preventiva" — migrado de la ruta `leg/com/rda/sec/rec-prev` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/recuperacion_preventiva/recuperacion_preventiva` en `crs-map.ts`). */
 @Component({
   selector: 'app-recuperacion-preventiva',
   standalone: true,
@@ -33,7 +21,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class RecuperacionPreventivaComponent {
   private readonly servicio = inject(RecuperacionPreventivaService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly mostrarFiltros = signal(false);
 
@@ -65,7 +52,7 @@ export class RecuperacionPreventivaComponent {
         this.cargando.set(false);
 
         if (tabla1.body.length === 0) {
-          this.mensajes.warn('Sin Recuperación Preventiva.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Sin Recuperación Preventiva.');
         }
       },
       error: () => {

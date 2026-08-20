@@ -2,10 +2,7 @@ import { Component, input, output } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideInbox } from '@ng-icons/lucide';
 
-/**
- * Estado vacío para listas sin datos.
- * Muestra un ícono, título y descripción opcionales.
- */
+/** Estado vacío para listas sin datos. Muestra un ícono, título y descripción opcionales. */
 @Component({
   selector: 'app-empty-state',
   standalone: true,

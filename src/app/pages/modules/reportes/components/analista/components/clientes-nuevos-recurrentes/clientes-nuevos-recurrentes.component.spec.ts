@@ -4,7 +4,6 @@ import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { ClientesNuevosRecurrentesComponent } from './clientes-nuevos-recurrentes.component';
 import { ClientesNuevosRecurrentesService } from '../../services/clientes-nuevos-recurrentes.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -27,7 +26,6 @@ describe('ClientesNuevosRecurrentesComponent', () => {
       providers: [
         { provide: ClientesNuevosRecurrentesService, useValue: servicioFalso },
         ToastService,
-        MessageService,
         PrimeNgMessageService,
       ],
     });
@@ -66,7 +64,7 @@ describe('ClientesNuevosRecurrentesComponent', () => {
   it('muestra una advertencia si la tabla viene vacía', () => {
     servicioFalso.obtenerClientesNuevosRecurrentes.mockReturnValue(of({ tabla1: tabla() }));
     const fixture = crear();
-    const warnSpy = vi.spyOn(TestBed.inject(MessageService), 'warn');
+    const warnSpy = vi.spyOn(TestBed.inject(ToastService), 'advertencia');
 
     fixture.componentInstance['onAsesorSeleccionado'](ASESOR);
 

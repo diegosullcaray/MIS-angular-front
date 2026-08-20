@@ -5,23 +5,12 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { AutonomiaTasasService } from '../../services/autonomia-tasas.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { MessageService } from '../../../../../../../core/services/message.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
-const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
-
-/**
- * "Reporte de Autonomía de Tasas" — migrado de la ruta `leg/com/rda/sec/aut-tasa`
- * (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`,
- * config `rda/sectorista/Reporte_Autonomia_Tasas/reporte_autonomia_tasa_sec`
- * en `crs-map.ts`).
- *
- * Solo lectura: asesor → 4 tablas, cada una con su propio título y nota
- * (`content.higher`/`content.lower` del legado).
- */
+/** "Reporte de Autonomía de Tasas" — migrado de la ruta `leg/com/rda/sec/aut-tasa` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/Reporte_Autonomia_Tasas/reporte_autonomia_tasa_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-autonomia-tasas',
   standalone: true,
@@ -32,7 +21,6 @@ const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: 
 export class AutonomiaTasasComponent {
   private readonly servicio = inject(AutonomiaTasasService);
   private readonly toast = inject(ToastService);
-  private readonly mensajes = inject(MessageService);
 
   protected readonly mostrarFiltros = signal(false);
 
@@ -70,7 +58,7 @@ export class AutonomiaTasasComponent {
         this.cargando.set(false);
 
         if ([tabla1, tabla2, tabla3, tabla4].every((t) => t.body.length === 0)) {
-          this.mensajes.warn('Este asesor no tiene datos de autonomía de tasas, o los datos podrían seguir procesándose.', 'Sin resultados');
+          this.toast.advertencia('Sin resultados', 'Este asesor no tiene datos de autonomía de tasas, o los datos podrían seguir procesándose.');
         }
       },
       error: () => {

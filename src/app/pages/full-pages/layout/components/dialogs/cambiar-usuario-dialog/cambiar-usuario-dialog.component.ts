@@ -7,16 +7,7 @@ import { AuthService } from '../../../../auth/service/auth.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { AlternateUsuario } from '../../../../auth/model/auth-session.model';
 
-/**
- * Diálogo "Cambiar usuario" — estilo selector de cuentas de Google: una
- * lista de usuarios alternos, cada uno cambia de inmediato al hacer clic
- * (sin paso de selección + confirmación aparte).
- *
- * Migra la funcionalidad de `AltUserDialogComponent` de STG (lista de
- * `alternates`, `LoginService.onAltLogin`) — la mecánica de negocio es la
- * misma (elegir un alterno de la lista, ver `AuthService.cambiarAUsuarioAlterno`),
- * solo cambia la interacción de UI a un clic directo por fila.
- */
+/** Diálogo "Cambiar usuario" — estilo selector de cuentas de Google: una lista de usuarios alternos, cada uno cambia de inmediato al hacer clic (sin paso de selección + confirmación aparte). */
 @Component({
   selector: 'app-cambiar-usuario-dialog',
   standalone: true,

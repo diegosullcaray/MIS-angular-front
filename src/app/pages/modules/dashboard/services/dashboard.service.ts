@@ -5,19 +5,7 @@ import { ShellStateService } from '../../../../core/services/shell-state.service
 import type { ReporteDashboard, UsuariosPorReporte } from '../models/reporte.model';
 import type { ListaReportesBody, TokenReporteBody, UsuariosReporteBody } from '../models/dashboard-api.model';
 
-/**
- * Fachada del módulo `dashboard` (Dashboards Integrados, `/app/dashboards`)
- * — traduce las respuestas crudas del backend Ant (`ModDashboardService`,
- * puerto 6302) a los modelos tipados que consumen las pantallas, y mantiene
- * la lista de reportes como estado compartido (`reportes`/`reporteSeleccionado`)
- * para que `PowerBiComponent` (ruta separada, `/app/dashboards/power-bi`)
- * sepa qué reporte embeber sin depender de un `@Input()` — igual patrón que
- * `KaypachaService.categorias`, reemplazando el `ReplaySubject` del legado
- * (`ReportesEService.selectedReportObs$`).
- *
- * Migrado de `ReportesEService`/`ModReportesEService` (legado STG,
- * `pages/modules/reportes-e/compartido/servicios`).
- */
+/** Fachada del módulo `dashboard` (Dashboards Integrados, `/app/dashboards`) — traduce las respuestas crudas del backend Ant (`ModDashboardService`, puerto 6302) a los modelos tipados que consumen las pantallas, y mantiene la lista de reportes como estado compartido (`reportes`/`reporteSeleccionado`) para que `PowerBiComponent` (ruta separada, `/app/dashboards/power-bi`) sepa qué reporte embeber sin depender de un `@Input()` — igual patrón que `KaypachaService.categorias`, reemplazando el `ReplaySubject` del legado (`ReportesEService.selectedReportObs$`). */
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
   private readonly ant = inject(ModDashboardService);
