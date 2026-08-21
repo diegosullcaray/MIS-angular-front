@@ -84,9 +84,7 @@
         <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 h-[220px] flex flex-col">
           <h3 class="m-0 mb-2 text-[13px] font-semibold text-[var(--mis-primary-text)]">Comparativo Día</h3>
           <div class="flex-1 min-h-0">
-            @if (datosComparativoDia(); as datos) {
-              <p-chart type="bar" [data]="datos" [options]="opcionesComparativoDia" height="100%" />
-            }
+            <div #comparativo class="w-full h-full"></div>
           </div>
         </div>
       </div>
@@ -112,8 +110,8 @@
               <div class="h-full flex items-center justify-center">
                 <i class="pi pi-spin pi-spinner text-[var(--mis-primary-text)]"></i>
               </div>
-            } @else if (datosEvolutivo(); as datos) {
-              <p-chart type="line" [data]="datos" [options]="opcionesEvolutivo" height="100%" />
+            } @else if (datosEvolutivo()) {
+              <div #evolutivo class="w-full h-full"></div>
             }
           </div>
         </div>
@@ -121,9 +119,7 @@
         <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 h-[220px] flex flex-col">
           <h3 class="m-0 mb-2 text-[13px] font-semibold text-[var(--mis-primary-text)]">Cartera por Tramos de Mora</h3>
           <div class="flex-1 min-h-0">
-            @if (datosCarteraTramos(); as datos) {
-              <p-chart type="pie" [data]="datos" [options]="opcionesCarteraTramos" height="100%" />
-            }
+            <div #tramos class="w-full h-full"></div>
           </div>
         </div>
       </div>

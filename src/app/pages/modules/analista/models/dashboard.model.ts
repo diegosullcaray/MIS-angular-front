@@ -58,9 +58,3 @@ export interface HistoricoVariable {
   his_2: number[];
   his_3: number[];
 }
-
-/** Forma esperada por `p-chart` — dataset genérico de Chart.js (gráfico "Evolutivo Mensual"). */
-export interface DatosGraficoLinea {
-  labels: string[];
-  datasets: Array<{ label: string; data: number[]; borderColor: string; backgroundColor: string; tension: number }>;
-}

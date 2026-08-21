@@ -1,11 +1,11 @@
-import { Component, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
-import { ChartModule } from 'primeng/chart';
+import ApexCharts, { type ApexOptions } from 'apexcharts';
 import { TooltipModule } from 'primeng/tooltip';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
@@ -14,19 +14,31 @@ import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-
 import { SelectorColaboradorDialogComponent } from '../../ui/selector-colaborador-dialog/selector-colaborador-dialog.component';
 import { DetalleTablaDialogComponent } from '../../ui/detalle-tabla-dialog/detalle-tabla-dialog.component';
 import { AnalistaService } from '../../services/analista.service';
+import { ThemeService } from '../../../../full-pages/layout/services/theme.service';
 import { crearSelectorColaborador } from '../../utils/colaborador-selector.util';
 import type { ColaboradorItem } from '../../models/colaborador.model';
 import type { FilaLabelValor } from '../../models/comun.model';
-import type { DatosGraficoLinea, FilaClienteCredito, HistoricoVariable, ResumenDashboard } from '../../models/dashboard.model';
+import type { DatosResumenAnalista, FilaClienteCredito, HistoricoVariable, ResumenDashboard } from '../../models/dashboard.model';
 
-/** Paleta fija (mismo tinte navy/sky del sistema — Chart.js no resuelve variables CSS). */
+/** Paleta fija (mismo tinte navy/sky del sistema — ApexCharts, como Chart.js antes, no resuelve variables CSS en su config). */
 const COLOR_PRIMARY = '#1D396E';
 const COLOR_SECONDARY = '#00A2FF';
 const PALETA_TRAMOS = ['#16A34A', '#00A2FF', '#B45309', '#DC2626', '#7C3AED', '#334155'];
+const LABELS_TRAMOS = ['<-30', '[-30 a 0]', '[1 a 30]', '[31 a 60]', '61>', 'Judicial'];
 
-const OPCIONES_BASE = { responsive: true, maintainAspectRatio: false };
+/** Texto/grilla de los ejes: mismo criterio que `GraficoReporteComponent`/`HeatmapComponent` (`--mis-text-secondary` claro/oscuro). */
+const COLOR_TEXTO_CLARO = '#5A6A85';
+const COLOR_TEXTO_OSCURO = '#A3B2C9';
+const GRID_CLARO = 'rgba(90,106,133,0.12)';
+const GRID_OSCURO = 'rgba(163,178,201,0.12)';
 
-/** Principal (`/app/analista`) — dashboard del analista: KPIs, perfil, 3 gráficos y tabla de clientes con detalle. */
+/** Serie del gráfico "Evolutivo Mensual", ya lista para ApexCharts. */
+interface DatosEvolutivo {
+  categorias: string[];
+  series: { name: string; data: number[] }[];
+}
+
+/** Principal (`/app/analista`) — dashboard del analista: KPIs, perfil, 3 gráficos (ApexCharts, igual patrón imperativo que `GraficoReporteComponent`) y tabla de clientes con detalle. */
 @Component({
   selector: 'app-principal-analista',
   standalone: true,
@@ -36,7 +48,6 @@ const OPCIONES_BASE = { responsive: true, maintainAspectRatio: false };
     ButtonModule,
     SelectModule,
     TableModule,
-    ChartModule,
     TooltipModule,
     ListSkeletonComponent,
     InlineErrorComponent,
@@ -51,6 +62,7 @@ const OPCIONES_BASE = { responsive: true, maintainAspectRatio: false };
 export class PrincipalComponent implements OnInit {
   private readonly analista = inject(AnalistaService);
   private readonly router = inject(Router);
+  private readonly tema = inject(ThemeService);
 
   protected readonly selectorColaborador = crearSelectorColaborador(this.analista);
   protected readonly esAdmin = this.selectorColaborador.esAdmin;
@@ -65,52 +77,51 @@ export class PrincipalComponent implements OnInit {
 
   protected readonly cargandoHistorico = signal(false);
   protected readonly variableActual = signal<string | null>(null);
+  protected readonly datosEvolutivo = signal<DatosEvolutivo | null>(null);
 
   protected readonly dialogDetalleAbierto = signal(false);
   protected readonly detalleCliente = signal<FilaLabelValor[]>([]);
   protected readonly cargandoDetalle = signal(false);
 
-  protected readonly opcionesComparativoDia = {
-    ...OPCIONES_BASE,
-    plugins: { legend: { display: false } },
-    scales: { y: { beginAtZero: true } },
-  };
+  private readonly comparativoRef = viewChild<ElementRef<HTMLDivElement>>('comparativo');
+  private readonly evolutivoRef = viewChild<ElementRef<HTMLDivElement>>('evolutivo');
+  private readonly tramosRef = viewChild<ElementRef<HTMLDivElement>>('tramos');
 
-  protected readonly opcionesCarteraTramos = {
-    ...OPCIONES_BASE,
-    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } },
-  };
-
-  protected readonly opcionesEvolutivo = {
-    ...OPCIONES_BASE,
-    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } },
-    scales: { y: { beginAtZero: true } },
-  };
-
-  protected readonly datosComparativoDia = computed(() => {
-    const d = this.dashboard()?.data;
-    if (!d) return null;
-    return {
-      labels: [d.f3, d.f2, d.f1],
-      datasets: [{ label: 'Cartera Stock', data: [d.sal_cap_mant, d.sal_cap_ant, d.sal_cap], backgroundColor: COLOR_PRIMARY }],
-    };
-  });
-
-  protected readonly datosCarteraTramos = computed(() => {
-    const d = this.dashboard()?.data;
-    if (!d) return null;
-    return {
-      labels: ['<-30', '[-30 a 0]', '[1 a 30]', '[31 a 60]', '61>', 'Judicial'],
-      datasets: [{ data: [d.da_t1, d.da_t2, d.da_t3, d.da_t4, d.da_t5, d.da_t6], backgroundColor: PALETA_TRAMOS }],
-    };
-  });
-
-  protected readonly datosEvolutivo = signal<DatosGraficoLinea | null>(null);
+  private chartComparativo: ApexCharts | null = null;
+  private chartEvolutivo: ApexCharts | null = null;
+  private chartTramos: ApexCharts | null = null;
 
   constructor() {
     effect(() => {
       const c = this.colaborador();
       if (c) untracked(() => this.cargar(c.codBt));
+    });
+
+    effect(() => {
+      const el = this.comparativoRef()?.nativeElement;
+      const d = this.dashboard()?.data;
+      const oscuro = this.tema.oscuro();
+      if (el && d) this.renderComparativoDia(el, d, oscuro);
+    });
+
+    effect(() => {
+      const el = this.tramosRef()?.nativeElement;
+      const d = this.dashboard()?.data;
+      const oscuro = this.tema.oscuro();
+      if (el && d) this.renderCarteraTramos(el, d, oscuro);
+    });
+
+    effect(() => {
+      const el = this.evolutivoRef()?.nativeElement;
+      const datos = this.datosEvolutivo();
+      const oscuro = this.tema.oscuro();
+      if (el && datos) this.renderEvolutivo(el, datos, oscuro);
+    });
+
+    inject(DestroyRef).onDestroy(() => {
+      this.chartComparativo?.destroy();
+      this.chartEvolutivo?.destroy();
+      this.chartTramos?.destroy();
     });
   }
 
@@ -191,16 +202,65 @@ export class PrincipalComponent implements OnInit {
     });
   }
 
-  private aDatosEvolutivo(h: HistoricoVariable): DatosGraficoLinea {
+  private aDatosEvolutivo(h: HistoricoVariable): DatosEvolutivo {
     const largo = Math.max(h.his_1.length, h.his_2.length, h.his_3.length);
-    const labels = Array.from({ length: largo }, (_, i) => `${i + 1}`);
     return {
-      labels,
-      datasets: [
-        { label: h.meta.s1, data: h.his_1, borderColor: COLOR_PRIMARY, backgroundColor: COLOR_PRIMARY, tension: 0.3 },
-        { label: h.meta.s2, data: h.his_2, borderColor: COLOR_SECONDARY, backgroundColor: COLOR_SECONDARY, tension: 0.3 },
-        { label: h.meta.s3, data: h.his_3, borderColor: PALETA_TRAMOS[2], backgroundColor: PALETA_TRAMOS[2], tension: 0.3 },
+      categorias: Array.from({ length: largo }, (_, i) => `${i + 1}`),
+      series: [
+        { name: h.meta.s1, data: h.his_1 },
+        { name: h.meta.s2, data: h.his_2 },
+        { name: h.meta.s3, data: h.his_3 },
       ],
     };
+  }
+
+  private renderComparativoDia(el: HTMLElement, d: DatosResumenAnalista, oscuro: boolean): void {
+    const options: ApexOptions = {
+      chart: { type: 'bar', height: '100%', background: 'transparent', foreColor: oscuro ? COLOR_TEXTO_OSCURO : COLOR_TEXTO_CLARO, toolbar: { show: false }, animations: { enabled: false } },
+      series: [{ name: 'Cartera Stock', data: [d.sal_cap_mant, d.sal_cap_ant, d.sal_cap] }],
+      xaxis: { categories: [d.f3, d.f2, d.f1] },
+      yaxis: { min: 0 },
+      colors: [COLOR_PRIMARY],
+      legend: { show: false },
+      dataLabels: { enabled: false },
+      grid: { borderColor: oscuro ? GRID_OSCURO : GRID_CLARO },
+      tooltip: { theme: oscuro ? 'dark' : 'light' },
+      stroke: { width: 0 },
+    };
+    this.chartComparativo?.destroy();
+    this.chartComparativo = new ApexCharts(el, options);
+    void this.chartComparativo.render();
+  }
+
+  private renderCarteraTramos(el: HTMLElement, d: DatosResumenAnalista, oscuro: boolean): void {
+    const options: ApexOptions = {
+      chart: { type: 'pie', height: '100%', background: 'transparent', foreColor: oscuro ? COLOR_TEXTO_OSCURO : COLOR_TEXTO_CLARO, animations: { enabled: false } },
+      series: [d.da_t1, d.da_t2, d.da_t3, d.da_t4, d.da_t5, d.da_t6],
+      labels: LABELS_TRAMOS,
+      colors: PALETA_TRAMOS,
+      legend: { position: 'bottom', fontSize: '10px', itemMargin: { horizontal: 6, vertical: 0 } },
+      tooltip: { theme: oscuro ? 'dark' : 'light' },
+    };
+    this.chartTramos?.destroy();
+    this.chartTramos = new ApexCharts(el, options);
+    void this.chartTramos.render();
+  }
+
+  private renderEvolutivo(el: HTMLElement, datos: DatosEvolutivo, oscuro: boolean): void {
+    const options: ApexOptions = {
+      chart: { type: 'line', height: '100%', background: 'transparent', foreColor: oscuro ? COLOR_TEXTO_OSCURO : COLOR_TEXTO_CLARO, toolbar: { show: false }, animations: { enabled: false } },
+      series: datos.series,
+      xaxis: { categories: datos.categorias },
+      yaxis: { min: 0 },
+      colors: [COLOR_PRIMARY, COLOR_SECONDARY, PALETA_TRAMOS[2]],
+      legend: { show: true, position: 'bottom', fontSize: '10px' },
+      dataLabels: { enabled: false },
+      grid: { borderColor: oscuro ? GRID_OSCURO : GRID_CLARO },
+      tooltip: { theme: oscuro ? 'dark' : 'light' },
+      stroke: { curve: 'smooth', width: 2 },
+    };
+    this.chartEvolutivo?.destroy();
+    this.chartEvolutivo = new ApexCharts(el, options);
+    void this.chartEvolutivo.render();
   }
 }
