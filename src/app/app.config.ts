@@ -19,7 +19,7 @@ import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
 import { ThemeService } from './pages/full-pages/layout/services/theme.service';
-import { FUENTE_BUSQUEDA } from './shared/buscador/fuente-busqueda';
+import { FUENTE_BUSQUEDA } from './shared/ui/buscador/fuente-busqueda';
 import { FuenteNavegacionService } from './pages/full-pages/layout/services/fuente-navegacion.service';
 import { FuenteDashboardsService } from './pages/modules/dashboard/services/fuente-dashboards.service';
 

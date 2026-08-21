@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavegacionSistemasService } from './navegacion-sistemas.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type { FuenteBusqueda, RegistroBuscable } from '../../../../shared/buscador/buscador.model';
+import type { FuenteBusqueda, RegistroBuscable } from '../../../../shared/ui/buscador/buscador.model';
 
 /** Aporta al buscador el árbol de navegación completo: todos los sistemas, a cualquier profundidad. */
 @Injectable({ providedIn: 'root' })
