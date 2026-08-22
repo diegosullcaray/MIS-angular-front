@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { DashboardService } from './dashboard.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type { FuenteBusqueda, RegistroBuscable } from '../../../../shared/buscador/buscador.model';
+import type { FuenteBusqueda, RegistroBuscable } from '../../../../shared/ui/buscador/buscador.model';
 
 /** Dónde vive la pantalla que renderiza un reporte de Power BI (ver `dashboard.routes.ts`). */
 const RUTA_POWER_BI = '/app/dashboards/power-bi';

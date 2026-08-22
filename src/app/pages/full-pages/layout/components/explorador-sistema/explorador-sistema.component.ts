@@ -3,7 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
-import { BuscadorComponent } from '../../../../../shared/buscador/buscador.component';
+import { BuscadorComponent } from '../../../../../shared/ui/buscador/buscador.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
