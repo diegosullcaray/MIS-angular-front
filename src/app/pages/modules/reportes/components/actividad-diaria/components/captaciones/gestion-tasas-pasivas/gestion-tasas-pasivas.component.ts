@@ -15,12 +15,13 @@ import {
   TIPO_TRAMO_PLAZO_POR_DEFECTO,
 } from '../../../../../models/filtros.model';
 import { GestionTasasPasivasService } from '../../../services/gestion-tasas-pasivas.service';
+import { TabsModule } from 'primeng/tabs';
 
 /** "Gestión de Tasas Pasivas" (`leg/com/rda/adm/tasa-pas`) — depósitos a plazo fijo por tipo de persona y moneda. */
 @Component({
   selector: 'app-gestion-tasas-pasivas',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SelectFiltroComponent, EmptyStateComponent, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, SelectFiltroComponent, EmptyStateComponent, WindowPanelComponent,TabsModule],
   templateUrl: './gestion-tasas-pasivas.component.html',
   styleUrl: './gestion-tasas-pasivas.component.css',
 })
