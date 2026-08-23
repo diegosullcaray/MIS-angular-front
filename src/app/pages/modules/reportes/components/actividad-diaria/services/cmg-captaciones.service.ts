@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
+import { ShellStateService } from '../../../../../../core/services/shell-state.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
-import { corregirSemaforosDesplazados } from '../../../utils/semaforos-desplazados.util';
-import { fechaUltimoDia } from '../../../utils/fecha-reporte.util';
+import { fechaCorteCompacta } from '../../../utils/fecha-reporte.util';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { ReporteCmgCaptaciones } from '../models/cmg-captaciones.model';
 
@@ -14,11 +14,13 @@ const COD_REP = 'GCMGCAP_01';
 @Injectable({ providedIn: 'root' })
 export class CmgCaptacionesService {
   private readonly reportes = inject(ModReportesService);
+  private readonly shell = inject(ShellStateService);
 
-  /** CMG de captaciones de una agencia — único bloque (`GCMGCAP_01`). */
+  /** CMG de captaciones de una agencia — único bloque (`GCMGCAP_01`), a la fecha de corte del backend (el mismo `fec` con el que el selector pide la jerarquía). */
   obtenerCmgCaptaciones(nodo: Pick<HierarquiaNodo, 'tip_cod' | 'cod_rel'>): Observable<ReporteCmgCaptaciones> {
+    const fec = fechaCorteCompacta(this.shell.usuarioActivo()?.fechaCorte);
     return this.reportes
-      .getRegularData(COD_REP, { ...nodo, fec: fechaUltimoDia() })
-      .pipe(map((respuesta) => ({ tabla1: corregirSemaforosDesplazados(mapearBloqueReporte(respuesta)) })));
+      .getRegularData(COD_REP, { ...nodo, fec })
+      .pipe(map((respuesta) => ({ tabla1: mapearBloqueReporte(respuesta) })));
   }
 }
