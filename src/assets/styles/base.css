@@ -13,7 +13,7 @@ html, body {
   background-color: var(--mis-bg);
   /* El velo va primero para quedar por encima del wallpaper. */
   background-image: linear-gradient(var(--mis-wallpaper-velo), var(--mis-wallpaper-velo)),
-                    url('/assets/images/fc/fondos/wallpaper.jpg');
+                    var(--mis-wallpaper);
   background-repeat: no-repeat;
   background-position: center center;
   background-attachment: fixed;

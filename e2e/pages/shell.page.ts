@@ -12,6 +12,14 @@ export class ShellPage {
     await this.page.goto(ruta);
   }
 
+  /**
+   * Fija el tema antes de que arranque la app (`ThemeService` lo lee de
+   * `localStorage` al construirse). Sin esto se usa el default, que es oscuro.
+   */
+  async fijarTema(modo: 'claro' | 'oscuro'): Promise<void> {
+    await this.page.addInitScript((m) => localStorage.setItem('mis-tema', m), modo);
+  }
+
   /** Aside de Col 1 (íconos de sistemas) — barra inferior fija en mobile, rail vertical en desktop. */
   get railIconos() {
     return this.page.locator('#tour-sidebar-icons');
@@ -44,9 +52,14 @@ export class ShellPage {
     return this.page.locator('div.h-screen.flex.overflow-hidden');
   }
 
-  /** URL del wallpaper actualmente aplicado (mobile: wallpaper_cell.jpg, desktop: wallpaper.jpg — ver clases responsive de la raíz). */
+  /** URL del wallpaper aplicado — lo resuelve `--mis-wallpaper` según ancho y tema (ver `tokens.css`). */
   async wallpaperAplicado(): Promise<string> {
     return this.raiz.evaluate((el) => getComputedStyle(el).backgroundImage);
+  }
+
+  /** Color del velo que va sobre el wallpaper (`shell-wallpaper::before`) — `rgba(0, 0, 0, 0)` cuando está apagado. */
+  async veloWallpaper(): Promise<string> {
+    return this.raiz.evaluate((el) => getComputedStyle(el, '::before').backgroundColor);
   }
 
   /**

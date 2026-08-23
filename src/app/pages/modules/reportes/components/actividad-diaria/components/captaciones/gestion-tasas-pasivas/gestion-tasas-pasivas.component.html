@@ -1,13 +1,15 @@
 <app-window-panel titulo="Gestión de Tasas Pasivas" [permitirActualizar]="false" [conFiltros]="true">
-  <div ventana-filtros class="flex items-end gap-3 flex-wrap">
+  <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector
       [paramsHier]="paramsHier"
       placeholder="Elegir agencia"
       (nodoSeleccionado)="onNivelSeleccionado($event)"
       (error)="onErrorJerarquia()"
     />
-    <app-select-filtro etiqueta="Tipo" [opciones]="opcionesTipo" [(valor)]="tipo" ancho="w-36" />
-    <app-select-filtro etiqueta="Canal" [opciones]="opcionesCanal" [(valor)]="canal" ancho="w-52" />
+    <div class="flex items-end gap-3 flex-wrap">
+      <app-select-filtro etiqueta="Tipo" [opciones]="opcionesTipo" [(valor)]="tipo" ancho="w-36" />
+      <app-select-filtro etiqueta="Canal" [opciones]="opcionesCanal" [(valor)]="canal" ancho="w-52" />
+    </div>
   </div>
 
   @if (!nivelActual()) {

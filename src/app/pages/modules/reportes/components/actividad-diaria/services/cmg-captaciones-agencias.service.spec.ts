@@ -62,49 +62,28 @@ describe('CmgCaptacionesAgenciasService', () => {
     expect(getRegularDataSpy.mock.calls[0][1].fec).toBe(ayerCompacto());
   });
 
-  it('corre los semáforos una métrica: METAS se queda sin punto y TFM recupera el suyo', () => {
-    // Forma real de GCMGCAP_01 (misma que DESEMP_SOC_01): el backend manda cada
-    // semáforo pegado a la métrica ANTERIOR, pero colorea la SIGUIENTE.
-    const semaforo = (columnDef: string, isdata: number) => ({
-      columnDef,
-      isdata,
-      hidden: true,
-      format: { type: 'traffic-light' },
-    });
+  it('deja el semáforo detrás de la métrica que califica', () => {
+    // Forma real de `GCMGCAP_01`: `TMM_Sem` (isdata 9) llega ANTES de `TMM`
+    // (isdata 10), que lo absorbe con `cols: 2`.
     const headers = [
       {
         columns: [
-          { columnDef: 'age', header: 'Agencia', isdata: 1 },
-          { columnDef: 'metas', header: 'METAS', isdata: 2 },
-          semaforo('sem_a', 3),
-          { columnDef: 'tmm', header: 'TMM', isdata: 4 },
-          semaforo('sem_b', 5),
-          { columnDef: 'tam', header: 'TAM', isdata: 6 },
-          semaforo('sem_c', 7),
-          { columnDef: 'tfm', header: 'TFM', isdata: 8 },
+          { columnDef: 'DESVAL', header: 'Variable', isdata: 1, cols: 1 },
+          { columnDef: '7', header: 'METAS', isdata: 8, cols: 1 },
+          { columnDef: '8', header: 'TMM_Sem', isdata: 9, cols: 1, hidden: true, format: { type: 'traffic-light' } },
+          { columnDef: '9', header: 'TMM', isdata: 10, cols: 2 },
         ],
       },
     ];
-    getRegularDataSpy.mockReturnValue(of(respuesta({ headers, body: [{ age: 'AG01' }], additional: {} })));
+    getRegularDataSpy.mockReturnValue(of(respuesta({ headers, body: [{ DESVAL: 'RED' }], additional: {} })));
     shell.setUsuarioActivo(usuario({ fechaCorte: '20251130' }));
 
-    let recibido: { tabla1: { headers: { columns: { columnDef: string; cols?: number }[] }[] } } | undefined;
+    let recibido: { tabla1: { headers: { columns: { columnDef: string; isdata?: number }[] }[] } } | undefined;
     service.obtener(NODO).subscribe((r) => (recibido = r));
 
     const columnas = recibido!.tabla1.headers[0].columns;
-    expect(columnas.map((c) => c.columnDef)).toEqual([
-      'age',
-      'metas',
-      'tmm',
-      'sem_a', // el punto que venía pegado a METAS es en realidad el de TMM
-      'tam',
-      'sem_b',
-      'tfm',
-      'sem_c', // TFM se queda con el que venía pegado a TAM
-    ]);
-
-    const porDef = new Map(columnas.map((c) => [c.columnDef, c]));
-    expect(porDef.get('metas')?.cols).toBe(1); // METAS no tiene punto propio
-    expect(porDef.get('tfm')?.cols).toBe(2); // TFM sí muestra el suyo
+    expect(columnas.map((c) => c.columnDef)).toEqual(['DESVAL', '7', '9', '8']);
+    expect(columnas.find((c) => c.columnDef === '9')?.isdata).toBe(9);
+    expect(columnas.find((c) => c.columnDef === '8')?.isdata).toBe(10);
   });
 });

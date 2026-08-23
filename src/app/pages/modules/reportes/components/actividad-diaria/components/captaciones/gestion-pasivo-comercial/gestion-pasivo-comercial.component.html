@@ -1,13 +1,15 @@
 <app-window-panel titulo="Gestión Pasivo Comercial" subtitulo="Captación por Canal Operaciones" [permitirActualizar]="false" [conFiltros]="true">
-  <div ventana-filtros class="flex items-end gap-3 flex-wrap">
+  <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector
       [paramsHier]="paramsHier"
       placeholder="Elegir nivel"
       (nodoSeleccionado)="onNivelSeleccionado($event)"
       (error)="onErrorJerarquia()"
     />
-    <app-select-filtro etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" ancho="w-48" />
-    <app-select-filtro etiqueta="Segmento" [opciones]="opcionesSegmento" [(valor)]="segmento" ancho="w-44" />
+    <div class="flex items-end gap-3 flex-wrap">
+      <app-select-filtro etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" ancho="w-48" />
+      <app-select-filtro etiqueta="Segmento" [opciones]="opcionesSegmento" [(valor)]="segmento" ancho="w-44" />
+    </div>
   </div>
 
   @if (!nivelActual()) {

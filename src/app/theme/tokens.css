@@ -58,6 +58,9 @@
   /* Panel de página (`.mis-page`) — vidrio sobre el wallpaper. */
   --mis-glass-bg: rgba(255,255,255,0.70);
   --mis-glass-border: rgba(255,255,255,0.60);
+  /* Wallpaper del shell. Arranca con el de mobile; los `@media` de más abajo
+     lo suben a la versión de escritorio y, en oscuro, a la propia de ese tema. */
+  --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper_cell.jpg');
   /* Velo sobre el wallpaper — transparente en claro, oscurece la foto en oscuro. */
   --mis-wallpaper-velo: transparent;
   /* Fondo de overlays a pantalla completa (spinner, redirect). */
@@ -212,4 +215,20 @@
   --mis-ranking-row1-bg: #143A4A;
 
   color-scheme: dark;
+}
+
+/* ── Wallpaper de escritorio ──────────────────────────────────
+   Desde el breakpoint `sm` de Tailwind (640px) el shell usa la foto de
+   escritorio. En oscuro no se reusa la de claro con un velo encima: hay una
+   versión propia, ya oscura de origen, así que el velo se apaga — encimarle
+   el degradado negro la ensuciaba y le comía el contraste. */
+@media (min-width: 640px) {
+  :root {
+    --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper.jpg');
+  }
+
+  .dark {
+    --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper_dark.png');
+    --mis-wallpaper-velo: transparent;
+  }
 }
