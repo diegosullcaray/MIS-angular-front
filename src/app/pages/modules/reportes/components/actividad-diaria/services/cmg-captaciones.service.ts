@@ -1,37 +1,20 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, map, tap } from 'rxjs';
-import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
-import { ShellStateService } from '../../../../../../core/services/shell-state.service';
-import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import { Observable, map } from 'rxjs';
+import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import { corregirSemaforosDesplazados } from '../../../utils/semaforos-desplazados.util';
-import { fechaCorteCompacta } from '../../../utils/fecha-reporte.util';
-import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import type { ReporteCmgCaptaciones } from '../models/cmg-captaciones.model';
+import type { ReporteBloqueUnico } from '../models/captaciones.model';
 
-const COD_REP = 'GCMGCAP_01';
-
+/** "CMG Captaciones - Agencias" — legado `cmg-capta01`, `cra-map.ts`: `module: 'GCMGCAP'`, `jerar: OFI_1`. */
 @Injectable({ providedIn: 'root' })
-export class CmgCaptacionesService {
-  private readonly reportes = inject(ModReportesService);
-  private readonly shell = inject(ShellStateService);
+export class CmgCaptacionesAgenciasService {
+  private readonly bloques = inject(BloqueReporteService);
 
-  obtenerCmgCaptaciones(nodo: Pick<HierarquiaNodo, 'tip_cod' | 'cod_rel'>): Observable<ReporteCmgCaptaciones> {
-    const fec = fechaCorteCompacta(this.shell.usuarioActivo()?.fechaCorte);
-    
-    // Imprime el nodo en formato JSON listo para copiar
-    console.log('--- NODO ENVIADO ---');
-    console.log(JSON.stringify(nodo, null, 2));
-
-    return this.reportes
-      .getRegularData(COD_REP, { ...nodo, fec })
-      .pipe(
-        // Imprime la respuesta del backend en formato JSON listo para copiar
-        tap((respuesta) => {
-          console.log('--- DATA RECIBIDA DEL BACKEND ---');
-          console.log(JSON.stringify(respuesta, null, 2));
-        }),
-        
-        map((respuesta) => ({ tabla1: corregirSemaforosDesplazados(mapearBloqueReporte(respuesta)) }))
-      );
+  /**
+   * `GCMGCAP_01` comparte forma con `DESEMP_SOC_01` (METAS · TMM · TAM · TFM ·
+   * DISTANCIA) y el mismo desfase: cada semáforo viaja pegado a la métrica
+   * ANTERIOR pero colorea la SIGUIENTE, así que "METAS" no lleva punto propio.
+   */
+  obtener(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
+    return this.bloques.regular('GCMGCAP_01', nodo).pipe(map((t) => ({ tabla1: corregirSemaforosDesplazados(t) })));
   }
 }
