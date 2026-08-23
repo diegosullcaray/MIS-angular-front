@@ -12,6 +12,21 @@ export function fechaUltimoDia(): string {
 }
 
 /**
+ * Fecha de corte del backend en `YYYYMMDD` — el formato que espera el parámetro
+ * `fec` de los reportes del motor "mixto" (`fec_day_ult` del legado).
+ *
+ * El legado calculaba ese `fec` como "ayer" según el reloj del cliente. Eso solo
+ * acierta si el backend ya cerró el día anterior: cuando su corte real va más
+ * atrás, el reporte pide un día sin datos y la tabla vuelve vacía. `curr_fec`
+ * (`usuarioActivo().fechaCorte`) es la fecha que el backend declara como
+ * cerrada, así que se prefiere; si todavía no llegó, se cae a "ayer".
+ */
+export function fechaCorteCompacta(fechaCorteUsuario: string | undefined): string {
+  if (fechaCorteUsuario && /^\d{8}$/.test(fechaCorteUsuario)) return fechaCorteUsuario;
+  return fechaUltimoDia();
+}
+
+/**
  * Fecha de corte (`YYYY-MM-DD`) con la que se pide cada nivel de la jerarquía
  * y algunos reportes (ej. Productos/Población Misionales). Distinta de
  * `fechaUltimoDia()` (`YYYYMMDD`, un día antes).
