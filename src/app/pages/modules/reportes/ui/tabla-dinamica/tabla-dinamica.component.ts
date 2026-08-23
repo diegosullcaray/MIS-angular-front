@@ -1,4 +1,5 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input, LOCALE_ID } from '@angular/core';
+import { formatNumber } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { aplanarEncabezados } from '../../utils/tabla-dinamica.util';
 import type { ColumnaDinamica } from '../../models/tabla-dinamica.model';
@@ -12,14 +13,34 @@ import type { ColumnaDinamica } from '../../models/tabla-dinamica.model';
   styleUrl: './tabla-dinamica.component.css',
 })
 export class TablaDinamicaComponent {
+  private readonly locale = inject(LOCALE_ID);
+
   readonly columnas = input.required<ColumnaDinamica[]>();
   readonly filas = input.required<Record<string, unknown>[]>();
   readonly cargando = input(false);
+  /** Pinta en verde/rojo las columnas de variación — legado `aplicarEstilos()` de `carterizacion-cap-com`, que lo aplica a toda clave que contenga `var`. */
+  readonly colorearVariaciones = input(false);
 
   protected readonly encabezados = computed(() => aplanarEncabezados(this.columnas()));
 
   protected valor(fila: Record<string, unknown>, columna: ColumnaDinamica): unknown {
-    return fila[columna.key];
+    const crudo = fila[columna.key];
+    if (crudo == null || crudo === '') return crudo;
+
+    const tipo = columna.format?.type;
+    if (tipo !== 'integer' && tipo !== 'decimal') return crudo;
+
+    const numero = Number(crudo);
+    return Number.isNaN(numero) ? crudo : formatNumber(numero, this.locale, tipo === 'integer' ? '1.0-0' : '1.2-2');
+  }
+
+  /** Color de la celda cuando es una variación: verde si sube, rojo si baja. */
+  protected color(fila: Record<string, unknown>, columna: ColumnaDinamica): string | null {
+    if (!this.colorearVariaciones() || !columna.key.toLowerCase().includes('var')) return null;
+
+    const numero = Number(fila[columna.key]);
+    if (Number.isNaN(numero) || numero === 0) return null;
+    return numero > 0 ? 'var(--mis-success)' : 'var(--mis-danger)';
   }
 
   /** Fila "destacada" del backend (`row.style === 1` en el legado — total/resumen). */

@@ -26,7 +26,7 @@ const REPORTES: readonly [string, string][] = [
   ['/app/reportes/leg/com/rda/adm/tasa-pas', 'Gestión de Tasas Pasivas'],
   ['/app/reportes/leg/com/rda/adm/panel-operaciones', 'Panel Operaciones'],
   ['/app/reportes/repositorio/actividad-diaria/caracterizacion/pasivo', 'Gestión Pasivo Comercial'],
-  ['/app/reportes/repositorio/actividad-diaria/caracterizacion/pasivocom', 'Vinculación Cartera'],
+  ['/app/reportes/repositorio/actividad-diaria/caracterizacion-com/pasivocom', 'Vinculación Cartera'],
 ];
 
 test.describe('Captaciones — smoke de las 6 pantallas migradas', () => {

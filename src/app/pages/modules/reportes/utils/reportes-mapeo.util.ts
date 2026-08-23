@@ -1,7 +1,13 @@
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
 import type { FilaReporte, TablaReporteResultado } from '../models/tabla-reporte.model';
 import type { ReporteResponseBody } from '../models/reportes-api.model';
-import type { ColumnaDinamica, TablaDinamicaResultado, TablaRegularResponseBody } from '../models/tabla-dinamica.model';
+import type {
+  ColumnaDinamica,
+  KpiTablaDinamica,
+  TablaDinamicaResultado,
+  TablaRegularResponseBody,
+  TablaRegularResultadoRaw,
+} from '../models/tabla-dinamica.model';
 import type { BloqueGrafico } from '../models/grafico-reporte.model';
 
 /** Mapeo compartido de la respuesta cruda del motor de reportes "mixtos" (`regularData`) a la forma que consume `app-tabla-reporte` — mismo mapeo que antes vivía centralizado en `ReportesService.obtenerBloqueReporte()`, ahora reutilizado por el service propio de cada componente para no duplicar el `.pipe(map(...))` en cada uno. */
@@ -14,7 +20,33 @@ export function mapearBloqueReporte(r: IWinderResponse): TablaReporteResultado {
 export function mapearTablaRegular(r: IWinderResponse): TablaDinamicaResultado {
   const resultado = (r.body as TablaRegularResponseBody | null)?.resultado;
   const columnas = resultado?.headers ? (JSON.parse(resultado.headers) as ColumnaDinamica[]) : [];
-  return { columnas, filas: (resultado?.data as Record<string, unknown>[]) ?? [] };
+  const filas = (resultado?.data as Record<string, unknown>[]) ?? [];
+  const kpis = mapearKpis(resultado, filas);
+  return kpis ? { columnas, filas, kpis } : { columnas, filas };
+}
+
+/** Clave de la variación de cada producto dentro de la fila total — legado `carterizacion-cap-com.component.ts` (`varKey`). */
+const CLAVE_VARIACION: Record<string, string> = {
+  AHORROS: 'var-ahorros',
+  'PLAZO FIJO': 'var-DPF',
+  CTS: 'var-CTS',
+};
+
+/** Tarjetas KPI de `resultado.meta1`: el saldo sale del propio `meta1` y la variación del mes, de la primera fila (la de totales). */
+function mapearKpis(resultado: TablaRegularResultadoRaw | undefined, filas: Record<string, unknown>[]): KpiTablaDinamica[] | undefined {
+  if (!resultado?.meta1?.length) return undefined;
+
+  const crudos = typeof resultado.meta1 === 'string' ? (JSON.parse(resultado.meta1) as Record<string, unknown>[]) : resultado.meta1;
+  const total = filas[0] ?? {};
+
+  return crudos.map((kpi) => {
+    const producto = String(kpi['PRODUCTO'] ?? '');
+    return {
+      producto,
+      saldo: Number(kpi['HSBSDO1'] ?? 0),
+      variacion: Number(total[CLAVE_VARIACION[producto.toUpperCase()] ?? ''] ?? 0),
+    };
+  });
 }
 
 /** Filtro de texto libre sobre las filas de una tabla — legado `filter_input` (`table-multiheader.component.html`: `applyFilter()`, búsqueda por substring sobre todos los valores de la fila). */
