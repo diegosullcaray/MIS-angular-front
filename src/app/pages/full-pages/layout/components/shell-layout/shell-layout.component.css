@@ -4,11 +4,13 @@
   overflow: hidden;
 }
 
-/* Velo sobre el wallpaper: transparente en claro, oscuro en `.dark`.
-   Va en un ::before para no pisar el background-image de las utilidades. */
+/* Velo sobre el wallpaper: transparente en claro, oscuro en `.dark`, y también
+   transparente en escritorio oscuro, donde la foto ya es oscura (ver tokens.css).
+   Va en un ::before para no pisar el background-image del contenedor. */
 .shell-wallpaper {
   position: relative;
   isolation: isolate;
+  background-image: var(--mis-wallpaper);
 }
 
 .shell-wallpaper::before {

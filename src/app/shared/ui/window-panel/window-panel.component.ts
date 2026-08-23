@@ -44,7 +44,7 @@ export class WindowPanelComponent {
   /** Muestra el botón de filtros en la barra y la franja colapsable que proyecta `[ventana-filtros]`. */
   readonly conFiltros = input<boolean>(false);
   /** Estado inicial de esa franja. */
-  readonly filtrosAbiertos = input<boolean>(true);
+  readonly filtrosAbiertos = input<boolean>(false);
 
   readonly actualizar = output<void>();
   /** Se emite al pulsar la luz roja, antes de navegar al inicio. */

@@ -55,13 +55,16 @@ describe('ShellLayoutComponent', () => {
     expect(el.querySelector('app-redirect-overlay')).not.toBeNull();
   });
 
-  it('usa el wallpaper de mobile (wallpaper_cell.jpg) por defecto, y el de escritorio (wallpaper.jpg) desde sm:', () => {
+  it('deja el wallpaper en manos del tema (`--mis-wallpaper`), no de utilidades fijas', () => {
     const fixture = TestBed.createComponent(ShellLayoutComponent);
     fixture.detectChanges();
 
     const raiz = (fixture.nativeElement as HTMLElement).firstElementChild as HTMLElement;
-    expect(raiz.className).toContain("bg-[url('/assets/images/fc/fondos/wallpaper_cell.jpg')]");
-    expect(raiz.className).toContain("sm:bg-[url('/assets/images/fc/fondos/wallpaper.jpg')]");
+    // Qué foto toca (mobile / escritorio / escritorio oscuro) lo resuelve
+    // `tokens.css`; acá solo queda cómo se dibuja.
+    expect(raiz.className).toContain('shell-wallpaper');
+    expect(raiz.className).toContain('bg-cover');
+    expect(raiz.className).not.toContain('bg-[url(');
   });
 
   it('mientras contenidoPendienteSeleccion está activo, oculta el router-outlet (contenido del sistema anterior) y muestra el explorador del sistema', () => {
