@@ -1,13 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
-import { HierSelectorComponent } from '../../../../../ui/hier-selector/hier-selector.component';
-import { TablaDinamicaComponent } from '../../../../../ui/tabla-dinamica/tabla-dinamica.component';
-import { EmptyStateComponent } from '../../../../../../../../shared/ui/empty-state/empty-state.component';
-import { WindowPanelComponent } from '../../../../../../../../shared/ui/window-panel/window-panel.component';
-import { ToastService } from '../../../../../../../../shared/services/toast.service';
-import { crearManejadorErrorJerarquia } from '../../../../../utils/hier-selector-error.util';
-import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../models/jerarquia.model';
-import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
-import { GestionPasivoComercialService } from '../../../services/gestion-pasivo-comercial.service';
+import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
+import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
+import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
+import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
+import { ToastService } from '../../../../../../../../../shared/services/toast.service';
+import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
+import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
+import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
+import { GestionPasivoComercialService } from '../../../../services/gestion-pasivo-comercial.service';
 
 /** "Gestión Pasivo Comercial" — legado `actividad-diaria/carterizacion/pasivo` (`RS_CARTEPAS_01`). */
 @Component({
