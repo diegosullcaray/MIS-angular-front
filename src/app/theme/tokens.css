@@ -224,7 +224,7 @@
    el degradado negro la ensuciaba y le comía el contraste. */
 @media (min-width: 640px) {
   :root {
-    --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper.jpg');
+    --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper.png');
   }
 
   .dark {
