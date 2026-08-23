@@ -36,7 +36,7 @@ export const ACTIVIDAD_DIARIA_ROUTES: Routes = [
   },
   {
     /** Legado `actividad-diaria/carterizacion-com/pasivocom` (`RS_MON_SALCAP_COM_01`). */
-    path: 'repositorio/actividad-diaria/caracterizacion-com/pasivocom',
+    path: 'repositorio/actividad-diaria/carterizacion-com/pasivocom',
     loadComponent: () =>
       import('./components/captaciones/vinculacion-cartera/vinculacion-cartera.component').then(
         (m) => m.VinculacionCarteraComponent,
@@ -44,7 +44,7 @@ export const ACTIVIDAD_DIARIA_ROUTES: Routes = [
   },
   {
     /** Legado `actividad-diaria/carterizacion/pasivo` (`RS_CARTEPAS_01`). */
-    path: 'repositorio/actividad-diaria/caracterizacion/pasivo',
+    path: 'repositorio/actividad-diaria/carterizacion/pasivo',
     loadComponent: () =>
       import('./components/captaciones/gestion-pasivo-comercial/gestion-pasivo-comercial.component').then(
         (m) => m.GestionPasivoComercialComponent,
