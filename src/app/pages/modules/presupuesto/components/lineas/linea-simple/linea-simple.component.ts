@@ -1,6 +1,5 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
@@ -15,7 +14,7 @@ import type { FilaLineaSimple, LineaSimpleConfig, ResumenMetadata } from '../../
 @Component({
   selector: 'app-linea-simple',
   standalone: true,
-  imports: [HierSelectorComponent, EditableTableComponent, ButtonModule, TooltipModule, WindowPanelComponent],
+  imports: [HierSelectorComponent, EditableTableComponent, ButtonModule, WindowPanelComponent],
   templateUrl: './linea-simple.component.html',
   styleUrl: './linea-simple.component.css',
 })
@@ -25,7 +24,6 @@ export class LineaSimpleComponent<F extends FilaLineaSimple = FilaLineaSimple> {
 
   readonly config = input.required<LineaSimpleConfig<F>>();
 
-  protected readonly mostrarFiltros = signal(true);
   protected readonly cargando = signal(false);
   protected readonly guardando = signal(false);
   protected readonly verificando = signal(false);

@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
-import { TooltipModule } from 'primeng/tooltip';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
@@ -58,7 +57,7 @@ function columnasComposicion(prefijo: 'd' | 'g', tipo: TipoColumna): ColumnaTabl
 @Component({
   selector: 'app-cartera-creditos',
   standalone: true,
-  imports: [HierSelectorComponent, EditableTableComponent, TabsModule, ButtonModule, TooltipModule, WindowPanelComponent],
+  imports: [HierSelectorComponent, EditableTableComponent, TabsModule, ButtonModule, WindowPanelComponent],
   templateUrl: './cartera-creditos.component.html',
   styleUrl: './cartera-creditos.component.css',
 })
@@ -72,7 +71,6 @@ export class CarteraCreditosComponent {
   protected readonly columnasRatio = columnasComposicion('g', 'percent');
 
   protected readonly tabActiva = signal('variables');
-  protected readonly mostrarFiltros = signal(true);
   protected readonly cargando = signal(false);
   protected readonly guardando = signal(false);
   protected readonly verificando = signal(false);

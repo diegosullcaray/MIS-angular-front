@@ -7,7 +7,6 @@ import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
 import { DesarrolloSostenibleService } from '../../../services/desarrollo-sostenible.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
@@ -16,7 +15,7 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-r
 @Component({
   selector: 'app-desempeno-social',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule, TooltipModule, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent],
   templateUrl: './desempeno-social.component.html',
   styleUrl: './desempeno-social.component.css',
 })
@@ -26,7 +25,6 @@ export class DesempenoSocialComponent {
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
-  protected readonly mostrarFiltros = signal(true);
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(true);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);

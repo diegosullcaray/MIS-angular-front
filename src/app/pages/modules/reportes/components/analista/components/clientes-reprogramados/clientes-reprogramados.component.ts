@@ -14,7 +14,6 @@ import {
   OPCIONES_PREG_03,
   OPCIONES_PREG_04,
 } from '../../models/clientes-reprogramados.model';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { ReprogramacionForm } from '../../models/clientes-reprogramados.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
@@ -24,7 +23,7 @@ import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../..
 @Component({
   selector: 'app-clientes-reprogramados',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './clientes-reprogramados.component.html',
   styleUrl: './clientes-reprogramados.component.css',
 })
@@ -37,7 +36,6 @@ export class ClientesReprogramadosComponent {
   protected readonly opcionesPreg03 = OPCIONES_PREG_03;
   protected readonly opcionesPreg04 = OPCIONES_PREG_04;
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

@@ -1,0 +1,34 @@
+<app-window-panel titulo="Gestión de Tasas Pasivas" [permitirActualizar]="false" [conFiltros]="true">
+  <div ventana-filtros class="flex items-end gap-3 flex-wrap">
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      placeholder="Elegir agencia"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
+    <app-select-filtro etiqueta="Tipo" [opciones]="opcionesTipo" [(valor)]="tipo" ancho="w-36" />
+    <app-select-filtro etiqueta="Canal" [opciones]="opcionesCanal" [(valor)]="canal" ancho="w-52" />
+  </div>
+
+  @if (!nivelActual()) {
+    <app-empty-state titulo="Elige una agencia" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte." />
+  } @else {
+    <section class="flex flex-col gap-2">
+      <h3 class="m-0 text-[13px] font-semibold text-[var(--mis-primary-text)]">
+        Depósitos a Plazo Fijo — Número de Aperturas por Tipo de Persona y Moneda
+      </h3>
+      <div class="mis-card p-3 overflow-x-auto">
+        <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
+      </div>
+    </section>
+
+    <section class="flex flex-col gap-2">
+      <h3 class="m-0 text-[13px] font-semibold text-[var(--mis-primary-text)]">
+        TPPP Mes Aperturas por Tipo de Persona y Moneda
+      </h3>
+      <div class="mis-card p-3 overflow-x-auto">
+        <app-tabla-reporte [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="cargando()" />
+      </div>
+    </section>
+  }
+</app-window-panel>

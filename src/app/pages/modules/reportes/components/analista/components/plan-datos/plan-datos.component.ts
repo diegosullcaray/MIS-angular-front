@@ -6,7 +6,6 @@ import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-report
 import { PlanDatosService } from '../../services/plan-datos.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { fechaBasePorDefecto, generarOpcionesFechaBase } from '../../models/plan-datos.model';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
@@ -15,7 +14,7 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
 @Component({
   selector: 'app-plan-datos',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './plan-datos.component.html',
   styleUrl: './plan-datos.component.css',
 })
@@ -25,7 +24,6 @@ export class PlanDatosComponent {
 
   protected readonly opcionesFechaBase = generarOpcionesFechaBase();
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

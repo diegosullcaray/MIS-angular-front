@@ -8,7 +8,6 @@ import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
 import { AvanceComercialService } from '../../../services/avance-comercial.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
@@ -19,7 +18,7 @@ import { TabsModule } from 'primeng/tabs';
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, TooltipModule, WindowPanelComponent, TabsModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent, TabsModule],
   templateUrl: './monitor-metas-desembolso.component.html',
   styleUrl: './monitor-metas-desembolso.component.css',
 })
@@ -32,7 +31,6 @@ export class MonitorMetasDesembolsoComponent {
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
 
   /** Los filtros arrancan plegados: al entrar ya se ve el reporte de la raíz. */
-  protected readonly mostrarFiltros = signal(false);
   protected readonly cargando = signal(false);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 

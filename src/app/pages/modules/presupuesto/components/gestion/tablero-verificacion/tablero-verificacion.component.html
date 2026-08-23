@@ -1,27 +1,15 @@
 <app-window-panel
+  [conFiltros]="true"
   titulo="Tablero de Verificación"
   [altoAuto]="true"
   [actualizando]="cargando()"
   etiquetaActualizar="Actualizar histórico"
   (actualizar)="recargar()"
 >
-  <button
-    ventana-acciones
-    type="button"
-    class="mis-window-btn"
-    (click)="mostrarFiltros.set(!mostrarFiltros())"
-    [attr.aria-pressed]="mostrarFiltros()"
-    [attr.aria-label]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-    [pTooltip]="mostrarFiltros() ? 'Ocultar filtros' : 'Mostrar filtros'"
-    tooltipPosition="bottom"
-  >
-    <i [class]="mostrarFiltros() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
-  </button>
-
   <!-- Un único selector de jerarquía, igual que el resto del módulo y que
        Reportes: la pantalla necesita DOS nodos, pero son los dos primeros
        niveles de la MISMA ruta, no dos selecciones independientes. -->
-  <div class="flex items-center gap-3 flex-wrap" [class.hidden]="!mostrarFiltros()">
+  <div ventana-filtros class="flex items-center gap-3 flex-wrap">
     <app-hier-selector
       [paramsHier]="paramsHier"
       [raizFija]="raizFija"

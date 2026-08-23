@@ -53,6 +53,20 @@
     <div class="mis-window-actions">
       <ng-content select="[ventana-acciones]" />
 
+      @if (conFiltros()) {
+        <button
+          type="button"
+          class="mis-window-btn"
+          (click)="alternarFiltros()"
+          [attr.aria-pressed]="filtrosVisibles()"
+          [attr.aria-label]="etiquetaFiltros()"
+          [pTooltip]="etiquetaFiltros()"
+          tooltipPosition="bottom"
+        >
+          <i [class]="filtrosVisibles() ? 'pi pi-filter-slash' : 'pi pi-filter'" class="text-[14px]"></i>
+        </button>
+      }
+
       @if (permitirActualizar()) {
         <button
           type="button"
@@ -71,6 +85,11 @@
   </header>
 
   <div class="mis-window-body" [class.mis-window-body--relleno]="conRelleno()">
+    @if (conFiltros()) {
+      <div class="flex flex-col gap-3" [class.hidden]="!filtrosVisibles()">
+        <ng-content select="[ventana-filtros]" />
+      </div>
+    }
     <ng-content />
   </div>
 </div>
