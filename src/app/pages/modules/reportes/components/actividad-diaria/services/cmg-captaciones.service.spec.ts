@@ -62,24 +62,49 @@ describe('CmgCaptacionesService', () => {
     expect(getRegularDataSpy.mock.calls[0][1].fec).toBe(ayerCompacto());
   });
 
-  it('entrega el bloque tal cual lo manda el backend, sin reordenar las columnas de semáforo', () => {
-    // El legado no reordena: `setdisplayedData()` solo ordena el CUERPO por
-    // `isdata`, y el encabezado se renderiza en el orden recibido.
+  it('corre los semáforos una métrica: METAS se queda sin punto y TFM recupera el suyo', () => {
+    // Forma real de GCMGCAP_01 (misma que DESEMP_SOC_01): el backend manda cada
+    // semáforo pegado a la métrica ANTERIOR, pero colorea la SIGUIENTE.
+    const semaforo = (columnDef: string, isdata: number) => ({
+      columnDef,
+      isdata,
+      hidden: true,
+      format: { type: 'traffic-light' },
+    });
     const headers = [
       {
         columns: [
           { columnDef: 'age', header: 'Agencia', isdata: 1 },
-          { columnDef: 'tmm', header: 'TMM', isdata: 2, cols: 2 },
-          { columnDef: 'sem_tmm', isdata: 3, hidden: true, format: { type: 'traffic-light' } },
+          { columnDef: 'metas', header: 'METAS', isdata: 2 },
+          semaforo('sem_a', 3),
+          { columnDef: 'tmm', header: 'TMM', isdata: 4 },
+          semaforo('sem_b', 5),
+          { columnDef: 'tam', header: 'TAM', isdata: 6 },
+          semaforo('sem_c', 7),
+          { columnDef: 'tfm', header: 'TFM', isdata: 8 },
         ],
       },
     ];
     getRegularDataSpy.mockReturnValue(of(respuesta({ headers, body: [{ age: 'AG01' }], additional: {} })));
     shell.setUsuarioActivo(usuario({ fechaCorte: '20251130' }));
 
-    let recibido: { tabla1: { headers: unknown } } | undefined;
+    let recibido: { tabla1: { headers: { columns: { columnDef: string; cols?: number }[] }[] } } | undefined;
     service.obtenerCmgCaptaciones(NODO).subscribe((r) => (recibido = r));
 
-    expect(recibido!.tabla1.headers).toEqual(headers);
+    const columnas = recibido!.tabla1.headers[0].columns;
+    expect(columnas.map((c) => c.columnDef)).toEqual([
+      'age',
+      'metas',
+      'tmm',
+      'sem_a', // el punto que venía pegado a METAS es en realidad el de TMM
+      'tam',
+      'sem_b',
+      'tfm',
+      'sem_c', // TFM se queda con el que venía pegado a TAM
+    ]);
+
+    const porDef = new Map(columnas.map((c) => [c.columnDef, c]));
+    expect(porDef.get('metas')?.cols).toBe(1); // METAS no tiene punto propio
+    expect(porDef.get('tfm')?.cols).toBe(2); // TFM sí muestra el suyo
   });
 });
