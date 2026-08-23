@@ -2,6 +2,7 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { HierSelectorComponent } from '../../../../../ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../ui/tabla-reporte/tabla-reporte.component';
 import { SelectFiltroComponent } from '../../../../../ui/select-filtro/select-filtro.component';
+import { TabsModule } from 'primeng/tabs';
 import { EmptyStateComponent } from '../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../shared/services/toast.service';
@@ -15,7 +16,7 @@ import { PanelOperacionesService } from '../../../services/panel-operaciones.ser
 @Component({
   selector: 'app-panel-operaciones',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SelectFiltroComponent, EmptyStateComponent, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, SelectFiltroComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
   templateUrl: './panel-operaciones.component.html',
   styleUrl: './panel-operaciones.component.css',
 })
@@ -33,6 +34,12 @@ export class PanelOperacionesComponent {
   protected readonly tabla1 = signal<TablaReporteResultado>(TABLA_VACIA);
   protected readonly tabla2 = signal<TablaReporteResultado>(TABLA_VACIA);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
+
+  /** Un tab por bloque, con los nombres del legado (`report-cra-v1p11.component.html`). */
+  protected readonly tabs = [
+    { id: 'reva', titulo: 'Panel Operación Reva', tabla: this.tabla1 },
+    { id: 'regulatorio', titulo: 'Panel Operación Regulatorio', tabla: this.tabla2 },
+  ];
 
   constructor() {
     effect(() => {
