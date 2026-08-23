@@ -2,12 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { CmgCaptacionesAgenciasComponent } from './cmg-captaciones-agencias.component';
-import { CmgCaptacionesAgenciasService } from '../../../services/cmg-captaciones-agencias.service';
-import { ModSysAdminService } from '../../../../../../../../core/winder/instances/mod-sys-admin.service';
-import { ToastService } from '../../../../../../../../shared/services/toast.service';
-import { PARAMS_HIER_OFICINA } from '../../../../../models/jerarquia.model';
-import type { HierarquiaNodo } from '../../../../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
+import { CmgCaptacionesAgenciasService } from '../../../../services/cmg-captaciones-agencias.service';
+import { ModSysAdminService } from '../../../../../../../../../core/winder/instances/mod-sys-admin.service';
+import { ToastService } from '../../../../../../../../../shared/services/toast.service';
+import { PARAMS_HIER_OFICINA } from '../../../../../../models/jerarquia.model';
+import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
+import type { TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 2, cod_rel: 'AG01', desc_rel: 'Agencia 01', lvl: 2 };
 

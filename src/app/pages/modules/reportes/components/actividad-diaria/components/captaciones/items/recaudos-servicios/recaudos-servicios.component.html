@@ -1,1 +1,10 @@
-<p>recaudos-servicios works!</p>
+<app-reporte-simple
+  titulo="Recaudo de Servicios"
+  subtitulo="Captaciones"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

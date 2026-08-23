@@ -32,5 +32,37 @@ export const OPCIONES_PRODUCTO_PASIVO_AMPLIADO: OpcionFiltro[] = [
   { id: 'AHORRO+PLAZO FIJO', desc: 'AHORRO+PLAZO FIJO' },
 ];
 
+/** `varProducto()` del legado — variante con otra capitalización de ids, usada por "Seguimiento Captaciones Banca Preferente". */
+export const OPCIONES_PRODUCTO_BP: OpcionFiltro[] = [
+  { id: 'TODOS', desc: 'Todos' },
+  { id: 'Ahorros', desc: 'Ahorros' },
+  { id: 'Plazo Fijo', desc: 'Plazo Fijo' },
+  { id: 'Cts', desc: 'Cts' },
+];
+
+/** `Segmento()` del legado — variable `segmento` de "Captación por Canal Operaciones". */
+export const OPCIONES_SEGMENTO: OpcionFiltro[] = [
+  { id: 'TODOS', desc: 'Todos' },
+  { id: 'Mujer', desc: 'Mujer' },
+  { id: 'Rural', desc: 'Rural' },
+  { id: 'Urbano', desc: 'Urbano' },
+  { id: 'Migrantes', desc: 'Migrantes' },
+];
+
+/** `TipoVariable()` del legado — variable `agru` de los reportes "CMG Clientes Pasivo". */
+export const OPCIONES_VARIABLE_CMG: OpcionFiltro[] = [
+  { id: 'Clientes', desc: 'Clientes' },
+  { id: 'Cuentas', desc: 'Cuentas' },
+  { id: 'Saldo', desc: 'Saldo' },
+];
+export const VARIABLE_CMG_POR_DEFECTO = 'Clientes';
+
+/** `TipoGrupo()` del legado — variable `grupo` de "CMG Clientes Pasivo Detalle". */
+export const OPCIONES_GRUPO_CMG: OpcionFiltro[] = [
+  { id: 'Nuevo', desc: 'Nuevos del Mes' },
+  { id: 'Anual', desc: 'Nuevos Año' },
+];
+export const GRUPO_CMG_POR_DEFECTO = 'Nuevo';
+
 /** Valor "sin filtrar" de `SPRODUCTO*()`. */
 export const TODOS = 'TODOS';

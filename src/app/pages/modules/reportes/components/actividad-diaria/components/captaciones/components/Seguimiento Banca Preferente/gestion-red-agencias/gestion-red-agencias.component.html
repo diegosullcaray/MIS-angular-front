@@ -1,1 +1,10 @@
-<p>gestion-red-agencias works!</p>
+<app-reporte-simple
+  titulo="Gestión Red de Agencias"
+  subtitulo="Seguimiento Banca Preferente"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

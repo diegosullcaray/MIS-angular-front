@@ -1,1 +1,12 @@
-<p>cmg-clientes-stock works!</p>
+<app-reporte-simple
+  titulo="CMG Clientes Pasivo Stock"
+  subtitulo="CMG Clientes Pasivos"
+  [paramsHier]="paramsHier"
+  placeholder="Elegir agencia"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  tituloVacio="Elige una agencia"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

@@ -25,11 +25,19 @@ const REPORTES: readonly [string, string][] = [
   ['/app/reportes/leg/com/rda/adm/cap-age', 'Captaciones por Canal'],
   ['/app/reportes/leg/com/rda/adm/tasa-pas', 'Gestión de Tasas Pasivas'],
   ['/app/reportes/leg/com/rda/adm/panel-operaciones', 'Panel Operaciones'],
-  ['/app/reportes/repositorio/actividad-diaria/caracterizacion/pasivo', 'Gestión Pasivo Comercial'],
-  ['/app/reportes/repositorio/actividad-diaria/caracterizacion-com/pasivocom', 'Vinculación Cartera'],
+  ['/app/reportes/repositorio/actividad-diaria/carterizacion/pasivo', 'Gestión Pasivo Comercial'],
+  ['/app/reportes/repositorio/actividad-diaria/carterizacion-com/pasivocom', 'Vinculación Cartera'],
+  ['/app/reportes/leg/com/rda/adm/recaudo-serv-pas', 'Recaudo de Servicios'],
+  ['/app/reportes/leg/com/rda/adm/capta-caract-canal-comercial', 'Captación por Canal Comercial'],
+  ['/app/reportes/leg/com/rda/adm/capta-caract-canal-operacional', 'Captación por Canal Operaciones'],
+  ['/app/reportes/leg/com/rda/adm/cmg-cli-pas', 'CMG Clientes Pasivo'],
+  ['/app/reportes/leg/com/rda/adm/cmg-cli-pas-stock', 'CMG Clientes Pasivo Stock'],
+  ['/app/reportes/leg/com/rda/adm/cmg-cli-pas-detalle', 'CMG Clientes Pasivo Detalle'],
+  ['/app/reportes/leg/com/rda/adm/cap-segui-bp', 'Seguimiento Captaciones Banca Preferente'],
+  ['/app/reportes/leg/com/rda/adm/gest-red-ag', 'Gestión Red de Agencias'],
 ];
 
-test.describe('Captaciones — smoke de las 6 pantallas migradas', () => {
+test.describe('Captaciones — smoke de las pantallas migradas', () => {
   for (const [ruta, titulo] of REPORTES) {
     test(`${titulo} resuelve en ${ruta}`, async ({ page }) => {
       await inyectarSesionVigente(page);

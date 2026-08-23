@@ -1,1 +1,20 @@
-<p>captacion-canal-operaciones works!</p>
+<app-reporte-simple
+  titulo="Captación por Canal Operaciones"
+  subtitulo="Captaciones"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <div filtros class="flex flex-wrap items-end gap-3">
+    <app-select-filtro etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" />
+    <app-select-filtro etiqueta="Segmento" [opciones]="opcionesSegmento" [(valor)]="segmento" />
+  </div>
+
+  <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+    <b>TFM - Tendencia de Frecuencia Mensual:</b> variación de la fecha actual contra el fin del mes anterior.<br />
+    <b>Var. Clientes - Variación Clientes:</b> variación de la fecha actual contra el fin del mes anterior.
+  </p>
+</app-reporte-simple>

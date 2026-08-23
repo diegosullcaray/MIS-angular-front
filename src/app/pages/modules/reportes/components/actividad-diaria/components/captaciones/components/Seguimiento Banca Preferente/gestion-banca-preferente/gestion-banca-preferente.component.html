@@ -1,1 +1,12 @@
-<p>gestion-banca-preferente works!</p>
+<app-reporte-simple
+  titulo="Seguimiento Captaciones Banca Preferente"
+  subtitulo="Seguimiento Banca Preferente"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <app-select-filtro filtros etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" />
+</app-reporte-simple>

@@ -1,1 +1,14 @@
-<p>cmg-clientes-flujo works!</p>
+<app-reporte-simple
+  titulo="CMG Clientes Pasivo"
+  subtitulo="CMG Clientes Pasivos"
+  [paramsHier]="paramsHier"
+  placeholder="Elegir agencia"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  tituloVacio="Elige una agencia"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <app-select-filtro filtros etiqueta="Variable" [opciones]="opcionesVariable" [(valor)]="variable" />
+</app-reporte-simple>

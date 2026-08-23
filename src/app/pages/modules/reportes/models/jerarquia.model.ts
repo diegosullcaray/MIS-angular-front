@@ -44,6 +44,18 @@ export const PARAMS_HIER_OFICINA: ParamsJerarquia = {
   dlgTitulo: 'JERARQUIA OFICINA',
 };
 
+/** `cod_jer` de la jerarquía "solo FC" — `OFI_3` del legado (`mod-rep.service.ts`: `{code:4, max_lvl:1}`). */
+export const COD_JERARQUIA_FC = 4;
+/** Profundidad máxima de `OFI_3`: un solo nivel, la propia Financiera. */
+export const NIVEL_MAXIMO_JERARQUIA_FC = 1;
+
+/** `paramsHier` para `OFI_3` — la usan los reportes de Seguimiento Banca Preferente, que no bajan de Financiera. */
+export const PARAMS_HIER_FC: ParamsJerarquia = {
+  code: COD_JERARQUIA_FC,
+  maxLvl: NIVEL_MAXIMO_JERARQUIA_FC,
+  dlgTitulo: 'JERARQUIA UNIDAD',
+};
+
 /** `cod_jer` de la jerarquía macro de captaciones sin macrocorredor — `MAC_2` del legado (`mod-rep.service.ts`: `{code:13, max_lvl:3}`). */
 export const COD_JERARQUIA_MACRO = 13;
 /** Profundidad máxima de `MAC_2`. */
