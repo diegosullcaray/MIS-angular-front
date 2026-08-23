@@ -36,7 +36,7 @@ export const ACTIVIDAD_DIARIA_ROUTES: Routes = [
   },
   {
     /** Legado `capta-caract-canal-comercial` (`CARACT_CARTERA`). */
-    path: 'repositorio/actividad-diaria/caracterizacion/pasivocpm',
+    path: 'repositorio/actividad-diaria/caracterizacion/pasivocom',
     loadComponent: () =>
       import('./components/captaciones/vinculacion-cartera/vinculacion-cartera.component').then(
         (m) => m.VinculacionCarteraComponent,
