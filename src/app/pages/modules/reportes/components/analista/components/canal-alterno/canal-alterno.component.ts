@@ -7,7 +7,6 @@ import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-report
 import { CanalAlternoService } from '../../services/canal-alterno.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { filtrarFilas } from '../../../../utils/reportes-mapeo.util';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
@@ -16,7 +15,7 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
 @Component({
   selector: 'app-canal-alterno',
   standalone: true,
-  imports: [FormsModule, SelectModule, InputTextModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, InputTextModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './canal-alterno.component.html',
   styleUrl: './canal-alterno.component.css',
 })
@@ -24,7 +23,6 @@ export class CanalAlternoComponent {
   private readonly servicio = inject(CanalAlternoService);
   private readonly toast = inject(ToastService);
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

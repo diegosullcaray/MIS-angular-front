@@ -5,7 +5,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { GraficoReporteComponent } from '../../../../ui/grafico-reporte/grafico-reporte.component';
 import { InversionStockMoraService } from '../../services/inversion-stock-mora.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { BloqueGrafico } from '../../../../models/grafico-reporte.model';
@@ -14,7 +13,7 @@ import type { BloqueGrafico } from '../../../../models/grafico-reporte.model';
 @Component({
   selector: 'app-inversion-stock-mora',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, GraficoReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, GraficoReporteComponent, WindowPanelComponent],
   templateUrl: './inversion-stock-mora.component.html',
   styleUrl: './inversion-stock-mora.component.css',
 })
@@ -22,7 +21,6 @@ export class InversionStockMoraComponent {
   private readonly servicio = inject(InversionStockMoraService);
   private readonly toast = inject(ToastService);
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

@@ -43,3 +43,15 @@ export const PARAMS_HIER_OFICINA: ParamsJerarquia = {
   maxLvl: NIVEL_MAXIMO_JERARQUIA_OFICINA,
   dlgTitulo: 'JERARQUIA OFICINA',
 };
+
+/** `cod_jer` de la jerarquía macro de captaciones sin macrocorredor — `MAC_2` del legado (`mod-rep.service.ts`: `{code:13, max_lvl:3}`). */
+export const COD_JERARQUIA_MACRO = 13;
+/** Profundidad máxima de `MAC_2`. */
+export const NIVEL_MAXIMO_JERARQUIA_MACRO = 3;
+
+/** `paramsHier` para `MAC_2` — la usan "Panel Operaciones" y "Gestión Pasivo Comercial". */
+export const PARAMS_HIER_MACRO: ParamsJerarquia = {
+  code: COD_JERARQUIA_MACRO,
+  maxLvl: NIVEL_MAXIMO_JERARQUIA_MACRO,
+  dlgTitulo: 'JERARQUIA MACRO',
+};

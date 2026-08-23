@@ -6,7 +6,6 @@ import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-report
 import { CampanaAgilService } from '../../services/campana-agil.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { OPCIONES_SEMANA, SEMANA_POR_DEFECTO } from '../../models/campana-agil.model';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
@@ -15,7 +14,7 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
 @Component({
   selector: 'app-campana-agil',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './campana-agil.component.html',
   styleUrl: './campana-agil.component.css',
 })
@@ -25,7 +24,6 @@ export class CampanaAgilComponent {
 
   protected readonly opcionesSemana = OPCIONES_SEMANA;
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

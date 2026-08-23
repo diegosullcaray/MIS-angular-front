@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
-import { CmgCaptacionesComponent } from './cmg-captaciones.component';
-import { CmgCaptacionesService } from '../../../services/cmg-captaciones.service';
+import { CmgCaptacionesAgenciasComponent } from './cmg-captaciones-agencias.component';
+import { CmgCaptacionesAgenciasService } from '../../../services/cmg-captaciones-agencias.service';
 import { ModSysAdminService } from '../../../../../../../../core/winder/instances/mod-sys-admin.service';
 import { ToastService } from '../../../../../../../../shared/services/toast.service';
 import { PARAMS_HIER_OFICINA } from '../../../../../models/jerarquia.model';
@@ -15,17 +15,17 @@ function tabla(overrides: Partial<TablaReporteResultado> = {}): TablaReporteResu
   return { headers: [], body: [], additional: {}, ...overrides };
 }
 
-describe('CmgCaptacionesComponent', () => {
-  let servicioFalso: { obtenerCmgCaptaciones: ReturnType<typeof vi.fn> };
+describe('CmgCaptacionesAgenciasComponent', () => {
+  let servicioFalso: { obtener: ReturnType<typeof vi.fn> };
   let antAdminFalso: { getBaseHierarchy: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    servicioFalso = { obtenerCmgCaptaciones: vi.fn() };
+    servicioFalso = { obtener: vi.fn() };
     antAdminFalso = { getBaseHierarchy: vi.fn().mockReturnValue(of({ code: '0', headers: {}, body: { base_hierarchy: [] } })) };
     TestBed.configureTestingModule({
-      imports: [CmgCaptacionesComponent],
+      imports: [CmgCaptacionesAgenciasComponent],
       providers: [
-        { provide: CmgCaptacionesService, useValue: servicioFalso },
+        { provide: CmgCaptacionesAgenciasService, useValue: servicioFalso },
         { provide: ModSysAdminService, useValue: antAdminFalso },
         MessageService,
       ],
@@ -33,7 +33,7 @@ describe('CmgCaptacionesComponent', () => {
   });
 
   function crear() {
-    const fixture = TestBed.createComponent(CmgCaptacionesComponent);
+    const fixture = TestBed.createComponent(CmgCaptacionesAgenciasComponent);
     fixture.detectChanges();
     return fixture;
   }
@@ -47,20 +47,20 @@ describe('CmgCaptacionesComponent', () => {
 
   it('sin nivel elegido, no pide el reporte', () => {
     crear();
-    expect(servicioFalso.obtenerCmgCaptaciones).not.toHaveBeenCalled();
+    expect(servicioFalso.obtener).not.toHaveBeenCalled();
   });
 
   it('onNivelSeleccionado() pide el reporte con tip_cod/cod_rel del nivel', () => {
-    servicioFalso.obtenerCmgCaptaciones.mockReturnValue(of({ tabla1: tabla() }));
+    servicioFalso.obtener.mockReturnValue(of({ tabla1: tabla() }));
     const fixture = crear();
 
     fixture.componentInstance['onNivelSeleccionado'](NODO);
 
-    expect(servicioFalso.obtenerCmgCaptaciones).toHaveBeenCalledWith({ tip_cod: 2, cod_rel: 'AG01' });
+    expect(servicioFalso.obtener).toHaveBeenCalledWith({ tip_cod: 2, cod_rel: 'AG01' });
   });
 
   it('onNivelSeleccionado() vuelca la tabla devuelta por el service y apaga el loading', () => {
-    servicioFalso.obtenerCmgCaptaciones.mockReturnValue(
+    servicioFalso.obtener.mockReturnValue(
       of({
         tabla1: tabla({
           headers: [{ columns: [{ columnDef: 'age', header: 'Agencia', isdata: 1 }] }],
@@ -78,7 +78,7 @@ describe('CmgCaptacionesComponent', () => {
   });
 
   it('si el bloque viene vacío, avisa que los datos podrían seguir procesándose', () => {
-    servicioFalso.obtenerCmgCaptaciones.mockReturnValue(of({ tabla1: tabla() }));
+    servicioFalso.obtener.mockReturnValue(of({ tabla1: tabla() }));
     const warnSpy = vi.spyOn(TestBed.inject(MessageService), 'add');
     const fixture = crear();
 
@@ -88,7 +88,7 @@ describe('CmgCaptacionesComponent', () => {
   });
 
   it('ante un error del backend muestra un toast y apaga el loading', () => {
-    servicioFalso.obtenerCmgCaptaciones.mockReturnValue(throwError(() => new Error('caído')));
+    servicioFalso.obtener.mockReturnValue(throwError(() => new Error('caído')));
     const errorSpy = vi.spyOn(TestBed.inject(ToastService), 'error');
     const fixture = crear();
 

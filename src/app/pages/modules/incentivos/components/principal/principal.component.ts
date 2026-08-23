@@ -1,7 +1,6 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { SkeletonModule } from 'primeng/skeleton';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
-import { TooltipModule } from 'primeng/tooltip';
 import { IncentivosService } from '../../services/incentivos.service';
 import { PerfilCardComponent } from '../../ui/perfil-card/perfil-card.component';
 import { AvancesGridComponent } from '../../ui/avances-grid/avances-grid.component';
@@ -20,7 +19,6 @@ import type { DetalleAvanceEvent, DetalleSuperPlusEvent, DetalleTablaVariableEve
   standalone: true,
   imports: [
     SkeletonModule,
-    TooltipModule,
     PerfilCardComponent,
     AvancesGridComponent,
     SuperPlusGridComponent,

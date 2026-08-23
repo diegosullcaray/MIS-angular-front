@@ -1,4 +1,4 @@
-import { Component, ElementRef, computed, effect, inject, input, output, signal } from '@angular/core';
+import { Component, ElementRef, computed, effect, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
@@ -41,6 +41,11 @@ export class WindowPanelComponent {
   /** Alto natural del contenido en vez de llenar el viewport (como `.mis-page--auto`). */
   readonly altoAuto = input<boolean>(false);
 
+  /** Muestra el botón de filtros en la barra y la franja colapsable que proyecta `[ventana-filtros]`. */
+  readonly conFiltros = input<boolean>(false);
+  /** Estado inicial de esa franja. */
+  readonly filtrosAbiertos = input<boolean>(true);
+
   readonly actualizar = output<void>();
   /** Se emite al pulsar la luz roja, antes de navegar al inicio. */
   readonly cerrar = output<void>();
@@ -49,9 +54,19 @@ export class WindowPanelComponent {
 
   protected readonly pantallaCompleta = signal(false);
 
+  protected readonly filtrosVisibles = linkedSignal(() => this.filtrosAbiertos());
+
   protected readonly etiquetaZoom = computed(() =>
     this.pantallaCompleta() ? 'Salir de pantalla completa' : 'Ver en pantalla completa'
   );
+
+  protected readonly etiquetaFiltros = computed(() =>
+    this.filtrosVisibles() ? 'Ocultar filtros' : 'Mostrar filtros'
+  );
+
+  protected alternarFiltros(): void {
+    this.filtrosVisibles.update((v) => !v);
+  }
 
   constructor() {
     // `fullscreenchange` es la única fuente fiable del estado real: se puede

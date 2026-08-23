@@ -21,7 +21,6 @@ import {
   filaAFormulario,
   filaAReferencia,
 } from '../../models/datos-clientes.model';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { CelForm, DatosClienteForm, OpcionDato } from '../../models/datos-clientes.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
@@ -33,7 +32,7 @@ const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 @Component({
   selector: 'app-datos-clientes',
   standalone: true,
-  imports: [FormsModule, SelectModule, InputTextModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, InputTextModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './datos-clientes.component.html',
   styleUrl: './datos-clientes.component.css',
 })
@@ -48,7 +47,6 @@ export class DatosClientesComponent {
   protected readonly opcionesVerificadorTele = OPCIONES_VERIFICADOR_TELE;
   protected readonly opcionesVerificadorCiiu = OPCIONES_VERIFICADOR_CIIU;
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

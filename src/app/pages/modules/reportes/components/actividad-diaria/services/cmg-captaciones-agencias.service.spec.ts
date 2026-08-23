@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { CmgCaptacionesService } from './cmg-captaciones.service';
+import { CmgCaptacionesAgenciasService } from './cmg-captaciones-agencias.service';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../../../core/services/shell-state.service';
 import type { UsuarioActivo } from '../../../../../../core/interfaces/shell-state.model';
@@ -24,8 +24,8 @@ function ayerCompacto(): string {
   return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`;
 }
 
-describe('CmgCaptacionesService', () => {
-  let service: CmgCaptacionesService;
+describe('CmgCaptacionesAgenciasService', () => {
+  let service: CmgCaptacionesAgenciasService;
   let shell: ShellStateService;
   let getRegularDataSpy: ReturnType<typeof vi.fn>;
 
@@ -34,14 +34,14 @@ describe('CmgCaptacionesService', () => {
     TestBed.configureTestingModule({
       providers: [{ provide: ModReportesService, useValue: { getRegularData: getRegularDataSpy } }],
     });
-    service = TestBed.inject(CmgCaptacionesService);
+    service = TestBed.inject(CmgCaptacionesAgenciasService);
     shell = TestBed.inject(ShellStateService);
   });
 
   it('pide el bloque GCMGCAP_01 con el tip_cod/cod_rel del nodo', () => {
     shell.setUsuarioActivo(usuario({ fechaCorte: '20251130' }));
 
-    service.obtenerCmgCaptaciones(NODO).subscribe();
+    service.obtener(NODO).subscribe();
 
     expect(getRegularDataSpy).toHaveBeenCalledWith('GCMGCAP_01', expect.objectContaining({ tip_cod: 2, cod_rel: 'AG01' }));
   });
@@ -49,7 +49,7 @@ describe('CmgCaptacionesService', () => {
   it('usa la fecha de corte del backend (`curr_fec`), no la fecha del reloj del cliente', () => {
     shell.setUsuarioActivo(usuario({ fechaCorte: '20251130' }));
 
-    service.obtenerCmgCaptaciones(NODO).subscribe();
+    service.obtener(NODO).subscribe();
 
     expect(getRegularDataSpy.mock.calls[0][1].fec).toBe('20251130');
   });
@@ -57,7 +57,7 @@ describe('CmgCaptacionesService', () => {
   it('si el backend todavía no expuso `curr_fec`, cae a la fecha de ayer', () => {
     shell.setUsuarioActivo(usuario({ fechaCorte: undefined }));
 
-    service.obtenerCmgCaptaciones(NODO).subscribe();
+    service.obtener(NODO).subscribe();
 
     expect(getRegularDataSpy.mock.calls[0][1].fec).toBe(ayerCompacto());
   });
@@ -89,7 +89,7 @@ describe('CmgCaptacionesService', () => {
     shell.setUsuarioActivo(usuario({ fechaCorte: '20251130' }));
 
     let recibido: { tabla1: { headers: { columns: { columnDef: string; cols?: number }[] }[] } } | undefined;
-    service.obtenerCmgCaptaciones(NODO).subscribe((r) => (recibido = r));
+    service.obtener(NODO).subscribe((r) => (recibido = r));
 
     const columnas = recibido!.tabla1.headers[0].columns;
     expect(columnas.map((c) => c.columnDef)).toEqual([

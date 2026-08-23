@@ -11,7 +11,6 @@ import { AvanceComercialService } from '../../../services/avance-comercial.servi
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { OPCIONES_TIPO_MON_REP } from '../../../models/avance-comercial/avance-comercial.model';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
@@ -20,7 +19,7 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-r
 @Component({
   selector: 'app-monitor-reprogramados',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SelectModule, FormsModule, SkeletonModule, ProgressSpinnerModule, TooltipModule, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SelectModule, FormsModule, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent],
   templateUrl: './monitor-reprogramados.component.html',
   styleUrl: './monitor-reprogramados.component.css',
 })
@@ -34,7 +33,6 @@ export class MonitorReprogramadosComponent {
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
 
   /** Los filtros arrancan plegados: al entrar ya se ve el reporte de la raíz. */
-  protected readonly mostrarFiltros = signal(false);
   protected readonly tipoSeleccionado = signal<1 | 2>(1);
   protected readonly cargando = signal(false);
   protected readonly tablaReprogramados = signal<TablaReporteResultado>(TABLA_VACIA);

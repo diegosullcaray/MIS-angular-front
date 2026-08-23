@@ -10,7 +10,6 @@ import { DesarrolloSostenibleService } from '../../../services/desarrollo-sosten
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { OPCIONES_PRODUCTO_MISIONAL } from '../../../models/desarrollo-sostenible/desarrollo-sostenible.model';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
@@ -20,7 +19,7 @@ import type { KpiOperacionesDesembolsadas } from '../../../models/avance-comerci
 @Component({
   selector: 'app-monitor-productos-misionales',
   standalone: true,
-  imports: [FormsModule, HierSelectorComponent, TablaReporteComponent, SelectModule, SkeletonModule, ProgressSpinnerModule, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, HierSelectorComponent, TablaReporteComponent, SelectModule, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent],
   templateUrl: './monitor-productos-misionales.component.html',
   styleUrl: './monitor-productos-misionales.component.css',
 })
@@ -31,7 +30,6 @@ export class MonitorProductosMisionalesComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesProducto = OPCIONES_PRODUCTO_MISIONAL;
 
-  protected readonly mostrarFiltros = signal(true);
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly productoSeleccionado = signal('TODOS');
   protected readonly cargando = signal(true);

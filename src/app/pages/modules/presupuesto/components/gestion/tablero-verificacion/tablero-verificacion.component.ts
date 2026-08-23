@@ -5,7 +5,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { TooltipModule } from 'primeng/tooltip';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
@@ -26,7 +25,6 @@ import type { LogVerificacionFila } from '../../../models/tablero-verificacion.m
     InputIconModule,
     SkeletonModule,
     FormsModule,
-    TooltipModule,
     WindowPanelComponent,
   ],
   templateUrl: './tablero-verificacion.component.html',
@@ -40,7 +38,6 @@ export class TableroVerificacionComponent {
   /** El legado hardcodeaba esta raíz ("Financiera Confianza") en vez de pedirla con `getBaseHierarchy`; se preserva. */
   protected readonly raizFija: HierarquiaNodo[] = [{ tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' }];
 
-  protected readonly mostrarFiltros = signal(true);
   protected readonly cargando = signal(false);
   /** Última ruta emitida por el selector; se guarda para poder recargar. */
   private readonly ruta = signal<HierarquiaNodo[]>([]);

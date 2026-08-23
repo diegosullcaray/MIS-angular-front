@@ -5,7 +5,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { MonitorMetasDesembolsoService } from '../../services/monitor-metas-desembolso.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
@@ -15,7 +14,7 @@ import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../mo
 @Component({
   selector: 'app-monitor-metas-desembolso-analista',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './monitor-metas-desembolso.component.html',
   styleUrl: './monitor-metas-desembolso.component.css',
 })
@@ -23,7 +22,6 @@ export class MonitorMetasDesembolsoAnalistaComponent {
   private readonly servicio = inject(MonitorMetasDesembolsoService);
   private readonly toast = inject(ToastService);
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

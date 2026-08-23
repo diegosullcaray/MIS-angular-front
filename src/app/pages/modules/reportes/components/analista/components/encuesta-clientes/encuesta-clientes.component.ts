@@ -17,7 +17,6 @@ import {
   OPCIONES_SEC_ECO,
   jsonAFormulario,
 } from '../../models/encuesta-clientes.model';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { CiiuOpcion, EncuestaClienteForm } from '../../models/encuesta-clientes.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
@@ -27,7 +26,7 @@ import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../..
 @Component({
   selector: 'app-encuesta-clientes',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './encuesta-clientes.component.html',
   styleUrl: './encuesta-clientes.component.css',
 })
@@ -41,7 +40,6 @@ export class EncuestaClientesComponent {
   protected readonly opcionesRedNeg = OPCIONES_RED_NEG;
   protected readonly opcionesSecEco = OPCIONES_SEC_ECO;
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

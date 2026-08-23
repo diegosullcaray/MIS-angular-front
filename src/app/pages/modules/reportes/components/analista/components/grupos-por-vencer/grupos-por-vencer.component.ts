@@ -5,7 +5,6 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
 import { GruposPorVencerService } from '../../services/grupos-por-vencer.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
@@ -14,7 +13,7 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
 @Component({
   selector: 'app-grupos-por-vencer',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './grupos-por-vencer.component.html',
   styleUrl: './grupos-por-vencer.component.css',
 })
@@ -22,7 +21,6 @@ export class GruposPorVencerComponent {
   private readonly servicio = inject(GruposPorVencerService);
   private readonly toast = inject(ToastService);
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

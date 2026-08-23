@@ -1,0 +1,23 @@
+<app-window-panel titulo="Vinculación Cartera" subtitulo="Captación por Canal Comercial" [permitirActualizar]="false" [conFiltros]="true">
+  <div ventana-filtros class="flex items-end gap-3 flex-wrap">
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
+    <app-select-filtro etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" ancho="w-48" />
+  </div>
+
+  @if (!nivelActual()) {
+    <app-empty-state titulo="Elige un nivel" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte." />
+  } @else {
+    <div class="mis-card p-3 overflow-x-auto">
+      <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
+    </div>
+    <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+      <b>TFM — Tendencia de Frecuencia Mensual:</b> variación fecha actual vs. fin de mes anterior.<br />
+      <b>VAR. Clientes:</b> variación de clientes, fecha actual vs. fin de mes anterior.
+    </p>
+  }
+</app-window-panel>

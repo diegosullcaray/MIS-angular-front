@@ -7,7 +7,6 @@ import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-report
 import { PlanillaMovilidadService } from '../../services/planilla-movilidad.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { fechaUltimoDia } from '../../../../utils/fecha-reporte.util';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
@@ -26,7 +25,7 @@ const CRITERIOS_MOVILIDAD: string[] = [
 @Component({
   selector: 'app-planilla-movilidad',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TabsModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TabsModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './planilla-movilidad.component.html',
   styleUrl: './planilla-movilidad.component.css',
 })
@@ -38,7 +37,6 @@ export class PlanillaMovilidadComponent {
   protected readonly tabCascada = signal('cascada');
   protected readonly criteriosMovilidad = CRITERIOS_MOVILIDAD;
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);

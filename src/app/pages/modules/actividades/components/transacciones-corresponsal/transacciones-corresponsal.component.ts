@@ -5,7 +5,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { TagModule } from 'primeng/tag';
-import { TooltipModule } from 'primeng/tooltip';
 import { ActividadesService } from '../../services/actividades.service';
 import type { TransaccionCorresponsalItem } from '../../models/actividades.model';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
@@ -23,7 +22,6 @@ import { inputValue } from '../../../../../shared/utils/dom.util';
     IconFieldModule,
     InputIconModule,
     TagModule,
-    TooltipModule,
     ListSkeletonComponent,
     InlineErrorComponent,
     WindowPanelComponent,

@@ -10,7 +10,6 @@ import { DesarrolloSostenibleService } from '../../../services/desarrollo-sosten
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
 import { OPCIONES_PRODUCTO_MISIONAL_PANEL } from '../../../models/desarrollo-sostenible/desarrollo-sostenible.model';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
@@ -19,7 +18,7 @@ import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../mode
 @Component({
   selector: 'app-productos-misionales',
   standalone: true,
-  imports: [FormsModule, HierSelectorComponent, TablaDinamicaComponent, SelectModule, TabsModule, SkeletonModule, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, HierSelectorComponent, TablaDinamicaComponent, SelectModule, TabsModule, SkeletonModule, WindowPanelComponent],
   templateUrl: './productos-misionales.component.html',
   styleUrl: './productos-misionales.component.css',
 })
@@ -30,7 +29,6 @@ export class ProductosMisionalesComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesProducto = OPCIONES_PRODUCTO_MISIONAL_PANEL;
 
-  protected readonly mostrarFiltros = signal(true);
   protected readonly tabActiva = signal('territorio');
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly productoSeleccionado = signal('Todos');

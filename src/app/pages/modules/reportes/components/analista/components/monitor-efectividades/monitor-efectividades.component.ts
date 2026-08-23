@@ -12,7 +12,6 @@ import {
   OPCIONES_TRAMO,
   OPCIONES_TRAMO_DIAS_GESTION,
 } from '../../models/monitor-efectividades.model';
-import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
@@ -22,7 +21,7 @@ import type { FiltrosMonitorEfectividades } from '../../models/monitor-efectivid
 @Component({
   selector: 'app-monitor-efectividades',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './monitor-efectividades.component.html',
   styleUrl: './monitor-efectividades.component.css',
 })
@@ -35,7 +34,6 @@ export class MonitorEfectividadesComponent {
   protected readonly opcionesSiNo = OPCIONES_SI_NO;
   protected readonly opcionesTramoDiasGestion = OPCIONES_TRAMO_DIAS_GESTION;
 
-  protected readonly mostrarFiltros = signal(false);
 
   protected readonly asesores = signal<AsesorSec[]>([]);
   protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);
