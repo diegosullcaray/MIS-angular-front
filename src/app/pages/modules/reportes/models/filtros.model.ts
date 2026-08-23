@@ -18,7 +18,7 @@ export const OPCIONES_CANAL: OpcionFiltro<number>[] = [
 ];
 export const CANAL_POR_DEFECTO = 101;
 
-/** `SPRODUCTO()` del legado — variable `prod` de los reportes de caracterización. */
+/** `SPRODUCTO()` del legado — base de `OPCIONES_PRODUCTO_PASIVO_AMPLIADO`. */
 export const OPCIONES_PRODUCTO_PASIVO: OpcionFiltro[] = [
   { id: 'TODOS', desc: 'TODOS' },
   { id: 'AHORROS', desc: 'AHORROS' },
@@ -32,14 +32,5 @@ export const OPCIONES_PRODUCTO_PASIVO_AMPLIADO: OpcionFiltro[] = [
   { id: 'AHORRO+PLAZO FIJO', desc: 'AHORRO+PLAZO FIJO' },
 ];
 
-/** `Segmento()` del legado — variable `segmento` de "Captación por Canal Operaciones". */
-export const OPCIONES_SEGMENTO: OpcionFiltro[] = [
-  { id: 'TODOS', desc: 'Todos' },
-  { id: 'Mujer', desc: 'Mujer' },
-  { id: 'Rural', desc: 'Rural' },
-  { id: 'Urbano', desc: 'Urbano' },
-  { id: 'Migrantes', desc: 'Migrantes' },
-];
-
-/** Valor "sin filtrar" que comparten `SPRODUCTO*()` y `Segmento()`. */
+/** Valor "sin filtrar" de `SPRODUCTO*()`. */
 export const TODOS = 'TODOS';

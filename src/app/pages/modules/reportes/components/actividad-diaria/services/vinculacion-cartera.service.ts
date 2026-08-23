@@ -1,14 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../models/captaciones.model';
+import type { TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
 
-/** "Vinculación Cartera" (Captación por Canal Comercial) — legado `capta-caract-canal-comercial`, `module: 'CARACT_CARTERA'`, `jerar: UNI_1`, filtro `prod`. */
+/** "Vinculación Cartera" — legado `actividad-diaria/carterizacion-com/pasivocom` (`CarterizacionCapComComponent`, título "Vinculación de Cartera - Captaciones"): motor `table.regular`, jerarquía `UNI_1`, sin filtros propios. */
 @Injectable({ providedIn: 'root' })
 export class VinculacionCarteraService {
   private readonly bloques = inject(BloqueReporteService);
 
-  obtener(nodo: NodoConsulta, prod: string): Observable<ReporteBloqueUnico> {
-    return this.bloques.regular('CARACT_CARTERA_01', nodo, { prod }).pipe(map((tabla1) => ({ tabla1 })));
+  obtener(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
+    return this.bloques.tablaRegular('RS_MON_SALCAP_COM_01', nodo);
   }
 }

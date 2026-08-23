@@ -2,10 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import { mapearBloqueReporte } from '../utils/reportes-mapeo.util';
-import { fechaCorteCompacta } from '../utils/fecha-reporte.util';
+import { mapearBloqueReporte, mapearTablaRegular } from '../utils/reportes-mapeo.util';
+import { fechaCorte, fechaCorteCompacta } from '../utils/fecha-reporte.util';
 import type { HierarquiaNodo } from '../models/jerarquia.model';
 import type { TablaReporteResultado } from '../models/tabla-reporte.model';
+import type { TablaDinamicaResultado } from '../models/tabla-dinamica.model';
 
 /** Nodo de jerarquía reducido a lo que viaja como parámetro del reporte. */
 export type NodoConsulta = Pick<HierarquiaNodo, 'tip_cod' | 'cod_rel'>;
@@ -38,6 +39,19 @@ export class BloqueReporteService {
     nodo: NodoConsulta,
   ): Observable<TablaReporteResultado[]> {
     return forkJoin(bloques.map((b) => this.regular(b.codRep, nodo, b.extra)));
+  }
+
+  /**
+   * Un bloque del motor `table.regular` (columnas dinámicas) de Carterización.
+   *
+   * Ojo con los nombres de los parámetros: este motor los espera como
+   * `tipcod`/`codrel`/`fecha` (y la fecha con guiones), no como los
+   * `tip_cod`/`cod_rel`/`fec` del motor "mixto" — ver el legado
+   * `carterizacion.component.ts` / `carterizacion-cap-com.component.ts`.
+   */
+  tablaRegular(codRep: string, nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
+    const params = { tipcod: nodo.tip_cod, codrel: nodo.cod_rel, fecha: fechaCorte(this.shell.usuarioActivo()?.fechaCorte) };
+    return this.reportes.getRegularTableResult(codRep, params).pipe(map(mapearTablaRegular));
   }
 
   /** Un bloque del strand "deprecado" (`reportData`) — reportes cuya entrada de `cra-map.ts` no declara `reportType`. */
