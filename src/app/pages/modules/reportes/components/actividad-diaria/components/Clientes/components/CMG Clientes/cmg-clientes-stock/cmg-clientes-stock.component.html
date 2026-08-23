@@ -1,1 +1,17 @@
-<p>cmg-clientes-stock works!</p>
+<app-reporte-simple
+  titulo="Stock de Clientes"
+  subtitulo="CMG Clientes"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+    El mes en curso se compara con el último RCC disponible.<br />
+    A partir del día 15 calendario se comparan días hábiles faltantes para el cierre.<br />
+    <b>TMM - Tasa Mensual Móvil:</b> variación de la fecha actual contra el mismo día del mes anterior.<br />
+    <b>TAM - Tasa Anual Móvil:</b> variación de la fecha actual contra el mismo día del año anterior.
+  </p>
+</app-reporte-simple>

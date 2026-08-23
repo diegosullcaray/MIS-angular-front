@@ -1,1 +1,15 @@
-<p>clientes-nuevos-recurrentes works!</p>
+<app-reporte-simple
+  titulo="Clientes Nuevos y Recurrentes"
+  subtitulo="Clientes"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+    <b>Cliente Nuevo:</b> cliente que desde enero de 2007 no registra ninguna operación de crédito en FC.<br />
+    <b>Cliente Recurrente:</b> cliente que ya ha tenido una operación de crédito en FC.
+  </p>
+</app-reporte-simple>

@@ -41,17 +41,32 @@ export class BloqueReporteService {
     return forkJoin(bloques.map((b) => this.regular(b.codRep, nodo, b.extra)));
   }
 
+  /** Fecha de corte del backend en `YYYY-MM-DD`, el formato que espera el motor `table.regular`. */
+  fecha(): string {
+    return fechaCorte(this.shell.usuarioActivo()?.fechaCorte);
+  }
+
   /**
-   * Un bloque del motor `table.regular` (columnas dinámicas) de Carterización.
+   * Un bloque del motor `table.regular` (columnas dinámicas) con los
+   * parámetros exactos que manda el legado.
    *
-   * Ojo con los nombres de los parámetros: este motor los espera como
-   * `tipcod`/`codrel`/`fecha` (y la fecha con guiones), no como los
-   * `tip_cod`/`cod_rel`/`fec` del motor "mixto" — ver el legado
-   * `carterizacion.component.ts` / `carterizacion-cap-com.component.ts`.
+   * No hay un juego de parámetros común: Carterización manda
+   * `tipcod`/`codrel`/`fecha`, Ranking Mujer `tip_cod`/`cod_rel`/`fec` y
+   * Movimiento de Clientes no manda ninguno. Por eso los pone cada service.
+   */
+  tablaRegularCon(codRep: string, params: Record<string, unknown> = {}): Observable<TablaDinamicaResultado> {
+    return this.reportes.getRegularTableResult(codRep, params).pipe(map(mapearTablaRegular));
+  }
+
+  /**
+   * Un bloque `table.regular` con los parámetros de Carterización.
+   *
+   * Ojo: este motor los espera como `tipcod`/`codrel`/`fecha` (y la fecha con
+   * guiones), no como los `tip_cod`/`cod_rel`/`fec` del motor "mixto" — ver el
+   * legado `carterizacion.component.ts` / `carterizacion-cap-com.component.ts`.
    */
   tablaRegular(codRep: string, nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
-    const params = { tipcod: nodo.tip_cod, codrel: nodo.cod_rel, fecha: fechaCorte(this.shell.usuarioActivo()?.fechaCorte) };
-    return this.reportes.getRegularTableResult(codRep, params).pipe(map(mapearTablaRegular));
+    return this.tablaRegularCon(codRep, { tipcod: nodo.tip_cod, codrel: nodo.cod_rel, fecha: this.fecha() });
   }
 
   /** Un bloque del strand "deprecado" (`reportData`) — reportes cuya entrada de `cra-map.ts` no declara `reportType`. */

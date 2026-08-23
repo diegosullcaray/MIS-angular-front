@@ -1,1 +1,16 @@
-<p>cmg-clientes-flujo works!</p>
+<app-reporte-simple
+  titulo="Clientes Flujo"
+  subtitulo="CMG Clientes"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+    Los datos de Bancarización se comparan con el último RCC disponible a la fecha.<br />
+    Los datos de Vulnerabilidad se muestran de acuerdo a las cargas enviadas por FMBBVA.<br />
+    A partir del día 15 calendario se comparan días hábiles faltantes para el cierre.
+  </p>
+</app-reporte-simple>

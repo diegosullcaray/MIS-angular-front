@@ -1,1 +1,10 @@
-<p>clientes-operaciones works!</p>
+<app-reporte-simple
+  titulo="Clientes y Operaciones"
+  subtitulo="Clientes"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>
