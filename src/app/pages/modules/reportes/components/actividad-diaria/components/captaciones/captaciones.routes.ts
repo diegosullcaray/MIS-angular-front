@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 
-/** Rutas de "Actividad Diaria" — separadas de `reportes.routes.ts` por la misma razón que `analista.routes.ts`. */
 export const CAPTACIONES_ROUTES: Routes = [
   {
 
