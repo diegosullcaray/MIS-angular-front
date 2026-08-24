@@ -1,4 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
+import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../tabla-reporte/tabla-reporte.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -12,6 +13,13 @@ export interface BloqueReporte {
   tabla: TablaReporteResultado;
 }
 
+/** Una pestaña, para los reportes cuyo host del legado reparte los bloques en `mat-tab`s. */
+export interface PestanaReporte {
+  id: string;
+  titulo: string;
+  bloques: BloqueReporte[];
+}
+
 /**
  * Armazón de un reporte del `report-cra-v1p1` del legado: ventana + selector de
  * jerarquía + sus bloques de tabla, uno debajo del otro como los apila el legado.
@@ -23,7 +31,7 @@ export interface BloqueReporte {
 @Component({
   selector: 'app-reporte-simple',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
   template: `
     <app-window-panel [titulo]="titulo()" [subtitulo]="subtitulo()" [permitirActualizar]="false" [conFiltros]="true">
       <div ventana-filtros class="flex flex-col gap-3">
@@ -38,6 +46,33 @@ export interface BloqueReporte {
 
       @if (!nivel()) {
         <app-empty-state [titulo]="tituloVacio()" [descripcion]="descripcionVacio()" />
+      } @else if (pestanas(); as tabs) {
+        <p-tabs [value]="tabs[0].id">
+          <p-tablist>
+            @for (tab of tabs; track tab.id) {
+              <p-tab [value]="tab.id" class="!py-2 !px-3">{{ tab.titulo }}</p-tab>
+            }
+          </p-tablist>
+          <p-tabpanels>
+            @for (tab of tabs; track tab.id) {
+              <p-tabpanel [value]="tab.id">
+                <div class="flex flex-col gap-5">
+                  @for (bloque of tab.bloques; track $index) {
+                    <section class="flex flex-col gap-2">
+                      @if (bloque.titulo) {
+                        <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
+                      }
+                      <div class="mis-card p-3 overflow-x-auto">
+                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" />
+                      </div>
+                    </section>
+                  }
+                </div>
+              </p-tabpanel>
+            }
+          </p-tabpanels>
+        </p-tabs>
+        <ng-content select="[nota]" />
       } @else {
         <div class="flex flex-col gap-5">
           @for (bloque of lista(); track $index) {
@@ -68,6 +103,8 @@ export class ReporteSimpleComponent {
   readonly tabla = input<TablaReporteResultado>();
   /** Bloques del reporte, en el orden en que los apila el legado. */
   readonly bloques = input<BloqueReporte[]>();
+  /** Reparte los bloques en pestañas, como hacen los hosts `cra-v1p2` / `cra-aut-tasa`. */
+  readonly pestanas = input<PestanaReporte[]>();
   readonly cargando = input(false);
 
   protected readonly lista = computed<BloqueReporte[]>(() => {

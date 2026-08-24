@@ -68,6 +68,30 @@ export class CarteraCraService {
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 
+  /** "Desembolsos Diarios" — legado `desem-dia` (`DesemDiario`), 5 bloques sin parámetros propios. */
+  desembolsosDiarios(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
+    return this.bloques.regulares(
+      ['_01', '_02', '_03', '_04', '_05'].map((id) => ({ codRep: `DesemDiario${id}` })),
+      nodo,
+    );
+  }
+
+  /**
+   * "Autonomía de Tasas" — legado `aut-tasa` (`GST_ACTIVAS`).
+   *
+   * Cada bloque se distingue solo por su `var`, y el orden del array del legado
+   * es `_01`.._08, `_10`, `_09` — el `_10` va antes que el `_09`, y las
+   * pestañas del host indexan sobre ese orden.
+   */
+  autonomiaTasas(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
+    const fec = this.bloques.fec();
+    const bloques = [1, 2, 3, 4, 5, 6, 7, 8, 10, 9].map((v) => ({
+      codRep: `GST_ACTIVAS_${String(v).padStart(2, '0')}`,
+      extra: { var: v, fec, diario: 1 },
+    }));
+    return this.bloques.regulares(bloques, nodo);
+  }
+
   private unBloque(codRep: string, nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.bloques.regular(codRep, nodo).pipe(map((tabla1) => ({ tabla1 })));
   }
