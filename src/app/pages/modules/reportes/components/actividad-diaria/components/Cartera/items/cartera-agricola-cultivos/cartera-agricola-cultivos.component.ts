@@ -1,24 +1,39 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
 import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
+import { GraficoApexComponent } from '../../../../../../ui/grafico-apex/grafico-apex.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
-import { CARTERA_AGRICOLA_VACIA, type CarteraAgricolaResultado } from '../../models/cartera-agricola.model';
-import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
-import { GraficoApexComponent } from '../../../../../../ui/grafico-apex/grafico-apex.component';
 import type { BloqueGrafico } from '../../../../../../models/grafico-reporte.model';
-import { MapaComponent, type MarcadorMapa } from '../../../../../../../../../shared/ui/mapa/mapa.component';
-import { DialogModule } from 'primeng/dialog';
+import {
+  CARTERA_AGRICOLA_VACIA,
+  COLUMNAS_DETALLE_CULTIVO,
+  GRAFICOS_AGRICOLA,
+  filasDeCultivo,
+  totalesDeCultivo,
+  type CarteraAgricolaResultado,
+  type DetalleCultivo,
+} from '../../models/cartera-agricola.model';
+import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
 
 /** "Cartera Agrícola - Cultivos" (`repositorio/actividad-diaria/cartera/agro-mix`). */
 @Component({
   selector: 'app-cartera-agricola-cultivos',
   standalone: true,
-  imports: [DecimalPipe, HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent, GraficoApexComponent, MapaComponent, DialogModule],
+  imports: [
+    DecimalPipe,
+    DialogModule,
+    HierSelectorComponent,
+    TablaDinamicaComponent,
+    GraficoApexComponent,
+    EmptyStateComponent,
+    WindowPanelComponent,
+  ],
   templateUrl: './cartera-agricola-cultivos.component.html',
   styleUrl: './cartera-agricola-cultivos.component.css',
 })
@@ -27,6 +42,8 @@ export class CarteraAgricolaCultivosComponent {
   private readonly toast = inject(ToastService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
+  protected readonly columnasDetalle = COLUMNAS_DETALLE_CULTIVO;
+
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
   protected readonly reporte = signal<CarteraAgricolaResultado>(CARTERA_AGRICOLA_VACIA);
@@ -35,19 +52,20 @@ export class CarteraAgricolaCultivosComponent {
   protected readonly totales = computed(() => this.reporte().totales);
   protected readonly tabla = computed(() => this.reporte().tabla);
 
+  /** Fila del nivel elegida en la tabla: al elegirla se pasa a la vista de gráficos. */
   protected readonly filaSeleccionada = signal<Record<string, unknown> | null>(null);
   protected readonly graficos = signal<BloqueGrafico[]>([]);
+  protected readonly cargandoGraficos = signal(false);
 
-  // Estado del modal de detalle (clic en una barra de gráfica)
-  protected readonly modalVisible = signal(false);
-  protected readonly modalTitulo = signal('');
-  protected readonly modalMarcadores = signal<MarcadorMapa[]>([]);
-  private dataCruda: { saldoCapital: Record<string, unknown>[]; saldoVencido: Record<string, unknown>[] } = { saldoCapital: [], saldoVencido: [] };
+  /** Detalle del cultivo elegido en un gráfico; `null` mantiene el modal cerrado. */
+  protected readonly detalle = signal<DetalleCultivo | null>(null);
+
+  private filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
     this.cargando.set(true);
-    this.filaSeleccionada.set(null);
+    this.volverAlListado();
 
     this.servicio.carteraAgricola({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
       next: (reporte) => {
@@ -61,52 +79,51 @@ export class CarteraAgricolaCultivosComponent {
     });
   }
 
+  /** El legado baja al detalle con el `htipcod`/`cod_rel` de la propia fila, no con el nodo elegido. */
   protected onFilaSeleccionada(fila: Record<string, unknown>): void {
     const tip_cod = Number(fila['htipcod']);
     const cod_rel = String(fila['cod_rel'] ?? '');
-    if (Number.isNaN(tip_cod) || !cod_rel) return;
+    if (!Number.isFinite(tip_cod) || !cod_rel) return;
 
-    this.cargando.set(true);
     this.filaSeleccionada.set(fila);
+    this.cargandoGraficos.set(true);
 
-    this.servicio.detalleGraficosAgricola(tip_cod, cod_rel).subscribe({
-      next: ({ graficos, dataCruda }) => {
+    this.servicio.detalleGraficosAgricola({ tip_cod, cod_rel }).subscribe({
+      next: ({ graficos, filasPorGrafico }) => {
         this.graficos.set(graficos);
-        this.dataCruda = dataCruda;
-        this.cargando.set(false);
+        this.filasPorGrafico = filasPorGrafico;
+        this.cargandoGraficos.set(false);
       },
       error: () => {
-        this.toast.error('No se pudieron cargar los gráficos de detalle');
-        this.cargando.set(false);
-        this.filaSeleccionada.set(null);
-      }
+        this.toast.error('No se pudieron cargar los gráficos de detalle', 'Inténtalo de nuevo en unos segundos.');
+        this.cargandoGraficos.set(false);
+        this.volverAlListado();
+      },
     });
   }
 
-  protected onVolver(): void {
+  protected volverAlListado(): void {
     this.filaSeleccionada.set(null);
+    this.graficos.set([]);
+    this.detalle.set(null);
+    this.filasPorGrafico = {};
   }
 
-  /** Se dispara cuando el usuario hace clic en una barra/punto de una gráfica. */
-  protected onPuntoSeleccionado(categoria: string): void {
-    // Buscar en ambas fuentes de datos crudos cuáles coinciden con la categoría
-    const todos = [...this.dataCruda.saldoCapital, ...this.dataCruda.saldoVencido];
-    const filtrados = todos.filter(
-      (item) => (item['HDESCUL_Agrupado'] || item['HDESCUL']) === categoria
-    );
+  /** `id` del gráfico que abre detalle, o `undefined` si ese gráfico no tiene clic en el legado. */
+  protected idDetalle(indice: number): string | undefined {
+    return GRAFICOS_AGRICOLA[indice]?.id;
+  }
 
-    // Construir marcadores solo con filas que tengan coordenadas válidas
-    const marcadores: MarcadorMapa[] = filtrados
-      .filter((item) => item['HLATITU'] && item['HLONGIT'])
-      .map((item) => ({
-        lat: Number(item['HLATITU']),
-        lng: Number(item['HLONGIT']),
-        titulo: String(item['HNOMBRES'] ?? item['HDNOMBRE'] ?? 'Cliente'),
-        subtitulo: item['HCAPMON'] ? `Saldo: S/ ${Number(item['HCAPMON']).toLocaleString('es-PE')}` : undefined,
-      }));
+  /** Clic en una barra: abre el listado de clientes de ese cultivo, como `showDetailsPopup()`. */
+  protected onCultivoSeleccionado(cultivo: string, idGrafico: string | undefined): void {
+    const origen = idGrafico ? this.filasPorGrafico[idGrafico] : undefined;
+    if (!origen) return;
 
-    this.modalTitulo.set(`Detalle: ${categoria}`);
-    this.modalMarcadores.set(marcadores);
-    this.modalVisible.set(true);
+    const filas = filasDeCultivo(origen, cultivo);
+    this.detalle.set({ cultivo, filas, totales: totalesDeCultivo(filas) });
+  }
+
+  protected cerrarDetalle(): void {
+    this.detalle.set(null);
   }
 }

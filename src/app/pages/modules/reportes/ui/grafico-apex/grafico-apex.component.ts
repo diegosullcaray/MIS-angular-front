@@ -286,7 +286,7 @@ export class GraficoApexComponent implements AfterViewInit {
     const text = oscuro ? '#94A3B8' : '#64748B';
     const grid = oscuro ? '#1E293B' : '#F1F5F9';
 
-    const seriesConfig = bloque.series.map((s, i) => ({
+    const seriesConfig = bloque.series.map((s) => ({
       name: s.nombre,
       type: s.nombre.includes('%') ? 'line' : 'column',
       data: s.datos as number[],

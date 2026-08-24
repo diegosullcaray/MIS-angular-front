@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ReporteSimpleComponent, type PestanaReporte } from '../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteBloquesBase } from '../../../../../../ui/reporte-simple/reporte-bloques.base';
@@ -29,20 +29,14 @@ export class SaldoCarteraComponent extends ReporteBloquesBase {
     'Productividad',
   ];
 
-  constructor() {
-    super();
-    effect(() => {
-      const data = this.tablas();
-      if (data && data.length > 0) {
-        console.log('DATOS SALDO CARTERA:', JSON.parse(JSON.stringify(data)));
-      }
-    });
-  }
-
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.saldoCartera(nodo);
   }
 
+  /**
+   * El host del legado apila los cinco bloques; acá se agrupan en dos pestañas
+   * (`_04`/`_05` vigentes, `_01`/`_02`/`_03` totales) para no scrollear tanto.
+   */
   protected pestanas(): PestanaReporte[] | undefined {
     const tablas = this.tablas();
     if (tablas.length === 0) return undefined;

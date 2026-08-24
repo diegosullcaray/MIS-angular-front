@@ -7,6 +7,7 @@ import type { ColumnaMonitor } from '../models/monitor-inteligencia.model';
 import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas';
 import type { CmgCarteraResultado, TarjetaCmgCartera } from '../models/cmg-cartera.model';
 import type { CarteraAgricolaResultado, TotalAgro, DetalleAgricolaResultado } from '../models/cartera-agricola.model';
+import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
 import { TOTALES_AGRO } from '../models/cartera-agricola.model';
 import type { BloqueGrafico } from '../../../../../models/grafico-reporte.model';
 
@@ -54,39 +55,28 @@ export class CarteraRepositorioService {
     );
   }
 
-  /** Obtiene y mapea los gráficos de detalle + data cruda con coordenadas (legado RS_AGROMIX_02 a 05). */
-  detalleGraficosAgricola(tip_cod: number, cod_rel: string): Observable<DetalleAgricolaResultado> {
-    const params = { tip_cod, cod_rel, fec: this.bloques.fecha() };
-    return forkJoin([
-      this.reportes.getRegularTableResult('RS_AGROMIX_03', params),
-      this.reportes.getRegularTableResult('RS_AGROMIX_02', params),
-      this.reportes.getRegularTableResult('RS_AGROMIX_04', params),
-      this.reportes.getRegularTableResult('RS_AGROMIX_05', params),
-    ]).pipe(
-      map(([r03, r02, r04, r05]) => {
-        const mapear = (r: { body?: unknown }, titulo: string): BloqueGrafico => {
+  /**
+   * Los cuatro gráficos del detalle por cultivo — legado `RS_AGROMIX_02` al `_05`.
+   *
+   * Cada bloque trae su `{categories, series}` dentro de `resultado.headers`;
+   * `resultado.data` son las filas de clientes, y solo hacen falta las de los
+   * dos gráficos que abren el modal de detalle (el `detailDataMap` del legado).
+   */
+  detalleGraficosAgricola(nodo: NodoConsulta): Observable<DetalleAgricolaResultado> {
+    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: this.bloques.fecha() };
+    const bloques = GRAFICOS_AGRICOLA.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
+
+    return forkJoin(bloques).pipe(
+      map((respuestas) => {
+        const filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
+        const graficos = respuestas.map((r, i) => {
+          const { titulo, id } = GRAFICOS_AGRICOLA[i];
           const resultado = crudo(r);
-          if (!resultado?.headers) return { titulo, categorias: [], series: [] };
-          const chartData = JSON.parse(resultado.headers) as { categories: string[]; series: { name: string; data: (number | null)[] }[] };
-          return {
-            titulo,
-            categorias: chartData.categories ?? [],
-            series: (chartData.series ?? []).map((s) => ({ nombre: s.name, datos: s.data })),
-          };
-        };
-        // Guardamos la data cruda de RS_AGROMIX_02 y 03 (incluye coordenadas HLATITU/HLONGIT)
-        const dataSaldoCapital = (crudo(r03)?.data ?? []) as Record<string, unknown>[];
-        const dataSaldoVencido = (crudo(r02)?.data ?? []) as Record<string, unknown>[];
-        return {
-          graficos: [
-            mapear(r03, 'Distribución Saldo por Cultivo'),
-            mapear(r02, 'Distribución Saldo Vencido por Cultivo'),
-            mapear(r04, 'Distribución de Clientes por Cultivo'),
-            mapear(r05, 'Resumen General'),
-          ],
-          dataCruda: { saldoCapital: dataSaldoCapital, saldoVencido: dataSaldoVencido },
-        };
-      })
+          if (id) filasPorGrafico[id] = (resultado?.data ?? []) as Record<string, unknown>[];
+          return { titulo, ...seriesDeGrafico(resultado?.headers) };
+        });
+        return { graficos, filasPorGrafico };
+      }),
     );
   }
 
@@ -251,4 +241,14 @@ function totalesAgro(primeraFila: Record<string, unknown>, mesAnterior: Record<s
     const anterior = Number(mesAnterior[clave] ?? 0);
     return { etiqueta, formato, actual, anterior, senal: Math.sign(actual - anterior) };
   });
+}
+
+/** Los bloques de gráfico traen su `{categories, series}` serializado en `headers`. */
+function seriesDeGrafico(headers: string | undefined): Pick<BloqueGrafico, 'categorias' | 'series'> {
+  if (!headers) return { categorias: [], series: [] };
+  const datos = JSON.parse(headers) as { categories?: string[]; series?: { name: string; data: (number | null)[] }[] };
+  return {
+    categorias: datos.categories ?? [],
+    series: (datos.series ?? []).map((s) => ({ nombre: s.name, datos: s.data })),
+  };
 }

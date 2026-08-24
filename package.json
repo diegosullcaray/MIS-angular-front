@@ -39,7 +39,6 @@
     "powerbi-client-angular": "^6.0.3",
     "primeicons": "^7.0.0",
     "primeng": "21.1.9",
-    "maplibre-gl": "^5.1.0",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.3.2",
     "tslib": "^2.3.0"
@@ -55,7 +54,6 @@
     "postcss": "^8.5.16",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
-    "@types/maplibre-gl": "^5.0.0",
     "vitest": "^4.1.10"
   },
   "postcss": {
