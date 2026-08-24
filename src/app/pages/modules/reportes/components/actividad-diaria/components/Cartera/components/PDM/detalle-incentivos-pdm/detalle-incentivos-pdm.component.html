@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Incentivos PDM"
+  subtitulo="PDM"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

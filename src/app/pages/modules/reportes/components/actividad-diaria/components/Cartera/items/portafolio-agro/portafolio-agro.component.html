@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Portafolio Agropecuario"
+  subtitulo="Cartera"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

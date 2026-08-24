@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { HierSelectorComponent } from '../hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../tabla-reporte/tabla-reporte.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -6,10 +6,17 @@ import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/wind
 import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
 
+/** Un bloque del reporte: su tabla y, si el legado se lo pone, su título. */
+export interface BloqueReporte {
+  titulo?: string;
+  tabla: TablaReporteResultado;
+}
+
 /**
- * Armazón de un reporte de un solo bloque: ventana + selector de jerarquía +
- * tabla, que es la forma del `report-cra-v1p1` del legado.
+ * Armazón de un reporte del `report-cra-v1p1` del legado: ventana + selector de
+ * jerarquía + sus bloques de tabla, uno debajo del otro como los apila el legado.
  *
+ * Para un solo bloque alcanza con `[tabla]`; para varios, `[bloques]`.
  * Los filtros propios del reporte se proyectan en `[filtros]` (debajo del
  * selector, como en el legado) y la leyenda al pie en `[nota]`.
  */
@@ -32,8 +39,17 @@ import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
       @if (!nivel()) {
         <app-empty-state [titulo]="tituloVacio()" [descripcion]="descripcionVacio()" />
       } @else {
-        <div class="mis-card p-3 overflow-x-auto">
-          <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" [cargando]="cargando()" />
+        <div class="flex flex-col gap-5">
+          @for (bloque of lista(); track $index) {
+            <section class="flex flex-col gap-2">
+              @if (bloque.titulo) {
+                <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
+              }
+              <div class="mis-card p-3 overflow-x-auto">
+                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" />
+              </div>
+            </section>
+          }
         </div>
         <ng-content select="[nota]" />
       }
@@ -48,8 +64,18 @@ export class ReporteSimpleComponent {
 
   /** Nodo elegido; mientras sea `null` se muestra el estado vacío en vez de la tabla. */
   readonly nivel = input.required<HierarquiaNodo | null>();
-  readonly tabla = input.required<TablaReporteResultado>();
+  /** Reporte de un solo bloque. Para varios, usar `bloques`. */
+  readonly tabla = input<TablaReporteResultado>();
+  /** Bloques del reporte, en el orden en que los apila el legado. */
+  readonly bloques = input<BloqueReporte[]>();
   readonly cargando = input(false);
+
+  protected readonly lista = computed<BloqueReporte[]>(() => {
+    const varios = this.bloques();
+    if (varios) return varios;
+    const una = this.tabla();
+    return una ? [{ tabla: una }] : [];
+  });
 
   readonly tituloVacio = input('Elige un nivel');
   readonly descripcionVacio = input('Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte.');

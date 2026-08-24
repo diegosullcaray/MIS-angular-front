@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Datos por Producto"
+  subtitulo="Cartera"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [bloques]="bloques()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

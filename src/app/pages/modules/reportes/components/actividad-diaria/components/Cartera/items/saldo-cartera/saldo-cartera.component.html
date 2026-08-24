@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Saldo Cartera"
+  subtitulo="Cartera"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [bloques]="bloques()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>
