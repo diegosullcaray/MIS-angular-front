@@ -7,8 +7,8 @@ import { ReportT } from '../../../../support/services/report';
 import { cra } from '../cra-map';
 import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
 
 @Component({
   selector: 'app-cra-aut-tasa',

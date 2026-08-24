@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import highchartsHeatmap from 'highcharts/modules/heatmap';
 import exporting from 'highcharts/modules/exporting';
-import { printLog } from 'app/core/helpers/debug.util';
 exporting(Highcharts);
 highchartsHeatmap(Highcharts);
 
@@ -13,7 +12,7 @@ highchartsHeatmap(Highcharts);
 })
 export class DashboardComponent implements OnInit {
   ngOnInit(): void {
-    printLog('onInit');
+    console.log('onInit');
   }
   highchartsHeatmapRDA: typeof Highcharts = Highcharts;
   chartConstructorRDA: string = "chart";

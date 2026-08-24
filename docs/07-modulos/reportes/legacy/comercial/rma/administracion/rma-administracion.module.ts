@@ -13,7 +13,8 @@ import { ReportCraV5Module } from '../../../support/components/template/cra/repo
 import { ReportCraV1P1Module } from '../../../support/components/template/cra/report-cra-v1p1/report-cra-v1p1.module';
 import { CraAutTasaComponent } from './cra-aut-tasa/cra-aut-tasa.component';
 import { ReportCraV1P3Module } from '../../../support/components/template/cra/report-cra-v1p3/report-cra-v1p3.module';
-import { SharedModule } from 'app/shared/shared.module';
+import { SharedCWCModule } from 'app/core/screen/components/shared-cwc.module';
+import { SharedCMCModule } from 'app/modules/shared/shared-cmc.module';
 import { ReportCraV1P8Module } from '../../../support/components/template/cra/report-cra-v1p8/report-cra-v1p8.module';
 import { ReportCraV11Module } from '../../../support/components/template/cra/report-cra-v11/report-cra-v11.module';
 
@@ -35,7 +36,8 @@ import { ReportCraV11Module } from '../../../support/components/template/cra/rep
     TableModule,
     RmaAdministracionRoutingModule,
     GraphicModule,
-    SharedModule,
+    SharedCWCModule,
+    SharedCMCModule,
     ReportCraV11Module,
   ],
   declarations: [CraSegAseComponent, CraAutTasaComponent]

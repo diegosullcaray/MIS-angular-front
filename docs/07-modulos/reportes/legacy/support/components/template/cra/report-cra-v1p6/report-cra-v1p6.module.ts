@@ -5,7 +5,8 @@ import { SelectModule } from '../../../select/select.module';
 import { TableModule } from '../../../table/table.module';
 import { GraphicModule } from '../../../graphic/graphic.module';
 import { MatTabsModule } from '@angular/material/tabs';
-import { SharedModule } from 'app/shared/shared.module';
+import { SharedCWCModule } from 'app/core/screen/components/shared-cwc.module';
+import { SharedCMCModule } from 'app/modules/shared/shared-cmc.module';
 
 const components = [
     ReportCraV1p6Component
@@ -18,7 +19,8 @@ const components = [
       TableModule,
       GraphicModule,
       MatTabsModule,
-      SharedModule,
+      SharedCWCModule,
+      SharedCMCModule
     ],
     declarations: components,
     exports:components

@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ReporteSimpleComponent } from '../../../../../../ui/reporte-simple/reporte-simple.component';
+import { ReporteSimpleComponent, type PestanaReporte } from '../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteBloquesBase } from '../../../../../../ui/reporte-simple/reporte-bloques.base';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
@@ -29,7 +29,42 @@ export class SaldoCarteraComponent extends ReporteBloquesBase {
     'Productividad',
   ];
 
+  constructor() {
+    super();
+    effect(() => {
+      const data = this.tablas();
+      if (data && data.length > 0) {
+        console.log('DATOS SALDO CARTERA:', JSON.parse(JSON.stringify(data)));
+      }
+    });
+  }
+
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.saldoCartera(nodo);
+  }
+
+  protected pestanas(): PestanaReporte[] | undefined {
+    const tablas = this.tablas();
+    if (tablas.length === 0) return undefined;
+
+    return [
+      {
+        id: 'vigente',
+        titulo: 'Saldo Vigente',
+        bloques: [
+          { titulo: this.titulos[0], tabla: tablas[0] },
+          { titulo: this.titulos[1], tabla: tablas[1] }
+        ]
+      },
+      {
+        id: 'total',
+        titulo: 'Saldo Total',
+        bloques: [
+          { titulo: this.titulos[2], tabla: tablas[2] },
+          { titulo: this.titulos[3], tabla: tablas[3] },
+          { titulo: this.titulos[4], tabla: tablas[4] }
+        ]
+      }
+    ];
   }
 }

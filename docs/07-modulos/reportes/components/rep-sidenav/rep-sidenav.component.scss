@@ -3,11 +3,11 @@
 }
 
 .base-tree ul{
-    padding-left: 12px;
+    padding-left: 20px;
 }
 
 
-
+  
 .base-tree ul,
 .base-tree li {
     margin-top: 0;
@@ -15,30 +15,7 @@
     list-style-type: none;
 }
 
-.node {
-    min-height: 32px;
-    font-size: 13px;
-}
-
-.node .mat-icon-button {
-    width: 28px;
-    height: 28px;
-    line-height: 28px;
-}
-
-.node .mat-icon-button .mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
-}
-
 .node:hover {
     background-color: rgba(0, 162, 255, 0.1) !important;
 }
 
-.node.active {
-    background-color: rgba(29, 57, 110, 0.1) !important;
-    border-left: 3px solid #1d396e;
-    font-weight: 600;
-}

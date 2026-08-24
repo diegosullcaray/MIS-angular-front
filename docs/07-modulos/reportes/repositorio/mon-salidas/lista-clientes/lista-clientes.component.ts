@@ -3,9 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MonSalidasService } from '../compartido/servicios/mon-salidas.service';
 import { MonSalidasAntService } from '../compartido/servicios/mon-salidas-ant.service';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { headers1, headers2, tblOpts } from './lista-clientes.util';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
+import { UserService } from 'app/system/admin/services/user.service';
 
 
 @Component({

@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { AntService } from 'app/core/data/remote/ant/ant-service.class';
 import { Strand } from 'app/core/data/remote/winder/strand.class';
 import { WinderService } from 'app/core/data/remote/winder/winder.service';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
-import { environment } from 'environments/environment';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
+import { UserService } from 'app/system/admin/services/user.service';
 
 @Injectable()
 export class ModSecService extends AntService {
@@ -12,7 +11,7 @@ export class ModSecService extends AntService {
     constructor(private winderService: WinderService, private userService: UserService) {
         super({
             port: 5301,
-            secret: environment.moduleSecrets.secciones,
+            secret: "D4305E5943A377227C6BF78C8E3278AD",
             appId: "secciones",
         },winderService);
     }

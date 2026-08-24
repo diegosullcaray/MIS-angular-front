@@ -3,9 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DetalleBaseComponent } from './detalle-base.component';
 import { MonImrService } from '../compartido/servicios/mon-imr.service';
 import { MonImrAntService } from '../compartido/servicios/mon-imr-ant.service';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
-import { LayoutService } from 'app/pages/full-pages/layout/services/layout.service';
+import { LayoutService } from 'app/system/admin/services/layout.service';
 
 
 @Component({

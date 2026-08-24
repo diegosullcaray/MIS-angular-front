@@ -1,18 +1,17 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
-import { IStgTableHeader } from "app/shared/components/stg-table/stg-table.interface";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { IStgTableHeader } from "app/core/screen/components/stg-table/stg-table.interface";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
-import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/helpers/functions.util';
+import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/shared/functions.util';
 import { formatNumber } from '@angular/common';
 import { Console } from 'console';
 import { tableConf3 } from '../esg/esg.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import {  tableConfOPTS } from './seguros-pasivos.util';
 import { BehaviorSubject, Subject, combineLatest } from 'rxjs';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
-import { printLog } from 'app/core/helpers/debug.util';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
 
 @Component({
     selector: 'app-seguros-pasivos.component',
@@ -99,7 +98,7 @@ export class SegurosPasivosComponent implements OnInit {
             x => {
 
                 let bh: any = x.body.base_hierarchy;
-                printLog(bh)
+                console.log(bh)
                 this.confHier1 = {
                     roots: bh, //antes r_tip_cod: bh.tip_cod,
                     cod_hier: code,

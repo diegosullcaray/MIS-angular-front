@@ -13,7 +13,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { SharedModule } from 'app/shared/shared.module';
+import { SharedCWCModule } from 'app/core/screen/components/shared-cwc.module';
+import { SharedCMCModule } from 'app/modules/shared/shared-cmc.module';
 const components = [
     ReportCraV12Component
   ]
@@ -21,7 +22,8 @@ const components = [
 @NgModule({
     imports: [
       //CommonModule,
-      SharedModule,
+      SharedCWCModule,
+      SharedCMCModule,
       SelectModule,
       TableModule,
       

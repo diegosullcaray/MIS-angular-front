@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, OnInit, ViewChild } from "@angular/core";
 import { Component } from "@angular/core";
-import { StgPaginatorComponent } from "app/shared/components/stg-paginator/stg-paginator.component";
-import { IStgTableHeader } from "app/shared/components/stg-table/stg-table.interface";
-import { prepareDataForPagination } from "app/shared/components/stg-table/stg-table.util";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { StgPaginatorComponent } from "app/core/screen/components/stg-paginator/stg-paginator.component";
+import { IStgTableHeader } from "app/core/screen/components/stg-table/stg-table.interface";
+import { prepareDataForPagination } from "app/core/screen/components/stg-table/stg-table.util";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
 import { tableConf, loadingConf, tableHeaders } from "./segui-incentivos-sec.util";
 

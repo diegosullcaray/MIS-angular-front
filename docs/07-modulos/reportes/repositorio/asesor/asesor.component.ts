@@ -1,15 +1,14 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
-import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/helpers/functions.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/shared/functions.util';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { perfilConfig, tableConfOPTS, tblHeadersCategorizacion } from './asesor.util';
 import { BehaviorSubject, Subject, combineLatest } from 'rxjs';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
 import { ChartConfiguration, ChartType, ChartOptions } from 'chart.js';
-import { printLog } from 'app/core/helpers/debug.util';
 
 type TabType = 'credito' | 'metrica' | 'seguros' | 'movilidad' | 'desembolsos' | 'efectividad' | 'categorizacion';
 
@@ -151,7 +150,7 @@ export class AsesorComponent implements OnInit {
     }
 
     public chartClicked({ event, active }: { event: any, active: {}[] }): void {
-        printLog('Chart clicked:', event, active);
+        console.log('Chart clicked:', event, active);
     }
 
     public chartHovered({ event, active }: { event: any, active: {}[] }): void {
@@ -401,7 +400,7 @@ export class AsesorComponent implements OnInit {
             const indexes = config.dataIndexes;
             
             if (config.storedProc === 'Tab_Dig_Com_A_01') {
-                printLog(r)
+                console.log(r)
                 this.VariableCard1 = r.meta1[0]["meta"]
                 this.VariableCard2 = r.meta1[0]["carteraCount"]
                 this.VariableCard3 = r.meta1[0]["enroladoCount"]

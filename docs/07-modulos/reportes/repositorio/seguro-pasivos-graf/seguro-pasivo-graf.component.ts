@@ -1,19 +1,18 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
-import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/helpers/functions.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/shared/functions.util';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { BehaviorSubject, ReplaySubject, Subject, combineLatest } from 'rxjs';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
 import { cra } from '../../legacy/comercial/rda/administracion/cra-map';
 import { ReportT } from '../../legacy/support/services/report';
 import { GraphicService } from '../../legacy/support/services/graphic.service';
 import { takeUntil } from 'rxjs/operators';
 import { ComercialService } from '../../legacy/comercial/comercial.service';
 import * as Highcharts from "highcharts";  
-import { printLog } from 'app/core/helpers/debug.util';
 
 @Component({
     selector: 'app-seguro-pasivo-graf.component',
@@ -254,7 +253,7 @@ export class SeguroPasivoGrafComponent implements OnInit {
               let result = data.body['result'];
               this.var615 = result.body[0].result615
               this.var616 = result.body[0].result616
-               printLog(result.body[0].series)
+               console.log(result.body[0].series)
               let categoriesT = result.body[0].categories 
                
               this.mapsschartOptions = { 
@@ -268,7 +267,7 @@ export class SeguroPasivoGrafComponent implements OnInit {
                     enabled: false
                   },
                 xAxis: {
-                  categories: JSON.parse(categoriesT)//['30', '35', '40', '45', '50', '55']
+                  categories: eval(categoriesT)//['30', '35', '40', '45', '50', '55']
                 },
                 yAxis: { 
                   title: {
@@ -276,7 +275,7 @@ export class SeguroPasivoGrafComponent implements OnInit {
                        
                   }
               },
-                series: JSON.parse(result.body[0].series)
+                series: eval(result.body[0].series) 
                /* [{
                   name: 'Polizas',
                   data: [12,50,20,40,60,120],
@@ -322,7 +321,7 @@ export class SeguroPasivoGrafComponent implements OnInit {
             (data) => {
               let result = data.body['result']; 
               let categoriesT = result.body[0].categories 
-              printLog(result.body[0].series)
+              console.log(result.body[0].series)
               this.mapsschartOptions = { 
                 chart: {
                   type: "column"  
@@ -334,7 +333,7 @@ export class SeguroPasivoGrafComponent implements OnInit {
                     enabled: false
                   },
                 xAxis: {
-                  categories: JSON.parse(categoriesT)//['30', '35', '40', '45', '50', '55']
+                  categories: eval(categoriesT)//['30', '35', '40', '45', '50', '55']
                 },
                 yAxis: { 
                   title: {
@@ -342,8 +341,8 @@ export class SeguroPasivoGrafComponent implements OnInit {
                        
                   }
               },
-                series: JSON.parse(result.body[0].series)
-              }
+                series: eval(result.body[0].series)  
+              } 
     
               let opts = this.mapsschartOptions;  
               let e = document.createElement('div');

@@ -2,8 +2,9 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FormsModule } from "@angular/forms";
-import { SharedModule } from "app/shared/shared.module";
-import { MaterialModule } from 'app/material/material.module';
+import { SharedCWCModule } from "app/core/screen/components/shared-cwc.module";
+import { SharedMaterialModule } from "app/core/screen/components/shared-material.module";
+import { SharedCMCModule } from "app/modules/shared/shared-cmc.module";
  
 import { EsgRoutingModule } from './esg-routing.module';
 import { EsgComponent } from './esg.component';
@@ -11,11 +12,12 @@ import { EsgComponent } from './esg.component';
 @NgModule({
     imports:[
         EsgRoutingModule,
-        SharedModule,
+        SharedCWCModule,
+        SharedCMCModule,
         CommonModule,
         FormsModule,
         FlexLayoutModule,
-        MaterialModule  
+        SharedMaterialModule  
     ],
     declarations:[EsgComponent],
     //providers:[ModAppService]

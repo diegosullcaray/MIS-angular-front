@@ -6,8 +6,9 @@ import type { ColumnaDinamica, TablaDinamicaResultado, TablaRegularResultadoRaw 
 import type { ColumnaMonitor } from '../models/monitor-inteligencia.model';
 import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas';
 import type { CmgCarteraResultado, TarjetaCmgCartera } from '../models/cmg-cartera.model';
-import type { CarteraAgricolaResultado, TotalAgro } from '../models/cartera-agricola.model';
+import type { CarteraAgricolaResultado, TotalAgro, DetalleAgricolaResultado } from '../models/cartera-agricola.model';
 import { TOTALES_AGRO } from '../models/cartera-agricola.model';
+import type { BloqueGrafico } from '../../../../../models/grafico-reporte.model';
 
 /** Los reportes de Cartera que viven en el `repositorio` del legado (motor `table.regular`). */
 @Injectable({ providedIn: 'root' })
@@ -50,6 +51,42 @@ export class CarteraRepositorioService {
           totales: totalesAgro(filas[0] ?? {}, meta?.[0] ?? {}),
         };
       }),
+    );
+  }
+
+  /** Obtiene y mapea los gráficos de detalle + data cruda con coordenadas (legado RS_AGROMIX_02 a 05). */
+  detalleGraficosAgricola(tip_cod: number, cod_rel: string): Observable<DetalleAgricolaResultado> {
+    const params = { tip_cod, cod_rel, fec: this.bloques.fecha() };
+    return forkJoin([
+      this.reportes.getRegularTableResult('RS_AGROMIX_03', params),
+      this.reportes.getRegularTableResult('RS_AGROMIX_02', params),
+      this.reportes.getRegularTableResult('RS_AGROMIX_04', params),
+      this.reportes.getRegularTableResult('RS_AGROMIX_05', params),
+    ]).pipe(
+      map(([r03, r02, r04, r05]) => {
+        const mapear = (r: { body?: unknown }, titulo: string): BloqueGrafico => {
+          const resultado = crudo(r);
+          if (!resultado?.headers) return { titulo, categorias: [], series: [] };
+          const chartData = JSON.parse(resultado.headers) as { categories: string[]; series: { name: string; data: (number | null)[] }[] };
+          return {
+            titulo,
+            categorias: chartData.categories ?? [],
+            series: (chartData.series ?? []).map((s) => ({ nombre: s.name, datos: s.data })),
+          };
+        };
+        // Guardamos la data cruda de RS_AGROMIX_02 y 03 (incluye coordenadas HLATITU/HLONGIT)
+        const dataSaldoCapital = (crudo(r03)?.data ?? []) as Record<string, unknown>[];
+        const dataSaldoVencido = (crudo(r02)?.data ?? []) as Record<string, unknown>[];
+        return {
+          graficos: [
+            mapear(r03, 'Distribución Saldo por Cultivo'),
+            mapear(r02, 'Distribución Saldo Vencido por Cultivo'),
+            mapear(r04, 'Distribución de Clientes por Cultivo'),
+            mapear(r05, 'Resumen General'),
+          ],
+          dataCruda: { saldoCapital: dataSaldoCapital, saldoVencido: dataSaldoVencido },
+        };
+      })
     );
   }
 

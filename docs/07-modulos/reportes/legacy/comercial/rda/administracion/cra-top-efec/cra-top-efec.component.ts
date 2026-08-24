@@ -1,12 +1,11 @@
 import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
-import { ReportT } from 'app/pages/modules/reportes/legacy/support/services/report';
-import { TableMHService } from 'app/pages/modules/reportes/legacy/support/services/table.service';
+import { ReportT } from 'app/modules/reportes/legacy/support/services/report';
+import { TableMHService } from 'app/modules/reportes/legacy/support/services/table.service';
 import { ReplaySubject, Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ComercialService } from '../../../comercial.service';
 import { cra } from '../cra-map';
-import { SelectService } from 'app/pages/modules/reportes/legacy/support/services/select.service';
-import { printLog } from 'app/core/helpers/debug.util';
+import { SelectService } from 'app/modules/reportes/legacy/support/services/select.service';
 
 @Component({
   selector: 'app-cra-top-efec',
@@ -82,7 +81,7 @@ export class CraTopEfecComponent implements OnInit {
     confT.results(true,true,false);
     this.config_table[add.index]=confT;
     const params={...confT.getParamsAdd(),...r};
-    printLog(params);
+    console.log(params);
     this.cs.getRegularData(report,params)
     .pipe(takeUntil(this.destroy$))
     .subscribe(

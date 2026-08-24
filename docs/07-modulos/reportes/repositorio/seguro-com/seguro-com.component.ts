@@ -1,15 +1,14 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
 import { ModSysAdminService } from 'app/core/data/remote/instances/mod-sys-admin.service'; 
-import { cloneObject, isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { cloneObject, isNullOrUndefined } from 'app/core/shared/functions.util';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { tableConfOPTS, tblHeaders } from './seguro-com.util';
 import { BehaviorSubject } from 'rxjs';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
 import { MatDialog } from '@angular/material/dialog';
-import { printError } from 'app/core/helpers/debug.util';
 
 @Component({
     selector: 'app-seguro-com.component',
@@ -22,7 +21,7 @@ export class SeguroComComponent implements OnInit {
     currentDate: any;
     Opts: any;
     headerDefs: any;
-
+    filter1: any;
     loading: boolean;
     load0: BehaviorSubject<boolean>;
     firstload: boolean;
@@ -37,7 +36,7 @@ export class SeguroComComponent implements OnInit {
     kpiHeaders: any = { ant: '', act: '' };
 
     public kpiTotales: any = {};
-
+    selector1: any;
     @ViewChild(TemplateRef, { static: true }) templateRef: TemplateRef<any>;
     @ViewChild("paginator", { "static": false }) paginatorVC: StgPaginatorComponent;
 
@@ -63,11 +62,11 @@ export class SeguroComComponent implements OnInit {
 
         this.hierBuffer = [];
         this.load0 = new BehaviorSubject(false);
-
+        this.loadFilter();
         try {
             await this.getBaseHierAsync();
         } catch (error) {
-            printError("Error crítico al inicializar la pantalla:", error);
+            console.error("Error crítico al inicializar la pantalla:", error);
             this.cerrarCargando();
         }
     } 
@@ -107,7 +106,7 @@ export class SeguroComComponent implements OnInit {
                                 }
                             },
                             error: (err) => {
-                                printError(err);
+                                console.error(err);
                                 this.cerrarCargando();
                                 resolve();
                             }
@@ -118,14 +117,75 @@ export class SeguroComComponent implements OnInit {
                     }
                 },
                 error: (err) => {
-                    printError(err);
+                    console.error(err);
                     this.cerrarCargando();
                     resolve();
                 }
             });
         });
     }
+    eventFilter(event: any) { 
+        if (!this.firstload && event.isUserInput) {
+            this.loadData();
+        }
+      }
 
+   // Agrega este método en tu componente
+   onFechaChange(item: any) {
+    if (!item) return;
+
+    // 1. Extraemos EXCLUSIVAMENTE el valor del string de la fecha.
+    // Validamos si viene directo en item.val o si está anidado en item.fecha.val
+    this.currentDate = item.val || (item.fecha ? item.fecha.val : item); 
+    
+    // 2. Mantenemos el objeto completo en selector1. 
+    // Esto es vital para que el combo no pierda su 'label' visual en la UI.
+    this.selector1 = item;
+
+    // 3. Disparamos el recálculo (asegúrate de que eventFilter llame a this.setDs)
+    this.eventFilter({
+      source: {
+        value: item,
+        selected: true
+      },
+      isUserInput: true
+    });
+  }
+  loadFilter() { 
+    this.antRep.getRegularTableResult("RS_FECH", { 
+        "fec": this.currentDate
+    }).subscribe(x => { 
+        let r = x.body.resultado; 
+        
+        if (r.meta1 && r.meta1.length > 0 && r.meta1[0]["json_result"]) {
+            try { 
+                this.filter1 = JSON.parse(r.meta1[0]["json_result"]);
+                  
+                if (this.filter1 && this.filter1.length > 0) {
+                    const primerElemento = this.filter1[0];
+                    
+                    // Extraemos el mismo valor primitivo que usa el [value] de tu HTML
+                    this.selector1 = primerElemento.val !== undefined ? primerElemento.val : primerElemento;
+                    this.currentDate = this.selector1;
+                } else {
+                    this.selector1 = null;
+                }
+                  
+                this.detector.detectChanges();
+            } catch (error) { 
+                this.filter1 = [];
+                this.selector1 = null;
+            }
+        } else {
+            this.filter1 = [];
+            this.selector1 = null;
+        }
+    }, error => {
+        this.filter1 = [];
+        this.selector1 = null;
+        this.load0.next(true);  
+    });
+  }
     ddHier(evt: any) {  
         let key = evt.key; 
         let tip_cod = evt.row.htipcod || evt.row.HTIPCOD || evt.row.tip_cod;
@@ -170,7 +230,8 @@ export class SeguroComComponent implements OnInit {
 //GRSCMIS_02 
         this.antRep.getRegularTableResult("GRSCMISREP_01", {
             "tip_cod": this.tip_cod,
-            "cod_rel": this.cod_rel 
+            "cod_rel": this.cod_rel,
+            "fec":  this.currentDate 
         }).subscribe({
             next: (x) => {
                 try {
@@ -221,7 +282,7 @@ export class SeguroComComponent implements OnInit {
                             agropecuario: filaCero.SegAgro || 0,
                             protCuota: filaCero.SegPC || 0,
                             oncologico: filaCero.SegOnco || 0,
-                            protTotal: filaCero.SMROS || 0 // Usé SMROS para Prot. Total según tu lista
+                            protTotal: filaCero.SPCCOS || 0 // Usé SMROS para Prot. Total según tu lista
                         };
                     }
                     
@@ -252,11 +313,11 @@ export class SeguroComComponent implements OnInit {
                     }
                     
                 } catch (e) {
-                    printError("Error procesando los datos de la tabla:", e);
+                    console.error("Error procesando los datos de la tabla:", e);
                 }
             },
             error: (err) => {
-                printError("Error en la petición a la BD:", err);
+                console.error("Error en la petición a la BD:", err);
                 this.cerrarCargando(); 
             },
             complete: () => {

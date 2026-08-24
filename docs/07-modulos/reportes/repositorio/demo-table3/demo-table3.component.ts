@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { StgTable3RandomOptions, StgTable3Service } from 'app/shared/components/stg-table3/stg-table3.service';
-import { IStgTable3Header, StgTable3Options } from 'app/shared/components/stg-table3/stg-table3.util';
+import { StgTable3RandomOptions, StgTable3Service } from 'app/core/screen/components/stg-table3/stg-table3.service';
+import { IStgTable3Header, StgTable3Options } from 'app/core/screen/components/stg-table3/stg-table3.util';
 
 @Component({
     selector: 'demo-table3',

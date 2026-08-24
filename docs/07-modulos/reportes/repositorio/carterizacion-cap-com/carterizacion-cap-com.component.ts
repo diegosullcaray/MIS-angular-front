@@ -1,15 +1,14 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
 import { ModSysAdminService } from 'app/core/data/remote/instances/mod-sys-admin.service'; 
-import { cloneObject, isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { cloneObject, isNullOrUndefined } from 'app/core/shared/functions.util';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { tableConfOPTS, tblHeaders } from './carterizacion-cap-com.util';
 import { BehaviorSubject } from 'rxjs';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
 import { MatDialog } from '@angular/material/dialog';
-import { printError } from 'app/core/helpers/debug.util';
 
 @Component({
     selector: 'app-carterizacion-cap-com.component',
@@ -65,7 +64,7 @@ export class CarterizacionCapComComponent implements OnInit {
         try {
             await this.getBaseHierAsync();
         } catch (error) {
-            printError("Error crítico al inicializar la pantalla:", error);
+            console.error("Error crítico al inicializar la pantalla:", error);
             this.cerrarCargando();
         }
     } 
@@ -105,7 +104,7 @@ export class CarterizacionCapComComponent implements OnInit {
                                 }
                             },
                             error: (err) => {
-                                printError(err);
+                                console.error(err);
                                 this.cerrarCargando();
                                 resolve();
                             }
@@ -116,7 +115,7 @@ export class CarterizacionCapComComponent implements OnInit {
                     }
                 },
                 error: (err) => {
-                    printError(err);
+                    console.error(err);
                     this.cerrarCargando();
                     resolve();
                 }
@@ -232,11 +231,11 @@ export class CarterizacionCapComComponent implements OnInit {
                     }
                     
                 } catch (e) {
-                    printError("Error procesando los datos de la tabla:", e);
+                    console.error("Error procesando los datos de la tabla:", e);
                 }
             },
             error: (err) => {
-                printError("Error en la petición a la BD:", err);
+                console.error("Error en la petición a la BD:", err);
                 this.cerrarCargando(); 
             },
             complete: () => {

@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { NgModule } from '@angular/core';
-import { MaterialModule } from 'app/material/material.module';
+import { SharedMaterialModule } from 'app/core/screen/components/shared-material.module';
 const components = [
     //NotFoundComponent
   ]
@@ -17,11 +17,11 @@ const components = [
       RouterModule,
       FlexLayoutModule,
       //SharedDirectivesModule,
-      MaterialModule,
+      SharedMaterialModule,
       //TranslateModule    
     ],
     declarations: components,
     exports: [FormsModule,
-      ReactiveFormsModule,MaterialModule]
+      ReactiveFormsModule,SharedMaterialModule]
   })
   export class SharedComponentsLegacyModule {}

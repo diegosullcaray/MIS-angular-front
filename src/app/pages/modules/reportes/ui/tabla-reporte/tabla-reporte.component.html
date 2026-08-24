@@ -10,9 +10,8 @@
             [style.background-color]="fondoEncabezado(columna)"
             [style.width]="anchoEncabezado(columna)"
             style="color: var(--mis-text-on-primary)"
-          >
-            {{ columna.header }}
-          </th>
+            [innerHTML]="columna.header"
+          ></th>
         }
       </tr>
     }

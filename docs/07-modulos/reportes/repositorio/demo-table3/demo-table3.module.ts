@@ -1,8 +1,9 @@
 import { NgModule } from "@angular/core";
-import { SharedModule } from "app/shared/shared.module";
+import { SharedCWCModule } from "app/core/screen/components/shared-cwc.module";
+import { SharedCMCModule } from "app/modules/shared/shared-cmc.module"; 
 import { DemoTable3Component } from "./demo-table3.component";
 import { DemoTable3RoutingModule } from "./demo-table3-routing.module";
-import { StgTable3Service } from "app/shared/components/stg-table3/stg-table3.service";
+import { StgTable3Service } from "app/core/screen/components/stg-table3/stg-table3.service";
 
 const components=[
     DemoTable3Component
@@ -11,7 +12,8 @@ const components=[
 @NgModule({
     imports:[
         DemoTable3RoutingModule,
-        SharedModule,
+        SharedCWCModule,
+        SharedCMCModule
     ],
     declarations:[components],
     providers:[StgTable3Service]

@@ -8,14 +8,13 @@ import { UntypedFormControl } from '@angular/forms';
 import { ReportT } from '../../../../services/report';
 import { SelectService } from '../../../../services/select.service';
 import { TableMHService } from '../../../../services/table.service';
-import { ComercialService } from 'app/pages/modules/reportes/legacy/comercial/comercial.service';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
-import { com } from 'app/pages/modules/reportes/legacy/comercial/com-map.module';
-import { isNull, isNullOrUndefined } from 'app/core/helpers/functions.util';
+import { ComercialService } from 'app/modules/reportes/legacy/comercial/comercial.service';
+import { UserService } from 'app/system/admin/services/user.service';
+import { com } from 'app/modules/reportes/legacy/comercial/com-map.module';
+import { isNull, isNullOrUndefined } from 'app/core/shared/functions.util';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { DatePipe } from '@angular/common';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { printLog } from 'app/core/helpers/debug.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
 
 @Component({
   selector: 'app-report-cra-v11',
@@ -80,7 +79,7 @@ export class ReportCraV11Component implements OnInit, OnDestroy {
     this.route.data.subscribe(d => {
      
       this.report = new ReportT(com(d.report));
-      printLog(this.report)
+      console.log(this.report)
       this.iniHierarchy();
       this.mergeParams();
       this.rendererSync(); 
@@ -94,7 +93,7 @@ export class ReportCraV11Component implements OnInit, OnDestroy {
 
   private iniHierarchy() {
     let cfg = this.antRep.getHierarchyConfig(this.report.getJerar());
-    printLog(cfg)
+    console.log(cfg)
     this.antRep.getBaseHierarchy(cfg.code).subscribe(
       x => {
         let bh: any = x.body.base_hierarchy;
@@ -205,7 +204,7 @@ export class ReportCraV11Component implements OnInit, OnDestroy {
     confT.results(true, true, false);
     this.config_table[add.index] = confT;
     const params = { ...confT.getParamsAdd(), ...r };
-    printLog(params)
+    console.log(params)
     this.cs.getRegularData(report, params)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
@@ -239,14 +238,14 @@ export class ReportCraV11Component implements OnInit, OnDestroy {
         map(([page, level, filter, filterA]) => {
           const find = '_03'
           const index = 1
-          printLog(find)
+          console.log(find)
           const table = this.report.getTableFind(index);
           const report: string = this.report.getRNameCompleted(find);
           const confT = new TableMHService(table);
           confT.results(true, true, false);
           this.config_table_ajax = confT;
           const params = { ...confT.getParamsAdd(), ...page, ...level, ...filter, ...filterA};
-          printLog(params)
+          console.log(params)
           return { params: params, report: report }
         }),
         switchMap((r) => this.cs.getRegularData(r.report, r.params)),
@@ -265,7 +264,7 @@ export class ReportCraV11Component implements OnInit, OnDestroy {
   }
  
   private rendererFilterT(findT: string) {
-    printLog(findT)
+    console.log(findT)
     const filters: any = this.report.getFiltersTableFind(findT);
    // console.log(filters)
     filters.forEach(f => {

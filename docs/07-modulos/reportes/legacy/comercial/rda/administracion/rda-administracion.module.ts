@@ -29,7 +29,8 @@ import { ReportCraV1P5Module } from '../../../support/components/template/cra/re
 import { ReportCraV1P4Module } from '../../../support/components/template/cra/report-cra-v1p4/report-cra-v1p4.module';
 import { ReportCraV1P6Module } from '../../../support/components/template/cra/report-cra-v1p6/report-cra-v1p6.module';
 import { ReportCraV1P9Module } from '../../../support/components/template/cra/report-cra-v1p9/report-cra-v1p9.module';
-import { SharedModule } from 'app/shared/shared.module';
+import { SharedCWCModule } from 'app/core/screen/components/shared-cwc.module';
+import { SharedCMCModule } from 'app/modules/shared/shared-cmc.module';
 import { ReportCraV1P7Module } from '../../../support/components/template/cra/report-cra-v1p7/report-cra-v1p7.module';
 import { ReportCraV8Module } from '../../../support/components/template/cra/report-cra-v8/report-cra-v8.module';
 import { ReportCraV1P8Module } from '../../../support/components/template/cra/report-cra-v1p8/report-cra-v1p8.module';
@@ -43,7 +44,8 @@ import { ReportCraV1P11Module } from '../../../support/components/template/cra/r
     RdaAdministracionRoutingModule,
     SelectModule,
     TableModule,
-    SharedModule,
+    SharedCWCModule,
+    SharedCMCModule,
 
     SharedComponentsLegacyModule,
 

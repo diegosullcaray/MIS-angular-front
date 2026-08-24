@@ -1,20 +1,19 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, AfterViewInit, HostListener, ElementRef } from "@angular/core";
-import { IStgTableHeader } from "app/shared/components/stg-table/stg-table.interface";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { IStgTableHeader } from "app/core/screen/components/stg-table/stg-table.interface";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
-import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/helpers/functions.util';
+import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/shared/functions.util';
 import { formatNumber } from '@angular/common';
 import { Console } from 'console';
 import { tableConf3 } from '../esg/esg.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { filter1, tableConfOPTS, tblHeaders } from './desembolsos-m.util';
 import { BehaviorSubject, Subject, combineLatest } from 'rxjs';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
-import { StgWindowConfig } from 'app/shared/components/stg-window/stg-window.config';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
+import { StgWindowConfig } from 'app/core/screen/components/stg-window/stg-window.config';
 import { MatDialog } from '@angular/material/dialog';
-import { printLog } from 'app/core/helpers/debug.util';
 
 @Component({
     selector: 'app-desembolsos-m.component',
@@ -173,17 +172,17 @@ export class DesembolsosMComponent implements OnInit, AfterViewInit {
 
         // Solo abrir si tip_cod es 17
         if (this.ftipCod !== 17) {
-            printLog('Modal bloqueado: tip_cod != 17');
+            console.log('Modal bloqueado: tip_cod != 17');
             return;
         }
 
         // No abrir si es el primer registro
         if (evt.row.fila === 1) {
-            printLog('Modal bloqueado: es el primer registro');
+            console.log('Modal bloqueado: es el primer registro');
             return;
         }
 
-        printLog('Abriendo modal:', evt);
+        console.log('Abriendo modal:', evt);
 
         this.varsDataRows = evt;
         this.pointer += 1;
@@ -284,7 +283,7 @@ export class DesembolsosMComponent implements OnInit, AfterViewInit {
             this.dataSource = r.data;
             this.headerDefs = JSON.parse(r.headers);
 
-            printLog(this.selector1)
+            console.log(this.selector1)
  
             this.processHeaders();
             
@@ -342,7 +341,7 @@ export class DesembolsosMComponent implements OnInit, AfterViewInit {
 
     private createCellRenderer(columnKey: string) {
         return (row: any, column: string, value: any) => {
-            printLog(`CellRenderer para ${columnKey}:`, { 
+            console.log(`CellRenderer para ${columnKey}:`, { 
                 IDRango: row?.IDRango, 
                 column, 
                 value 

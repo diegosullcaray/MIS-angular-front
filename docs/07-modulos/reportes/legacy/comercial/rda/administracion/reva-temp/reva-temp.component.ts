@@ -5,12 +5,12 @@ import { Subject, ReplaySubject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ActivatedRoute } from '@angular/router';
-import { ReportT } from 'app/pages/modules/reportes/legacy/support/services/report';
-import { TableMHService } from 'app/pages/modules/reportes/legacy/support/services/table.service';
+import { ReportT } from 'app/modules/reportes/legacy/support/services/report';
+import { TableMHService } from 'app/modules/reportes/legacy/support/services/table.service';
 import { ComercialService } from '../../../comercial.service';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
+import { UserService } from 'app/system/admin/services/user.service';
 import { cra } from '../cra-map';
-import { SelectService } from 'app/pages/modules/reportes/legacy/support/services/select.service';
+import { SelectService } from 'app/modules/reportes/legacy/support/services/select.service';
 
 @Component({
   selector: 'app-reva-temp',

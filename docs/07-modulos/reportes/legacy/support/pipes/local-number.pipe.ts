@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { formatNumber, formatPercent, formatDate } from '@angular/common';
-import { isNull, isUndefined } from 'app/core/helpers/functions.util';
+import { isNull, isUndefined } from 'app/core/shared/functions.util';
 
 @Pipe({
   name: 'localNumber'

@@ -17,7 +17,7 @@
     }
   </ng-template>
   <ng-template pTemplate="body" let-fila>
-    <tr [class.font-bold]="destacada(fila)" [style.background-color]="destacada(fila) ? 'var(--mis-hover)' : null">
+    <tr [class.font-bold]="destacada(fila)" [class.cursor-pointer]="seleccionable()" [style.background-color]="destacada(fila) ? 'var(--mis-hover)' : null" (click)="onClickFila(fila)">
       @for (columna of encabezados().columnasHoja; track columna.key) {
         <td class="text-[13px] whitespace-nowrap text-center" [style]="columna.style" [style.color]="color(fila, columna)">
           {{ valor(fila, columna) }}

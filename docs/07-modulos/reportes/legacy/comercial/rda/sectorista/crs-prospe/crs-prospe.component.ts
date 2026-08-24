@@ -8,15 +8,14 @@ import { ReportT } from '../../../../support/services/report';
 import { crs } from '../crs-map';
 import { SelectService } from '../../../../support/services/select.service';
 import { UntypedFormControl, UntypedFormGroup, UntypedFormBuilder, FormArray, Validators } from '@angular/forms';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
-import { isNull, isNullOrUndefined } from 'app/core/helpers/functions.util';
+import { UserService } from 'app/system/admin/services/user.service';
+import { isNull, isNullOrUndefined } from 'app/core/shared/functions.util';
 import { MatDialogConfig } from '@angular/material/dialog';
 import {
   MatDialog,
   MatDialogRef,
   MAT_DIALOG_DATA
 } from "@angular/material/dialog";
-import { printLog } from 'app/core/helpers/debug.util';
 import { AddProspecomponent } from './add-prospe.component'; 
 //import { RegistrarVisitaService } from '../../../../../services/registrar-visita.service';
 export interface DialogData {
@@ -244,7 +243,7 @@ export class CrsProspeComponent implements OnDestroy,OnInit {
 
     public submit() {
         this.dataSaved = true;
-        printLog(this.nn.desc);
+        console.log(this.nn.desc);
         this.close();
     }
    
@@ -335,20 +334,20 @@ export class CrsProspeComponent implements OnDestroy,OnInit {
 
   public update(r){
     let p = this.us.get('profile');
-    printLog(p);
+    console.log(p);
     let v = p.tip_use;
     let n = p.num_doc;
     if(1==1 || this.tUser==0 || (v===1 && n == r.row.num_doc_sec)){
       this.cliente=r.row.nom_cli;
       delete r.row.nom_cli;
       this.data={...r.row};
-      printLog(this.data)
+      console.log(this.data)
       this.selected=1;
 
       //const emailF= this.formG.controls.email as FormControl;
       let reaccion=isNullOrUndefined(r.row.reaccion)?'{}':r.row.reaccion;
       const reaccionJ:{}=JSON.parse(reaccion);
-      printLog(reaccionJ)
+      console.log(reaccionJ)
       //const reaccion:{}=JSON.parse(r.row.reaccion);
       this.formG.reset();
       this.formG.patchValue(reaccionJ)

@@ -2,6 +2,7 @@
 @import "tailwindcss";
 @import "primeicons/primeicons.css";
 @import "driver.js/dist/driver.css";
+/* maplibre-gl/dist/maplibre-gl.css — se añade automáticamente desde mapa.component cuando se instala el paquete */
 
 /* MIS Design System Tokens */
 @import "./app/theme/tokens.css";
@@ -19,4 +20,4 @@
 @source "./src/**/*.ts";
 
 /* ── PrimeNG cssLayer ordering ────────────────────────────── */
-@layer theme, base, primeng, utilities;
+@layer theme, base, primeng, utilities;

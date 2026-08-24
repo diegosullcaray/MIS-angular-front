@@ -7,7 +7,7 @@ const routes: Routes = [
         children:[
             {
                 path: "agro-mix",
-                loadChildren: () => import('../../../repositorio/agro-mix-d/agro-mix-d.module').then(m => m.agroMixDModule)
+                loadChildren: () => import('../../../repositorio/agro-mix/agro-mix.module').then(m => m.agroMixModule)
  
  
             }   

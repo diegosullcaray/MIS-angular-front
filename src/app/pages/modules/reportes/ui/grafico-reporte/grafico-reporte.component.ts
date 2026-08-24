@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, effect, inject, input, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, effect, inject, input, output, viewChild } from '@angular/core';
 import { Chart, registerables, type ChartConfiguration } from 'chart.js';
 import { ThemeService } from '../../../../full-pages/layout/services/theme.service';
 import type { BloqueGrafico } from '../../models/grafico-reporte.model';
@@ -22,6 +22,8 @@ export class GraficoReporteComponent {
   private chart: Chart | null = null;
 
   readonly datos = input.required<BloqueGrafico>();
+  /** Emite el label (categoría) de la barra/punto clickeado, para abrir el modal de detalle. */
+  readonly puntoSeleccionado = output<string>();
 
   constructor() {
     effect(() => {
@@ -68,6 +70,13 @@ export class GraficoReporteComponent {
         plugins: {
           legend: { display: datos.series.length > 1, labels: { color: colorTexto } },
           tooltip: { mode: 'index', intersect: false },
+        },
+        onClick: (_event, elements, chart) => {
+          if (elements.length > 0) {
+            const idx = elements[0].index;
+            const label = chart.data.labels?.[idx];
+            if (label) this.puntoSeleccionado.emit(String(label));
+          }
         },
       },
     };

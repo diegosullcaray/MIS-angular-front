@@ -5,8 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ControlCargasRoutingModule } from './control-cargas-routing.module';
 
-//import { WinderService } from '../../../../../core/data/remote/winder/winder.service';
-import { WinderService } from '../../../../../core/data/remote/winder/winder.service';
+//import { WinderService } from '../../../../core/data/remote/winder/winder.service';
+import { WinderService } from '../../../../core/data/remote/winder/winder.service';
 import { ModRepService } from '../support/data/ant-mod-rep.service';
 import { ModSecService } from '../support/data/ant-mod-sec.service';
 import { ComercialService } from '../comercial/comercial.service';

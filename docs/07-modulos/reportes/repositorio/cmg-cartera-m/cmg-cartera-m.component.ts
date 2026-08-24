@@ -1,14 +1,13 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from "@angular/core";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
-import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/helpers/functions.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/shared/functions.util';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { filter1, tableConfOPTS, tableConfOPTS2, trafficFnMap } from './cmg-cartera-m.util';
 import { BehaviorSubject, Subject, combineLatest } from 'rxjs';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
-import { printLog } from 'app/core/helpers/debug.util';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
 
 @Component({
     selector: 'app-cmg-cartera-m.component',
@@ -485,7 +484,7 @@ reiniciarAnimaciones() {
 
     }
     onFechaChange(item: any) {
-      printLog('Fecha seleccionada:', item);
+      console.log('Fecha seleccionada:', item);
       // Tu lógica existente (eventFilter)
       this.eventFilter({
         source: {
@@ -549,10 +548,10 @@ loadData() {
     this.preLoad();
   this.mostrarCard= false;
 
-  printLog(tipcod)
-  printLog(codrel)
-  printLog(this.fechaMensual.val )
-  printLog(fase)
+  console.log(tipcod)
+  console.log(codrel)
+  console.log(this.fechaMensual.val )
+  console.log(fase)
 
     this.antRep.getRegularTableResult("CMG_CARTERA_01", {
       codrel: codrel,
@@ -563,16 +562,16 @@ loadData() {
     }).subscribe(x => {
       const r = x.body.resultado;
       const semaforoKeys = ["8", "10","12"]; 
-      printLog(r.data) 
+      console.log(r.data) 
       this.saldoCartera=r.data[18][6]  //saldomediocierreayer
       this.metasaldoCartera=r.data[18][5]  ?? 0//saldomediomesante 
-      printLog(r.data[18][6])
-      printLog(r.data[18][5])
+      console.log(r.data[18][6])
+      console.log(r.data[18][5])
       this.varsaldomediovigente= ((Number((r.data[18][6] || '0').toString().replace(/,/g, '')) - 
       Number((r.data[18][5] || '0').toString().replace(/,/g, ''))) )
       .toLocaleString('en-US', { maximumFractionDigits: 3 });//r.data[18][9]  ?? 0
-      printLog(this.saldoCartera)
-      printLog(this.metasaldoCartera)
+      console.log(this.saldoCartera)
+      console.log(this.metasaldoCartera)
       this.dataSaldoMedioVigente=this.saldoCartera > this.metasaldoCartera ? 1 : -1;
       //console.log(this.dataSaldoMedioVigente)
       this.getTrendClass(this.dataSaldoMedioVigente)
@@ -656,7 +655,7 @@ loadData() {
       const headersProcesados = parsedHeaders.filter(
         h => !(h.cellStyle?.display?.toLowerCase() === 'none')
       );
-      printLog(headersProcesados)
+      console.log(headersProcesados)
       this.headerDefs = headersProcesados; 
       this.load2.next(true);
     });

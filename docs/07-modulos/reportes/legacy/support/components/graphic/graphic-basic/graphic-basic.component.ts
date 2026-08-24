@@ -2,9 +2,9 @@ import { Component, OnInit, Input, SimpleChanges, OnChanges, ChangeDetectorRef }
 import * as Highcharts from "highcharts";
 import HC_venn from 'highcharts/modules/venn';
 import HC_annotations from 'highcharts/modules/annotations'
-import { LayoutService } from 'app/pages/full-pages/layout/services/layout.service';
-import { isNull, isUndefined } from 'app/core/helpers/functions.util';
-import { baseAnimations } from 'app/shared/animations/animations.util';
+import { LayoutService } from 'app/system/admin/services/layout.service';
+import { isNull, isUndefined } from 'app/core/shared/functions.util';
+import { baseAnimations } from 'app/core/screen/animations/animations.util';
 HC_venn(Highcharts);
 HC_annotations(Highcharts);
 

@@ -1,5 +1,4 @@
-import { isNullOrUndefined } from "app/core/helpers/functions.util";
-import { printLog } from 'app/core/helpers/debug.util';
+import { isNullOrUndefined } from "app/core/shared/functions.util";
 
 const tableStyleFn = function (row: any) {
     if (row.style == 1) {
@@ -48,9 +47,9 @@ const tableStyleFnModal = function (row: any) {
 }
 export const linkStyleFn = function (params: any) {
     // Extraemos directamente la propiedad 'style' desde rowData
-    printLog(params)
+    console.log(params)
     let styleValue = params?.rowData?.style;
-    printLog(styleValue)
+    console.log(styleValue)
     if (styleValue == 1) {
         return {
             "cursor": "pointer",

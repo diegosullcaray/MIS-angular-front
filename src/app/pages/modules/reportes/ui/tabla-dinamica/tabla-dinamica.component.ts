@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, LOCALE_ID } from '@angular/core';
+import { Component, computed, inject, input, output, LOCALE_ID } from '@angular/core';
 import { formatNumber } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { aplanarEncabezados } from '../../utils/tabla-dinamica.util';
@@ -20,6 +20,9 @@ export class TablaDinamicaComponent {
   readonly cargando = input(false);
   /** Pinta en verde/rojo las columnas de variación — legado `aplicarEstilos()` de `carterizacion-cap-com`, que lo aplica a toda clave que contenga `var`. */
   readonly colorearVariaciones = input(false);
+  
+  readonly seleccionable = input(false);
+  readonly filaSeleccionada = output<Record<string, unknown>>();
 
   protected readonly encabezados = computed(() => aplanarEncabezados(this.columnas()));
 
@@ -46,5 +49,11 @@ export class TablaDinamicaComponent {
   /** Fila "destacada" del backend (`row.style === 1` en el legado — total/resumen). */
   protected destacada(fila: Record<string, unknown>): boolean {
     return fila['style'] === 1;
+  }
+
+  protected onClickFila(fila: Record<string, unknown>): void {
+    if (this.seleccionable()) {
+      this.filaSeleccionada.emit(fila);
+    }
   }
 }

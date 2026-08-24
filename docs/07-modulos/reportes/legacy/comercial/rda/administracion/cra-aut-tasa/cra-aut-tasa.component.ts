@@ -1,7 +1,7 @@
 import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
-import { ReportT } from 'app/pages/modules/reportes/legacy/support/services/report';
-import { SelectService } from 'app/pages/modules/reportes/legacy/support/services/select.service';
-import { TableMHService } from 'app/pages/modules/reportes/legacy/support/services/table.service';
+import { ReportT } from 'app/modules/reportes/legacy/support/services/report';
+import { SelectService } from 'app/modules/reportes/legacy/support/services/select.service';
+import { TableMHService } from 'app/modules/reportes/legacy/support/services/table.service';
 
 import { combineLatest, Subject, Subscription, ReplaySubject } from 'rxjs';
 
@@ -9,9 +9,8 @@ import { takeUntil } from 'rxjs/operators';
 import { ComercialService } from '../../../comercial.service';
 import { cra } from '../cra-map';
 import { ActivatedRoute } from '@angular/router';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { printLog } from 'app/core/helpers/debug.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
 @Component({
   selector: 'app-cra-aut-tasa',
   templateUrl: './cra-aut-tasa.component.html',
@@ -115,7 +114,7 @@ export class CraAutTasaComponent implements OnInit, OnDestroy {
     confT.results(true, true, false);
     this.config_table[add.index] = confT;
     const params = { ...confT.getParamsAdd(), ...r };
-    printLog(params); 
+    console.log(params); 
     const reportType=this.report.getReportType();
     this.cs.getMixData(report,reportType,params)
       .pipe(takeUntil(this.destroy$))

@@ -9,9 +9,8 @@ import { GraphicService } from '../../../../services/graphic.service';
 import { TableMHService } from '../../../../services/table.service';
 import { ComercialService } from '../../../../../comercial/comercial.service';
 import { cra } from '../../../../../comercial/rda/administracion/cra-map';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { printLog } from 'app/core/helpers/debug.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
 
 
 @Component({
@@ -86,15 +85,15 @@ export class ReportCraV1p7Component implements OnInit, OnDestroy {
 
   private processFilters() {
     const filters: any = this.report.getFilters();
-    printLog(filters);
+    console.log(filters);
     filters.forEach(f => {
       const confS = new SelectService();
       confS.labelName(f.label);
       confS.getVariable(f.variable);
       confS.selectedVAlue(f.selected);
       confS.adddata(f.data);
-      printLog(f.variable);
-      printLog(f.selected)
+      console.log(f.variable);
+      console.log(f.selected)
       this.configFilters.push(confS);
       
       
@@ -107,9 +106,9 @@ export class ReportCraV1p7Component implements OnInit, OnDestroy {
   }
 
   private iniHierarchy() {
-    printLog(this.report.getJerar());
+    console.log(this.report.getJerar());
     let cfg = this.antRep.getHierarchyConfig(this.report.getJerar()); 
-    printLog(cfg);
+    console.log(cfg);
     this.antRep.getBaseHierarchy(cfg.code).subscribe(
       x => {
         let bh: any = x.body.base_hierarchy;
@@ -206,7 +205,7 @@ export class ReportCraV1p7Component implements OnInit, OnDestroy {
     confT.results(true, true, false);
     this.config_table[add.index] = confT;
     const params = { ...confT.getParamsAdd(), ...r };//this.filterF$
-    printLog(params);
+    console.log(params);
     //this.renderUltGestion(params.tip_cod,params.cod_rel);
     const reportType = this.report.getReportType();
     //console.log(reportType);
@@ -215,7 +214,7 @@ export class ReportCraV1p7Component implements OnInit, OnDestroy {
       .subscribe(
         (data) => {
           let result = data.body['result'];
-          printLog(result.body);
+          console.log(result.body);
           const confT = new TableMHService(table);
           confT.results(true, false, false);
           confT.addColumns(result.headers);

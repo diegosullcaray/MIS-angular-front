@@ -1,14 +1,13 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
 import { ModSysAdminService } from 'app/core/data/remote/instances/mod-sys-admin.service';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
+import { UserService } from 'app/system/admin/services/user.service';
 import * as Highcharts from 'highcharts';
 import { ModRepService } from '../../compartido/servicios/mod-rep.service';
-import { cloneObject, isNullOrUndefined } from 'app/core/helpers/functions.util';
+import { cloneObject, isNullOrUndefined } from 'app/core/shared/functions.util';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import moment from 'moment';
 import { principalConfig, tblOpts } from './banca-solidaria.util';
-import { printLog } from 'app/core/helpers/debug.util';
 
 export interface RegionData {
   nombre: string;
@@ -121,8 +120,8 @@ ddHier(evt: any) {
   if (key !== 'descripcion') {
     return; 
   }
-  printLog(evt)
-  printLog(key)
+  console.log(evt)
+  console.log(key)
   
      
   this.loader.open();
@@ -131,7 +130,7 @@ ddHier(evt: any) {
   this.principal.loading = true;  
   let cod_rel = evt.row.hcodrel; 
   this.saveBuffer({ tip_cod: tip_cod, cod_rel: cod_rel, des_rel: evt.value }); 
-  printLog(tip_cod,cod_rel)
+  console.log(tip_cod,cod_rel)
   this.setDs(tip_cod, cod_rel); 
 }
 private setDs(tip_cod: number, cod_rel: string) { 
@@ -143,7 +142,7 @@ private setDs(tip_cod: number, cod_rel: string) {
     let r = x.body.resultado;
     this.dataSource = r.data; 
     this.setKpiValues(r.data);
-    printLog(r.data) 
+    console.log(r.data) 
     this.load0.next(true);
 });
 }
@@ -232,8 +231,8 @@ private getBaseHierAsync(): Promise<void> {
                                 "fec":  this.currentDate 
                             }).subscribe(x => {
                                 let r = x.body.resultado;   
-                                printLog(r.data)  
-                                printLog(JSON.parse(r.headers))
+                                console.log(r.data)  
+                                console.log(JSON.parse(r.headers))
                                 this.dataSource = r.data; 
                                 this.headerDefs = JSON.parse(r.headers);
                                 this.setKpiValues(r.data);

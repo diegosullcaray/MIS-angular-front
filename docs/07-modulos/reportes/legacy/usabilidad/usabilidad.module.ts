@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { UsabilidadRoutingModule } from './usabilidad-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { MaterialModule } from 'app/material/material.module';
+import { SharedMaterialModule } from 'app/core/screen/components/shared-material.module';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -13,7 +13,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
   imports: [
     CommonModule,
     UsabilidadRoutingModule,
-    MaterialModule,
+    SharedMaterialModule,
     HighchartsChartModule,
     FlexLayoutModule]
 })

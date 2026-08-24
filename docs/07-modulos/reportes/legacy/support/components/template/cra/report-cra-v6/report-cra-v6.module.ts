@@ -7,7 +7,8 @@ import { ReportCraV6Component } from './report-cra-v6.component';
 import { SelectModule } from '../../../select/select.module';
 import { TableModule } from '../../../table/table.module';
 import { GraphicModule } from '../../../graphic/graphic.module';
-import { SharedModule } from 'app/shared/shared.module';
+import { SharedCWCModule } from 'app/core/screen/components/shared-cwc.module';
+import { SharedCMCModule } from 'app/modules/shared/shared-cmc.module';
 const components = [
   ReportCraV6Component
 ]
@@ -19,7 +20,8 @@ const components = [
     TableModule,
     GraphicModule,
     //NgxPaginationModule,
-    SharedModule,
+    SharedCWCModule,
+    SharedCMCModule
   ],
   declarations: components,
   exports:components

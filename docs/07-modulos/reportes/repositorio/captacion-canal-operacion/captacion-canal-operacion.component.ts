@@ -1,15 +1,14 @@
 import { ChangeDetectorRef, OnInit, ViewChild } from "@angular/core";
 import { Component } from "@angular/core";
-import { StgPaginatorComponent } from "app/shared/components/stg-paginator/stg-paginator.component";
-import { IStgTableHeader } from "app/shared/components/stg-table/stg-table.interface";
-import { prepareDataForPagination } from "app/shared/components/stg-table/stg-table.util";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { StgPaginatorComponent } from "app/core/screen/components/stg-paginator/stg-paginator.component";
+import { IStgTableHeader } from "app/core/screen/components/stg-table/stg-table.interface";
+import { prepareDataForPagination } from "app/core/screen/components/stg-table/stg-table.util";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
 import { tableConf, loadingConf, tableHeaders } from "./captacion-canal-operacion.util";
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
+import { isNullOrUndefined } from '../../../../core/shared/functions.util';
 import { ReportT } from '../../legacy/support/services/report';
 import { cra } from '../../legacy/comercial/rda/administracion/cra-map';
-import { printLog } from 'app/core/helpers/debug.util';
 
 @Component({
     selector: 'app-captacion-canal-operacion-rep',
@@ -49,7 +48,7 @@ export class CaptacionCanalOperacionComponent implements OnInit {
         this.report = new ReportT(cra('LST_AUT'));
 
         let cfg = this.antRep.getHierarchyConfig(this.report.getJerar());
-        printLog(cfg.code)
+        console.log(cfg.code)
     this.antRep.getBaseHierarchy(12).subscribe(
       x => {
         let bh: any = x.body.base_hierarchy;

@@ -4,13 +4,11 @@ import { AntService } from "app/core/data/remote/ant/ant-service.class";
 import { ModSysAdminService } from "app/core/data/remote/instances/mod-sys-admin.service";
 import { IWinderResponse } from "app/core/data/remote/winder/winder.interface";
 import { WinderService } from "app/core/data/remote/winder/winder.service";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { UserService } from "app/system/admin/services/user.service";
 import { Observable } from "rxjs";
 import { ReportType } from '../../legacy/support/data/ant-mod-rep.service';
 import { Strand } from 'app/core/data/remote/winder/strand.class';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { environment } from 'environments/environment';
-import { printLog } from 'app/core/helpers/debug.util';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
 
 @Injectable()
 export class ModRepService extends AntService {
@@ -22,7 +20,7 @@ export class ModRepService extends AntService {
     constructor(private winderService: WinderService, private user: UserService, private antAdmin: ModSysAdminService) {
         super({
             port: 5304,
-            secret: environment.moduleSecrets.reporting,
+            secret: "B0ECE459601D3577F7408D5C8DEA314A",
             appId: "reporting"
         }, winderService);
         let profile = this.user.get('profile');
@@ -68,7 +66,7 @@ export class ModRepService extends AntService {
     public getRegularTableResult(codRep:string,params: any): Observable<IWinderResponse>{
         
        params["cod_rep"]=codRep;
-       printLog(params)
+       console.log(params)
        //console.log(this.getSimpleResponseString("table.regular", params, "resultado"))
        return this.getSimpleResponseString("table.regular", params, "resultado");
     }

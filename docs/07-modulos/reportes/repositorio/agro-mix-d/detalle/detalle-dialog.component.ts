@@ -1,12 +1,11 @@
 import { Component, Inject, OnInit, ViewChild, ViewEncapsulation, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
 import { tblOptsModal } from '../agro-mix-d.util';
-import { cloneObject } from 'app/core/helpers/functions.util';
+import { cloneObject } from 'app/core/shared/functions.util';
 import * as L from 'leaflet';
 import { LayerGroup } from 'leaflet'; 
-import { printLog, printWarn, printError } from 'app/core/helpers/debug.util';
 
 @Component({
   selector: 'app-detalle-dialog',
@@ -82,7 +81,7 @@ export class DetalleDialogComponent implements OnInit, AfterViewInit {
                 }
             }
         } catch (error) {
-            printError('❌ Error al aplicar estilo manualmente a la barra:', error);
+            console.error('❌ Error al aplicar estilo manualmente a la barra:', error);
         }
     }, 0); 
   }
@@ -121,7 +120,7 @@ export class DetalleDialogComponent implements OnInit, AfterViewInit {
     const name = evt.row.HDESCLI || evt.row.HCTACLI || 'Ubicación';
 
     if (isNaN(lat) || isNaN(lng)) {
-      printError("❌ Coordenadas inválidas:", evt.row);
+      console.error("❌ Coordenadas inválidas:", evt.row);
       return;
     }
       
@@ -135,11 +134,11 @@ export class DetalleDialogComponent implements OnInit, AfterViewInit {
  
   private setupMap(): void {
     if (!this.isMapReady || !this.map || !this.dataParaMapa) {
-      printWarn("⏳ Mapa no listo o sin datos, esperando...");
+      console.warn("⏳ Mapa no listo o sin datos, esperando...");
       return;
     }
 
-    printLog('🗺️ Configurando mapa (setupMap)...');
+    console.log('🗺️ Configurando mapa (setupMap)...');
     const { lat, lng, name } = this.dataParaMapa;
  
     this.map.invalidateSize();
@@ -164,14 +163,14 @@ export class DetalleDialogComponent implements OnInit, AfterViewInit {
     this.filterValue = inputValue;
 
     const v = inputValue.toString().toLowerCase();  
-    printLog('Buscando:', v);
+    console.log('Buscando:', v);
 
     if (v === "") { 
       this.dataSource3Page = [...this.originalDataSource];  
     } else { 
-      printLog(this.dataSource3Page)  
+      console.log(this.dataSource3Page)  
       this.dataSource3Page = this.originalDataSource.filter(x => {
-         printLog(x)
+         console.log(x)
         const cli= (x.HDESCLI ?? '').toLowerCase();
         const fecpro = (x.HFECPRO ?? '').toString().toLowerCase();
         const cultivo = (x.HDESCUL ?? '').toLowerCase();

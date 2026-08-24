@@ -1,20 +1,19 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, AfterViewInit } from "@angular/core";
-import { IStgTableHeader } from "app/shared/components/stg-table/stg-table.interface";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { IStgTableHeader } from "app/core/screen/components/stg-table/stg-table.interface";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
-import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/helpers/functions.util';
+import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/shared/functions.util';
 import { formatNumber } from '@angular/common';
 import { Console } from 'console';
 import { tableConf3 } from '../esg/esg.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { tableConfOPTS, tblHeaders } from './desembolsos.util';
 import { BehaviorSubject, Subject, combineLatest } from 'rxjs';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
-import { StgWindowConfig } from 'app/shared/components/stg-window/stg-window.config';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
+import { StgWindowConfig } from 'app/core/screen/components/stg-window/stg-window.config';
 import { MatDialog } from '@angular/material/dialog';
-import { printLog } from 'app/core/helpers/debug.util';
 
 @Component({
     selector: 'app-desembolsos.component',
@@ -124,17 +123,17 @@ export class DesembolsosComponent implements OnInit, AfterViewInit {
 
         // Solo abrir si tip_cod es 17
         if (this.ftipCod !== 17) {
-            printLog('Modal bloqueado: tip_cod != 17');
+            console.log('Modal bloqueado: tip_cod != 17');
             return;
         }
 
         // No abrir si es el primer registro
         if (evt.row.fila === 1) {
-            printLog('Modal bloqueado: es el primer registro');
+            console.log('Modal bloqueado: es el primer registro');
             return;
         }
 
-        printLog('Abriendo modal:', evt);
+        console.log('Abriendo modal:', evt);
 
         this.varsDataRows = evt;
         this.pointer += 1;
@@ -195,7 +194,7 @@ export class DesembolsosComponent implements OnInit, AfterViewInit {
             "cod_rel": codrel,
             "fec": this.currentDate
         }).subscribe(x => {
-            printLog('Datos recibidos:', x.body.resultado);
+            console.log('Datos recibidos:', x.body.resultado);
             let r = x.body.resultado;
             this.dataSource = r.data;
             this.headerDefs = JSON.parse(r.headers);
@@ -207,17 +206,17 @@ export class DesembolsosComponent implements OnInit, AfterViewInit {
     }
 
     private processHeaders() {
-        printLog('=== PROCESANDO HEADERS ===');
+        console.log('=== PROCESANDO HEADERS ===');
         
         if (this.headerDefs) {
-            printLog(this.headerDefs[1])
-            printLog(this.headerDefs[1].subs) 
+            console.log(this.headerDefs[1])
+            console.log(this.headerDefs[1].subs) 
             if (this.headerDefs[1] && this.headerDefs[1].subs) {
-                printLog('Configurando headers para Número de Operaciones...');
+                console.log('Configurando headers para Número de Operaciones...');
                 
                 this.headerDefs[1].subs.forEach((sub: any, index: number) => {
                     if (['1_Ope', '2_Ope', '3_Ope'].includes(sub.key)) {
-                        printLog(`Configurando sub-header NUM ${sub.key}`);
+                        console.log(`Configurando sub-header NUM ${sub.key}`);
                         
                         sub.cellRenderer = this.createCellRenderer(sub.key);
                         sub.cellTemplate = this.createCellRenderer(sub.key);
@@ -230,11 +229,11 @@ export class DesembolsosComponent implements OnInit, AfterViewInit {
             }
              
             if (this.headerDefs[2] && this.headerDefs[2].subs) {
-                printLog('Configurando headers para Monto Desembolsado...');
+                console.log('Configurando headers para Monto Desembolsado...');
                 
                 this.headerDefs[2].subs.forEach((sub: any, index: number) => {
                     if (['1_MON', '2_MON', '3_MON'].includes(sub.key)) {
-                        printLog(`Configurando sub-header MON ${sub.key}`);
+                        console.log(`Configurando sub-header MON ${sub.key}`);
                         
                         sub.cellRenderer = this.createCellRenderer(sub.key);
                         sub.cellTemplate = this.createCellRenderer(sub.key);
@@ -247,19 +246,19 @@ export class DesembolsosComponent implements OnInit, AfterViewInit {
             }
         }
         
-        printLog('Headers procesados:', this.headerDefs);
+        console.log('Headers procesados:', this.headerDefs);
     }
 
     private createCellRenderer(columnKey: string) {
         return (row: any, column: string, value: any) => {
-            printLog(`CellRenderer para ${columnKey}:`, { 
+            console.log(`CellRenderer para ${columnKey}:`, { 
                 IDRango: row?.IDRango, 
                 column, 
                 value 
             });
             
             if (row && row.IDRango === 12) {
-                printLog(`🟢 APLICANDO ESTILO para ${columnKey}!`); 
+                console.log(`🟢 APLICANDO ESTILO para ${columnKey}!`); 
                 return value;
             }
             return value;
@@ -357,24 +356,24 @@ export class DesembolsosComponent implements OnInit, AfterViewInit {
         const tableElement = document.querySelector('stg-table2');
         
         if (!tableElement) {
-            printLog('Tabla no encontrada, reintentando...');
+            console.log('Tabla no encontrada, reintentando...');
             setTimeout(() => this.applyDirectDOMStyles(), 200);
             return;
         }
 
-        printLog('Tabla encontrada, aplicando estilos...');
+        console.log('Tabla encontrada, aplicando estilos...');
          
         const rows = tableElement.querySelectorAll('tbody tr, .table-row, .stg-table-row');
         
         if (rows.length === 0) {
-            printLog('No se encontraron filas, reintentando...');
+            console.log('No se encontraron filas, reintentando...');
             setTimeout(() => this.applyDirectDOMStyles(), 200);
             return;
         }
 
         rows.forEach((row: any, rowIndex: number) => {
             if (this.dataSource && this.dataSource[rowIndex] && this.dataSource[rowIndex].IDRango === 12) {
-                printLog(`Aplicando estilos a fila ${rowIndex} (IDRango=12)`);
+                console.log(`Aplicando estilos a fila ${rowIndex} (IDRango=12)`);
                 
                 const cells = row.querySelectorAll('td, .table-cell, .stg-table-cell');
                 const rowData = this.dataSource[rowIndex];
@@ -386,7 +385,7 @@ export class DesembolsosComponent implements OnInit, AfterViewInit {
                         const columnKey = this.getColumnKey(cellIndex);
                         const value = rowData[columnKey];
                         
-                        printLog(`Estilizando celda ${columnKey} con valor ${value}`);
+                        console.log(`Estilizando celda ${columnKey} con valor ${value}`);
                          
                         const color = this.getBackgroundColor(value, rowData, columnKey);
                          
@@ -443,7 +442,7 @@ export class DesembolsosComponent implements OnInit, AfterViewInit {
         const observer = new MutationObserver((mutationsList) => {
             for (let mutation of mutationsList) {
                 if (mutation.type === 'childList') {
-                    printLog('Tabla modificada, reaplicando estilos...');
+                    console.log('Tabla modificada, reaplicando estilos...');
                     setTimeout(() => this.applyDirectDOMStyles(), 50);
                 }
             }

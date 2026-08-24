@@ -2,8 +2,9 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FormsModule } from "@angular/forms";
-import { SharedModule } from "app/shared/shared.module";
-import { MaterialModule } from 'app/material/material.module';
+import { SharedCWCModule } from "app/core/screen/components/shared-cwc.module";
+import { SharedMaterialModule } from "app/core/screen/components/shared-material.module";
+import { SharedCMCModule } from "app/modules/shared/shared-cmc.module";   
 import { reasignadoComponent } from "./reasignado.component";
 import { reasignadoRoutingModule } from "./reasignado-routing.module";
 
@@ -13,8 +14,9 @@ import { reasignadoRoutingModule } from "./reasignado-routing.module";
         CommonModule,
         FormsModule,
         FlexLayoutModule,
-        MaterialModule,
-        SharedModule,
+        SharedMaterialModule,
+        SharedCWCModule,
+        SharedCMCModule 
     ],
     declarations:[reasignadoComponent],
     //providers:[ModAppService]

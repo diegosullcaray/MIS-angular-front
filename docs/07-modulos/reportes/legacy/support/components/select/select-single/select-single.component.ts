@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
 import { ModSecService } from '../../../data/ant-mod-sec.service';
 import { IStrategosSelectBody, IStrategosSelectRemoteConfig } from './select-single-bearer.interface';
 

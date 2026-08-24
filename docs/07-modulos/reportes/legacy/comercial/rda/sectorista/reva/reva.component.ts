@@ -2,10 +2,11 @@ import { Component, OnInit,HostListener,AfterViewInit,ChangeDetectorRef} from '@
 import { FormGroup, FormControl, Validators, FormArray,FormBuilder } from '@angular/forms';
 import {combineLatest, of,Observable,merge, BehaviorSubject} from 'rxjs';
 import { startWith, map, tap, takeWhile } from 'rxjs/operators';
-import {baseAnimations} from 'app/shared/animations/animations.util'
-import {WinderService} from '../../../../../../../../core/data/remote/winder/winder.service';
-import { Strand } from '../../../../../../../../core/data/remote/winder/strand.class';
-import { IWinderConfig } from '../../../../../../../../core/data/remote/winder/winder-bearer.interface';
+import {baseAnimations} from '../../../../../../../core/screen/animations/animations.util'
+import {WinderService} from '../../../../../../../core/data/remote/winder/winder.service';
+import { Strand } from '../../../../../../../core/data/remote/winder/strand.class';
+import { IWinderConfig } from '../../../../../../../core/data/remote/winder/winder-bearer.interface';
+//import { secStructureConfig } from 'app/system/session/session-structure.config';
 //import { RegistrarVisitaService } from '../../../../../services/registrar-visita.service';
 import { ActivatedRoute } from '@angular/router';
 

@@ -23,12 +23,13 @@ function filaEncabezadoVisible(columnas: ColumnaReporte[]): ColumnaReporte[] {
     const largoRacha = j - i;
     const anterior = resultado[resultado.length - 1];
     const siguiente = columnas[j];
+    
     const reachAnterior = anterior ? numeroColumnas(anterior.cols) - 1 : 0;
     const reachSiguiente = siguiente ? numeroColumnas(siguiente.cols) - 1 : 0;
-    const siguienteLibre = !!siguiente && !columnas[j + 1]?.hidden;
 
-    if (reachAnterior < largoRacha && !(siguienteLibre && reachSiguiente >= largoRacha) && anterior) {
-      const colSpan = numeroColumnas(anterior.cols) + (largoRacha - reachAnterior);
+    if (anterior && reachAnterior + reachSiguiente < largoRacha) {
+      const missing = largoRacha - reachAnterior - reachSiguiente;
+      const colSpan = numeroColumnas(anterior.cols) + missing;
       resultado[resultado.length - 1] = { ...anterior, cols: colSpan };
     }
     i = j;

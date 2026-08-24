@@ -11,13 +11,13 @@ import { GraphicService } from '../../../../services/graphic.service';
 import { TableMHService } from '../../../../services/table.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { ComercialService } from 'app/pages/modules/reportes/legacy/comercial/comercial.service';
-import { cra } from 'app/pages/modules/reportes/legacy/comercial/rda/administracion/cra-map';
-import { isNull, isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
+import { ComercialService } from 'app/modules/reportes/legacy/comercial/comercial.service';
+import { cra } from 'app/modules/reportes/legacy/comercial/rda/administracion/cra-map';
+import { isNull, isNullOrUndefined } from 'app/core/shared/functions.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
+import { UserService } from 'app/system/admin/services/user.service';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { printLog } from 'app/core/helpers/debug.util';
+import { BuscadorKaypachaComponent } from 'app/modules/Kaypacha2/buscador/buscador.component';
 
 
 @Component({
@@ -84,11 +84,11 @@ export class ReportCraV1p8Component implements OnInit, OnDestroy {
 
   private iniHierarchy() {
     let cfg = this.antRep.getHierarchyConfig(this.report.getJerar());
-    printLog(cfg)//{code: 4, max_lvl: 1}
+    console.log(cfg)//{code: 4, max_lvl: 1}
     this.antRep.getBaseHierarchy(cfg.code).subscribe(
       x => {
         let bh: any = x.body.base_hierarchy;
-        printLog(bh)
+        console.log(bh)
         this.confHier1 = {
           roots: bh, 
           cod_hier: cfg.code, 
@@ -117,7 +117,7 @@ export class ReportCraV1p8Component implements OnInit, OnDestroy {
     .subscribe(([filter])=>{ 
       this.configT.forEach((find,index)=>{ 
         let datoUsuario = this.user.get("profile");  
-        printLog(datoUsuario)
+        console.log(datoUsuario)
         let params={}
         params={...filter} 
         params = { 
@@ -128,7 +128,7 @@ export class ReportCraV1p8Component implements OnInit, OnDestroy {
           Ter: filter['Ter'],
           fec: filter['fec']
         }
-        printLog(params)
+        console.log(params)
         this.renderTable(params,{find:find,index:index})
       })
     })

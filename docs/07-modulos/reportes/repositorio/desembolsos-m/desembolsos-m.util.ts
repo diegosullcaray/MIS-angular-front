@@ -1,5 +1,4 @@
-import { isNullOrUndefined } from "app/core/helpers/functions.util";
-import { printLog } from 'app/core/helpers/debug.util';
+import { isNullOrUndefined } from "app/core/shared/functions.util";
 
 const tableStyleFn = function (row: any) {
     if (row.style == 1) {
@@ -18,9 +17,9 @@ export const filter1 = [
    
 ];
 const cellStyleFn = function (row: any, key: string) {
-  printLog('Evaluando fila:', row.tip_cod, 'key:', key);
+  console.log('Evaluando fila:', row.tip_cod, 'key:', key);
   if (key === 'descripcion' && row.tip_cod === 17) {
-    printLog('✓ Estilo aplicado');
+    console.log('✓ Estilo aplicado');
     return {
       'cursor': 'pointer',
       'text-decoration': 'underline',
@@ -30,7 +29,7 @@ const cellStyleFn = function (row: any, key: string) {
   return {};
 };
 const rowClassFn = function (row: any) {
-   printLog(row)
+   console.log(row)
    return row.tip_cod === 17 ? 'resaltado-hover' : '';
 };
 export const tableConfOPTS = { 
@@ -52,7 +51,7 @@ const tlFn = function (value: number) {
       }
 }; 
 const colorFn = function (value: number): string {
-    printLog(value)
+    console.log(value)
     if (isNullOrUndefined(value)) {
       return 'red';
     } else if (value >= 0) {
@@ -64,16 +63,16 @@ const colorFn = function (value: number): string {
 
 
   const ctFn=function(value:string,row:any){ 
-   printLog(row)
+   console.log(row)
    if(row.htipcod==17){
-      printLog(row.htipcod)
-      printLog("excepto 17")
+      console.log(row.htipcod)
+      console.log("excepto 17")
       if(row.fila!=1){
       return {type: 'link',params: { underline: true }};
    }
    }  
    if(row.htipcod===17){
-      printLog("ES 17")
+      console.log("ES 17")
       return {type: 'none'};
 
    }

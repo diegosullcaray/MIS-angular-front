@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from "app/core/helpers/functions.util";
+import { isNullOrUndefined } from "app/core/shared/functions.util";
 
 export const colorPosNegStyleFn = function (params: any) {
     let val = Number(params.value);

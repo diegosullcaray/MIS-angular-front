@@ -2,9 +2,9 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DetalleBaseComponent } from './detalle-base.component';
 import { MonSalidasService } from '../compartido/servicios/mon-salidas.service';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { MonSalidasAntService } from '../compartido/servicios/mon-salidas-ant.service';
-import { LayoutService } from 'app/pages/full-pages/layout/services/layout.service';
+import { LayoutService } from 'app/system/admin/services/layout.service';
 
 
 @Component({

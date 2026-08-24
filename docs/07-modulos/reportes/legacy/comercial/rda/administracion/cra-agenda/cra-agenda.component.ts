@@ -1,7 +1,7 @@
 import { Component,ChangeDetectorRef, OnInit, OnDestroy} from '@angular/core';
-import { ReportT } from 'app/pages/modules/reportes/legacy/support/services/report';
-import { SelectService } from 'app/pages/modules/reportes/legacy/support/services/select.service';
-import { TableMHService } from 'app/pages/modules/reportes/legacy/support/services/table.service';
+import { ReportT } from 'app/modules/reportes/legacy/support/services/report';
+import { SelectService } from 'app/modules/reportes/legacy/support/services/select.service';
+import { TableMHService } from 'app/modules/reportes/legacy/support/services/table.service';
 
 import { combineLatest, Subject, Subscription, ReplaySubject } from 'rxjs';
 

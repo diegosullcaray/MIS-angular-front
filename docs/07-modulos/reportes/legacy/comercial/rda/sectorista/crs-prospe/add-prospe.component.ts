@@ -4,7 +4,7 @@ import { UntypedFormControl, UntypedFormGroup, UntypedFormBuilder, FormArray, Va
  
 import { ComercialService } from '../../../comercial.service';
 import { BehaviorSubject, ReplaySubject, Subject,combineLatest } from 'rxjs';
-import { UserService } from '../../../../../../../../pages/full-pages/layout/services/user.service';
+import { UserService } from '../../../../../../../system/admin/services/user.service';
 import { SelectService } from '../../../../support/services/select.service';
 import * as moment from 'moment'; 
 import { ReportT } from '../../../../support/services/report';
@@ -12,7 +12,6 @@ import { crs } from '../crs-map';
 import { TableMHService } from '../../../../support/services/table.service';
 import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-import { printLog } from 'app/core/helpers/debug.util';
 @Component({
   selector: "hello",
   templateUrl: './add-prospe.component.html',
@@ -293,15 +292,15 @@ export class AddProspecomponent implements OnDestroy,OnInit {
     let cod_bt = p.cod_bt;
     //console.log(JSON.stringify(cod_bt))
     this.data = ({HCODSEC: JSON.stringify(cod_bt)})
-    printLog({params: JSON.stringify(cod_bt)});
+    console.log({params: JSON.stringify(cod_bt)});
     const params={...this.data,...this.formG.getRawValue()}
     const report='ADD_PROS_CORRE_01';
     this.selected=0;
-    printLog(params)
-    printLog(JSON.stringify(params)) 
-  printLog(this.formG.getRawValue());
-  printLog(this.formG.value['HAPENOMB']);
-  printLog(this.data2)
+    console.log(params)
+    console.log(JSON.stringify(params)) 
+  console.log(this.formG.getRawValue());
+  console.log(this.formG.value['HAPENOMB']);
+  console.log(this.data2)
      
 
      this.cs.postRegularUpdate(report,{json:JSON.stringify(params)})
@@ -359,7 +358,7 @@ export class AddProspecomponent implements OnDestroy,OnInit {
     });   
     this.ctaLicenciaF.valueChanges
      .subscribe((r)=>{
-       printLog(r)
+       console.log(r)
        if(r =='SI'){ 
          this.isInputShown=true;
          this.setValidador(this.LicenciaF,true);

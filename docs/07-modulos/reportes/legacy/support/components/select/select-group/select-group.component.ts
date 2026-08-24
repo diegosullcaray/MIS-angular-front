@@ -3,7 +3,7 @@ import { UntypedFormControl, UntypedFormGroup, FormBuilder } from '@angular/form
 import { of, Observable, Subject, BehaviorSubject, ReplaySubject } from 'rxjs';
 import { tap, map, takeUntil } from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
-import { ComercialService } from 'app/pages/modules/reportes/legacy/comercial/comercial.service';
+import { ComercialService } from 'app/modules/reportes/legacy/comercial/comercial.service';
 import { CacheService } from '../../../services/cache.service';
 @Component({
   selector: 'app-select-group',

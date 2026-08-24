@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { isUndefined } from 'app/core/helpers/functions.util';
+import { isUndefined } from 'app/core/shared/functions.util';
 import { confInit } from '../common/components-ui.interface';
 
 @Injectable()

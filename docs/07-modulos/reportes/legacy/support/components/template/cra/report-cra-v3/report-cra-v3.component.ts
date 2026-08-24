@@ -8,9 +8,8 @@ import { cra } from '../../../../../comercial/rma/administracion/cra-map';
 import { ReportT } from '../../../../services/report';
 import { SelectService } from '../../../../services/select.service';
 import { TableMHService } from '../../../../services/table.service';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { printLog } from 'app/core/helpers/debug.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
 //import { RegistrarVisitaService } from '../../../../../services/registrar-visita.service';
 
 @Component({
@@ -123,7 +122,7 @@ export class ReportCraV3Component implements  OnInit,OnDestroy {
     confG.results(true,true,false);
     this.config_graphic=[confG,confG,confG,confG,confG,confG,confG,confG];
     const params={...confG.getParamsAdd(),...r};
-    printLog(params)
+    console.log(params)
     this.cs.getGraphicData(report,params)
     .pipe(takeUntil(this.destroy$))
     .subscribe(
@@ -159,7 +158,7 @@ export class ReportCraV3Component implements  OnInit,OnDestroy {
     confT.results(true,true,false);
     this.config_table[add.index]=confT;
     const params={...confT.getParamsAdd(),...r};
-    printLog(params)
+    console.log(params)
     const reportType=this.report.getReportType();
     this.cs.getMixData(report,reportType,params)
     .pipe(takeUntil(this.destroy$))

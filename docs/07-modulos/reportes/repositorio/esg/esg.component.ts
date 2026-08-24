@@ -1,9 +1,8 @@
 import { OnInit } from "@angular/core";
 import { Component } from "@angular/core";
-import { IStgTableHeader } from "app/shared/components/stg-table/stg-table.interface";
+import { IStgTableHeader } from "app/core/screen/components/stg-table/stg-table.interface";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
 import { tableConf, loadingConf,tableConf2 } from "./esg.util";
-import { printLog } from 'app/core/helpers/debug.util';
 
 @Component({
     selector: 'app-esg',
@@ -62,7 +61,7 @@ export /*abstract*/ class EsgComponent {
         
     }
     public editCell(evt: any) {
-        printLog(evt.row)
+        console.log(evt.row)
         let idx = evt.row.ord - 1;
         if (evt.key == 'RVALOR') { 
             for (let i = idx+2; i <= this.maxIdx; i++) { 

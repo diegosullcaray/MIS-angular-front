@@ -2,14 +2,13 @@ import * as moment from 'moment';
 import { Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { ModSysAdminService } from "app/core/data/remote/instances/mod-sys-admin.service";
-import { StgAppLoaderService } from "app/shared/components/stg-app-loader/stg-app-loader.service";
-import { cloneObject, isNullOrUndefined } from "app/core/helpers/functions.util";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { StgAppLoaderService } from "app/core/screen/components/stg-app-loader/stg-app-loader.service";
+import { cloneObject, isNullOrUndefined } from "app/core/shared/functions.util";
+import { UserService } from "app/system/admin/services/user.service";
 import { MonImrAntService } from "./mon-imr-ant.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { principalConfig, filter1 } from "../../principal/principal.util";
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { printError } from 'app/core/helpers/debug.util';
 
 @Injectable()
 export class MonImrService {
@@ -77,7 +76,7 @@ export class MonImrService {
                 await this.getBaseHierAsync();
             }
         } catch (error) {
-            printError('Error loading data:', error);
+            console.error('Error loading data:', error);
         } finally {
             this.isLoading = false;
             this.loader.close();
@@ -609,7 +608,7 @@ export class MonImrService {
                 this.principal.loading = false;
                 // ✅ Cerrar loader también en caso de error
                 this.loader.close();
-                printError('Error in setDs:', error);
+                console.error('Error in setDs:', error);
             }
         }); 
     }

@@ -3,13 +3,13 @@ import { Component, ChangeDetectorRef, OnDestroy, OnInit } from '@angular/core';
 import { ReplaySubject, Subject, combineLatest } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { ReportT } from 'app/pages/modules/reportes/legacy/support/services/report';
+import { ReportT } from 'app/modules/reportes/legacy/support/services/report';
 import { cra } from '../cra-map';
-import { SelectService } from 'app/pages/modules/reportes/legacy/support/services/select.service';
-import { TableMHService } from 'app/pages/modules/reportes/legacy/support/services/table.service';
+import { SelectService } from 'app/modules/reportes/legacy/support/services/select.service';
+import { TableMHService } from 'app/modules/reportes/legacy/support/services/table.service';
 import { ComercialService } from '../../../comercial.service';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
 
 
 @Component({

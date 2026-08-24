@@ -5,7 +5,7 @@ import { PrincipalComponent } from "./principal/principal.component";
 import { DetalleComponent } from "./detalle/detalle.component";
 import { ListaClientesComponent } from "./lista-clientes/lista-clientes.component";
 import { DetalleDialogWrapperComponent } from "./detalle/detalle-dialog-wrapper.component";
-import { ClientSummaryComponent } from "app/shared/ui/client-summary/client-summary.component";
+import { ClientSummaryComponent } from "app/modules/shared/components/client-summary/client-summary.component";
 
 
 const routes: Routes = [

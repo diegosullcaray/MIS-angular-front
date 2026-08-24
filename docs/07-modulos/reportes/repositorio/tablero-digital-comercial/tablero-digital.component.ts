@@ -1,14 +1,13 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
-import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/helpers/functions.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/shared/functions.util';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { filter1, tableConfOPTS, tableConfOPTS2 } from './tablero-digital.util';
 import { BehaviorSubject, Subject, combineLatest } from 'rxjs';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
-import { printLog } from 'app/core/helpers/debug.util';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
 
 @Component({
     selector: 'app-tablero-digital.component',
@@ -226,7 +225,7 @@ export class tableroDigitalComponent implements OnInit {
             x => {
                 let r = x.body.resultado;
                 
-                 printLog((r.headers))
+                 console.log((r.headers))
                 this.dataSource = r.data;
                 this.headerDefs = JSON.parse(r.headers);
                 this.load0.next(true);

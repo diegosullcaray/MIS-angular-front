@@ -7,7 +7,6 @@ import { takeUntil } from 'rxjs/operators';
 import { ReportT } from '../../../../services/report';
 import { crs } from '../../../../../../legacy/comercial/rda/sectorista/crs-map';
 import { SelectService } from '../../../../../support/services/select.service';
-import { printLog } from 'app/core/helpers/debug.util';
 //import { RegistrarVisitaService } from '../../../../../services/registrar-visita.service';
 
 @Component({
@@ -82,7 +81,7 @@ export class ReportCrsV1Component implements OnDestroy,OnInit {
     confT.results(true,true,false);
     this.config_table[add.index]=confT;
     const params={...confT.getParamsAdd(),...r}
-    printLog(params);
+    console.log(params);
     const reportType=this.report.getReportType();
     this.cs.getMixData(report,reportType,params)
     .pipe(takeUntil(this.destroy$))

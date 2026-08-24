@@ -11,11 +11,11 @@ import { GraphicService } from '../../../../services/graphic.service';
 import { TableMHService } from '../../../../services/table.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { ComercialService } from 'app/pages/modules/reportes/legacy/comercial/comercial.service';
-import { cra } from 'app/pages/modules/reportes/legacy/comercial/rda/administracion/cra-map';
-import { isNull, isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
+import { ComercialService } from 'app/modules/reportes/legacy/comercial/comercial.service';
+import { cra } from 'app/modules/reportes/legacy/comercial/rda/administracion/cra-map';
+import { isNull, isNullOrUndefined } from 'app/core/shared/functions.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
+import { UserService } from 'app/system/admin/services/user.service';
 
 
 @Component({

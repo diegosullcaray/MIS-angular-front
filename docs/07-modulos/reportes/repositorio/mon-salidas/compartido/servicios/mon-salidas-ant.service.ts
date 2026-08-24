@@ -3,10 +3,9 @@ import { AntService } from "app/core/data/remote/ant/ant-service.class";
 import { ModSysAdminService } from "app/core/data/remote/instances/mod-sys-admin.service";
 import { WinderService } from "app/core/data/remote/winder/winder.service";
 import { IWinderResponse } from "app/core/data/remote/winder/winder.interface";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { UserService } from "app/system/admin/services/user.service";
 import { Observable, of, timer } from "rxjs";
 import { map } from "rxjs/operators";
-import { environment } from "environments/environment";
 
 @Injectable()
 export class MonSalidasAntService extends AntService {
@@ -18,7 +17,7 @@ export class MonSalidasAntService extends AntService {
     constructor(private winderService: WinderService, private user: UserService, private antAdmin: ModSysAdminService) {
         super({
             port: 6304,
-            secret: environment.moduleSecrets.rep2,
+            secret: "8982D9BA889F825E1360E0C594653C68",
             appId: "rep2"
         }, winderService);
         let profile = this.user.get('profile');

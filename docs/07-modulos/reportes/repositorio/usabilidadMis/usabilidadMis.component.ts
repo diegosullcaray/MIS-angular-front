@@ -1,13 +1,12 @@
 import * as Highcharts from 'highcharts';
 import { OnInit, ChangeDetectorRef } from '@angular/core';
 import { Component } from "@angular/core";
-import { IStgTableHeader } from "app/shared/components/stg-table/stg-table.interface";
+import { IStgTableHeader } from "app/core/screen/components/stg-table/stg-table.interface";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
 import {  loadingConf, tableOptions, headerDef, } from './usabilidadMis.util'; 
-import { UserService } from '../../../../../pages/full-pages/layout/services/user.service';
+import { UserService } from '../../../../system/admin/services/user.service';
 import { Subject } from 'rxjs';
 import { ThisReceiver } from '@angular/compiler';
-import { printLog } from 'app/core/helpers/debug.util';
 
 @Component({
     selector: 'app-usabilidadMis',
@@ -64,11 +63,11 @@ export /*abstract*/ class usabilidadMisComponent {
 
         this.antRep.getRegularData("USABIL_01",{tip_cod: '2', cod_rel: '3'}).subscribe(
             x => {
-                printLog(x);
+                console.log(x);
                 this.dataSource = x.body.resultado.data;
                 //
-                printLog(x.body.resultado);
-                printLog(x.body.resultado.data);
+                console.log(x.body.resultado);
+                console.log(x.body.resultado.data);
                 this.loadingObs = true;
             }
         );
@@ -86,12 +85,12 @@ export /*abstract*/ class usabilidadMisComponent {
         this.currentDate_ = this.user.get('profile').curr_fec;
         this.headers = headerDef;
         this.options = tableOptions;
-        printLog(lv);
+        console.log(lv);
         this.antRep.getRegularTableResult("USABIL_01",{tip_cod: lv.tip_cod, cod_rel: lv.cod_rel, fec: this.currentDate_}).subscribe(
             x => {
                 this.dataSource = x.body.resultado.data;
                 //
-                printLog(this.dataSource);
+                console.log(this.dataSource);
                 this.loadingObs = false;
             }
         );
@@ -305,8 +304,19 @@ export /*abstract*/ class usabilidadMisComponent {
             data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 17.6, 16.5, 12.0, 6.5,
                 2.0, -0.9]
         }
-
+    
+    
+    
         ]
     }
     
+
+
+
+
+
+
+
+
+
 }

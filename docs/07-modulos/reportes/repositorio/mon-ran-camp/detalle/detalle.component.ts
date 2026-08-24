@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import { MonRanCampService } from '../compartido/servicios/mon-ran-camp.service';
 import { MonRanCampAntService } from '../compartido/servicios/mon-ran-camp-ant.service';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
-import { cloneObject } from 'app/core/helpers/functions.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
+import { cloneObject } from 'app/core/shared/functions.util';
 import { tableHeaders, tableOpts } from './detalle.util';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
 
 
 @Component({

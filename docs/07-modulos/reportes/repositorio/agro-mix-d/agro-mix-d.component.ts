@@ -1,19 +1,18 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from "@angular/core";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
-import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/helpers/functions.util';
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { cloneObject, isNullOrUndefined, onNullOrUndefined } from 'app/core/shared/functions.util';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
 import {  principalConfig,  tableHeadersModal,  tblOpts } from './agro-mix-d.util';
 import { BehaviorSubject, combineLatest } from 'rxjs'; 
 import { ModSysAdminService } from 'app/core/data/remote/instances/mod-sys-admin.service';
 import * as Highcharts from 'highcharts';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
 import { DetalleDialogComponent } from './detalle/detalle-dialog.component';
 import { MapaSimpleComponent } from './mapa-simple.component';
-import { printLog, printError } from 'app/core/helpers/debug.util';
 @Component({
     selector: 'app-agro-mix-d.component',
     templateUrl: './agro-mix-d.component.html',
@@ -120,7 +119,7 @@ showDetailsPopup(category: string, chartIdentifier: string): void {
   const dataToFilter = this.detailDataMap.get(chartIdentifier);
   
   if (!dataToFilter) {
-    printError(`No se encontraron datos de detalle para el gráfico: ${chartIdentifier}`);
+    console.error(`No se encontraron datos de detalle para el gráfico: ${chartIdentifier}`);
     return;
   }
    
@@ -320,7 +319,7 @@ ddHier(evt: any) {
   let key = evt.key; 
   let tip_cod = evt.row.htipcod;
   
-  printLog(evt)
+  console.log(evt)
   
    
   if(key =='EXTE' ||key =='HCCLI'||key =='HSALCAPMN' ||key =='HSALVEMN'){
@@ -361,7 +360,7 @@ async loadAllChartsData(): Promise<void> {
     this.isChartReady = true;
 
   } catch (error) {
-    printError("Falló la carga de uno o más gráficos", error);
+    console.error("Falló la carga de uno o más gráficos", error);
   } finally {
     this.loader.close();
   }
@@ -834,13 +833,13 @@ prepareChartData(): void {
         this.isChartReady = true;
 
       } catch (e) {
-        printError("Error al procesar la respuesta del gráfico:", e);
+        console.error("Error al procesar la respuesta del gráfico:", e);
       } finally {
         this.loader.close();
       }
     },
     error: (err) => {
-      printError("Error en la llamada al servicio del gráfico:", err);
+      console.error("Error en la llamada al servicio del gráfico:", err);
       this.loader.close();
     }
   });
@@ -902,7 +901,7 @@ private setDs(tip_cod: number, cod_rel: string) {
 }).subscribe(x => { 
     let r = x.body.resultado;
     this.dataSource = r.data;
-    printLog(this.dataSource)
+    console.log(this.dataSource)
     this.headerDefs = JSON.parse(r.headers);
     this.saldoCarteraMA = r.meta1[0]["HSALCAPMN"]
     this.saldoVencidoMA = r.meta1[0]["HSALVEMN"]
@@ -972,7 +971,7 @@ private getBaseHierAsync(): Promise<void> {
                                 this.extMA = r.meta1[0]["EXTE"] 
 
                                 this.dataSource = r.data;
-                                printLog(this.dataSource)
+                                console.log(this.dataSource)
                                 this.TsaldoCapital = this.dataSource[0].HSALCAPMN
                                 this.TsaldoVencido = this.dataSource[0].HSALVEMN
                                 this.TNumCliente = this.dataSource[0].HCCLI

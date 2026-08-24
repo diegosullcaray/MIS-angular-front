@@ -5,10 +5,9 @@ import { Injectable } from '@angular/core';
 import { WinderService } from 'app/core/data/remote/winder/winder.service';
 import { Strand } from 'app/core/data/remote/winder/strand.class';
 import { IWinderResponse } from 'app/core/data/remote/winder/winder.interface';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
+import { UserService } from 'app/system/admin/services/user.service';
 import { AntService } from 'app/core/data/remote/ant/ant-service.class';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { environment } from 'environments/environment';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
 
 export enum ReportType {
     REGULAR = "regularData",
@@ -26,7 +25,7 @@ export class ModRepService extends AntService{
     constructor(private winderService: WinderService, private userService: UserService) { 
         super({
             port: 5304,
-            secret: environment.moduleSecrets.reporting,
+            secret: "B0ECE459601D3577F7408D5C8DEA314A",
             appId: "reporting"
         },winderService);
     }

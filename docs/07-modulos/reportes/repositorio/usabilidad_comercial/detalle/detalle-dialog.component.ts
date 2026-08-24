@@ -1,19 +1,18 @@
 import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DetalleBaseComponent } from './detalle-base.component'; 
-import { StgAppLoaderService } from 'app/shared/components/stg-app-loader/stg-app-loader.service';
+import { StgAppLoaderService } from 'app/core/screen/components/stg-app-loader/stg-app-loader.service';
  
 import { animate, style, transition, trigger } from '@angular/animations';
-import { LayoutService } from 'app/pages/full-pages/layout/services/layout.service';
-import { Incentivos3Service } from 'app/pages/modules/incentivos3/compartido/servicios/incentivos3.service';
-import { ModIncentivos3Service } from 'app/pages/modules/incentivos3/compartido/servicios/mod-incentivos3.service';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { printLog } from 'app/core/helpers/debug.util';
+import { LayoutService } from 'app/system/admin/services/layout.service';
+import { Incentivos3Service } from 'app/modules/incentivos3/compartido/servicios/incentivos3.service';
+import { ModIncentivos3Service } from 'app/modules/incentivos3/compartido/servicios/mod-incentivos3.service';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
 //import { tableConfOPTS, tblHeaders } from '../usa_come.util';
-import { cloneObject } from 'app/core/helpers/functions.util';
+import { cloneObject } from 'app/core/shared/functions.util';
 import { tblHeaders } from '../detalle/detalle.util';
-import { prepareDataForPagination } from 'app/shared/components/stg-paginator/stg-paginator.util';
-import { StgPaginatorComponent } from 'app/shared/components/stg-paginator/stg-paginator.component';
+import { prepareDataForPagination } from 'app/core/screen/components/stg-paginator/stg-paginator.util';
+import { StgPaginatorComponent } from 'app/core/screen/components/stg-paginator/stg-paginator.component';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 
 @Component({
@@ -77,7 +76,7 @@ headerDefs: any;
   this.tip_cod = this.data?.tip_cod;
   this.cod_rel = this.data?.cod_rel;
   this.des_rel = this.data?.des_rel;
-  printLog(this.vars)
+  console.log(this.vars)
 
   this.showVars = true; // Activar visibilidad
 this.datas = this.vars.row.cod_ugru
@@ -87,7 +86,7 @@ this.enrolado = this.vars.row.num_enro_2
 this.usabilidad = this.vars.row.num_usab_2
 this.fechaConsulta = this.vars.row.fec
 
-printLog(this.fechaConsulta)
+console.log(this.fechaConsulta)
 
 //console.log(this.vars)
  // console.log("Datos recibidos en el hijo:", this.vars.row.cod_ugru);

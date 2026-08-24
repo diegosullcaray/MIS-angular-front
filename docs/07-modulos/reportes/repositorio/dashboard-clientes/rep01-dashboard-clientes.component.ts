@@ -1,10 +1,10 @@
 import * as moment from 'moment';
 import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
-import { IStgTableHeader } from "app/shared/components/stg-table/stg-table.interface";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { IStgTableHeader } from "app/core/screen/components/stg-table/stg-table.interface";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
 import { selEdadData, selEntData, selGenData, selPaisData, selUniData, tableConf, loadingConf } from "./rep01-dashboard-clientes.util";
-import { isNullOrUndefined, onNullOrUndefined } from 'app/core/helpers/functions.util';
+import { isNullOrUndefined, onNullOrUndefined } from 'app/core/shared/functions.util';
 import { formatNumber } from '@angular/common';
 
 @Component({

@@ -8,8 +8,8 @@ import { ReportT } from '../../../../support/services/report';
 import { crs } from '../crs-map';
 import { SelectService } from '../../../../support/services/select.service';
 import { UntypedFormControl, UntypedFormGroup, UntypedFormBuilder, UntypedFormArray, Validators } from '@angular/forms';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
-import { isNullOrUndefined, isUndefined } from 'app/core/helpers/functions.util';
+import { UserService } from 'app/system/admin/services/user.service';
+import { isNullOrUndefined, isUndefined } from 'app/core/shared/functions.util';
 //import { RegistrarVisitaService } from '../../../../../services/registrar-visita.service';
 
 @Component({

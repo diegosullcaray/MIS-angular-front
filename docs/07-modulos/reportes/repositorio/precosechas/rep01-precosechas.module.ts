@@ -3,8 +3,9 @@ import { NgModule } from "@angular/core";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FormsModule } from "@angular/forms";
 import { ModAppService } from "app/core/data/remote/instances/mod-app-service";
-import { SharedModule } from "app/shared/shared.module";
-import { MaterialModule } from 'app/material/material.module';
+import { SharedCWCModule } from "app/core/screen/components/shared-cwc.module";
+import { SharedMaterialModule } from "app/core/screen/components/shared-material.module";
+import { SharedCMCModule } from "app/modules/shared/shared-cmc.module";
 import { ComercialService } from "../../legacy/comercial/comercial.service";
 import { SelectModule } from "../../legacy/support/components/select/select.module";
 import { Rep01PrecosechasRoutingModule } from "./rep01-precosechas-routing.module";
@@ -15,7 +16,8 @@ import { ModRepService } from '../../compartido/servicios/mod-rep.service';
 @NgModule({
     imports:[
         Rep01PrecosechasRoutingModule,
-        SharedModule,
+        SharedCWCModule,
+        SharedCMCModule,
         SelectModule
     ],
     declarations:[Rep01PrecosechasComponent],

@@ -2,7 +2,7 @@ import { Component, ViewChild, TemplateRef, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Router, ActivatedRoute } from "@angular/router";
 import { DetalleDialogComponent } from "./detalle-dialog.component";
-import { StgWindowConfig } from "app/shared/components/stg-window/stg-window.config";
+import { StgWindowConfig } from "app/core/screen/components/stg-window/stg-window.config";
 
 @Component({
     template: `

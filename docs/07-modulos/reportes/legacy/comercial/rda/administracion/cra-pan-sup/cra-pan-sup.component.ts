@@ -1,16 +1,15 @@
 import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { ReportT } from 'app/pages/modules/reportes/legacy/support/services/report';
-import { SelectService } from 'app/pages/modules/reportes/legacy/support/services/select.service';
-import { TableMHService } from 'app/pages/modules/reportes/legacy/support/services/table.service';
+import { isNullOrUndefined } from 'app/core/shared/functions.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
+import { ReportT } from 'app/modules/reportes/legacy/support/services/report';
+import { SelectService } from 'app/modules/reportes/legacy/support/services/select.service';
+import { TableMHService } from 'app/modules/reportes/legacy/support/services/table.service';
 
 import { combineLatest, Subject, Subscription, ReplaySubject } from 'rxjs';
 
 import { takeUntil } from 'rxjs/operators';
 import { ComercialService } from '../../../comercial.service';
 import { cra } from '../cra-map';
-import { printLog } from 'app/core/helpers/debug.util';
 
 @Component({
   selector: 'app-cra-pan-sup',
@@ -207,7 +206,7 @@ export class CraPanSupComponent implements OnInit {
           confT.addColumns(result.headers);
           confT.addELEMENT_DATA(result.body);
           this.config_table[add.index] = confT;
-          printLog(this.config_table)
+          console.log(this.config_table)
           this.cdr.detectChanges();
         },
         () => {

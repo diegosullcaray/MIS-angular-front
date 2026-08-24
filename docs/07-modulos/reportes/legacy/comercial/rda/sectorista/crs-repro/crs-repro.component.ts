@@ -7,8 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ReportT } from '../../../../support/services/report';
 import { crs } from '../crs-map';
 import { SelectService } from '../../../../support/services/select.service';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
-import { printLog } from 'app/core/helpers/debug.util';
+import { UserService } from 'app/system/admin/services/user.service';
 //import { RegistrarVisitaService } from '../../../../../services/registrar-visita.service';
 
 @Component({
@@ -204,7 +203,7 @@ export class CrsReproComponent implements OnDestroy {
   save() {
     const report = 'UP_REPRO_01';
     this.selected = 0;
-    printLog({ json: JSON.stringify(this.data) })
+    console.log({ json: JSON.stringify(this.data) })
     this.cs.postRegularUpdate(report, { json: JSON.stringify(this.data) })
       .subscribe(r => {
         this.refresh$.next(true);

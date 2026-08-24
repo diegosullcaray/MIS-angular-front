@@ -11,10 +11,10 @@ import { TableMHService } from '../../../../services/table.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { ComercialService } from 'app/pages/modules/reportes/legacy/comercial/comercial.service';
-import { cra } from 'app/pages/modules/reportes/legacy/comercial/rda/administracion/cra-map';
-import { isNull, isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
+import { ComercialService } from 'app/modules/reportes/legacy/comercial/comercial.service';
+import { cra } from 'app/modules/reportes/legacy/comercial/rda/administracion/cra-map';
+import { isNull, isNullOrUndefined } from 'app/core/shared/functions.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
 
 @Component({
   selector: 'app-report-cra-v5',

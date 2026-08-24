@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from "app/core/helpers/functions.util";
+import { isNullOrUndefined } from "app/core/shared/functions.util";
 import { first } from "rxjs-compat/operator/first";
 
 export const principalConfig = {

@@ -1,5 +1,4 @@
-import { isNullOrUndefined } from "app/core/helpers/functions.util";
-import { printLog } from 'app/core/helpers/debug.util';
+import { isNullOrUndefined } from "app/core/shared/functions.util";
 
 const tableStyleFn = function (row: any) {
    let rowStyles: any = {};
@@ -9,14 +8,17 @@ const tableStyleFn = function (row: any) {
        rowStyles["background"] = "#E9E8E8";       // Fondo plomito
        rowStyles["font-weight"] = "bold";         // Negrita
        rowStyles["color"] = "#164d90";            // Texto azul oscuro
-   } else if (row.style == 0) {
+       rowStyles["font-size"] = "12px";   
+      } else if (row.style == 0) {
        rowStyles["color"] = "#004B8D";
    } else {
        rowStyles["color"] = "#164d90";
    }
 
    // 2. VARIABLES SOLO PARA LA PRIMERA COLUMNA (Manito y rayita)
-   if (row.htipcod != 17) {
+   if (row.htipcod != 2) {
+      // console.log("hola");
+      // console.log(row.htipcod);
        rowStyles["--mi-cursor"] = "pointer";
        rowStyles["--mi-subrayado"] = "underline";
    } else {
@@ -27,9 +29,9 @@ const tableStyleFn = function (row: any) {
    return rowStyles;
 }
 const cellStyleFn = function (row: any, key: string) {
-  printLog('Evaluando fila:', row.tip_cod, 'key:', key);
+  console.log('Evaluando fila:', row.tip_cod, 'key:', key);
   if (key === 'descripcion' && row.tip_cod === 17) {
-    printLog('✓ Estilo aplicado');
+    console.log('✓ Estilo aplicado');
     return {
       'cursor': 'pointer',
       'text-decoration': 'underline',
@@ -39,12 +41,12 @@ const cellStyleFn = function (row: any, key: string) {
   return {};
 };
 const rowClassFn = function (row: any) {
-   printLog(row)
+   console.log(row)
    return row.tip_cod === 17 ? 'resaltado-hover' : '';
 };
 export const tableConfOPTS = { 
    style:{
-      'font-size':'14px',
+      'font-size':'12px',
       'font-weight': 'none'  
   },
   header:{
@@ -54,6 +56,7 @@ export const tableConfOPTS = {
   },
   body: {
       rowStyleFn: tableStyleFn,
+      stickyCols: [100]
   }
 };
 const tlFn = function (value: number) {
@@ -68,7 +71,7 @@ const tlFn = function (value: number) {
       }
 }; 
 const colorFn = function (value: number): string {
-    printLog(value)
+    console.log(value)
     if (isNullOrUndefined(value)) {
       return 'red';
     } else if (value >= 0) {
@@ -79,10 +82,10 @@ const colorFn = function (value: number): string {
   };
   
   export const linkStyleFn = function (params: any) {
-   printLog(params)
+   console.log(params)
    // Extraemos directamente la propiedad 'style' desde rowData
    let styleValue = params?.rowData?.style;
-   printLog(styleValue)
+   console.log(styleValue)
    if (styleValue == 1) {
        return {
            "cursor": "pointer",
@@ -103,16 +106,16 @@ const colorFn = function (value: number): string {
 };
 
   const ctFn=function(value:string,row:any){ 
-   printLog(row)
+   console.log(row)
    if(row.htipcod==17){
-      printLog(row.htipcod)
-      printLog("excepto 17")
+      console.log(row.htipcod)
+      console.log("excepto 17")
       if(row.fila!=1){
       return {type: 'link',params: { underline: true }};
    }
    }  
    if(row.htipcod===17 ){
-      printLog("ES 17")
+      console.log("ES 17")
       return {type: 'none'};
 
    }

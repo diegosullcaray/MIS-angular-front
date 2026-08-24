@@ -1,16 +1,15 @@
 import { ChangeDetectorRef, OnInit, ViewChild } from "@angular/core";
 import { Component } from "@angular/core";
-import { StgPaginatorComponent } from "app/shared/components/stg-paginator/stg-paginator.component";
-import { IStgTableHeader } from "app/shared/components/stg-table/stg-table.interface";
-import { prepareDataForPagination } from "app/shared/components/stg-table/stg-table.util";
-import { UserService } from "app/pages/full-pages/layout/services/user.service";
+import { StgPaginatorComponent } from "app/core/screen/components/stg-paginator/stg-paginator.component";
+import { IStgTableHeader } from "app/core/screen/components/stg-table/stg-table.interface";
+import { prepareDataForPagination } from "app/core/screen/components/stg-table/stg-table.util";
+import { UserService } from "app/system/admin/services/user.service";
 import { ModRepService } from "../../compartido/servicios/mod-rep.service";
 import { tableConf, loadingConf /*, tableHeaders*/ } from "./captacion-canal-comercial.util";
-import { isNullOrUndefined } from 'app/core/helpers/functions.util';
+import { isNullOrUndefined } from '../../../../core/shared/functions.util';
 import { ReportT } from '../../legacy/support/services/report';
 import { cra } from '../../legacy/comercial/rda/administracion/cra-map';
 import { UntypedFormGroup } from '@angular/forms';
-import { printLog } from 'app/core/helpers/debug.util';
 
 @Component({
     selector: 'app-captacion-canal-comercial-rep',
@@ -100,7 +99,7 @@ export class CaptacionCanalComercialComponent implements OnInit {
     }
     public selectHier(evt: any) {  
         this.onSelectItem("")
-        printLog(this.currLvl.prod)
+        console.log(this.currLvl.prod)
         let lv: any = evt[0];
         this.currentDate_ = this.user.get('profile').curr_fec;
         this.loadingObs = true;

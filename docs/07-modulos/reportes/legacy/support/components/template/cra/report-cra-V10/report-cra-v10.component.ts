@@ -8,12 +8,11 @@ import { FormControl } from '@angular/forms';
 import { ReportT } from '../../../../services/report';
 import { SelectService } from '../../../../services/select.service';
 import { TableMHService } from '../../../../services/table.service';
-import { ComercialService } from 'app/pages/modules/reportes/legacy/comercial/comercial.service';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
-import { cra } from 'app/pages/modules/reportes/legacy/comercial/rda/administracion/cra-map';
-import { isNull, isNullOrUndefined } from 'app/core/helpers/functions.util';
-import { ModRepService } from 'app/pages/modules/reportes/compartido/servicios/mod-rep.service';
-import { printLog } from 'app/core/helpers/debug.util';
+import { ComercialService } from 'app/modules/reportes/legacy/comercial/comercial.service';
+import { UserService } from 'app/system/admin/services/user.service';
+import { cra } from 'app/modules/reportes/legacy/comercial/rda/administracion/cra-map';
+import { isNull, isNullOrUndefined } from 'app/core/shared/functions.util';
+import { ModRepService } from 'app/modules/reportes/compartido/servicios/mod-rep.service';
 
 
 @Component({
@@ -113,7 +112,7 @@ export class ReportCraV10Component implements OnInit, OnDestroy {
     combineLatest([this.page$,this.filter$, this.level$]).subscribe(([page,filter, level]) => {
       let lp = { tip_cod: level.tip_cod, cod_rel: level.cod_rel };
       let params={...page,...filter,...level}
-      printLog(params)
+      console.log(params)
       this.renderTable(params,{find:'_01',index:0})
     });
   }
@@ -125,7 +124,7 @@ export class ReportCraV10Component implements OnInit, OnDestroy {
     confT.results(true,true,false);
     this.config_table_ajax=confT;
     const params={...confT.getParamsAdd(),...r}
-    printLog(params);
+    console.log(params);
     const reportType=this.report.getReportType();
     this.cs.getMixData(report,reportType,params)
     .pipe(takeUntil(this.destroy$))

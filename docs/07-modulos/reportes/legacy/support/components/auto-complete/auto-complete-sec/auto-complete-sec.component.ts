@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef ,EventEmitter, Output, OnDestroy} 
 import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { tap, startWith, map, takeUntil } from 'rxjs/operators';
 import { Observable, ReplaySubject } from 'rxjs';
-import { UserService } from 'app/pages/full-pages/layout/services/user.service';
+import { UserService } from 'app/system/admin/services/user.service';
 import { ModSecService } from '../../../data/ant-mod-sec.service';
 
 @Component({

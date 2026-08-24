@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MaterialModule } from 'app/material/material.module';
+import { SharedMaterialModule } from 'app/core/screen/components/shared-material.module';
 import { AutoCompleteModule } from '../../../support/components/auto-complete/auto-complete.module';
 import { SelectModule } from '../../../support/components/select/select.module';
 import { SharedComponentsLegacyModule } from '../../../support/components/shared-components.module';
@@ -26,7 +26,7 @@ import { ReportCrsV6Module } from '../../../support/components/template/crs/repo
   imports: [
     TableModule,
     SelectModule,
-    MaterialModule,
+    SharedMaterialModule,
     FlexLayoutModule,
     SharedComponentsLegacyModule,
     RDASectoristaRoutingModule,

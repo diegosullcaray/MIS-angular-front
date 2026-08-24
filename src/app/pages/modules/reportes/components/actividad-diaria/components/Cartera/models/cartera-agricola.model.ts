@@ -1,3 +1,4 @@
+import type { BloqueGrafico } from '../../../../../models/grafico-reporte.model';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 
 export interface TotalAgro {
@@ -17,10 +18,19 @@ export interface CarteraAgricolaResultado {
 
 export const CARTERA_AGRICOLA_VACIA: CarteraAgricolaResultado = { tabla: { columnas: [], filas: [] }, totales: [] };
 
+/** Resultado combinado del `forkJoin` de RS_AGROMIX_02 al 05. */
+export interface DetalleAgricolaResultado {
+  graficos: BloqueGrafico[];
+  dataCruda: {
+    saldoCapital: Record<string, unknown>[];
+    saldoVencido: Record<string, unknown>[];
+  };
+}
+
 /** Las cuatro cifras del encabezado, con la clave que comparten la fila total y `meta1` — legado `agro-mix-d.component.ts`. */
 export const TOTALES_AGRO: { clave: string; etiqueta: string; formato: 'entero' | 'moneda' }[] = [
-  { clave: 'HSALCAPMN', etiqueta: 'Saldo capital', formato: 'moneda' },
-  { clave: 'HSALVEMN', etiqueta: 'Saldo vencido', formato: 'moneda' },
-  { clave: 'HCCLI', etiqueta: 'N° clientes', formato: 'entero' },
-  { clave: 'EXTE', etiqueta: 'Extensión (ha)', formato: 'entero' },
+  { clave: 'HSALCAPMN', etiqueta: 'Saldo Capital (miles PEN)', formato: 'moneda' },
+  { clave: 'HSALVEMN', etiqueta: 'Saldo Vencido (miles PEN)', formato: 'moneda' },
+  { clave: 'HCCLI', etiqueta: 'Nro Clientes', formato: 'entero' },
+  { clave: 'EXTE', etiqueta: 'Extensión', formato: 'entero' },
 ];
