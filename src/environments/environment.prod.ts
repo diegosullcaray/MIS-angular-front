@@ -11,6 +11,7 @@ export const environment: Environment = {
     admin: '29A832E1F8C68ECB46E7C89716BB68E2',
     secciones: 'D4305E5943A377227C6BF78C8E3278AD',
     reporting: 'B0ECE459601D3577F7408D5C8DEA314A',
+    rep2: '8982D9BA889F825E1360E0C594653C68',
   },
 
   requestConfigRootURL: 'https://stg.confianza.pe/cores2/ant',

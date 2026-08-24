@@ -12,6 +12,8 @@ export interface Environment {
     admin: string;
     secciones: string;
     reporting: string;
+    /** Módulo de reportes v2 (puerto 6304) — lo usa "Monitor Salidas y Retenciones". */
+    rep2: string;
   };
 
   /** Raíz del backend Ant, ej. `https://stg.confianza.pe/cores2/ant`. */

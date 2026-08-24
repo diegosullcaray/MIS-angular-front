@@ -8,6 +8,7 @@ import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas
 import type { CmgCarteraResultado, TarjetaCmgCartera } from '../models/cmg-cartera.model';
 import type { CarteraAgricolaResultado, TotalAgro, DetalleAgricolaResultado } from '../models/cartera-agricola.model';
 import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
+import { GRAFICOS_GESTION_COMERCIAL, type GestionComercialResultado } from '../models/gestion-comercial.model';
 import { TOTALES_AGRO } from '../models/cartera-agricola.model';
 import type { BloqueGrafico } from '../../../../../models/grafico-reporte.model';
 
@@ -76,6 +77,33 @@ export class CarteraRepositorioService {
           return { titulo, ...seriesDeGrafico(resultado?.headers) };
         });
         return { graficos, filasPorGrafico };
+      }),
+    );
+  }
+
+  /**
+   * "Gestión Comercial" — legado `repositorio/gestion-comercial`.
+   *
+   * Todo el reporte cuelga del mismo nodo y la misma fecha: las tres tablas
+   * (`RS_GEST_COM_01` al `_03`) y los siete gráficos (`GRAF_GEST_COM_*`) se
+   * piden juntos. `RS_GEST_COM_01` alimenta dos tablas con el mismo `data`.
+   */
+  gestionComercial(nodo: NodoConsulta): Observable<GestionComercialResultado> {
+    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fecha: this.bloques.fecha() };
+    const tablas = ['RS_GEST_COM_01', 'RS_GEST_COM_02', 'RS_GEST_COM_03'].map((c) =>
+      this.reportes.getRegularTableResult(c, params),
+    );
+    const graficos = GRAFICOS_GESTION_COMERCIAL.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
+
+    return forkJoin([...tablas, ...graficos]).pipe(
+      map((respuestas) => {
+        const [r01, r02, r03, ...rGraficos] = respuestas.map(crudo);
+        return {
+          filas: (r01?.data ?? []) as Record<string, unknown>[],
+          varSaldoVigente: tablaDeResultado(r02),
+          varClientesStock: tablaDeResultado(r03),
+          graficos: rGraficos.map((r, i) => ({ titulo: GRAFICOS_GESTION_COMERCIAL[i].titulo, ...seriesDeGrafico(r?.headers) })),
+        };
       }),
     );
   }
@@ -250,5 +278,13 @@ function seriesDeGrafico(headers: string | undefined): Pick<BloqueGrafico, 'cate
   return {
     categorias: datos.categories ?? [],
     series: (datos.series ?? []).map((s) => ({ nombre: s.name, datos: s.data })),
+  };
+}
+
+/** Tabla cuyas cabeceras vienen en el propio payload. */
+function tablaDeResultado(resultado: TablaRegularResultadoRaw | undefined): TablaDinamicaResultado {
+  return {
+    columnas: resultado?.headers ? (JSON.parse(resultado.headers) as ColumnaDinamica[]) : [],
+    filas: (resultado?.data ?? []) as Record<string, unknown>[],
   };
 }

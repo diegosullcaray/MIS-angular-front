@@ -117,3 +117,50 @@ describe('CarteraRepositorioService', () => {
     });
   });
 });
+
+describe('"Gestión Comercial"', () => {
+  let getRegularTableResult: ReturnType<typeof vi.fn>;
+  let servicio: CarteraRepositorioService;
+
+  beforeEach(() => {
+    getRegularTableResult = vi.fn().mockReturnValue(respuesta({ headers: '[]', data: [] }));
+    TestBed.configureTestingModule({ providers: [{ provide: ModReportesService, useValue: { getRegularTableResult } }] });
+    TestBed.inject(ShellStateService).setUsuarioActivo(usuario());
+    servicio = TestBed.inject(CarteraRepositorioService);
+  });
+
+  it('pide sus tres tablas y sus siete gráficos con los mismos parámetros', () => {
+    servicio.gestionComercial(NODO).subscribe();
+
+    const codReps = getRegularTableResult.mock.calls.map((c) => c[0]);
+    expect(codReps.slice(0, 3)).toEqual(['RS_GEST_COM_01', 'RS_GEST_COM_02', 'RS_GEST_COM_03']);
+    expect(codReps.slice(3).sort()).toEqual([
+      'GRAF_GEST_COM_01',
+      'GRAF_GEST_COM_02',
+      'GRAF_GEST_COM_03',
+      'GRAF_GEST_COM_04',
+      'GRAF_GEST_COM_05',
+      'GRAF_GEST_COM_06',
+      'GRAF_GEST_COM_07',
+    ]);
+    for (const [, params] of getRegularTableResult.mock.calls) {
+      expect(params).toEqual({ tip_cod: 9, cod_rel: 'FC', fecha: '2025-11-30' });
+    }
+  });
+
+  it('reparte el `data` de RS_GEST_COM_01 y deja que las otras dos traigan sus cabeceras', () => {
+    getRegularTableResult.mockImplementation((codRep: string) => {
+      if (codRep === 'RS_GEST_COM_01') return respuesta({ headers: '[]', data: [{ descripcion: 'FC' }] });
+      if (codRep === 'RS_GEST_COM_02') {
+        return respuesta({ headers: JSON.stringify([{ key: 'a', label: 'A' }]), data: [{ a: 1 }] });
+      }
+      return respuesta({ headers: '[]', data: [] });
+    });
+
+    let r: { filas: unknown[]; varSaldoVigente: { columnas: unknown[] } } | undefined;
+    servicio.gestionComercial(NODO).subscribe((x) => (r = x));
+
+    expect(r!.filas).toEqual([{ descripcion: 'FC' }]);
+    expect(r!.varSaldoVigente.columnas).toEqual([{ key: 'a', label: 'A' }]);
+  });
+});

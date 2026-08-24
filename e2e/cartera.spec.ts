@@ -39,6 +39,11 @@ const REPORTES: readonly [string, string][] = [
   ['/app/reportes/repositorio/actividad-diaria/cartera/rank-comercial', 'Ranking Unidades de Negocio - Desembolsos'],
   ['/app/reportes/repositorio/actividad-diaria/cartera/agro-mix', 'Gestión Comercial - Portafolio Agrícola'],
   ['/app/reportes/repositorio/actividad-diaria/mon-comercial/Monincome', 'Monitor de Inteligencia de Negocios'],
+  ['/app/reportes/repositorio/actividad-diaria/cartera/gest-comercial', 'Gestión Comercial'],
+  [
+    '/app/reportes/repositorio/actividad-diaria/cartera/mon-retenciones',
+    'Monitor de Salidas y Retenciones por Nivel de Riesgo',
+  ],
 ];
 
 test.describe('Cartera — smoke de las pantallas migradas', () => {
