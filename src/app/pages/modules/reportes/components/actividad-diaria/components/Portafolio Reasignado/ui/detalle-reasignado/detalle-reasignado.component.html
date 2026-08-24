@@ -1,0 +1,57 @@
+<div class="flex flex-col gap-3">
+  <div class="flex flex-wrap items-end gap-3">
+    <ng-content select="[filtros]" />
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Última gestión</span>
+      <p-select
+        [options]="opcionesUltimaGestion()"
+        optionLabel="desc"
+        optionValue="id"
+        [ngModel]="ultimaGestion()"
+        (ngModelChange)="ultimaGestion.set($event)"
+        styleClass="text-[11.5px] w-52"
+        ariaLabel="Última gestión"
+      />
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Fecha compromiso</span>
+      <p-datepicker
+        [ngModel]="fechaCompromiso()"
+        (ngModelChange)="fechaCompromiso.set($event)"
+        dateFormat="dd/mm/yy"
+        [showClear]="true"
+        styleClass="text-[11.5px] w-44"
+        inputStyleClass="text-[11.5px]"
+        ariaLabel="Fecha compromiso"
+      />
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
+      <input
+        pInputText
+        [ngModel]="asesor()"
+        (ngModelChange)="asesor.set($event)"
+        (keyup.enter)="buscarAsesor.emit()"
+        placeholder="Nombre del asesor"
+        class="w-52 text-[11.5px]"
+      />
+    </div>
+
+    <p-button label="Buscar asesor" icon="pi pi-search" size="small" (onClick)="buscarAsesor.emit()" />
+  </div>
+
+  <div class="mis-card p-3 overflow-x-auto">
+    <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" [cargando]="cargando()" />
+  </div>
+
+  <p-paginator
+    [first]="primeraFila"
+    [rows]="porPagina"
+    [totalRecords]="total()"
+    (onPageChange)="onPagina($event)"
+    styleClass="text-[12px]"
+  />
+</div>

@@ -1,0 +1,56 @@
+<app-window-panel
+  titulo="Monitor Efectividades Reasignados"
+  subtitulo="Portafolio Reasignado"
+  [permitirActualizar]="false"
+  [conFiltros]="true"
+>
+  <app-hier-selector
+    ventana-filtros
+    [paramsHier]="paramsHier"
+    placeholder="Elegir nivel"
+    (nodoSeleccionado)="onNivelSeleccionado($event)"
+    (error)="onErrorJerarquia()"
+  />
+
+  @if (!nivelActual()) {
+    <app-empty-state titulo="Elige un nivel" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte." />
+  } @else {
+    <p-tabs value="monitor">
+      <p-tablist>
+        <p-tab value="monitor" class="!py-2 !px-3">Monitor de Efectividades</p-tab>
+        <p-tab value="detalle" class="!py-2 !px-3">Detalle de Efectividades</p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <p-tabpanel value="monitor">
+          <div class="mis-card p-3 overflow-x-auto">
+            <app-tabla-reporte [encabezados]="resumen().headers" [filas]="resumen().body" [cargando]="cargandoResumen()" />
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="detalle">
+          <app-detalle-reasignado
+            [tabla]="detalle()"
+            [cargando]="cargandoDetalle()"
+            [total]="totalDetalle()"
+            [opcionesUltimaGestion]="opcionesUltimaGestion()"
+            [(asesor)]="asesor"
+            [(fechaCompromiso)]="fechaCompromiso"
+            [(ultimaGestion)]="ultimaGestion"
+            [(pagina)]="pagina"
+            (buscarAsesor)="onBuscarAsesor()"
+          >
+            <div filtros class="flex flex-wrap items-end gap-3">
+              <app-select-filtro etiqueta="Tramo" [opciones]="opcionesTramo" [(valor)]="tramo" ancho="w-40" />
+              <app-select-filtro etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" ancho="w-56" />
+              <app-select-filtro etiqueta="Compromiso roto" [opciones]="opcionesSiNo" [(valor)]="compromisoRoto" ancho="w-32" />
+              <app-select-filtro etiqueta="0 Cuota" [opciones]="opcionesSiNo" [(valor)]="ceroCuota" ancho="w-28" />
+              <app-select-filtro etiqueta="1 Cuota" [opciones]="opcionesSiNo" [(valor)]="unaCuota" ancho="w-28" />
+              <app-select-filtro etiqueta="Tramo días gestión" [opciones]="opcionesTramoDias" [(valor)]="tramoDiasGestion" ancho="w-48" />
+            </div>
+          </app-detalle-reasignado>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  }
+</app-window-panel>
