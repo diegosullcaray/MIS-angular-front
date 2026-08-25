@@ -136,9 +136,10 @@ export class CarteraRepositorioService {
       map(([respTabla, respKpis]) => {
         const rTabla = crudo(respTabla);
         const filas = (rTabla?.data ?? []) as Record<string, unknown>[];
+        const kpis = ((crudo(respKpis)?.data ?? []) as Record<string, unknown>[])[0] ?? {};
         return {
-          tabla: { columnas: columnasVisibles(rTabla?.headers), filas },
-          tarjetas: tarjetas(filas, ((crudo(respKpis)?.data ?? []) as Record<string, unknown>[])[0] ?? {}),
+          tabla: { columnas: conColumnasSemaforo(columnasVisibles(rTabla?.headers)), filas },
+          tarjetas: tarjetas(filas, kpis),
         };
       }),
     );
@@ -200,41 +201,65 @@ function columnasVisibles(headers: string | undefined): ColumnaDinamica[] {
  * quedan sin valor en vez de romper la pantalla.
  */
 function tarjetas(filasTabla: Record<string, unknown>[], kpis: Record<string, unknown>): TarjetaCmgCartera[] {
-  const num = (v: unknown) => Number(String(v ?? '0').replace(/,/g, '')) || 0;
+  // `tasaminima` llega como `"42.07%"` (string, con el signo de porcentaje) — se descarta todo lo que no sea dígito/signo/punto.
+  const num = (v: unknown) => Number(String(v ?? '0').replace(/[^0-9.-]/g, '')) || 0;
   const fila18 = filasTabla[18] as Record<string, unknown> | undefined;
   const fila16 = filasTabla[16] as Record<string, unknown> | undefined;
 
   const saldoMedio = num(fila18?.[6]);
   const saldoMedioAnterior = num(fila18?.[5]);
+  const deltaSaldo = saldoMedio - saldoMedioAnterior;
+
+  const tappMes = fila16?.[6] == null ? undefined : num(fila16[6]);
+  const tappMinima = kpis['tasaminima'] == null ? undefined : num(kpis['tasaminima']);
+  const deltaPbs = tappMes === undefined || tappMinima === undefined ? undefined : Math.round((tappMes - tappMinima) * 100);
+  const senalTapp = deltaPbs === undefined ? 0 : Math.sign(deltaPbs);
 
   return [
     {
       etiqueta: 'Monto Desembolsado (miles PEN)',
       valor: num(kpis['des_acum']) / 1000,
       comparativo: `Meta ${(num(kpis['meta_des_acum']) / 1000).toLocaleString('es-PE', { maximumFractionDigits: 0 })}`,
-      senal: Math.sign(num(kpis['des_acum']) - num(kpis['meta_des_acum'])),
+      senal: 0,
       cumplimiento: kpis['cumpl_des_acum'] == null ? undefined : num(kpis['cumpl_des_acum']),
     },
     {
       etiqueta: 'Ope. Desembolsada (Nro)',
       valor: num(kpis['ope_acum_']),
       comparativo: `Meta ${num(kpis['meta_ope_acum_']).toLocaleString('es-PE')}`,
-      senal: Math.sign(num(kpis['ope_acum_']) - num(kpis['meta_ope_acum_'])),
+      senal: 0,
       cumplimiento: kpis['cumpl_ope_acum'] == null ? undefined : num(kpis['cumpl_ope_acum']),
     },
     {
       etiqueta: 'TAPP Mes / TAPP Mínima',
       valor: String(fila16?.[6] ?? ''),
       comparativo: String(kpis['tasaminima'] ?? ''),
-      senal: 0,
+      senal: senalTapp,
+      delta: deltaPbs === undefined ? undefined : `${deltaPbs.toLocaleString('es-PE')} pbs`,
     },
     {
       etiqueta: 'Saldo Medio Vigente (miles PEN)',
       valor: saldoMedio,
       comparativo: `Mes anterior ${saldoMedioAnterior.toLocaleString('es-PE', { maximumFractionDigits: 0 })}`,
-      senal: Math.sign(saldoMedio - saldoMedioAnterior),
+      senal: Math.sign(deltaSaldo),
+      delta: Math.round(deltaSaldo).toLocaleString('es-PE'),
     },
   ];
+}
+
+/**
+ * Las "bolas" de semáforo de la tabla de CMG Cartera (TMM, TAM y la tercera
+ * columna de control): el legado antepone un ícono coloreado a las columnas
+ * 9/11/13 según el signo (-1/0/1) de las columnas de control 8/10/12, ocultas
+ * (`cellStyle.display: 'none'`) pero presentes en la fila. Se marca cada
+ * columna visible con su `semaforoKey` para que `app-tabla-dinamica` dibuje
+ * el mismo punto (`pi-circle-fill`) y los mismos colores que ya usa
+ * `app-tabla-reporte` en el resto de la app.
+ */
+const SEMAFOROS_CMG_CARTERA: Readonly<Record<string, string>> = { '9': '8', '11': '10', '13': '12' };
+
+function conColumnasSemaforo(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
+  return columnas.map((c) => (SEMAFOROS_CMG_CARTERA[c.key] ? { ...c, semaforoKey: SEMAFOROS_CMG_CARTERA[c.key] } : c));
 }
 
 /** Avance con su semáforo delante, en el formato exacto del legado (`🟢 15.28%`). */

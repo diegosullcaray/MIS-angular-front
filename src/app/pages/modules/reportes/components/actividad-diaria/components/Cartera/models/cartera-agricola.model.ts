@@ -1,5 +1,6 @@
 import type { BloqueGrafico } from '../../../../../models/grafico-reporte.model';
-import type { ColumnaDinamica, TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
+import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
+import type { DataTableColumn } from '../../../../../../../../shared/ui/data-table/data-table.model';
 
 export interface TotalAgro {
   etiqueta: string;
@@ -51,16 +52,28 @@ export const TOTALES_AGRO: { clave: string; etiqueta: string; formato: 'entero' 
   { clave: 'EXTE', etiqueta: 'Extensión', formato: 'entero' },
 ];
 
-/** Columnas del modal de detalle por cultivo — legado `tableHeadersModal` (`agro-mix-d.util.ts`). */
-export const COLUMNAS_DETALLE_CULTIVO: ColumnaDinamica[] = [
-  { key: 'HDESCUL', label: 'Producto' },
-  { key: 'HDESCLI', label: 'Cliente' },
-  { key: 'HETPROD', label: 'Estado Producto' },
-  { key: 'HCTACLI', label: 'Cuenta Cliente' },
-  { key: 'HCAPMON', label: 'Saldo Capital', format: { type: 'integer' } },
-  { key: 'HVENMON', label: 'Saldo Vencido', format: { type: 'integer' } },
-  { key: 'HEXTENS', label: 'Extensión', format: { type: 'integer' } },
+/**
+ * Columnas del modal de detalle por cultivo — legado `tableHeadersModal`
+ * (`agro-mix-d.util.ts`), más la columna de acción que abre el mapa.
+ *
+ * Van como `DataTableColumn` (no `ColumnaDinamica`) porque el modal usa
+ * `app-data-table`, que es la tabla del sistema con buscador, orden,
+ * paginado y filtros por columna — el legado traía su propio input de
+ * búsqueda y su paginador de 10 sueltos.
+ */
+export const COLUMNAS_DETALLE_CULTIVO: DataTableColumn[] = [
+  { field: 'HDESCUL', header: 'Producto', filterType: 'text' },
+  { field: 'HDESCLI', header: 'Cliente', width: '14rem', filterType: 'text' },
+  { field: 'HETPROD', header: 'Estado Producto', filterType: 'text' },
+  { field: 'HCTACLI', header: 'Cuenta Cliente', filterType: 'text' },
+  { field: 'HCAPMON', header: 'Saldo Capital', align: 'right', filterType: 'number' },
+  { field: 'HVENMON', header: 'Saldo Vencido', align: 'right', filterType: 'number' },
+  { field: 'HEXTENS', header: 'Extensión', align: 'right', filterType: 'number', mobileVisible: false },
+  { field: 'ubicacion', header: 'Ubicación', align: 'center', width: '7rem', sortable: false },
 ];
+
+/** Campos por los que busca el modal — los mismos cinco del `filter()` del legado. */
+export const BUSQUEDA_DETALLE_CULTIVO = ['HDESCUL', 'HDESCLI', 'HETPROD', 'HCTACLI', 'HFECPRO'];
 
 /** Los cuatro totales que el legado calcula sobre las filas del cultivo elegido. */
 export interface TotalesCultivo {
@@ -74,6 +87,13 @@ export interface DetalleCultivo {
   cultivo: string;
   filas: Record<string, unknown>[];
   totales: TotalesCultivo;
+}
+
+/** Ubicación de un cliente en el mapa del detalle — `HLATITU`/`HLONGIT` del legado (`ddMaps()`). */
+export interface UbicacionCliente {
+  lat: number;
+  lng: number;
+  etiqueta: string;
 }
 
 /** Suma las columnas del cultivo elegido — legado `showDetailsPopup()`. */

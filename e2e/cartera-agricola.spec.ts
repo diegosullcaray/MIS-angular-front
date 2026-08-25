@@ -40,12 +40,19 @@ async function mockBackend(page: Page) {
   });
 }
 
-/** Clic en la primera barra de una gráfica, asegurando que quede a la vista. */
+/**
+ * Clic en la primera barra de una gráfica, asegurando que quede a la vista.
+ *
+ * Highcharts dibuja cada barra como un `path.highcharts-point` dentro del
+ * grupo de su serie; se acota a `.highcharts-series-group` porque el símbolo
+ * de la leyenda lleva esa misma clase y si no, el clic lo apagaría en vez de
+ * abrir el detalle.
+ */
 async function clicEnPrimeraBarra(page: Page, indiceGrafico: number) {
   const barra = page
-    .locator('app-grafico-apex')
+    .locator('app-grafico-highcharts')
     .nth(indiceGrafico)
-    .locator('.apexcharts-bar-area, .apexcharts-series path')
+    .locator('.highcharts-series-group .highcharts-series-0 path.highcharts-point')
     .first();
   await barra.scrollIntoViewIfNeeded();
   await barra.click({ force: true });

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { CAPTACIONES_ROUTES } from './components/captaciones/captaciones.routes';
+import { CAPTACIONES_ROUTES } from './components/Captaciones/captaciones.routes';
 import { CLIENTES_ROUTES } from './components/Clientes/clientes.routes';
 import { CARTERA_ROUTES } from './components/Cartera/cartera.routes';
 import { PORTAFOLIO_REASIGNADO_ROUTES } from './components/Portafolio Reasignado/portafolio-reasignado.routes';

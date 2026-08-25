@@ -5,6 +5,8 @@ export interface ColumnaDinamica {
   style?: Record<string, string>;
   /** Formato de la celda — lo declaran tanto el payload como los `tblHeaders` estáticos del legado (`{ type: 'integer' }`). */
   format?: { type?: string };
+  /** Clave de la fila que trae el semáforo (-1/0/1) de esta columna — mismo punto y colores que `app-tabla-reporte` (`pi-circle-fill`). */
+  semaforoKey?: string;
   subs?: ColumnaDinamica[];
 }
 

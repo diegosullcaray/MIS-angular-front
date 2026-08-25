@@ -5,7 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
-import ApexCharts, { type ApexOptions } from 'apexcharts';
+// El build ESM de Highcharts 13 solo expone `default` en runtime, pero sus
+// tipos son exports con nombre — de ahí la importación partida en dos.
+import Highcharts from 'highcharts';
+import type { Chart as HighchartsChart, Options as HighchartsOptions } from 'highcharts';
 import { TooltipModule } from 'primeng/tooltip';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
@@ -20,7 +23,7 @@ import type { ColaboradorItem } from '../../models/colaborador.model';
 import type { FilaLabelValor } from '../../models/comun.model';
 import type { DatosResumenAnalista, FilaClienteCredito, HistoricoVariable, ResumenDashboard } from '../../models/dashboard.model';
 
-/** Paleta fija (mismo tinte navy/sky del sistema — ApexCharts, como Chart.js antes, no resuelve variables CSS en su config). */
+/** Paleta fija (mismo tinte navy/sky del sistema — Highcharts, como Chart.js antes, no resuelve variables CSS en su config). */
 const COLOR_PRIMARY = '#1D396E';
 const COLOR_SECONDARY = '#00A2FF';
 const PALETA_TRAMOS = ['#16A34A', '#00A2FF', '#B45309', '#DC2626', '#7C3AED', '#334155'];
@@ -32,13 +35,13 @@ const COLOR_TEXTO_OSCURO = '#A3B2C9';
 const GRID_CLARO = 'rgba(90,106,133,0.12)';
 const GRID_OSCURO = 'rgba(163,178,201,0.12)';
 
-/** Serie del gráfico "Evolutivo Mensual", ya lista para ApexCharts. */
+/** Serie del gráfico "Evolutivo Mensual", ya lista para Highcharts. */
 interface DatosEvolutivo {
   categorias: string[];
   series: { name: string; data: number[] }[];
 }
 
-/** Principal (`/app/analista`) — dashboard del analista: KPIs, perfil, 3 gráficos (ApexCharts, igual patrón imperativo que `GraficoReporteComponent`) y tabla de clientes con detalle. */
+/** Principal (`/app/analista`) — dashboard del analista: KPIs, perfil, 3 gráficos (Highcharts, igual patrón imperativo que `GraficoReporteComponent`) y tabla de clientes con detalle. */
 @Component({
   selector: 'app-principal-analista',
   standalone: true,
@@ -87,9 +90,9 @@ export class PrincipalComponent implements OnInit {
   private readonly evolutivoRef = viewChild<ElementRef<HTMLDivElement>>('evolutivo');
   private readonly tramosRef = viewChild<ElementRef<HTMLDivElement>>('tramos');
 
-  private chartComparativo: ApexCharts | null = null;
-  private chartEvolutivo: ApexCharts | null = null;
-  private chartTramos: ApexCharts | null = null;
+  private chartComparativo: HighchartsChart | null = null;
+  private chartEvolutivo: HighchartsChart | null = null;
+  private chartTramos: HighchartsChart | null = null;
 
   constructor() {
     effect(() => {
@@ -214,53 +217,64 @@ export class PrincipalComponent implements OnInit {
     };
   }
 
-  private renderComparativoDia(el: HTMLElement, d: DatosResumenAnalista, oscuro: boolean): void {
-    const options: ApexOptions = {
-      chart: { type: 'bar', height: '100%', background: 'transparent', foreColor: oscuro ? COLOR_TEXTO_OSCURO : COLOR_TEXTO_CLARO, toolbar: { show: false }, animations: { enabled: false } },
-      series: [{ name: 'Cartera Stock', data: [d.sal_cap_mant, d.sal_cap_ant, d.sal_cap] }],
-      xaxis: { categories: [d.f3, d.f2, d.f1] },
-      yaxis: { min: 0 },
-      colors: [COLOR_PRIMARY],
-      legend: { show: false },
-      dataLabels: { enabled: false },
-      grid: { borderColor: oscuro ? GRID_OSCURO : GRID_CLARO },
-      tooltip: { theme: oscuro ? 'dark' : 'light' },
-      stroke: { width: 0 },
+  /** Base común de los tres gráficos: fondo transparente y textos según el tema. */
+  private baseHighcharts(oscuro: boolean): HighchartsOptions {
+    const texto = oscuro ? COLOR_TEXTO_OSCURO : COLOR_TEXTO_CLARO;
+    return {
+      chart: { backgroundColor: 'transparent', style: { fontFamily: 'inherit' }, animation: false },
+      title: { text: undefined },
+      credits: { enabled: false },
+      accessibility: { enabled: false },
+      plotOptions: { series: { animation: false } },
+      tooltip: {
+        backgroundColor: oscuro ? '#162034' : '#FFFFFF',
+        borderColor: oscuro ? GRID_OSCURO : GRID_CLARO,
+        style: { color: oscuro ? '#E8EEF9' : '#304156', fontSize: '12px' },
+      },
+      legend: { itemStyle: { color: texto, fontSize: '10px', fontWeight: '500' } },
     };
+  }
+
+  private renderComparativoDia(el: HTMLElement, d: DatosResumenAnalista, oscuro: boolean): void {
+    const texto = oscuro ? COLOR_TEXTO_OSCURO : COLOR_TEXTO_CLARO;
     this.chartComparativo?.destroy();
-    this.chartComparativo = new ApexCharts(el, options);
-    void this.chartComparativo.render();
+    this.chartComparativo = Highcharts.chart(el, {
+      ...this.baseHighcharts(oscuro),
+      chart: { ...this.baseHighcharts(oscuro).chart, type: 'column' },
+      xAxis: { categories: [d.f3, d.f2, d.f1], labels: { style: { color: texto, fontSize: '10px' } }, lineColor: oscuro ? GRID_OSCURO : GRID_CLARO },
+      yAxis: { min: 0, title: { text: undefined }, labels: { style: { color: texto, fontSize: '10px' } }, gridLineColor: oscuro ? GRID_OSCURO : GRID_CLARO },
+      legend: { enabled: false },
+      series: [{ type: 'column', name: 'Cartera Stock', data: [d.sal_cap_mant, d.sal_cap_ant, d.sal_cap], color: COLOR_PRIMARY }],
+    });
   }
 
   private renderCarteraTramos(el: HTMLElement, d: DatosResumenAnalista, oscuro: boolean): void {
-    const options: ApexOptions = {
-      chart: { type: 'pie', height: '100%', background: 'transparent', foreColor: oscuro ? COLOR_TEXTO_OSCURO : COLOR_TEXTO_CLARO, animations: { enabled: false } },
-      series: [d.da_t1, d.da_t2, d.da_t3, d.da_t4, d.da_t5, d.da_t6],
-      labels: LABELS_TRAMOS,
-      colors: PALETA_TRAMOS,
-      legend: { position: 'bottom', fontSize: '10px', itemMargin: { horizontal: 6, vertical: 0 } },
-      tooltip: { theme: oscuro ? 'dark' : 'light' },
-    };
+    const valores = [d.da_t1, d.da_t2, d.da_t3, d.da_t4, d.da_t5, d.da_t6];
     this.chartTramos?.destroy();
-    this.chartTramos = new ApexCharts(el, options);
-    void this.chartTramos.render();
+    this.chartTramos = Highcharts.chart(el, {
+      ...this.baseHighcharts(oscuro),
+      chart: { ...this.baseHighcharts(oscuro).chart, type: 'pie' },
+      legend: { ...this.baseHighcharts(oscuro).legend, enabled: true, align: 'center', verticalAlign: 'bottom', layout: 'horizontal' },
+      plotOptions: { pie: { showInLegend: true, dataLabels: { enabled: false }, borderWidth: 0 } },
+      series: [{
+        type: 'pie',
+        name: 'Cartera',
+        data: LABELS_TRAMOS.map((name, i) => ({ name, y: valores[i], color: PALETA_TRAMOS[i] })),
+      }],
+    });
   }
 
   private renderEvolutivo(el: HTMLElement, datos: DatosEvolutivo, oscuro: boolean): void {
-    const options: ApexOptions = {
-      chart: { type: 'line', height: '100%', background: 'transparent', foreColor: oscuro ? COLOR_TEXTO_OSCURO : COLOR_TEXTO_CLARO, toolbar: { show: false }, animations: { enabled: false } },
-      series: datos.series,
-      xaxis: { categories: datos.categorias },
-      yaxis: { min: 0 },
-      colors: [COLOR_PRIMARY, COLOR_SECONDARY, PALETA_TRAMOS[2]],
-      legend: { show: true, position: 'bottom', fontSize: '10px' },
-      dataLabels: { enabled: false },
-      grid: { borderColor: oscuro ? GRID_OSCURO : GRID_CLARO },
-      tooltip: { theme: oscuro ? 'dark' : 'light' },
-      stroke: { curve: 'smooth', width: 2 },
-    };
+    const texto = oscuro ? COLOR_TEXTO_OSCURO : COLOR_TEXTO_CLARO;
+    const colores = [COLOR_PRIMARY, COLOR_SECONDARY, PALETA_TRAMOS[2]];
     this.chartEvolutivo?.destroy();
-    this.chartEvolutivo = new ApexCharts(el, options);
-    void this.chartEvolutivo.render();
+    this.chartEvolutivo = Highcharts.chart(el, {
+      ...this.baseHighcharts(oscuro),
+      chart: { ...this.baseHighcharts(oscuro).chart, type: 'spline' },
+      xAxis: { categories: datos.categorias, labels: { style: { color: texto, fontSize: '10px' } }, lineColor: oscuro ? GRID_OSCURO : GRID_CLARO },
+      yAxis: { min: 0, title: { text: undefined }, labels: { style: { color: texto, fontSize: '10px' } }, gridLineColor: oscuro ? GRID_OSCURO : GRID_CLARO },
+      legend: { ...this.baseHighcharts(oscuro).legend, enabled: true, align: 'center', verticalAlign: 'bottom', layout: 'horizontal' },
+      series: datos.series.map((s, i) => ({ type: 'spline' as const, name: s.name, data: s.data, color: colores[i % colores.length], marker: { enabled: false } })),
+    });
   }
 }

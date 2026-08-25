@@ -1,5 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { KnobModule } from 'primeng/knob';
 import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
 import { SelectFiltroComponent } from '../../../../../../ui/select-filtro/select-filtro.component';
@@ -13,6 +15,7 @@ import {
   FASE_CMG_CARTERA_POR_DEFECTO,
   OPCIONES_FASE_CMG_CARTERA,
   type CmgCarteraResultado,
+  type TarjetaCmgCartera,
 } from '../../models/cmg-cartera.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
 
@@ -22,6 +25,8 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
   standalone: true,
   imports: [
     DecimalPipe,
+    FormsModule,
+    KnobModule,
     HierSelectorComponent,
     TablaDinamicaComponent,
     SelectFiltroComponent,
@@ -47,6 +52,9 @@ export class CmgCarteraComponent {
   protected readonly tarjetas = computed(() => this.reporte().tarjetas);
   protected readonly tabla = computed(() => this.reporte().tabla);
 
+  /** Progreso animado de cada aro (por etiqueta), de 0 al `cumplimiento` real. */
+  private readonly progresoAnillos = signal<Record<string, number>>({});
+
   constructor() {
     effect(() => {
       const nodo = this.nivelActual();
@@ -64,17 +72,49 @@ export class CmgCarteraComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** Valor animado del aro de cumplimiento de una tarjeta (0 mientras no ha animado). */
+  protected valorAnillo(tarjeta: TarjetaCmgCartera): number {
+    return this.progresoAnillos()[tarjeta.etiqueta] ?? 0;
+  }
+
+  /** Mismos cortes de color que el legado: rojo por debajo de meta, ámbar cerca, verde al superarla. */
+  protected colorAnillo(valor: number): string {
+    if (valor <= 0) return 'transparent';
+    if (valor < 95) return 'var(--mis-danger)';
+    if (valor <= 100) return 'var(--mis-warning)';
+    return 'var(--mis-success)';
+  }
+
   private cargar(nodo: HierarquiaNodo, fase: number): void {
     this.cargando.set(true);
     this.servicio.cmgCartera({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, fase).subscribe({
       next: (reporte) => {
         this.reporte.set(reporte);
         this.cargando.set(false);
+        this.animarAnillos(reporte.tarjetas);
       },
       error: () => {
         this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
         this.cargando.set(false);
       },
     });
+  }
+
+  /** Anima cada aro desde 0 hasta su % de cumplimiento real. */
+  private animarAnillos(tarjetas: TarjetaCmgCartera[]): void {
+    this.progresoAnillos.set({});
+    const duracionMs = 900;
+    for (const t of tarjetas) {
+      if (t.cumplimiento === undefined) continue;
+      const objetivo = t.cumplimiento;
+      const etiqueta = t.etiqueta;
+      const inicio = performance.now();
+      const paso = (ahora: number) => {
+        const progreso = Math.min((ahora - inicio) / duracionMs, 1);
+        this.progresoAnillos.update((m) => ({ ...m, [etiqueta]: Math.round(objetivo * progreso * 10) / 10 }));
+        if (progreso < 1) requestAnimationFrame(paso);
+      };
+      requestAnimationFrame(paso);
+    }
   }
 }

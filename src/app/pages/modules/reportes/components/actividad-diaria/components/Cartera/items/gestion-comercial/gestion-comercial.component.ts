@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
-import { GraficoApexComponent } from '../../../../../../ui/grafico-apex/grafico-apex.component';
+import { GraficoHighchartsComponent } from '../../../../../../ui/grafico-highcharts/grafico-highcharts.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -24,7 +24,7 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
     TabsModule,
     HierSelectorComponent,
     TablaDinamicaComponent,
-    GraficoApexComponent,
+    GraficoHighchartsComponent,
     EmptyStateComponent,
     WindowPanelComponent,
   ],

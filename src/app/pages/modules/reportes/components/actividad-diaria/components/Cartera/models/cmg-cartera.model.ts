@@ -8,7 +8,9 @@ export interface TarjetaCmgCartera {
   comparativo: string;
   /** `1` sube, `-1` baja, `0` sin señal. */
   senal: number;
-  /** % de cumplimiento cuando el backend lo trae. */
+  /** Texto junto a la flecha cuando hay señal (ej. "-525 pbs", "369"). */
+  delta?: string;
+  /** % de cumplimiento cuando el backend lo trae (dibuja el aro en vez de la flecha). */
   cumplimiento?: number;
 }
 

@@ -51,6 +51,34 @@ export class TablaDinamicaComponent {
     return fila['style'] === 1;
   }
 
+  /** Si hay que dibujar el punto de semáforo de esta celda (columna con `semaforoKey` y valor presente en la fila). */
+  protected mostrarSemaforo(fila: Record<string, unknown>, columna: ColumnaDinamica): boolean {
+    if (!columna.semaforoKey) return false;
+    const valor = fila[columna.semaforoKey];
+    return valor !== null && valor !== undefined && valor !== '';
+  }
+
+  /** Mismos colores que `app-tabla-reporte` (`colorSemaforo`): `1` éxito, `0` alerta, `-1` peligro, cualquier otro valor neutro. */
+  protected colorSemaforo(fila: Record<string, unknown>, columna: ColumnaDinamica): string {
+    const valor = columna.semaforoKey ? fila[columna.semaforoKey] : undefined;
+    const num = Number(valor);
+    if (num === 1) return 'text-[var(--mis-success)]';
+    if (num === 0) return 'text-orange-500';
+    if (num === -1) return 'text-[var(--mis-danger)]';
+    return 'text-[var(--mis-text-tertiary)]';
+  }
+
+  /**
+   * Números pegados a la derecha, texto a la izquierda — misma regla que
+   * `app-tabla-reporte`. A diferencia de esa tabla, aquí el semáforo no es una
+   * columna aparte: comparte celda con su valor (`semaforoKey`), así que sigue
+   * la alineación normal del valor en vez de la angosta y centrada.
+   */
+  protected alineacion(columna: ColumnaDinamica): string {
+    const tipo = columna.format?.type;
+    return tipo === 'integer' || tipo === 'decimal' || tipo === 'percent' ? 'text-right' : 'text-left';
+  }
+
   protected onClickFila(fila: Record<string, unknown>): void {
     if (this.seleccionable()) {
       this.filaSeleccionada.emit(fila);

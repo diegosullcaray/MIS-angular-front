@@ -62,7 +62,7 @@
             @for (grafico of graficos(); track grafico.titulo) {
               <!-- El título lo pinta la propia gráfica a partir de `bloque.titulo`. -->
               <div class="mis-card p-3">
-                <app-grafico-apex [datos]="grafico" />
+                <app-grafico-highcharts [datos]="grafico" />
               </div>
             }
           </div>

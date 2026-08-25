@@ -1,9 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
-import { GraficoApexComponent } from '../../../../../../ui/grafico-apex/grafico-apex.component';
+import { DataTableComponent } from '../../../../../../../../../shared/ui/data-table/data-table.component';
+import { DataTableCellDirective } from '../../../../../../../../../shared/ui/data-table/data-table-cell.directive';
+import { GraficoHighchartsComponent } from '../../../../../../ui/grafico-highcharts/grafico-highcharts.component';
+import { MapaUbicacionComponent } from '../../../../../../ui/mapa-ubicacion/mapa-ubicacion.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -11,6 +16,7 @@ import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selec
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import type { BloqueGrafico } from '../../../../../../models/grafico-reporte.model';
 import {
+  BUSQUEDA_DETALLE_CULTIVO,
   CARTERA_AGRICOLA_VACIA,
   COLUMNAS_DETALLE_CULTIVO,
   GRAFICOS_AGRICOLA,
@@ -18,6 +24,7 @@ import {
   totalesDeCultivo,
   type CarteraAgricolaResultado,
   type DetalleCultivo,
+  type UbicacionCliente,
 } from '../../models/cartera-agricola.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
 
@@ -28,9 +35,14 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
   imports: [
     DecimalPipe,
     DialogModule,
+    ButtonModule,
+    TooltipModule,
     HierSelectorComponent,
     TablaDinamicaComponent,
-    GraficoApexComponent,
+    DataTableComponent,
+    DataTableCellDirective,
+    GraficoHighchartsComponent,
+    MapaUbicacionComponent,
     EmptyStateComponent,
     WindowPanelComponent,
   ],
@@ -43,6 +55,7 @@ export class CarteraAgricolaCultivosComponent {
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly columnasDetalle = COLUMNAS_DETALLE_CULTIVO;
+  protected readonly busquedaDetalle = BUSQUEDA_DETALLE_CULTIVO;
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
@@ -59,6 +72,9 @@ export class CarteraAgricolaCultivosComponent {
 
   /** Detalle del cultivo elegido en un gráfico; `null` mantiene el modal cerrado. */
   protected readonly detalle = signal<DetalleCultivo | null>(null);
+
+  /** Cliente cuyo mapa se está viendo dentro del modal; `null` muestra la tabla. */
+  protected readonly ubicacion = signal<UbicacionCliente | null>(null);
 
   private filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
 
@@ -125,5 +141,33 @@ export class CarteraAgricolaCultivosComponent {
 
   protected cerrarDetalle(): void {
     this.detalle.set(null);
+    this.ubicacion.set(null);
   }
+
+  /**
+   * Clic en un cliente del listado: abre su ubicación en el mapa — legado
+   * `ddMaps()`, que lee `HLATITU`/`HLONGIT` de la propia fila. Esas dos claves
+   * no son columnas visibles, pero sí viajan en el `data` del bloque.
+   */
+  protected onClienteSeleccionado(fila: Record<string, unknown>): void {
+    const lat = Number(fila['HLATITU']);
+    const lng = Number(fila['HLONGIT']);
+    if (!coordenadaValida(lat, -90, 90) || !coordenadaValida(lng, -180, 180)) {
+      this.toast.info('Sin ubicación', 'Este cliente no tiene coordenadas registradas.');
+      return;
+    }
+
+    const etiqueta = String(fila['HDESCLI'] ?? fila['HCTACLI'] ?? 'Ubicación');
+    this.ubicacion.set({ lat, lng, etiqueta });
+  }
+
+  /** Vuelve del mapa al listado de clientes, sin cerrar el modal. */
+  protected volverAlListadoDeClientes(): void {
+    this.ubicacion.set(null);
+  }
+}
+
+/** El legado solo descartaba `NaN`; además se acotan al rango real para no centrar el mapa en un `0,0` falso. */
+function coordenadaValida(valor: number, min: number, max: number): boolean {
+  return Number.isFinite(valor) && valor !== 0 && valor >= min && valor <= max;
 }
