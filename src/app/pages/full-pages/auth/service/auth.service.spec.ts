@@ -143,11 +143,11 @@ describe('AuthService', () => {
     expect(sessionStorage.getItem('mis.sesion')).toContain('winder-sid-1');
 
     const persistida = JSON.parse(sessionStorage.getItem('mis.sesion')!);
-    expect(persistida.expiraEn).toBeGreaterThan(Date.now() + 14 * 60 * 1000);
-    expect(persistida.expiraEn).toBeLessThanOrEqual(Date.now() + 15 * 60 * 1000);
+    expect(persistida.expiraEn).toBeGreaterThan(Date.now() + 29 * 60 * 1000);
+    expect(persistida.expiraEn).toBeLessThanOrEqual(Date.now() + 30 * 60 * 1000);
   });
 
-  it('borra las credenciales de sessionStorage y redirige a "Sesión expirada" (401) automáticamente a los 15 min de login, sin necesidad de recargar', async () => {
+  it('borra las credenciales de sessionStorage y redirige a "Sesión expirada" (401) automáticamente a los 30 min de login, sin necesidad de recargar', async () => {
     vi.useFakeTimers();
     configurar({
       hasValidIdToken: vi.fn().mockReturnValue(true),
@@ -158,7 +158,7 @@ describe('AuthService', () => {
     await service.completarLoginGoogle();
     expect(shell.usuarioActivo()).not.toBeNull();
 
-    vi.advanceTimersByTime(15 * 60 * 1000);
+    vi.advanceTimersByTime(30 * 60 * 1000);
 
     expect(shell.usuarioActivo()).toBeNull();
     expect(service.token()).toBeNull();
@@ -199,7 +199,7 @@ describe('AuthService', () => {
     expect(shell.usuarioActivo()?.id).toBe('u-1');
   });
 
-  it('restaurarSesion() descarta y redirige a "Sesión expirada" (401) si la sesión ya venció (pasaron los 15 min)', () => {
+  it('restaurarSesion() descarta y redirige a "Sesión expirada" (401) si la sesión ya venció (pasaron los 30 min)', () => {
     configurar();
     const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     sessionStorage.setItem(
@@ -228,7 +228,7 @@ describe('AuthService', () => {
       JSON.stringify({
         token: 'jwt-vigente',
         usuario: { id: 'u-1', nombre: 'Ana Torres', email: 'ana.torres@confianza.pe', rol: 'admin-sistema', subsistemas: [] },
-        expiraEn: Date.now() + 5000, // quedan 5s de los 15min originales
+        expiraEn: Date.now() + 5000, // quedan 5s de los 30min originales
       })
     );
 
@@ -276,7 +276,7 @@ describe('AuthService', () => {
     await service.completarLoginGoogle();
 
     service.cerrarSesion('');
-    vi.advanceTimersByTime(15 * 60 * 1000);
+    vi.advanceTimersByTime(30 * 60 * 1000);
 
     expect(navSpy).not.toHaveBeenCalledWith('/error/401');
   });
