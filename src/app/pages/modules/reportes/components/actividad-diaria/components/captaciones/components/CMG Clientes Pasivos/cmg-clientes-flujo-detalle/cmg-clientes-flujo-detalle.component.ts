@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ReporteSimpleComponent } from '../../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteSimpleBase } from '../../../../../../../ui/reporte-simple/reporte-simple.base';
-import { SelectFiltroComponent } from '../../../../../../../ui/select-filtro/select-filtro.component';
+import { SelectFiltroComponent } from '../../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { PARAMS_HIER_OFICINA } from '../../../../../../../models/jerarquia.model';
 import {
   GRUPO_CMG_POR_DEFECTO,

@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { EditableTableComponent } from './editable-table.component';
-import type { ColumnaTabla } from '../../models/tabla.model';
-import type { FilaLineaSimple } from '../../models/linea-simple.model';
+import type { ColumnaTabla, FilaTabla } from '../models/tabla-editable.model';
 
 describe('EditableTableComponent', () => {
   beforeEach(() => {
@@ -41,7 +40,7 @@ describe('EditableTableComponent', () => {
     fixture.componentRef.setInput('columnas', [{ label: 'Saldo', key: 'a1' }]);
     fixture.detectChanges();
 
-    const fila: FilaLineaSimple = { ord: 1, a1: 100 };
+    const fila: FilaTabla = { ord: 1, a1: 100 };
     const emitSpy = vi.fn();
     fixture.componentInstance.celdaEditada.subscribe(emitSpy);
 

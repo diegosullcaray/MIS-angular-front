@@ -1,14 +1,8 @@
-/** Columna dinámica del motor `table.regular` (`resultado.headers`, JSON string en el backend). */
-export interface ColumnaDinamica {
-  key: string;
-  label: string;
-  style?: Record<string, string>;
-  /** Formato de la celda — lo declaran tanto el payload como los `tblHeaders` estáticos del legado (`{ type: 'integer' }`). */
-  format?: { type?: string };
-  /** Clave de la fila que trae el semáforo (-1/0/1) de esta columna — mismo punto y colores que `app-tabla-reporte` (`pi-circle-fill`). */
-  semaforoKey?: string;
-  subs?: ColumnaDinamica[];
-}
+import type { ColumnaDinamica } from '../../../../shared/ui/tablas/models/tabla-dinamica.model';
+
+// La columna es contrato de render y vive junto a `<app-tabla-dinamica>`; acá queda lo que
+// devuelve el motor `table.regular`, que es de este módulo.
+export type { ColumnaDinamica };
 
 /** Tarjeta KPI de `resultado.meta1` — legado `carterizacion-cap-com.component.ts` (`kpiCards`). */
 export interface KpiTablaDinamica {

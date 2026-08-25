@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import type { ColumnaReporte, FilaEncabezadoReporte, FilaReporte } from '../../models/tabla-reporte.model';
+import type { ColumnaReporte, FilaEncabezadoReporte, FilaReporte } from '../models/tabla-reporte.model';
 
 function numeroColumnas(cols: ColumnaReporte['cols']): number {
   return cols ? Number(cols) : 1;

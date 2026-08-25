@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval, startWith, switchMap } from 'rxjs';
-import { TablaReporteComponent } from '../../ui/tabla-reporte/tabla-reporte.component';
+import { TablaReporteComponent } from '../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { ControlCargasService } from './control-cargas.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';

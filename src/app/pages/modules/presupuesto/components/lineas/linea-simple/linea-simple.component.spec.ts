@@ -4,7 +4,7 @@ import { MessageService } from 'primeng/api';
 import { LineaSimpleComponent } from './linea-simple.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { CeldaEditadaEvent } from '../../../models/tabla.model';
+import type { CeldaEditadaEvent } from '../../../../../../shared/ui/tablas/models/tabla-editable.model';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { FilaLineaSimple, LineaSimpleConfig, ResumenLineaSimple, ResumenMetadata } from '../../../models/linea-simple.model';
 

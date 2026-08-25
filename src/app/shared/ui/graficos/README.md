@@ -31,7 +31,7 @@ Cada capa tiene una única responsabilidad, para que nada se recicle "sucio":
   componente.
 - **Los componentes específicos (`grafico-mixto`, `grafico-pie`).** Envuelven al base. Reciben
   data simple (`[datos]="bloque"`, `[porciones]="..."`), leen el tema y llaman a la fábrica.
-  Son los únicos que dependen del `ThemeService`.
+  Son los únicos que dependen del `ThemeService` (`shared/services/`).
 - **Las utilidades.** `highcharts-factory` centraliza lo repetitivo: márgenes, ejes, tooltip
   corporativo, formateo de importes y la elección de la forma del gráfico. `paleta-colores`
   tiene los colores y los tokens de tema resueltos a hexadecimal (Highcharts no resuelve

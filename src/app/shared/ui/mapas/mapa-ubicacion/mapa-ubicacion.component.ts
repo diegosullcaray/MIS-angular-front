@@ -11,7 +11,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { MapLibreMap, Marker } from 'maplibre-gl';
-import { ThemeService } from '../../../../full-pages/layout/services/theme.service';
+import { ThemeService } from '../../../services/theme.service';
 
 /** Centro del Perú — encuadre inicial del legado (`L.latLng(-9.189967, -75.015152)`). */
 const CENTRO_PERU: [number, number] = [-75.015152, -9.189967];

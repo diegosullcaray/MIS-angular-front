@@ -1,4 +1,4 @@
-import type { ColumnaTabla } from './tabla.model';
+import type { ColumnaTabla } from '../../../../shared/ui/tablas/models/tabla-editable.model';
 import type { FilaLineaSimple } from './linea-simple.model';
 
 /** Fila de Depósitos (BP y Red comparten exactamente esta forma — 3 productos: Ahorros (`a*`), CTS (`b*`), Plazo Fijo (`c*`), cada uno con Saldo Inicial / Variación (editable) / Saldo Final). */

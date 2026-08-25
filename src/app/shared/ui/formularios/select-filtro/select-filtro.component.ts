@@ -1,7 +1,7 @@
 import { Component, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
-import type { OpcionFiltro } from '../../models/filtros.model';
+import type { OpcionFiltro } from '../opcion-filtro.model';
 
 /** Desplegable etiquetado de la franja de filtros — equivalente a un `filter` de `cra-map.ts` (`{ label, data, selected }`). */
 @Component({

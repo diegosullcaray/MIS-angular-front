@@ -5,7 +5,7 @@ import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { EncuestaClientesService } from '../../services/encuesta-clientes.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import {

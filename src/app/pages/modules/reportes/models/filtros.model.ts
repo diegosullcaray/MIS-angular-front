@@ -1,8 +1,8 @@
-/** Opción de un desplegable de filtro — misma forma que `filter-locale.module.ts` del legado (`{ id, desc }`). */
-export interface OpcionFiltro<T extends string | number = string> {
-  id: T;
-  desc: string;
-}
+import type { OpcionFiltro } from '../../../../shared/ui/formularios/opcion-filtro.model';
+
+// El tipo vive en `shared/ui/formularios` junto a `<app-select-filtro>`, que es quien lo pinta;
+// acá quedan los catálogos de negocio de Reportes, que no tienen por qué estar en shared.
+export type { OpcionFiltro };
 
 /** `Tipo01()` del legado — variable `agr` de "Gestión de Tasas Pasivas". */
 export const OPCIONES_TIPO_TRAMO_PLAZO: OpcionFiltro<number>[] = [

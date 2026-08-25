@@ -7,10 +7,10 @@ import { InputIconModule } from 'primeng/inputicon';
 import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
+import { EditableTableComponent } from '../../../../../../shared/ui/tablas/editable-table/editable-table.component';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { filtrarPorDescripcion } from '../../../utils/texto.util';
-import type { ColumnaTabla } from '../../../models/tabla.model';
+import type { ColumnaTabla } from '../../../../../../shared/ui/tablas/models/tabla-editable.model';
 import type { NivelJerarquiaFijo, ResponsableFila } from '../../../models/responsables.model';
 
 const NIVELES: NivelJerarquiaFijo[] = [

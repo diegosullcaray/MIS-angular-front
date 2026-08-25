@@ -3,8 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
-import type { CeldaEditadaEvent, ColumnaTabla, FilaTabla, TipoColumna } from '../../models/tabla.model';
-import { formatearNumero } from '../../../../../shared/utils/formato.util';
+import type { CeldaEditadaEvent, ColumnaTabla, FilaTabla, TipoColumna } from '../models/tabla-editable.model';
+import { formatearNumero } from '../../../utils/formato.util';
 
 /** Tabla editable genérica de Presupuesto — reemplaza al `stg-table` legado (`customComponentCell`/`customComponentStyler`/`onEditCell`) con el propio mecanismo de edición inline de PrimeNG (`pEditableColumn`/`p-cellEditor`). */
 @Component({

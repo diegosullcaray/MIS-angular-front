@@ -4,7 +4,7 @@ import { MessageService } from 'primeng/api';
 import { CarteraCreditosComponent } from './cartera-creditos.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { CeldaEditadaEvent } from '../../../models/tabla.model';
+import type { CeldaEditadaEvent } from '../../../../../../shared/ui/tablas/models/tabla-editable.model';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { ResumenMetadata } from '../../../models/linea-simple.model';
 import type { FilaCarteraCreditosVariables, ResumenCarteraCreditos } from '../../../models/cartera-creditos.model';

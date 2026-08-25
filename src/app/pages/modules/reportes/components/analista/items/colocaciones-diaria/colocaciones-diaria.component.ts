@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { ColocacionesDiariaService } from '../../services/colocaciones-diaria.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';

@@ -1,6 +1,6 @@
 import type { Observable } from 'rxjs';
 import type { ParamsJerarquia } from './jerarquia.model';
-import type { ColumnaTabla } from './tabla.model';
+import type { ColumnaTabla } from '../../../../shared/ui/tablas/models/tabla-editable.model';
 
 /** Fila base de una pantalla "línea simple" — toda fila concreta la extiende con sus propias columnas. */
 export interface FilaLineaSimple {

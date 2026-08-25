@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { CanalAlternoService } from '../../services/canal-alterno.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { filtrarFilas } from '../../../../utils/reportes-mapeo.util';

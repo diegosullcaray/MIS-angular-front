@@ -4,7 +4,7 @@ import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { HierSelectorComponent } from '../../../../ui/hier-selector/hier-selector.component';
-import { TablaDinamicaComponent } from '../../../../ui/tabla-dinamica/tabla-dinamica.component';
+import { TablaDinamicaComponent } from '../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { PARAMS_HIER_UNIDAD } from '../../../../models/jerarquia.model';
 import { DesarrolloSostenibleService } from '../../services/desarrollo-sostenible.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';

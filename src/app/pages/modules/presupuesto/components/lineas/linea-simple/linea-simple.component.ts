@@ -3,10 +3,10 @@ import { ButtonModule } from 'primeng/button';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
-import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
+import { EditableTableComponent } from '../../../../../../shared/ui/tablas/editable-table/editable-table.component';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
-import type { CeldaEditadaEvent } from '../../../models/tabla.model';
+import type { CeldaEditadaEvent } from '../../../../../../shared/ui/tablas/models/tabla-editable.model';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { FilaLineaSimple, LineaSimpleConfig, ResumenMetadata } from '../../../models/linea-simple.model';
 

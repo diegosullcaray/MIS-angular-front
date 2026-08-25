@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, output } from '@angular/core';
 import { GraficoBaseComponent } from '../grafico-base/grafico-base.component';
-import { ThemeService } from '../../../../pages/full-pages/layout/services/theme.service';
+import { ThemeService } from '../../../services/theme.service';
 import type { PorcionGrafico } from '../models/grafico-comun.model';
 import { opcionesPie } from '../utils/highcharts-factory.util';
 

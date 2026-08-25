@@ -1,8 +1,8 @@
 import { Component, computed, inject, input, output, LOCALE_ID } from '@angular/core';
 import { formatNumber } from '@angular/common';
 import { TableModule } from 'primeng/table';
-import { aplanarEncabezados } from '../../utils/tabla-dinamica.util';
-import type { ColumnaDinamica } from '../../models/tabla-dinamica.model';
+import { aplanarEncabezados } from './tabla-dinamica.util';
+import type { ColumnaDinamica } from '../models/tabla-dinamica.model';
 
 /** Tabla del motor `table.regular` (columnas dinámicas) — reemplaza a `stg-table2` del legado (`shared/components/stg-table2`). */
 @Component({

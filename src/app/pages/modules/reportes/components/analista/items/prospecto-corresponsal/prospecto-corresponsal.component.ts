@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { AgregarProspectoDialogComponent } from './agregar-prospecto-dialog/agregar-prospecto-dialog.component';
 import { ProspectoCorresponsalService } from '../../services/prospecto-corresponsal.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';

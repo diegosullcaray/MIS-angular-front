@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabsModule } from 'primeng/tabs';
-import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { PlanillaMovilidadService } from '../../services/planilla-movilidad.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { fechaUltimoDia } from '../../../../utils/fecha-reporte.util';

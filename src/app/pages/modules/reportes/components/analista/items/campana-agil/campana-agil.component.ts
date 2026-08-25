@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { CampanaAgilService } from '../../services/campana-agil.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { OPCIONES_SEMANA, SEMANA_POR_DEFECTO } from '../../models/campana-agil.model';

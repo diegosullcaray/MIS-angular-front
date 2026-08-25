@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { TablaReporteComponent } from './tabla-reporte.component';
-import type { FilaEncabezadoReporte, FilaReporte } from '../../models/tabla-reporte.model';
+import type { FilaEncabezadoReporte, FilaReporte } from '../models/tabla-reporte.model';
 
 const ENCABEZADOS: FilaEncabezadoReporte[] = [
   {
