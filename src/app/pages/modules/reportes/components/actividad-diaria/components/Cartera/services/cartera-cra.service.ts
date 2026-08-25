@@ -56,15 +56,23 @@ export class CarteraCraService {
     return this.unBloque('RESMORAGP_01', nodo);
   }
 
-  /** "Detalle Incentivos PDM" — legado `res-inc_pdm` (`RESINCGRUP`), sin parámetros propios. */
+  /**
+   * "Detalle Incentivos PDM" — legado `res-inc_pdm` (`RESINCGRUP`), sin
+   * parámetros propios. Va por el host paginado `report-cra-V10`.
+   */
   detalleIncentivosPdm(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque('RESINCGRUP_01', nodo);
+    return this.bloques.regularPaginado('RESINCGRUP_01', nodo).pipe(map((tabla1) => ({ tabla1 })));
   }
 
-  /** "Desembolsos PDM" — legado `det-ince-pdm` (`DET_INCEN_PDM`), que pide `fecha`. */
+  /**
+   * "Desembolsos PDM" — legado `det-ince-pdm` (`DET_INCEN_PDM`), que pide `fecha`.
+   *
+   * También es del host paginado `report-cra-V10`: sin `pagen` ni el nodo
+   * completo el backend contesta "Resultado vacio para: regularData".
+   */
   desembolsosPdm(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.bloques
-      .regular('DET_INCEN_PDM_01', nodo, { fecha: this.bloques.fec() })
+      .regularPaginado('DET_INCEN_PDM_01', nodo, { fecha: this.bloques.fec() })
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 

@@ -59,9 +59,26 @@ describe('CarteraCraService (reportes de Cartera del `report-cra-v1p1`)', () => 
     expect(llamadas()).toEqual([{ codRep: 'GCOMCRE_02', extra: {} }]);
   });
 
-  it('"Desembolsos PDM" manda `fecha`, no solo el `fec` común', () => {
-    servicio.desembolsosPdm(NODO).subscribe();
-    expect(llamadas()).toEqual([{ codRep: 'DET_INCEN_PDM_01', extra: { fecha: '20251130' } }]);
+  /**
+   * Los dos reportes del host paginado `report-cra-V10` del legado, que arma
+   * `{ ...page, ...filter, ...level }`: mandan `pagen` y el nodo COMPLETO
+   * (con `lvl_hier`), y no el `fec` común. Sin eso el backend responde
+   * "Resultado vacio para: regularData".
+   */
+  const NODO_COMPLETO = { tip_cod: 7, cod_rel: '231', lvl_hier: 1, des_rel: 'FINANCIERA CONFIANZA', lbl_hier: 'FINANCIERA' };
+
+  it('"Desembolsos PDM" manda `pagen`, el nodo completo y `fecha` (host V10)', () => {
+    servicio.desembolsosPdm(NODO_COMPLETO).subscribe();
+
+    expect(getRegularData.mock.calls[0][0]).toBe('DET_INCEN_PDM_01');
+    expect(getRegularData.mock.calls[0][1]).toEqual({ pagen: 1, ...NODO_COMPLETO, fecha: '20251130' });
+  });
+
+  it('"Detalle Incentivos PDM" manda `pagen` y el nodo completo, sin parámetros propios (host V10)', () => {
+    servicio.detalleIncentivosPdm(NODO_COMPLETO).subscribe();
+
+    expect(getRegularData.mock.calls[0][0]).toBe('RESINCGRUP_01');
+    expect(getRegularData.mock.calls[0][1]).toEqual({ pagen: 1, ...NODO_COMPLETO });
   });
 
   it.each([
@@ -70,7 +87,6 @@ describe('CarteraCraService (reportes de Cartera del `report-cra-v1p1`)', () => 
     ['rankingAutonomias', 'reporte_autonomia_newdiaria_01'],
     ['activasPdm', 'RACTGP_01'],
     ['moraPdm', 'RESMORAGP_01'],
-    ['detalleIncentivosPdm', 'RESINCGRUP_01'],
   ])('%s pide %s sin parámetros propios', (metodo, codRep) => {
     (servicio[metodo as keyof CarteraCraService] as (n: typeof NODO) => { subscribe: () => void }).call(servicio, NODO).subscribe();
     expect(llamadas()).toEqual([{ codRep, extra: {} }]);

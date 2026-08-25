@@ -5,6 +5,8 @@ export interface HierarquiaNodo {
   des_rel?: string;
   lbl_hier?: string;
   lvl?: number;
+  /** Nivel que devuelve el backend en `level_hierarchy`; los reportes paginados del legado lo reenvían tal cual. */
+  lvl_hier?: number;
 }
 
 export interface ParamsJerarquia {

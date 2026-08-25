@@ -56,7 +56,10 @@ describe('ReporteSimpleBase', () => {
     componente.seleccionar(NODO);
     fixture.detectChanges();
 
-    expect(componente.consultas).toEqual([{ nodo: { tip_cod: 2, cod_rel: 'AG01' }, prod: 'TODOS' }]);
+    // El nodo llega COMPLETO: los reportes paginados reenvían también sus
+    // campos de jerarquía. El recorte a `tip_cod`/`cod_rel` lo hace
+    // `BloqueReporteService.regular()`, no esta base.
+    expect(componente.consultas).toEqual([{ nodo: NODO, prod: 'TODOS' }]);
     expect(componente.estado.tabla().body).toEqual([{ marca: 'TODOS' }]);
     expect(componente.estado.cargando()).toBe(false);
   });

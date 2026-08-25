@@ -37,7 +37,10 @@ export abstract class ReporteSimpleBase {
 
   private cargar(nodo: HierarquiaNodo): void {
     this.cargando.set(true);
-    this.consultar({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
+    // Se pasa el nodo COMPLETO: los reportes paginados reenvían también
+    // `lvl_hier`/`des_rel`/`lbl_hier`. Los demás no cambian, porque
+    // `BloqueReporteService.regular()` recorta a `tip_cod`/`cod_rel`.
+    this.consultar(nodo).subscribe({
       next: ({ tabla1 }) => {
         this.tabla.set(tabla1);
         this.cargando.set(false);
