@@ -1,33 +1,5 @@
-/**
- * Verde para todo el panel, por pedido de la división.
- *
- * Se hace redefiniendo los tokens de marca en el host en vez de tocar
- * `app-window-panel` o `app-tabla-dinamica`: las variables CSS se heredan por DOM,
- * así que la barra de la ventana, los encabezados de la tabla y los textos de las
- * tarjetas quedan en verde sin que ninguno de esos componentes se entere.
- *
- * El verde es oscuro a propósito: `--mis-text-on-primary` es blanco, y sobre un
- * verde claro no llega al contraste mínimo.
- */
-:host {
-  --mis-primary: #15803d;
-  --mis-primary-hover: #166534;
-  --mis-primary-light: rgba(22, 163, 74, 0.12);
-  --mis-primary-text: #15803d;
-  --mis-window-bar-bg: linear-gradient(180deg, rgba(240, 253, 244, 0.94) 0%, rgba(220, 252, 231, 0.9) 100%);
-  --mis-window-bar-border: rgba(21, 128, 61, 0.22);
-}
-
-:host-context(.dark) {
-  --mis-primary: #15803d;
-  --mis-primary-hover: #14532d;
-  --mis-primary-light: rgba(74, 222, 128, 0.16);
-  --mis-primary-text: #4ade80;
-  --mis-window-bar-bg: linear-gradient(180deg, rgba(20, 83, 45, 0.92) 0%, rgba(14, 59, 32, 0.88) 100%);
-  --mis-window-bar-border: rgba(74, 222, 128, 0.18);
-}
-
-/* Riel de acento de cada tarjeta — mismo recurso que `<app-kpi-tile>`. */
+/* Riel de acento de cada tarjeta — mismo recurso que `<app-kpi-tile>`. Usa el azul del sistema:
+   este panel no lleva el verde de división (eso es solo `cartera-agricola-cultivos`). */
 .tarjeta-cmg {
   position: relative;
   overflow: hidden;

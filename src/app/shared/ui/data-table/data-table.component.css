@@ -59,7 +59,7 @@
   padding-bottom: 0 !important;
 }
 
-/* Ícono de orden del header (fondo azul #035096) — el color por defecto de
+/* Ícono de orden del header (fondo `--mis-primary`) — el color por defecto de
    PrimeNG lo hereda gris/apagado del tema base, no del `!text-white` del
    <th>: el ícono es un <svg> propio que no siempre toma el color heredado.
    Blanco translúcido en reposo, blanco sólido en la columna activa — para

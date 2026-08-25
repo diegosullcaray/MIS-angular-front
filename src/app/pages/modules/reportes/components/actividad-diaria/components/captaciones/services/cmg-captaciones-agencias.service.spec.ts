@@ -62,9 +62,10 @@ describe('CmgCaptacionesAgenciasService', () => {
     expect(getRegularDataSpy.mock.calls[0][1].fec).toBe(ayerCompacto());
   });
 
-  it('deja el semáforo detrás de la métrica que califica', () => {
-    // Forma real de `GCMGCAP_01`: `TMM_Sem` (isdata 9) llega ANTES de `TMM`
-    // (isdata 10), que lo absorbe con `cols: 2`.
+  it('deja el semáforo tal cual lo manda el backend, delante de la métrica que califica', () => {
+    // Forma real de `GCMGCAP_01`: `TMM_Sem` (isdata 9) llega ANTES de `TMM` (isdata 10), que lo
+    // absorbe con `cols: 2` — así, en `<app-tabla-reporte>`, el punto queda a la IZQUIERDA del
+    // número (orden por `isdata`, sin reordenar nada acá).
     const headers = [
       {
         columns: [
@@ -82,8 +83,8 @@ describe('CmgCaptacionesAgenciasService', () => {
     service.obtener(NODO).subscribe((r) => (recibido = r));
 
     const columnas = recibido!.tabla1.headers[0].columns;
-    expect(columnas.map((c) => c.columnDef)).toEqual(['DESVAL', '7', '9', '8']);
-    expect(columnas.find((c) => c.columnDef === '9')?.isdata).toBe(9);
-    expect(columnas.find((c) => c.columnDef === '8')?.isdata).toBe(10);
+    expect(columnas.map((c) => c.columnDef)).toEqual(['DESVAL', '7', '8', '9']);
+    expect(columnas.find((c) => c.columnDef === '8')?.isdata).toBe(9);
+    expect(columnas.find((c) => c.columnDef === '9')?.isdata).toBe(10);
   });
 });
