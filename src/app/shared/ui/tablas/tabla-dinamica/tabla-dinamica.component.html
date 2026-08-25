@@ -6,7 +6,7 @@
           <th
             [attr.colspan]="columna.colspan"
             [attr.rowspan]="columna.rowspan"
-            class="text-[12px] uppercase text-center whitespace-nowrap"
+            class="text-[12px] uppercase text-center whitespace-nowrap border border-[var(--mis-text-on-primary)]/25"
             style="color: var(--mis-text-on-primary);"
             [style.background-color]="columna.style?.['background'] ?? 'var(--mis-primary)'"
           >
@@ -19,7 +19,7 @@
   <ng-template pTemplate="body" let-fila>
     <tr [class.font-bold]="destacada(fila)" [class.cursor-pointer]="seleccionable()" [style.background-color]="destacada(fila) ? 'var(--mis-hover)' : null" (click)="onClickFila(fila)">
       @for (columna of encabezados().columnasHoja; track columna.key) {
-        <td class="text-[13px] whitespace-nowrap" [class]="alineacion(columna)" [style]="columna.style" [style.color]="color(fila, columna)">
+        <td class="text-[13px] whitespace-nowrap" [class]="alineacion(columna)" [style.color]="color(fila, columna)">
           @if (mostrarSemaforo(fila, columna)) {
             <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(fila, columna)"></i>
           }

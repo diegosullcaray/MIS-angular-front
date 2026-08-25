@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { KpiTileComponent } from '../../../../../../../../../shared/ui/kpi-tile/kpi-tile.component';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
@@ -14,7 +14,7 @@ import { VinculacionCarteraService } from '../../services/vinculacion-cartera.se
 @Component({
   selector: 'app-vinculacion-cartera',
   standalone: true,
-  imports: [DecimalPipe, HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent],
+  imports: [KpiTileComponent, HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent],
   templateUrl: './vinculacion-cartera.component.html',
   styleUrl: './vinculacion-cartera.component.css',
 })

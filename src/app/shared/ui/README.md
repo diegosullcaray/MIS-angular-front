@@ -15,6 +15,7 @@ Cada carpeta tiene su propio README con la API y ejemplos.
 | [`graficos/`](./graficos/README.md) | Todas las gráficas, sobre Highcharts |
 | [`hier-selector/`](./hier-selector/README.md) | Selector de jerarquía organizativa en cascada |
 | [`inline-error/`](./inline-error/README.md) | Error de API dentro de la vista, con reintento |
+| [`kpi-tile/`](./kpi-tile/README.md) | Tarjeta de indicador: valor compacto y variación con periodo |
 | [`list-skeleton/`](./list-skeleton/README.md) | Skeleton de tabla mientras cargan datos |
 | [`loading-overlay/`](./loading-overlay/README.md) | Spinner global (vía `LoadingService`) |
 | [`mapas/`](./mapas/README.md) | Mapas sobre MapLibre (`<app-mapa-ubicacion>`) |

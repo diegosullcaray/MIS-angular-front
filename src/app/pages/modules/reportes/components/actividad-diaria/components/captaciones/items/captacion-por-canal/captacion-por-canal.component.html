@@ -10,6 +10,10 @@
   @if (!nivelActual()) {
     <app-empty-state titulo="Elige una agencia" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte." />
   } @else {
+    <!-- `content.higher` del legado (`cra-map.ts`, `captacion_canal`): el `<h2>CAPTACIONES RED</h2>`
+         ya lo pone el subtítulo de la ventana; faltaba la unidad. -->
+    <p class="text-[13px] font-semibold text-[var(--mis-text-secondary)] m-0">Expresado en PEN y %</p>
+
     <div class="mis-card p-3 overflow-x-auto">
       <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
     </div>

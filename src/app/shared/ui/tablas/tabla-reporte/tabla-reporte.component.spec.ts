@@ -325,4 +325,92 @@ describe('TablaReporteComponent', () => {
       expect(fixture.componentInstance['columnasDato']().map((c) => c.columnDef)).toEqual(['nom']);
     });
   });
+
+
+  describe('columnas ocultas y su colspan', () => {
+    /** Suma de `colspan` que produce una fila de encabezado ya sin las ocultas. */
+    function anchoDe(fixture: ReturnType<typeof crear>, indiceFila: number): number {
+      return fixture.componentInstance['filasEncabezado']()[indiceFila].reduce(
+        (total, c) => total + Number(c.cols ?? 1),
+        0
+      );
+    }
+
+    /**
+     * Forma real de `CARACT_pas_01` (Captación por Canal): cada semáforo va oculto ANTES del dato
+     * que anota, y el dato declara `cols: 2` para ocupar las dos celdas (punto + número).
+     * Los dos grupos padre declaran 9, así que la fila de abajo debe sumar 18.
+     */
+    const CANAL: FilaEncabezadoReporte[] = [
+      {
+        columns: [
+          { columnDef: 'descripcion', header: 'Descripción', rows: 2, isdata: 1 },
+          { columnDef: 'm_SP', header: 'Saldo Puntual', cols: 9 },
+          { columnDef: 'm_SPSM', header: 'Saldo Medio', cols: 9 },
+        ],
+      },
+      {
+        columns: [
+          { columnDef: 'NL_1', header: '2026-07-21', isdata: 2, format: { type: 'number' } },
+          { columnDef: 'NL_2', header: '2026-07-31', isdata: 3, format: { type: 'number' } },
+          { columnDef: 'NL_3', header: '2026-08-24', isdata: 4, format: { type: 'number' } },
+          { columnDef: 'metasaldo', header: 'Meta', isdata: 5, format: { type: 'number' } },
+          { columnDef: '8', header: '', isdata: 6, hidden: true, format: { type: 'traffic-light' } },
+          { columnDef: 'TMMSALDO', header: 'TMM', cols: 2, isdata: 7, format: { type: 'number' } },
+          { columnDef: '10', header: '', isdata: 8, hidden: true, format: { type: 'traffic-light' } },
+          { columnDef: 'TFMSALDO', header: 'TFM', cols: 2, isdata: 9, format: { type: 'number' } },
+          { columnDef: 'VARMETS', header: 'Distancia Meta', isdata: 10, format: { type: 'number' } },
+          { columnDef: 'A1', header: '2026-07-21', isdata: 11, format: { type: 'number' } },
+          { columnDef: 'A2', header: '2026-07-31', isdata: 12, format: { type: 'number' } },
+          { columnDef: 'A3', header: '2026-08-24', isdata: 13, format: { type: 'number' } },
+          { columnDef: 'metasaldoM', header: 'Meta', isdata: 14 },
+          { columnDef: '9', header: '', isdata: 15, hidden: true, format: { type: 'traffic-light' } },
+          { columnDef: 'TMMSM', header: 'TMM', cols: 2, isdata: 16, format: { type: 'number' } },
+          { columnDef: '11', header: '', isdata: 17, hidden: true, format: { type: 'traffic-light' } },
+          { columnDef: 'TFMSM', header: 'TFM', cols: 2, isdata: 18, format: { type: 'number' } },
+          { columnDef: 'VARMETSM', header: 'Distancia Meta', isdata: 19, format: { type: 'number' } },
+        ],
+      },
+    ];
+
+    it('con pares semáforo+dato seguidos, la fila suma el ancho que declaran los grupos padre', () => {
+      const fixture = crear(CANAL, []);
+      // `Saldo Puntual` (9) + `Saldo Medio` (9); `Descripción` ocupa las dos filas.
+      expect(anchoDe(fixture, 1)).toBe(18);
+    });
+
+    it('no ensancha la columna anterior para cubrir el semáforo del par siguiente', () => {
+      const fixture = crear(CANAL, []);
+      const fila = fixture.componentInstance['filasEncabezado']()[1];
+      const meta = fila.filter((c) => c.columnDef === 'metasaldo' || c.columnDef === 'metasaldoM');
+
+      // "Meta" no anota nada: su punto pertenece a TMM, que ya declaró `cols: 2`.
+      expect(meta.map((c) => Number(c.cols ?? 1))).toEqual([1, 1]);
+    });
+
+    it('el semáforo precede a su dato, para que el punto quede a la izquierda del número', () => {
+      const fixture = crear(CANAL, []);
+      const orden = fixture.componentInstance['columnasDato']().map((c) => c.columnDef);
+
+      expect(orden.indexOf('8')).toBe(orden.indexOf('TMMSALDO') - 1);
+      expect(orden.indexOf('11')).toBe(orden.indexOf('TFMSM') - 1);
+    });
+
+    it('si nadie declara el `cols` que la cubra, ensancha la anterior para no dejar hueco', () => {
+      const fixture = crear(
+        [
+          {
+            columns: [
+              { columnDef: 'a', header: 'A', isdata: 1 },
+              { columnDef: 'oculta', header: '', isdata: 2, hidden: true, format: { type: 'traffic-light' } },
+              { columnDef: 'b', header: 'B', isdata: 3 },
+            ],
+          },
+        ],
+        []
+      );
+
+      expect(anchoDe(fixture, 0)).toBe(3);
+    });
+  });
 });

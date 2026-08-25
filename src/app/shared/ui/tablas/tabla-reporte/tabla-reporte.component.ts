@@ -6,8 +6,28 @@ function numeroColumnas(cols: ColumnaReporte['cols']): number {
   return cols ? Number(cols) : 1;
 }
 
-/** Asigna cada columna `hidden` a la vecina visible que ya declaró un `cols` capaz de cubrirla — el legado cubre a veces hacia adelante y a veces hacia atrás; si ninguna cubre, se ensancha la anterior. */
+/**
+ * Quita las columnas `hidden` de una fila de encabezado y reparte, si hace falta, el `colspan`
+ * que las cubra.
+ *
+ * El backend manda la columna del semáforo oculta, pegada al dato que anota, y espera que ese
+ * dato la cubra con `cols: 2` (punto + número). Pero unas veces la oculta va **antes** del dato
+ * (`[8] TMMSALDO(2)` en `CARACT_pas_01`) y otras **después** (`meta(1) [meta_sem]` en
+ * `DESEMP_SOC_01`), y las dos formas son localmente indistinguibles.
+ *
+ * Lo que sí las distingue es si la fila ya cierra: el ancho de la grilla es el total de columnas
+ * (visibles + ocultas), así que cuando lo declarado por las visibles ya llega a ese total, cada
+ * oculta tiene dueño y no hay nada que ensanchar. Ensanchar igual —como se hacía antes— metía un
+ * `colspan` de más: en `CARACT_pas_01` la columna "Meta" absorbía el punto del par siguiente y
+ * todas las columnas a partir de ahí quedaban corridas.
+ *
+ * Solo cuando falta ancho se reparte, y ahí sí vale la heurística de vecindad.
+ */
 function filaEncabezadoVisible(columnas: ColumnaReporte[]): ColumnaReporte[] {
+  const visibles = columnas.filter((columna) => !columna.hidden);
+  const declarado = visibles.reduce((total, columna) => total + numeroColumnas(columna.cols), 0);
+  if (declarado >= columnas.length) return visibles;
+
   const resultado: ColumnaReporte[] = [];
   let i = 0;
   while (i < columnas.length) {

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { CmgCaptacionesAgenciasComponent } from './cmg-captaciones-agencias.component';
-import { CmgCaptacionesAgenciasService } from '../../../../services/cmg-captaciones-agencias.service';
+import { CmgCaptacionesAgenciasService } from '../../services/cmg-captaciones-agencias.service';
 import { ModSysAdminService } from '../../../../../../../../../core/winder/instances/mod-sys-admin.service';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { PARAMS_HIER_OFICINA } from '../../../../../../models/jerarquia.model';
