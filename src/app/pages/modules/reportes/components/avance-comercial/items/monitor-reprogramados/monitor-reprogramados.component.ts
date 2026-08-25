@@ -3,17 +3,17 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
-import { TablaReporteComponent } from '../../../ui/tabla-reporte/tabla-reporte.component';
-import { EmptyStateComponent } from '../../../../../../shared/ui/empty-state/empty-state.component';
-import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
-import { AvanceComercialService } from '../../../services/avance-comercial.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
-import { OPCIONES_TIPO_MON_REP } from '../../../models/avance-comercial/avance-comercial.model';
-import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
-import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import { TABLA_VACIA, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { HierSelectorComponent } from '../../../../ui/hier-selector/hier-selector.component';
+import { TablaReporteComponent } from '../../../../ui/tabla-reporte/tabla-reporte.component';
+import { EmptyStateComponent } from '../../../../../../../shared/ui/empty-state/empty-state.component';
+import { PARAMS_HIER_UNIDAD } from '../../../../models/jerarquia.model';
+import { AvanceComercialService } from '../../services/avance-comercial.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { crearManejadorErrorJerarquia } from '../../../../utils/hier-selector-error.util';
+import { OPCIONES_TIPO_MON_REP } from '../../models/avance-comercial.model';
+import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
+import type { HierarquiaNodo } from '../../../../models/jerarquia.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
 /** "Monitor Reprogramados" — migrado de la ruta `mon-rep` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'RS_MON_REP'`). */
 @Component({

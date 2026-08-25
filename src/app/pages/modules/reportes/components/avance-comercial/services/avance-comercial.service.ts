@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
-import { mapearBloqueReporte } from '../utils/reportes-mapeo.util';
-import { fechaUltimoDia } from '../utils/fecha-reporte.util';
-import type { HierarquiaNodo } from '../models/jerarquia.model';
-import type { TablaReporteResultado } from '../models/tabla-reporte.model';
-import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas, ReporteMonitorMetasDesembolso } from '../models/avance-comercial/avance-comercial.model';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
+import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
+import { fechaUltimoDia } from '../../../utils/fecha-reporte.util';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas, ReporteMonitorMetasDesembolso } from '../models/avance-comercial.model';
 
 /** Datos de los reportes del dominio "Avance Comercial": Monitor Metas Desembolso y Monitor Reprogramados. */
 @Injectable({ providedIn: 'root' })

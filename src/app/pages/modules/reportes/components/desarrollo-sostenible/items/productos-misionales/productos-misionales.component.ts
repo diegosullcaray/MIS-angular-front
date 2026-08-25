@@ -3,38 +3,39 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
-import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
-import { TablaDinamicaComponent } from '../../../ui/tabla-dinamica/tabla-dinamica.component';
-import { PARAMS_HIER_UNIDAD } from '../../../models/jerarquia.model';
-import { DesarrolloSostenibleService } from '../../../services/desarrollo-sostenible.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import { crearManejadorErrorJerarquia } from '../../../utils/hier-selector-error.util';
-import { OPCIONES_POBLACION_MISIONAL } from '../../../models/desarrollo-sostenible/desarrollo-sostenible.model';
-import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
-import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
+import { HierSelectorComponent } from '../../../../ui/hier-selector/hier-selector.component';
+import { TablaDinamicaComponent } from '../../../../ui/tabla-dinamica/tabla-dinamica.component';
+import { PARAMS_HIER_UNIDAD } from '../../../../models/jerarquia.model';
+import { DesarrolloSostenibleService } from '../../services/desarrollo-sostenible.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { crearManejadorErrorJerarquia } from '../../../../utils/hier-selector-error.util';
+import { OPCIONES_PRODUCTO_MISIONAL_PANEL } from '../../models/desarrollo-sostenible.model';
+import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
+import type { HierarquiaNodo } from '../../../../models/jerarquia.model';
+import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../models/tabla-dinamica.model';
 
-/** "Poblaciones Misionales" — migrado de la ruta `repositorio/actividad-diaria/poblacion-misional/poblacion-misional` (legado STG, `reportes/repositorio/poblacion-misional`, `cod_rep: pob_misi_01..04`). */
+/** "Productos Misionales" — migrado de la ruta `repositorio/actividad-diaria/prod-misionales/productos-misionales` (legado STG, `reportes/repositorio/panel-misionales`, `cod_rep: prod_misi_01..05`). */
 @Component({
-  selector: 'app-poblacion-misional',
+  selector: 'app-productos-misionales',
   standalone: true,
   imports: [FormsModule, HierSelectorComponent, TablaDinamicaComponent, SelectModule, TabsModule, SkeletonModule, WindowPanelComponent],
-  templateUrl: './poblacion-misional.component.html',
-  styleUrl: './poblacion-misional.component.css',
+  templateUrl: './productos-misionales.component.html',
+  styleUrl: './productos-misionales.component.css',
 })
-export class PoblacionMisionalComponent {
+export class ProductosMisionalesComponent {
   private readonly servicio = inject(DesarrolloSostenibleService);
   private readonly toast = inject(ToastService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
-  protected readonly opcionesPoblacion = OPCIONES_POBLACION_MISIONAL;
+  protected readonly opcionesProducto = OPCIONES_PRODUCTO_MISIONAL_PANEL;
 
   protected readonly tabActiva = signal('territorio');
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
-  protected readonly poblacionSeleccionada = signal('ClientesNuevos');
+  protected readonly productoSeleccionado = signal('Todos');
   protected readonly cargando = signal(true);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
+  protected readonly resumen = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
   protected readonly territorio = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
   protected readonly corredores = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
   protected readonly unidad = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
@@ -45,8 +46,8 @@ export class PoblacionMisionalComponent {
     this.cargarReporte();
   }
 
-  protected onPoblacionSeleccionada(prod: string): void {
-    this.poblacionSeleccionada.set(prod);
+  protected onProductoSeleccionado(prod: string): void {
+    this.productoSeleccionado.set(prod);
     if (this.nivelActual()) this.cargarReporte();
   }
 
@@ -56,15 +57,16 @@ export class PoblacionMisionalComponent {
 
     this.cargando.set(true);
 
-    this.servicio.obtenerPoblacionMisional({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, this.poblacionSeleccionada()).subscribe({
-      next: ({ territorio, corredores, unidad, asesores }) => {
+    this.servicio.obtenerProductosMisionales({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, this.productoSeleccionado()).subscribe({
+      next: ({ resumen, territorio, corredores, unidad, asesores }) => {
+        this.resumen.set(resumen);
         this.territorio.set(territorio);
         this.corredores.set(corredores);
         this.unidad.set(unidad);
         this.asesores.set(asesores);
         this.cargando.set(false);
 
-        if ([territorio, corredores, unidad, asesores].every((t) => t.filas.length === 0)) {
+        if ([resumen, territorio, corredores, unidad, asesores].every((t) => t.filas.length === 0)) {
           this.toast.advertencia('Carga en proceso', 'Los datos podrían seguir procesándose en el servidor. Si ves valores en 0, intenta actualizar en unos minutos.');
         }
       },

@@ -10,10 +10,10 @@ export const AVANCE_COMERCIAL_ROUTES: Routes = [
   {
     path: 'leg/com/rda/adm/mon-desem',
     loadComponent: () =>
-      import('./monitor-metas-desembolso/monitor-metas-desembolso.component').then((m) => m.MonitorMetasDesembolsoComponent),
+      import('./items/monitor-metas-desembolso/monitor-metas-desembolso.component').then((m) => m.MonitorMetasDesembolsoComponent),
   },
   {
     path: 'leg/com/rda/adm/mon-rep',
-    loadComponent: () => import('./monitor-reprogramados/monitor-reprogramados.component').then((m) => m.MonitorReprogramadosComponent),
+    loadComponent: () => import('./items/monitor-reprogramados/monitor-reprogramados.component').then((m) => m.MonitorReprogramadosComponent),
   },
 ];

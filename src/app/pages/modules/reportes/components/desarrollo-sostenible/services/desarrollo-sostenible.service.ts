@@ -1,17 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
-import { ShellStateService } from '../../../../core/services/shell-state.service';
-import { mapearBloqueReporte, mapearTablaRegular } from '../utils/reportes-mapeo.util';
-import { fechaCorte, fechaUltimoDia } from '../utils/fecha-reporte.util';
-import type { HierarquiaNodo } from '../models/jerarquia.model';
-import type { ColumnaReporte, TablaReporteResultado } from '../models/tabla-reporte.model';
+import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
+import { ShellStateService } from '../../../../../../core/services/shell-state.service';
+import { mapearBloqueReporte, mapearTablaRegular } from '../../../utils/reportes-mapeo.util';
+import { fechaCorte, fechaUltimoDia } from '../../../utils/fecha-reporte.util';
+import type { HierarquiaNodo } from '../../../models/jerarquia.model';
+import type { ColumnaReporte, TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type {
   ReporteMonitorProductosMisionales,
   ReportePoblacionMisional,
   ReporteProductosMisionales,
-} from '../models/desarrollo-sostenible/desarrollo-sostenible.model';
-import type { KpiOperacionesDesembolsadas } from '../models/avance-comercial/avance-comercial.model';
+} from '../models/desarrollo-sostenible.model';
+import type { KpiOperacionesDesembolsadas } from '../../avance-comercial/models/avance-comercial.model';
 
 /** `DESEMP_SOC_01` ata cada semáforo oculto a la columna que le SIGUE en el arreglo, no a la que tiene delante: el semáforo pegado a "META" (`col_8`) en realidad colorea "TMM"; el pegado a "TMM" (`col_10`) colorea "TAM" — y "META" nunca tiene semáforo propio (confirmado contra el legado). */
 export function corregirSemaforosDesempenoSocial(resultado: TablaReporteResultado): TablaReporteResultado {
