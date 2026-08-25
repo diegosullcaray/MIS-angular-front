@@ -14,17 +14,11 @@ function nodo(overrides: Partial<HierarquiaNodo> = {}): HierarquiaNodo {
 describe('TableroVerificacionComponent', () => {
   let presupuestoFalso: {
     obtenerLogVerificaciones: ReturnType<typeof vi.fn>;
-    obtenerJerarquiaBase: ReturnType<typeof vi.fn>;
-    obtenerJerarquiaNivel: ReturnType<typeof vi.fn>;
-    fechaCorte: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
     presupuestoFalso = {
       obtenerLogVerificaciones: vi.fn().mockReturnValue(of([])),
-      obtenerJerarquiaBase: vi.fn().mockReturnValue(of([])),
-      obtenerJerarquiaNivel: vi.fn().mockReturnValue(of([])),
-      fechaCorte: vi.fn().mockReturnValue('2026-08-05'),
     };
     TestBed.configureTestingModule({
       imports: [TableroVerificacionComponent],

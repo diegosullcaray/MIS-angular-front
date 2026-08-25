@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
-import { HierSelectorComponent } from '../../../../ui/hier-selector/hier-selector.component';
+import { HierSelectorComponent } from '../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { PARAMS_HIER_UNIDAD } from '../../../../models/jerarquia.model';
 import { DesarrolloSostenibleService } from '../../services/desarrollo-sostenible.service';

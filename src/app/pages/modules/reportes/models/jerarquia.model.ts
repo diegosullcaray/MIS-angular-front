@@ -1,26 +1,13 @@
-export interface HierarquiaNodo {
-  tip_cod: number;
-  cod_rel: string;
-  desc_rel?: string;
-  des_rel?: string;
-  lbl_hier?: string;
-  lvl?: number;
-  /** Nivel que devuelve el backend en `level_hierarchy`; los reportes paginados del legado lo reenvían tal cual. */
-  lvl_hier?: number;
-}
+import type { ParamsJerarquia } from '../../../../shared/ui/hier-selector/jerarquia.model';
 
-export interface ParamsJerarquia {
-  code: number;
-  maxLvl: number;
-  dlgTitulo: string;
-}
-
-/** Un nivel del selector en cascada de `HierSelectorComponent` — opciones del `p-select` de ese nivel + su selección. */
-export interface NivelJerarquiaDropdown {
-  label: string;
-  level: number;
-  data: HierarquiaNodo[];
-}
+// Los tipos viven junto a `<app-hier-selector>`, en shared; acá queda el catálogo de jerarquías
+// de este módulo — el `getHierarchyConfig()` del legado (`mod-rep.service.ts`).
+export type {
+  HierarquiaNodo,
+  JerarquiaResponseBody,
+  NivelJerarquiaDropdown,
+  ParamsJerarquia,
+} from '../../../../shared/ui/hier-selector/jerarquia.model';
 
 /** `cod_jer` de la jerarquía organizativa (`UNI_1` del legado) — mismo código que usan Presupuesto/Kaypacha/Incentivos para `base_hier`. */
 export const COD_JERARQUIA_ORGANIZATIVA = 9;

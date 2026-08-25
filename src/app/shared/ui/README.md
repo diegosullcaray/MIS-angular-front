@@ -13,6 +13,7 @@ Cada carpeta tiene su propio README con la API y ejemplos.
 | [`empty-state/`](./empty-state/README.md) | Lista sin datos |
 | [`formularios/`](./formularios/README.md) | Controles de formulario genéricos (`<app-select-filtro>`) |
 | [`graficos/`](./graficos/README.md) | Todas las gráficas, sobre Highcharts |
+| [`hier-selector/`](./hier-selector/README.md) | Selector de jerarquía organizativa en cascada |
 | [`inline-error/`](./inline-error/README.md) | Error de API dentro de la vista, con reintento |
 | [`list-skeleton/`](./list-skeleton/README.md) | Skeleton de tabla mientras cargan datos |
 | [`loading-overlay/`](./loading-overlay/README.md) | Spinner global (vía `LoadingService`) |

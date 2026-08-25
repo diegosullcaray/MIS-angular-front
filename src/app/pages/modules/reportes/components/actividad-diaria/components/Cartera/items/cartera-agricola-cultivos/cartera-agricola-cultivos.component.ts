@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
+import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { DataTableComponent } from '../../../../../../../../../shared/ui/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../../../../../../../shared/ui/data-table/data-table-cell.directive';

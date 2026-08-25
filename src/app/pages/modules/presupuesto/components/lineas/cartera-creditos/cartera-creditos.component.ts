@@ -3,7 +3,7 @@ import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import { HierSelectorComponent } from '../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { EditableTableComponent } from '../../../../../../shared/ui/tablas/editable-table/editable-table.component';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';

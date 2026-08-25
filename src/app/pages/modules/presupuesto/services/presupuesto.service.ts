@@ -3,7 +3,6 @@ import { Observable, map } from 'rxjs';
 import { ModPresupuestoService } from '../../../../core/winder/instances/mod-presupuesto.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import type { HierarquiaNodo } from '../models/jerarquia.model';
 import type { ResumenLineaSimple } from '../models/linea-simple.model';
 import type { FilaDeposito } from '../models/deposito.model';
 import type { FilaSegurosComercial } from '../models/seguros-comercial.model';
@@ -36,37 +35,6 @@ export class PresupuestoService {
   }
 
   /** Fecha de corte de negocio usada por `baseInit` en el legado (`profile.curr_fec`, vía `UserService`) — este Host todavía no expone ese campo en `UsuarioActivo`, así que se usa la fecha real como aproximación hasta confirmar el campo real con el backend. */
-  fechaCorte(): string {
-    const currFec = this.shell.usuarioActivo()?.fechaCorte;
-    if (currFec && /^\d{8}$/.test(currFec)) {
-      return `${currFec.slice(0, 4)}-${currFec.slice(4, 6)}-${currFec.slice(6, 8)}`;
-    }
-    if (currFec && /^\d{4}-\d{2}-\d{2}$/.test(currFec)) {
-      return currFec;
-    }
-    return new Date().toISOString().slice(0, 10);
-  }
-
-  // ─── Jerarquía organizativa (selector de jerarquía, compartido por pantalla) ─
-
-  obtenerJerarquiaBase(codHierarchy: number): Observable<HierarquiaNodo[]> {
-    return this.antAdmin.getBaseHierarchy(this.email, codHierarchy).pipe(
-      map((response) => (response.body as JerarquiaResponseBody | null)?.base_hierarchy ?? [])
-    );
-  }
-
-  obtenerJerarquiaNivel(
-    codHier: number,
-    lvlHier: number,
-    tipCod: number,
-    codRels: string[],
-    params?: Record<string, unknown>
-  ): Observable<HierarquiaNodo[]> {
-    return this.antAdmin.getLevelHierarchy(codHier, lvlHier, tipCod, codRels, params).pipe(
-      map((response) => (response.body as JerarquiaResponseBody | null)?.level_hierarchy ?? [])
-    );
-  }
-
   // ─── Responsables ──────────────────────────────────────────────────────────
 
   obtenerResponsables(tipCod: number): Observable<ResponsableFila[]> {

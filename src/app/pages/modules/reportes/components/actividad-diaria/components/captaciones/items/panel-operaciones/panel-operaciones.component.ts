@@ -1,5 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
+import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { TabsModule } from 'primeng/tabs';
