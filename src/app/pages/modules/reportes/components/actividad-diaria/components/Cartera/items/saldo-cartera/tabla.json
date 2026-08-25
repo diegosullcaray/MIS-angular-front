@@ -1,0 +1,895 @@
+[
+    {
+        "headers": [
+            {
+                "level": "1",
+                "columns": [
+                    {
+                        "columnDef": "descripcion",
+                        "header": "Descripción",
+                        "rows": "2",
+                        "isdata": 1,
+                        "sticky": true,
+                        "format": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_ant",
+                        "header": "Saldo al <br>31-jul.",
+                        "rows": "2",
+                        "isdata": 2,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap",
+                        "header": "Saldo al <br>24-ago.",
+                        "rows": "2",
+                        "isdata": 3,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    },
+                    {
+                        "columnDef": "var_cart",
+                        "header": "Var.Mes",
+                        "rows": "2",
+                        "isdata": 4,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    },
+                    {
+                        "columnDef": "meta_",
+                        "header": "Meta",
+                        "cols": "2"
+                    },
+                    {
+                        "columnDef": "dis_meta_",
+                        "header": "Distancia Meta",
+                        "cols": "4"
+                    },
+                    {
+                        "columnDef": "HSALMEDMNVIGE",
+                        "header": "Saldo Medio al <br>24-ago.",
+                        "rows": "2",
+                        "isdata": 12,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    }
+                ]
+            },
+            {
+                "level": "2",
+                "columns": [
+                    {
+                        "columnDef": "meta_var_cart",
+                        "header": "Var.mes",
+                        "isdata": 6,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "10%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "meta_sal_cart_v2",
+                        "header": "Saldo",
+                        "isdata": 7,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "10%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sem_met_var_cart",
+                        "header": "",
+                        "isdata": 8,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "dist_met_var_cart",
+                        "header": "Var mes",
+                        "cols": "2",
+                        "isdata": 9,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "10%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sem_met_cart",
+                        "header": "",
+                        "isdata": 10,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "dist_met_cart_v2",
+                        "header": "Saldo",
+                        "cols": "2",
+                        "isdata": 11,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "10%"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "body": [
+            {
+                "fila": 1,
+                "cod_n1": "7",
+                "style": 1,
+                "descripcion": "FINANCIERA CONFIANZA",
+                "sal_cap": 2492123916.55,
+                "sal_cap_ant": 2532169991,
+                "var_cart": -40046074.44999981,
+                "meta_cart": 2576566751.64,
+                "dist_met_cart": -84442835.08999968,
+                "meta_var_cart": 44396760.64,
+                "dist_met_var_cart": -84442835.08999981,
+                "sem_met_cart": 0,
+                "sem_met_var_cart": -1,
+                "_tipcod": 7,
+                "HTIPCOD": 7,
+                "_codrel": "7",
+                "HCODREL": "7",
+                "HSALMEDMNVIGE": 2479888870.00625,
+                "meta_sal_cart_v2": 2576566751.64,
+                "dist_met_cart_v2": -84442835.08999968
+            },
+            {
+                "fila": 2,
+                "cod_n1": "7",
+                "cod_n2": "1",
+                "style": 0,
+                "descripcion": "INDIVIDUAL ",
+                "sal_cap": 2414166358.7,
+                "sal_cap_ant": 2450189613.6,
+                "var_cart": -36023254.900000095,
+                "meta_cart": 2490583577.55,
+                "dist_met_cart": -76417218.85000038,
+                "meta_var_cart": 40393963.95,
+                "dist_met_var_cart": -76417218.8500001,
+                "sem_met_cart": 0,
+                "sem_met_var_cart": -1,
+                "_tipcod": 21,
+                "HTIPCOD": 21,
+                "_codrel": "1",
+                "HCODREL": "1",
+                "HSALMEDMNVIGE": 2398768231.912916,
+                "meta_sal_cart_v2": 2490583577.5499997,
+                "dist_met_cart_v2": -76417218.8499999
+            },
+            {
+                "fila": 3,
+                "cod_n1": "7",
+                "cod_n2": "2",
+                "style": 0,
+                "descripcion": "GRUPAL",
+                "sal_cap": 77899816.04,
+                "sal_cap_ant": 81534639.64,
+                "var_cart": -3634823.599999994,
+                "meta_cart": 85814236.39,
+                "dist_met_cart": -7914420.349999994,
+                "meta_var_cart": 4002796.69,
+                "dist_met_var_cart": -7637620.2899999935,
+                "sem_met_cart": -1,
+                "sem_met_var_cart": -1,
+                "_tipcod": 21,
+                "HTIPCOD": 21,
+                "_codrel": "2",
+                "HCODREL": "2",
+                "HSALMEDMNVIGE": 78126497.155833,
+                "meta_sal_cart_v2": 85537436.33,
+                "dist_met_cart_v2": -7637620.289999992
+            },
+            {
+                "fila": 4,
+                "cod_n1": "7",
+                "cod_n2": "9999",
+                "style": 0,
+                "descripcion": "SIN ASIGNAR",
+                "sal_cap": 57741.81,
+                "sal_cap_ant": 445737.76,
+                "var_cart": -387995.95,
+                "meta_cart": 168937.7,
+                "dist_met_cart": -111195.89000000001,
+                "meta_var_cart": 0,
+                "dist_met_var_cart": -387995.95,
+                "sem_met_cart": -1,
+                "sem_met_var_cart": -1,
+                "_tipcod": 21,
+                "HTIPCOD": 21,
+                "_codrel": "9999",
+                "HCODREL": "9999",
+                "HSALMEDMNVIGE": 2994140.9375,
+                "meta_sal_cart_v2": 445737.76,
+                "dist_met_cart_v2": -387995.95
+            }
+        ],
+        "additional": {}
+    },
+    {
+        "headers": [
+            {
+                "level": "1",
+                "columns": [
+                    {
+                        "columnDef": "descripcion",
+                        "header": "Descripción",
+                        "isdata": 1,
+                        "sticky": true,
+                        "format": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_1",
+                        "header": "Agropecuario",
+                        "isdata": 2,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_2",
+                        "header": "Construyendo Confianza",
+                        "isdata": 3,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_4",
+                        "header": "Emprendiendo Confianza",
+                        "isdata": 4,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_5",
+                        "header": "Iniciando Confianza Pyme",
+                        "isdata": 5,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_6",
+                        "header": "Palabra de Mujer",
+                        "isdata": 6,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_3",
+                        "header": "Crédito Educativo",
+                        "isdata": 7,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "body": [
+            {
+                "fila": 1,
+                "style": 1,
+                "descripcion": "FINANCIERA CONFIANZA",
+                "sal_cap_1": 410877036.01,
+                "sal_cap_2": 186435415.8,
+                "sal_cap_3": 11404544.43,
+                "sal_cap_4": 1756250787.05,
+                "sal_cap_5": 1448044.63,
+                "sal_cap_6": 73162948.22
+            },
+            {
+                "fila": 2,
+                "style": 0,
+                "descripcion": "INDIVIDUAL ",
+                "sal_cap_1": 410873426.98,
+                "sal_cap_2": 186410782.9,
+                "sal_cap_3": 11404544.43,
+                "sal_cap_4": 1756156884.95,
+                "sal_cap_5": 1448044.63,
+                "sal_cap_6": 0
+            },
+            {
+                "fila": 3,
+                "style": 0,
+                "descripcion": "GRUPAL",
+                "sal_cap_1": 2509.03,
+                "sal_cap_2": 24632.9,
+                "sal_cap_3": 0,
+                "sal_cap_4": 92209.26,
+                "sal_cap_5": 0,
+                "sal_cap_6": 73147063.15
+            },
+            {
+                "fila": 4,
+                "style": 0,
+                "descripcion": "SIN ASIGNAR",
+                "sal_cap_1": 1100,
+                "sal_cap_2": 0,
+                "sal_cap_3": 0,
+                "sal_cap_4": 1692.84,
+                "sal_cap_5": 0,
+                "sal_cap_6": 15885.07
+            }
+        ],
+        "additional": {}
+    },
+    {
+        "headers": [
+            {
+                "level": "1",
+                "columns": [
+                    {
+                        "columnDef": "descripcion",
+                        "header": "Descripción",
+                        "rows": "2",
+                        "isdata": 1,
+                        "sticky": true,
+                        "format": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_ant",
+                        "header": "Saldo al <br>31-jul.",
+                        "rows": "2",
+                        "isdata": 2,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap",
+                        "header": "Saldo al <br>24-ago.",
+                        "rows": "2",
+                        "isdata": 3,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    },
+                    {
+                        "columnDef": "var_cart",
+                        "header": "Var.Mes",
+                        "rows": "2",
+                        "isdata": 4,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    },
+                    {
+                        "columnDef": "meta_",
+                        "header": "Meta",
+                        "cols": "2"
+                    },
+                    {
+                        "columnDef": "dis_meta_",
+                        "header": "Distancia Meta",
+                        "cols": "4"
+                    },
+                    {
+                        "columnDef": "HSALMEDMN",
+                        "header": "Saldo Medio al <br>24-ago.",
+                        "rows": "2",
+                        "isdata": 12,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    }
+                ]
+            },
+            {
+                "level": "2",
+                "columns": [
+                    {
+                        "columnDef": "meta_var_cart",
+                        "header": "Var.mes",
+                        "isdata": 6,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "10%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "meta_cart",
+                        "header": "Saldo",
+                        "isdata": 7,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "10%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sem_met_var_cart",
+                        "header": "",
+                        "isdata": 8,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "dist_met_var_cart",
+                        "header": "Var mes",
+                        "cols": "2",
+                        "isdata": 9,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "10%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sem_met_cart",
+                        "header": "",
+                        "isdata": 10,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "dist_met_cart",
+                        "header": "Saldo",
+                        "cols": "2",
+                        "isdata": 11,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "10%"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "body": [
+            {
+                "fila": 1,
+                "cod_n1": "7",
+                "style": 1,
+                "descripcion": "FINANCIERA CONFIANZA",
+                "sal_cap": 2663964513.44,
+                "sal_cap_ant": 2686114996.38,
+                "var_cart": -22150482.940000057,
+                "dist_met_cart": 2663964513.44,
+                "dist_met_var_cart": -22150482.940000057,
+                "_tipcod": 7,
+                "_codrel": "7",
+                "HSALMEDMN": 2647981258.553333
+            },
+            {
+                "fila": 2,
+                "cod_n1": "7",
+                "cod_n2": "1",
+                "style": 0,
+                "descripcion": "INDIVIDUAL ",
+                "sal_cap": 2577489195.99,
+                "sal_cap_ant": 2597231949.87,
+                "var_cart": -19742753.880000114,
+                "dist_met_cart": 2577489195.99,
+                "dist_met_var_cart": -19742753.880000114,
+                "_tipcod": 21,
+                "_codrel": "1",
+                "HSALMEDMN": 2558998981.395416
+            },
+            {
+                "fila": 3,
+                "cod_n1": "7",
+                "cod_n2": "2",
+                "style": 0,
+                "descripcion": "GRUPAL",
+                "sal_cap": 86304902.64,
+                "sal_cap_ant": 88376939.51,
+                "var_cart": -2072036.8700000048,
+                "dist_met_cart": 86304902.64,
+                "dist_met_var_cart": -2072036.8700000048,
+                "_tipcod": 21,
+                "_codrel": "2",
+                "HSALMEDMN": 85798833.977083
+            },
+            {
+                "fila": 4,
+                "cod_n1": "7",
+                "cod_n2": "9999",
+                "style": 0,
+                "descripcion": "SIN ASIGNAR",
+                "sal_cap": 170414.81,
+                "sal_cap_ant": 506107,
+                "var_cart": -335692.19,
+                "dist_met_cart": 170414.81,
+                "dist_met_var_cart": -335692.19,
+                "_tipcod": 21,
+                "_codrel": "9999",
+                "HSALMEDMN": 3183443.180833
+            }
+        ],
+        "additional": {}
+    },
+    {
+        "headers": [
+            {
+                "level": "1",
+                "columns": [
+                    {
+                        "columnDef": "descripcion",
+                        "header": "Descripción",
+                        "isdata": 1,
+                        "sticky": true,
+                        "format": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_1",
+                        "header": "Agropecuario",
+                        "isdata": 2,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_2",
+                        "header": "Construyendo Confianza",
+                        "isdata": 3,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_4",
+                        "header": "Emprendiendo Confianza",
+                        "isdata": 4,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_5",
+                        "header": "Iniciando Confianza Pyme",
+                        "isdata": 5,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_6",
+                        "header": "Palabra de Mujer",
+                        "isdata": 6,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sal_cap_3",
+                        "header": "Crédito Educativo",
+                        "isdata": 7,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "12%"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "body": [
+            {
+                "fila": 1,
+                "style": 1,
+                "descripcion": "FINANCIERA CONFIANZA",
+                "sal_cap_1": 442665001.95,
+                "sal_cap_2": 196270064.93,
+                "sal_cap_3": 11856966.3,
+                "sal_cap_4": 1862783024.07,
+                "sal_cap_5": 1470708.04,
+                "sal_cap_6": 81475350.39
+            },
+            {
+                "fila": 2,
+                "style": 0,
+                "descripcion": "INDIVIDUAL ",
+                "sal_cap_1": 442647197.52,
+                "sal_cap_2": 196245432.03,
+                "sal_cap_3": 11856515.64,
+                "sal_cap_4": 1862675675.21,
+                "sal_cap_5": 1470708.04,
+                "sal_cap_6": 0
+            },
+            {
+                "fila": 3,
+                "style": 0,
+                "descripcion": "GRUPAL",
+                "sal_cap_1": 16704.43,
+                "sal_cap_2": 24632.9,
+                "sal_cap_3": 0,
+                "sal_cap_4": 105085.26,
+                "sal_cap_5": 0,
+                "sal_cap_6": 81382775.71
+            },
+            {
+                "fila": 4,
+                "style": 0,
+                "descripcion": "SIN ASIGNAR",
+                "sal_cap_1": 1100,
+                "sal_cap_2": 0,
+                "sal_cap_3": 450.66,
+                "sal_cap_4": 2263.6,
+                "sal_cap_5": 0,
+                "sal_cap_6": 92574.68
+            }
+        ],
+        "additional": {}
+    },
+    {
+        "headers": [
+            {
+                "level": "1",
+                "columns": [
+                    {
+                        "columnDef": "descripcion",
+                        "header": "Descripción",
+                        "isdata": 1,
+                        "sticky": true,
+                        "format": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "columnDef": "prod_ind",
+                        "header": "Productividad Individual",
+                        "isdata": 2,
+                        "format": {
+                            "type": "number",
+                            "mode": ".2-2"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "14%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "prod_gru",
+                        "header": "Productividad Grupal",
+                        "isdata": 3,
+                        "format": {
+                            "type": "number",
+                            "mode": ".2-2"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "14%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "prod_tot",
+                        "header": "Productividad Total",
+                        "isdata": 4,
+                        "format": {
+                            "type": "number",
+                            "mode": ".1-1"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "14%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "meta_cart",
+                        "header": "Meta Productividad Total",
+                        "isdata": 5,
+                        "format": {
+                            "type": "number",
+                            "mode": ".1-1"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "14%"
+                            }
+                        }
+                    },
+                    {
+                        "columnDef": "sem_var",
+                        "header": "",
+                        "isdata": 6,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "varmetaprod",
+                        "header": "Variación",
+                        "cols": "2",
+                        "isdata": 7,
+                        "format": {
+                            "type": "number",
+                            "mode": ".1-1"
+                        },
+                        "style": {
+                            "desktop": {
+                                "width": "14%"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "body": [
+            {
+                "fila": 1,
+                "cod_fc": "7",
+                "style": 1,
+                "descripcion": "FINANCIERA CONFIANZA",
+                "num_ope_sf2": 29439,
+                "prod_tot": 17.21,
+                "prod_ind": 12.546583850931677,
+                "prod_gru": 42.97328244274809,
+                "meta_cart": 24.3,
+                "varmetaprod": 7.09
+            },
+            {
+                "fila": 2,
+                "cod_fc": "7",
+                "cod_ugru": "1",
+                "style": 0,
+                "descripcion": "INDIVIDUAL ",
+                "num_ope_sf2": 18180,
+                "prod_tot": 12.55,
+                "prod_ind": 12.546583850931677,
+                "prod_gru": 0,
+                "meta_cart": 17.16,
+                "varmetaprod": 4.609999999999999
+            },
+            {
+                "fila": 3,
+                "cod_fc": "7",
+                "cod_ugru": "2",
+                "style": 0,
+                "descripcion": "GRUPAL",
+                "num_ope_sf2": 11259,
+                "prod_tot": 42.97,
+                "prod_ind": 0,
+                "prod_gru": 42.97328244274809,
+                "meta_cart": 64.61,
+                "varmetaprod": 21.64
+            }
+        ],
+        "additional": {}
+    }
+]
