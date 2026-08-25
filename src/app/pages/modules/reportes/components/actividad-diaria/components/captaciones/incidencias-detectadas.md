@@ -17,7 +17,7 @@ D:\FINANCIERA CONFIANZA\04 SISTEMAS\05 MIGRACIONES\MIS-angular-front\src\app\pag
 
 -- en el heder de la tabla , las lineas de sepracion no estan coloreadas para segmentarlo , corrije el color de vorde la tabla nelos heders
 
-D:\FINANCIERA CONFIANZA\04 SISTEMAS\05 MIGRACIONES\MIS-angular-front\src\app\pages\modules\reportes\components\actividad-diaria\components\captaciones\components\captacion-canal-operaciones 
+
 
 
 
