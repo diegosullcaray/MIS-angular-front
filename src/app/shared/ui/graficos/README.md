@@ -50,10 +50,31 @@ Si mañana hay que cambiar el estilo de todas las barras del sistema, se toca
 
 ## Uso
 
+```typescript
+// El número de `../` depende de dónde viva tu componente; no hay alias de rutas en el proyecto.
+import { GraficoMixtoComponent } from '…/shared/ui/graficos/grafico-mixto/grafico-mixto.component';
+import type { BloqueGrafico } from '…/shared/ui/graficos/models/grafico-comun.model';
+
+@Component({
+  imports: [GraficoMixtoComponent],
+  // ...
+})
+export class MiReporte {
+  protected readonly grafico = signal<BloqueGrafico>({
+    titulo: 'Saldo por cultivo',
+    categorias: ['ARROZ', 'CAFÉ', 'MAÍZ'],
+    series: [
+      { nombre: 'Saldo', datos: [500_000, 320_000, 180_000] },
+      { nombre: '% Vencido', datos: [3.2, 5.1, 2.4] },
+    ],
+  });
+}
+```
+
 ```html
 <!-- El alto lo fija el contenedor; el gráfico ocupa el 100 %. -->
 <div class="mis-card p-3 h-[360px]">
-  <app-grafico-mixto [datos]="grafico" (puntoSeleccionado)="abrirDetalle($event)" />
+  <app-grafico-mixto [datos]="grafico()" (puntoSeleccionado)="abrirDetalle($event)" />
 </div>
 ```
 
