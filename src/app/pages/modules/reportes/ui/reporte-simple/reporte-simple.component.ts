@@ -34,6 +34,8 @@ export interface PestanaReporte {
   imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
   template: `
     <app-window-panel [titulo]="titulo()" [subtitulo]="subtitulo()" [permitirActualizar]="false" [conFiltros]="true">
+      
+      <!-- ZONA DE FILTROS -->
       <div ventana-filtros class="flex flex-col gap-3">
         <app-hier-selector
           [paramsHier]="paramsHier()"
@@ -44,6 +46,7 @@ export interface PestanaReporte {
         <ng-content select="[filtros]" />
       </div>
 
+      <!-- ZONA DE CONTENIDO PRINCIPAL (Estado Vacío, Pestañas o Bloques Apilados) -->
       @if (!nivel()) {
         <app-empty-state [titulo]="tituloVacio()" [descripcion]="descripcionVacio()" />
       } @else if (pestanas(); as tabs) {
@@ -72,7 +75,6 @@ export interface PestanaReporte {
             }
           </p-tabpanels>
         </p-tabs>
-        <ng-content select="[nota]" />
       } @else {
         <div class="flex flex-col gap-5">
           @for (bloque of lista(); track $index) {
@@ -86,8 +88,17 @@ export interface PestanaReporte {
             </section>
           }
         </div>
-        <ng-content select="[nota]" />
       }
+
+      <!-- ZONA INFERIOR DE PROYECCIÓN (Notas y otros elementos html) -->
+      <div class="flex flex-col gap-3 mt-4">
+        <!-- Esto proyectará tu <p nota> -->
+        <ng-content select="[nota]" />
+        
+        <!-- Esto proyectará tu <h1>HOLA</h1> y cualquier etiqueta sin atributos -->
+        <ng-content /> 
+      </div>
+
     </app-window-panel>
   `,
 })
