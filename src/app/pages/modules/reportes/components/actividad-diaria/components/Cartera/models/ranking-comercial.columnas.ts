@@ -28,7 +28,7 @@ export const COLUMNAS_RANKING_COMERCIAL: ColumnaDinamica[] = [
       { key: 'prod_ind', label: 'Real', format: decimal, style: PRODUCTIVIDAD },
       { key: 'meta_produc', label: 'Meta Mes', format: decimal, style: PRODUCTIVIDAD },
       { key: 'TMMPROD', label: 'TMM', format: decimal, style: PRODUCTIVIDAD },
-      { key: 'Percent_Cumpl_Semaforo', label: '% Avance', style: PRODUCTIVIDAD },
+      { key: 'Percent_Cumpl', label: '% Avance', format: porcentaje, semaforoKey: 'Percent_Cumpl_Semaforo', style: PRODUCTIVIDAD },
     ],
   },
   {
@@ -39,7 +39,7 @@ export const COLUMNAS_RANKING_COMERCIAL: ColumnaDinamica[] = [
       { key: 'mont_dese_2', label: 'Real', format: decimal, style: DESEMBOLSOS },
       { key: 'meta_desemb', label: 'Meta Mes', format: decimal, style: DESEMBOLSOS },
       { key: 'TMMDESEMB', label: 'TMM', format: decimal, style: DESEMBOLSOS },
-      { key: 'percent_cumpl_desemb_Semaforo', label: '% Avance', style: DESEMBOLSOS },
+      { key: 'percent_cumpl_desemb', label: '% Avance', format: porcentaje, semaforoKey: 'percent_cumpl_desemb_Semaforo', style: DESEMBOLSOS },
     ],
   },
   {
@@ -52,7 +52,7 @@ export const COLUMNAS_RANKING_COMERCIAL: ColumnaDinamica[] = [
       { key: 'DistMetaFechaDi', label: 'Dist. Meta Fecha', format: decimal, style: VAR_SALDO },
       { key: 'metavarsvimensu', label: 'Meta Mensual', format: decimal, style: VAR_SALDO },
       { key: 'HVSALVIGMNTRI', label: 'Ult. 3M', format: decimal, style: VAR_SALDO },
-      { key: 'percent_cumpl_varsalv_Semaforo', label: '% Avance', style: VAR_SALDO },
+      { key: 'percent_cumpl_varsalv', label: '% Avance', format: porcentaje, semaforoKey: 'percent_cumpl_varsalv_Semaforo', style: VAR_SALDO },
     ],
   },
   {

@@ -61,20 +61,22 @@ describe('CarteraRepositorioService', () => {
       return fila['Percent_Cumpl_Semaforo'];
     }
 
+    // Devuelve la señal (`1`/`0`/`-1`), no el emoji: el punto lo pinta la tabla vía `semaforoKey`,
+    // con el mismo indicador que el resto del sistema. El porcentaje va en su propia columna.
     it('verde cuando el avance alcanza los días transcurridos', () => {
-      expect(conTiming(20, 0.25)).toBe('🟢 25.00%');
+      expect(conTiming(20, 0.25)).toBe(1);
     });
 
     it('amarillo cuando el avance llega al 80% de los días transcurridos', () => {
-      expect(conTiming(50, 0.4)).toBe('🟡 40.00%');
+      expect(conTiming(50, 0.4)).toBe(0);
     });
 
     it('rojo cuando se queda por debajo de ese 80%', () => {
-      expect(conTiming(50, 0.1)).toBe('🔴 10.00%');
+      expect(conTiming(50, 0.1)).toBe(-1);
     });
 
-    it('sin `Timing` muestra el avance sin semáforo, para no inventar un estado', () => {
-      expect(conTiming(0, 0.25)).toBe('25.00%');
+    it('sin `Timing` no hay señal, para no inventar un estado', () => {
+      expect(conTiming(0, 0.25)).toBe('');
     });
 
     it('un avance vacío queda vacío', () => {

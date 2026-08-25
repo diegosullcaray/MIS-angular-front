@@ -51,4 +51,42 @@ describe('TablaDinamicaComponent', () => {
 
     expect(th.className).toContain('border');
   });
+
+
+  describe('estilos que manda el backend', () => {
+    /** Forma real de `RS_DESEMB_01`: `style` lleva anchos para el `<th>` y `cellStyle` la alineación del `<td>`. */
+    const CON_CELLSTYLE: ColumnaDinamica[] = [
+      { key: 'RangoDesembolso', label: 'Rango Desembolso', cellStyle: { 'text-align': 'left' } },
+      {
+        key: 'ope',
+        label: 'Número de Operaciones',
+        subs: [
+          { key: '1_Ope', label: '30-jun.', cellStyle: { 'text-align': 'right' }, style: { width: '70px' } },
+        ],
+      },
+    ];
+
+    it('`cellStyle` se aplica a la celda del cuerpo — sin él las columnas sin `format` quedan a la izquierda', () => {
+      TestBed.configureTestingModule({ imports: [TablaDinamicaComponent] });
+      const fixture = TestBed.createComponent(TablaDinamicaComponent);
+      fixture.componentRef.setInput('columnas', CON_CELLSTYLE);
+      fixture.componentRef.setInput('filas', [{ RangoDesembolso: '%Desembolsos>= PEN 50M', '1_Ope': '6%' }]);
+      fixture.detectChanges();
+
+      const celdas = fixture.nativeElement.querySelectorAll('tbody td') as NodeListOf<HTMLElement>;
+      expect(celdas[0].style.textAlign).toBe('left');
+      expect(celdas[1].style.textAlign).toBe('right');
+    });
+
+    it('`style` sigue siendo del encabezado y no toca el cuerpo', () => {
+      TestBed.configureTestingModule({ imports: [TablaDinamicaComponent] });
+      const fixture = TestBed.createComponent(TablaDinamicaComponent);
+      fixture.componentRef.setInput('columnas', CON_CELLSTYLE);
+      fixture.componentRef.setInput('filas', [{ '1_Ope': '6%' }]);
+      fixture.detectChanges();
+
+      const celdas = fixture.nativeElement.querySelectorAll('tbody td') as NodeListOf<HTMLElement>;
+      for (const celda of celdas) expect(celda.style.width).toBe('');
+    });
+  });
 });

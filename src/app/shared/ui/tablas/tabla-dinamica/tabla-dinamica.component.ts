@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, output, LOCALE_ID } from '@angular/core';
-import { formatNumber } from '@angular/common';
+import { formatNumber, formatPercent } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { aplanarEncabezados } from './tabla-dinamica.util';
 import type { ColumnaDinamica } from '../models/tabla-dinamica.model';
@@ -31,10 +31,14 @@ export class TablaDinamicaComponent {
     if (crudo == null || crudo === '') return crudo;
 
     const tipo = columna.format?.type;
-    if (tipo !== 'integer' && tipo !== 'decimal') return crudo;
+    if (tipo !== 'integer' && tipo !== 'decimal' && tipo !== 'percent') return crudo;
 
     const numero = Number(crudo);
-    return Number.isNaN(numero) ? crudo : formatNumber(numero, this.locale, tipo === 'integer' ? '1.0-0' : '1.2-2');
+    // Un porcentaje que ya viene con `%` (texto) no es convertible: se deja tal cual.
+    if (Number.isNaN(numero)) return crudo;
+
+    if (tipo === 'percent') return formatPercent(numero, this.locale, '1.2-2');
+    return formatNumber(numero, this.locale, tipo === 'integer' ? '1.0-0' : '1.2-2');
   }
 
   /** Color de la celda cuando es una variación: verde si sube, rojo si baja. */
