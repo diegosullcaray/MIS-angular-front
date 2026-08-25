@@ -412,5 +412,41 @@ describe('TablaReporteComponent', () => {
 
       expect(anchoDe(fixture, 0)).toBe(3);
     });
+
+
+    /**
+     * Forma real de `RS_SAL_CAR_04` (Saldo Cartera): la fila de arriba mezcla columnas de dos
+     * filas de alto con dos grupos (`Meta` de 2 y `Distancia Meta` de 4), y la de abajo trae los
+     * seis hijos, dos de ellos semáforos ocultos seguidos de su dato.
+     */
+    it('no desborda cuando la fila de hijos ya cierra contra sus grupos', () => {
+      const fixture = crear(
+        [
+          {
+            columns: [
+              { columnDef: 'descripcion', header: 'Descripción', rows: 2, isdata: 1 },
+              { columnDef: 'var_cart', header: 'Var.Mes', rows: 2, isdata: 4 },
+              { columnDef: 'meta_', header: 'Meta', cols: 2 },
+              { columnDef: 'dis_meta_', header: 'Distancia Meta', cols: 4 },
+              { columnDef: 'HSALMEDMNVIGE', header: 'Saldo Medio', rows: 2, isdata: 12 },
+            ],
+          },
+          {
+            columns: [
+              { columnDef: 'meta_var_cart', header: 'Var.Mes', isdata: 6 },
+              { columnDef: 'meta_sal_cart_v2', header: 'Saldo', isdata: 7 },
+              { columnDef: 'sem_met_var_cart', header: '', isdata: 8, hidden: true, format: { type: 'traffic-light' } },
+              { columnDef: 'dist_met_var_cart', header: 'Var.Mes', cols: 2, isdata: 9 },
+              { columnDef: 'sem_met_cart', header: '', isdata: 10, hidden: true, format: { type: 'traffic-light' } },
+              { columnDef: 'dist_met_cart_v2', header: 'Saldo', cols: 2, isdata: 11 },
+            ],
+          },
+        ],
+        []
+      );
+
+      // `Meta` (2) + `Distancia Meta` (4): los hijos tienen que sumar exactamente 6.
+      expect(anchoDe(fixture, 1)).toBe(6);
+    });
   });
 });

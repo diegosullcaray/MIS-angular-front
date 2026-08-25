@@ -13,26 +13,9 @@
     />
 
     <div class="flex flex-wrap items-end gap-3">
-      <div class="flex flex-col gap-0.5">
-        <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Unidad</span>
-        <input pInputText [ngModel]="unidad()" (ngModelChange)="unidad.set($event)" placeholder="Buscar unidad…" class="w-44 text-[11.5px]" />
-      </div>
-      <div class="flex flex-col gap-0.5">
-        <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Corredor</span>
-        <input pInputText [ngModel]="corredor()" (ngModelChange)="corredor.set($event)" placeholder="Buscar corredor…" class="w-44 text-[11.5px]" />
-      </div>
-      <div class="flex flex-col gap-0.5">
-        <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Territorio</span>
-        <p-select
-          [options]="territorios()"
-          optionLabel="desc"
-          optionValue="id"
-          [ngModel]="territorio()"
-          (ngModelChange)="territorio.set($event)"
-          styleClass="text-[11.5px] w-52"
-          ariaLabel="Territorio"
-        />
-      </div>
+      <app-input-filtro etiqueta="Unidad" placeholder="Buscar unidad…" [(valor)]="unidad" />
+      <app-input-filtro etiqueta="Corredor" placeholder="Buscar corredor…" [(valor)]="corredor" />
+      <app-select-filtro etiqueta="Territorio" [opciones]="territorios()" [(valor)]="territorio" ancho="w-52" />
     </div>
   </div>
 

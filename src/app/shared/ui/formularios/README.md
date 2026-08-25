@@ -1,7 +1,8 @@
 # Formularios
 
-Controles de formulario genéricos. Hoy solo vive acá `<app-select-filtro>`; es el lugar donde van
-los inputs y selects reutilizables que hagan falta más adelante.
+Controles de formulario genéricos: la barra de filtros de un reporte se arma con estos, para que
+todas las pantallas se vean y se comporten igual en vez de que cada una repita su `<span>` de
+etiqueta más el control.
 
 ## `<app-select-filtro>`
 
@@ -54,3 +55,25 @@ interface OpcionFiltro<T extends string | number = string> {
 Acá vive solo el **tipo**. Los catálogos concretos de cada módulo (canales, productos, segmentos…)
 se quedan en su módulo — ver `reportes/models/filtros.model.ts`, que los define y reexporta este
 tipo. Un catálogo de negocio no tiene por qué vivir en shared.
+
+## `<app-input-filtro>`
+
+Campo de texto de filtro, hermano de `<app-select-filtro>` y con la misma forma de API.
+
+```html
+<div class="flex flex-wrap items-end gap-3">
+  <app-input-filtro etiqueta="Unidad" placeholder="Buscar unidad…" [(valor)]="unidad" />
+  <app-select-filtro etiqueta="Territorio" [opciones]="territorios()" [(valor)]="territorio" ancho="w-52" />
+</div>
+```
+
+| Input | Tipo | Por defecto | Para qué |
+|---|---|---|---|
+| `etiqueta` | `string` | — | **Requerido.** Label sobre el campo; también es su `aria-label` |
+| `placeholder` | `string` | `''` | Texto de ayuda dentro del campo |
+| `ancho` | `string` | `'w-44'` | Clase de Tailwind para el ancho |
+| `valor` | `model<string>` | `''` | Banda doble |
+
+Filtra en cada tecla, porque trabaja sobre data ya cargada en el cliente. Para filtrar contra el
+backend conviene la búsqueda manual de [`<app-data-table>`](../data-table/README.md), que espera
+al Enter o al botón.

@@ -11,6 +11,12 @@ import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
 export interface BloqueReporte {
   titulo?: string;
   tabla: TablaReporteResultado;
+  /**
+   * Nota al pie de ESTE bloque — el `content.lower` del legado, que va por tabla y no por
+   * reporte (ej. en "Datos por Producto" solo `_03` y `_04` llevan la suya). Para una leyenda
+   * única de todo el reporte está el slot `[nota]`.
+   */
+  nota?: string;
 }
 
 /** Una pestaña, para los reportes cuyo host del legado reparte los bloques en `mat-tab`s. */
@@ -68,6 +74,9 @@ export interface PestanaReporte {
                       <div class="mis-card p-3 overflow-x-auto">
                         <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" />
                       </div>
+                      @if (bloque.nota) {
+                        <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
+                      }
                     </section>
                   }
                 </div>
@@ -85,6 +94,9 @@ export interface PestanaReporte {
               <div class="mis-card p-3 overflow-x-auto">
                 <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" />
               </div>
+              @if (bloque.nota) {
+                <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
+              }
             </section>
           }
         </div>

@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
+import { InputFiltroComponent } from '../../../../../../../../../shared/ui/formularios/input-filtro/input-filtro.component';
+import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
@@ -17,9 +16,8 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
   selector: 'app-ranking-comercial',
   standalone: true,
   imports: [
-    FormsModule,
-    InputTextModule,
-    SelectModule,
+    InputFiltroComponent,
+    SelectFiltroComponent,
     HierSelectorComponent,
     TablaDinamicaComponent,
     EmptyStateComponent,

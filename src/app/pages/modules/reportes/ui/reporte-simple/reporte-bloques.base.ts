@@ -29,9 +29,15 @@ export abstract class ReporteBloquesBase {
 
   protected abstract consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]>;
 
+  /**
+   * Nota al pie de cada bloque, por índice — el `content.lower` del legado, que va por tabla.
+   * La subclase la sobrescribe solo si alguno de sus bloques la tiene.
+   */
+  protected readonly notas: (string | undefined)[] = [];
+
   /** Lo que espera el `[bloques]` de `app-reporte-simple`. */
   protected bloques(): BloqueReporte[] {
-    return this.tablas().map((tabla, i) => ({ titulo: this.titulos[i], tabla }));
+    return this.tablas().map((tabla, i) => ({ titulo: this.titulos[i], tabla, nota: this.notas[i] }));
   }
 
   constructor() {

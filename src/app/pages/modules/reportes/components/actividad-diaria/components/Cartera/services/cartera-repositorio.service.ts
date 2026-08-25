@@ -262,16 +262,21 @@ function conColumnasSemaforo(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
   return columnas.map((c) => (SEMAFOROS_CMG_CARTERA[c.key] ? { ...c, semaforoKey: SEMAFOROS_CMG_CARTERA[c.key] } : c));
 }
 
-/** Avance con su semáforo delante, en el formato exacto del legado (`🟢 15.28%`). */
-function semaforo(avanceCrudo: unknown, timingDecimal: number): string {
+/**
+ * Señal del semáforo de un avance contra el timing del mes: `1` en meta, `0` cerca, `-1` lejos.
+ *
+ * El legado devolvía el emoji ya incrustado en el texto (`🟢 15.28%`). Acá se devuelve solo la
+ * señal, y la pinta `<app-tabla-dinamica>` con el mismo punto que el resto del sistema
+ * (`semaforoKey`): así el indicador es consistente y el porcentaje queda como número, ordenable
+ * y formateable.
+ */
+function semaforo(avanceCrudo: unknown, timingDecimal: number): number | '' {
   const avance = Number(avanceCrudo);
   if (avanceCrudo == null || Number.isNaN(avance)) return '';
+  if (timingDecimal === 0) return '';
 
-  const formateado = `${(avance * 100).toFixed(2)}%`;
-  if (timingDecimal === 0) return formateado;
-
-  const icono = avance >= timingDecimal ? '🟢' : avance / timingDecimal >= 0.8 ? '🟡' : '🔴';
-  return `${icono} ${formateado}`;
+  if (avance >= timingDecimal) return 1;
+  return avance / timingDecimal >= 0.8 ? 0 : -1;
 }
 
 /** Claves de avance del legado y la columna calculada que alimenta cada una. */

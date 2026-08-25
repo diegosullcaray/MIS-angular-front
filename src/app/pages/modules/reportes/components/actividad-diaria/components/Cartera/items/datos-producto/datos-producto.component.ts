@@ -23,6 +23,14 @@ export class DatosProductoComponent extends ReporteBloquesBase {
   /** Solo el primer bloque trae título en el legado; los otros tres se apilan sin encabezado propio. */
   protected readonly titulos = ['Datos por producto'];
 
+  /** `content.lower` de cada bloque en el legado (`cra-map.ts`, `RS_DAT_PRO`): solo `_03` y `_04`. */
+  protected override readonly notas = [
+    undefined,
+    undefined,
+    '<b>a:</b> Variación con respecto al cierre del mes anterior.',
+    '<b>b:</b> Variación de la TAPP con respecto al cierre del mes anterior en Puntos Básicos.',
+  ];
+
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.datosProducto(nodo);
   }
