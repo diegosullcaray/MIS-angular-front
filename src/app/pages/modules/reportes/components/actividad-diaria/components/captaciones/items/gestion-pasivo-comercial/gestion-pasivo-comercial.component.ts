@@ -7,7 +7,7 @@ import { ToastService } from '../../../../../../../../../shared/services/toast.s
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
-import { GestionPasivoComercialService } from '../../../../services/gestion-pasivo-comercial.service';
+import { GestionPasivoComercialService } from '../../services/gestion-pasivo-comercial.service';
 
 /** "Gestión Pasivo Comercial" — legado `actividad-diaria/carterizacion/pasivo` (`RS_CARTEPAS_01`). */
 @Component({

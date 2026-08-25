@@ -11,8 +11,8 @@ import {
   VARIABLE_CMG_POR_DEFECTO,
 } from '../../../../../../../models/filtros.model';
 import type { NodoConsulta } from '../../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../../../models/captaciones.model';
-import { CmgClientesPasivosService } from '../../../../../services/cmg-clientes-pasivos.service';
+import type { ReporteBloqueUnico } from '../../../models/captaciones.model';
+import { CmgClientesPasivosService } from '../../../services/cmg-clientes-pasivos.service';
 
 /** "CMG Clientes Pasivo Detalle" (`leg/com/rda/adm/cmg-cli-pas-detalle`) — legado `CMG_CLI_PAS_DETA`. */
 @Component({

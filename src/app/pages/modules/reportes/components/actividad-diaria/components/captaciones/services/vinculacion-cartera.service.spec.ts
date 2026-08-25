@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { VinculacionCarteraService } from './vinculacion-cartera.service';
 import { GestionPasivoComercialService } from './gestion-pasivo-comercial.service';
-import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
-import { ShellStateService } from '../../../../../../core/services/shell-state.service';
+import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
+import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
 import { COLUMNAS_GESTION_PASIVO_COMERCIAL } from '../models/gestion-pasivo-comercial.columnas';
-import type { IWinderResponse } from '../../../../../../core/winder/winder/winder.interface';
+import type { IWinderResponse } from '../../../../../../../../core/winder/winder/winder.interface';
 
 const NODO = { tip_cod: 9, cod_rel: 'FC' };
 

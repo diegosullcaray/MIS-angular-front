@@ -5,9 +5,9 @@ import { CaptacionCanalComercialService } from './captacion-canal-comercial.serv
 import { CaptacionCanalOperacionesService } from './captacion-canal-operaciones.service';
 import { CmgClientesPasivosService } from './cmg-clientes-pasivos.service';
 import { SeguimientoBancaPreferenteService } from './seguimiento-banca-preferente.service';
-import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
-import { ShellStateService } from '../../../../../../core/services/shell-state.service';
-import type { UsuarioActivo } from '../../../../../../core/interfaces/shell-state.model';
+import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
+import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
+import type { UsuarioActivo } from '../../../../../../../../core/interfaces/shell-state.model';
 
 const NODO = { tip_cod: 13, cod_rel: 'FC' };
 

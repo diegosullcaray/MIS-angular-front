@@ -1,4 +1,4 @@
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
 
 /** Reporte de un solo bloque — la forma de casi todos los de Captaciones. */
 export interface ReporteBloqueUnico {

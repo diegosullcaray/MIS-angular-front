@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
+import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { ReporteBloqueUnico } from '../models/captaciones.model';
 
 /** "Captación por Canal Comercial" — legado `capta-caract-canal-comercial`, `module: 'CARACT_CARTERA'`, `jerar: UNI_1`, filtro `prod`. */

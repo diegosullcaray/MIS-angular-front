@@ -7,7 +7,7 @@ import { ToastService } from '../../../../../../../../../shared/services/toast.s
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_OFICINA, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
-import { CaptacionPorCanalService } from '../../../../services/captacion-por-canal.service';
+import { CaptacionPorCanalService } from '../../services/captacion-por-canal.service';
 
 /** "Captaciones por Canal" (`leg/com/rda/adm/cap-age`) — CAPTACIONES RED. */
 @Component({

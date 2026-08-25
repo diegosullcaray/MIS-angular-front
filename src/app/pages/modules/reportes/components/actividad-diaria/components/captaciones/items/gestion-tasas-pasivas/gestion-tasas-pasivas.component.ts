@@ -14,7 +14,7 @@ import {
   OPCIONES_TIPO_TRAMO_PLAZO,
   TIPO_TRAMO_PLAZO_POR_DEFECTO,
 } from '../../../../../../models/filtros.model';
-import { GestionTasasPasivasService } from '../../../../services/gestion-tasas-pasivas.service';
+import { GestionTasasPasivasService } from '../../services/gestion-tasas-pasivas.service';
 import { TabsModule } from 'primeng/tabs';
 
 /** "Gestión de Tasas Pasivas" (`leg/com/rda/adm/tasa-pas`) — depósitos a plazo fijo por tipo de persona y moneda. */

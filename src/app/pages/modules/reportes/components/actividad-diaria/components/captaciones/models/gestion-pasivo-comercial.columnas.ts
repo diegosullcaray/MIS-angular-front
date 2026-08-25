@@ -1,4 +1,4 @@
-import type { ColumnaDinamica } from '../../../models/tabla-dinamica.model';
+import type { ColumnaDinamica } from '../../../../../models/tabla-dinamica.model';
 
 const entero = { type: 'integer' } as const;
 

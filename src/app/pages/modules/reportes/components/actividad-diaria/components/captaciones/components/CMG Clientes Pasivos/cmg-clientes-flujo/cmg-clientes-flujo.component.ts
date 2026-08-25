@@ -6,8 +6,8 @@ import { SelectFiltroComponent } from '../../../../../../../../../../shared/ui/f
 import { PARAMS_HIER_OFICINA } from '../../../../../../../models/jerarquia.model';
 import { OPCIONES_VARIABLE_CMG, VARIABLE_CMG_POR_DEFECTO } from '../../../../../../../models/filtros.model';
 import type { NodoConsulta } from '../../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../../../models/captaciones.model';
-import { CmgClientesPasivosService } from '../../../../../services/cmg-clientes-pasivos.service';
+import type { ReporteBloqueUnico } from '../../../models/captaciones.model';
+import { CmgClientesPasivosService } from '../../../services/cmg-clientes-pasivos.service';
 
 /** "CMG Clientes Pasivo" (`leg/com/rda/adm/cmg-cli-pas`) — legado `CMG_CLI_PAS`. */
 @Component({

@@ -6,8 +6,8 @@ import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/form
 import { PARAMS_HIER_MACRO } from '../../../../../../models/jerarquia.model';
 import { OPCIONES_PRODUCTO_PASIVO, OPCIONES_SEGMENTO, TODOS } from '../../../../../../models/filtros.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../../models/captaciones.model';
-import { CaptacionCanalOperacionesService } from '../../../../services/captacion-canal-operaciones.service';
+import type { ReporteBloqueUnico } from '../../models/captaciones.model';
+import { CaptacionCanalOperacionesService } from '../../services/captacion-canal-operaciones.service';
 
 /** "Captación por Canal Operaciones" (`leg/com/rda/adm/capta-caract-canal-operacional`) — legado `CARACT_pas`. */
 @Component({

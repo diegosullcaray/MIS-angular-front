@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { CmgCaptacionesAgenciasService } from './cmg-captaciones-agencias.service';
-import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
-import { ShellStateService } from '../../../../../../core/services/shell-state.service';
-import type { UsuarioActivo } from '../../../../../../core/interfaces/shell-state.model';
-import type { IWinderResponse } from '../../../../../../core/winder/winder/winder.interface';
+import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
+import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
+import type { UsuarioActivo } from '../../../../../../../../core/interfaces/shell-state.model';
+import type { IWinderResponse } from '../../../../../../../../core/winder/winder/winder.interface';
 
 const NODO = { tip_cod: 2, cod_rel: 'AG01' };
 

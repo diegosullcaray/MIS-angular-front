@@ -5,7 +5,7 @@ import { crearManejadorErrorJerarquia } from '../../utils/hier-selector-error.ut
 import type { NodoConsulta } from '../../services/bloque-reporte.service';
 import type { HierarquiaNodo } from '../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../models/tabla-reporte.model';
-import type { ReporteBloqueUnico } from '../../components/actividad-diaria/models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../components/actividad-diaria/components/captaciones/models/captaciones.model';
 
 /**
  * Estado de un reporte de un solo bloque, para usar con `ReporteSimpleComponent`.

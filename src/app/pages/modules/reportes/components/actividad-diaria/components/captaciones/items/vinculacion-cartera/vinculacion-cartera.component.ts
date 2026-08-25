@@ -8,7 +8,7 @@ import { ToastService } from '../../../../../../../../../shared/services/toast.s
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
-import { VinculacionCarteraService } from '../../../../services/vinculacion-cartera.service';
+import { VinculacionCarteraService } from '../../services/vinculacion-cartera.service';
 
 /** "Vinculación Cartera" — legado `actividad-diaria/carterizacion-com/pasivocom` (`RS_MON_SALCAP_COM_01`). */
 @Component({

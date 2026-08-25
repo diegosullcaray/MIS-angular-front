@@ -7,7 +7,7 @@ import { ToastService } from '../../../../../../../../../shared/services/toast.s
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_OFICINA, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
-import { CmgCaptacionesAgenciasService } from '../../../../services/cmg-captaciones-agencias.service';
+import { CmgCaptacionesAgenciasService } from '../../services/cmg-captaciones-agencias.service';
 
 /** "CMG Captaciones - Agencias" (`leg/com/rda/adm/cmg-capta01`). */
 @Component({

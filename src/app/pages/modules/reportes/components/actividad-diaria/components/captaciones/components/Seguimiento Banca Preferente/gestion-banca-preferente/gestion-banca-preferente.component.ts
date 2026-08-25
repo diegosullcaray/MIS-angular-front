@@ -6,8 +6,8 @@ import { SelectFiltroComponent } from '../../../../../../../../../../shared/ui/f
 import { PARAMS_HIER_FC } from '../../../../../../../models/jerarquia.model';
 import { OPCIONES_PRODUCTO_BP, TODOS } from '../../../../../../../models/filtros.model';
 import type { NodoConsulta } from '../../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../../../models/captaciones.model';
-import { SeguimientoBancaPreferenteService } from '../../../../../services/seguimiento-banca-preferente.service';
+import type { ReporteBloqueUnico } from '../../../models/captaciones.model';
+import { SeguimientoBancaPreferenteService } from '../../../services/seguimiento-banca-preferente.service';
 
 /** "Seguimiento Captaciones Banca Preferente" (`leg/com/rda/adm/cap-segui-bp`) — legado `CAP_SEGUI_BP`. */
 @Component({

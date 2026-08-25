@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
-import { moverSemaforosTrasSuValor } from '../../../utils/semaforo-tras-valor.util';
+import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
+import { moverSemaforosTrasSuValor } from '../../../../../utils/semaforo-tras-valor.util';
 import type { ReporteBloqueUnico } from '../models/captaciones.model';
 
 /** "CMG Captaciones - Agencias" — legado `cmg-capta01`, `cra-map.ts`: `module: 'GCMGCAP'`, `jerar: OFI_1`. */

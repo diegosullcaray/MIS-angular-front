@@ -4,8 +4,8 @@ import { ReporteSimpleComponent } from '../../../../../../../ui/reporte-simple/r
 import { ReporteSimpleBase } from '../../../../../../../ui/reporte-simple/reporte-simple.base';
 import { PARAMS_HIER_OFICINA } from '../../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../../../models/captaciones.model';
-import { CmgClientesPasivosService } from '../../../../../services/cmg-clientes-pasivos.service';
+import type { ReporteBloqueUnico } from '../../../models/captaciones.model';
+import { CmgClientesPasivosService } from '../../../services/cmg-clientes-pasivos.service';
 
 /** "CMG Clientes Pasivo Stock" (`leg/com/rda/adm/cmg-cli-pas-stock`) — legado `CMG_CLI_PAS_STOCK`. */
 @Component({

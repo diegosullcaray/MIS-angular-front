@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
+import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { ReporteDosBloques } from '../models/captaciones.model';
 
 /** Filtros propios del reporte — `agr` (`Tipo01`) y `var` (`Canal01`) del legado. */

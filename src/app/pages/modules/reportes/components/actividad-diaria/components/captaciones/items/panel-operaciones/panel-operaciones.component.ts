@@ -10,7 +10,7 @@ import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selec
 import { PARAMS_HIER_MACRO, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
 import { OPCIONES_PRODUCTO_PASIVO_AMPLIADO, TODOS } from '../../../../../../models/filtros.model';
-import { PanelOperacionesService } from '../../../../services/panel-operaciones.service';
+import { PanelOperacionesService } from '../../services/panel-operaciones.service';
 
 /** "Panel Operaciones" (`leg/com/rda/adm/panel-operaciones`) — panel de gestión de la RED. */
 @Component({

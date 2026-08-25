@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
+import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import { COLUMNAS_GESTION_PASIVO_COMERCIAL } from '../models/gestion-pasivo-comercial.columnas';
-import type { TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
+import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 
 /** "Gestión Pasivo Comercial" — legado `actividad-diaria/carterizacion/pasivo` (`CarterizacionComponent`): motor `table.regular`, jerarquía `UNI_1`, sin filtros propios. */
 @Injectable({ providedIn: 'root' })

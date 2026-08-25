@@ -6,8 +6,8 @@ import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/form
 import { PARAMS_HIER_UNIDAD } from '../../../../../../models/jerarquia.model';
 import { OPCIONES_PRODUCTO_PASIVO, TODOS } from '../../../../../../models/filtros.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../../models/captaciones.model';
-import { CaptacionCanalComercialService } from '../../../../services/captacion-canal-comercial.service';
+import type { ReporteBloqueUnico } from '../../models/captaciones.model';
+import { CaptacionCanalComercialService } from '../../services/captacion-canal-comercial.service';
 
 /** "Captación por Canal Comercial" (`leg/com/rda/adm/capta-caract-canal-comercial`) — legado `CARACT_CARTERA`. */
 @Component({
