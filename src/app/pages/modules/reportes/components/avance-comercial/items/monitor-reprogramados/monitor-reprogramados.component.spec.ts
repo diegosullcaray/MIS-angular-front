@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { MonitorReprogramadosComponent } from './monitor-reprogramados.component';
-import { AvanceComercialService } from '../../../services/avance-comercial.service';
-import { ModSysAdminService } from '../../../../../../core/winder/instances/mod-sys-admin.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
-import type { HierarquiaNodo } from '../../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { AvanceComercialService } from '../../services/avance-comercial.service';
+import { ModSysAdminService } from '../../../../../../../core/winder/instances/mod-sys-admin.service';
+import { ToastService } from '../../../../../../../shared/services/toast.service';
+import type { HierarquiaNodo } from '../../../../models/jerarquia.model';
+import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 4, cod_rel: 'A1', desc_rel: 'Agencia 1', lvl: 2 };
 

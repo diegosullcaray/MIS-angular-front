@@ -1,5 +1,5 @@
 import { corregirSemaforosDesempenoSocial } from './desarrollo-sostenible.service';
-import type { TablaReporteResultado } from '../models/tabla-reporte.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 
 /** Forma real de `DESEMP_SOC_01` (confirmada con datos en vivo): el semáforo que el backend pega junto a una columna en realidad colorea la SIGUIENTE. */
 function tablaDesempenoSocial(): TablaReporteResultado {
