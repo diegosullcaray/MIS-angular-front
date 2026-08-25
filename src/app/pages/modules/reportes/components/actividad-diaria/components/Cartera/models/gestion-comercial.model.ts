@@ -1,5 +1,5 @@
 import type { ColumnaDinamica, TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
-import type { BloqueGrafico } from '../../../../../models/grafico-reporte.model';
+import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
 const decimal = { type: 'decimal' } as const;
 const entero = { type: 'integer' } as const;

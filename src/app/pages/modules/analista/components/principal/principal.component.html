@@ -84,7 +84,9 @@
         <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 h-[220px] flex flex-col">
           <h3 class="m-0 mb-2 text-[13px] font-semibold text-[var(--mis-primary-text)]">Comparativo Día</h3>
           <div class="flex-1 min-h-0">
-            <div #comparativo class="w-full h-full"></div>
+            @if (comparativoDia(); as bloque) {
+              <app-grafico-mixto [datos]="bloque" tipo="columna" [fondoTransparente]="true" />
+            }
           </div>
         </div>
       </div>
@@ -110,8 +112,8 @@
               <div class="h-full flex items-center justify-center">
                 <i class="pi pi-spin pi-spinner text-[var(--mis-primary-text)]"></i>
               </div>
-            } @else if (datosEvolutivo()) {
-              <div #evolutivo class="w-full h-full"></div>
+            } @else if (evolutivo(); as bloque) {
+              <app-grafico-mixto [datos]="bloque" tipo="linea" formato="numero" [fondoTransparente]="true" />
             }
           </div>
         </div>
@@ -119,7 +121,7 @@
         <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 h-[220px] flex flex-col">
           <h3 class="m-0 mb-2 text-[13px] font-semibold text-[var(--mis-primary-text)]">Cartera por Tramos de Mora</h3>
           <div class="flex-1 min-h-0">
-            <div #tramos class="w-full h-full"></div>
+            <app-grafico-pie [porciones]="tramosMora()" [fondoTransparente]="true" />
           </div>
         </div>
       </div>

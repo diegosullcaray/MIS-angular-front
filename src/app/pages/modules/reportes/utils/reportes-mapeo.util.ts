@@ -8,7 +8,7 @@ import type {
   TablaRegularResponseBody,
   TablaRegularResultadoRaw,
 } from '../models/tabla-dinamica.model';
-import type { BloqueGrafico } from '../models/grafico-reporte.model';
+import type { BloqueGrafico } from '../../../../shared/ui/graficos/models/grafico-comun.model';
 
 /** Mapeo compartido de la respuesta cruda del motor de reportes "mixtos" (`regularData`) a la forma que consume `app-tabla-reporte` — mismo mapeo que antes vivía centralizado en `ReportesService.obtenerBloqueReporte()`, ahora reutilizado por el service propio de cada componente para no duplicar el `.pipe(map(...))` en cada uno. */
 export function mapearBloqueReporte(r: IWinderResponse): TablaReporteResultado {

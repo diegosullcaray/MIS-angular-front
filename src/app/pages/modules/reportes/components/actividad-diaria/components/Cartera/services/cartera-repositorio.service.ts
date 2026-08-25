@@ -10,7 +10,7 @@ import type { CarteraAgricolaResultado, TotalAgro, DetalleAgricolaResultado } fr
 import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
 import { GRAFICOS_GESTION_COMERCIAL, type GestionComercialResultado } from '../models/gestion-comercial.model';
 import { TOTALES_AGRO } from '../models/cartera-agricola.model';
-import type { BloqueGrafico } from '../../../../../models/grafico-reporte.model';
+import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
 /** Los reportes de Cartera que viven en el `repositorio` del legado (motor `table.regular`). */
 @Injectable({ providedIn: 'root' })

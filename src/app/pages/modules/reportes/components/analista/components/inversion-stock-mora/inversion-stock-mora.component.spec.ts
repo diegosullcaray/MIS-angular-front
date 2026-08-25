@@ -5,7 +5,7 @@ import { InversionStockMoraComponent } from './inversion-stock-mora.component';
 import { InversionStockMoraService } from '../../services/inversion-stock-mora.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import type { AsesorSec } from '../../models/asesor-sec.model';
-import type { BloqueGrafico } from '../../../../models/grafico-reporte.model';
+import type { BloqueGrafico } from '../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
 const ASESOR: AsesorSec = { nombre: 'Juan Pérez', dni: '12345678' };
 
@@ -34,10 +34,9 @@ describe('InversionStockMoraComponent', () => {
   });
 
   // No se llama fixture.detectChanges() después de elegir un asesor: dejaría que Angular
-  // instancie <app-grafico-reporte> (Chart.js), que necesita un canvas 2D real —
-  // jsdom no lo provee y no hay paquete `canvas` en el proyecto (mismo motivo por el
-  // que `app-heatmap`, el otro consumidor de Chart.js, tampoco tiene spec). Alcanza con
-  // verificar el estado de los signals: la lógica de carga es independiente del render.
+  // instancie <app-grafico-mixto>, y Highcharts necesita medir el SVG (getBBox), que jsdom
+  // no implementa. Alcanza con verificar el estado de los signals: la lógica de carga es
+  // independiente del render.
   function crear() {
     const fixture = TestBed.createComponent(InversionStockMoraComponent);
     fixture.detectChanges();

@@ -28,8 +28,8 @@
   } @else {
     <div class="flex flex-col gap-5">
       @for (grafico of graficos(); track $index) {
-        <div class="mis-card p-3">
-          <app-grafico-reporte [datos]="grafico" />
+        <div class="mis-card p-3 h-[360px]">
+          <app-grafico-mixto [datos]="grafico" tipo="linea" />
         </div>
       }
     </div>

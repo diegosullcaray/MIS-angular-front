@@ -76,7 +76,7 @@ describe('PrincipalComponent', () => {
   it('al cargar el dashboard, pide el histórico de la primera variable disponible', () => {
     const fixture = crear();
     expect(analistaFalso.obtenerHistoricoVariable).toHaveBeenCalledWith('BT-001', 'sal');
-    expect(fixture.componentInstance['datosEvolutivo']()).not.toBeNull();
+    expect(fixture.componentInstance['evolutivo']()).not.toBeNull();
   });
 
   it('para un admin, solo prepara el nodo ancla — no carga ningún dashboard hasta elegir colaborador', () => {

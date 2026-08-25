@@ -7,14 +7,14 @@ import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-s
 import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
 import { DataTableComponent } from '../../../../../../../../../shared/ui/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../../../../../../../shared/ui/data-table/data-table-cell.directive';
-import { GraficoHighchartsComponent } from '../../../../../../ui/grafico-highcharts/grafico-highcharts.component';
+import { GraficoMixtoComponent } from '../../../../../../../../../shared/ui/graficos/grafico-mixto/grafico-mixto.component';
 import { MapaUbicacionComponent } from '../../../../../../ui/mapa-ubicacion/mapa-ubicacion.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
-import type { BloqueGrafico } from '../../../../../../models/grafico-reporte.model';
+import type { BloqueGrafico } from '../../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import {
   BUSQUEDA_DETALLE_CULTIVO,
   CARTERA_AGRICOLA_VACIA,
@@ -41,7 +41,7 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
     TablaDinamicaComponent,
     DataTableComponent,
     DataTableCellDirective,
-    GraficoHighchartsComponent,
+    GraficoMixtoComponent,
     MapaUbicacionComponent,
     EmptyStateComponent,
     WindowPanelComponent,

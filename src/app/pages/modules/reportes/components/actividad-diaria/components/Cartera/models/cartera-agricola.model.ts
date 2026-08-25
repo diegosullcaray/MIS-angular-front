@@ -1,4 +1,4 @@
-import type { BloqueGrafico } from '../../../../../models/grafico-reporte.model';
+import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { DataTableColumn } from '../../../../../../../../shared/ui/data-table/data-table.model';
 
