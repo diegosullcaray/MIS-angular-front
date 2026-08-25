@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs'; // 1️⃣ Importar 'tap'
 import { ReporteSimpleComponent } from '../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteSimpleBase } from '../../../../../../ui/reporte-simple/reporte-simple.base';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
@@ -27,6 +28,9 @@ export class CaptacionCanalOperacionesComponent extends ReporteSimpleBase {
   protected readonly segmento = signal<string>(TODOS);
 
   protected consultar(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.servicio.obtener(nodo, this.producto(), this.segmento());
+    // 2️⃣ Interceptar la respuesta del servicio con pipe y tap
+    return this.servicio.obtener(nodo, this.producto(), this.segmento()).pipe(
+      tap((respuesta) => console.log('✅ Data de Captación Canal Operaciones:', respuesta))
+    );
   }
 }

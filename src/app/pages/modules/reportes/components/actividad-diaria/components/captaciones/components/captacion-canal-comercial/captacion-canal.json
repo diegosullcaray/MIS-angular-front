@@ -1,0 +1,306 @@
+{
+    "tabla1": {
+        "headers": [
+            {
+                "level": "1",
+                "columns": [
+                    {
+                        "columnDef": "descripcion",
+                        "header": "Descripción",
+                        "rows": "2",
+                        "isdata": 1,
+                        "sticky": true,
+                        "format": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "columnDef": "m_SP",
+                        "header": "Saldo Puntual",
+                        "cols": "9"
+                    },
+                    {
+                        "columnDef": "m_SPSM",
+                        "header": "Saldo Medio",
+                        "cols": "9"
+                    },
+                    {
+                        "columnDef": "numcli_cartera_caract_3",
+                        "header": "Clientes",
+                        "rows": "2",
+                        "isdata": 20,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    },
+                    {
+                        "columnDef": "15",
+                        "header": "",
+                        "rows": "2",
+                        "isdata": 21,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "dif_clientes",
+                        "header": "Var. Clientes",
+                        "cols": "2",
+                        "rows": "2",
+                        "isdata": 22,
+                        "format": {
+                            "type": "number",
+                            "mode": ".0-0"
+                        }
+                    }
+                ]
+            },
+            {
+                "level": "2",
+                "columns": [
+                    {
+                        "columnDef": "monto_cartera_caract_1",
+                        "header": "2026-07-21",
+                        "isdata": 2,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "monto_cartera_caract_2",
+                        "header": "2026-07-31",
+                        "isdata": 3,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "monto_cartera_caract_3",
+                        "header": "2026-08-24",
+                        "isdata": 4,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "metasaldo",
+                        "header": "Meta",
+                        "isdata": 5,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "8",
+                        "header": "",
+                        "isdata": 6,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "TMMSALDO",
+                        "header": "TMM",
+                        "cols": "2",
+                        "isdata": 7,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "10",
+                        "header": "",
+                        "isdata": 8,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "TFMSALDO",
+                        "header": "TFM",
+                        "cols": "2",
+                        "isdata": 9,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "VARMETS",
+                        "header": "Distancia Meta",
+                        "isdata": 10,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "A1",
+                        "header": "2026-07-21",
+                        "isdata": 11,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "A2",
+                        "header": "2026-07-31",
+                        "isdata": 12,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "A3",
+                        "header": "2026-08-24",
+                        "isdata": 13,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "metasaldoM",
+                        "header": "Meta",
+                        "isdata": 14,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "9",
+                        "header": "",
+                        "isdata": 15,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "TMMSM",
+                        "header": "TMM",
+                        "cols": "2",
+                        "isdata": 16,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "11",
+                        "header": "",
+                        "isdata": 17,
+                        "hidden": true,
+                        "format": {
+                            "type": "traffic-light"
+                        }
+                    },
+                    {
+                        "columnDef": "TFMSM",
+                        "header": "TFM",
+                        "cols": "2",
+                        "isdata": 18,
+                        "format": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "columnDef": "VARMETSM",
+                        "header": "Distancia Meta",
+                        "isdata": 19,
+                        "format": {
+                            "type": "number"
+                        }
+                    }
+                ]
+            }
+        ],
+        "body": [
+            {
+                "8": "0",
+                "9": "1",
+                "10": "-1",
+                "11": "0",
+                "15": "0",
+                "style": 1,
+                "descripcion": "FINANCIERA CONFIANZA",
+                "monto_cartera_caract_1": "131,573",
+                "monto_cartera_caract_2": "147,633",
+                "monto_cartera_caract_3": "129,871",
+                "TMMSALDO": "-1,701",
+                "TFMSALDO": "-17,762",
+                "A1": "128,613",
+                "A2": "131,476",
+                "A3": "128,962",
+                "TMMSM": "349",
+                "TFMSM": "-2,514",
+                "numcli_cartera_caract_3": 295354,
+                "dif_clientes": -1755
+            },
+            {
+                "8": "0",
+                "9": "1",
+                "10": "-1",
+                "11": "0",
+                "15": "0",
+                "style": 0,
+                "descripcion": "INDIVIDUAL ",
+                "monto_cartera_caract_1": "115,141",
+                "monto_cartera_caract_2": "131,349",
+                "monto_cartera_caract_3": "113,737",
+                "TMMSALDO": "-1,404",
+                "TFMSALDO": "-17,613",
+                "A1": "112,499",
+                "A2": "115,281",
+                "A3": "113,062",
+                "TMMSM": "564",
+                "TFMSM": "-2,219",
+                "numcli_cartera_caract_3": 211020,
+                "dif_clientes": -248
+            },
+            {
+                "8": "0",
+                "9": "0",
+                "10": "0",
+                "11": "0",
+                "15": "0",
+                "style": 0,
+                "descripcion": "GRUPAL",
+                "monto_cartera_caract_1": "16,416",
+                "monto_cartera_caract_2": "16,239",
+                "monto_cartera_caract_3": "16,125",
+                "TMMSALDO": "-291",
+                "TFMSALDO": "-114",
+                "A1": "16,101",
+                "A2": "16,181",
+                "A3": "15,866",
+                "TMMSM": "-235",
+                "TFMSM": "-315",
+                "numcli_cartera_caract_3": 84107,
+                "dif_clientes": -1403
+            },
+            {
+                "8": "-1",
+                "9": "1",
+                "10": "-1",
+                "11": "1",
+                "15": "-1",
+                "style": 0,
+                "descripcion": "SIN ASIGNAR",
+                "monto_cartera_caract_1": "15",
+                "monto_cartera_caract_2": "45",
+                "monto_cartera_caract_3": "9",
+                "TMMSALDO": "-6",
+                "TFMSALDO": "-36",
+                "A1": "13",
+                "A2": "14",
+                "A3": "33",
+                "TMMSM": "20",
+                "TFMSM": "20",
+                "numcli_cartera_caract_3": 227,
+                "dif_clientes": -104
+            }
+        ],
+        "additional": {}
+    }
+}
