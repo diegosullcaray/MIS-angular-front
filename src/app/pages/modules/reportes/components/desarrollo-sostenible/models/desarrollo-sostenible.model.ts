@@ -1,6 +1,6 @@
-import type { TablaReporteResultado } from '../tabla-reporte.model';
-import type { TablaDinamicaResultado } from '../tabla-dinamica.model';
-import type { KpiOperacionesDesembolsadas } from '../avance-comercial/avance-comercial.model';
+import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import type { TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
+import type { KpiOperacionesDesembolsadas } from '../../avance-comercial/models/avance-comercial.model';
 
 /** Opción del filtro "Productos" de `Monitor_Dese_misi` (legado: `SPRODUCTOMISI()`, `cra-map.ts`). */
 export interface OpcionProductoMisional {

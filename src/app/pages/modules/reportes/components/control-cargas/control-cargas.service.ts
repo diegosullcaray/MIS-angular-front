@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
-import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
-import { mapearBloqueReporte } from '../utils/reportes-mapeo.util';
-import type { ReporteControlCargas } from '../models/control-cargas/control-cargas.model';
+import { ModReportesService } from '../../../../../core/winder/instances/mod-reportes.service';
+import { mapearBloqueReporte } from '../../utils/reportes-mapeo.util';
+import type { ReporteControlCargas } from './control-cargas.model';
 
 const COD_REP = 'RS_MON_CAR_01';
 
