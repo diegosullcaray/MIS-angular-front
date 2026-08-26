@@ -5,7 +5,7 @@ import { ReporteSimpleBase } from '../../../../../../../ui/reporte-simple/report
 import { PARAMS_HIER_UNIDAD } from '../../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../../services/bloque-reporte.service';
 import { CarteraCraService } from '../../../services/cartera-cra.service';
-import { ReporteBloqueUnico } from '../../../../captaciones/models/captaciones.model';
+import { ReporteBloqueUnico } from '../../../../Captaciones/models/captaciones.model';
 
 /** "Desembolsos PDM" — legado `desembolsosPdm`. */
 @Component({

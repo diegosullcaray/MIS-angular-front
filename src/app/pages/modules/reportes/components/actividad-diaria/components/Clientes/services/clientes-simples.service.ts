@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../captaciones/models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.model';
 
 /**
  * Los reportes de Clientes que salen del `report-cra-v1p1` del legado: un solo

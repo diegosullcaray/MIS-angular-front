@@ -4,7 +4,7 @@ import { ReporteSimpleComponent } from '../../../../../../../ui/reporte-simple/r
 import { ReporteSimpleBase } from '../../../../../../../ui/reporte-simple/reporte-simple.base';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../../captaciones/models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../../../Captaciones/models/captaciones.model';
 import { ClientesSimplesService } from '../../../services/clientes-simples.service';
 
 /** "Stock de Clientes" (`leg/com/rda/adm/cmg-cli`) — legado `rda/administracion/clientes/cmg_cliente`. */
