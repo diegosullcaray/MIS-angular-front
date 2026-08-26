@@ -79,8 +79,14 @@
   <div class="flex flex-col gap-3">
     <app-select-filtro etiqueta="Mostrar" [opciones]="opcionesTope" [(valor)]="tope" ancho="w-36" />
 
-    <div class="overflow-x-auto">
-      <app-tabla-dinamica [columnas]="columnasClientes" [filas]="clientes()" [cargando]="cargandoDetalle()" />
-    </div>
+    <app-data-table
+      [columns]="columnasClientes"
+      [data]="clientes()"
+      [loading]="cargandoDetalle()"
+      [searchFields]="busquedaClientes"
+      searchPlaceholder="Buscar por nombre, unidad o asesor..."
+      emptyMessage="No se encontraron clientes."
+      emptyHint="Ajusta la búsqueda o los filtros para ver más resultados."
+    />
   </div>
 </p-dialog>

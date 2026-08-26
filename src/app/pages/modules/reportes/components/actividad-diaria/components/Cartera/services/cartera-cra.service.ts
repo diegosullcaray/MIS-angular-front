@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
-import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../captaciones/models/captaciones.model';
 
 /**
  * Los reportes de Cartera que salen del `report-cra-v1p1` del legado: motor

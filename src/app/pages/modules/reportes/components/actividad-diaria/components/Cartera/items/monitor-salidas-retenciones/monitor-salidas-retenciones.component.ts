@@ -3,6 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
+import { DataTableComponent } from '../../../../../../../../../shared/ui/data-table/data-table.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
@@ -11,6 +12,7 @@ import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selec
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import {
+  BUSQUEDA_CLIENTES_SALIDAS,
   COLUMNAS_CLIENTES_SALIDAS,
   COLUMNAS_SALIDAS,
   RESULTADO_SALIDAS_VACIO,
@@ -32,6 +34,7 @@ import { MonitorSalidasService } from '../../services/monitor-salidas.service';
     DialogModule,
     HierSelectorComponent,
     TablaDinamicaComponent,
+    DataTableComponent,
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
@@ -46,6 +49,7 @@ export class MonitorSalidasRetencionesComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly columnas = COLUMNAS_SALIDAS;
   protected readonly columnasClientes = COLUMNAS_CLIENTES_SALIDAS;
+  protected readonly busquedaClientes = BUSQUEDA_CLIENTES_SALIDAS;
   protected readonly opcionesTope: OpcionFiltro<number>[] = TOPES_DETALLE.map((t) => ({ id: t, desc: `Top ${t}` }));
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);

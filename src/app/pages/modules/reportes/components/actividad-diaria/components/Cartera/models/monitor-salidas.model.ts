@@ -1,4 +1,5 @@
 import type { ColumnaDinamica } from '../../../../../models/tabla-dinamica.model';
+import type { DataTableColumn } from '../../../../../../../../shared/ui/data-table/data-table.model';
 
 /** Una tarjeta del encabezado, tal como la manda `mon_sali_ret.resultados`. */
 export interface TarjetaSalidas {
@@ -48,17 +49,28 @@ export const COLUMNAS_SALIDAS: ColumnaDinamica[] = [
   { key: 'clive', label: 'Clientes por Vencer', format: { type: 'integer' } },
 ];
 
-/** Columnas del listado de clientes — legado `lista-clientes.util.ts`. */
-export const COLUMNAS_CLIENTES_SALIDAS: ColumnaDinamica[] = [
-  { key: 'ndoc', label: 'Nro. Documento' },
-  { key: 'nom', label: 'Nombre' },
-  { key: 'pri', label: 'Prioridad' },
-  { key: 'mon_desem', label: 'Monto Desembolsado', format: { type: 'integer' } },
-  { key: 'nrie', label: 'Nivel de Riesgo' },
-  { key: 'fec_eval', label: 'Fecha de Salida' },
-  { key: 'uni', label: 'Unidad' },
-  { key: 'ase', label: 'Asesor' },
+/**
+ * Columnas del listado de clientes del diálogo de detalle — legado `lista-clientes.util.ts`
+ * (`headers1`/`headers2`, que solo difieren en el nombre de la columna de fecha; acá se
+ * unifican en una sola lista con `fec_eval`).
+ *
+ * Pasa de `<app-tabla-dinamica>` a `<app-data-table>`: el legado no tenía filtro propio en este
+ * diálogo, pero con listados largos (cientos de clientes) hace falta poder buscar y filtrar por
+ * columna en vez de scrollear.
+ */
+export const COLUMNAS_CLIENTES_SALIDAS: DataTableColumn[] = [
+  { field: 'ndoc', header: 'Nro. Documento', filterType: 'text' },
+  { field: 'nom', header: 'Nombre', width: '16rem', filterType: 'text' },
+  { field: 'pri', header: 'Prioridad', align: 'right', filterType: 'number' },
+  { field: 'mon_desem', header: 'Monto Desembolsado', align: 'right', filterType: 'number' },
+  { field: 'nrie', header: 'Nivel de Riesgo', filterType: 'text' },
+  { field: 'fec_eval', header: 'Fecha de Salida', filterType: 'date' },
+  { field: 'uni', header: 'Unidad', width: '14rem', filterType: 'text' },
+  { field: 'ase', header: 'Asesor', width: '14rem', filterType: 'text' },
 ];
+
+/** Campos por los que busca el buscador libre del diálogo — nombre, unidad y asesor. */
+export const BUSQUEDA_CLIENTES_SALIDAS = ['nom', 'uni', 'ase'];
 
 /** Cuántos clientes trae el detalle; el legado arranca en 10 y deja cambiarlo. */
 export const TOPES_DETALLE = [10, 25, 50, 100];
