@@ -1,0 +1,300 @@
+{
+    "nodoPrincipal": {
+        "id": "R_ACT_DIA",
+        "nombre": "Actividad Diaria",
+        "elementos": [
+            {
+                "id": "N_CAPTA",
+                "orden": 1,
+                "nombre": "Captaciones",
+                "tipo": "nodo",
+                "ruta": null,
+                "elementos": [
+                    {
+                        "id": "N_CMG_CLI_PAS",
+                        "orden": 0,
+                        "nombre": "CMG Clientes Pasivos",
+                        "tipo": "nodo",
+                        "ruta": null
+                    },
+                    {
+                        "id": "L_CMG_CAPT01",
+                        "orden": 1,
+                        "nombre": "CMG Captaciones - Agencias",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/cmg-capta01"
+                    },
+                    {
+                        "id": "L_CART_PASIV_COM",
+                        "orden": 2,
+                        "nombre": "Gestión Pasivo Comercial",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/repositorio/actividad-diaria/carterizacion/pasivo"
+                    },
+                    {
+                        "id": "L_CAPT_CAN",
+                        "orden": 3,
+                        "nombre": "Captaciones por Canal",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/cap-age"
+                    },
+                    {
+                        "id": "L_TAB_OPERACIONES",
+                        "orden": 5,
+                        "nombre": "Panel Operaciones",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/panel-operaciones"
+                    },
+                    {
+                        "id": "L_VINC_CARTERA",
+                        "orden": 5,
+                        "nombre": "Vinculación Cartera Captaciones",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/repositorio/actividad-diaria/carterizacion-com/pasivocom"
+                    },
+                    {
+                        "id": "L_GEST_TP",
+                        "orden": 6,
+                        "nombre": "Gestión de Tasas Pasivas",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/tasa-pas"
+                    },
+                    {
+                        "id": "R_CAPTAOPE",
+                        "orden": 20,
+                        "nombre": "Captación Operacional",
+                        "tipo": "nodo",
+                        "ruta": null
+                    },
+                    {
+                        "id": "R_CAPTACOM",
+                        "orden": 21,
+                        "nombre": "Captación Comercial",
+                        "tipo": "nodo",
+                        "ruta": null
+                    },
+                    {
+                        "id": "R_SEGBP",
+                        "orden": 21,
+                        "nombre": "Seguimiento Banca Preferente",
+                        "tipo": "nodo",
+                        "ruta": null
+                    },
+                    {
+                        "id": "L_CAP_RECAU_SERV",
+                        "orden": 22,
+                        "nombre": "Recaudo de servicios",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/recaudo-serv-pas"
+                    }
+                ]
+            },
+            {
+                "id": "N_CLI",
+                "orden": 2,
+                "nombre": "Clientes",
+                "tipo": "nodo",
+                "ruta": null
+            },
+            {
+                "id": "N_CART",
+                "orden": 3,
+                "nombre": "Cartera",
+                "tipo": "nodo",
+                "ruta": null
+            },
+            {
+                "id": "N_HERED",
+                "orden": 4,
+                "nombre": "Portafolio Reasignado",
+                "tipo": "nodo",
+                "ruta": null
+            },
+            {
+                "id": "N_CART_MOR",
+                "orden": 5,
+                "nombre": "Cartera en Mora",
+                "tipo": "nodo",
+                "ruta": null
+            },
+            {
+                "id": "N_SEG",
+                "orden": 6,
+                "nombre": "Seguros",
+                "tipo": "nodo",
+                "ruta": null,
+                "elementos": [
+                    {
+                        "id": "L_REP_SEG_PAS",
+                        "orden": 2,
+                        "nombre": "Seguros Pasivos",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/repositorio/actividad-diaria/seguros-pasivos/seguros-pasivos"
+                    },
+                    {
+                        "id": "L_REP_SEG",
+                        "orden": 3,
+                        "nombre": "Reporte Seguros",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/cam-seguros"
+                    },
+                    {
+                        "id": "L_REP_SEG_PAS_GRAF1",
+                        "orden": 3,
+                        "nombre": "Evolutivo Pasivos",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/repositorio/actividad-diaria/seg-pasivos-graf/seguro-pasivos-grafico"
+                    },
+                    {
+                        "id": "L_REPSEG_OPT",
+                        "orden": 4,
+                        "nombre": "Reporte Seguros Optativos",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/repositorio/actividad-diaria/seguro/seguro-com"
+                    }
+                ]
+            },
+            {
+                "id": "N_CAMP",
+                "orden": 7,
+                "nombre": "Campañas",
+                "tipo": "nodo",
+                "ruta": null,
+                "elementos": [
+                    {
+                        "id": "L_APADR",
+                        "orden": 2,
+                        "nombre": "Apadrinamiento",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/cam-apa"
+                    },
+                    {
+                        "id": "L_AGEND",
+                        "orden": 5,
+                        "nombre": "Agendamiento",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/repositorio/actividad-diaria/campanias/agendamiento"
+                    },
+                    {
+                        "id": "L_MENTORING",
+                        "orden": 6,
+                        "nombre": "Reporte Mentoring",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/RMentoring"
+                    }
+                ]
+            },
+            {
+                "id": "N_REP_EJ",
+                "orden": 8,
+                "nombre": "Comercial Ejecutivo",
+                "tipo": "nodo",
+                "ruta": null,
+                "elementos": [
+                    {
+                        "id": "L_DESE",
+                        "orden": 1,
+                        "nombre": "Desembolsos",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/desem-reacfae"
+                    },
+                    {
+                        "id": "L_CLI",
+                        "orden": 2,
+                        "nombre": "Clientes",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/cli"
+                    },
+                    {
+                        "id": "L_AGRO",
+                        "orden": 3,
+                        "nombre": "Agro",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/agro"
+                    },
+                    {
+                        "id": "L_PDM",
+                        "orden": 6,
+                        "nombre": "PDM",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/pdm"
+                    }
+                ]
+            },
+            {
+                "id": "N_PROYECCION",
+                "orden": 11,
+                "nombre": "Proyecciones",
+                "tipo": "nodo",
+                "ruta": null,
+                "elementos": [
+                    {
+                        "id": "L_PROYCOLREC",
+                        "orden": 1,
+                        "nombre": "Proyección colocación",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/proy_M1"
+                    },
+                    {
+                        "id": "L_PROYDIACOLREC",
+                        "orden": 1,
+                        "nombre": "Proyección diaria colocación",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/proy_M2"
+                    }
+                ]
+            },
+            {
+                "id": "N_APPMOVIL",
+                "orden": 12,
+                "nombre": "Aplicativo Móvil",
+                "tipo": "nodo",
+                "ruta": null
+            },
+            {
+                "id": "N_TABDIGITAL",
+                "orden": 13,
+                "nombre": "Tablero Digital",
+                "tipo": "nodo",
+                "ruta": null
+            },
+            {
+                "id": "N_REP_PDM",
+                "orden": 14,
+                "nombre": "Reportes PDM",
+                "tipo": "nodo",
+                "ruta": null,
+                "elementos": [
+                    {
+                        "id": "L_SEGPDM",
+                        "orden": 1,
+                        "nombre": "Seguimiento PDM",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/seg_pdm"
+                    },
+                    {
+                        "id": "L_BANCASOL",
+                        "orden": 5,
+                        "nombre": "Gestión de Banca Solidaria",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/repositorio/actividad-diaria/cartera/banca-solidaria"
+                    }
+                ]
+            },
+            {
+                "id": "L_RES_MOV_COMER",
+                "orden": 15,
+                "nombre": "Resumen Movilidad Comercial",
+                "tipo": "reporte",
+                "ruta": "/app/reportes/leg/com/rda/adm/res-mov"
+            },
+            {
+                "id": "L_RES_MOV_RECU",
+                "orden": 16,
+                "nombre": "Resumen Movilidad Recuperaciones",
+                "tipo": "reporte",
+                "ruta": "/app/reportes/leg/com/rda/adm/res-mov-rec"
+            }
+        ]
+    }
+}
