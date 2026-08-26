@@ -30,7 +30,7 @@ describe('MonitorSalidasService', () => {
 
   it('pide las tarjetas y la tabla del nivel con la fecha de corte', () => {
     servicio.resultados(NODO).subscribe();
-    expect(getMonSalidasResultados).toHaveBeenCalledWith({ tip_cod: 9, cod_rel: 'FC', fec: '2025-11-30' });
+    expect(getMonSalidasResultados).toHaveBeenCalledWith({ tip_cod: 9, cod_rel: 'FC', fec: '20251130' });
   });
 
   it('separa `cards` de `table`, y tolera que el backend no mande alguno', () => {
@@ -49,7 +49,7 @@ describe('MonitorSalidasService', () => {
     ['clive', 3],
   ])('traduce la métrica %s al `tip` %i que espera el backend', (metrica, tip) => {
     servicio.detalle(NODO, metrica as string, 25).subscribe();
-    expect(getMonSalidasDetalle).toHaveBeenCalledWith({ tip_cod: 9, cod_rel: 'FC', fec: '2025-11-30', tip, top: 25 });
+    expect(getMonSalidasDetalle).toHaveBeenCalledWith({ tip_cod: 9, cod_rel: 'FC', fec: '20251130', tip, top: 25 });
   });
 });
 

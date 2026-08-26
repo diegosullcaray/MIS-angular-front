@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ModRep2Service } from '../../../../../../../../core/winder/instances/mod-rep2.service';
 import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
-import { fechaCorte } from '../../../../../utils/fecha-reporte.util';
+import { fechaCorteCompacta } from '../../../../../utils/fecha-reporte.util';
 import type { NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import { RESULTADO_SALIDAS_VACIO, TIPO_DETALLE, type ResultadoSalidas } from '../models/monitor-salidas.model';
 
@@ -40,8 +40,15 @@ export class MonitorSalidasService {
       .pipe(map((r) => ((r.body as { resultado?: Record<string, unknown>[] } | null)?.resultado ?? [])));
   }
 
+  /**
+   * `fec` va en `YYYYMMDD` sin guiones — a diferencia del resto de Cartera (que usa el motor
+   * "mixto" y `fechaCorte()` con guiones), este reporte pega directo contra `rep2`
+   * (`MonSalidasAntService.getDataSources()` del legado), que manda `profile.curr_fec` tal cual,
+   * sin reformatear. Pedirlo con guiones es lo que producía el 500: el backend de este módulo
+   * no lo reconoce.
+   */
   private paramsBase(nodo: NodoConsulta): Record<string, unknown> {
-    return { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: fechaCorte(this.shell.usuarioActivo()?.fechaCorte) };
+    return { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: fechaCorteCompacta(this.shell.usuarioActivo()?.fechaCorte) };
   }
 }
 

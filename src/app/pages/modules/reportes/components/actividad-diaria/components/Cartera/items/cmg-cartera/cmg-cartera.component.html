@@ -62,7 +62,12 @@
       }
     </div>
 
-    <!-- Notas del legado: sin ellas, TMM y TAM no se pueden interpretar. -->
+    <div class="mis-card p-3 overflow-x-auto">
+      <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
+    </div>
+
+    <!-- Notas del legado, debajo de la tabla — mismo lugar que `[nota]` en `app-reporte-simple`
+         (ver Captaciones): sin ellas, TMM y TAM no se pueden interpretar. -->
     <dl class="mis-card p-3 grid gap-2 sm:grid-cols-3 text-[12px] m-0">
       <div class="flex flex-col gap-0.5">
         <dt class="font-semibold text-[var(--mis-primary-text)]">Días Hábiles</dt>
@@ -83,9 +88,5 @@
         </dd>
       </div>
     </dl>
-
-    <div class="mis-card p-3 overflow-x-auto">
-      <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
-    </div>
   }
 </app-window-panel>
