@@ -1,17 +1,36 @@
 # Estado de las incidencias — `incidencias-mora.md`
 
-8 incidencias reportadas, **8 corregidas**. Ninguna quedó sin resolver.
+8 incidencias reportadas, **8 corregidas y cubiertas con tests de regresión**.
 
-| # | Reporte | Incidencia | Estado |
-|---|---|---|---|
-| 1 | Monitor IMR | Abre diálogos que no corresponden | ✅ Corregido |
-| 2 | Monitor Efectividades | No carga — HTTP 500 | ✅ Corregido |
-| 3 | Seguimiento Reprogramados | No carga la tabla | ✅ Corregido |
-| 4 | Reporte de Pago Puntual | No carga la tabla | ✅ Corregido |
-| 5 | Seguimiento de Portafolio | HTTP 500 | ✅ Corregido |
-| 6 | Evolutivo Pasivos | Filtros distintos al legado | ✅ Corregido |
-| 7 | Seguros Pasivos | Falta la distribución por pestañas | ✅ Corregido |
-| 8 | Seguros Optativos | Faltan los KPIs y "Rendimiento por Tipo" | ✅ Corregido |
+| # | Reporte | Incidencia | Estado | Test que lo fija |
+|---|---|---|---|---|
+| 1 | Monitor IMR | Abre diálogos que no corresponden | ✅ | `monitor-imr.component.spec.ts` · `tabla-dinamica.component.spec.ts` |
+| 2 | Monitor Efectividades | No carga — HTTP 500 | ✅ | `cartera-mora-cra.service.spec.ts` |
+| 3 | Seguimiento Reprogramados | No carga la tabla | ✅ | `cartera-mora-cra.service.spec.ts` |
+| 4 | Reporte de Pago Puntual | No carga la tabla | ✅ | `cartera-mora-cra.service.spec.ts` |
+| 5 | Seguimiento de Portafolio | HTTP 500 | ✅ | `cartera-mora-cra.service.spec.ts` |
+| 6 | Evolutivo Pasivos | Filtros distintos al legado | ✅ | `seguros-pasivos.component.spec.ts` |
+| 7 | Seguros Pasivos | Falta la distribución por pestañas | ✅ | `seguros-pasivos.component.spec.ts` |
+| 8 | Seguros Optativos | Faltan los KPIs y "Rendimiento por Tipo" | ✅ | `seguros.model.spec.ts` |
+
+## Validación de los tests
+
+Los tests no solo pasan con el arreglo puesto: se comprobó que **fallan al
+reintroducir cada bug**. Sin esa comprobación un test verde no prueba nada.
+
+Se revirtieron los cinco arreglos, uno por uno, y se verificó qué test rompía:
+
+| Bug reintroducido | Test que falló |
+|---|---|
+| `unBloqueV7` vuelve a `deprecado()` | "seguimientoReprogramados / reportePagoPuntual va por `regularData`…" |
+| `seguimientoPortafolio` vuelve a `regular()` (con `fec`) | "no manda `fec` junto al `fecha` del mapa…" |
+| `PROYEC_COLREC` vuelve a `deprecado()` | los 3 de `ProyeccionesService` |
+| Monitor IMR abre el diálogo en cualquier columna | "una columna cualquiera no abre nada — el bug reportado" |
+| Evolutivo Pasivos vuelve a `PARAMS_HIER_UNIDAD` | "usa la jerarquía 14 con profundidad 4, no `UNI_1`" |
+| Seguros Pasivos pierde la 5.ª pestaña | "declara las cinco pestañas…" y "cada pestaña apunta a una tabla distinta" |
+| KPI con la clave equivocada (`TotalOperaciones`) | "saca los tres KPIs de cabecera de la fila total" |
+
+41 tests nuevos: 1214 → **1255**.
 
 ---
 
