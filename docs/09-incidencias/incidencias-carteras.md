@@ -1,13 +1,6 @@
 PENDIENTES
 
 
-
-
-D:\FINANCIERA CONFIANZA\04 SISTEMAS\05 MIGRACIONES\MIS-angular-front\src\app\pages\modules\reportes\components\actividad-diaria\components\Cartera\items\estructura-desembolsos 
-
--- en este reporte en la tabla la columna Número de Operaciones y  Monto Desembolsado en la fila   %Desembolsos>= PEN 50M  , no estan pintado las celdas correspondientes en el legacy , la data se mapea de esta manera  D:\FINANCIERA CONFIANZA\04 SISTEMAS\05 MIGRACIONES\MIS-angular-front\src\app\pages\modules\reportes\components\actividad-diaria\components\Cartera\items\estructura-desembolsos\tabla.json 
-
-
  D:\FINANCIERA CONFIANZA\04 SISTEMAS\05 MIGRACIONES\MIS-angular-front\src\app\pages\modules\reportes\components\actividad-diaria\components\Cartera\items\monitor-salidas-retenciones
 
 Detalle Clientes Salidas en el Mes
@@ -20,3 +13,7 @@ en este reporte solo hay dos tabs clientes y saldo cartera , ademas corrije las 
 
 en el legacy hya un fitro d efecha tambien , revisa y corrije 
 
+http://localhost:4200/app/reportes/repositorio/actividad-diaria/cartera/rank-comercial 
+ en ahi no s eusa lo que es el filtro princiapl solo los fitros del propio sistema 
+  no me estas colocando lo que es el indicador de etsa Avance Esperado (Timing): como esta ne ele legacy 
+  
