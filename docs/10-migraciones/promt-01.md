@@ -63,11 +63,20 @@ Seis trampas, todas encontradas en el legado real:
   `jerar` comentados al lado de los activos. Un `grep` ingenuo cuenta
   `GRSCMIS` con 5 bloques cuando tiene 4, o le asigna a `R_APADRINA` la
   jerarquía `F,T,R` cuando la activa es `UNI_1`. Filtrá `/* */` y `//` primero.
-- **El strand no siempre es `regularData`.** `report.ts` inicializa
-  `reportType = ReportType.DEPRECATED`, así que una entrada que NO declara
-  `reportType` — o que lo tiene **comentado**, como `PROYEC_COLREC` — va por
-  `reportData` → `BloqueReporteService.deprecado()`. Mandarla por el strand
-  equivocado devuelve el bloque vacío **sin error**.
+- **El strand lo decide el HOST, no el mapa.** Es la trampa que más caro salió:
+  rompió cuatro reportes en producción. El `reportType` de `cra-map.ts` solo lo
+  consultan los hosts que llaman `cs.getMixData(report, reportType, params)` —
+  `cra-v1p1`, `-v1p6`, `-v1p7`, `-v6`, `-V10`. Los hosts **`cra-v4`, `-v7` y
+  `-v11` llaman `cs.getRegularData()` directamente**, así que sus reportes van
+  por `regularData` aunque su entrada del mapa no declare `reportType` o lo
+  tenga comentado. Mirá SIEMPRE el `component:` de la ruta antes de elegir el
+  método. Esos tres hosts además arman los params como
+  `{ ...getParamsAdd(), ...filter, ...level }` y **no agregan `fec`**: usá
+  `regularExacto()`, porque el `fec` de más sobre un bloque que ya declara
+  `fecha` devuelve HTTP 500.
+- **Recién si el host usa `getMixData`** vale la regla del mapa: `report.ts`
+  inicializa `reportType = ReportType.DEPRECATED`, así que una entrada sin
+  `reportType` (o con él comentado) va por `reportData` → `deprecado()`.
 - **`fec` y `fecha` no son intercambiables.** `BloqueReporteService` agrega
   `fec` solo; el bloque que pide `fecha` lo tiene que recibir aparte.
 - **El `id` del mapa no siempre lleva guion bajo** (`RSRTOPV` usa `'01'` →

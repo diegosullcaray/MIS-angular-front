@@ -45,6 +45,22 @@ export const PARAMS_HIER_FC: ParamsJerarquia = {
   dlgTitulo: 'JERARQUIA UNIDAD',
 };
 
+/**
+ * `cod_jer` de la jerarquía de "Evolutivo Pasivos" — el legado la pide directo
+ * con `iniHierarchy(14, 4)`, sin pasar por `getHierarchyConfig()`: no tiene
+ * nombre simbólico (`UNI_*`/`OFI_*`) en `mod-rep.service.ts`.
+ */
+export const COD_JERARQUIA_SEGUROS_PASIVOS = 14;
+/** Profundidad máxima de la jerarquía 14 — el segundo argumento de ese `iniHierarchy`. */
+export const NIVEL_MAXIMO_JERARQUIA_SEGUROS_PASIVOS = 4;
+
+/** `paramsHier` de la jerarquía 14 — solo la usa "Evolutivo Pasivos" (`repositorio/seguro-pasivos-graf`). */
+export const PARAMS_HIER_SEGUROS_PASIVOS: ParamsJerarquia = {
+  code: COD_JERARQUIA_SEGUROS_PASIVOS,
+  maxLvl: NIVEL_MAXIMO_JERARQUIA_SEGUROS_PASIVOS,
+  dlgTitulo: 'JERARQUIA UNIDAD',
+};
+
 /** `cod_jer` de la jerarquía macro de captaciones sin macrocorredor — `MAC_2` del legado (`mod-rep.service.ts`: `{code:13, max_lvl:3}`). */
 export const COD_JERARQUIA_MACRO = 13;
 /** Profundidad máxima de `MAC_2`. */

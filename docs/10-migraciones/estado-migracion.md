@@ -90,16 +90,22 @@ detalle:
    comentados junto a los activos. Sin filtrarlos: `GRSCMIS` parece tener 5
    bloques y tiene 4; `R_APADRINA` parece usar `F,T,R` y usa `UNI_1`;
    `PROYEC_DIACOLREC` parece tener `_03`; `RMENTORIN` parece tener `_02`.
-2. **`reportType` comentado = strand deprecado.** `PROYEC_COLREC` lo tiene
-   comentado, así que cae en el `DEPRECATED` por defecto de `report.ts` y va por
-   `reportData`, no por `regularData`.
+2. **El strand lo decide el HOST, no el mapa.** Los hosts `cra-v4`, `-v7` y
+   `-v11` llaman `cs.getRegularData()` directamente e ignoran el `reportType`;
+   solo los que usan `getMixData()` lo respetan. Además esos tres no agregan
+   `fec` a los params. Confundirlo devuelve HTTP 500 — ver
+   `docs/09-incidencias/incidencias-mora-estado.md`.
 3. **`fec` vs `fecha`.** No son intercambiables y cada bloque declara el suyo.
    Además los reportes de `repositorio` usan `fec` pero **con guiones**
    (`fecha()`), no el compacto del motor mixto.
 4. **Ids no correlativos ni con guion bajo.** `RSRTOPV` usa `'01'`;
    `PROYEC_COLREC` y `GRSCMIS` saltan números.
-5. **`OFI_3` no es la jerarquía de oficinas.** `OFI_1` es `{code:2,max_lvl:5}`
+5. **Hay jerarquías sin nombre simbólico.** "Evolutivo Pasivos" pide la suya
+   con `iniHierarchy(14, 4)`, que no es ningún `UNI_*`/`OFI_*` de
+   `getHierarchyConfig()`. Mirá siempre el `iniHierarchy(...)` del componente de
+   repositorio en vez de asumir `UNI_1`.
+6. **`OFI_3` no es la jerarquía de oficinas.** `OFI_1` es `{code:2,max_lvl:5}`
    (→ `PARAMS_HIER_OFICINA`) y `OFI_3` es `{code:4,max_lvl:1}`
    (→ `PARAMS_HIER_FC`).
-6. **El host decide cómo se piden los bloques.** `cra-V10` es paginado:
+7. **El host decide cómo se piden los bloques.** `cra-V10` es paginado:
    `regularPaginado()`, con `pagen` y el nodo completo.

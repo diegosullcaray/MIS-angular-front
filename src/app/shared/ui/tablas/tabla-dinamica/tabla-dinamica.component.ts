@@ -24,6 +24,18 @@ export class TablaDinamicaComponent {
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<Record<string, unknown>>();
 
+  /**
+   * Claves de columna que son "clicables" — equivalente al `onClickCell` de
+   * `stg-table2` del legado, donde cada reporte decidía qué hacer según
+   * `evt.key`.
+   *
+   * Vacío (por defecto) mantiene el comportamiento de fila entera. Con valores,
+   * solo esas celdas responden al clic y emiten `celdaSeleccionada`, que es lo
+   * que necesitan los reportes cuyo legado abre cosas distintas por columna.
+   */
+  readonly columnasClicables = input<readonly string[]>([]);
+  readonly celdaSeleccionada = output<{ clave: string; fila: Record<string, unknown> }>();
+
   protected readonly encabezados = computed(() => aplanarEncabezados(this.columnas()));
 
   protected valor(fila: Record<string, unknown>, columna: ColumnaDinamica): unknown {
@@ -83,9 +95,21 @@ export class TablaDinamicaComponent {
     return tipo === 'integer' || tipo === 'decimal' || tipo === 'percent' ? 'text-right' : 'text-left';
   }
 
+  /** Si esta celda concreta responde al clic — solo cuando su clave está en `columnasClicables`. */
+  protected clicable(columna: ColumnaDinamica): boolean {
+    return this.columnasClicables().includes(columna.key);
+  }
+
   protected onClickFila(fila: Record<string, unknown>): void {
-    if (this.seleccionable()) {
+    // Con `columnasClicables` el clic lo maneja la celda, no la fila.
+    if (this.seleccionable() && !this.columnasClicables().length) {
       this.filaSeleccionada.emit(fila);
+    }
+  }
+
+  protected onClickCelda(columna: ColumnaDinamica, fila: Record<string, unknown>): void {
+    if (this.clicable(columna)) {
+      this.celdaSeleccionada.emit({ clave: columna.key, fila });
     }
   }
 }

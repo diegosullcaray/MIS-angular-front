@@ -145,6 +145,23 @@ export const TOPE_DETALLE_IMR_POR_DEFECTO = 10;
  */
 export const COLUMNAS_CON_DETALLE_IMR = ['sali2', 'sali3'];
 
+/**
+ * La columna de descripción NO abre el detalle: baja un nivel en la jerarquía
+ * — legado `ddEvent()` → `ddHier(row)`, que recarga el reporte en ese nodo.
+ */
+export const COLUMNA_DRILLDOWN_IMR = 'desc';
+
+/** Todas las columnas que responden al clic en la tabla de Monitor IMR. */
+export const COLUMNAS_CLICABLES_IMR = [COLUMNA_DRILLDOWN_IMR, ...COLUMNAS_CON_DETALLE_IMR];
+
+/**
+ * El legado corta el drill-down en `tip_cod === 1` (Financiera): desde ahí no
+ * se baja más.
+ */
+export function permiteDrilldown(fila: Record<string, unknown>): boolean {
+  return Number(fila['tip_cod']) !== 1;
+}
+
 /** Las filas de total del legado vienen marcadas con `style === 1` y no son navegables. */
 export function esFilaTotal(fila: Record<string, unknown>): boolean {
   return Number(fila['style']) === 1;

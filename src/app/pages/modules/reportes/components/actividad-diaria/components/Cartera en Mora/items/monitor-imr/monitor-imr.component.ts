@@ -12,7 +12,9 @@ import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../model
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import {
   COLUMNAS_CLIENTES_IMR,
+  COLUMNAS_CLICABLES_IMR,
   COLUMNAS_CON_DETALLE_IMR,
+  COLUMNA_DRILLDOWN_IMR,
   IMPULSA_IMR_POR_DEFECTO,
   OPCIONES_IMPULSA_IMR,
   RESULTADO_IMR_VACIO,
@@ -21,6 +23,7 @@ import {
   TOPE_DETALLE_IMR_POR_DEFECTO,
   esFilaTotal,
   metricaDeTarjetaImr,
+  permiteDrilldown,
   type ResultadoImr,
 } from '../../models/cartera-en-mora.model';
 import { MonitorImrService } from '../../services/monitor-imr.service';
@@ -55,6 +58,7 @@ export class MonitorImrComponent {
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly columnasClientes = COLUMNAS_CLIENTES_IMR;
+  protected readonly columnasClicables = COLUMNAS_CLICABLES_IMR;
   protected readonly opcionesImpulsa = OPCIONES_IMPULSA_IMR;
   protected readonly opcionesTope: OpcionFiltro<number>[] = TOPES_DETALLE_IMR.map((t) => ({ id: t, desc: `Top ${t}` }));
 
@@ -108,16 +112,30 @@ export class MonitorImrComponent {
   }
 
   /**
-   * Clic en la tabla: en el legado solo abren detalle las columnas `sali2` y
-   * `sali3`, y nunca desde una fila de total. Como `<app-tabla-dinamica>` emite
-   * la fila y no la celda, se abre con `sali2`, que es la primera de las dos.
+   * Clic en la tabla — replica el `ddEvent()` del legado, que hace tres cosas
+   * distintas según la COLUMNA tocada:
+   *
+   * - `desc` baja un nivel en la jerarquía (no abre nada);
+   * - `sali2`/`sali3` abren el listado de clientes de esa fila;
+   * - cualquier otra columna no hace nada.
+   *
+   * En los tres casos las filas de total (`style === 1`) quedan afuera.
    */
-  protected onFila(fila: Record<string, unknown>): void {
+  protected onCelda({ clave, fila }: { clave: string; fila: Record<string, unknown> }): void {
     if (esFilaTotal(fila)) return;
+
     const tip_cod = Number(fila['tip_cod']);
     const cod_rel = String(fila['cod_rel'] ?? '');
     if (!Number.isFinite(tip_cod) || !cod_rel) return;
-    this.abrirDetalle({ tip_cod, cod_rel, des_rel: String(fila['desc'] ?? '') }, COLUMNAS_CON_DETALLE_IMR[0]);
+    const nodo = { tip_cod, cod_rel, des_rel: String(fila['desc'] ?? '') };
+
+    if (clave === COLUMNA_DRILLDOWN_IMR) {
+      // `ddHier()` del legado: corta en Financiera, de ahí no se baja más.
+      if (permiteDrilldown(fila)) this.onNivelSeleccionado(nodo as HierarquiaNodo);
+      return;
+    }
+
+    if (COLUMNAS_CON_DETALLE_IMR.includes(clave)) this.abrirDetalle(nodo as HierarquiaNodo, clave);
   }
 
   protected cerrarDetalle(): void {

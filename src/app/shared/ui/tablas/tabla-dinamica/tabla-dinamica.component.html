@@ -18,9 +18,22 @@
     }
   </ng-template>
   <ng-template pTemplate="body" let-fila>
-    <tr [class.font-bold]="destacada(fila)" [class.cursor-pointer]="seleccionable()" [style.background-color]="destacada(fila) ? 'var(--mis-hover)' : null" (click)="onClickFila(fila)">
+    <tr
+      [class.font-bold]="destacada(fila)"
+      [class.cursor-pointer]="seleccionable() && !columnasClicables().length"
+      [style.background-color]="destacada(fila) ? 'var(--mis-hover)' : null"
+      (click)="onClickFila(fila)"
+    >
       @for (columna of encabezados().columnasHoja; track columna.key) {
-        <td class="text-[13px] whitespace-nowrap" [class]="alineacion(columna)" [style]="columna.cellStyle ?? null" [style.color]="color(fila, columna)">
+        <td
+          class="text-[13px] whitespace-nowrap"
+          [class]="alineacion(columna)"
+          [class.cursor-pointer]="clicable(columna)"
+          [class.underline]="clicable(columna)"
+          [style]="columna.cellStyle ?? null"
+          [style.color]="color(fila, columna)"
+          (click)="onClickCelda(columna, fila)"
+        >
           @if (mostrarSemaforo(fila, columna)) {
             <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(fila, columna)"></i>
           }

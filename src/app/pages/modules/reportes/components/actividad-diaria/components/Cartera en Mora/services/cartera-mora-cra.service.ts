@@ -10,14 +10,15 @@ import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.mo
  *
  * Dos detalles que NO son intercambiables entre reportes:
  *
- * - **Strand.** Los que declaran `reportType: REGULAR` en `cra-map.ts` van por
- *   `regularData` (`regular()`); los que no lo declaran caen en el
- *   `ReportType.DEPRECATED` por defecto de `report.ts` y van por `reportData`
- *   (`deprecado()`). Los tres monitores de efectividades viven en
- *   `com-map.module.ts` y son de este segundo grupo.
+ * - **Strand: lo decide el HOST, no el mapa.** El `reportType` de `cra-map.ts`
+ *   solo lo consulta `report-cra-v1p1` (y los otros hosts que llaman
+ *   `getMixData`). Los hosts `-v4`, `-v7` y `-v11` llaman directamente
+ *   `cs.getRegularData()`, así que sus reportes van por `regularData` aunque su
+ *   entrada del mapa no declare `reportType`. Los tres monitores de
+ *   efectividades son de ese grupo: pedirlos por `reportData` da HTTP 500.
  * - **Nombre del corte.** Unos piden `fec` (lo agrega `BloqueReporteService`) y
- *   otros `fecha`, que hay que pasarle aparte. Mandar el que no es deja el
- *   bloque vacío sin error.
+ *   otros `fecha`, que hay que pasarle aparte. Y los de los hosts `-v4`/`-v7`
+ *   no reciben `fec` en absoluto: van por `regularExacto()`.
  */
 @Injectable({ providedIn: 'root' })
 export class CarteraMoraCraService {
@@ -57,25 +58,22 @@ export class CarteraMoraCraService {
    */
   monitorEfectividades(nodo: NodoConsulta, filtros: Record<string, unknown>): Observable<TablaReporteResultado[]> {
     const fecha = this.bloques.fec();
-    return this.deprecados(
-      [
-        { codRep: 'RS_MON_EFEC_01', extra: { fecha } },
-        { codRep: 'RS_MON_EFEC_02', extra: { fecha, ...filtros } },
-        { codRep: 'RS_MON_EFEC_03', extra: { fecha, tram: '1. -30-0' } },
-        { codRep: 'RS_MON_EFEC_03', extra: { fecha, tram: '2. 1-30' } },
-      ],
-      nodo,
-    );
+    return forkJoin([
+      this.bloques.regularExacto('RS_MON_EFEC_01', nodo, { fecha }),
+      this.bloques.regularExacto('RS_MON_EFEC_02', nodo, { fecha, ...filtros }),
+      this.bloques.regularExacto('RS_MON_EFEC_03', nodo, { fecha, tram: '1. -30-0' }),
+      this.bloques.regularExacto('RS_MON_EFEC_03', nodo, { fecha, tram: '2. 1-30' }),
+    ]);
   }
 
   /** "Seguimiento Reprogramados" — legado `mon-efecrepro` (`RS_MON_EFECREPRO`, host `cra-v7`). */
   seguimientoReprogramados(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloqueDeprecado('RS_MON_EFECREPRO_01', nodo);
+    return this.unBloqueV7('RS_MON_EFECREPRO_01', nodo);
   }
 
   /** "Reporte de Pago Puntual" — legado `mon-efectramoscomer` (`RS_MON_EFECTRAMOSC`, host `cra-v7`). */
   reportePagoPuntual(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloqueDeprecado('RS_MON_EFECTRAMOSC_01', nodo);
+    return this.unBloqueV7('RS_MON_EFECTRAMOSC_01', nodo);
   }
 
   /**
@@ -111,12 +109,14 @@ export class CarteraMoraCraService {
    *
    * Igual que el anterior: un solo bloque `_01` pedido tres veces, distinguido
    * por su `mode` (1 potencial ingreso a mora, 2 por grupo, 3 cuota ballon).
+   *
+   * Va por `regularExacto()`: su entrada del mapa ya declara el corte como
+   * `fecha`, y el `fec` que agrega `regular()` de más era lo que devolvía 500.
    */
   seguimientoPortafolio(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     const fecha = this.bloques.fec();
-    return this.bloques.regulares(
-      [1, 2, 3].map((mode) => ({ codRep: 'RS_AVA_POR_01', extra: { fecha, mode } })),
-      nodo,
+    return forkJoin(
+      [1, 2, 3].map((mode) => this.bloques.regularExacto('RS_AVA_POR_01', nodo, { fecha, mode })),
     );
   }
 
@@ -124,9 +124,10 @@ export class CarteraMoraCraService {
     return this.bloques.regular(codRep, nodo).pipe(map((tabla1) => ({ tabla1 })));
   }
 
-  private unBloqueDeprecado(codRep: string, nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
+  /** Bloque único de un host `-v7`: `regularData` y solo los params del mapa (`fecha`), sin `fec`. */
+  private unBloqueV7(codRep: string, nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.bloques
-      .deprecado(codRep, nodo, { fecha: this.bloques.fec() })
+      .regularExacto(codRep, nodo, { fecha: this.bloques.fec() })
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 
@@ -138,11 +139,4 @@ export class CarteraMoraCraService {
     );
   }
 
-  /** `forkJoin` de bloques del strand deprecado — el equivalente de `regulares()` para `reportData`. */
-  private deprecados(
-    bloques: readonly { codRep: string; extra: Record<string, unknown> }[],
-    nodo: NodoConsulta,
-  ): Observable<TablaReporteResultado[]> {
-    return forkJoin(bloques.map((b) => this.bloques.deprecado(b.codRep, nodo, b.extra)));
-  }
 }

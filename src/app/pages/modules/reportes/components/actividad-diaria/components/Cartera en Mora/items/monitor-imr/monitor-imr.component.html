@@ -47,12 +47,14 @@
     </div>
 
     <div class="mis-card p-3 overflow-x-auto">
+      <!-- Solo `desc` (drill-down) y `sali2`/`sali3` (detalle) responden al clic, como en el legado. -->
       <app-tabla-dinamica
         [columnas]="columnas()"
         [filas]="filas()"
         [cargando]="cargando()"
         [seleccionable]="true"
-        (filaSeleccionada)="onFila($event)"
+        [columnasClicables]="columnasClicables"
+        (celdaSeleccionada)="onCelda($event)"
       />
     </div>
 

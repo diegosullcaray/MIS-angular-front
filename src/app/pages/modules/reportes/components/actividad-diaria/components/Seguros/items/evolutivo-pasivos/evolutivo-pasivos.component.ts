@@ -6,7 +6,7 @@ import { ListSkeletonComponent } from '../../../../../../../../../shared/ui/list
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
-import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
+import { PARAMS_HIER_SEGUROS_PASIVOS, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import type { BloqueGrafico } from '../../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import { SegurosService } from '../../services/seguros.service';
 
@@ -30,7 +30,12 @@ export class EvolutivoPasivosComponent {
   private readonly servicio = inject(SegurosService);
   private readonly toast = inject(ToastService);
 
-  protected readonly paramsHier = PARAMS_HIER_UNIDAD;
+  /**
+   * OJO: este reporte NO usa `UNI_1`. El legado pide su jerarquía directo con
+   * `iniHierarchy(14, 4)` — otra jerarquía y otra profundidad que el resto de
+   * Seguros, que van con `(9, 6)`.
+   */
+  protected readonly paramsHier = PARAMS_HIER_SEGUROS_PASIVOS;
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);

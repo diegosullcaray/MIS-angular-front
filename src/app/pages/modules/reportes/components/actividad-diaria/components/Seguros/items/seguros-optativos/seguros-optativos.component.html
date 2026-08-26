@@ -13,6 +13,45 @@
       descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte."
     />
   } @else {
+    <!-- KPIs de cabecera — `kpiTotales` del legado, sacados de la fila total. -->
+    <div class="grid gap-3 grid-cols-1 sm:grid-cols-3">
+      <div class="mis-card p-4 flex flex-col gap-1">
+        <span class="text-[11px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">Total Operaciones</span>
+        <span class="text-[28px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          {{ kpis().totalOperaciones | number: '1.0-0' }}
+        </span>
+      </div>
+      <div class="mis-card p-4 flex flex-col gap-1">
+        <span class="text-[11px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">Total Seguros (Colocados)</span>
+        <span class="text-[28px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          {{ kpis().totalSeguros | number: '1.0-0' }}
+        </span>
+      </div>
+      <div class="mis-card p-4 flex flex-col gap-1">
+        <span class="text-[11px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">Penetración Global</span>
+        <span class="text-[28px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          {{ kpis().penetracionGlobal | percent: '1.2-2' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Mini-tarjetas por producto — misma sección del legado. -->
+    <section class="flex flex-col gap-2">
+      <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0 uppercase tracking-wide">
+        Rendimiento por Tipo de Seguro Optativo
+      </h2>
+      <div class="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+        @for (tipo of kpis().porTipo; track tipo.etiqueta) {
+          <div class="mis-card p-3 flex flex-col gap-1">
+            <span class="text-[11px] text-[var(--mis-text-tertiary)] truncate">{{ tipo.etiqueta }}</span>
+            <span class="text-lg font-semibold text-[var(--mis-text-primary)] tabular-nums">
+              {{ tipo.valor | number: '1.0-0' }}
+            </span>
+          </div>
+        }
+      </div>
+    </section>
+
     <div class="mis-card p-3 overflow-x-auto">
       <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
     </div>

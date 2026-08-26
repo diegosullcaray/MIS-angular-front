@@ -70,6 +70,21 @@ export class BloqueReporteService {
       .pipe(map(mapearBloqueReporte));
   }
 
+  /**
+   * Un bloque `regularData` con EXACTAMENTE los parámetros que declara el mapa,
+   * sin el `fec` que agrega `regular()` por su cuenta.
+   *
+   * Los hosts `report-cra-v4`, `-v7` y `-v11` arman sus parámetros como
+   * `{ ...confT.getParamsAdd(), ...filter, ...level }`: los del bloque, los
+   * filtros y `tip_cod`/`cod_rel`, y nada más. Los reportes que cuelgan de esos
+   * hosts y ya declaran su propio corte (casi siempre como `fecha`) tienen que
+   * pedirse así; mandarles además un `fec` los rompe.
+   */
+  regularExacto(codRep: string, nodo: NodoConsulta, extra: Record<string, unknown> = {}): Observable<TablaReporteResultado> {
+    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, ...extra };
+    return this.reportes.getRegularData(codRep, params).pipe(map(mapearBloqueReporte));
+  }
+
   /** Varios bloques `regularData` en paralelo, con los mismos parámetros salvo los `extra` de cada uno. */
   regulares(
     bloques: readonly { codRep: string; extra?: Record<string, unknown> }[],

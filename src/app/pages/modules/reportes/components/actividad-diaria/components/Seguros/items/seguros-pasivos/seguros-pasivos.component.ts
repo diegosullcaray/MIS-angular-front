@@ -3,6 +3,7 @@ import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
+import { TabsModule } from 'primeng/tabs';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
@@ -14,17 +15,19 @@ import { SegurosService } from '../../services/seguros.service';
  * (`repositorio/actividad-diaria/seguros-pasivos/seguros-pasivos`) — legado
  * `repositorio/seguros-pasivos`, motor `table.regular`.
  *
- * Cuatro tablas apiladas. El orden es el de la PANTALLA del legado, no el de
- * las llamadas: el resumen (`_03`) va primero aunque se pida tercero.
+ * Cinco PESTAÑAS, como el `mat-tab-group` del legado — no cinco tablas
+ * apiladas. El orden es el de la pantalla, no el de las llamadas: el resumen
+ * (`_03`) va primero aunque se pida tercero.
  *
- * El template del legado declara una quinta tabla ("Protección 360",
- * `dataSource5`) que ningún `subscribe` llega a llenar — queda fuera porque en
- * el legado tampoco muestra nada.
+ * La quinta ("Protección 360") queda vacía a propósito: el template del legado
+ * la declara con `dataSource5`/`headerDefs5`, pero esas variables ni siquiera
+ * existen en su componente, así que allá tampoco muestra nada. Se deja la
+ * pestaña para no cambiar la navegación del reporte.
  */
 @Component({
   selector: 'app-seguros-pasivos',
   standalone: true,
-  imports: [HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
   templateUrl: './seguros-pasivos.component.html',
   styleUrl: './seguros-pasivos.component.css',
 })
@@ -39,8 +42,18 @@ export class SegurosPasivosComponent {
   protected readonly tablas = signal<TablaDinamicaResultado[]>([]);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
-  /** Los `<span>` de título de cada bloque en el template del legado. */
-  protected readonly titulos = ['Seguro Pasivo Resumen', 'Seguros Oncológicos', 'Vida Segura', 'Protección Total'];
+  /**
+   * Las cinco pestañas del `mat-tab-group` del legado, con el índice de la
+   * tabla que le toca a cada una. La última no tiene tabla: en el legado
+   * tampoco.
+   */
+  protected readonly pestanas = [
+    { id: 'resumen', titulo: 'Seguro Pasivo Resumen', indice: 0 },
+    { id: 'oncologicos', titulo: 'Seguros Oncológicos', indice: 1 },
+    { id: 'vida-segura', titulo: 'Vida Segura', indice: 2 },
+    { id: 'proteccion-total', titulo: 'Protección Total', indice: 3 },
+    { id: 'proteccion-360', titulo: 'Protección 360', indice: 4 },
+  ];
 
   constructor() {
     effect(() => {
