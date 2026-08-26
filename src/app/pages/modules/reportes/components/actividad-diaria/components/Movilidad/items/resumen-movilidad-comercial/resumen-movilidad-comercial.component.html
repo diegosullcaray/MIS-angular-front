@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Resumen Movilidad Comercial"
+  subtitulo="Movilidad"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

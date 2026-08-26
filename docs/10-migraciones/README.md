@@ -9,14 +9,18 @@ Carpeta de trabajo de la migración del sistema legado STG a la app Host.
 | [`sintaxis.json`](sintaxis.json) | Inventario del árbol de "Actividad Diaria": nodos, reportes y rutas | Cuando cambia el menú del legado |
 | [`estado-migracion.md`](estado-migracion.md) | Qué está migrado y qué falta, auditado contra el código real | Al terminar cada ejercicio |
 | [`promt-01.md`](promt-01.md) | El prompt de migración (v2) | Cuando un ejercicio deja una lección nueva |
-| [`ejercicio-02.md`](ejercicio-02.md) | Enunciado del lote pendiente | — |
+| [`ejercicio-02.md`](ejercicio-02.md) | Enunciado del lote 02 | — |
 
 ## Historial
 
 | Ejercicio | Módulo | Alcance | Resultado |
 |---|---|---|---|
 | 01 | Cartera en Mora | 17 pantallas | [`ejercicio-01-resultado.md`](ejercicio-01-resultado.md) · enunciado original en [`ejercicico-01.md`](ejercicico-01.md) |
-| 02 | Comercial Ejecutivo · Reportes PDM · Movilidad | 8 reportes | pendiente — [`ejercicio-02.md`](ejercicio-02.md) |
+| 02 | Seguros · Campañas · Comercial Ejecutivo · Proyecciones · Reportes PDM · Movilidad | 17 reportes | [`ejercicio-02-resultado.md`](ejercicio-02-resultado.md) |
+
+Con el ejercicio 02, los 24 reportes que `sintaxis.json` detalla quedan
+migrados. Lo único que falta del árbol son los nodos `Aplicativo Móvil` y
+`Tablero Digital`, que el JSON declara sin `elementos`.
 
 ## Ciclo de trabajo
 

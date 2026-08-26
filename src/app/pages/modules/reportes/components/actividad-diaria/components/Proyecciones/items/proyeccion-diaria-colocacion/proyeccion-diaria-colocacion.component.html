@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Proyección diaria colocación"
+  subtitulo="Proyecciones"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [bloques]="bloques()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>
