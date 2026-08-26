@@ -1,0 +1,21 @@
+<app-reporte-simple
+  titulo="Monitor Efectividades"
+  subtitulo="Cartera en Mora"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [bloques]="bloques()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <!-- Los siete filtros del bloque `_02` en `com-map.module.ts`, en el mismo orden del legado. -->
+  <div filtros class="flex flex-wrap gap-3">
+    <app-select-filtro etiqueta="Tramo" [opciones]="opcionesTramo" [(valor)]="tramo" />
+    <app-select-filtro etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" ancho="w-64" />
+    <app-select-filtro etiqueta="Compromiso Roto" [opciones]="opcionesSiNo" [(valor)]="compromisoRoto" ancho="w-32" />
+    <app-select-filtro etiqueta="0 Cuota" [opciones]="opcionesSiNo" [(valor)]="ceroCuota" ancho="w-32" />
+    <app-select-filtro etiqueta="1 Cuota" [opciones]="opcionesSiNo" [(valor)]="unaCuota" ancho="w-32" />
+    <app-select-filtro etiqueta="Tramo Días Gestión" [opciones]="opcionesTramoDias" [(valor)]="tramoDias" ancho="w-52" />
+    <app-select-filtro etiqueta="Precosecha" [opciones]="opcionesPrecosecha" [(valor)]="precosecha" ancho="w-36" />
+  </div>
+</app-reporte-simple>

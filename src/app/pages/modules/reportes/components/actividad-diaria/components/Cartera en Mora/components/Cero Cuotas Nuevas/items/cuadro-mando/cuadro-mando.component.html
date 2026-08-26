@@ -1,0 +1,16 @@
+<app-reporte-simple
+  titulo="Cuadro de Mando"
+  subtitulo="Cero Cuotas Nuevas"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [bloques]="bloques()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <!-- `filter` de `CMCUONUEV` en `cra-map.ts`: producto por índice y tipo de cuota. -->
+  <div filtros class="flex flex-wrap gap-3">
+    <app-select-filtro etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" ancho="w-64" />
+    <app-select-filtro etiqueta="Tipo" [opciones]="opcionesTipo" [(valor)]="tipo" ancho="w-40" />
+  </div>
+</app-reporte-simple>

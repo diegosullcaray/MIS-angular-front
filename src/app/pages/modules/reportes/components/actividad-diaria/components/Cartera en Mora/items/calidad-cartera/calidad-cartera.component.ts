@@ -1,0 +1,32 @@
+import { Component, inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ReporteSimpleComponent } from '../../../../../../ui/reporte-simple/reporte-simple.component';
+import { ReporteBloquesBase } from '../../../../../../ui/reporte-simple/reporte-bloques.base';
+import { PARAMS_HIER_UNIDAD } from '../../../../../../models/jerarquia.model';
+import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
+import type { TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
+import { CarteraMoraCraService } from '../../services/cartera-mora-cra.service';
+
+/** "Calidad de Cartera" (`leg/com/rda/adm/cal-cart`) — legado `RS_CAL_CAR`, dos bloques apilados. */
+@Component({
+  selector: 'app-calidad-cartera',
+  standalone: true,
+  imports: [ReporteSimpleComponent],
+  templateUrl: './calidad-cartera.component.html',
+  styleUrl: './calidad-cartera.component.css',
+})
+export class CalidadCarteraComponent extends ReporteBloquesBase {
+  private readonly servicio = inject(CarteraMoraCraService);
+
+  protected readonly paramsHier = PARAMS_HIER_UNIDAD;
+
+  /** Títulos de `content.higher` de cada bloque, en el orden del legado. */
+  protected readonly titulos = ['Calidad de Cartera', ''];
+
+  /** `content.higher` secundario del legado: ambos bloques declaran su unidad como leyenda. */
+  protected override readonly notas = ['<b>Expresado en PEN</b>', '<b>Expresado en PEN y %</b>'];
+
+  protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
+    return this.servicio.calidadCartera(nodo);
+  }
+}

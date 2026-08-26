@@ -1,0 +1,13 @@
+<app-reporte-simple
+  titulo="Top"
+  subtitulo="Cero Cuotas Nuevas"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [bloques]="bloques()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <!-- `filter` de `CEROCUOTA_TOPCNUEVA` en `cra-map.ts`. -->
+  <app-select-filtro filtros etiqueta="Tipo" [opciones]="opcionesTipo" [(valor)]="tipo" ancho="w-40" />
+</app-reporte-simple>

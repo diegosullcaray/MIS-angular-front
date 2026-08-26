@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Seguimiento de Portafolio"
+  subtitulo="Cartera en Mora"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [bloques]="bloques()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>
