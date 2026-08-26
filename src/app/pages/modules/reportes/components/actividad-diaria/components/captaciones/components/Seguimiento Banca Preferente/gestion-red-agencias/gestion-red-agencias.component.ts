@@ -4,8 +4,8 @@ import { ReporteSimpleComponent } from '../../../../../../../ui/reporte-simple/r
 import { ReporteSimpleBase } from '../../../../../../../ui/reporte-simple/reporte-simple.base';
 import { PARAMS_HIER_FC } from '../../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../models/captaciones.model';
 import { SeguimientoBancaPreferenteService } from '../../../services/seguimiento-banca-preferente.service';
+import { ReporteBloqueUnico } from '../../../../Captaciones/models/captaciones.model';
 
 /** "Gestión Red de Agencias" (`leg/com/rda/adm/gest-red-ag`) — legado `CAP_SEGUI_FC_BP`. */
 @Component({
