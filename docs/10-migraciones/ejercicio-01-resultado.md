@@ -2,6 +2,13 @@
 
 Resultado de aplicar `promt-01.md` sobre `ejercicico-01.md`.
 
+> **Estado global de la migración:** `estado-migracion.md`.
+> **Siguiente lote:** `ejercicio-02.md`.
+>
+> Este ejercicio dejó dos insumos que se incorporaron al prompt v2: las trampas
+> del mapa legado (strand por defecto, `fec` vs `fecha`, ids sin guion bajo) y
+> la regla de no inventar datos.
+
 ## 1. Árbol de carpetas
 
 Se respeta el formato pedido (`components/`, `items/`, `models/`, `services/`,
