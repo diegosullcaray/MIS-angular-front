@@ -91,6 +91,20 @@ Seis trampas, todas encontradas en el legado real:
 - **El host decide cómo se piden los bloques.** `cra-V10` es paginado:
   `regularPaginado()`, con `pagen` y el nodo completo. Sin eso el backend
   responde "Resultado vacio para: regularData".
+- **"Filtro de fecha" casi nunca es un calendario.** En los reportes del
+  repositorio (`gestion-comercial`, `seguro-com`, `agro-mix`, `cero-cuotas`,
+  `usa_come-m`) el selector de periodo es un desplegable con los cortes que
+  sirve el backend: `RS_FECH` o `RS_FECH02` con `{ fec }`, y la lista sale de
+  `meta1[0].json_result` —un JSON serializado de `{ label, val }`. Se pide con
+  `BloqueReporteService.periodos(codRep)` y se pinta con `<app-select-filtro>`.
+  Un `p-datepicker` dejaría elegir fechas sin datos. Ojo con cuál usa cada
+  reporte: Gestión Comercial va por `RS_FECH02` y Seguros Optativos por
+  `RS_FECH`.
+- **Los bloques de gráfico no siempre traen el payload en `headers`.** Los siete
+  `GRAF_GEST_COM_*` lo mandan en `data[0]`, en el PRIMER campo de la fila (con
+  un nombre distinto por bloque), y solo caen a `headers` si `data` viene
+  vacío; los `RS_AGROMIX_*`, en cambio, sí usan `headers`. Mirá el `prepare*`
+  del legado antes de asumir.
 
 Script de referencia para leer el mapa sin comentarios:
 
