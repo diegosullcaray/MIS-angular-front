@@ -249,14 +249,92 @@
                 "orden": 12,
                 "nombre": "Aplicativo Móvil",
                 "tipo": "nodo",
-                "ruta": null
+                "ruta": null,
+                "elementos": [
+                    {
+                        "id": "L_APPUSO",
+                        "orden": 1,
+                        "nombre": "Uso de App",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/app_uso"
+                    }
+                ]
             },
             {
                 "id": "N_TABDIGITAL",
                 "orden": 13,
                 "nombre": "Tablero Digital",
                 "tipo": "nodo",
-                "ruta": null
+                "ruta": null,
+                "elementos": [
+                    {
+                        "id": "L_TABCORRES",
+                        "orden": 1,
+                        "nombre": "APP Cliente - Home Banking",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/leg/com/rda/adm/tab-digital"
+                    },
+                    {
+                        "id": "L_TABCORRES_COM",
+                        "orden": 2,
+                        "nombre": "Tablero Digital Comercial",
+                        "tipo": "reporte",
+                        "ruta": "/app/reportes/repositorio/actividad-diaria/tab-digital/usa-come"
+                    },
+                    {
+                        "id": "R_TABDOPE",
+                        "orden": 22,
+                        "nombre": "Operaciones",
+                        "tipo": "nodo",
+                        "ruta": null,
+                        "elementos": [
+                            {
+                                "id": "L_GCTABDIG_CANAL_OPERACIONAL",
+                                "orden": 1,
+                                "nombre": "Gestión por Canal",
+                                "tipo": "reporte",
+                                "ruta": "/app/reportes/leg/com/rda/adm/GC-tab-digital_vr2-ope"
+                            },
+                            {
+                                "id": "L_VGEN_CANAL_OPERACIONAL",
+                                "orden": 2,
+                                "nombre": "Vista General",
+                                "tipo": "reporte",
+                                "ruta": "/app/reportes/leg/com/rda/adm/tab-digital_vr2-ope"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "R_TAB_CORRE",
+                        "orden": 24,
+                        "nombre": "Corresponsal",
+                        "tipo": "nodo",
+                        "ruta": null,
+                        "elementos": [
+                            {
+                                "id": "L_VGEN_CORRES",
+                                "orden": 2,
+                                "nombre": "Vista General",
+                                "tipo": "reporte",
+                                "ruta": "/app/reportes/leg/com/rda/adm/v-general-cor"
+                            },
+                            {
+                                "id": "L_VGESTION_CORR",
+                                "orden": 3,
+                                "nombre": "Gestión",
+                                "tipo": "reporte",
+                                "ruta": "/app/reportes/leg/com/rda/adm/v-gestion-cor"
+                            },
+                            {
+                                "id": "L_DET_CORRES",
+                                "orden": 3,
+                                "nombre": "Detalle Corresponsales",
+                                "tipo": "reporte",
+                                "ruta": "/app/reportes/leg/com/rda/adm/det_correspon"
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "id": "N_REP_PDM",
