@@ -8,9 +8,15 @@ import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas
 import type { CmgCarteraResultado, TarjetaCmgCartera } from '../models/cmg-cartera.model';
 import type { CarteraAgricolaResultado, TotalAgro, DetalleAgricolaResultado } from '../models/cartera-agricola.model';
 import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
-import { GRAFICOS_GESTION_COMERCIAL, type GestionComercialResultado } from '../models/gestion-comercial.model';
+import {
+  GRAFICOS_GESTION_COMERCIAL,
+  kpisDeFilaTotal,
+  type GestionComercialResultado,
+  type GraficoGestionComercial,
+} from '../models/gestion-comercial.model';
 import { TOTALES_AGRO } from '../models/cartera-agricola.model';
-import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
+import type { BloqueGrafico, FormatoValor } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
+import type { OpcionFiltro } from '../../../../../../../../shared/ui/formularios/opcion-filtro.model';
 
 /** Los reportes de Cartera que viven en el `repositorio` del legado (motor `table.regular`). */
 @Injectable({ providedIn: 'root' })
@@ -81,15 +87,24 @@ export class CarteraRepositorioService {
     );
   }
 
+  /** Las opciones del selector de periodo de "Gestión Comercial" (legado `loadFilter()`). */
+  periodosGestionComercial(): Observable<OpcionFiltro[]> {
+    return this.bloques.periodos('RS_FECH02');
+  }
+
   /**
    * "Gestión Comercial" — legado `repositorio/gestion-comercial`.
    *
    * Todo el reporte cuelga del mismo nodo y la misma fecha: las tres tablas
    * (`RS_GEST_COM_01` al `_03`) y los siete gráficos (`GRAF_GEST_COM_*`) se
-   * piden juntos. `RS_GEST_COM_01` alimenta dos tablas con el mismo `data`.
+   * piden juntos. `RS_GEST_COM_01` alimenta dos tablas con el mismo `data` y,
+   * además, las tarjetas del encabezado (su fila 0 es la de totales).
+   *
+   * La `fecha` es la del selector de periodo; si no llega, la de corte del
+   * usuario, que es con la que abre el legado.
    */
-  gestionComercial(nodo: NodoConsulta): Observable<GestionComercialResultado> {
-    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fecha: this.bloques.fecha() };
+  gestionComercial(nodo: NodoConsulta, fecha = this.bloques.fecha()): Observable<GestionComercialResultado> {
+    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fecha };
     const tablas = ['RS_GEST_COM_01', 'RS_GEST_COM_02', 'RS_GEST_COM_03'].map((c) =>
       this.reportes.getRegularTableResult(c, params),
     );
@@ -98,11 +113,13 @@ export class CarteraRepositorioService {
     return forkJoin([...tablas, ...graficos]).pipe(
       map((respuestas) => {
         const [r01, r02, r03, ...rGraficos] = respuestas.map(crudo);
+        const filas = (r01?.data ?? []) as Record<string, unknown>[];
         return {
-          filas: (r01?.data ?? []) as Record<string, unknown>[],
+          filas,
           varSaldoVigente: tablaDeResultado(r02),
           varClientesStock: tablaDeResultado(r03),
-          graficos: rGraficos.map((r, i) => ({ titulo: GRAFICOS_GESTION_COMERCIAL[i].titulo, ...seriesDeGrafico(r?.headers) })),
+          kpis: kpisDeFilaTotal(filas),
+          graficos: rGraficos.map((r, i) => graficoGestionComercial(r, GRAFICOS_GESTION_COMERCIAL[i])),
         };
       }),
     );
@@ -148,15 +165,18 @@ export class CarteraRepositorioService {
   /**
    * "Ranking Comercial" — legado `repositorio/ranking-comercial` (`RS_RANK_COM_01`).
    *
-   * Ojo con los parámetros: este reporte manda el nodo como
-   * `territorio`/`corredor`, no como `tip_cod`/`cod_rel`.
+   * NO usa la jerarquía: el legado manda `territorio` y `corredor` en `'0'`
+   * fijo, trae el ranking completo y filtra en el cliente por unidad, corredor
+   * y territorio. Por eso este método no recibe nodo.
    *
    * Las tres columnas `*_Semaforo` no vienen del backend: las arma el cliente
    * comparando cada avance contra el `Timing` (días transcurridos) de la fila,
    * por eso las cabeceras son fijas y no las del payload.
    */
-  rankingComercial(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
-    const params = { territorio: nodo.cod_rel, corredor: nodo.tip_cod, fecha: this.bloques.fecha() };
+  rankingComercial(): Observable<TablaDinamicaResultado> {
+    // El legado manda `territorio` y `corredor` en '0' FIJO: este reporte no usa
+    // la jerarquía, trae el ranking completo y filtra del lado del cliente.
+    const params = { territorio: '0', corredor: '0', fecha: this.bloques.fecha() };
     return this.bloques
       .tablaRegularCon('RS_RANK_COM_01', params)
       .pipe(map(({ filas }) => ({ columnas: COLUMNAS_RANKING_COMERCIAL, filas: filas.map(conSemaforos) })));
@@ -309,6 +329,67 @@ function seriesDeGrafico(headers: string | undefined): Pick<BloqueGrafico, 'cate
     categorias: datos.categories ?? [],
     series: (datos.series ?? []).map((s) => ({ nombre: s.name, datos: s.data })),
   };
+}
+
+/**
+ * Un gráfico de "Gestión Comercial".
+ *
+ * Estos siete bloques NO traen su `{categories, series}` en `headers` como el
+ * resto: el legado lo busca primero en `data[0]`, en el PRIMER campo de la fila
+ * (su nombre cambia según el bloque), y solo cae a `headers` si `data` viene
+ * vacío. Leer únicamente `headers` era lo que dejaba los siete gráficos en
+ * blanco.
+ */
+function graficoGestionComercial(
+  resultado: TablaRegularResultadoRaw | undefined,
+  config: GraficoGestionComercial,
+): BloqueGrafico & { formato: FormatoValor } {
+  const { titulo, formato, esPorcentaje, esNivel } = config;
+  const base = { titulo, formato, categorias: [] as string[], series: [] };
+
+  const datos = parseGrafico(cargaUtilGrafico(resultado));
+  if (!datos) return base;
+
+  return {
+    titulo,
+    formato,
+    categorias: datos.categories ?? [],
+    series: (datos.series ?? []).map((s) => {
+      const nombre = s.name ?? '';
+      // El legado multiplica la TAPP por 100 y la rotula con "%"; el "%" en el
+      // nombre es lo que manda la serie al eje secundario como spline.
+      if (esPorcentaje?.(nombre)) {
+        return { nombre: `${nombre} %`, datos: (s.data ?? []).map((v) => (v == null ? v : v * 100)) };
+      }
+      return { nombre, datos: s.data ?? [], ...(esNivel?.(nombre) ? { secundaria: true } : {}) };
+    }),
+  };
+}
+
+/** `data[0][primer campo]` y, si no hay filas, `headers` — el orden del legado. */
+function cargaUtilGrafico(resultado: TablaRegularResultadoRaw | undefined): unknown {
+  const primeraFila = (resultado?.data as Record<string, unknown>[] | undefined)?.[0];
+  if (primeraFila) {
+    const primeraClave = Object.keys(primeraFila)[0];
+    if (primeraClave !== undefined) return primeraFila[primeraClave];
+  }
+  return resultado?.headers;
+}
+
+interface DatosGraficoCrudo {
+  categories?: string[];
+  series?: { name?: string; data?: (number | null)[] }[];
+}
+
+/** El payload llega serializado casi siempre, pero algunos bloques ya lo mandan como objeto. */
+function parseGrafico(carga: unknown): DatosGraficoCrudo | undefined {
+  if (carga && typeof carga === 'object') return carga as DatosGraficoCrudo;
+  if (typeof carga !== 'string' || carga === '') return undefined;
+  try {
+    return JSON.parse(carga) as DatosGraficoCrudo;
+  } catch {
+    return undefined;
+  }
 }
 
 /** Tabla cuyas cabeceras vienen en el propio payload. */

@@ -40,12 +40,26 @@ export function metricaDeTarjeta(indice: number): string | undefined {
   return indice === 1 ? 'sali1' : indice === 2 ? 'sali3' : 'clive';
 }
 
-/** Columnas de la tabla del nivel — legado `principal.util.ts` (`tblHeaders`). */
+/**
+ * Clave sintética donde se guarda el semáforo del churn de cada fila.
+ *
+ * El legado lo resuelve con un `trafficFn` que recibe el valor de la celda; acá
+ * `<app-tabla-dinamica>` espera el semáforo en otra clave de la fila
+ * (`semaforoKey`), así que se precalcula antes de pintar.
+ */
+export const CLAVE_SEMAFORO_CHURN = 'ret_tl';
+
+/**
+ * Columnas de la tabla del nivel — legado `principal.util.ts` (`tblHeaders`).
+ *
+ * El punto de color va SOLO en "Churn rate": es la única columna que declara
+ * `trafficFn` en el legado.
+ */
 export const COLUMNAS_SALIDAS: ColumnaDinamica[] = [
   { key: 'desc', label: 'Descripción' },
   { key: 'sali1', label: 'Salida en el mes', format: { type: 'integer' } },
   { key: 'sali3', label: 'Salidas en los últimos 3M', format: { type: 'integer' } },
-  { key: 'ret', label: 'Churn rate', format: { type: 'percent' } },
+  { key: 'ret', label: 'Churn rate', format: { type: 'percent' }, semaforoKey: CLAVE_SEMAFORO_CHURN },
   { key: 'clive', label: 'Clientes por Vencer', format: { type: 'integer' } },
 ];
 
@@ -77,11 +91,20 @@ export const TOPES_DETALLE = [10, 25, 50, 100];
 export const TOPE_DETALLE_POR_DEFECTO = 10;
 
 /**
- * Color del churn rate — legado `tlFn` de `principal.util.ts`.
- * Ojo: acá más alto es mejor (retención), al revés que una mora.
+ * Semáforo del churn rate — legado `tlFn` de `principal.util.ts`, con sus
+ * mismos umbrales.
+ *
+ * Ojo: acá más alto es mejor (retención), al revés que una mora. Devuelve el
+ * `-1`/`0`/`1` que entiende `<app-tabla-dinamica>`, que los pinta rojo, naranja
+ * y verde — los tres colores del legado.
  */
-export function colorChurn(valor: number | null | undefined): string {
-  if (valor == null || valor < 0.9025) return 'var(--mis-danger)';
-  if (valor < 0.95) return 'var(--mis-warning)';
-  return 'var(--mis-success)';
+export function semaforoChurn(valor: number | null | undefined): -1 | 0 | 1 {
+  if (valor == null || valor < 0.9025) return -1;
+  if (valor < 0.95) return 0;
+  return 1;
+}
+
+/** Agrega a cada fila el semáforo de su churn, que es lo que pinta el punto de color. */
+export function conSemaforoChurn(filas: Record<string, unknown>[]): Record<string, unknown>[] {
+  return filas.map((fila) => ({ ...fila, [CLAVE_SEMAFORO_CHURN]: semaforoChurn(fila['ret'] as number) }));
 }

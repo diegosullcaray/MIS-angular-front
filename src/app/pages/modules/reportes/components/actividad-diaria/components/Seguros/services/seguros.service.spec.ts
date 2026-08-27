@@ -107,4 +107,41 @@ describe('SegurosService', () => {
       expect(graficos).toEqual([]);
     });
   });
+
+  /**
+   * Tarea 5 de `incidencias-mora-actualizado.md`: "faltan los filtros de fecha".
+   * El legado (`seguro-com.component.ts`) usa `RS_FECH` y su valor reemplaza al
+   * corte del usuario en la consulta del reporte.
+   */
+  describe('filtro de periodo de "Seguros Optativos"', () => {
+    it('las opciones salen de `RS_FECH` (no del `RS_FECH02` de Gestión Comercial)', () => {
+      getRegularTableResult.mockReturnValue(
+        of({ code: '0', headers: {}, body: { resultado: { meta1: [{ json_result: '[]' }] } } }),
+      );
+
+      servicio.periodosSegurosOptativos().subscribe();
+
+      expect(getRegularTableResult).toHaveBeenCalledWith('RS_FECH', { fec: '2025-11-30' });
+    });
+
+    it('sin periodo elegido el reporte usa el corte del usuario', () => {
+      servicio.segurosOptativos(NODO).subscribe();
+
+      expect(getRegularTableResult).toHaveBeenCalledWith('GRSCMISREP_01', {
+        tip_cod: 9,
+        cod_rel: 'FC',
+        fec: '2025-11-30',
+      });
+    });
+
+    it('el periodo elegido reemplaza a ese corte', () => {
+      servicio.segurosOptativos(NODO, '2025-10-31').subscribe();
+
+      expect(getRegularTableResult).toHaveBeenCalledWith('GRSCMISREP_01', {
+        tip_cod: 9,
+        cod_rel: 'FC',
+        fec: '2025-10-31',
+      });
+    });
+  });
 });

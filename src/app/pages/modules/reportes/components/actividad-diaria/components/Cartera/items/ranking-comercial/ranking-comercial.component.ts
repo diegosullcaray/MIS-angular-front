@@ -1,24 +1,28 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { InputFiltroComponent } from '../../../../../../../../../shared/ui/formularios/input-filtro/input-filtro.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
-import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
-import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
-import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
 
-/** "Ranking Comercial" (`repositorio/actividad-diaria/cartera/rank-comercial`). */
+/**
+ * "Ranking Comercial" (`repositorio/actividad-diaria/cartera/rank-comercial`).
+ *
+ * NO cuelga del selector de jerarquía: el legado pide el ranking completo
+ * (`territorio` y `corredor` en `'0'`) y filtra del lado del cliente con sus
+ * tres filtros propios. Por eso carga solo al entrar, sin esperar un nivel.
+ */
 @Component({
   selector: 'app-ranking-comercial',
   standalone: true,
   imports: [
+    DecimalPipe,
     InputFiltroComponent,
     SelectFiltroComponent,
-    HierSelectorComponent,
     TablaDinamicaComponent,
     EmptyStateComponent,
     WindowPanelComponent,
@@ -30,10 +34,8 @@ export class RankingComercialComponent {
   private readonly servicio = inject(CarteraRepositorioService);
   private readonly toast = inject(ToastService);
 
-  protected readonly paramsHier = PARAMS_HIER_UNIDAD;
-  protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
-  protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
+  protected readonly error = signal(false);
 
   private readonly resultado = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
 
@@ -60,17 +62,34 @@ export class RankingComercialComponent {
     );
   });
 
-  protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
-    this.nivelActual.set(nodo);
-    this.cargando.set(true);
+  /**
+   * "Avance Esperado" — el `Timing` de la primera fila, que es de dónde lo saca
+   * el legado (`avanceEsperado = dataSource[0].Timing`). Es el porcentaje de
+   * días transcurridos del mes, y el mismo valor contra el que se compara cada
+   * avance para decidir su semáforo.
+   */
+  protected readonly avanceEsperado = computed(() => {
+    const primera = this.resultado().filas[0];
+    const timing = Number(primera?.['Timing']);
+    return Number.isFinite(timing) ? timing : 0;
+  });
 
-    this.servicio.rankingComercial({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
+  constructor() {
+    this.cargar();
+  }
+
+  protected cargar(): void {
+    this.cargando.set(true);
+    this.error.set(false);
+
+    this.servicio.rankingComercial().subscribe({
       next: (resultado) => {
         this.resultado.set(resultado);
         this.cargando.set(false);
       },
       error: () => {
         this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+        this.error.set(true);
         this.cargando.set(false);
       },
     });

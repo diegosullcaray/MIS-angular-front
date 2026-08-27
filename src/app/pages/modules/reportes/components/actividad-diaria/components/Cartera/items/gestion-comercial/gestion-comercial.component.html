@@ -1,16 +1,258 @@
 <app-window-panel titulo="Gestión Comercial" subtitulo="Cartera" [permitirActualizar]="false" [conFiltros]="true">
-  <app-hier-selector
-    ventana-filtros
-    [paramsHier]="paramsHier"
-    placeholder="Elegir nivel"
-    (nodoSeleccionado)="onNivelSeleccionado($event)"
-    (error)="onErrorJerarquia()"
-  />
+  <div ventana-filtros class="flex flex-wrap items-end gap-3">
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
+    <!--
+      El "filtro de fecha" del legado no es un calendario libre: es la lista de
+      cortes que devuelve `RS_FECH02`. Solo se pinta cuando el backend la manda;
+      si viene vacía el reporte se queda con la fecha de corte del usuario.
+    -->
+    @if (periodos().length) {
+      <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
+    }
+  </div>
 
   @if (!nivelActual()) {
     <app-empty-state titulo="Elige un nivel" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte." />
   } @else {
     <div class="flex flex-col gap-5">
+      <!--
+        Las diez tarjetas del encabezado del legado, todas sacadas de la fila
+        total de `RS_GEST_COM_01`. Las unidades (÷1.000, ÷1.000.000) y los
+        decimales son los de su plantilla.
+      -->
+      @let k = kpis();
+
+      <section class="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+        <!-- PRODUCTIVIDAD -->
+        <div class="mis-card p-4 flex flex-col gap-3">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Productividad</span>
+          <div class="flex items-baseline justify-between gap-2">
+            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+              {{ k.productividad | number: '1.2-2' }}
+            </span>
+            <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">
+              <div>
+                TMM
+                <span class="font-semibold tabular-nums" [class]="k.tmmProductividad >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+                  {{ k.tmmProductividad | number: '1.2-2' }}
+                </span>
+              </div>
+              <div>
+                Cumpl.
+                <span class="font-semibold tabular-nums" [class]="claseCumplimiento(k.cumplProductividad)">
+                  {{ k.cumplProductividad | number: '1.0-0' }}%
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-baseline justify-between text-[11px] text-[var(--mis-text-tertiary)] tabular-nums">
+              <span>{{ k.avanceProductividad | number: '1.1-1' }}%</span>
+              <span>Meta {{ k.metaProductividad | number: '1.1-1' }}</span>
+            </div>
+            <div class="h-1.5 rounded-full bg-[var(--mis-border)] overflow-hidden">
+              <div class="h-full rounded-full bg-[var(--mis-primary)]" [style.width.%]="anchoBarra(k.avanceProductividad)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TICKET PROM. -->
+        <div class="mis-card p-4 flex flex-col gap-3">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Ticket Prom.</span>
+          <div class="flex items-baseline justify-between gap-2">
+            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+              {{ k.ticket / 1000 | number: '1.2-2' }}<span class="text-[13px] font-normal text-[var(--mis-text-tertiary)] ml-1">mil</span>
+            </span>
+            <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">
+              <div>TMM</div>
+              <div class="font-semibold tabular-nums" [class]="k.tmmTicket >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+                {{ k.tmmTicket | number: '1.2-2' }}
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-baseline justify-between text-[11px] text-[var(--mis-text-tertiary)] tabular-nums">
+              <span>{{ k.avanceTicket | number: '1.1-2' }}%</span>
+              <span>Meta {{ k.metaTicket / 1000 | number: '1.2-2' }}</span>
+            </div>
+            <div class="h-1.5 rounded-full bg-[var(--mis-border)] overflow-hidden">
+              <div class="h-full rounded-full bg-[var(--mis-primary)]" [style.width.%]="anchoBarra(k.avanceTicket)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DESEMBOLSOS -->
+        <div class="mis-card p-4 flex flex-col gap-3">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Desembolsos</span>
+          <div class="flex items-baseline justify-between gap-2">
+            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+              {{ k.desembolsos / 1000000 | number: '1.1-2' }}<span class="text-[13px] font-normal text-[var(--mis-text-tertiary)] ml-0.5">M</span>
+            </span>
+            <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">
+              <div>
+                TMM
+                <span class="font-semibold tabular-nums" [class]="k.tmmDesembolsos >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+                  {{ k.tmmDesembolsos / 1000000 | number: '1.1-2' }} M
+                </span>
+              </div>
+              <div>
+                Cumpl.
+                <span class="font-semibold tabular-nums" [class]="claseCumplimiento(k.cumplDesembolsos)">
+                  {{ k.cumplDesembolsos | number: '1.1-2' }}%
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-baseline justify-between text-[11px] text-[var(--mis-text-tertiary)] tabular-nums">
+              <span>{{ k.avanceDesembolsos | number: '1.1-2' }}%</span>
+              <span>Meta {{ k.metaDesembolsos / 1000000 | number: '1.2-2' }} M</span>
+            </div>
+            <div class="h-1.5 rounded-full bg-[var(--mis-border)] overflow-hidden">
+              <div class="h-full rounded-full bg-[var(--mis-primary)]" [style.width.%]="anchoBarra(k.avanceDesembolsos)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CANCELACIÓN VIG. -->
+        <div class="mis-card p-4 flex flex-col gap-3">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Cancelación Vig.</span>
+          <!-- El legado no la pide al backend: la despeja de desembolsos, variación de saldo y rodamiento. -->
+          <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+            {{ k.cancelacionVigente / 1000 | number: '1.0-1' }}
+          </span>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-baseline justify-between text-[11px] text-[var(--mis-text-tertiary)] tabular-nums">
+              <span>{{ k.avanceCancelacion | number: '1.1-2' }}%</span>
+              <span>Meta {{ k.metaCancelacion / 1000000 | number: '1.2-2' }} M</span>
+            </div>
+            <div class="h-1.5 rounded-full bg-[var(--mis-border)] overflow-hidden">
+              <div class="h-full rounded-full bg-[var(--mis-primary)]" [style.width.%]="anchoBarra(k.avanceCancelacion)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARTERA VIGENTE -->
+        <div class="mis-card p-4 flex flex-col gap-3">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Cartera Vigente</span>
+          <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+            {{ k.carteraVigente / 1000000 | number: '1.1-3' }}
+          </span>
+          <div class="grid grid-cols-3 gap-2 border-t border-[var(--mis-border)] pt-2 text-[11px]">
+            <div class="flex flex-col">
+              <span class="text-[var(--mis-text-tertiary)]">META</span>
+              <strong class="text-[13px] tabular-nums text-[var(--mis-text-primary)]">{{ k.metaDiariaCarteraVigente / 1000000 | number: '1.1-2' }}</strong>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[var(--mis-text-tertiary)]">VAR.</span>
+              <strong class="text-[13px] tabular-nums" [class]="k.varCarteraVigente >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+                {{ k.varCarteraVigente / 1000000 | number: '1.1-2' }}
+              </strong>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[var(--mis-text-tertiary)]">DIST.</span>
+              <strong class="text-[13px] tabular-nums" [class]="k.distanciaMetaCarteraVigente >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+                {{ k.distanciaMetaCarteraVigente / 1000000 | number: '1.1-2' }}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- RODAMIENTO (+ el desglose vigente / no vigente) -->
+        <div class="mis-card p-4 flex flex-col gap-3">
+          <div class="flex items-baseline justify-between gap-2">
+            <div class="flex flex-col gap-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Rodamiento</span>
+              <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+                {{ k.rodamiento / 1000 | number: '1.0-1' }}
+              </span>
+            </div>
+            <span class="text-[11px] font-semibold tabular-nums" [class]="k.tmmRodamiento >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+              TMM {{ k.tmmRodamiento / 1000 | number: '1.0-1' }}
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-3 border-t border-[var(--mis-border)] pt-2">
+            <div class="flex flex-col border-r border-[var(--mis-border)] pr-3">
+              <span class="text-[10px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">No Vigente</span>
+              <span class="text-[16px] font-semibold tabular-nums text-[var(--mis-text-primary)]">{{ k.saldoNoVigente / 1000 | number: '1.0-1' }}</span>
+              <span class="text-[11px] tabular-nums" [class]="k.tmmSaldoNoVigente >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+                TMM {{ k.tmmSaldoNoVigente / 1000 | number: '1.0-1' }}
+              </span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">Vigente</span>
+              <span class="text-[16px] font-semibold tabular-nums text-[var(--mis-text-primary)]">{{ k.saldoVigente / 1000 | number: '1.0-0' }}</span>
+              <span class="text-[11px] tabular-nums" [class]="k.tmmSaldoVigente >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+                TMM {{ k.tmmSaldoVigente / 1000 | number: '1.0-0' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STOCK CLIENTES -->
+        <div class="mis-card p-4 flex flex-col gap-3">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Stock Clientes</span>
+          <div class="flex items-baseline justify-between gap-2">
+            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+              {{ k.clientesStock / 1000 | number: '1.1-3' }}
+            </span>
+            <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">
+              <div>VAR.</div>
+              <div class="font-semibold tabular-nums" [class]="k.varClientesStock >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+                {{ k.varClientesStock | number: '1.1-2' }}
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-baseline justify-between text-[11px] text-[var(--mis-text-tertiary)] tabular-nums">
+              <span>{{ k.avanceClientesStock | number: '1.1-2' }}%</span>
+              <span>Meta {{ k.metaVarClientesStock / 1000 | number: '1.1-2' }}</span>
+            </div>
+            <div class="h-1.5 rounded-full bg-[var(--mis-border)] overflow-hidden">
+              <div class="h-full rounded-full bg-[var(--mis-primary)]" [style.width.%]="anchoBarra(k.avanceClientesStock)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLIENTES NUEVOS -->
+        <div class="mis-card p-4 flex flex-col gap-3">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Clientes Nuevos</span>
+          <div class="flex items-baseline justify-between gap-2">
+            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+              {{ k.clientesNuevos | number: '1.0-0' }}
+            </span>
+            <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">
+              <div>
+                TMM
+                <span class="font-semibold tabular-nums" [class]="k.tmmClientesNuevos >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
+                  {{ k.tmmClientesNuevos | number: '1.0-0' }}
+                </span>
+              </div>
+              <div>
+                Cumpl.
+                <span class="font-semibold tabular-nums" [class]="claseCumplimiento(k.cumplClientesNuevos)">
+                  {{ k.cumplClientesNuevos | number: '1.0-0' }}%
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-baseline justify-between text-[11px] text-[var(--mis-text-tertiary)] tabular-nums">
+              <span>{{ k.avanceClientesNuevos | number: '1.1-2' }}%</span>
+              <span>Meta {{ k.metaClientesNuevos / 1000 | number: '1.1-2' }}</span>
+            </div>
+            <div class="h-1.5 rounded-full bg-[var(--mis-border)] overflow-hidden">
+              <div class="h-full rounded-full bg-[var(--mis-primary)]" [style.width.%]="anchoBarra(k.avanceClientesNuevos)"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Dos pestañas, mismo orden y nombres que el legado (`gestion-comercial.component.html`):
            "Saldo Cartera" primero, "Clientes" segundo. Los 7 gráficos van debajo, fuera de las
            pestañas — el legado los muestra sin depender de cuál esté activa. -->
@@ -71,9 +313,10 @@
 
       <div class="grid gap-3 grid-cols-1 xl:grid-cols-2">
         @for (grafico of graficos(); track grafico.titulo) {
-          <!-- El título lo pinta la propia gráfica a partir de `bloque.titulo`. -->
+          <!-- El título lo pinta la propia gráfica a partir de `bloque.titulo`. Todas van
+               como columnas: el legado no usa ni una barra horizontal en este reporte. -->
           <div class="mis-card p-3 h-[360px]">
-            <app-grafico-mixto [datos]="grafico" />
+            <app-grafico-mixto [datos]="grafico" tipo="columna" [formato]="grafico.formato" />
           </div>
         }
       </div>

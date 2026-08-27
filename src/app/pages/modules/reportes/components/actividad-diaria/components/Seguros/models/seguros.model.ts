@@ -29,6 +29,23 @@ const TIPOS_SEGURO: readonly { clave: string; etiqueta: string }[] = [
   { clave: 'SPCCOS', etiqueta: 'Prot. Total' },
 ];
 
+/**
+ * La penetración como FRACCIÓN, que es como la pinta el legado (`| percent`).
+ *
+ * El comentario del legado duda de la unidad ("asumo que viene como '76.95%' o
+ * número") y su `| percent` solo funciona si llega en fracción. Acá se acepta
+ * cualquiera de las dos: si el valor trae el signo de porcentaje, el número está
+ * en puntos porcentuales y se divide entre 100.
+ */
+function penetracion(valor: unknown): number {
+  if (typeof valor === 'string' && valor.includes('%')) {
+    const puntos = Number(valor.replace(/[^0-9.-]/g, ''));
+    return Number.isFinite(puntos) ? puntos / 100 : 0;
+  }
+  const fraccion = Number(valor);
+  return Number.isFinite(fraccion) ? fraccion : 0;
+}
+
 /** Arma los KPIs desde la primera fila de la tabla — legado `setKpiValues()`. */
 export function kpisDeFilaTotal(filas: Record<string, unknown>[]): KpisSegurosOptativos {
   const fila = filas[0];
@@ -42,7 +59,7 @@ export function kpisDeFilaTotal(filas: Record<string, unknown>[]): KpisSegurosOp
   return {
     totalOperaciones: num('TOpeOS'),
     totalSeguros: num('TSegOS'),
-    penetracionGlobal: num('PorcPenOS'),
+    penetracionGlobal: penetracion(fila['PorcPenOS']),
     porTipo: TIPOS_SEGURO.map((t) => ({ etiqueta: t.etiqueta, valor: num(t.clave) })),
   };
 }

@@ -6,6 +6,7 @@ import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { IWinderResponse } from '../../../../../../../../core/winder/winder/winder.interface';
+import type { OpcionFiltro } from '../../../../../../../../shared/ui/formularios/opcion-filtro.model';
 
 /**
  * Los cuatro reportes de "Seguros".
@@ -50,12 +51,25 @@ export class SegurosService {
     );
   }
 
-  /** "Reporte Seguros Optativos" — legado `repositorio/seguro-com` (`GRSCMISREP_01`). */
-  segurosOptativos(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
+  /**
+   * Las opciones del selector de periodo de "Seguros Optativos" — legado
+   * `loadFilter()`, que usa `RS_FECH` (no el `RS_FECH02` de Gestión Comercial).
+   */
+  periodosSegurosOptativos(): Observable<OpcionFiltro[]> {
+    return this.bloques.periodos('RS_FECH');
+  }
+
+  /**
+   * "Reporte Seguros Optativos" — legado `repositorio/seguro-com` (`GRSCMISREP_01`).
+   *
+   * La `fec` es la del selector de periodo; si no llega, la de corte del
+   * usuario, que es con la que abre el legado antes de que responda `RS_FECH`.
+   */
+  segurosOptativos(nodo: NodoConsulta, fec = this.bloques.fecha()): Observable<TablaDinamicaResultado> {
     return this.bloques.tablaRegularCon('GRSCMISREP_01', {
       tip_cod: nodo.tip_cod,
       cod_rel: nodo.cod_rel,
-      fec: this.bloques.fecha(),
+      fec,
     });
   }
 

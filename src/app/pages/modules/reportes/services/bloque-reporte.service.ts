@@ -1,12 +1,15 @@
+import { HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, forkJoin, map } from 'rxjs';
+import { Observable, catchError, forkJoin, map, of } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import { mapearBloqueReporte, mapearTablaRegular } from '../utils/reportes-mapeo.util';
+import { TIMEOUT_MS, TIMEOUT_REPORTE_PESADO_MS } from '../../../../core/interceptors/auth.interceptor';
+import { mapearBloqueReporte, mapearPeriodos, mapearTablaRegular } from '../utils/reportes-mapeo.util';
 import { fechaCorte, fechaCorteCompacta } from '../utils/fecha-reporte.util';
 import type { HierarquiaNodo } from '../models/jerarquia.model';
-import type { TablaReporteResultado } from '../models/tabla-reporte.model';
+import { TABLA_VACIA, type TablaReporteResultado } from '../models/tabla-reporte.model';
 import type { TablaDinamicaResultado } from '../models/tabla-dinamica.model';
+import type { OpcionFiltro } from '../../../../shared/ui/formularios/opcion-filtro.model';
 
 /**
  * Nodo de jerarquía tal como viaja a los reportes.
@@ -85,6 +88,46 @@ export class BloqueReporteService {
     return this.reportes.getRegularData(codRep, params).pipe(map(mapearBloqueReporte));
   }
 
+  /**
+   * Igual que `regularExacto()`, pero un bloque sin datos no tumba al resto.
+   *
+   * El backend lanza `NullPointerException` con
+   * `"Resultado vacio para: regularData"` (HTTP 500) cuando la consulta no
+   * devuelve filas. Dentro de un `forkJoin` eso mata TODO el reporte, aunque los
+   * demás bloques hayan respondido bien. Para los reportes de varios bloques
+   * donde algunos pueden venir vacíos, este método los aísla: el bloque sin
+   * datos queda como tabla vacía y los otros se pintan igual.
+   */
+  regularTolerante(
+    codRep: string,
+    nodo: NodoConsulta,
+    extra: Record<string, unknown> = {},
+  ): Observable<TablaReporteResultado> {
+    return this.regularExacto(codRep, nodo, extra).pipe(catchError(() => of(TABLA_VACIA)));
+  }
+
+  /**
+   * Como `regularTolerante()`, pero con el timeout largo de los reportes de data
+   * masiva.
+   *
+   * "Seguimiento Reprogramados" y "Seguimiento de Portafolio" no entran en los
+   * 30 s por defecto del interceptor. En vez de subir ese global —que dejaría a
+   * toda la app esperando el doble ante cualquier request colgada— cada uno pide
+   * el suyo por `HttpContext`.
+   */
+  regularLento(
+    codRep: string,
+    nodo: NodoConsulta,
+    extra: Record<string, unknown> = {},
+  ): Observable<TablaReporteResultado> {
+    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, ...extra };
+    const context = new HttpContext().set(TIMEOUT_MS, TIMEOUT_REPORTE_PESADO_MS);
+    return this.reportes.getRegularData(codRep, params, context).pipe(
+      map(mapearBloqueReporte),
+      catchError(() => of(TABLA_VACIA)),
+    );
+  }
+
   /** Varios bloques `regularData` en paralelo, con los mismos parámetros salvo los `extra` de cada uno. */
   regulares(
     bloques: readonly { codRep: string; extra?: Record<string, unknown> }[],
@@ -119,6 +162,23 @@ export class BloqueReporteService {
    */
   tablaRegular(codRep: string, nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
     return this.tablaRegularCon(codRep, { tipcod: nodo.tip_cod, codrel: nodo.cod_rel, fecha: this.fecha() });
+  }
+
+  /**
+   * Las opciones del selector de periodo de los reportes del repositorio.
+   *
+   * Varios reportes del legado (`gestion-comercial`, `seguro-com`, `agro-mix`,
+   * `cero-cuotas`, `usa_come-m`) abren con un desplegable de cortes que sale del
+   * backend, no de un calendario libre: `RS_FECH` o `RS_FECH02` según el
+   * reporte, siempre con `{ fec }` y siempre leyendo `meta1[0].json_result`.
+   *
+   * La primera opción es la que queda seleccionada, y su `id` reemplaza al corte
+   * del usuario en todas las consultas del reporte.
+   */
+  periodos(codRep: string): Observable<OpcionFiltro[]> {
+    return this.reportes
+      .getRegularTableResult(codRep, { fec: this.fecha() })
+      .pipe(map(mapearPeriodos), catchError(() => of([])));
   }
 
   /** Un bloque del strand "deprecado" (`reportData`) — reportes cuya entrada de `cra-map.ts` no declara `reportType`. */

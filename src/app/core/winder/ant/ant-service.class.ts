@@ -1,3 +1,4 @@
+import { HttpContext } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -18,8 +19,8 @@ export abstract class AntService {
     return this.winderService.prepare(this.connectionConf, requestConf).get().pipe(first());
   }
 
-  protected getResponseString(s: Strand | Strand[]): Observable<IWinderResponse> {
-    return this.get({ responseType: 'JSON', strands: s });
+  protected getResponseString(s: Strand | Strand[], options?: Record<string, unknown>): Observable<IWinderResponse> {
+    return this.get({ responseType: 'JSON', strands: s, options });
   }
 
   protected getResponseResource(s: Strand | Strand[]): Observable<IWinderResponse> {
@@ -30,11 +31,12 @@ export abstract class AntService {
   protected getSimpleResponseString(
     strandName: string,
     params: Record<string, unknown>,
-    responseName = 'response'
+    responseName = 'response',
+    context?: HttpContext
   ): Observable<IWinderResponse> {
     const s = new Strand(strandName, responseName);
     Object.keys(params).forEach((v) => s.pushToPayload(v, params[v]));
-    return this.getResponseString(s);
+    return this.getResponseString(s, context ? { context } : undefined);
   }
 
   /** GET sin parámetros de payload. */

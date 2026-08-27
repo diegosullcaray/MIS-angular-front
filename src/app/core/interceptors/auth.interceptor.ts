@@ -1,4 +1,11 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpContextToken,
+  HttpInterceptorFn,
+  HttpRequest,
+  HttpHandlerFn,
+  HttpEvent,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError, Observable, timeout } from 'rxjs';
 import { ShellStateService } from '../services/shell-state.service';
@@ -7,6 +14,19 @@ import { environment } from '../../../environments/environment';
 
 /** Timeout en ms para requests al backend Ant (igual que el STG). */
 const ANT_TIMEOUT_MS = 30_000;
+
+/**
+ * Timeout propio de una request, en ms.
+ *
+ * Existe porque unos pocos reportes mueven tanta data que no entran en los 30 s
+ * por defecto ("Seguimiento Reprogramados", "Seguimiento de Portafolio"). Subir
+ * el global para todos sería peor: dejaría a la app esperando el doble ante
+ * cualquier request realmente colgada. Así solo esperan de más los que lo piden.
+ */
+export const TIMEOUT_MS = new HttpContextToken<number>(() => ANT_TIMEOUT_MS);
+
+/** Timeout de los reportes de data masiva. */
+export const TIMEOUT_REPORTE_PESADO_MS = 120_000;
 
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -17,7 +37,7 @@ export const authInterceptor: HttpInterceptorFn = (
 
   // El protocolo Winder cifra su propia autenticación: solo se le pone timeout.
   if (req.url.startsWith(environment.requestConfigRootURL)) {
-    return next(req).pipe(timeout(ANT_TIMEOUT_MS));
+    return next(req).pipe(timeout(req.context.get(TIMEOUT_MS)));
   }
 
   // angular-oauth2-oidc usa HttpClient: no debe llevar el Bearer del Host ni cerrar sesión en un 401.
