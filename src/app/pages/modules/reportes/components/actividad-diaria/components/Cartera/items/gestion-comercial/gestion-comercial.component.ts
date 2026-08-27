@@ -1,6 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
+import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { GraficoMixtoComponent } from '../../../../../../../../../shared/ui/graficos/grafico-mixto/grafico-mixto.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
@@ -8,10 +10,12 @@ import { WindowPanelComponent } from '../../../../../../../../../shared/ui/windo
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
+import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import {
   COLUMNAS_GESTION_CLIENTES,
   COLUMNAS_GESTION_PRODUCCION,
   GESTION_COMERCIAL_VACIA,
+  claseCumplimiento,
   type GestionComercialResultado,
 } from '../../models/gestion-comercial.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
@@ -21,8 +25,10 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
   selector: 'app-gestion-comercial',
   standalone: true,
   imports: [
+    DecimalPipe,
     TabsModule,
     HierSelectorComponent,
+    SelectFiltroComponent,
     TablaDinamicaComponent,
     GraficoMixtoComponent,
     EmptyStateComponent,
@@ -38,22 +44,55 @@ export class GestionComercialComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly columnasProduccion = COLUMNAS_GESTION_PRODUCCION;
   protected readonly columnasClientes = COLUMNAS_GESTION_CLIENTES;
+  protected readonly claseCumplimiento = claseCumplimiento;
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
   protected readonly reporte = signal<GestionComercialResultado>(GESTION_COMERCIAL_VACIA);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
+  /**
+   * El periodo del legado: NO es un calendario libre sino la lista de cortes que
+   * devuelve `RS_FECH02`. Vacío mientras no responda; ahí el reporte usa la
+   * fecha de corte del usuario, igual que el legado.
+   */
+  protected readonly periodos = signal<OpcionFiltro[]>([]);
+  protected readonly periodo = signal('');
+
   protected readonly filas = computed(() => this.reporte().filas);
+  protected readonly kpis = computed(() => this.reporte().kpis);
   protected readonly varSaldoVigente = computed(() => this.reporte().varSaldoVigente);
   protected readonly varClientesStock = computed(() => this.reporte().varClientesStock);
   protected readonly graficos = computed(() => this.reporte().graficos);
 
+  constructor() {
+    this.servicio.periodosGestionComercial().subscribe((opciones) => {
+      this.periodos.set(opciones);
+      // El legado deja seleccionado el primero, que es el corte más reciente.
+      if (opciones.length > 0) this.periodo.set(opciones[0].id);
+    });
+
+    // Un cambio de periodo recarga el reporte sobre el nivel que ya esté abierto.
+    effect(() => {
+      const nodo = this.nivelActual();
+      const periodo = this.periodo();
+      if (nodo) this.cargar(nodo, periodo);
+    });
+  }
+
+  /** Ancho de la barra de avance: el porcentaje, recortado para que no se salga de la tarjeta. */
+  protected anchoBarra(porcentaje: number): number {
+    return Math.max(0, Math.min(100, porcentaje));
+  }
+
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
+  }
+
+  private cargar(nodo: HierarquiaNodo, periodo: string): void {
     this.cargando.set(true);
 
-    this.servicio.gestionComercial({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
+    this.servicio.gestionComercial({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
       next: (reporte) => {
         this.reporte.set(reporte);
         this.cargando.set(false);

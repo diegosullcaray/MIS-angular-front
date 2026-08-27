@@ -4,6 +4,16 @@ export interface SerieGrafico {
   datos: (number | null)[];
   /** Fuerza el color de la serie; si se omite, lo decide la fábrica según el rol de la serie. */
   color?: string;
+  /**
+   * Manda la serie al eje secundario, como spline.
+   *
+   * Por defecto ahí solo van las series de porcentaje (las que traen "%" en el
+   * nombre). Esto es para los evolutivos que combinan un NIVEL con su VARIACIÓN
+   * — "Saldo Cartera Vigente", "Variación Cliente Stock" —, donde las dos series
+   * son del mismo tipo pero de órdenes de magnitud distintos: con un solo eje la
+   * variación queda aplastada contra el cero.
+   */
+  secundaria?: boolean;
 }
 
 /**

@@ -9,6 +9,7 @@ import type {
   TablaRegularResultadoRaw,
 } from '../models/tabla-dinamica.model';
 import type { BloqueGrafico } from '../../../../shared/ui/graficos/models/grafico-comun.model';
+import type { OpcionFiltro } from '../../../../shared/ui/formularios/opcion-filtro.model';
 
 /** Mapeo compartido de la respuesta cruda del motor de reportes "mixtos" (`regularData`) a la forma que consume `app-tabla-reporte` — mismo mapeo que antes vivía centralizado en `ReportesService.obtenerBloqueReporte()`, ahora reutilizado por el service propio de cada componente para no duplicar el `.pipe(map(...))` en cada uno. */
 export function mapearBloqueReporte(r: IWinderResponse): TablaReporteResultado {
@@ -47,6 +48,40 @@ function mapearKpis(resultado: TablaRegularResultadoRaw | undefined, filas: Reco
       variacion: Number(total[CLAVE_VARIACION[producto.toUpperCase()] ?? ''] ?? 0),
     };
   });
+}
+
+/**
+ * Opciones del selector de periodo de los reportes del repositorio — bloques
+ * `RS_FECH` / `RS_FECH02` del legado (`loadFilter()`).
+ *
+ * El bloque no devuelve una tabla: la lista viaja como JSON serializado dentro
+ * de `resultado.meta1[0].json_result`, con la forma `{ label, val }` (el `val`
+ * es la fecha de corte que después reemplaza a la del usuario).
+ *
+ * Devuelve `[]` ante cualquier payload que no se pueda leer: el legado hace lo
+ * mismo (`catch` → `filter1 = []`) y así el reporte se queda con su corte por
+ * defecto en vez de romperse.
+ */
+export function mapearPeriodos(r: IWinderResponse): OpcionFiltro[] {
+  const meta1 = (r.body as TablaRegularResponseBody | null)?.resultado?.meta1;
+  const filas = typeof meta1 === 'string' ? seguroParse<Record<string, unknown>[]>(meta1) : meta1;
+  const json = filas?.[0]?.['json_result'];
+  if (typeof json !== 'string') return [];
+
+  const opciones = seguroParse<{ label?: string; text?: string; val?: string }[]>(json);
+  if (!Array.isArray(opciones)) return [];
+
+  return opciones
+    .filter((o) => typeof o?.val === 'string' && o.val !== '')
+    .map((o) => ({ id: o.val as string, desc: o.label ?? o.text ?? (o.val as string) }));
+}
+
+function seguroParse<T>(texto: string): T | undefined {
+  try {
+    return JSON.parse(texto) as T;
+  } catch {
+    return undefined;
+  }
 }
 
 /** Filtro de texto libre sobre las filas de una tabla — legado `filter_input` (`table-multiheader.component.html`: `applyFilter()`, búsqueda por substring sobre todos los valores de la fila). */

@@ -1,5 +1,5 @@
 import type { ColumnaDinamica, TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
-import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
+import type { BloqueGrafico, FormatoValor } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
 const decimal = { type: 'decimal' } as const;
 const entero = { type: 'integer' } as const;
@@ -42,16 +42,196 @@ export const COLUMNAS_GESTION_CLIENTES: ColumnaDinamica[] = [
   { key: 'TMMCLINUEV', label: 'TMM Clientes Nuevos', format: entero },
 ];
 
-/** Los siete gráficos, con el título que les pone la plantilla del legado. */
-export const GRAFICOS_GESTION_COMERCIAL: { codRep: string; titulo: string }[] = [
-  { codRep: 'GRAF_GEST_COM_01', titulo: 'Desembolsos Diarios' },
-  { codRep: 'GRAF_GEST_COM_03', titulo: 'Variación Stock Clientes' },
-  { codRep: 'GRAF_GEST_COM_04', titulo: 'Ingresos y Salidas' },
-  { codRep: 'GRAF_GEST_COM_02', titulo: 'Saldo Cartera Vigente' },
-  { codRep: 'GRAF_GEST_COM_05', titulo: 'Variación Stock Clientes (T)' },
-  { codRep: 'GRAF_GEST_COM_07', titulo: 'Variación Cliente Stock' },
-  { codRep: 'GRAF_GEST_COM_06', titulo: 'Ingresos y Salidas (T)' },
+/**
+ * Los siete gráficos, con el título que les pone la plantilla del legado y cómo
+ * hay que pintar cada uno.
+ *
+ * El legado arma un `Highcharts.Options` a mano por gráfico; acá los siete pasan
+ * por `<app-grafico-mixto>`, así que de cada uno solo queda lo que la fábrica
+ * compartida no puede deducir sola:
+ *
+ * - `formato`: soles en los de importe, número pelado en los de clientes.
+ * - `esPorcentaje`: la serie llega en fracción y el legado la pinta en % sobre
+ *   el eje secundario (la TAPP de "Desembolsos Diarios").
+ * - `esNivel`: los dos evolutivos que combinan un NIVEL con su VARIACIÓN. El
+ *   legado pinta el nivel como línea y la variación como columnas, cada uno con
+ *   su eje; acá el nivel se manda al eje secundario (`secundaria`), que es lo
+ *   que lo convierte en spline. Sin eso las dos series comparten escala y la
+ *   variación queda pegada al cero.
+ */
+export interface GraficoGestionComercial {
+  codRep: string;
+  titulo: string;
+  formato: FormatoValor;
+  esPorcentaje?: (nombreSerie: string) => boolean;
+  esNivel?: (nombreSerie: string) => boolean;
+}
+
+const sinVariacion = (nombre: string) => !nombre.toLowerCase().includes('var');
+
+export const GRAFICOS_GESTION_COMERCIAL: GraficoGestionComercial[] = [
+  {
+    codRep: 'GRAF_GEST_COM_01',
+    titulo: 'Desembolsos Diarios',
+    formato: 'soles',
+    esPorcentaje: (nombre) => nombre.toLowerCase().includes('tapp'),
+  },
+  { codRep: 'GRAF_GEST_COM_03', titulo: 'Variación Stock Clientes', formato: 'numero' },
+  { codRep: 'GRAF_GEST_COM_04', titulo: 'Ingresos y Salidas', formato: 'soles' },
+  { codRep: 'GRAF_GEST_COM_02', titulo: 'Saldo Cartera Vigente', formato: 'soles', esNivel: sinVariacion },
+  { codRep: 'GRAF_GEST_COM_05', titulo: 'Variación Stock Clientes (T)', formato: 'numero' },
+  { codRep: 'GRAF_GEST_COM_07', titulo: 'Variación Cliente Stock', formato: 'numero', esNivel: sinVariacion },
+  { codRep: 'GRAF_GEST_COM_06', titulo: 'Ingresos y Salidas (T)', formato: 'soles' },
 ];
+
+/**
+ * Los KPIs del encabezado — legado `setKpiValues()`, que los saca de la PRIMERA
+ * FILA de `RS_GEST_COM_01` (la de totales), no de un bloque aparte.
+ *
+ * Se guardan en crudo, en la unidad que manda el backend; la división entre mil
+ * o entre un millón la hace la plantilla, igual que el legado.
+ */
+export interface KpisGestionComercial {
+  productividad: number;
+  tmmProductividad: number;
+  /** Ya multiplicado por 100 (el backend lo manda como fracción). */
+  cumplProductividad: number;
+  avanceProductividad: number;
+  metaProductividad: number;
+
+  ticket: number;
+  tmmTicket: number;
+  avanceTicket: number;
+  metaTicket: number;
+
+  desembolsos: number;
+  tmmDesembolsos: number;
+  cumplDesembolsos: number;
+  avanceDesembolsos: number;
+  metaDesembolsos: number;
+
+  /** Calculado: desembolsos − variación de saldo vigente − rodamiento. */
+  cancelacionVigente: number;
+  /** El calculado sobre la meta de cancelación (`hvalvar_136`), en %. */
+  avanceCancelacion: number;
+  metaCancelacion: number;
+
+  carteraVigente: number;
+  varCarteraVigente: number;
+  metaDiariaCarteraVigente: number;
+  distanciaMetaCarteraVigente: number;
+
+  rodamiento: number;
+  tmmRodamiento: number;
+  saldoNoVigente: number;
+  tmmSaldoNoVigente: number;
+  saldoVigente: number;
+  tmmSaldoVigente: number;
+
+  clientesStock: number;
+  varClientesStock: number;
+  avanceClientesStock: number;
+  metaVarClientesStock: number;
+
+  clientesNuevos: number;
+  tmmClientesNuevos: number;
+  cumplClientesNuevos: number;
+  avanceClientesNuevos: number;
+  metaClientesNuevos: number;
+}
+
+export const KPIS_GESTION_COMERCIAL_VACIOS: KpisGestionComercial = {
+  productividad: 0, tmmProductividad: 0, cumplProductividad: 0, avanceProductividad: 0, metaProductividad: 0,
+  ticket: 0, tmmTicket: 0, avanceTicket: 0, metaTicket: 0,
+  desembolsos: 0, tmmDesembolsos: 0, cumplDesembolsos: 0, avanceDesembolsos: 0, metaDesembolsos: 0,
+  cancelacionVigente: 0, avanceCancelacion: 0, metaCancelacion: 0,
+  carteraVigente: 0, varCarteraVigente: 0, metaDiariaCarteraVigente: 0, distanciaMetaCarteraVigente: 0,
+  rodamiento: 0, tmmRodamiento: 0, saldoNoVigente: 0, tmmSaldoNoVigente: 0, saldoVigente: 0, tmmSaldoVigente: 0,
+  clientesStock: 0, varClientesStock: 0, avanceClientesStock: 0, metaVarClientesStock: 0,
+  clientesNuevos: 0, tmmClientesNuevos: 0, cumplClientesNuevos: 0, avanceClientesNuevos: 0, metaClientesNuevos: 0,
+};
+
+/** Arma los KPIs desde la fila total de `RS_GEST_COM_01` — legado `setKpiValues()`. */
+export function kpisDeFilaTotal(filas: readonly Record<string, unknown>[]): KpisGestionComercial {
+  const fila = filas[0];
+  if (!fila) return KPIS_GESTION_COMERCIAL_VACIOS;
+
+  const num = (clave: string): number => {
+    const valor = Number(fila[clave]);
+    return Number.isFinite(valor) ? valor : 0;
+  };
+  /** Los avances y cumplimientos llegan como fracción y se pintan en %. */
+  const pct = (clave: string): number => num(clave) * 100;
+
+  const desembolsos = num('mont_dese_2');
+  const varCarteraVigente = num('HVSALVIGMN');
+  const rodamiento = num('HRODAM');
+  const metaCancelacion = num('hvalvar_136');
+  // El legado no lo pide al backend: lo despeja de los otros tres.
+  const cancelacionVigente = desembolsos - varCarteraVigente - rodamiento;
+
+  return {
+    productividad: num('prod_ind'),
+    tmmProductividad: num('TMMPROD'),
+    cumplProductividad: pct('Percent_Cumpl'),
+    avanceProductividad: pct('percent_avance_hoy'),
+    metaProductividad: num('hvalvar_8070'),
+
+    ticket: num('tick_prom_2'),
+    tmmTicket: num('TMM_TICK'),
+    avanceTicket: pct('percent_avance_ticket'),
+    metaTicket: num('hvalvar_134'),
+
+    desembolsos,
+    tmmDesembolsos: num('TMMDESEMB'),
+    cumplDesembolsos: pct('percentcumpldesembolsometadi'),
+    avanceDesembolsos: pct('percent_avance_montode'),
+    metaDesembolsos: num('hvalvar_133'),
+
+    cancelacionVigente,
+    avanceCancelacion: metaCancelacion === 0 ? 0 : (cancelacionVigente / metaCancelacion) * 100,
+    metaCancelacion,
+
+    carteraVigente: num('sal_vig_2'),
+    varCarteraVigente,
+    metaDiariaCarteraVigente: num('hvalvar_10256'),
+    distanciaMetaCarteraVigente: num('distdiariacartvig'),
+
+    rodamiento,
+    tmmRodamiento: num('TMMRODAMIENTO'),
+    saldoNoVigente: num('HSALNOVIG'),
+    tmmSaldoNoVigente: num('TMMHSALNOVIG'),
+    saldoVigente: num('HSALVIGEN'),
+    tmmSaldoVigente: num('TMMSALVIGE'),
+
+    clientesStock: num('cli_stock_2'),
+    varClientesStock: num('TMMCLISTOCK'),
+    avanceClientesStock: pct('percent_avance_cli_stock'),
+    metaVarClientesStock: num('hvalvar_10062'),
+
+    clientesNuevos: num('HNUMCLIN'),
+    tmmClientesNuevos: num('TMMCLINUEV'),
+    cumplClientesNuevos: pct('Percent_Cumpl_clinuevo'),
+    avanceClientesNuevos: pct('percent_avance_cli_nuevos'),
+    metaClientesNuevos: num('hvalvar_166'),
+  };
+}
+
+/**
+ * Semáforo de un cumplimiento (en %): verde desde el 100 %, ámbar desde el 80 %,
+ * rojo por debajo — legado `obtenerClaseColor()`.
+ *
+ * OJO: el legado lo llama con dos escalas distintas (`kpi_perc_cumpl`, ya
+ * multiplicado por 100, y `cumpldesembolsometadi`, en fracción) y adentro vuelve
+ * a multiplicar, así que los cumplimientos que ya venían en % siempre le salían
+ * verdes. Acá el helper recibe SIEMPRE el porcentaje y compara contra 100/80,
+ * que es lo que la pantalla quiere decir.
+ */
+export function claseCumplimiento(porcentaje: number): string {
+  if (porcentaje >= 100) return 'text-[var(--mis-success)]';
+  if (porcentaje >= 80) return 'text-orange-500';
+  return 'text-[var(--mis-danger)]';
+}
 
 export interface GestionComercialResultado {
   /** Mismo `data` de `RS_GEST_COM_01`, que se pinta con dos juegos de columnas. */
@@ -60,12 +240,16 @@ export interface GestionComercialResultado {
   varSaldoVigente: TablaDinamicaResultado;
   /** `RS_GEST_COM_03` — "Var Clientes Stock"; ídem. */
   varClientesStock: TablaDinamicaResultado;
-  graficos: BloqueGrafico[];
+  /** Las tarjetas del encabezado, sacadas de la fila total de `RS_GEST_COM_01`. */
+  kpis: KpisGestionComercial;
+  /** Cada gráfico ya listo para `<app-grafico-mixto>`, con su formato de tooltip. */
+  graficos: (BloqueGrafico & { formato: FormatoValor })[];
 }
 
 export const GESTION_COMERCIAL_VACIA: GestionComercialResultado = {
   filas: [],
   varSaldoVigente: { columnas: [], filas: [] },
   varClientesStock: { columnas: [], filas: [] },
+  kpis: KPIS_GESTION_COMERCIAL_VACIOS,
   graficos: [],
 };

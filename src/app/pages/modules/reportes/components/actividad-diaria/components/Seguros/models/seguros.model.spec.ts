@@ -60,4 +60,22 @@ describe('kpisDeFilaTotal', () => {
     expect(kpis.totalOperaciones).toBe(30994);
     expect(kpis.penetracionGlobal).toBe(0.7194);
   });
+
+  /**
+   * El propio legado duda de la unidad ("asumo que viene como '76.95%' o
+   * número") y su `| percent` solo funciona con la fracción. Se aceptan las dos.
+   */
+  describe('penetración global', () => {
+    it('deja la fracción tal cual: es lo que espera el `| percent` de la vista', () => {
+      expect(kpisDeFilaTotal([{ PorcPenOS: 0.7194 }]).penetracionGlobal).toBe(0.7194);
+    });
+
+    it('un valor con "%" viene en puntos porcentuales y se pasa a fracción', () => {
+      expect(kpisDeFilaTotal([{ PorcPenOS: '71.94%' }]).penetracionGlobal).toBeCloseTo(0.7194);
+    });
+
+    it('un valor ilegible cuenta como 0, no como NaN', () => {
+      expect(kpisDeFilaTotal([{ PorcPenOS: 'sin dato' }]).penetracionGlobal).toBe(0);
+    });
+  });
 });

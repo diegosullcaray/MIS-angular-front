@@ -82,13 +82,17 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
   const unicaSerie = bloque.series.length === 1;
   const estiloTexto = { color: texto, fontSize: '11px' };
   // En modo `linea` no hay eje secundario: todas las series comparten el eje de valores.
-  const hayPorcentajes = forma !== 'linea' && bloque.series.some((s) => esPorcentaje(s.nombre));
+  // Ahí van las de porcentaje y las que lo pidan explícitamente (`secundaria`).
+  const enEjeSecundario = (s: SerieGrafico) => forma !== 'linea' && (s.secundaria ?? esPorcentaje(s.nombre));
+  const secundarias = bloque.series.filter(enEjeSecundario);
+  // El eje secundario se rotula en "%" solo si TODO lo que va ahí es porcentaje.
+  const ejeSecundarioEnPorcentaje = secundarias.length > 0 && secundarias.every((s) => esPorcentaje(s.nombre));
   // `bar` invierte los ejes (barras horizontales); `column` las deja verticales.
   const tipoBase = forma === 'columna' ? 'column' : forma === 'linea' ? 'spline' : 'bar';
 
   const series: SeriesOptionsType[] = bloque.series.map((serie, i) => {
     const color = serie.color ?? (forma === 'linea' ? PALETA_SERIES[i % PALETA_SERIES.length] : colorSerieReporte(serie.nombre, unicaSerie));
-    if (forma !== 'linea' && esPorcentaje(serie.nombre)) {
+    if (enEjeSecundario(serie)) {
       return {
         type: 'spline',
         name: serie.nombre,
@@ -126,10 +130,12 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
       },
       {
         title: { text: undefined },
-        labels: { format: '{value} %', style: estiloTexto },
+        labels: ejeSecundarioEnPorcentaje
+          ? { format: '{value} %', style: estiloTexto }
+          : { formatter: formateadorEjeValor, style: estiloTexto },
         opposite: true,
         gridLineWidth: 0,
-        visible: hayPorcentajes,
+        visible: secundarias.length > 0,
       },
     ],
     plotOptions: {
