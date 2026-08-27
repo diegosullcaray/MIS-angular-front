@@ -148,15 +148,18 @@ export class CarteraRepositorioService {
   /**
    * "Ranking Comercial" — legado `repositorio/ranking-comercial` (`RS_RANK_COM_01`).
    *
-   * Ojo con los parámetros: este reporte manda el nodo como
-   * `territorio`/`corredor`, no como `tip_cod`/`cod_rel`.
+   * NO usa la jerarquía: el legado manda `territorio` y `corredor` en `'0'`
+   * fijo, trae el ranking completo y filtra en el cliente por unidad, corredor
+   * y territorio. Por eso este método no recibe nodo.
    *
    * Las tres columnas `*_Semaforo` no vienen del backend: las arma el cliente
    * comparando cada avance contra el `Timing` (días transcurridos) de la fila,
    * por eso las cabeceras son fijas y no las del payload.
    */
-  rankingComercial(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
-    const params = { territorio: nodo.cod_rel, corredor: nodo.tip_cod, fecha: this.bloques.fecha() };
+  rankingComercial(): Observable<TablaDinamicaResultado> {
+    // El legado manda `territorio` y `corredor` en '0' FIJO: este reporte no usa
+    // la jerarquía, trae el ranking completo y filtra del lado del cliente.
+    const params = { territorio: '0', corredor: '0', fecha: this.bloques.fecha() };
     return this.bloques
       .tablaRegularCon('RS_RANK_COM_01', params)
       .pipe(map(({ filas }) => ({ columnas: COLUMNAS_RANKING_COMERCIAL, filas: filas.map(conSemaforos) })));

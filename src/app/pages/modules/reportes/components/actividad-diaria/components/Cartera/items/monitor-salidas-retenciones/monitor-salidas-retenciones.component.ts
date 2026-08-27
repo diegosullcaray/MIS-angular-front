@@ -19,7 +19,7 @@ import {
   TITULO_DETALLE,
   TOPES_DETALLE,
   TOPE_DETALLE_POR_DEFECTO,
-  colorChurn,
+  conSemaforoChurn,
   metricaDeTarjeta,
   type ResultadoSalidas,
 } from '../../models/monitor-salidas.model';
@@ -58,7 +58,11 @@ export class MonitorSalidasRetencionesComponent {
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   protected readonly tarjetas = computed(() => this.resultado().cards);
-  protected readonly filas = computed(() => this.resultado().table);
+  /**
+   * Las filas con su semáforo de churn ya calculado — es lo que dibuja el punto
+   * de color de la columna "Churn rate", como el `trafficFn` del legado.
+   */
+  protected readonly filas = computed(() => conSemaforoChurn(this.resultado().table));
 
   /** Métrica abierta en el detalle (`sali1`/`sali3`/`clive`); `null` mantiene el modal cerrado. */
   protected readonly metrica = signal<string | null>(null);
@@ -97,9 +101,6 @@ export class MonitorSalidasRetencionesComponent {
     });
   }
 
-  protected colorDeChurn(fila: Record<string, unknown>): string {
-    return colorChurn(fila['ret'] as number);
-  }
 
   /** Las tarjetas 0 y 3 no abren detalle en el legado. */
   protected tarjetaAbreDetalle(indice: number): boolean {

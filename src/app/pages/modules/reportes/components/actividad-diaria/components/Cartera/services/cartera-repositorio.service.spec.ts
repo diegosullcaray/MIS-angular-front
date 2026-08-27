@@ -32,11 +32,16 @@ describe('CarteraRepositorioService', () => {
     expect(getRegularTableResult).toHaveBeenCalledWith('RS_DESEMB_01', { tip_cod: 9, cod_rel: 'FC', fec: '2025-11-30' });
   });
 
-  it('"Ranking Comercial" manda el nodo como `territorio`/`corredor`, no como `tip_cod`/`cod_rel`', () => {
-    servicio.rankingComercial(NODO).subscribe();
+  /**
+   * Tarea 3 de `incidencias-carteras-actualizado.md`: este reporte no debe
+   * colgar del filtro global. El legado manda `territorio` y `corredor` en '0'
+   * FIJO, trae el ranking completo y filtra del lado del cliente.
+   */
+  it('"Ranking Comercial" NO usa la jerarquía: manda `territorio`/`corredor` en "0"', () => {
+    servicio.rankingComercial().subscribe();
     expect(getRegularTableResult).toHaveBeenCalledWith('RS_RANK_COM_01', {
-      territorio: 'FC',
-      corredor: 9,
+      territorio: '0',
+      corredor: '0',
       fecha: '2025-11-30',
     });
   });
@@ -45,7 +50,7 @@ describe('CarteraRepositorioService', () => {
     getRegularTableResult.mockReturnValue(respuesta({ headers: JSON.stringify([{ key: 'x', label: 'Del backend' }]), data: [] }));
 
     let columnas: unknown;
-    servicio.rankingComercial(NODO).subscribe((r) => (columnas = r.columnas));
+    servicio.rankingComercial().subscribe((r) => (columnas = r.columnas));
 
     expect(columnas).toBe(COLUMNAS_RANKING_COMERCIAL);
   });
@@ -57,7 +62,7 @@ describe('CarteraRepositorioService', () => {
         respuesta({ headers: '[]', data: [{ Timing: timing, Percent_Cumpl: avance }] }),
       );
       let fila: Record<string, unknown> = {};
-      servicio.rankingComercial(NODO).subscribe((r) => (fila = r.filas[0]));
+      servicio.rankingComercial().subscribe((r) => (fila = r.filas[0]));
       return fila['Percent_Cumpl_Semaforo'];
     }
 
@@ -82,7 +87,7 @@ describe('CarteraRepositorioService', () => {
     it('un avance vacío queda vacío', () => {
       getRegularTableResult.mockReturnValue(respuesta({ headers: '[]', data: [{ Timing: 20, Percent_Cumpl: null }] }));
       let fila: Record<string, unknown> = {};
-      servicio.rankingComercial(NODO).subscribe((r) => (fila = r.filas[0]));
+      servicio.rankingComercial().subscribe((r) => (fila = r.filas[0]));
       expect(fila['Percent_Cumpl_Semaforo']).toBe('');
     });
   });
