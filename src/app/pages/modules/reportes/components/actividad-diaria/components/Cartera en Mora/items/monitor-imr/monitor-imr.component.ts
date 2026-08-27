@@ -22,7 +22,6 @@ import {
   TOPES_DETALLE_IMR,
   TOPE_DETALLE_IMR_POR_DEFECTO,
   esFilaTotal,
-  metricaDeTarjetaImr,
   permiteDrilldown,
   type ResultadoImr,
 } from '../../models/cartera-en-mora.model';
@@ -33,9 +32,14 @@ import { MonitorImrService } from '../../services/monitor-imr.service';
  * `repositorio/mon-imr`.
  *
  * Misma forma que "Monitor Salidas y Retenciones": tarjetas arriba, tabla del
- * nivel abajo y un diálogo con el listado de clientes detrás de la métrica que
- * se toque. Dos diferencias con aquel: las columnas de la tabla las manda el
- * backend (no están hardcodeadas) y todas las tarjetas abren detalle.
+ * nivel abajo y un diálogo con el listado de clientes.
+ *
+ * Dos diferencias con aquel:
+ *
+ * - Las columnas de la tabla las manda el backend, no están hardcodeadas.
+ * - **Las tarjetas NO abren detalle.** En el legado `detCard()` deja comentada
+ *   la apertura del diálogo y `getCardValStyle()` no devuelve subrayado: son
+ *   solo lectura. El único punto de entrada al detalle es la tabla.
  */
 @Component({
   selector: 'app-monitor-imr',
@@ -104,12 +108,6 @@ export class MonitorImrComponent {
     this.nivelActual.set(nodo);
   }
 
-  protected onTarjeta(indice: number): void {
-    const metrica = metricaDeTarjetaImr(indice);
-    const nodo = this.nivelActual();
-    if (!metrica || !nodo) return;
-    this.abrirDetalle(nodo, metrica);
-  }
 
   /**
    * Clic en la tabla — replica el `ddEvent()` del legado, que hace tres cosas

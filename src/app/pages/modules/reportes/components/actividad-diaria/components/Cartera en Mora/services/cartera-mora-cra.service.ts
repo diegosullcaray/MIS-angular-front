@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
+import type { OpcionFiltro } from '../../../../../models/filtros.model';
+import { TODO } from '../../Portafolio Reasignado/models/portafolio-reasignado.model';
 import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.model';
 
 /**
@@ -19,6 +21,9 @@ import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.mo
  * - **Nombre del corte.** Unos piden `fec` (lo agrega `BloqueReporteService`) y
  *   otros `fecha`, que hay que pasarle aparte. Y los de los hosts `-v4`/`-v7`
  *   no reciben `fec` en absoluto: van por `regularExacto()`.
+ * - **Bloques vacíos.** El backend contesta 500 cuando una consulta no devuelve
+ *   filas; en los reportes de varios bloques eso no puede tumbar al resto, así
+ *   que esos usan `regularTolerante()`.
  */
 @Injectable({ providedIn: 'root' })
 export class CarteraMoraCraService {
@@ -52,18 +57,53 @@ export class CarteraMoraCraService {
   /**
    * "Monitor Efectividades" — legado `mon-efec` (`RS_MON_EFEC`, host `cra-v4`).
    *
-   * Cuatro bloques: el `_01` resumen, el `_02` con sus siete filtros propios y
-   * el `_03` dos veces, una por tramo (`-30-0` y `1-30`), que es como el legado
-   * arma sus dos "Resumen de Gestiones Ingresadas".
+   * Resumen: el `_01` y el `_03` dos veces, una por tramo (`-30-0` y `1-30`),
+   * que es como el legado arma sus dos "Resumen de Gestiones Ingresadas". El
+   * `_02` no va acá: es la segunda pestaña, con sus propios filtros.
+   *
+   * Van por `regularTolerante()` porque no todos traen datos siempre: el backend
+   * responde 500 (`NullPointerException: Resultado vacio para: regularData`)
+   * cuando un bloque no tiene filas, y dentro de un `forkJoin` eso tumbaba el
+   * reporte entero aunque los otros tres hubieran respondido bien.
    */
-  monitorEfectividades(nodo: NodoConsulta, filtros: Record<string, unknown>): Observable<TablaReporteResultado[]> {
+  monitorEfectividadesResumen(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     const fecha = this.bloques.fec();
     return forkJoin([
-      this.bloques.regularExacto('RS_MON_EFEC_01', nodo, { fecha }),
-      this.bloques.regularExacto('RS_MON_EFEC_02', nodo, { fecha, ...filtros }),
-      this.bloques.regularExacto('RS_MON_EFEC_03', nodo, { fecha, tram: '1. -30-0' }),
-      this.bloques.regularExacto('RS_MON_EFEC_03', nodo, { fecha, tram: '2. 1-30' }),
+      this.bloques.regularTolerante('RS_MON_EFEC_01', nodo, { fecha }),
+      this.bloques.regularTolerante('RS_MON_EFEC_03', nodo, { fecha, tram: '1. -30-0' }),
+      this.bloques.regularTolerante('RS_MON_EFEC_03', nodo, { fecha, tram: '2. 1-30' }),
     ]);
+  }
+
+  /**
+   * Detalle de "Monitor Efectividades" — el bloque `_02`, el de la segunda
+   * pestaña del legado.
+   *
+   * Es el único con filtros propios y además va PAGINADO: el host lo arma como
+   * `{ ...getParamsAdd(), ...page, ...level, ...filtros }`, con `pagen`.
+   */
+  monitorEfectividadesDetalle(
+    nodo: NodoConsulta,
+    filtros: Record<string, unknown>,
+    pagina = 1,
+  ): Observable<TablaReporteResultado> {
+    // `pagen` va DESPUÉS de `filtros`: `paramsDetalleComunes()` trae el suyo fijo
+    // en 1 y, si quedara último, pisaría la página que se está pidiendo.
+    return this.bloques.regularTolerante('RS_MON_EFEC_02', nodo, {
+      fecha: this.bloques.fec(),
+      ...filtros,
+      pagen: pagina,
+    });
+  }
+
+  /** Opciones de "Última Gestión": el legado las trae del propio backend (`SEL_EFEC_01`). */
+  opcionesUltimaGestion(): Observable<OpcionFiltro[]> {
+    return this.bloques.regular('SEL_EFEC_01', { tip_cod: 0, cod_rel: '' }).pipe(
+      map((tabla) => [
+        { id: TODO, desc: 'TODO' },
+        ...tabla.body.map((fila) => ({ id: String(fila['id'] ?? ''), desc: String(fila['desc'] ?? fila['id'] ?? '') })),
+      ]),
+    );
   }
 
   /** "Seguimiento Reprogramados" — legado `mon-efecrepro` (`RS_MON_EFECREPRO`, host `cra-v7`). */
@@ -110,13 +150,15 @@ export class CarteraMoraCraService {
    * Igual que el anterior: un solo bloque `_01` pedido tres veces, distinguido
    * por su `mode` (1 potencial ingreso a mora, 2 por grupo, 3 cuota ballon).
    *
-   * Va por `regularExacto()`: su entrada del mapa ya declara el corte como
-   * `fecha`, y el `fec` que agrega `regular()` de más era lo que devolvía 500.
+   * Su entrada del mapa ya declara el corte como `fecha`, así que no lleva el
+   * `fec` que agrega `regular()`. Va por `regularLento()`: mueve mucha data (se
+   * cortaba por timeout) y alguno de los tres `mode` puede volver vacío, lo que
+   * antes tumbaba los tres.
    */
   seguimientoPortafolio(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     const fecha = this.bloques.fec();
     return forkJoin(
-      [1, 2, 3].map((mode) => this.bloques.regularExacto('RS_AVA_POR_01', nodo, { fecha, mode })),
+      [1, 2, 3].map((mode) => this.bloques.regularLento('RS_AVA_POR_01', nodo, { fecha, mode })),
     );
   }
 
@@ -124,10 +166,16 @@ export class CarteraMoraCraService {
     return this.bloques.regular(codRep, nodo).pipe(map((tabla1) => ({ tabla1 })));
   }
 
-  /** Bloque único de un host `-v7`: `regularData` y solo los params del mapa (`fecha`), sin `fec`. */
+  /**
+   * Bloque único de un host `-v7`: `regularData` y solo los params del mapa
+   * (`fecha`), sin `fec`.
+   *
+   * Va con el timeout largo: los dos reportes de este host mueven tanta data que
+   * no entran en los 30 s por defecto y se cortaban antes de terminar.
+   */
   private unBloqueV7(codRep: string, nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.bloques
-      .regularExacto(codRep, nodo, { fecha: this.bloques.fec() })
+      .regularLento(codRep, nodo, { fecha: this.bloques.fec() })
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 

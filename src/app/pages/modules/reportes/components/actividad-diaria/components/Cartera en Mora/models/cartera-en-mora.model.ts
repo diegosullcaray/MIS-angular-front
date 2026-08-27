@@ -109,14 +109,6 @@ export const TITULO_DETALLE_IMR: Record<string, string> = {
   sali5: 'Salidas mayor a s/600',
 };
 
-/**
- * Métrica que abre cada tarjeta — legado `detCard()`, que mapea el índice a
- * `sali1..sali5`. Acá TODAS las tarjetas abren detalle (a diferencia de Monitor
- * Salidas, donde el legado corta en los índices 0 y 3).
- */
-export function metricaDeTarjetaImr(indice: number): string | undefined {
-  return indice >= 0 && indice < 5 ? `sali${indice + 1}` : undefined;
-}
 
 /**
  * Columnas del listado de clientes del detalle — legado `lista-clientes.util.ts`

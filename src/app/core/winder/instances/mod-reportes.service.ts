@@ -1,3 +1,4 @@
+import { HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AntService } from '../ant/ant-service.class';
@@ -33,9 +34,15 @@ export class ModReportesService extends AntService {
    *
    * @param codRep Código del bloque del reporte (`cod_rep`, ej: `'Monitor_Dese_01'`).
    * @param params Parámetros propios del bloque + jerarquía elegida (`tip_cod`/`cod_rel`).
+   * @param context Contexto HTTP opcional — lo usan los reportes de data masiva
+   *   para pedir un `TIMEOUT_MS` más largo que el de 30 s por defecto.
    */
-  public getRegularData(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
-    return this.getSimpleResponseString('regularData', { ...params, cod_rep: codRep }, 'result');
+  public getRegularData(
+    codRep: string,
+    params: Record<string, unknown>,
+    context?: HttpContext
+  ): Observable<IWinderResponse> {
+    return this.getSimpleResponseString('regularData', { ...params, cod_rep: codRep }, 'result', context);
   }
 
   /** Variante "deprecada" del motor de reportes "mixtos" (strand `reportData` en vez de `regularData`) — el propio legado la marca como obsoleta (`ComercialService.getReportData()`: "está usando un método depreciado") pero algunos reportes todavía no fueron migrados a `regularData` del lado del backend (ej. "Cartera", `rda/sectorista/cartera/cartera_sec`). */

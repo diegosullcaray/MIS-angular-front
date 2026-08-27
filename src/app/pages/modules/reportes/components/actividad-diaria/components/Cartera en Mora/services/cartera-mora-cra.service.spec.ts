@@ -1,5 +1,10 @@
+import { HttpContext } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import {
+  TIMEOUT_MS,
+  TIMEOUT_REPORTE_PESADO_MS,
+} from '../../../../../../../../core/interceptors/auth.interceptor';
+import { of, throwError } from 'rxjs';
 import { CarteraMoraCraService } from './cartera-mora-cra.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
@@ -38,34 +43,56 @@ describe('CarteraMoraCraService', () => {
 
   describe('reportes de los hosts `-v4` y `-v7` (incidencias 2, 3 y 4)', () => {
     it('"Monitor Efectividades" NO usa el strand deprecado: va por `regularData`', () => {
-      servicio.monitorEfectividades(NODO, {}).subscribe();
+      servicio.monitorEfectividadesResumen(NODO).subscribe();
 
       expect(getDeprecatedData).not.toHaveBeenCalled();
       expect(getRegularData).toHaveBeenCalled();
     });
 
-    it('"Monitor Efectividades" pide sus 4 bloques, con el `_03` dos veces por tramo', () => {
-      servicio.monitorEfectividades(NODO, {}).subscribe();
+    it('el resumen pide el `_01` y el `_03` dos veces, una por tramo (el `_02` es del detalle)', () => {
+      servicio.monitorEfectividadesResumen(NODO).subscribe();
 
       expect(getRegularData.mock.calls.map(([codRep]) => codRep)).toEqual([
         'RS_MON_EFEC_01',
-        'RS_MON_EFEC_02',
         'RS_MON_EFEC_03',
         'RS_MON_EFEC_03',
       ]);
-      expect(getRegularData.mock.calls[2][1]).toMatchObject({ tram: '1. -30-0' });
-      expect(getRegularData.mock.calls[3][1]).toMatchObject({ tram: '2. 1-30' });
+      expect(getRegularData.mock.calls[1][1]).toMatchObject({ tram: '1. -30-0' });
+      expect(getRegularData.mock.calls[2][1]).toMatchObject({ tram: '2. 1-30' });
     });
 
-    it('los filtros del bloque `_02` viajan solo en ese bloque', () => {
-      servicio.monitorEfectividades(NODO, { tramof: 'TODO', prod: 'AGROPECUARIO' }).subscribe();
+    it('el detalle pide el `_02` con sus filtros y con `pagen`', () => {
+      servicio.monitorEfectividadesDetalle(NODO, { prod: 'AGROPECUARIO' }, 3).subscribe();
 
-      expect(getRegularData.mock.calls[1][1]).toMatchObject({ prod: 'AGROPECUARIO' });
-      expect(getRegularData.mock.calls[0][1]).not.toHaveProperty('prod');
+      expect(getRegularData.mock.calls[0][0]).toBe('RS_MON_EFEC_02');
+      expect(getRegularData.mock.calls[0][1]).toMatchObject({ prod: 'AGROPECUARIO', pagen: 3 });
+    });
+
+    it('la página pedida gana sobre el `pagen` fijo que trae `paramsDetalleComunes`', () => {
+      servicio.monitorEfectividadesDetalle(NODO, { pagen: 1 }, 5).subscribe();
+
+      expect(getRegularData.mock.calls[0][1]).toMatchObject({ pagen: 5 });
+    });
+
+    /**
+     * El backend contesta 500 (`NullPointerException: Resultado vacio`) cuando un
+     * bloque no tiene filas. Dentro del `forkJoin` eso tumbaba el reporte entero.
+     */
+    it('un bloque que falla no tumba a los demás: devuelve tabla vacía', () => {
+      getRegularData
+        .mockReturnValueOnce(of(RESPUESTA))
+        .mockReturnValueOnce(throwError(() => new Error('500 Resultado vacio para: regularData')))
+        .mockReturnValueOnce(of(RESPUESTA));
+
+      let tablas: unknown[] | undefined;
+      servicio.monitorEfectividadesResumen(NODO).subscribe((t) => (tablas = t));
+
+      expect(tablas).toHaveLength(3);
+      expect(tablas?.[1]).toEqual({ headers: [], body: [], additional: {} });
     });
 
     it('ningún bloque de `-v4` manda `fec`: el host solo manda los params del mapa y el nodo', () => {
-      servicio.monitorEfectividades(NODO, {}).subscribe();
+      servicio.monitorEfectividadesResumen(NODO).subscribe();
 
       for (const [, params] of getRegularData.mock.calls) {
         expect(params).not.toHaveProperty('fec');
@@ -105,6 +132,39 @@ describe('CarteraMoraCraService', () => {
         expect(params).not.toHaveProperty('fec');
         expect(params).toMatchObject({ fecha: '20251130' });
       }
+    });
+  });
+
+  /**
+   * Tareas 3 y 4 de `incidencias-mora-actualizado.md`: los dos reportes de data
+   * masiva se cortaban por el timeout global de 30 s. Piden el suyo por
+   * `HttpContext` en vez de subir el global para toda la app.
+   */
+  describe('timeout largo de los reportes pesados', () => {
+    /** El `HttpContext` es el tercer argumento de `getRegularData`. */
+    function contextoDe(indice: number): HttpContext | undefined {
+      return getRegularData.mock.calls[indice][2];
+    }
+
+    it.each([
+      ['seguimientoReprogramados'],
+      ['reportePagoPuntual'],
+    ])('"%s" pide el timeout largo', (metodo) => {
+      (servicio[metodo as 'seguimientoReprogramados' | 'reportePagoPuntual'])(NODO).subscribe();
+
+      expect(contextoDe(0)?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
+    });
+
+    it('"Seguimiento de Portafolio" lo pide en sus tres bloques', () => {
+      servicio.seguimientoPortafolio(NODO).subscribe();
+
+      for (let i = 0; i < 3; i++) expect(contextoDe(i)?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
+    });
+
+    it('un reporte normal NO pide timeout largo: se queda con el global', () => {
+      servicio.cmgMora(NODO).subscribe();
+
+      expect(contextoDe(0)).toBeUndefined();
     });
   });
 

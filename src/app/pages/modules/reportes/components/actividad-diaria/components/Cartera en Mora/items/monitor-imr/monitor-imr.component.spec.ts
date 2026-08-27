@@ -93,5 +93,71 @@ describe('MonitorImrComponent — clic en la tabla', () => {
 
     expect(c.metrica()).toBeNull();
   });
+});
 
+/**
+ * Segunda vuelta de la incidencia 1 (`incidencias-mora-actualizado.md`, tarea 1):
+ * "al hacer clic en las tarjetas de KPI se abren modales de forma incorrecta".
+ *
+ * En el legado `detCard()` tiene la apertura del diálogo COMENTADA y
+ * `getCardValStyle()` no devuelve subrayado: las tarjetas son solo lectura.
+ */
+describe('MonitorImrComponent — las tarjetas KPI no son interactivas', () => {
+  function fixtureConTarjetas() {
+    TestBed.configureTestingModule({
+      imports: [MonitorImrComponent],
+      providers: [
+        {
+          provide: MonitorImrService,
+          useValue: {
+            resultados: vi.fn().mockReturnValue(
+              of({
+                cards: [
+                  { lbl: 'IMR', val: 10, typ: 'number' },
+                  { lbl: 'Entradas', val: 20, typ: 'number' },
+                ],
+                table: [],
+                columnas: [],
+              }),
+            ),
+            detalle: vi.fn().mockReturnValue(of([])),
+          },
+        },
+        PrimeNgMessageService,
+      ],
+    });
+    const fixture = TestBed.createComponent(MonitorImrComponent);
+    const instancia = fixture.componentInstance as unknown as {
+      onNivelSeleccionado(n: unknown): void;
+      metrica(): string | null;
+    };
+    instancia.onNivelSeleccionado({ tip_cod: 9, cod_rel: 'FC', des_rel: 'FC' });
+    fixture.detectChanges();
+    return { fixture, instancia };
+  }
+
+  it('las tarjetas se pintan como `div`, no como `button`', () => {
+    const { fixture } = fixtureConTarjetas();
+    const tarjetas = fixture.nativeElement.querySelectorAll('.mis-card') as NodeListOf<HTMLElement>;
+
+    expect(tarjetas.length).toBeGreaterThan(0);
+    for (const t of tarjetas) expect(t.tagName).not.toBe('BUTTON');
+  });
+
+  it('hacer clic en una tarjeta no abre el diálogo', () => {
+    const { fixture, instancia } = fixtureConTarjetas();
+    const tarjeta = fixture.nativeElement.querySelector('.mis-card') as HTMLElement;
+
+    tarjeta.click();
+    fixture.detectChanges();
+
+    expect(instancia.metrica()).toBeNull();
+  });
+
+  it('el valor de la tarjeta no lleva subrayado de enlace', () => {
+    const { fixture } = fixtureConTarjetas();
+    const subrayados = fixture.nativeElement.querySelectorAll('.mis-card .underline');
+
+    expect(subrayados.length).toBe(0);
+  });
 });
