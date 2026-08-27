@@ -9,7 +9,6 @@ import { REPORTES_PDM_ROUTES } from './components/Reportes PDM/reportes-pdm.rout
 import { PROYECCIONES_ROUTES } from './components/Proyecciones/proyecciones.routes';
 import { CAMPANAS_ROUTES } from './components/Campañas/campanas.routes';
 import { SEGUROS_ROUTES } from './components/Seguros/seguros.routes';
-import { MOVILIDAD_ROUTES } from './components/Movilidad/movilidad.routes';
 /** Rutas de "Actividad Diaria" — separadas de `reportes.routes.ts` por la misma razón que `analista.routes.ts`. */
 export const ACTIVIDAD_DIARIA_ROUTES: Routes = [
    ...CAPTACIONES_ROUTES,
@@ -22,5 +21,4 @@ export const ACTIVIDAD_DIARIA_ROUTES: Routes = [
    ...COMERCIAL_EJECUTIVO_ROUTES,
    ...PROYECCIONES_ROUTES,
    ...REPORTES_PDM_ROUTES,
-   ...MOVILIDAD_ROUTES
 ];

@@ -2,7 +2,7 @@
    columna scrollea por dentro, igual que la plantilla original. */
 .mis-config {
   display: flex;
-  height: min(70vh, 520px);
+  height: min(70vh, 620px);
   overflow: hidden;
   font-size: var(--mis-text-xs);
 }
