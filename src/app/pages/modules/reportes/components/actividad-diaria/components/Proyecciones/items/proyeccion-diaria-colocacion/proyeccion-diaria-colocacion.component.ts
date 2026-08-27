@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ReporteSimpleComponent } from '../../../../../../ui/reporte-simple/reporte-simple.component';
+import { ReporteSimpleComponent, type PestanaReporte } from '../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteBloquesBase } from '../../../../../../ui/reporte-simple/reporte-bloques.base';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
@@ -27,6 +27,18 @@ export class ProyeccionDiariaColocacionComponent extends ReporteBloquesBase {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
   protected readonly titulos = ['Proyección diaria por operaciones', 'Proyección diaria por colocaciones'];
+
+  /**
+   * Una pestaña por tabla en vez de las dos apiladas: son dos vistas del mismo
+   * corte (operaciones y colocaciones) y no se leen juntas.
+   */
+  protected pestanas(): PestanaReporte[] {
+    const bloques = this.bloques();
+    return [
+      { id: 'operaciones', titulo: 'Por operaciones', bloques: bloques.slice(0, 1) },
+      { id: 'colocaciones', titulo: 'Por colocaciones', bloques: bloques.slice(1, 2) },
+    ];
+  }
 
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.diariaColocacion(nodo);

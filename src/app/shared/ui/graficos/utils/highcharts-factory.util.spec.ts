@@ -1,5 +1,5 @@
-import type { SeriesOptionsType, YAxisOptions } from 'highcharts';
-import { opcionesMixto } from './highcharts-factory.util';
+import type { PlotPieOptions, SeriesOptionsType, YAxisOptions } from 'highcharts';
+import { opcionesMixto, opcionesPie } from './highcharts-factory.util';
 import type { BloqueGrafico } from '../models/grafico-comun.model';
 
 function bloque(series: BloqueGrafico['series']): BloqueGrafico {
@@ -80,5 +80,36 @@ describe('opcionesMixto: eje secundario', () => {
 
     expect(seriesDe(opciones).every((s) => (s as { yAxis?: number }).yAxis === 0)).toBe(true);
     expect(ejeSecundario(opciones).visible).toBe(false);
+  });
+});
+
+/**
+ * Tarea 3 de `incidencias-proeyecciones.md`: "Estado de Renovación (Base
+ * Inicial)" es una DONA en el legado (`innerSize: '65%'`), no una torta llena.
+ */
+describe('opcionesPie: dona', () => {
+  const PORCIONES = [
+    { nombre: 'Renovados', valor: 45, color: '#4CB848' },
+    { nombre: 'Por Renovar', valor: 35, color: '#004481' },
+  ];
+
+  function pie(opciones: ReturnType<typeof opcionesPie>): PlotPieOptions {
+    return opciones.plotOptions!.pie as PlotPieOptions;
+  }
+
+  it('por defecto es torta llena: sin `innerSize`', () => {
+    expect(pie(opcionesPie(PORCIONES, false))).not.toHaveProperty('innerSize');
+  });
+
+  it('`dona: true` la vacía por el centro', () => {
+    expect(pie(opcionesPie(PORCIONES, false, { dona: true })).innerSize).toBe('65%');
+  });
+
+  it('respeta el color de cada porción', () => {
+    const serie = (opcionesPie(PORCIONES, false, { dona: true }).series as SeriesOptionsType[])[0];
+    expect((serie as { data: { name: string; y: number; color: string }[] }).data).toEqual([
+      { name: 'Renovados', y: 45, color: '#4CB848' },
+      { name: 'Por Renovar', y: 35, color: '#004481' },
+    ]);
   });
 });

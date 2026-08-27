@@ -1,5 +1,10 @@
+import { HttpContext } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import {
+  TIMEOUT_MS,
+  TIMEOUT_REPORTE_PESADO_MS,
+} from '../../../../../../../../core/interceptors/auth.interceptor';
 import { ProyeccionesService } from './proyecciones.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
@@ -60,5 +65,42 @@ describe('ProyeccionesService', () => {
       'PROYEC_DIACOLREC_01',
       'PROYEC_DIACOLREC_02',
     ]);
+  });
+
+  /**
+   * Tarea 1 de `incidencias-proeyecciones.md`: el reporte se caía con el 500
+   * (`NullPointerException: Resultado vacio para: regularData`) y no terminaba
+   * de cargar dentro del timeout global de 30 s.
+   */
+  describe('timeout y bloques vacíos de "Proyección colocación"', () => {
+    /** El `HttpContext` es el tercer argumento de `getRegularData`. */
+    function contextoDe(indice: number): HttpContext | undefined {
+      return getRegularData.mock.calls[indice][2];
+    }
+
+    it('los dos bloques piden el timeout largo', () => {
+      servicio.colocacion(NODO).subscribe();
+
+      expect(contextoDe(0)?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
+      expect(contextoDe(1)?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
+    });
+
+    it('un bloque sin datos no tumba al otro: queda como tabla vacía', () => {
+      getRegularData
+        .mockReturnValueOnce(throwError(() => new Error('500 Resultado vacio para: regularData')))
+        .mockReturnValueOnce(of(RESPUESTA));
+
+      let tablas: unknown[] | undefined;
+      servicio.colocacion(NODO).subscribe((t) => (tablas = t));
+
+      expect(tablas).toHaveLength(2);
+      expect(tablas?.[0]).toEqual({ headers: [], body: [], additional: {} });
+    });
+
+    it('"Proyección diaria" NO pide el timeout largo: se queda con el global', () => {
+      servicio.diariaColocacion(NODO).subscribe();
+
+      expect(contextoDe(0)).toBeUndefined();
+    });
   });
 });

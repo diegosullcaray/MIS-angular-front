@@ -57,4 +57,6 @@ export interface OpcionesGrafico {
   formato?: FormatoValor;
   /** Para gráficos embebidos en tarjetas que ya traen su propio fondo. */
   fondoTransparente?: boolean;
+  /** Solo en torta: la vacía por el centro (`innerSize`) para dejarla como dona. */
+  dona?: boolean;
 }

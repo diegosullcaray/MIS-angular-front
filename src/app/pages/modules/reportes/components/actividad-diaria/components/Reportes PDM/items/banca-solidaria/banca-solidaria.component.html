@@ -18,6 +18,56 @@
       descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte."
     />
   } @else {
+    @let k = kpis();
+
+    <!-- Las cinco tarjetas del legado, sacadas de la fila de totales de `GRBSOLI_01`. -->
+    <div class="grid gap-3 grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
+      <div class="mis-card p-4 flex flex-col gap-1.5">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Saldo Vigente</span>
+        <span class="text-[22px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          S/ {{ k.saldoVigente | number: '1.0-0' }}
+        </span>
+      </div>
+      <div class="mis-card p-4 flex flex-col gap-1.5">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Mto. Desembolsado</span>
+        <span class="text-[22px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          S/ {{ k.montoDesembolsado | number: '1.0-0' }}
+        </span>
+      </div>
+      <div class="mis-card p-4 flex flex-col gap-1.5">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Ticket Promedio</span>
+        <span class="text-[22px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          S/ {{ k.ticketPromedio | number: '1.2-2' }}
+        </span>
+      </div>
+      <div class="mis-card p-4 flex flex-col gap-1.5">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">N° Clientes</span>
+        <span class="text-[22px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          {{ k.numeroClientes | number: '1.0-0' }}
+        </span>
+      </div>
+      <div class="mis-card p-4 flex flex-col gap-1.5">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Tasa Mes</span>
+        <!-- El legado la pinta como `tappmes * 100`: llega en fracción. -->
+        <span class="text-[22px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          {{ k.tasaMes * 100 | number: '1.0-0' }}%
+        </span>
+      </div>
+    </div>
+
+    <!-- Las dos gráficas del legado, con los wrappers de shared. -->
+    <div class="grid gap-3 grid-cols-1 xl:grid-cols-2">
+      <div class="mis-card p-3 h-[320px] flex flex-col gap-2">
+        <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">Estado de Renovación (Base Inicial)</h2>
+        <app-grafico-pie [porciones]="estadoRenovacion()" [dona]="true" />
+      </div>
+      <div class="mis-card p-3 h-[320px] flex flex-col gap-2">
+        <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">Antigüedad de Cliente</h2>
+        <!-- Una sola serie de conteos: columnas y tooltip con número pelado, no soles. -->
+        <app-grafico-mixto [datos]="antiguedadCliente()" tipo="columna" formato="numero" />
+      </div>
+    </div>
+
     <div class="mis-card p-3 overflow-x-auto">
       <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
     </div>

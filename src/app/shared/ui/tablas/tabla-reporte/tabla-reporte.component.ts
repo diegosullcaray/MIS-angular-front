@@ -74,6 +74,25 @@ export class TablaReporteComponent {
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<FilaReporte>();
 
+  /**
+   * Deja que el texto de cabeceras y celdas haga salto de línea, para que la
+   * tabla entre en el ancho de la pantalla en vez de generar scroll horizontal.
+   *
+   * Por defecto va en `nowrap`, que es lo que corresponde a los reportes anchos:
+   * ahí el scroll es preferible a apretar veinte columnas. Lo activan los
+   * reportes de pocas columnas y encabezados largos —"Proyección Diaria
+   * Colocación"— donde el `nowrap` sacaba scroll sin necesidad.
+   */
+  readonly ajustarAncho = input(false);
+
+  protected claseCelda(): string {
+    return this.ajustarAncho() ? 'whitespace-normal break-words text-center' : 'whitespace-nowrap';
+  }
+
+  protected claseEncabezado(): string {
+    return this.ajustarAncho() ? 'whitespace-normal break-words' : 'whitespace-nowrap';
+  }
+
   /** Columnas de una fila de encabezado, tolerando `columns` ausente o con huecos: estos `computed` corren dentro de la detección de cambios y una excepción congelaría toda la app, no solo la tabla. */
   private columnasDe(fila: FilaEncabezadoReporte | undefined): ColumnaReporte[] {
     return (fila?.columns ?? []).filter((columna): columna is ColumnaReporte => columna != null);
@@ -101,6 +120,9 @@ export class TablaReporteComponent {
 
   /** Ancho fijo del encabezado si el backend lo indica — `c.style?.desktop?.width` del legado. */
   protected anchoEncabezado(columna: ColumnaReporte): string | null {
+    // En modo ajustado no se respeta el ancho fijo del backend: es justamente lo
+    // que fuerza el scroll horizontal que este modo viene a evitar.
+    if (this.ajustarAncho()) return null;
     return columna.style?.desktop?.width ?? null;
   }
 

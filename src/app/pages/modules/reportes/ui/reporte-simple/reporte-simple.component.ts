@@ -71,8 +71,8 @@ export interface PestanaReporte {
                       @if (bloque.titulo) {
                         <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
                       }
-                      <div class="mis-card p-3 overflow-x-auto">
-                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" />
+                      <div class="mis-card p-3" [class.overflow-x-auto]="!ajustarAncho()">
+                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
                       </div>
                       @if (bloque.nota) {
                         <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
@@ -91,8 +91,8 @@ export interface PestanaReporte {
               @if (bloque.titulo) {
                 <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
               }
-              <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" />
+              <div class="mis-card p-3" [class.overflow-x-auto]="!ajustarAncho()">
+                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
               </div>
               @if (bloque.nota) {
                 <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
@@ -129,6 +129,11 @@ export class ReporteSimpleComponent {
   /** Reparte los bloques en pestañas, como hacen los hosts `cra-v1p2` / `cra-aut-tasa`. */
   readonly pestanas = input<PestanaReporte[]>();
   readonly cargando = input(false);
+  /**
+   * Deja que las tablas hagan salto de línea para entrar en el ancho de la
+   * pantalla, en vez de sacar scroll horizontal. Ver `<app-tabla-reporte>`.
+   */
+  readonly ajustarAncho = input(false);
 
   protected readonly lista = computed<BloqueReporte[]>(() => {
     const varios = this.bloques();

@@ -1,10 +1,16 @@
+<!--
+  `ajustarAncho`: son pocas columnas con encabezados largos, así que el `nowrap`
+  por defecto sacaba scroll horizontal sin necesidad. Acá el texto salta de línea
+  y las dos tablas entran en el ancho de la pantalla.
+-->
 <app-reporte-simple
   titulo="Proyección diaria colocación"
   subtitulo="Proyecciones"
   [paramsHier]="paramsHier"
   [nivel]="nivelActual()"
-  [bloques]="bloques()"
+  [pestanas]="pestanas()"
   [cargando]="cargando()"
+  [ajustarAncho]="true"
   (nivelSeleccionado)="onNivelSeleccionado($event)"
   (errorJerarquia)="onErrorJerarquia()"
 />

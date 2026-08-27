@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
-import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
+import { derivadosDeFilaTotal, type BancaSolidariaResultado } from '../models/banca-solidaria.model';
 import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.model';
 
 /**
@@ -27,12 +27,17 @@ export class ReportesPdmService {
    *
    * Ojo con el nombre del parámetro: este bloque pide `fec`, pero con el formato
    * con guiones de `fecha()` — no es el `fec` compacto del motor mixto.
+   *
+   * Las tarjetas y las dos gráficas NO son bloques aparte: el legado las saca de
+   * la primera fila de esta misma tabla, la de totales.
    */
-  bancaSolidaria(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
-    return this.bloques.tablaRegularCon('GRBSOLI_01', {
-      tip_cod: nodo.tip_cod,
-      cod_rel: nodo.cod_rel,
-      fec: this.bloques.fecha(),
-    });
+  bancaSolidaria(nodo: NodoConsulta): Observable<BancaSolidariaResultado> {
+    return this.bloques
+      .tablaRegularCon('GRBSOLI_01', {
+        tip_cod: nodo.tip_cod,
+        cod_rel: nodo.cod_rel,
+        fec: this.bloques.fecha(),
+      })
+      .pipe(map((tabla) => ({ tabla, ...derivadosDeFilaTotal(tabla.filas) })));
   }
 }

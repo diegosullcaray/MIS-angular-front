@@ -25,11 +25,16 @@ export class GraficoPieComponent {
   readonly titulo = input('');
   /** Para gráficos embebidos en tarjetas que ya traen su propio fondo. */
   readonly fondoTransparente = input(false);
+  /** Vacía el centro: la torta pasa a ser dona (legado `innerSize: '65%'`). */
+  readonly dona = input(false);
 
   /** Emite el nombre de la porción clickeada. */
   readonly porcionSeleccionada = output<string>();
 
   protected readonly opciones = computed(() =>
-    opcionesPie(this.porciones(), this.tema.oscuro(), { fondoTransparente: this.fondoTransparente() })
+    opcionesPie(this.porciones(), this.tema.oscuro(), {
+      fondoTransparente: this.fondoTransparente(),
+      dona: this.dona(),
+    })
   );
 }

@@ -6,7 +6,8 @@
           <th
             [attr.colspan]="columna.cols || 1"
             [attr.rowspan]="columna.rows || 1"
-            class="text-[12px] uppercase text-center whitespace-nowrap border border-[var(--mis-text-on-primary)]/25"
+            class="text-[12px] uppercase text-center border border-[var(--mis-text-on-primary)]/25"
+            [class]="claseEncabezado()"
             [style.background-color]="fondoEncabezado(columna)"
             [style.width]="anchoEncabezado(columna)"
             style="color: var(--mis-text-on-primary)"
@@ -24,7 +25,7 @@
       (click)="onClickFila(fila)"
     >
       @for (columna of columnasDato(); track columna.columnDef) {
-        <td class="text-[13px] whitespace-nowrap" [class]="alineacion(columna)" [style.background]="fondoCelda(fila, columna)">
+        <td class="text-[13px]" [class]="alineacion(columna) + ' ' + claseCelda()" [style.background]="fondoCelda(fila, columna)">
           @if (esSemaforo(columna)) {
             @if (mostrarSemaforo(fila, columna)) {
               <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(valor(fila, columna))"></i>

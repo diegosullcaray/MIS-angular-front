@@ -449,4 +449,59 @@ describe('TablaReporteComponent', () => {
       expect(anchoDe(fixture, 1)).toBe(6);
     });
   });
+
+  /**
+   * Tarea 2 de `incidencias-proeyecciones.md`: "las dos tablas generan scroll
+   * horizontal innecesario". Con pocas columnas y encabezados largos, el
+   * `nowrap` por defecto y el ancho fijo del backend sacan scroll sin
+   * necesidad; `ajustarAncho` deja que el texto salte de línea.
+   */
+  describe('ajustarAncho', () => {
+    const CON_ANCHO: FilaEncabezadoReporte[] = [
+      {
+        columns: [
+          { columnDef: 'nom', header: 'Nombre muy largo de columna', isdata: 1, style: { desktop: { width: '320px' } } },
+        ],
+      },
+    ];
+
+    function crearCon(ajustar: boolean, encabezados = CON_ANCHO) {
+      TestBed.configureTestingModule({ imports: [TablaReporteComponent] });
+      const fixture = TestBed.createComponent(TablaReporteComponent);
+      fixture.componentRef.setInput('encabezados', encabezados);
+      fixture.componentRef.setInput('filas', FILAS);
+      fixture.componentRef.setInput('ajustarAncho', ajustar);
+      fixture.detectChanges();
+      return fixture;
+    }
+
+    it('por defecto mantiene el `nowrap`: en los reportes anchos el scroll es lo correcto', () => {
+      const componente = crearCon(false).componentInstance;
+
+      expect(componente['claseEncabezado']()).toContain('whitespace-nowrap');
+      expect(componente['claseCelda']()).toContain('whitespace-nowrap');
+    });
+
+    it('activado deja que el texto salte de línea', () => {
+      const componente = crearCon(true).componentInstance;
+
+      expect(componente['claseEncabezado']()).toContain('whitespace-normal');
+      expect(componente['claseCelda']()).toContain('whitespace-normal');
+      expect(componente['claseCelda']()).not.toContain('whitespace-nowrap');
+    });
+
+    /** El ancho fijo del backend es justamente lo que fuerza el scroll. */
+    it('activado ignora el ancho fijo que manda el backend', () => {
+      const columna = CON_ANCHO[0].columns[0];
+      // Un solo fixture: `TestBed` no se puede reconfigurar dentro del mismo test.
+      const fixture = crearCon(false);
+
+      expect(fixture.componentInstance['anchoEncabezado'](columna)).toBe('320px');
+
+      fixture.componentRef.setInput('ajustarAncho', true);
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance['anchoEncabezado'](columna)).toBeNull();
+    });
+  });
 });

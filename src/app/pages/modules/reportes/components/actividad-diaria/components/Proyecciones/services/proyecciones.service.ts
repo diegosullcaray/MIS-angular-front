@@ -20,12 +20,21 @@ import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.
 export class ProyeccionesService {
   private readonly bloques = inject(BloqueReporteService);
 
-  /** "Proyección colocación" — legado `proy_M1` (`PROYEC_COLREC`, host `cra-v11`). */
+  /**
+   * "Proyección colocación" — legado `proy_M1` (`PROYEC_COLREC`, host `cra-v11`).
+   *
+   * Va por `regularLento()`: mueve bastante data y no entraba en los 30 s del
+   * timeout global, y además el backend contesta 500
+   * (`NullPointerException: Resultado vacio para: regularData`) cuando un bloque
+   * no devuelve filas. Dentro del `forkJoin` eso tumbaba el reporte entero; así
+   * el bloque sin datos queda como tabla vacía —la tabla ya pinta "Sin datos
+   * para mostrar"— y el otro se ve igual.
+   */
   colocacion(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     const fec = this.bloques.fec();
     return forkJoin([
-      this.bloques.regularExacto('PROYEC_COLREC_01', nodo, { fec }),
-      this.bloques.regularExacto('PROYEC_COLREC_03', nodo),
+      this.bloques.regularLento('PROYEC_COLREC_01', nodo, { fec }),
+      this.bloques.regularLento('PROYEC_COLREC_03', nodo),
     ]);
   }
 

@@ -156,7 +156,14 @@ export function opcionesPie(porciones: readonly PorcionGrafico[], oscuro: boolea
     ...base,
     chart: { ...base.chart, type: 'pie' },
     legend: { ...base.legend, enabled: true, align: 'center', verticalAlign: 'bottom', layout: 'horizontal' },
-    plotOptions: { pie: { showInLegend: true, dataLabels: { enabled: false }, borderWidth: 0 } },
+    plotOptions: {
+      pie: {
+        showInLegend: true,
+        dataLabels: { enabled: false },
+        borderWidth: 0,
+        ...(config.dona ? { innerSize: '65%' } : {}),
+      },
+    },
     series: [
       {
         type: 'pie',
