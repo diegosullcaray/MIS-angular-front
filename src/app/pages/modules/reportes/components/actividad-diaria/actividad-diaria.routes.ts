@@ -9,6 +9,8 @@ import { REPORTES_PDM_ROUTES } from './components/Reportes PDM/reportes-pdm.rout
 import { PROYECCIONES_ROUTES } from './components/Proyecciones/proyecciones.routes';
 import { CAMPANAS_ROUTES } from './components/Campañas/campanas.routes';
 import { SEGUROS_ROUTES } from './components/Seguros/seguros.routes';
+import { APLICATIVO_MOVIL_ROUTES } from './components/Aplicativo Movil/aplicativo-movil.routes';
+import { TABLERO_DIGITAL_ROUTES } from './components/Tablero Digital/tablero-digital.routes';
 /** Rutas de "Actividad Diaria" — separadas de `reportes.routes.ts` por la misma razón que `analista.routes.ts`. */
 export const ACTIVIDAD_DIARIA_ROUTES: Routes = [
    ...CAPTACIONES_ROUTES,
@@ -21,4 +23,25 @@ export const ACTIVIDAD_DIARIA_ROUTES: Routes = [
    ...COMERCIAL_EJECUTIVO_ROUTES,
    ...PROYECCIONES_ROUTES,
    ...REPORTES_PDM_ROUTES,
+   ...APLICATIVO_MOVIL_ROUTES,
+   ...TABLERO_DIGITAL_ROUTES,
+   // "Resumen de Movilidad" no cuelga de ningún sub-nodo del menú: sus dos
+   // reportes son items directos de "Actividad Diaria", así que sus rutas van
+   // acá y no en un archivo de módulo propio.
+   {
+     /** Legado `res-mov` (`RESNMOV_01`, host paginado `cra-V10`). */
+     path: 'leg/com/rda/adm/res-mov',
+     loadComponent: () =>
+       import('./items/resumen-movilidad-comercial/resumen-movilidad-comercial.component').then(
+         (c) => c.ResumenMovilidadComercialComponent,
+       ),
+   },
+   {
+     /** Legado `res-mov-rec` (`RESNMOVR_01`, host `cra-v6`: consulta por el usuario, sin jerarquía). */
+     path: 'leg/com/rda/adm/res-mov-rec',
+     loadComponent: () =>
+       import('./items/resumen-movilidad-recuperaciones/resumen-movilidad-recuperaciones.component').then(
+         (c) => c.ResumenMovilidadRecuperacionesComponent,
+       ),
+   },
 ];

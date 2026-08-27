@@ -167,6 +167,7 @@ export class AuthService {
       codBt: profile.cod_bt,
       fechaCorte: profile.curr_fec,
       fechasHabilitadas: profile.hab_fec,
+      numDoc: profile.num_doc,
     };
   }
 

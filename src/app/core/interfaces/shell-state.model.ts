@@ -14,6 +14,15 @@ export interface UsuarioActivo {
   fechaCorte?: string;
   /** Fechas de corte re-consultables (`profile.hab_fec` del backend Ant), separadas por coma, formato `YYYYMMDD` cada una. */
   fechasHabilitadas?: string;
+  /**
+   * Documento del usuario (`profile.num_doc` del backend Ant).
+   *
+   * Lo pide el host `report-cra-v6` del legado, que descarta el nodo de
+   * jerarquía y consulta SIEMPRE por el usuario logueado
+   * (`tip_cod: 2, cod_rel: num_doc`) — ver "Resumen de Movilidad
+   * Recuperaciones".
+   */
+  numDoc?: string;
 }
 
 export interface MenuItemActivo {

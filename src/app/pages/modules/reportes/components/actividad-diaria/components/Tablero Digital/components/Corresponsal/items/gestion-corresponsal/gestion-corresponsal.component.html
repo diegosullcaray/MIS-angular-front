@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Vista Gestión - Corresponsales"
+  subtitulo="Tablero Digital · Corresponsal"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

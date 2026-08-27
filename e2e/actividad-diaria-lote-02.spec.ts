@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 import { inyectarSesionVigente } from './fixtures/session';
 
 /**
- * Smoke de los seis módulos migrados en el lote 02: Seguros, Campañas,
- * Comercial Ejecutivo, Proyecciones, Reportes PDM y Movilidad.
+ * Smoke de los cinco módulos migrados en el lote 02: Seguros, Campañas,
+ * Comercial Ejecutivo, Proyecciones y Reportes PDM.
  */
 const REPORTES: readonly [string, string][] = [
   // Seguros
@@ -26,9 +26,8 @@ const REPORTES: readonly [string, string][] = [
   // Reportes PDM
   ['/app/reportes/leg/com/rda/adm/seg_pdm', 'Seguimiento PDM'],
   ['/app/reportes/repositorio/actividad-diaria/cartera/banca-solidaria', 'Gestión de Banca Solidaria'],
-  // Movilidad
-  ['/app/reportes/leg/com/rda/adm/res-mov', 'Resumen Movilidad Comercial'],
-  ['/app/reportes/leg/com/rda/adm/res-mov-rec', 'Resumen Movilidad Recuperaciones'],
+  // Los dos "Resumen de Movilidad" dejaron de ser un módulo propio: ahora son
+  // items directos de "Actividad Diaria" y su smoke vive en el lote 03.
 ];
 
 test.describe('Actividad Diaria — smoke del lote 02', () => {
