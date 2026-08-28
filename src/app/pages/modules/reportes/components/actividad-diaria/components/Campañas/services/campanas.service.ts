@@ -2,7 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
+import type { OpcionFiltro } from '../../../../../models/filtros.model';
 import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.model';
+import { TODO } from '../../Portafolio Reasignado/models/portafolio-reasignado.model';
 
 /** Los filtros propios de "Agendamiento" — `fuga`, `prop` y el rango `nom`. */
 export interface FiltrosAgenda {
@@ -17,6 +19,9 @@ export interface FiltrosAgenda {
  * Apadrinamiento y Mentoring salen del motor "mixto"; Agendamiento vive en el
  * repositorio y va por `table.regular` con `fecha` (con guiones) y sus tres
  * filtros.
+ *
+ * Mentoring es el único de los tres con un filtro propio que depende del
+ * nivel elegido (el Asesor, `SEL_JER_MENTORING_01`), no de un catálogo fijo.
  */
 @Injectable({ providedIn: 'root' })
 export class CampanasService {
@@ -35,12 +40,35 @@ export class CampanasService {
   }
 
   /**
+   * Opciones del filtro "Asesor" de "Reporte Mentoring" — legado
+   * `renderUltGestion()`, que las trae de `SEL_JER_MENTORING_01` para el nodo
+   * de jerarquía elegido (no es una lista fija: cambia con el nivel).
+   *
+   * Sin `fec`: el legado la pide con exactamente `{ tip_cod, cod_rel }`.
+   */
+  opcionesAsesorMentoring(nodo: NodoConsulta): Observable<OpcionFiltro<string>[]> {
+    return this.bloques.regularExacto('SEL_JER_MENTORING_01', nodo).pipe(
+      map((tabla) => [
+        { id: TODO, desc: 'TODO' },
+        ...tabla.body.map((fila) => ({ id: String(fila['id'] ?? ''), desc: String(fila['desc'] ?? fila['id'] ?? '') })),
+      ]),
+    );
+  }
+
+  /**
    * "Reporte Mentoring" — legado `RMentoring` (`RMENTORIN_01`, host `cra-v1p7`).
    *
    * El mapa declara un segundo bloque ("Créditos Grupales") pero está comentado.
+   *
+   * Al `fec` del bloque el legado le suma el asesor elegido (`resp`, del
+   * `filterF$` de `report-cra-v1p7.component.ts`) — sin él el backend
+   * respondía 500. Va por `regularLento()`: el reporte mueve tanta data que no
+   * entraba en los 30 s por defecto ("dale más tiempo de carga").
    */
-  mentoring(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.bloques.regular('RMENTORIN_01', nodo).pipe(map((tabla1) => ({ tabla1 })));
+  mentoring(nodo: NodoConsulta, resp: string = TODO): Observable<ReporteBloqueUnico> {
+    return this.bloques
+      .regularLento('RMENTORIN_01', nodo, { fec: this.bloques.fec(), resp })
+      .pipe(map((tabla1) => ({ tabla1 })));
   }
 
   /**

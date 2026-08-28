@@ -1,4 +1,5 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
@@ -7,7 +8,7 @@ import { WindowPanelComponent } from '../../../../../../../../../shared/ui/windo
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
-import type { TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
+import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
 import {
   FILTRO_AGENDA_POR_DEFECTO,
   OPCIONES_NIVEL_FUGA,
@@ -20,14 +21,26 @@ import { CampanasService } from '../../services/campanas.service';
  * "Agendamiento" (`repositorio/actividad-diaria/campanias/agendamiento`) —
  * legado `repositorio/agenda-comercial`.
  *
- * Cuatro tablas del motor `table.regular` (columnas dinámicas del backend),
- * apiladas como en el legado. `fuga` y `prop` afectan a las cuatro; el rango
- * (`nom`) solo a las dos últimas, que son las de detalle.
+ * Cuatro tablas del motor `table.regular`, UNA POR PESTAÑA — el legado las
+ * reparte en un `mat-tab-group` (`Resumen Total`, `Resumen por Bases`,
+ * `Detalle Bases Vivas`, `Detalle Bases Automáticos y express`), no apiladas.
+ *
+ * Los tres filtros no son los mismos en las cuatro: `onTabChanged()` del
+ * legado oculta "Nivel de Fuga" en "Detalle Bases Vivas" y solo muestra
+ * "Rango de fechas Cancela" ahí. "Nivel de propensión" es el único que no
+ * lleva `*ngIf` y está en las cuatro. Por eso cada pestaña pone sus propios
+ * filtros en vez de compartir una franja fija arriba.
+ *
+ * Las cuatro tablas se piden siempre juntas — cualquier filtro dispara las
+ * cuatro consultas, esté la pestaña que esté activa — así que el rango
+ * elegido en "Detalle Bases Vivas" también llega al `RS_AGE_COM_03` de
+ * "Detalle Bases Automáticos y express", aunque ese filtro no se vea ahí.
  */
 @Component({
   selector: 'app-agendamiento',
   standalone: true,
   imports: [
+    TabsModule,
     HierSelectorComponent,
     TablaDinamicaComponent,
     SelectFiltroComponent,
@@ -55,13 +68,11 @@ export class AgendamientoComponent {
   protected readonly tablas = signal<TablaDinamicaResultado[]>([]);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
-  /** Títulos de cada tabla, en el orden en que las apila el legado. */
-  protected readonly titulos = [
-    'Resumen de agendamiento',
-    'Agendamiento por nivel',
-    'Detalle de clientes agendados',
-    'Detalle de gestiones',
-  ];
+  /** Las cuatro tablas del legado, en el orden en que responde el service — una por pestaña. */
+  protected readonly resumenTotal = computed(() => this.tablas()[0] ?? TABLA_DINAMICA_VACIA);
+  protected readonly resumenPorBases = computed(() => this.tablas()[1] ?? TABLA_DINAMICA_VACIA);
+  protected readonly detalleBasesVivas = computed(() => this.tablas()[2] ?? TABLA_DINAMICA_VACIA);
+  protected readonly detalleBasesAutomaticas = computed(() => this.tablas()[3] ?? TABLA_DINAMICA_VACIA);
 
   constructor() {
     effect(() => {
