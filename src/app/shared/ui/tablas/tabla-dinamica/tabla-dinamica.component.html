@@ -30,8 +30,10 @@
           [class]="alineacion(columna)"
           [class.cursor-pointer]="clicable(columna)"
           [class.underline]="clicable(columna)"
+          [class.font-bold]="fondoCelda(fila, columna)"
           [style]="columna.cellStyle ?? null"
-          [style.color]="color(fila, columna)"
+          [style.color]="color(fila, columna) ?? colorFondoDinamico(fila, columna)"
+          [style.background-color]="fondoCelda(fila, columna)"
           (click)="onClickCelda(columna, fila)"
         >
           @if (mostrarSemaforo(fila, columna)) {

@@ -43,10 +43,17 @@ export const COLUMNAS_GESTION_CLIENTES: ColumnaDinamica[] = [
 ];
 
 /**
- * Los siete gráficos, con el título que les pone la plantilla del legado y cómo
- * hay que pintar cada uno.
+ * Los seis gráficos ACTIVOS, con el título que les pone la plantilla del
+ * legado, en su mismo orden, y cómo hay que pintar cada uno.
  *
- * El legado arma un `Highcharts.Options` a mano por gráfico; acá los siete pasan
+ * `GRAF_GEST_COM_03` ("Variación Stock Clientes", sin el corte `T`) NO va: en
+ * el legado ese bloque de gráfico está comentado (`<!-- ... -->`), solo queda
+ * activo el de `GRAF_GEST_COM_05`. Y los dos "Ingresos y Salidas" —`_04` y
+ * `_06`— llevan literalmente el MISMO título en el legado: no es un error de
+ * este archivo, es que muestra el mismo gráfico dos veces con cortes
+ * distintos y sin nada en el texto que los distinga.
+ *
+ * El legado arma un `Highcharts.Options` a mano por gráfico; acá los seis pasan
  * por `<app-grafico-mixto>`, así que de cada uno solo queda lo que la fábrica
  * compartida no puede deducir sola:
  *
@@ -58,6 +65,19 @@ export const COLUMNAS_GESTION_CLIENTES: ColumnaDinamica[] = [
  *   su eje; acá el nivel se manda al eje secundario (`secundaria`), que es lo
  *   que lo convierte en spline. Sin eso las dos series comparten escala y la
  *   variación queda pegada al cero.
+ * - `colorDeSerie`: el color que el legado fija a mano por serie (Highcharts no
+ *   resuelve tokens CSS, así que van en hexadecimal literal, igual que
+ *   `paleta-colores.util.ts`). Sin esto, la fábrica compartida les asigna un
+ *   color genérico por rol que no es el del legado. `Ingresos y Salidas`
+ *   (`_04`/`_06`) no tiene entrada: el legado pinta esas series con el color
+ *   que ya trae el propio payload del backend, sin fijar nada a mano.
+ *
+ * El orden importa: en el legado las dos tablas de variación
+ * (`RS_GEST_COM_02`/`_03`) no cuelgan de ninguna pestaña, van intercaladas
+ * en este mismo bloque de gráficos — "Var Saldo Cartera Vigente" justo
+ * después de "Saldo Cartera Vigente" (`_02`) y "Var Clientes Stock" al final,
+ * después del segundo "Ingresos y Salidas" (`_04`). El componente las inserta
+ * ahí por posición, no por pestaña.
  */
 export interface GraficoGestionComercial {
   codRep: string;
@@ -65,9 +85,24 @@ export interface GraficoGestionComercial {
   formato: FormatoValor;
   esPorcentaje?: (nombreSerie: string) => boolean;
   esNivel?: (nombreSerie: string) => boolean;
+  colorDeSerie?: (nombreSerie: string) => string | undefined;
 }
 
 const sinVariacion = (nombre: string) => !nombre.toLowerCase().includes('var');
+
+/** `prepareResumenChart()`: Desembolsos en columna, TAPP en línea sobre el eje secundario. */
+const coloresDesembolsosDiarios = (nombre: string) => (nombre.toLowerCase().includes('tapp') ? '#3F51B5' : '#4DD0E1');
+
+/** `prepareSaldoCarteraVigente()` / `prepareVariacionCliStockChart()`: mismo par nivel/variación en los dos evolutivos. */
+const coloresNivelYVariacion = (nombre: string) => (sinVariacion(nombre) ? '#1565C0' : '#80DEEA');
+
+/** `prepareVariacionStockChartT()`: tres colores según si el nombre trae "VARIACION", "META" o ninguno. */
+function colorVariacionStockClientes(nombre: string): string {
+  const mayus = nombre.toUpperCase();
+  if (mayus.includes('VARIACION') && !mayus.includes('META')) return '#c5be97';
+  if (mayus.includes('META')) return '#d4e157';
+  return '#eef5b2';
+}
 
 export const GRAFICOS_GESTION_COMERCIAL: GraficoGestionComercial[] = [
   {
@@ -75,14 +110,37 @@ export const GRAFICOS_GESTION_COMERCIAL: GraficoGestionComercial[] = [
     titulo: 'Desembolsos Diarios',
     formato: 'soles',
     esPorcentaje: (nombre) => nombre.toLowerCase().includes('tapp'),
+    colorDeSerie: coloresDesembolsosDiarios,
   },
-  { codRep: 'GRAF_GEST_COM_03', titulo: 'Variación Stock Clientes', formato: 'numero' },
+  {
+    codRep: 'GRAF_GEST_COM_05',
+    titulo: 'Variación Stock Clientes',
+    formato: 'numero',
+    colorDeSerie: colorVariacionStockClientes,
+  },
+  { codRep: 'GRAF_GEST_COM_06', titulo: 'Ingresos y Salidas', formato: 'soles' },
+  {
+    codRep: 'GRAF_GEST_COM_02',
+    titulo: 'Saldo Cartera Vigente',
+    formato: 'soles',
+    esNivel: sinVariacion,
+    colorDeSerie: coloresNivelYVariacion,
+  },
+  // Acá va, por posición, la tabla "Var Saldo Cartera Vigente" (`RS_GEST_COM_02`).
+  {
+    codRep: 'GRAF_GEST_COM_07',
+    titulo: 'Variación Cliente Stock',
+    formato: 'numero',
+    esNivel: sinVariacion,
+    colorDeSerie: coloresNivelYVariacion,
+  },
   { codRep: 'GRAF_GEST_COM_04', titulo: 'Ingresos y Salidas', formato: 'soles' },
-  { codRep: 'GRAF_GEST_COM_02', titulo: 'Saldo Cartera Vigente', formato: 'soles', esNivel: sinVariacion },
-  { codRep: 'GRAF_GEST_COM_05', titulo: 'Variación Stock Clientes (T)', formato: 'numero' },
-  { codRep: 'GRAF_GEST_COM_07', titulo: 'Variación Cliente Stock', formato: 'numero', esNivel: sinVariacion },
-  { codRep: 'GRAF_GEST_COM_06', titulo: 'Ingresos y Salidas (T)', formato: 'soles' },
+  // Acá va, al final, la tabla "Var Clientes Stock" (`RS_GEST_COM_03`).
 ];
+
+/** Índice (0-based) de `GRAFICOS_GESTION_COMERCIAL` tras el cual va cada tabla de variación. */
+export const INDICE_TRAS_VAR_SALDO = 3;
+export const INDICE_TRAS_VAR_CLIENTES = GRAFICOS_GESTION_COMERCIAL.length - 1;
 
 /**
  * Los KPIs del encabezado — legado `setKpiValues()`, que los saca de la PRIMERA

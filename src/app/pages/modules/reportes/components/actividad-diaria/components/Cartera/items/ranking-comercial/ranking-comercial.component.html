@@ -37,22 +37,6 @@
       </span>
     </div>
 
-    <!-- Leyenda del semáforo, con los mismos umbrales que el legado. -->
-    <div class="flex flex-wrap items-center gap-4 text-[11px] text-[var(--mis-text-tertiary)]">
-      <span class="flex items-center gap-1.5">
-        <span class="w-2.5 h-2.5 rounded-full bg-[var(--mis-success)]"></span>
-        Avance ≥ esperado
-      </span>
-      <span class="flex items-center gap-1.5">
-        <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
-        Entre el 80 % y el 100 % del esperado
-      </span>
-      <span class="flex items-center gap-1.5">
-        <span class="w-2.5 h-2.5 rounded-full bg-[var(--mis-danger)]"></span>
-        Por debajo del 80 %
-      </span>
-    </div>
-
     <div class="mis-card p-3 overflow-x-auto">
       <app-tabla-dinamica [columnas]="columnas()" [filas]="filas()" [cargando]="cargando()" />
     </div>

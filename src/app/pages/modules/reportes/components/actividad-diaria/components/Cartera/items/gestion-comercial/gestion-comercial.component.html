@@ -254,8 +254,9 @@
       </section>
 
       <!-- Dos pestañas, mismo orden y nombres que el legado (`gestion-comercial.component.html`):
-           "Saldo Cartera" primero, "Clientes" segundo. Los 7 gráficos van debajo, fuera de las
-           pestañas — el legado los muestra sin depender de cuál esté activa. -->
+           "Saldo Cartera" primero, "Clientes" segundo. Las dos son el mismo `RS_GEST_COM_01` con
+           distintas columnas — ninguna de las dos tablas "Var." va acá: en el legado no cuelgan de
+           ninguna pestaña, van intercaladas más abajo, en "Análisis Gráfico". -->
       <p-tabs value="saldo">
         <p-tablist>
           <p-tab value="saldo" class="!py-2 !px-3">Saldo Cartera</p-tab>
@@ -263,61 +264,66 @@
         </p-tablist>
 
         <p-tabpanels>
-          <!-- Las dos pestañas son el mismo `RS_GEST_COM_01` con distintas columnas. -->
           <p-tabpanel value="saldo">
-            <div class="flex flex-col gap-5">
-              <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-dinamica [columnas]="columnasProduccion" [filas]="filas()" [cargando]="cargando()" />
-              </div>
-
-              <section class="flex flex-col gap-2">
-                <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">Var. Saldo Cartera Vigente</h2>
-                <div class="mis-card p-3 overflow-x-auto">
-                  <app-tabla-dinamica
-                    [columnas]="varSaldoVigente().columnas"
-                    [filas]="varSaldoVigente().filas"
-                    [cargando]="cargando()"
-                  />
-                </div>
-              </section>
+            <div class="mis-card p-3 overflow-x-auto">
+              <app-tabla-dinamica [columnas]="columnasProduccion" [filas]="filas()" [cargando]="cargando()" />
             </div>
           </p-tabpanel>
 
           <p-tabpanel value="clientes">
-            <div class="flex flex-col gap-5">
-              <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-dinamica [columnas]="columnasClientes" [filas]="filas()" [cargando]="cargando()" />
-              </div>
-
-              <section class="flex flex-col gap-2">
-                <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">Var. Clientes Stock</h2>
-                <div class="mis-card p-3 overflow-x-auto">
-                  <app-tabla-dinamica
-                    [columnas]="varClientesStock().columnas"
-                    [filas]="varClientesStock().filas"
-                    [cargando]="cargando()"
-                  />
-                </div>
-              </section>
+            <div class="mis-card p-3 overflow-x-auto">
+              <app-tabla-dinamica [columnas]="columnasClientes" [filas]="filas()" [cargando]="cargando()" />
             </div>
           </p-tabpanel>
         </p-tabpanels>
       </p-tabs>
 
-      <!-- "📊 Análisis Gráfico" del legado: los 7 gráficos de `GRAFICOS_GESTION_COMERCIAL`,
-           siempre visibles debajo de las pestañas (no dependen de cuál está activa). -->
+      <!--
+        "📊 Análisis Gráfico" del legado: los seis gráficos activos de
+        `GRAFICOS_GESTION_COMERCIAL`, siempre visibles (no dependen de cuál pestaña esté
+        activa), en una sola columna como el legado (`charts-wrapper-column`) — no en grilla.
+        "Var. Saldo Cartera Vigente" y "Var. Clientes Stock" van intercaladas por POSICIÓN,
+        no por pestaña: la primera justo después de "Saldo Cartera Vigente", la segunda al final.
+      -->
       <section class="flex flex-col gap-1 border-t border-[var(--mis-border)] pt-4">
         <h2 class="text-[15px] font-semibold text-[var(--mis-text-primary)] m-0">Análisis Gráfico</h2>
         <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0">Visualización de métricas y tendencias del periodo actual.</p>
       </section>
 
-      <div class="grid gap-3 grid-cols-1 xl:grid-cols-2">
-        @for (grafico of graficos(); track grafico.titulo) {
+      <div class="flex flex-col gap-4">
+        @for (grafico of graficos(); track $index; let i = $index) {
           <!-- El título lo pinta la propia gráfica a partir de `bloque.titulo`. Todas van
                como columnas: el legado no usa ni una barra horizontal en este reporte. -->
           <div class="mis-card p-3 h-[360px]">
             <app-grafico-mixto [datos]="grafico" tipo="columna" [formato]="grafico.formato" />
           </div>
+
+          @if (i === indiceTrasVarSaldo) {
+            <section class="flex flex-col gap-2">
+              <h3 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">Var Saldo Cartera Vigente</h3>
+              <div class="mis-card p-3 overflow-x-auto">
+                <app-tabla-dinamica
+                  [columnas]="varSaldoVigente().columnas"
+                  [filas]="varSaldoVigente().filas"
+                  [cargando]="cargando()"
+                  [fondoDinamico]="true"
+                />
+              </div>
+            </section>
+          }
+          @if (i === indiceTrasVarClientes) {
+            <section class="flex flex-col gap-2">
+              <h3 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">Var Clientes Stock</h3>
+              <div class="mis-card p-3 overflow-x-auto">
+                <app-tabla-dinamica
+                  [columnas]="varClientesStock().columnas"
+                  [filas]="varClientesStock().filas"
+                  [cargando]="cargando()"
+                  [fondoDinamico]="true"
+                />
+              </div>
+            </section>
+          }
         }
       </div>
     </div>

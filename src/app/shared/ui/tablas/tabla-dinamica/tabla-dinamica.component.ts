@@ -20,7 +20,15 @@ export class TablaDinamicaComponent {
   readonly cargando = input(false);
   /** Pinta en verde/rojo las columnas de variación — legado `aplicarEstilos()` de `carterizacion-cap-com`, que lo aplica a toda clave que contenga `var`. */
   readonly colorearVariaciones = input(false);
-  
+
+  /**
+   * Fondo dinámico verde/rojo según el signo del valor — legado
+   * `fondoDinamicoFn()` de `gestion-comercial.component.ts`, que lo aplica a
+   * TODA columna salvo "Descripción" (a diferencia de `colorearVariaciones`,
+   * que solo mira las claves con `var`).
+   */
+  readonly fondoDinamico = input(false);
+
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<Record<string, unknown>>();
 
@@ -60,6 +68,28 @@ export class TablaDinamicaComponent {
     const numero = Number(fila[columna.key]);
     if (Number.isNaN(numero) || numero === 0) return null;
     return numero > 0 ? 'var(--mis-success)' : 'var(--mis-danger)';
+  }
+
+  /** Con `fondoDinamico`, el signo del valor de esta celda; `null` fuera de rango o en "Descripción". */
+  private signoFondoDinamico(fila: Record<string, unknown>, columna: ColumnaDinamica): 1 | -1 | null {
+    if (!this.fondoDinamico() || columna.label === 'Descripción') return null;
+    const numero = Number(fila[columna.key]);
+    if (Number.isNaN(numero) || numero === 0) return null;
+    return numero > 0 ? 1 : -1;
+  }
+
+  /** Fondo de la celda con `fondoDinamico`: verde claro en positivo, rojo claro en negativo. */
+  protected fondoCelda(fila: Record<string, unknown>, columna: ColumnaDinamica): string | null {
+    const signo = this.signoFondoDinamico(fila, columna);
+    if (!signo) return null;
+    return signo > 0 ? 'var(--mis-success-light)' : 'var(--mis-danger-light)';
+  }
+
+  /** Texto de la celda con `fondoDinamico`, a juego con su fondo. */
+  protected colorFondoDinamico(fila: Record<string, unknown>, columna: ColumnaDinamica): string | null {
+    const signo = this.signoFondoDinamico(fila, columna);
+    if (!signo) return null;
+    return signo > 0 ? 'var(--mis-success)' : 'var(--mis-danger)';
   }
 
   /** Fila "destacada" del backend (`row.style === 1` en el legado — total/resumen). */

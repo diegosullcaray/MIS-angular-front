@@ -15,6 +15,8 @@ import {
   COLUMNAS_GESTION_CLIENTES,
   COLUMNAS_GESTION_PRODUCCION,
   GESTION_COMERCIAL_VACIA,
+  INDICE_TRAS_VAR_CLIENTES,
+  INDICE_TRAS_VAR_SALDO,
   claseCumplimiento,
   type GestionComercialResultado,
 } from '../../models/gestion-comercial.model';
@@ -45,6 +47,9 @@ export class GestionComercialComponent {
   protected readonly columnasProduccion = COLUMNAS_GESTION_PRODUCCION;
   protected readonly columnasClientes = COLUMNAS_GESTION_CLIENTES;
   protected readonly claseCumplimiento = claseCumplimiento;
+  /** Dónde van, por posición, las dos tablas de variación entre los gráficos — ver el modelo. */
+  protected readonly indiceTrasVarSaldo = INDICE_TRAS_VAR_SALDO;
+  protected readonly indiceTrasVarClientes = INDICE_TRAS_VAR_CLIENTES;
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);

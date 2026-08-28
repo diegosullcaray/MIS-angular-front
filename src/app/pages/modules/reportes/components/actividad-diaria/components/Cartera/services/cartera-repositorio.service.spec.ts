@@ -136,7 +136,13 @@ describe('"Gestión Comercial"', () => {
     servicio = TestBed.inject(CarteraRepositorioService);
   });
 
-  it('pide sus tres tablas y sus siete gráficos con los mismos parámetros', () => {
+  /**
+   * Tarea 2 de `incidencias-carteras-actualizado.md`: `GRAF_GEST_COM_03` está
+   * comentado en el legado (`<!-- ... -->`) — solo quedan seis gráficos
+   * activos, no siete. Y los dos "Ingresos y Salidas" (`_04`, `_06`) son a
+   * propósito el mismo título repetido: así los pinta el legado.
+   */
+  it('pide sus tres tablas y sus SEIS gráficos activos, sin el `_03` comentado', () => {
     servicio.gestionComercial(NODO).subscribe();
 
     const codReps = getRegularTableResult.mock.calls.map((c) => c[0]);
@@ -144,7 +150,6 @@ describe('"Gestión Comercial"', () => {
     expect(codReps.slice(3).sort()).toEqual([
       'GRAF_GEST_COM_01',
       'GRAF_GEST_COM_02',
-      'GRAF_GEST_COM_03',
       'GRAF_GEST_COM_04',
       'GRAF_GEST_COM_05',
       'GRAF_GEST_COM_06',
@@ -181,6 +186,21 @@ describe('"Gestión Comercial"', () => {
   describe('gráficos', () => {
     const GRAFICO = { categories: ['Ene', 'Feb'], series: [{ name: 'Desembolsos', data: [1, 2] }] };
 
+    /**
+     * Orden real de `GRAFICOS_GESTION_COMERCIAL`: el título YA NO es una clave
+     * única — los dos "Ingresos y Salidas" (`_04` y `_06`) llevan el mismo
+     * título a propósito, como el legado — así que los tests ubican cada
+     * gráfico por posición, no por nombre.
+     */
+    const INDICE: Record<string, number> = {
+      GRAF_GEST_COM_01: 0,
+      GRAF_GEST_COM_05: 1,
+      GRAF_GEST_COM_06: 2,
+      GRAF_GEST_COM_02: 3,
+      GRAF_GEST_COM_07: 4,
+      GRAF_GEST_COM_04: 5,
+    };
+
     /** Cada bloque nombra ese primer campo distinto: lo que importa es que sea el primero. */
     function conGrafico(codRep: string, campo: string, carga: unknown) {
       getRegularTableResult.mockImplementation((cod: string) =>
@@ -188,16 +208,16 @@ describe('"Gestión Comercial"', () => {
       );
     }
 
-    function graficoDe(titulo: string) {
+    function graficoDe(codRep: string) {
       let r: { graficos: { titulo: string; categorias: string[]; series: unknown[]; formato: string }[] } | undefined;
       servicio.gestionComercial(NODO).subscribe((x) => (r = x));
-      return r!.graficos.find((g) => g.titulo === titulo)!;
+      return r!.graficos[INDICE[codRep]];
     }
 
     it('lee el payload del PRIMER campo de `data[0]`, no de `headers`', () => {
       conGrafico('GRAF_GEST_COM_04', 'json_grafico', JSON.stringify(GRAFICO));
 
-      const grafico = graficoDe('Ingresos y Salidas');
+      const grafico = graficoDe('GRAF_GEST_COM_04');
       expect(grafico.categorias).toEqual(['Ene', 'Feb']);
       expect(grafico.series).toEqual([{ nombre: 'Desembolsos', datos: [1, 2] }]);
     });
@@ -207,17 +227,17 @@ describe('"Gestión Comercial"', () => {
         cod === 'GRAF_GEST_COM_04' ? respuesta({ headers: JSON.stringify(GRAFICO), data: [] }) : respuesta({ headers: '[]', data: [] }),
       );
 
-      expect(graficoDe('Ingresos y Salidas').categorias).toEqual(['Ene', 'Feb']);
+      expect(graficoDe('GRAF_GEST_COM_04').categorias).toEqual(['Ene', 'Feb']);
     });
 
-    it('un payload ilegible deja ese gráfico vacío, sin tumbar a los otros seis', () => {
+    it('un payload ilegible deja ese gráfico vacío, sin tumbar a los otros cinco', () => {
       conGrafico('GRAF_GEST_COM_04', 'json_grafico', 'no es json');
 
       let r: { graficos: { titulo: string; categorias: string[] }[] } | undefined;
       servicio.gestionComercial(NODO).subscribe((x) => (r = x));
 
-      expect(r!.graficos).toHaveLength(7);
-      expect(r!.graficos.find((g) => g.titulo === 'Ingresos y Salidas')!.categorias).toEqual([]);
+      expect(r!.graficos).toHaveLength(6);
+      expect(r!.graficos[INDICE['GRAF_GEST_COM_04']].categorias).toEqual([]);
     });
 
     /** El legado multiplica la TAPP por 100 y la rotula en "%", sobre el eje secundario. */
@@ -228,9 +248,9 @@ describe('"Gestión Comercial"', () => {
         JSON.stringify({ categories: ['Ene'], series: [{ name: 'Desembolsos', data: [100] }, { name: 'TAPP', data: [0.2345] }] }),
       );
 
-      expect(graficoDe('Desembolsos Diarios').series).toEqual([
-        { nombre: 'Desembolsos', datos: [100] },
-        { nombre: 'TAPP %', datos: [23.45] },
+      expect(graficoDe('GRAF_GEST_COM_01').series).toEqual([
+        { nombre: 'Desembolsos', datos: [100], color: '#4DD0E1' },
+        { nombre: 'TAPP %', datos: [23.45], color: '#3F51B5' },
       ]);
     });
 
@@ -240,18 +260,18 @@ describe('"Gestión Comercial"', () => {
      * escala y la variación queda pegada al cero.
      */
     it.each([
-      ['GRAF_GEST_COM_02', 'Saldo Cartera Vigente', 'Saldo Vigente', 'Var. Saldo Vigente'],
-      ['GRAF_GEST_COM_07', 'Variación Cliente Stock', 'Cliente Stock', 'Var. Cliente Stock'],
-    ])('%s manda el nivel al eje secundario y deja la variación en columnas', (codRep, titulo, nivel, variacion) => {
+      ['GRAF_GEST_COM_02', 'Saldo Vigente', 'Var. Saldo Vigente'],
+      ['GRAF_GEST_COM_07', 'Cliente Stock', 'Var. Cliente Stock'],
+    ])('%s manda el nivel al eje secundario y deja la variación en columnas', (codRep, nivel, variacion) => {
       conGrafico(
         codRep,
         'json_grafico',
         JSON.stringify({ categories: ['Ene'], series: [{ name: nivel, data: [1] }, { name: variacion, data: [2] }] }),
       );
 
-      expect(graficoDe(titulo).series).toEqual([
-        { nombre: nivel, datos: [1], secundaria: true },
-        { nombre: variacion, datos: [2] },
+      expect(graficoDe(codRep).series).toEqual([
+        { nombre: nivel, datos: [1], secundaria: true, color: '#1565C0' },
+        { nombre: variacion, datos: [2], color: '#80DEEA' },
       ]);
     });
 
@@ -259,9 +279,94 @@ describe('"Gestión Comercial"', () => {
       let r: { graficos: { titulo: string; formato: string }[] } | undefined;
       servicio.gestionComercial(NODO).subscribe((x) => (r = x));
 
-      const formatos = Object.fromEntries(r!.graficos.map((g) => [g.titulo, g.formato]));
-      expect(formatos['Ingresos y Salidas']).toBe('soles');
-      expect(formatos['Variación Stock Clientes']).toBe('numero');
+      expect(r!.graficos[INDICE['GRAF_GEST_COM_04']].formato).toBe('soles');
+      expect(r!.graficos[INDICE['GRAF_GEST_COM_05']].formato).toBe('numero');
+    });
+
+    /**
+     * `GRAF_GEST_COM_03` está comentado en el legado: no se pide y no aparece
+     * entre los gráficos devueltos.
+     */
+    it('NO pide `GRAF_GEST_COM_03`: está comentado en el legado', () => {
+      servicio.gestionComercial(NODO).subscribe();
+
+      const codReps = getRegularTableResult.mock.calls.map((c) => c[0]);
+      expect(codReps).not.toContain('GRAF_GEST_COM_03');
+    });
+
+    /** El legado le pone el MISMO título a los dos — no es un error, es así como lo pinta. */
+    it('los dos "Ingresos y Salidas" (`_04` y `_06`) comparten título a propósito', () => {
+      let r: { graficos: { titulo: string }[] } | undefined;
+      servicio.gestionComercial(NODO).subscribe((x) => (r = x));
+
+      expect(r!.graficos[INDICE['GRAF_GEST_COM_06']].titulo).toBe('Ingresos y Salidas');
+      expect(r!.graficos[INDICE['GRAF_GEST_COM_04']].titulo).toBe('Ingresos y Salidas');
+    });
+
+    /**
+     * Tarea 2: "segmentar por colores como está en el legacy". Highcharts no
+     * resuelve tokens CSS, así que el legado fija estos colores a mano por
+     * serie (`prepareResumenChart`, `prepareSaldoCarteraVigente`,
+     * `prepareVariacionCliStockChart`, `prepareVariacionStockChartT`).
+     */
+    describe('colores por serie, iguales a los que fija el legado', () => {
+      it('"Desembolsos Diarios": Desembolsos celeste, TAPP azul índigo', () => {
+        conGrafico(
+          'GRAF_GEST_COM_01',
+          'json_grafico',
+          JSON.stringify({ categories: ['Ene'], series: [{ name: 'Desembolsos', data: [1] }, { name: 'TAPP', data: [0.5] }] }),
+        );
+
+        const [desembolsos, tapp] = graficoDe('GRAF_GEST_COM_01').series as { color?: string }[];
+        expect(desembolsos.color).toBe('#4DD0E1');
+        expect(tapp.color).toBe('#3F51B5');
+      });
+
+      it.each([
+        ['GRAF_GEST_COM_02', 'Saldo Vigente', 'Var. Saldo Vigente'],
+        ['GRAF_GEST_COM_07', 'Cliente Stock', 'Var. Cliente Stock'],
+      ])('%s: nivel azul oscuro, variación celeste claro', (codRep, nivel, variacion) => {
+        conGrafico(
+          codRep,
+          'json_grafico',
+          JSON.stringify({ categories: ['Ene'], series: [{ name: nivel, data: [1] }, { name: variacion, data: [2] }] }),
+        );
+
+        const [serieNivel, serieVariacion] = graficoDe(codRep).series as { color?: string }[];
+        expect(serieNivel.color).toBe('#1565C0');
+        expect(serieVariacion.color).toBe('#80DEEA');
+      });
+
+      it('"Variación Stock Clientes": variación grisácea, meta verde lima, el resto claro', () => {
+        conGrafico(
+          'GRAF_GEST_COM_05',
+          'json_grafico',
+          JSON.stringify({
+            categories: ['Ene'],
+            series: [
+              { name: 'VARIACION CLIENTES', data: [1] },
+              { name: 'META CLIENTES', data: [2] },
+              { name: 'CLIENTES', data: [3] },
+            ],
+          }),
+        );
+
+        const [variacion, meta, otro] = graficoDe('GRAF_GEST_COM_05').series as { color?: string }[];
+        expect(variacion.color).toBe('#c5be97');
+        expect(meta.color).toBe('#d4e157');
+        expect(otro.color).toBe('#eef5b2');
+      });
+
+      /** El legado NO fija color acá: usa el que ya trae el payload del backend. */
+      it('"Ingresos y Salidas" no fuerza ningún color', () => {
+        conGrafico(
+          'GRAF_GEST_COM_04',
+          'json_grafico',
+          JSON.stringify({ categories: ['Ene'], series: [{ name: 'Ingresos', data: [1] }] }),
+        );
+
+        expect((graficoDe('GRAF_GEST_COM_04').series[0] as { color?: string }).color).toBeUndefined();
+      });
     });
   });
 
@@ -310,10 +415,10 @@ describe('"Gestión Comercial"', () => {
       }
     });
 
-    it('la fecha elegida viaja a las tres tablas y a los siete gráficos', () => {
+    it('la fecha elegida viaja a las tres tablas y a los seis gráficos', () => {
       servicio.gestionComercial(NODO, '2025-10-31').subscribe();
 
-      expect(getRegularTableResult.mock.calls).toHaveLength(10);
+      expect(getRegularTableResult.mock.calls).toHaveLength(9);
       for (const [, params] of getRegularTableResult.mock.calls) {
         expect(params).toEqual({ tip_cod: 9, cod_rel: 'FC', fecha: '2025-10-31' });
       }

@@ -344,7 +344,7 @@ function graficoGestionComercial(
   resultado: TablaRegularResultadoRaw | undefined,
   config: GraficoGestionComercial,
 ): BloqueGrafico & { formato: FormatoValor } {
-  const { titulo, formato, esPorcentaje, esNivel } = config;
+  const { titulo, formato, esPorcentaje, esNivel, colorDeSerie } = config;
   const base = { titulo, formato, categorias: [] as string[], series: [] };
 
   const datos = parseGrafico(cargaUtilGrafico(resultado));
@@ -356,12 +356,18 @@ function graficoGestionComercial(
     categorias: datos.categories ?? [],
     series: (datos.series ?? []).map((s) => {
       const nombre = s.name ?? '';
+      const color = colorDeSerie?.(nombre);
       // El legado multiplica la TAPP por 100 y la rotula con "%"; el "%" en el
       // nombre es lo que manda la serie al eje secundario como spline.
       if (esPorcentaje?.(nombre)) {
-        return { nombre: `${nombre} %`, datos: (s.data ?? []).map((v) => (v == null ? v : v * 100)) };
+        return { nombre: `${nombre} %`, datos: (s.data ?? []).map((v) => (v == null ? v : v * 100)), ...(color ? { color } : {}) };
       }
-      return { nombre, datos: s.data ?? [], ...(esNivel?.(nombre) ? { secundaria: true } : {}) };
+      return {
+        nombre,
+        datos: s.data ?? [],
+        ...(esNivel?.(nombre) ? { secundaria: true } : {}),
+        ...(color ? { color } : {}),
+      };
     }),
   };
 }

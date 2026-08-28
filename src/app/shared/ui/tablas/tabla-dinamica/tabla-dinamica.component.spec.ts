@@ -165,3 +165,127 @@ describe('TablaDinamicaComponent — clic por celda', () => {
     expect(eventos).toEqual([]);
   });
 });
+
+/**
+ * Regresión de la tarea 1 de `incidencias-carteras-actualizado.md`: el punto
+ * de color seguía sin verse en "Churn rate" (Monitor de Salidas y
+ * Retenciones) después del fix anterior. `semaforoChurn()`/`conSemaforoChurn()`
+ * ya estaban bien probados a nivel de datos; lo que faltaba era una prueba de
+ * que `<app-tabla-dinamica>` REALMENTE lo dibuja con `semaforoKey`.
+ */
+describe('TablaDinamicaComponent: semaforoKey', () => {
+  const COLUMNAS_CON_SEMAFORO: ColumnaDinamica[] = [
+    { key: 'desc', label: 'Descripción' },
+    { key: 'ret', label: 'Churn rate', format: { type: 'percent' }, semaforoKey: 'ret_tl' },
+  ];
+
+  function crearConSemaforo(filas: Record<string, unknown>[]) {
+    TestBed.configureTestingModule({ imports: [TablaDinamicaComponent] });
+    const fixture = TestBed.createComponent(TablaDinamicaComponent);
+    fixture.componentRef.setInput('columnas', COLUMNAS_CON_SEMAFORO);
+    fixture.componentRef.setInput('filas', filas);
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  function puntoDe(fixture: ReturnType<typeof crearConSemaforo>, fila = 0): Element | null {
+    const filaEl = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr')[fila];
+    return filaEl?.querySelector('i.pi-circle-fill') ?? null;
+  }
+
+  it('dibuja el punto cuando la fila trae la clave del semáforo', () => {
+    const fixture = crearConSemaforo([{ desc: 'A', ret: 0.85, ret_tl: -1 }]);
+
+    expect(puntoDe(fixture)).not.toBeNull();
+  });
+
+  it('rojo/naranja/verde según -1/0/1, los mismos colores de `app-tabla-reporte`', () => {
+    const fixture = crearConSemaforo([
+      { desc: 'A', ret: 0.85, ret_tl: -1 },
+      { desc: 'B', ret: 0.93, ret_tl: 0 },
+      { desc: 'C', ret: 0.97, ret_tl: 1 },
+    ]);
+
+    expect(puntoDe(fixture, 0)?.className).toContain('mis-danger');
+    expect(puntoDe(fixture, 1)?.className).toContain('orange-500');
+    expect(puntoDe(fixture, 2)?.className).toContain('mis-success');
+  });
+
+  it('sin la clave del semáforo en la fila, no dibuja nada', () => {
+    const fixture = crearConSemaforo([{ desc: 'A', ret: 0.85 }]);
+
+    expect(puntoDe(fixture)).toBeNull();
+  });
+
+  it('una columna sin `semaforoKey` nunca dibuja el punto, aunque la fila traiga la clave', () => {
+    TestBed.configureTestingModule({ imports: [TablaDinamicaComponent] });
+    const fixture = TestBed.createComponent(TablaDinamicaComponent);
+    fixture.componentRef.setInput('columnas', [{ key: 'ret', label: 'Churn rate', format: { type: 'percent' } }]);
+    fixture.componentRef.setInput('filas', [{ ret: 0.85, ret_tl: -1 }]);
+    fixture.detectChanges();
+
+    expect(puntoDe(fixture)).toBeNull();
+  });
+});
+
+/**
+ * Regresión de la tarea 2 de `incidencias-carteras-actualizado.md`: "en el
+ * legacy las celdas de la tabla estaban coloreadas el background, en cambio
+ * en el que migraste no se encuentra de esa manera".
+ *
+ * Legado `fondoDinamicoFn()` de `gestion-comercial.component.ts`: fondo verde
+ * si el valor es positivo, rojo si es negativo, sin fondo si es cero o no es
+ * numérico, y NUNCA en la columna "Descripción".
+ */
+describe('TablaDinamicaComponent: fondoDinamico', () => {
+  const COLUMNAS: ColumnaDinamica[] = [
+    { key: 'desc', label: 'Descripción' },
+    { key: 'var1', label: 'Var. 1', format: { type: 'decimal' } },
+  ];
+
+  function crearCon(fondoDinamico: boolean, filas: Record<string, unknown>[]) {
+    TestBed.configureTestingModule({ imports: [TablaDinamicaComponent] });
+    const fixture = TestBed.createComponent(TablaDinamicaComponent);
+    fixture.componentRef.setInput('columnas', COLUMNAS);
+    fixture.componentRef.setInput('filas', filas);
+    fixture.componentRef.setInput('fondoDinamico', fondoDinamico);
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  function celdaVar(fixture: ReturnType<typeof crearCon>): HTMLElement {
+    return (fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr td')[1] as HTMLElement;
+  }
+
+  it('positivo: fondo y texto verdes, negrita', () => {
+    const celda = celdaVar(crearCon(true, [{ desc: 'A', var1: 5 }]));
+
+    expect(celda.style.backgroundColor).toBe('var(--mis-success-light)');
+    expect(celda.style.color).toBe('var(--mis-success)');
+    expect(celda.classList).toContain('font-bold');
+  });
+
+  it('negativo: fondo y texto rojos', () => {
+    const celda = celdaVar(crearCon(true, [{ desc: 'A', var1: -3 }]));
+
+    expect(celda.style.backgroundColor).toBe('var(--mis-danger-light)');
+    expect(celda.style.color).toBe('var(--mis-danger)');
+  });
+
+  it('cero o no numérico: sin fondo', () => {
+    const fixture = crearCon(true, [{ desc: 'A', var1: 0 }]);
+    expect(celdaVar(fixture).style.backgroundColor).toBe('');
+  });
+
+  it('la columna "Descripción" nunca lleva fondo, aunque su valor sea numérico', () => {
+    const fixture = crearCon(true, [{ desc: 5, var1: 5 }]);
+    const celdaDesc = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr td')[0] as HTMLElement;
+
+    expect(celdaDesc.style.backgroundColor).toBe('');
+  });
+
+  it('desactivado (por defecto), no colorea nada', () => {
+    const fixture = crearCon(false, [{ desc: 'A', var1: 5 }]);
+    expect(celdaVar(fixture).style.backgroundColor).toBe('');
+  });
+});
