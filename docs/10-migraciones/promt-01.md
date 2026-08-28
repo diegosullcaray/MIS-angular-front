@@ -105,6 +105,15 @@ Seis trampas, todas encontradas en el legado real:
   un nombre distinto por bloque), y solo caen a `headers` si `data` viene
   vacío; los `RS_AGROMIX_*`, en cambio, sí usan `headers`. Mirá el `prepare*`
   del legado antes de asumir.
+- **Un filtro puede depender del NODO elegido, no ser un catálogo fijo.** El
+  "Asesor" de Mentoring (`RMENTORIN`, host `cra-v1p7`) sale de
+  `SEL_JER_MENTORING_01` pedido con el `{ tip_cod, cod_rel }` del nivel de
+  jerarquía elegido, y cambia de opciones con cada nivel. Es distinto del
+  "filtro de fecha" (`RS_FECH`/`RS_FECH02`), que no depende del nodo. Sin este
+  filtro el backend puede responder 500: `report-cra-v1p7.component.ts` arma
+  la consulta principal como `{ ...filter, ...nodo, ...filterF }`, y
+  `filterF` es justamente el valor de este filtro — faltando, la consulta
+  queda incompleta.
 
 Script de referencia para leer el mapa sin comentarios:
 

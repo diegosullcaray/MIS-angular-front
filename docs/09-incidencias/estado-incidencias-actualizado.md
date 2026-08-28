@@ -1,9 +1,11 @@
 # Estado de las incidencias actualizadas
 
-Resumen de las ocho tareas de `incidencias-mora-actualizado.md` (M1–M5) y
-`incidencias-carteras-actualizado.md` (C1–C3).
+Resumen de las incidencias actualizadas subidas al Main:
+`incidencias-mora-actualizado.md` (M1–M5), `incidencias-carteras-actualizado.md`
+(C1–C3), `incidencias-proeyecciones.md` (P1–P3) e `incidencias-campañas.md`
+(CA1–CA2).
 
-**Todas resueltas.** 1 314 tests en verde (197 archivos), `tsc` limpio y build de
+**Todas resueltas.** 1 366 tests en verde (204 archivos), `tsc` limpio y build de
 producción sin errores.
 
 | # | Reporte | Estado | Commit |
@@ -16,6 +18,11 @@ producción sin errores.
 | C1 | Monitor Salidas y Retenciones | ✅ | `89a202a` |
 | C2 | Gestión Comercial | ✅ | `07a6840` |
 | C3 | Rank Comercial | ✅ | `89a202a` |
+| P1 | Proyección Colocación | ✅ | `1c6baff` |
+| P2 | Proyección Diaria Colocación | ✅ | `1c6baff` |
+| P3 | Banca Solidaria | ✅ | `1c6baff` |
+| CA1 | Agendamiento | ✅ | `923f91a` |
+| CA2 | Reporte Mentoring | ✅ | `923f91a` |
 
 ---
 
@@ -172,9 +179,102 @@ columna de avance.
 
 ---
 
+## P1 · Proyección Colocación — timeout, 500 y pestañas
+
+**Reportado:** la excepción del backend (500 / `NullPointerException:
+Resultado vacio para: regularData`) rompe la vista; falta estructura de
+pestañas.
+
+**Corrección:** los dos bloques (`_01` y `_03`) pasan a `regularLento()` —
+timeout largo por request y tolerancia al bloque sin datos, que dentro del
+`forkJoin` tumbaba el reporte entero. El contenido se reparte en dos pestañas,
+"Resumen" (`_01`) y "Detalle" (`_03`), en vez de ir apilado.
+
+---
+
+## P2 · Proyección Diaria Colocación — pestañas y ancho de columnas
+
+**Reportado:** las dos tablas generan scroll horizontal innecesario y están
+apiladas en vez de pestañas.
+
+**Corrección:** cada tabla pasa a su propia pestaña. Se agregó `ajustarAncho`
+a `<app-tabla-reporte>` (opt-in, y se pasa por `<app-reporte-simple>`): deja
+que cabeceras y celdas salten de línea y descarta el ancho fijo que manda el
+backend, que es lo que forzaba el scroll. En los reportes anchos el scroll
+sigue siendo lo correcto por defecto; acá, con pocas columnas y encabezados
+largos, no hacía falta.
+
+---
+
+## P3 · Banca Solidaria — KPIs y gráficos
+
+**Reportado:** faltan las tarjetas de indicadores y las gráficas del legado.
+
+**Corrección:** se mapean desde la fila total de `GRBSOLI_01` las cinco
+tarjetas (Saldo Vigente, Mto. Desembolsado, Ticket Promedio, N.° Clientes,
+Tasa Mes) y las dos gráficas: la dona "Estado de Renovación (Base Inicial)"
+—con sus cuatro estados y los colores exactos del legado— y las columnas
+"Antigüedad de Cliente". Ninguna es un bloque aparte: el legado las saca de
+esa misma fila (`setKpiValues()`, `updateDonutChart()`, `updateBarChart()`).
+`<app-grafico-pie>` ganó un input `dona` para el `innerSize: '65%'` del
+legado.
+
+---
+
+## CA1 · Agendamiento — secuencia de filtros por pestaña
+
+**Reportado:** "en este reporte se está trabajando por tabs [...] y cada tab
+varía la secuencia de filtros, revisa y corrige".
+
+**Causa:** el reporte se había migrado con las cuatro tablas apiladas y una
+única franja de tres filtros compartida, en vez de las cuatro pestañas del
+legado (`mat-tab-group`: "Resumen Total", "Resumen por Bases", "Detalle Bases
+Vivas", "Detalle Bases Automáticos y express"). El legado además cambia qué
+filtros se ven según la pestaña (`onTabChanged()`): "Nivel de Fuga" se oculta
+en "Detalle Bases Vivas" y ahí aparece en su lugar "Rango de fechas Cancela",
+que en las otras tres no se ve. "Nivel de propensión" es el único filtro que
+no lleva esa condición y está en las cuatro.
+
+**Corrección:** cuatro pestañas reales con `p-tabs`, cada una con su propia
+tabla y su propia franja de filtros (en vez de una franja fija arriba). Las
+cuatro tablas se siguen pidiendo siempre juntas, esté la pestaña que esté
+activa — el rango elegido en "Detalle Bases Vivas" también llega al bloque de
+"Detalle Bases Automáticos y express", aunque ese filtro no se pueda cambiar
+ahí, igual que en el legado.
+
+---
+
+## CA2 · Reporte Mentoring — timeout y filtro de asesores
+
+**Reportado:** HTTP 500 ("no está cargando la data, dale más tiempo de
+carga") y "no estás trayendo los filtros de los asesores".
+
+**Causa:** las dos cosas tenían la misma raíz. El legado
+(`report-cra-v1p7.component.ts`) arma los parámetros de la consulta como
+`{ ...filter, ...nodo, ...filterF }`, donde `filterF` es el asesor elegido
+(`resp`) — un filtro que NO sale de un catálogo fijo sino de
+`SEL_JER_MENTORING_01` para el nodo de jerarquía elegido. El reporte migrado
+nunca mandaba `resp`, y el backend devolvía 500 sin él.
+
+**Corrección:**
+
+- `CampanasService.mentoring(nodo, resp = 'TODO')` — agrega `resp` a los
+  parámetros y pasa a `regularLento()` (timeout largo: el reporte mueve mucha
+  data y no entraba en los 30 s por defecto).
+- `CampanasService.opcionesAsesorMentoring(nodo)` — trae las opciones desde
+  `SEL_JER_MENTORING_01` con exactamente `{ tip_cod, cod_rel }` (sin `fec`,
+  como el legado), anteponiendo "TODO".
+- El componente deja de extender `ReporteSimpleBase`: necesita orquestar el
+  fetch de opciones de asesor aparte del de la tabla. Al cambiar de nivel
+  resetea el asesor a "TODO" y refresca sus opciones, igual que el legado
+  (`renderUltGestion()` crea un `SelectService` nuevo cada vez) — un asesor de
+  la unidad anterior no tiene por qué existir en la nueva.
+
+---
+
 ## Tests
 
-47 tests de regresión nuevos, en cinco archivos:
+47 tests de regresión para M1–M5/C1–C3, en cinco archivos:
 
 | Archivo | Cubre |
 |---------|-------|
@@ -196,6 +296,28 @@ comprobando que falla exactamente él:
 | El periodo elegido no llega al reporte (M5) | 1 |
 | El selector lee de `data` en vez de `meta1` | 4 |
 | La fábrica ignora `secundaria` | 2 |
+
+31 tests de regresión más para P1–P3/CA1–CA2, en seis archivos (tres nuevos,
+tres ampliados):
+
+| Archivo | Cubre |
+|---------|-------|
+| `Proyecciones/services/proyecciones.service.spec.ts` (ampliado) | Timeout largo y tolerancia al bloque vacío (P1) |
+| `Reportes PDM/models/banca-solidaria.model.spec.ts` (nuevo) | Los cinco KPIs y las dos gráficas (P3) |
+| `shared/ui/tablas/tabla-reporte/tabla-reporte.component.spec.ts` (ampliado) | `ajustarAncho` (P2) |
+| `shared/ui/graficos/utils/highcharts-factory.util.spec.ts` (ampliado) | La dona (`opcionesPie`) (P3) |
+| `Campañas/items/agendamiento/agendamiento.component.spec.ts` (nuevo) | Las cuatro pestañas y su secuencia de filtros (CA1) |
+| `Campañas/services/campanas.service.spec.ts` (nuevo) | `resp` del asesor y el timeout largo (CA2) |
+| `Campañas/items/mentoring/mentoring.component.spec.ts` (nuevo) | El reseteo del asesor al cambiar de nivel (CA2) |
+
+Validados igual, reintroduciendo el bug:
+
+| Bug reintroducido | Tests que fallan |
+|-------------------|------------------|
+| "Detalle Bases Vivas" no oculta "Nivel de fuga" (CA1) | 1 |
+| `mentoring()` no manda `resp` (CA2) | 2 |
+| `mentoring()` sin timeout largo (CA2) | 1 |
+| El componente no resetea el asesor al cambiar de nivel (CA2) | 1 |
 
 ---
 
