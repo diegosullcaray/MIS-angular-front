@@ -47,7 +47,7 @@ export class CampanasService {
    * Sin `fec`: el legado la pide con exactamente `{ tip_cod, cod_rel }`.
    */
   opcionesAsesorMentoring(nodo: NodoConsulta): Observable<OpcionFiltro<string>[]> {
-    return this.bloques.regularExacto('SEL_JER_MENTORING_01', nodo).pipe(
+    return this.bloques.regularLento('SEL_JER_MENTORING_01', nodo).pipe(
       map((tabla) => [
         { id: TODO, desc: 'TODO' },
         ...tabla.body.map((fila) => ({ id: String(fila['id'] ?? ''), desc: String(fila['desc'] ?? fila['id'] ?? '') })),

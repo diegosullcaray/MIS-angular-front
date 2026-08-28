@@ -23,7 +23,7 @@ import type {
   PorcionGrafico,
   SerieGrafico,
 } from '../models/grafico-comun.model';
-import { PALETA_SERIES, colorSerieReporte, esPorcentaje, tokensTema } from './paleta-colores.util';
+import { AZUL, PALETA_SERIES, colorSerieReporte, esPorcentaje, tokensTema } from './paleta-colores.util';
 
 /**
  * Infiere la forma del gráfico a partir de las series, replicando qué config del legado le toca
@@ -74,9 +74,10 @@ export function opcionesBase(oscuro: boolean, fondoTransparente = false): Option
  * eso las barras desaparecían.
  */
 export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: OpcionesGrafico = {}): Options {
-  const { tipo = 'auto', formato = 'soles', fondoTransparente = false } = config;
+  const { tipo = 'auto', formato = 'soles', fondoTransparente = false, apilado = false } = config;
+  const esApilado = apilado || Boolean(bloque.apilado);
   const base = opcionesBase(oscuro, fondoTransparente);
-  const { texto, linea } = tokensTema(oscuro);
+  const { texto, textoFuerte, linea } = tokensTema(oscuro);
   const forma = tipo === 'auto' ? inferirTipo(bloque.series) : tipo;
 
   const unicaSerie = bloque.series.length === 1;
@@ -91,7 +92,7 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
   const tipoBase = forma === 'columna' ? 'column' : forma === 'linea' ? 'spline' : 'bar';
 
   const series: SeriesOptionsType[] = bloque.series.map((serie, i) => {
-    const color = serie.color ?? (forma === 'linea' ? PALETA_SERIES[i % PALETA_SERIES.length] : colorSerieReporte(serie.nombre, unicaSerie));
+    const color = serie.color ?? (unicaSerie ? AZUL : PALETA_SERIES[i % PALETA_SERIES.length]);
     if (enEjeSecundario(serie)) {
       return {
         type: 'spline',
@@ -99,7 +100,26 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
         data: serie.datos,
         yAxis: 1,
         color,
-        marker: { enabled: true, radius: 3, fillColor: color },
+        marker: { enabled: true, radius: 3.5, fillColor: color },
+        dataLabels: {
+          enabled: true,
+          formatter: function (this: Point) {
+            const valor = Number(this.y);
+            if (!Number.isFinite(valor)) return '';
+            if (ejeSecundarioEnPorcentaje || esPorcentaje(serie.nombre)) {
+              return `${valor.toFixed(1)}%`;
+            }
+            if (formato === 'soles') {
+              return Math.abs(valor) >= 1_000_000
+                ? `${(valor / 1_000_000).toFixed(1)} M`
+                : Math.abs(valor) >= 1_000
+                ? `${(valor / 1_000).toFixed(0)} k`
+                : Highcharts.numberFormat(valor, 0, '.', ',');
+            }
+            return Highcharts.numberFormat(valor, 0, '.', ',');
+          },
+          style: { fontSize: '10px', fontWeight: 'bold', color },
+        },
       };
     }
     return {
@@ -108,6 +128,37 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
       data: serie.datos,
       yAxis: 0,
       color,
+      dataLabels: {
+        enabled: true,
+        formatter: function (this: Point) {
+          const valor = Number(this.y);
+          if (!Number.isFinite(valor) || valor === 0) return '';
+          if (esPorcentaje(serie.nombre)) {
+            return `${valor.toFixed(1)}%`;
+          }
+          if (esApilado) {
+            return Math.abs(valor) >= 1_000_000
+              ? `${(Math.abs(valor) / 1_000_000).toFixed(1)} M`
+              : Math.abs(valor) >= 1_000
+              ? `${(Math.abs(valor) / 1_000).toFixed(0)} k`
+              : Highcharts.numberFormat(Math.abs(valor), 0, '.', ',');
+          }
+          if (formato === 'soles') {
+            return Math.abs(valor) >= 1_000_000
+              ? `${(valor / 1_000_000).toFixed(1)} M`
+              : Math.abs(valor) >= 1_000
+              ? `${(valor / 1_000).toFixed(0)} k`
+              : Highcharts.numberFormat(valor, 0, '.', ',');
+          }
+          return Highcharts.numberFormat(valor, 0, '.', ',');
+        },
+        style: {
+          fontSize: '10px',
+          fontWeight: 'bold',
+          textOutline: 'none',
+          ...(esApilado ? { color: '#ffffff' } : {}),
+        },
+      },
       ...(forma === 'linea' ? { connectNulls: true, marker: { enabled: true, radius: 3 } } : {}),
     };
   });
@@ -127,6 +178,28 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
         title: { text: bloque.tituloEjeY ?? undefined, style: estiloTexto },
         labels: { formatter: formateadorEjeValor, style: estiloTexto },
         gridLineColor: linea,
+        ...(esApilado
+          ? {
+              plotLines: [{ value: 0, color: linea, width: 2, zIndex: 5 }],
+              stackLabels: {
+                enabled: true,
+                useHTML: true,
+                formatter: function (this: any) {
+                  const val = Number(this.total);
+                  if (!Number.isFinite(val) || val === 0) return '';
+                  const absVal = Math.abs(val);
+                  const texto =
+                    absVal >= 1_000_000
+                      ? `${(val / 1_000_000).toFixed(1)} M`
+                      : absVal >= 1_000
+                      ? `${(val / 1_000).toFixed(1)} k`
+                      : Highcharts.numberFormat(val, 0, '.', ',');
+                  const bgColor = this.isNegative ? '#ef4444' : '#10b981';
+                  return `<div style="background-color:${bgColor}; color:#ffffff; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:10px; box-shadow:0 1px 2px rgba(0,0,0,0.2);">${texto}</div>`;
+                },
+              },
+            }
+          : {}),
       },
       {
         title: { text: undefined },
@@ -139,8 +212,16 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
       },
     ],
     plotOptions: {
-      column: { pointPadding: 0.2, groupPadding: 0.1, borderWidth: 0 },
-      bar: { borderWidth: 0 },
+      column: {
+        ...(esApilado ? { stacking: 'normal' } : {}),
+        pointPadding: 0.2,
+        groupPadding: 0.1,
+        borderWidth: 0,
+      },
+      bar: {
+        ...(esApilado ? { stacking: 'normal' } : {}),
+        borderWidth: 0,
+      },
       series: { cursor: 'pointer' },
     },
     legend: { ...base.legend, enabled: !unicaSerie },

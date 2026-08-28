@@ -22,11 +22,11 @@
 
   <!-- Contenedor relativo en mobile para alojar los íconos y las flechas de desplazamiento; rail vertical scrollable en desktop -->
   <div class="relative flex-1 flex flex-row items-center overflow-hidden w-full h-full sm:flex-col sm:min-h-0 sm:overflow-hidden">
-    <!-- Flecha izquierda en mobile -->
+    <!-- Flecha izquierda en mobile con difuminado gradual -->
     @if (puedeScrollIzquierda()) {
       <button
         type="button"
-        class="sidebar-rail-edge sm:hidden absolute left-0 z-10 flex shrink-0 items-center justify-center w-8 h-full text-white/80 hover:text-white transition-all duration-150 border-0 cursor-pointer p-0 shadow-md"
+        class="sidebar-rail-edge sidebar-rail-edge--left sm:hidden absolute left-0 z-10 flex shrink-0 items-center justify-start pl-1 w-9 h-full text-white hover:text-white transition-all duration-150 border-0 cursor-pointer p-0"
         (click)="desplazarIzquierda()"
         aria-label="Desplazar íconos a la izquierda"
       >
@@ -55,11 +55,11 @@
       }
     </div>
 
-    <!-- Flecha derecha en mobile -->
+    <!-- Flecha derecha en mobile con difuminado gradual -->
     @if (puedeScrollDerecha()) {
       <button
         type="button"
-        class="sidebar-rail-edge sm:hidden absolute right-0 z-10 flex shrink-0 items-center justify-center w-8 h-full text-white/80 hover:text-white transition-all duration-150 border-0 cursor-pointer p-0 shadow-md"
+        class="sidebar-rail-edge sidebar-rail-edge--right sm:hidden absolute right-0 z-10 flex shrink-0 items-center justify-end pr-1 w-9 h-full text-white hover:text-white transition-all duration-150 border-0 cursor-pointer p-0"
         (click)="desplazarDerecha()"
         aria-label="Desplazar íconos a la derecha"
       >

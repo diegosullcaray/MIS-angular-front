@@ -35,6 +35,8 @@ export class GraficoMixtoComponent {
   readonly formato = input<FormatoValor>('soles');
   /** Para gráficos embebidos en tarjetas que ya traen su propio fondo. */
   readonly fondoTransparente = input(false);
+  /** Si las barras/columnas deben apilarse (stacking: 'normal'). */
+  readonly apilado = input(false);
 
   /** Emite la categoría clickeada — abre el detalle del reporte que la escuche. */
   readonly puntoSeleccionado = output<string>();
@@ -44,6 +46,7 @@ export class GraficoMixtoComponent {
       tipo: this.tipo(),
       formato: this.formato(),
       fondoTransparente: this.fondoTransparente(),
+      apilado: this.apilado() || Boolean(this.datos().apilado),
     })
   );
 }

@@ -5,6 +5,51 @@ const decimal = { type: 'decimal' } as const;
 const entero = { type: 'integer' } as const;
 const porcentaje = { type: 'percent' } as const;
 
+export const bgTrafficLightStyleFn = (val: unknown): Record<string, string> | undefined => {
+  const num = Number(val);
+  if (isNaN(num)) return undefined;
+  if (num >= 1 || num >= 100) {
+    return { 'background-color': '#dcfce7', color: '#166534', 'font-weight': 'bold' };
+  } else if (num >= 0.8 || num >= 80) {
+    return { 'background-color': '#fef08a', color: '#854d0e', 'font-weight': 'bold' };
+  } else {
+    return { 'background-color': '#fee2e2', color: '#991b1b', 'font-weight': 'bold' };
+  }
+};
+
+export const colorThresholdStyleFnSaldo = (val: unknown): Record<string, string> | undefined => {
+  const num = Number(val);
+  if (isNaN(num)) return undefined;
+  const limiteAmbarRojo = -1500000;
+  if (num > 0) {
+    return { 'background-color': '#dcfce7', color: '#166534', 'font-weight': 'bold' };
+  } else if (num <= 0 && num > limiteAmbarRojo) {
+    return { 'background-color': '#fef08a', color: '#854d0e', 'font-weight': 'bold' };
+  } else {
+    return { 'background-color': '#fee2e2', color: '#991b1b', 'font-weight': 'bold' };
+  }
+};
+
+export const colorThresholdStyleFnCliente = (val: unknown): Record<string, string> | undefined => {
+  const num = Number(val);
+  if (isNaN(num)) return undefined;
+  const limiteAmbarRojo = -200;
+  if (num > 0) {
+    return { 'background-color': '#dcfce7', color: '#166534', 'font-weight': 'bold' };
+  } else if (num <= 0 && num > limiteAmbarRojo) {
+    return { 'background-color': '#fef08a', color: '#854d0e', 'font-weight': 'bold' };
+  } else {
+    return { 'background-color': '#fee2e2', color: '#991b1b', 'font-weight': 'bold' };
+  }
+};
+
+export const colorPosNegStyleFn = (val: unknown): Record<string, string> | undefined => {
+  const num = Number(val);
+  if (isNaN(num) || num === 0) return undefined;
+  if (num < 0) return { color: '#ef4444', 'font-weight': 'bold' };
+  return { color: '#22c55e', 'font-weight': 'bold' };
+};
+
 /**
  * `RS_GEST_COM_01` alimenta dos tablas con el mismo `data` y distintas
  * columnas: el legado las declara fijas en `tablaTab1` y `tablaTab2`.
@@ -12,34 +57,34 @@ const porcentaje = { type: 'percent' } as const;
 export const COLUMNAS_GESTION_PRODUCCION: ColumnaDinamica[] = [
   { key: 'descripcion', label: 'Descripción' },
   { key: 'prod_ind', label: 'Product.', format: decimal },
-  { key: 'Percent_Cumpl', label: '% Cump. Prod', format: porcentaje },
-  { key: 'TMMPROD', label: 'TMM Prod.', format: decimal },
+  { key: 'Percent_Cumpl', label: '% Cump. Prod', format: porcentaje, cellStyleFn: bgTrafficLightStyleFn },
+  { key: 'TMMPROD', label: 'TMM Prod.', format: decimal, cellStyleFn: colorPosNegStyleFn },
   { key: 'mont_dese_2', label: 'Desemb.', format: entero },
-  { key: 'percentcumpldesembolsometadi', label: '% Cump. Desemb.', format: porcentaje },
-  { key: 'TMMDESEMB', label: 'TMM Desemb.', format: entero },
+  { key: 'percentcumpldesembolsometadi', label: '% Cump. Desemb.', format: porcentaje, cellStyleFn: bgTrafficLightStyleFn },
+  { key: 'TMMDESEMB', label: 'TMM Desemb.', format: entero, cellStyleFn: colorPosNegStyleFn },
   { key: 'tick_prom_2', label: 'Ticket', format: entero },
-  { key: 'TMM_TICK', label: 'TMM Ticket', format: decimal },
+  { key: 'TMM_TICK', label: 'TMM Ticket', format: decimal, cellStyleFn: colorPosNegStyleFn },
   { key: 'tapp_mes_2', label: 'TAPP', format: porcentaje },
-  { key: 'TMMTAPP', label: 'TMM TAPP', format: decimal },
+  { key: 'TMMTAPP', label: 'TMM TAPP', format: decimal, cellStyleFn: colorPosNegStyleFn },
   { key: 'Canc_vigente', label: 'Canc. Vig.', format: entero },
   { key: 'HRODAM', label: 'Rodamiento', format: entero },
   { key: 'sal_vig_2', label: 'Saldo Vig.', format: entero },
-  { key: 'HVSALVIGMN', label: 'Var. Saldo Vig.', format: entero },
+  { key: 'HVSALVIGMN', label: 'Var. Saldo Vig.', format: entero, cellStyleFn: colorPosNegStyleFn },
   { key: 'hvalvar_10256', label: 'Meta Fecha VarSal', format: entero },
-  { key: 'distdiariacartvig', label: 'Dist. Meta Fecha', format: entero },
+  { key: 'distdiariacartvig', label: 'Dist. Meta Fecha', format: entero, cellStyleFn: colorThresholdStyleFnSaldo },
   { key: 'hvalvar_9000', label: 'Meta Var. Saldo Vig.', format: entero },
 ];
 
 export const COLUMNAS_GESTION_CLIENTES: ColumnaDinamica[] = [
   { key: 'descripcion', label: 'Descripción' },
   { key: 'cli_stock_2', label: 'Cliente Stock', format: decimal },
-  { key: 'TMMCLISTOCK', label: 'Var. clientes stock', format: decimal },
+  { key: 'TMMCLISTOCK', label: 'Var. clientes stock', format: decimal, cellStyleFn: colorPosNegStyleFn },
   { key: 'hvalvar_10257', label: 'Meta Fecha Var Clientes', format: decimal },
-  { key: 'var_distancia_metadi', label: 'Dist. Meta Fecha', format: decimal },
+  { key: 'var_distancia_metadi', label: 'Dist. Meta Fecha', format: decimal, cellStyleFn: colorThresholdStyleFnCliente },
   { key: 'hvalvar_10062', label: 'Meta Var. Stock Cliente', format: entero },
   { key: 'HNUMCLIN', label: 'Clientes Nuevos', format: entero },
-  { key: 'Percent_Cumpl_clinuevo', label: '% Cump. Nuevos', format: porcentaje },
-  { key: 'TMMCLINUEV', label: 'TMM Clientes Nuevos', format: entero },
+  { key: 'Percent_Cumpl_clinuevo', label: '% Cump. Nuevos', format: porcentaje, cellStyleFn: bgTrafficLightStyleFn },
+  { key: 'TMMCLINUEV', label: 'TMM Clientes Nuevos', format: entero, cellStyleFn: colorPosNegStyleFn },
 ];
 
 /**
@@ -83,6 +128,7 @@ export interface GraficoGestionComercial {
   codRep: string;
   titulo: string;
   formato: FormatoValor;
+  apilado?: boolean;
   esPorcentaje?: (nombreSerie: string) => boolean;
   esNivel?: (nombreSerie: string) => boolean;
   colorDeSerie?: (nombreSerie: string) => string | undefined;
@@ -118,7 +164,12 @@ export const GRAFICOS_GESTION_COMERCIAL: GraficoGestionComercial[] = [
     formato: 'numero',
     colorDeSerie: colorVariacionStockClientes,
   },
-  { codRep: 'GRAF_GEST_COM_06', titulo: 'Ingresos y Salidas', formato: 'soles' },
+  {
+    codRep: 'GRAF_GEST_COM_06',
+    titulo: 'Ingresos y Salidas',
+    formato: 'soles',
+    apilado: true,
+  },
   {
     codRep: 'GRAF_GEST_COM_02',
     titulo: 'Saldo Cartera Vigente',
@@ -134,7 +185,12 @@ export const GRAFICOS_GESTION_COMERCIAL: GraficoGestionComercial[] = [
     esNivel: sinVariacion,
     colorDeSerie: coloresNivelYVariacion,
   },
-  { codRep: 'GRAF_GEST_COM_04', titulo: 'Ingresos y Salidas', formato: 'soles' },
+  {
+    codRep: 'GRAF_GEST_COM_04',
+    titulo: 'Ingresos y Salidas',
+    formato: 'soles',
+    apilado: true,
+  },
   // Acá va, al final, la tabla "Var Clientes Stock" (`RS_GEST_COM_03`).
 ];
 

@@ -13,7 +13,9 @@
     catálogo fijo: por eso las opciones cambian con el nivel y no aparecen
     hasta elegir uno.
   -->
-  <div filtros class="flex flex-wrap items-end gap-3">
-    <app-select-filtro etiqueta="Asesor" [opciones]="opcionesAsesor()" [(valor)]="asesor" ancho="w-64" />
-  </div>
+  @if (!ocultarAsesor()) {
+    <div filtros class="flex flex-wrap items-end gap-3">
+      <app-select-filtro etiqueta="Asesor" [opciones]="opcionesAsesor()" [(valor)]="asesor" ancho="w-64" />
+    </div>
+  }
 </app-reporte-simple>

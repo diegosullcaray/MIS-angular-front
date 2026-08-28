@@ -12,5 +12,7 @@ export interface ColumnaDinamica {
   format?: { type?: string };
   /** Clave de la fila que trae el semáforo (-1/0/1) de esta columna — mismo punto y colores que `app-tabla-reporte` (`pi-circle-fill`). */
   semaforoKey?: string;
+  /** Función para computar estilo dinámico de celda (color, background, font-weight) según el valor y fila — legado cellStyleFn. */
+  cellStyleFn?: (valor: unknown, fila: Record<string, unknown>) => Record<string, string> | undefined;
   subs?: ColumnaDinamica[];
 }

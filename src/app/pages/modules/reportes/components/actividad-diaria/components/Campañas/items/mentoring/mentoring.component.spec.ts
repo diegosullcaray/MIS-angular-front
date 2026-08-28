@@ -103,4 +103,15 @@ describe('MentoringComponent', () => {
     expect(opcionesAsesorMentoring).toHaveBeenCalled();
     expect(instancia.opcionesAsesor()).toEqual([{ id: 'TODO', desc: 'TODO' }]);
   });
+
+  it('cuando tip_cod === 18 (asesor) oculta el combo asesor y no consulta SEL_JER_MENTORING_01', () => {
+    const { instancia, fixture, opcionesAsesorMentoring } = crear();
+    const nodoAsesor: HierarquiaNodo = { tip_cod: 18, cod_rel: 'ASE001' };
+
+    instancia.onNivelSeleccionado(nodoAsesor);
+    fixture.detectChanges();
+
+    expect(opcionesAsesorMentoring).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.querySelector('app-select-filtro')).toBeNull();
+  });
 });

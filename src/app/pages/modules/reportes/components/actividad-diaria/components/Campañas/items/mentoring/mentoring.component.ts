@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ReporteSimpleComponent } from '../../../../../../ui/reporte-simple/reporte-simple.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -41,6 +41,9 @@ export class MentoringComponent {
   protected readonly asesor = signal<string>(TODO);
   protected readonly opcionesAsesor = signal<OpcionFiltro<string>[]>([{ id: TODO, desc: 'TODO' }]);
 
+  /** En el legado `report-cra-v1p7`, si `tip_cod === 18` (nivel asesor), se oculta el combo asesor (`ocultarCombo = true`). */
+  protected readonly ocultarAsesor = computed(() => this.nivelActual()?.tip_cod === 18);
+
   protected readonly cargando = signal(false);
   protected readonly tabla = signal<TablaReporteResultado>(TABLA_VACIA);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
@@ -55,7 +58,11 @@ export class MentoringComponent {
 
       if (nodo !== this.ultimoNodo) {
         this.ultimoNodo = nodo;
-        this.cargarOpcionesAsesor(nodo);
+        if (nodo.tip_cod !== 18) {
+          this.cargarOpcionesAsesor(nodo);
+        } else {
+          this.opcionesAsesor.set([{ id: TODO, desc: 'TODO' }]);
+        }
         if (this.asesor() !== TODO) {
           // Dispara de nuevo este efecto, ya con el asesor reseteado.
           this.asesor.set(TODO);

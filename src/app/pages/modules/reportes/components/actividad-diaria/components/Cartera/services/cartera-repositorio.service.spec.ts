@@ -357,8 +357,7 @@ describe('"Gestión Comercial"', () => {
         expect(otro.color).toBe('#eef5b2');
       });
 
-      /** El legado NO fija color acá: usa el que ya trae el payload del backend. */
-      it('"Ingresos y Salidas" no fuerza ningún color', () => {
+      it('"Ingresos y Salidas" no fuerza color para permitir paleta única por variable', () => {
         conGrafico(
           'GRAF_GEST_COM_04',
           'json_grafico',

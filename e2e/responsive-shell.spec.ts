@@ -97,13 +97,13 @@ test.describe('Shell responsive — desktop (>= 640px)', () => {
     await expect(shell.botonHamburguesaDelHeader).toHaveCount(0);
   });
 
-  test('en claro usa el wallpaper de escritorio (wallpaper.jpg), no el de mobile', async ({ page }) => {
+  test('en claro usa el wallpaper de escritorio (wallpaper.png), no el de mobile', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.fijarTema('claro');
     await shell.ir();
 
     const wallpaper = await shell.wallpaperAplicado();
-    expect(wallpaper).toContain('wallpaper.jpg');
+    expect(wallpaper).toContain('wallpaper.png');
     expect(wallpaper).not.toContain('wallpaper_cell.jpg');
   });
 

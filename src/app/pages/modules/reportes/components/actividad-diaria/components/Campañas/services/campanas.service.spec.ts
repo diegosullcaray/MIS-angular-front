@@ -64,12 +64,15 @@ describe('CampanasService', () => {
       return of({ code: '0', headers: {}, body: { result: { headers: [], body: filas, additional: {} } } });
     }
 
-    it('pide `SEL_JER_MENTORING_01` con exactamente `{ tip_cod, cod_rel }`, sin `fec`', () => {
+    it('pide `SEL_JER_MENTORING_01` con exactamente `{ tip_cod, cod_rel }`, sin `fec` y con timeout pesado', () => {
       getRegularData.mockReturnValue(respuestaAsesores([]));
 
       servicio.opcionesAsesorMentoring(NODO).subscribe();
 
-      expect(getRegularData).toHaveBeenCalledWith('SEL_JER_MENTORING_01', { tip_cod: 9, cod_rel: 'FC' });
+      expect(getRegularData.mock.calls[0][0]).toBe('SEL_JER_MENTORING_01');
+      expect(getRegularData.mock.calls[0][1]).toEqual({ tip_cod: 9, cod_rel: 'FC' });
+      const contexto = getRegularData.mock.calls[0][2] as HttpContext | undefined;
+      expect(contexto?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
     });
 
     it('antepone "TODO" a los asesores que devuelve el backend', () => {

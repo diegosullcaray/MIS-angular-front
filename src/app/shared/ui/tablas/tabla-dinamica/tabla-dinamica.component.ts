@@ -92,6 +92,27 @@ export class TablaDinamicaComponent {
     return signo > 0 ? 'var(--mis-success)' : 'var(--mis-danger)';
   }
 
+  /** Estilo de celda dinámico: combina `cellStyle`, `cellStyleFn`, `fondoDinamico` y color sin colisiones. */
+  protected estiloCelda(fila: Record<string, unknown>, columna: ColumnaDinamica): Record<string, string> | null {
+    const res: Record<string, string> = {};
+    if (columna.cellStyle) {
+      Object.assign(res, columna.cellStyle);
+    }
+    if (columna.cellStyleFn) {
+      const custom = columna.cellStyleFn(fila[columna.key], fila);
+      if (custom) Object.assign(res, custom);
+    }
+    const fondo = this.fondoCelda(fila, columna);
+    if (fondo && !res['background-color'] && !res['background']) {
+      res['background-color'] = fondo;
+    }
+    const colorTexto = this.color(fila, columna) ?? this.colorFondoDinamico(fila, columna);
+    if (colorTexto && !res['color']) {
+      res['color'] = colorTexto;
+    }
+    return Object.keys(res).length > 0 ? res : null;
+  }
+
   /** Fila "destacada" del backend (`row.style === 1` en el legado — total/resumen). */
   protected destacada(fila: Record<string, unknown>): boolean {
     return fila['style'] === 1;
@@ -112,6 +133,16 @@ export class TablaDinamicaComponent {
     if (num === 0) return 'text-orange-500';
     if (num === -1) return 'text-[var(--mis-danger)]';
     return 'text-[var(--mis-text-tertiary)]';
+  }
+
+  /** Color de fondo para el punto de semáforo Tailwind (ej. Churn rate). */
+  protected colorSemaforoBg(fila: Record<string, unknown>, columna: ColumnaDinamica): string {
+    const valor = columna.semaforoKey ? fila[columna.semaforoKey] : undefined;
+    const num = Number(valor);
+    if (num === 1) return 'bg-emerald-500';
+    if (num === 0) return 'bg-amber-500';
+    if (num === -1) return 'bg-red-500';
+    return 'bg-gray-400';
   }
 
   /**

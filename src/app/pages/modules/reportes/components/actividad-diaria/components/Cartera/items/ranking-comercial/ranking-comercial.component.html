@@ -20,24 +20,16 @@
       descripcion="Vuelve a intentarlo en unos segundos."
     />
   } @else {
-    <!--
-      "Avance Esperado": el `Timing` de la primera fila — el porcentaje de días
-      transcurridos del mes, y la referencia contra la que se pinta el semáforo
-      de cada columna de avance.
-    -->
-    <div class="mis-card p-4 flex items-center justify-between gap-4 max-w-sm">
-      <div class="flex flex-col gap-1">
-        <span class="text-[11px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">Avance Esperado</span>
-        <span class="text-[28px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
-          {{ avanceEsperado() | number: '1.2-2' }}%
-        </span>
+    <!-- "Avance Esperado (Timing)" del legado con tokens del sistema -->
+    <div class="flex items-center gap-3">
+      <div class="inline-flex items-center gap-2 bg-[var(--mis-surface)] border border-[var(--mis-border-strong)] px-4 py-1.5 rounded-full shadow-xs">
+        <i class="pi pi-clock text-[var(--mis-primary)] text-sm"></i>
+        <span class="text-xs font-semibold text-[var(--mis-text-primary)]">Avance Esperado (Timing):</span>
+        <span class="text-sm font-bold text-[var(--mis-primary-text)] tabular-nums">{{ avanceEsperado() | number: '1.2-2' }}%</span>
       </div>
-      <span class="text-[11px] text-[var(--mis-text-tertiary)] text-right leading-relaxed max-w-[11rem]">
-        Días transcurridos del mes. Cada avance se compara contra este valor.
-      </span>
     </div>
 
-    <div class="mis-card p-3 overflow-x-auto">
+    <div class="bg-white dark:bg-[var(--mis-surface)] p-3 rounded-xl border border-[var(--mis-border)] overflow-x-auto shadow-xs">
       <app-tabla-dinamica [columnas]="columnas()" [filas]="filas()" [cargando]="cargando()" />
     </div>
   }

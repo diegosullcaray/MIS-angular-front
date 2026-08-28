@@ -8,6 +8,18 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
 
+const CLAVE_STORAGE_VISTA = 'mis-explorador-vista';
+
+function leerVistaGuardada(): 'cuadricula' | 'lista' {
+  try {
+    const valor = localStorage.getItem(CLAVE_STORAGE_VISTA);
+    if (valor === 'lista' || valor === 'cuadricula') return valor;
+  } catch {
+    // Almacenamiento no disponible
+  }
+  return 'cuadricula';
+}
+
 /** Explorador de archivos del sistema activo — reemplaza al panel de links de la Col 2. */
 @Component({
   selector: 'app-explorador-sistema',
@@ -21,7 +33,16 @@ export class ExploradorSistemaComponent {
   private readonly router = inject(Router);
 
   protected readonly panel = this.navegacion.panelActivo;
-  protected readonly vista = signal<'cuadricula' | 'lista'>('cuadricula');
+  protected readonly vista = signal<'cuadricula' | 'lista'>(leerVistaGuardada());
+
+  protected cambiarVista(nuevaVista: 'cuadricula' | 'lista'): void {
+    this.vista.set(nuevaVista);
+    try {
+      localStorage.setItem(CLAVE_STORAGE_VISTA, nuevaVista);
+    } catch {
+      // Ignorar errores de almacenamiento
+    }
+  }
 
   /** Carpetas primero y, dentro de cada grupo, alfabético — como el explorador de Windows. */
   protected readonly nodosVisibles = computed<SidebarNavRuta[]>(() =>

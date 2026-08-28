@@ -344,8 +344,8 @@ function graficoGestionComercial(
   resultado: TablaRegularResultadoRaw | undefined,
   config: GraficoGestionComercial,
 ): BloqueGrafico & { formato: FormatoValor } {
-  const { titulo, formato, esPorcentaje, esNivel, colorDeSerie } = config;
-  const base = { titulo, formato, categorias: [] as string[], series: [] };
+  const { titulo, formato, apilado, esPorcentaje, esNivel, colorDeSerie } = config;
+  const base = { titulo, formato, apilado, categorias: [] as string[], series: [] };
 
   const datos = parseGrafico(cargaUtilGrafico(resultado));
   if (!datos) return base;
@@ -353,6 +353,7 @@ function graficoGestionComercial(
   return {
     titulo,
     formato,
+    apilado,
     categorias: datos.categories ?? [],
     series: (datos.series ?? []).map((s) => {
       const nombre = s.name ?? '';

@@ -13,6 +13,18 @@
     -->
     @if (periodos().length) {
       <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
+    } @else {
+      <div class="flex flex-col gap-1">
+        <label class="text-[11px] font-medium text-[var(--mis-text-secondary)] uppercase tracking-wider">Fecha</label>
+        <p-datepicker
+          [(ngModel)]="fechaCalendario"
+          (ngModelChange)="onFechaCalendarioChange($event)"
+          dateFormat="yy-mm-dd"
+          [showIcon]="true"
+          placeholder="Seleccionar fecha"
+          class="p-inputtext-sm"
+        />
+      </div>
     }
   </div>
 
@@ -295,7 +307,7 @@
           <!-- El título lo pinta la propia gráfica a partir de `bloque.titulo`. Todas van
                como columnas: el legado no usa ni una barra horizontal en este reporte. -->
           <div class="mis-card p-3 h-[360px]">
-            <app-grafico-mixto [datos]="grafico" tipo="columna" [formato]="grafico.formato" />
+            <app-grafico-mixto [datos]="grafico" tipo="columna" [formato]="grafico.formato" [apilado]="grafico.apilado ?? false" />
           </div>
 
           @if (i === indiceTrasVarSaldo) {

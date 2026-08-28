@@ -1,6 +1,8 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TabsModule } from 'primeng/tabs';
+import { DatePickerModule } from 'primeng/datepicker';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
@@ -28,7 +30,9 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
   standalone: true,
   imports: [
     DecimalPipe,
+    FormsModule,
     TabsModule,
+    DatePickerModule,
     HierSelectorComponent,
     SelectFiltroComponent,
     TablaDinamicaComponent,
@@ -59,10 +63,11 @@ export class GestionComercialComponent {
   /**
    * El periodo del legado: NO es un calendario libre sino la lista de cortes que
    * devuelve `RS_FECH02`. Vacío mientras no responda; ahí el reporte usa la
-   * fecha de corte del usuario, igual que el legado.
+   * fecha de corte del usuario o la fecha seleccionada en calendario.
    */
   protected readonly periodos = signal<OpcionFiltro[]>([]);
   protected readonly periodo = signal('');
+  protected fechaCalendario: Date | null = null;
 
   protected readonly filas = computed(() => this.reporte().filas);
   protected readonly kpis = computed(() => this.reporte().kpis);
@@ -92,6 +97,14 @@ export class GestionComercialComponent {
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
+  }
+
+  protected onFechaCalendarioChange(fecha: Date | null): void {
+    if (!fecha) return;
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+    const day = String(fecha.getDate()).padStart(2, '0');
+    this.periodo.set(`${year}-${month}-${day}`);
   }
 
   private cargar(nodo: HierarquiaNodo, periodo: string): void {

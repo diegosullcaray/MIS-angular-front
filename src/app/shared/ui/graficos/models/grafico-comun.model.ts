@@ -30,6 +30,8 @@ export interface BloqueGrafico {
   categorias: string[];
   series: SerieGrafico[];
   tituloEjeY?: string;
+  /** Gráfico de barras o columnas apiladas (ej. Ingresos y Salidas, stacking: 'normal'). */
+  apilado?: boolean;
 }
 
 /** Una porción de un gráfico de torta/dona (`<app-grafico-pie>`). */
@@ -57,6 +59,8 @@ export interface OpcionesGrafico {
   formato?: FormatoValor;
   /** Para gráficos embebidos en tarjetas que ya traen su propio fondo. */
   fondoTransparente?: boolean;
+  /** Gráfico de barras o columnas apiladas (stacking: 'normal'). */
+  apilado?: boolean;
   /** Solo en torta: la vacía por el centro (`innerSize`) para dejarla como dona. */
   dona?: boolean;
 }

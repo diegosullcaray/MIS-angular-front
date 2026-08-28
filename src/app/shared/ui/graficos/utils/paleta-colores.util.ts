@@ -17,8 +17,19 @@ export const AZUL = '#2f9bd8';
 export const COLOR_PRIMARY = '#1D396E';
 export const COLOR_SECONDARY = '#00A2FF';
 
-/** Paleta de series genéricas, en orden (legado `theme_gp1()` de `theme.module.ts`). */
-export const PALETA_SERIES = ['#0191CE', '#164D90', '#2E9E5B', '#D97706', '#DC2626'] as const;
+/** Paleta de series genéricas con colores únicos y diferenciados. */
+export const PALETA_SERIES = [
+  '#0284C7', // Azul cielo
+  '#10B981', // Esmeralda / Verde
+  '#F59E0B', // Ámbar / Dorado
+  '#8B5CF6', // Violeta
+  '#EC4899', // Rosa
+  '#06B6D4', // Cyan
+  '#F97316', // Naranja
+  '#14B8A6', // Teal
+  '#6366F1', // Índigo
+  '#84CC16', // Lima
+] as const;
 
 /** Paleta de los tramos de mora del dashboard del analista. */
 export const PALETA_TRAMOS = ['#16A34A', '#00A2FF', '#B45309', '#DC2626', '#7C3AED', '#334155'] as const;
