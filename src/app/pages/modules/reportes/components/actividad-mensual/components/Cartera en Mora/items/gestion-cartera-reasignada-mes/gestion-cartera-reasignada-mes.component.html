@@ -1,0 +1,24 @@
+<app-reporte-simple
+  titulo="Gestión de Cartera Reasignada"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [bloques]="bloques()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <div filtros>
+    <app-select-filtro
+      etiqueta="Mostrar por"
+      [opciones]="opcionesMostrarPor"
+      [valor]="mostrarPor()"
+      (valorChange)="mostrarPor.set($event)"
+    />
+    <app-select-filtro
+      etiqueta="Fecha Cierre"
+      [opciones]="opcionesFechaBase"
+      [valor]="fechaBase()"
+      (valorChange)="fechaBase.set($event)"
+    />
+  </div>
+</app-reporte-simple>

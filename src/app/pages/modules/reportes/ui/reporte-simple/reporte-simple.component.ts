@@ -49,7 +49,9 @@ export interface PestanaReporte {
           (nodoSeleccionado)="nivelSeleccionado.emit($event)"
           (error)="errorJerarquia.emit()"
         />
-        <ng-content select="[filtros]" />
+        <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+          <ng-content select="[filtros]" />
+        </div>
       </div>
 
       <!-- ZONA DE CONTENIDO PRINCIPAL (Estado Vacío, Pestañas o Bloques Apilados) -->

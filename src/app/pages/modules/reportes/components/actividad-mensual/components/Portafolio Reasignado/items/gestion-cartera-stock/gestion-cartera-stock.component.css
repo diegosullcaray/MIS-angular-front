@@ -1,0 +1,4 @@
+/* Estilos encapsulados para gestion-cartera-stock */
+:host {
+  display: block;
+}

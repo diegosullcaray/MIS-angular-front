@@ -1,0 +1,29 @@
+<app-reporte-simple
+  titulo="Captación por Canal Comercial"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <div filtros class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+    <app-select-filtro
+      etiqueta="Fecha Cierre"
+      [opciones]="opcionesFechaBase"
+      [valor]="fechaBase()"
+      (valorChange)="fechaBase.set($event)"
+    />
+    <app-select-filtro
+      etiqueta="Producto"
+      [opciones]="opcionesProducto"
+      [valor]="producto()"
+      (valorChange)="producto.set($event)"
+    />
+  </div>
+
+  <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+    <b>TFM - Tendencia de Frecuencia Mensual &rarr;</b> Var. fecha actual vs. fin de mes anterior.<br>
+    <b>VAR. Clientes - Variación Clientes &rarr;</b> Var. fecha actual vs. fin de mes anterior.
+  </p>
+</app-reporte-simple>

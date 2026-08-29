@@ -1,0 +1,4 @@
+/* Estilos encapsulados para cartera-producto */
+:host {
+  display: block;
+}

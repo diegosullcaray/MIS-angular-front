@@ -66,9 +66,12 @@ export const COD_JERARQUIA_MACRO = 13;
 /** Profundidad máxima de `MAC_2`. */
 export const NIVEL_MAXIMO_JERARQUIA_MACRO = 3;
 
-/** `paramsHier` para `MAC_2` — la usan "Panel Operaciones" y "Gestión Pasivo Comercial". */
+/** `paramsHier` para `MAC_2` — la usan "Panel Operaciones", "Gestión Pasivo Comercial" y "Captación Operacional". */
 export const PARAMS_HIER_MACRO: ParamsJerarquia = {
   code: COD_JERARQUIA_MACRO,
   maxLvl: NIVEL_MAXIMO_JERARQUIA_MACRO,
   dlgTitulo: 'JERARQUIA MACRO',
 };
+
+/** Alias semántico para `MAC_2` (macro sin macrocorredor). */
+export const PARAMS_HIER_MACRO_SIN_CORREDOR = PARAMS_HIER_MACRO;

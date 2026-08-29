@@ -11,5 +11,11 @@ export interface TablaReporteResultado {
   additional: Record<string, unknown>;
 }
 
+/** Contrato estándar para reportes de un solo bloque (ReporteSimpleBase). */
+export interface ReporteBloqueUnico {
+  tabla1: TablaReporteResultado;
+}
+
 /** Estado inicial de un bloque aún sin cargar. */
 export const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
+

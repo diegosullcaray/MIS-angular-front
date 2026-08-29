@@ -8,6 +8,7 @@ import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas
 import type { CmgCarteraResultado, TarjetaCmgCartera } from '../models/cmg-cartera.model';
 import type { CarteraAgricolaResultado, TotalAgro, DetalleAgricolaResultado } from '../models/cartera-agricola.model';
 import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
+import { aplicarEstilosEstructuraDesembolsos } from '../../../../actividad-mensual/services/actividad-mensual-repo.service';
 import {
   GRAFICOS_GESTION_COMERCIAL,
   kpisDeFilaTotal,
@@ -26,17 +27,17 @@ export class CarteraRepositorioService {
 
   /**
    * "Estructura de Desembolsos" — legado `repositorio/desembolsos` (`RS_DESEMB_01`).
-   *
-   * El legado además corre un `processHeaders()` que asigna un `cellRenderer`
-   * a algunas subcolumnas, pero esa función devuelve el valor sin tocarlo en
-   * las dos ramas: es código muerto y no se porta.
+   * Aplica coloración condicional en la fila de distribución porcentual (IDRango 12)
+   * según el ranking de mayor a menor valor para _Ope y _MON.
    */
   estructuraDesembolsos(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
-    return this.bloques.tablaRegularCon('RS_DESEMB_01', {
-      tip_cod: nodo.tip_cod,
-      cod_rel: nodo.cod_rel,
-      fec: this.bloques.fecha(),
-    });
+    return this.bloques
+      .tablaRegularCon('RS_DESEMB_01', {
+        tip_cod: nodo.tip_cod,
+        cod_rel: nodo.cod_rel,
+        fec: this.bloques.fecha(),
+      })
+      .pipe(map((tabla) => aplicarEstilosEstructuraDesembolsos(tabla)));
   }
 
   /**

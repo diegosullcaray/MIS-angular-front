@@ -1,0 +1,36 @@
+<app-reporte-simple
+  titulo="SEMAFORO COSECHAS"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <div filtros class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+    <app-select-filtro
+      etiqueta="Producto"
+      [opciones]="opcionesProducto"
+      [valor]="producto()"
+      (valorChange)="producto.set($event)"
+    />
+    <app-select-filtro
+      etiqueta="Sub Producto"
+      [opciones]="opcionesSubproducto"
+      [valor]="subproducto()"
+      (valorChange)="subproducto.set($event)"
+    />
+    <app-select-filtro
+      etiqueta="Maduracion"
+      [opciones]="opcionesMaduracion"
+      [valor]="maduracion()"
+      (valorChange)="maduracion.set($event)"
+    />
+    <app-select-filtro
+      etiqueta="Tipo"
+      [opciones]="opcionesTipo"
+      [valor]="tipo()"
+      (valorChange)="tipo.set($event)"
+    />
+  </div>
+</app-reporte-simple>

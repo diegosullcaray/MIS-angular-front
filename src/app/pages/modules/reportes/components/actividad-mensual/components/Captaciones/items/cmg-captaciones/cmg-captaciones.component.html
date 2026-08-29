@@ -1,0 +1,24 @@
+<app-reporte-simple
+  titulo="CMG Captaciones"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <div filtros class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+    <app-select-filtro
+      etiqueta="Fecha Cierre"
+      [opciones]="opcionesFechaBase"
+      [valor]="fechaBase()"
+      (valorChange)="fechaBase.set($event)"
+    />
+  </div>
+
+  <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+    <b>A partir del día 15 calendario se comparan días hábiles faltantes para el cierre.</b><br>
+    <b>TMM - Tasa Mensual Móvil &rarr;</b> Var. fecha actual vs. mismo día del mes anterior.<br>
+    <b>TAM - Tasa Anual Móvil &rarr;</b> Var. fecha actual vs. mismo día del año anterior.
+  </p>
+</app-reporte-simple>
