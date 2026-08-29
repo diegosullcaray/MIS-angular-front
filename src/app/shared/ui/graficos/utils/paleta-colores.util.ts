@@ -76,7 +76,14 @@ export function esPorcentaje(nombre: string): boolean {
  * vencidos). Una serie sola va azul.
  */
 export function colorSerieReporte(nombre: string, unicaSerie: boolean): string {
+  const n = (nombre ?? '').toLowerCase();
   if (unicaSerie) return AZUL;
-  if (esPorcentaje(nombre)) return nombre.includes('Vencido') ? AMBAR : NARANJA;
-  return nombre.includes('Vencido') ? MAGENTA : NAVY;
+  if (n === 'clientes') return AZUL;
+  if (n === 'saldo vencido' || n === 'saldovencido') return MAGENTA;
+  if (n === 'saldo') return NAVY;
+  if (n.includes('participación') || n.includes('participacion')) return MAGENTA;
+  if (n.includes('respecto al total') || n.includes('respecto')) return NARANJA;
+  if (n.includes('vencido') || n.includes('mora')) return esPorcentaje(nombre) ? NARANJA : MAGENTA;
+  if (esPorcentaje(nombre)) return NARANJA;
+  return NAVY;
 }

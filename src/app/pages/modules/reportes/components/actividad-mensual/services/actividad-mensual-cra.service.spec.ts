@@ -16,6 +16,7 @@ describe('ActividadMensualCraService', () => {
     regular = vi.fn().mockReturnValue(of(TABLA_VACIA));
     deprecado = vi.fn().mockReturnValue(of(TABLA_VACIA));
     regulares = vi.fn().mockReturnValue(of([TABLA_VACIA]));
+    const graficos = vi.fn().mockReturnValue(of([]));
 
     TestBed.configureTestingModule({
       providers: [
@@ -26,6 +27,7 @@ describe('ActividadMensualCraService', () => {
             regular,
             deprecado,
             regulares,
+            graficos,
             fecha: () => '2026-08-28',
             fec: () => '20260828',
           },
@@ -76,10 +78,12 @@ describe('ActividadMensualCraService', () => {
     expect(res.tabla1).toBe(TABLA_VACIA);
   });
 
-  it('carteraProducto debe consultar rma/administracion/Cartera/cartera_producto_rma_02 en deprecado', async () => {
+  it('carteraProducto debe consultar tabla cartera_producto_rma_02 y gráfico cartera_producto_rma_01', async () => {
     const res = await firstValueFrom(service.carteraProducto(nodo));
-    expect(deprecado).toHaveBeenCalledWith('rma/administracion/Cartera/cartera_producto_rma_02', nodo);
-    expect(res.tabla1).toBe(TABLA_VACIA);
+    expect(deprecado).toHaveBeenCalledWith('rma/administracion/Cartera/cartera_producto_rma_02', nodo, undefined);
+    expect(res.tabla).toBe(TABLA_VACIA);
+    expect(res.graficos).toBeDefined();
+    expect(res.tarjetas).toBeDefined();
   });
 
   it('programasGobierno debe consultar 4 bloques', async () => {
@@ -127,5 +131,11 @@ describe('ActividadMensualCraService', () => {
     const res = await firstValueFrom(service.rankingKaypachaComercial(nodo));
     expect(regular).toHaveBeenCalledWith('rankKay_01', nodo);
     expect(res.tabla1).toBe(TABLA_VACIA);
+  });
+
+  it('tasasMesProducto debe consultar gráfico tasa_producto_rma_01', async () => {
+    const res = await firstValueFrom(service.tasasMesProducto(nodo));
+    expect(res.graficos).toBeDefined();
+    expect(res.tarjetas).toBeDefined();
   });
 });

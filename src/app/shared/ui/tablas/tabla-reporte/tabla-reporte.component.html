@@ -10,7 +10,7 @@
             [class]="claseEncabezado()"
             [style.background-color]="fondoEncabezado(columna)"
             [style.width]="anchoEncabezado(columna)"
-            style="color: var(--mis-text-on-primary)"
+            [style.color]="colorEncabezado(columna)"
             [innerHTML]="columna.header"
           ></th>
         }

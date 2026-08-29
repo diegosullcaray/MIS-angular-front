@@ -1,4 +1,47 @@
-/* Estilos encapsulados para cartera-producto */
 :host {
   display: block;
+  width: 100%;
+}
+
+.kpi-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-border);
+  box-shadow: var(--mis-shadow-sm);
+  transition: transform var(--mis-transition-base), box-shadow var(--mis-transition-base), border-color var(--mis-transition-base);
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mis-shadow-md);
+  border-color: var(--mis-border-strong);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--mis-primary), transparent);
+  opacity: 0;
+  transition: opacity var(--mis-transition-fast);
+}
+
+.kpi-card:hover::before {
+  opacity: 1;
+}
+
+.trend-badge-positive {
+  background-color: var(--mis-success-light);
+  color: var(--mis-success);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+}
+
+.trend-badge-negative {
+  background-color: var(--mis-danger-light);
+  color: var(--mis-danger);
+  border: 1px solid rgba(220, 38, 38, 0.2);
 }

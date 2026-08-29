@@ -118,6 +118,17 @@ export class TablaReporteComponent {
     return columna.style?.background ?? 'var(--mis-primary)';
   }
 
+  /** Color del texto en el `<th>`: respeta el estilo del backend o resalta en verde si indica Real. */
+  protected colorEncabezado(columna: ColumnaReporte): string {
+    const styleColor = columna.style ? (columna.style['color'] as string | undefined) : undefined;
+    if (styleColor) return styleColor;
+    const headerTexto = (columna.header ?? columna.columnDef ?? '').toLowerCase();
+    if (headerTexto.includes('real')) {
+      return '#4ade80';
+    }
+    return 'var(--mis-text-on-primary)';
+  }
+
   /** Ancho fijo del encabezado si el backend lo indica — `c.style?.desktop?.width` del legado. */
   protected anchoEncabezado(columna: ColumnaReporte): string | null {
     // En modo ajustado no se respeta el ancho fijo del backend: es justamente lo

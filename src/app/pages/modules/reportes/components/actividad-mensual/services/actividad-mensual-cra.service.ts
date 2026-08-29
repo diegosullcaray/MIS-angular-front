@@ -1,7 +1,15 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import type { ReporteBloqueUnico, TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import {
+  type CarteraProductoResultado,
+  extraerTarjetasCarteraProducto,
+} from '../components/Cartera/items/cartera-producto/models/cartera-producto.model';
+import {
+  type TasasMesProductoResultado,
+  extraerTarjetasTasasProducto,
+} from '../components/Cartera/items/tasas-mes-producto/models/tasas-mes-producto.model';
 
 @Injectable({ providedIn: 'root' })
 export class ActividadMensualCraService {
@@ -71,9 +79,19 @@ export class ActividadMensualCraService {
     return this.consultarRegular('CARACT_pas_M_01', nodo, { prod, segmento, ...(fec ? { fec } : {}) });
   }
 
-  /** Cartera por Producto (`cart-prod` -> `rma/administracion/Cartera/cartera_producto_rma_02`, host `cra-v3`). */
-  carteraProducto(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarDeprecado('rma/administracion/Cartera/cartera_producto_rma_02', nodo, fec ? { fec } : undefined);
+  /** Cartera por Producto (`cart-prod` -> gráfico `cartera_producto_rma_01`, tabla `cartera_producto_rma_02`, host `cra-v3`). */
+  carteraProducto(nodo: NodoConsulta, fec?: string): Observable<CarteraProductoResultado> {
+    const extra = fec ? { fec } : undefined;
+    const tabla$ = this.bloques.deprecado('rma/administracion/Cartera/cartera_producto_rma_02', nodo, extra);
+    const graficos$ = this.bloques.graficos('rma/administracion/Cartera/cartera_producto_rma_01', nodo, extra);
+
+    return forkJoin({ tabla: tabla$, graficos: graficos$ }).pipe(
+      map(({ tabla, graficos }) => ({
+        tabla,
+        graficos,
+        tarjetas: extraerTarjetasCarteraProducto(tabla, graficos),
+      }))
+    );
   }
 
   /** Programas del Gobierno (`pro-gob-m` -> `RPROGOB_M`, host `cra-v1p3`). */
@@ -109,8 +127,15 @@ export class ActividadMensualCraService {
   }
 
   /** Tasas Mes por Producto (`tp-mes` -> `rma/administracion/Cartera/tasa_producto_rma_01`, host `cra-v3`). */
-  tasasMesProducto(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarDeprecado('rma/administracion/Cartera/tasa_producto_rma_01', nodo, fec ? { fec } : undefined);
+  tasasMesProducto(nodo: NodoConsulta, fec?: string): Observable<TasasMesProductoResultado> {
+    return this.bloques
+      .graficos('rma/administracion/Cartera/tasa_producto_rma_01', nodo, fec ? { fec } : undefined)
+      .pipe(
+        map((graficos) => ({
+          graficos,
+          tarjetas: extraerTarjetasTasasProducto(graficos),
+        }))
+      );
   }
 
   /** Comite de Créditos (`seg_comite` -> `SEGUI_COMITE_01`, host `cra-v3`). */

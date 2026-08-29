@@ -92,7 +92,18 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
   const tipoBase = forma === 'columna' ? 'column' : forma === 'linea' ? 'spline' : 'bar';
 
   const series: SeriesOptionsType[] = bloque.series.map((serie, i) => {
-    const color = serie.color ?? (unicaSerie ? AZUL : PALETA_SERIES[i % PALETA_SERIES.length]);
+    let color = serie.color;
+    if (!color) {
+      const nombreLower = (serie.nombre ?? '').toLowerCase();
+      if (nombreLower.includes('real')) {
+        color = '#0284C7'; // Azul para barras Real
+      } else if (nombreLower.includes('meta') || nombreLower.includes('ppto') || nombreLower.includes('presupuesto')) {
+        color = '#1D396E'; // Navy para Meta
+      } else {
+        color = '#0284C7'; // Azul corporativo por defecto
+      }
+    }
+
     if (enEjeSecundario(serie)) {
       return {
         type: 'spline',
@@ -156,6 +167,7 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
           fontSize: '10px',
           fontWeight: 'bold',
           textOutline: 'none',
+          color: color,
           ...(esApilado ? { color: '#ffffff' } : {}),
         },
       },
@@ -166,16 +178,36 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
   return {
     ...base,
     chart: { ...base.chart, type: tipoBase, zooming: { type: 'xy' } },
+    title: {
+      text: bloque.titulo ?? undefined,
+      align: 'center',
+      style: {
+        color: oscuro ? '#E8EEF9' : '#164D90',
+        fontWeight: 'bold',
+        fontSize: '16px',
+      },
+    },
+    subtitle: bloque.subtitulo
+      ? {
+          text: bloque.subtitulo,
+          useHTML: true,
+          align: 'right',
+          style: { color: '#16a34a', fontSize: '13px' },
+        }
+      : undefined,
     xAxis: {
       categories: bloque.categorias,
       crosshair: true,
-      labels: { style: estiloTexto },
+      labels: {
+        rotation: -45,
+        style: estiloTexto,
+      },
       lineColor: linea,
       tickColor: linea,
     },
     yAxis: [
       {
-        title: { text: bloque.tituloEjeY ?? undefined, style: estiloTexto },
+        title: { text: bloque.tituloEjeY ?? 'En miles', style: { ...estiloTexto, fontWeight: 'bold' } },
         labels: { formatter: formateadorEjeValor, style: estiloTexto },
         gridLineColor: linea,
         ...(esApilado
@@ -202,13 +234,17 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
           : {}),
       },
       {
-        title: { text: undefined },
+        title: {
+          text: secundarias.length > 0 ? (ejeSecundarioEnPorcentaje ? '%' : undefined) : (bloque.tituloEjeY ?? 'En miles'),
+          style: { ...estiloTexto, fontWeight: 'bold' },
+        },
         labels: ejeSecundarioEnPorcentaje
           ? { format: '{value} %', style: estiloTexto }
           : { formatter: formateadorEjeValor, style: estiloTexto },
         opposite: true,
         gridLineWidth: 0,
-        visible: secundarias.length > 0,
+        visible: true,
+        ...(secundarias.length === 0 ? { linkedTo: 0 } : {}),
       },
     ],
     plotOptions: {
@@ -224,7 +260,11 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
       },
       series: { cursor: 'pointer' },
     },
-    legend: { ...base.legend, enabled: !unicaSerie },
+    legend: {
+      ...base.legend,
+      enabled: true,
+      symbolRadius: 0,
+    },
     tooltip: { ...base.tooltip, shared: true, formatter: formateadorTooltip(formato) },
     series,
   };

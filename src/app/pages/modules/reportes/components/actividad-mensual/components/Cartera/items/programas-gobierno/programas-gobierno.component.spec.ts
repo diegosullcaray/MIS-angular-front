@@ -6,12 +6,20 @@ import { ActividadMensualCraService } from '../../../../services/actividad-mensu
 import { TABLA_VACIA } from '../../../../../../models/tabla-reporte.model';
 import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
+// jsdom no implementa ResizeObserver — lo usa `p-tabs` internamente.
+class ResizeObserverFalso {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+}
+
 const NODO: HierarquiaNodo = { tip_cod: 1, cod_rel: '100', desc_rel: 'Unidad 100', lvl: 1 };
 
 describe('ProgramasGobiernoComponent', () => {
   let servicioSpy: { programasGobierno: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
+    (globalThis as unknown as { ResizeObserver: typeof ResizeObserverFalso }).ResizeObserver = ResizeObserverFalso;
     servicioSpy = {
       programasGobierno: vi.fn().mockReturnValue(of([TABLA_VACIA, TABLA_VACIA, TABLA_VACIA, TABLA_VACIA])),
     };

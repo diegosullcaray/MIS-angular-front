@@ -3,7 +3,7 @@ import { of, firstValueFrom } from 'rxjs';
 import { ActividadMensualRepoService } from './actividad-mensual-repo.service';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
-import { TABLA_DINAMICA_VACIA } from '../../../models/tabla-dinamica.model';
+import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
 
 describe('ActividadMensualRepoService', () => {
   let periodos: ReturnType<typeof vi.fn>;
@@ -57,13 +57,17 @@ describe('ActividadMensualRepoService', () => {
     expect(res).toBe(TABLA_DINAMICA_VACIA);
   });
 
-  it('estructuraDesembolsos debe llamar a tablaRegularCon con RS_DESEMB_01', async () => {
-    const res = await firstValueFrom(service.estructuraDesembolsos(nodo));
-    expect(tablaRegularCon).toHaveBeenCalledWith('RS_DESEMB_01', {
-      tip_cod: nodo.tip_cod,
-      cod_rel: nodo.cod_rel,
-      fec: '2026-08-28',
-    });
+  it('estructuraDesembolsosMensual debe llamar a tablaRegularCon con RS_DESEMB_02', async () => {
+    const res = await firstValueFrom(service.estructuraDesembolsosMensual(nodo, '2026-08-28'));
+    expect(tablaRegularCon).toHaveBeenCalledWith(
+      'RS_DESEMB_02',
+      {
+        tip_cod: nodo.tip_cod,
+        cod_rel: nodo.cod_rel,
+        fec: '2026-08-28',
+      },
+      expect.anything()
+    );
     expect(res).toEqual(TABLA_DINAMICA_VACIA);
   });
 
@@ -99,7 +103,7 @@ describe('ActividadMensualRepoService', () => {
   });
 
   it('aplicarEstilosEstructuraDesembolsos asigna colores cronológicos según ranking en IDRango 12', async () => {
-    const tablaMock = {
+    const tablaMock: TablaDinamicaResultado = {
       columnas: [
         { key: 'DES_RANGO', label: 'Rango' },
         { key: '1_Ope', label: 'Ope 1' },
@@ -108,11 +112,11 @@ describe('ActividadMensualRepoService', () => {
       ],
       filas: [
         { IDRango: 1, DES_RANGO: 'Hasta 1000', '1_Ope': 10, '2_Ope': 20, '3_Ope': 30 },
-        { IDRango: 12, DES_RANGO: 'Total', '1_Ope': '25%', '2_Ope': '45%', '3_Ope': '30%' },
+        { IDRango: 12, DES_RANGO: '% Part', '1_Ope': '25%', '2_Ope': '45%', '3_Ope': '30%' },
       ],
     };
     tablaRegularCon.mockReturnValue(of(tablaMock));
-    const res = await firstValueFrom(service.estructuraDesembolsos(nodo));
+    const res = await firstValueFrom(service.estructuraDesembolsosMensual(nodo, '2026-08-28'));
 
     const colOpe1 = res.columnas.find((c) => c.key === '1_Ope');
     const colOpe2 = res.columnas.find((c) => c.key === '2_Ope');

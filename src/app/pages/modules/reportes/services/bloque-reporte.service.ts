@@ -4,11 +4,12 @@ import { Observable, catchError, forkJoin, map, of } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { TIMEOUT_MS, TIMEOUT_REPORTE_PESADO_MS } from '../../../../core/interceptors/auth.interceptor';
-import { mapearBloqueReporte, mapearPeriodos, mapearTablaRegular } from '../utils/reportes-mapeo.util';
+import { mapearBloqueReporte, mapearBloquesGrafico, mapearPeriodos, mapearTablaRegular } from '../utils/reportes-mapeo.util';
 import { fechaCorte, fechaCorteCompacta } from '../utils/fecha-reporte.util';
 import type { HierarquiaNodo } from '../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../models/tabla-reporte.model';
 import type { TablaDinamicaResultado } from '../models/tabla-dinamica.model';
+import type { BloqueGrafico } from '../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { OpcionFiltro } from '../../../../shared/ui/formularios/opcion-filtro.model';
 
 /**
@@ -149,8 +150,8 @@ export class BloqueReporteService {
    * `tipcod`/`codrel`/`fecha`, Ranking Mujer `tip_cod`/`cod_rel`/`fec` y
    * Movimiento de Clientes no manda ninguno. Por eso los pone cada service.
    */
-  tablaRegularCon(codRep: string, params: Record<string, unknown> = {}): Observable<TablaDinamicaResultado> {
-    return this.reportes.getRegularTableResult(codRep, params).pipe(map(mapearTablaRegular));
+  tablaRegularCon(codRep: string, params: Record<string, unknown> = {}, context?: HttpContext): Observable<TablaDinamicaResultado> {
+    return this.reportes.getRegularTableResult(codRep, params, context).pipe(map(mapearTablaRegular));
   }
 
   /**
@@ -184,5 +185,15 @@ export class BloqueReporteService {
   /** Un bloque del strand "deprecado" (`reportData`) — reportes cuya entrada de `cra-map.ts` no declara `reportType`. */
   deprecado(codRep: string, nodo: NodoConsulta, extra: Record<string, unknown> = {}): Observable<TablaReporteResultado> {
     return this.reportes.getDeprecatedData(codRep, { ...nodo, fec: this.fec(), ...extra }).pipe(map(mapearBloqueReporte));
+  }
+
+  /** Un bloque de gráficos Highcharts (`graphicData`). */
+  graficos(codRep: string, nodo: NodoConsulta, extra: Record<string, unknown> = {}): Observable<BloqueGrafico[]> {
+    return this.reportes
+      .getGraphicData(codRep, { ...nodo, fec: this.fec(), ...extra })
+      .pipe(
+        map(mapearBloquesGrafico),
+        catchError(() => of([]))
+      );
   }
 }

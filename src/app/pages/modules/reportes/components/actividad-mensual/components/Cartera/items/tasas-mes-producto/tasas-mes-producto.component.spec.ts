@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { TasasMesProductoComponent } from './tasas-mes-producto.component';
 import { ActividadMensualCraService } from '../../../../services/actividad-mensual-cra.service';
-import { TABLA_VACIA } from '../../../../../../models/tabla-reporte.model';
+import { TASAS_MES_PRODUCTO_VACIO } from './models/tasas-mes-producto.model';
 import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 2, cod_rel: '200', desc_rel: 'Oficina 200', lvl: 1 };
@@ -12,7 +12,7 @@ describe('TasasMesProductoComponent', () => {
   let servicioSpy: { tasasMesProducto: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    servicioSpy = { tasasMesProducto: vi.fn().mockReturnValue(of({ tabla1: TABLA_VACIA })) };
+    servicioSpy = { tasasMesProducto: vi.fn().mockReturnValue(of(TASAS_MES_PRODUCTO_VACIO)) };
 
     TestBed.configureTestingModule({
       imports: [TasasMesProductoComponent],

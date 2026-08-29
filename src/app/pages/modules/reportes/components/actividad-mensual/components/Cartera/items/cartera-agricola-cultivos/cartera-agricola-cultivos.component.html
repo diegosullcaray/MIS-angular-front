@@ -1,15 +1,23 @@
-<app-window-panel titulo="Cartera Agrícola - Cultivos" [conFiltros]="true">
+<app-window-panel
+  titulo="Gestión Comercial - Portafolio Agrícola"
+  subtitulo="Información mensual por cultivos"
+  [permitirActualizar]="false"
+  [conFiltros]="true"
+>
   <div ventana-filtros class="flex flex-col gap-3">
+    <!-- Selector de Jerarquía -->
     <app-hier-selector
       [paramsHier]="paramsHier"
       placeholder="Elegir nivel"
       (nodoSeleccionado)="onNivelSeleccionado($event)"
       (error)="onErrorJerarquia()"
     />
+
+    <!-- Filtro de Periodo -->
     @if (periodos().length > 0) {
       <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
         <app-select-filtro
-          etiqueta="Fecha Cierre"
+          etiqueta="Periodo / Corte"
           [opciones]="periodos()"
           [valor]="periodo()"
           (valorChange)="periodo.set($event)"
@@ -21,29 +29,180 @@
   @if (!nivelActual()) {
     <app-empty-state
       titulo="Elige un nivel"
-      descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte."
+      descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte de cartera de cultivos."
     />
-  } @else {
-    <div class="flex flex-col gap-4">
+  } @else if (!filaSeleccionada()) {
+    <div class="flex flex-col gap-4 sm:gap-5 w-full">
+      <!-- Tarjetas KPI Estándar (Design System) -->
       @if (totales().length > 0) {
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          @for (total of totales(); track total.etiqueta) {
-            <div class="mis-card p-3 flex flex-col gap-1">
-              <span class="text-[12px] text-[var(--mis-text-secondary)] font-medium">{{ total.etiqueta }}</span>
-              <span class="text-[18px] font-bold text-[var(--mis-text-primary)]">
-                {{ formatear(total.actual, total.formato) }}
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+          @for (t of totales(); track t.etiqueta) {
+            <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col justify-between gap-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] truncate">
+                  {{ t.etiqueta }}
+                </span>
+                @if (t.senal !== 0) {
+                  <span
+                    class="flex items-center gap-1 text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full"
+                    [class.trend-badge-positive]="t.senal > 0"
+                    [class.trend-badge-negative]="t.senal < 0"
+                  >
+                    {{ t.actual - t.anterior | number: (t.formato === 'moneda' ? '1.0-2' : '1.0-0') }}
+                    <i class="pi text-[10px]" [class.pi-arrow-up]="t.senal > 0" [class.pi-arrow-down]="t.senal < 0"></i>
+                  </span>
+                }
+              </div>
+
+              <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight">
+                @if (t.formato === 'moneda') {
+                  S/ {{ t.actual | number: '1.0-2' }}
+                } @else {
+                  {{ t.actual | number: '1.0-0' }}
+                }
               </span>
-              <span class="text-[11px] text-[var(--mis-text-tertiary)]">
-                Mes anterior: {{ formatear(total.anterior, total.formato) }}
+
+              <span class="text-[11px] sm:text-[12px] font-medium text-[var(--mis-text-secondary)]">
+                Mes anterior: {{ t.anterior | number: (t.formato === 'moneda' ? '1.0-2' : '1.0-0') }}
               </span>
             </div>
           }
         </section>
       }
 
-      <div class="mis-card p-3 overflow-x-auto">
-        <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
+      <!-- Tabla Principal Seleccionable -->
+      <section class="mis-card p-3.5 sm:p-4 overflow-x-auto w-full">
+        <app-tabla-dinamica
+          [columnas]="tabla().columnas"
+          [filas]="tabla().filas"
+          [cargando]="cargando()"
+          [seleccionable]="true"
+          (filaSeleccionada)="onFilaSeleccionada($event)"
+        />
+      </section>
+    </div>
+  } @else {
+    <!-- Vista Detalle por Cultivo (Gráficos) -->
+    <div class="flex flex-col gap-4 w-full">
+      <div class="flex items-center gap-3">
+        <button type="button" class="mis-btn mis-btn-ghost !p-2" (click)="volverAlListado()" aria-label="Volver al listado">
+          <i class="pi pi-arrow-left text-base"></i>
+        </button>
+        <h2 class="text-base sm:text-lg font-bold text-[var(--mis-text-primary)] m-0">
+          Detalle por cultivo — {{ filaSeleccionada()?.['DESCRIPCION'] ?? filaSeleccionada()?.['rdesjer'] ?? '' }}
+        </h2>
       </div>
+
+      <div class="grid gap-4 grid-cols-1 xl:grid-cols-2">
+        @for (grafico of graficos(); track grafico.titulo; let i = $index) {
+          <div class="mis-card p-3 sm:p-4 min-h-[560px] sm:min-h-[580px] flex flex-col">
+            <app-grafico-mixto [datos]="grafico" (puntoSeleccionado)="onCultivoSeleccionado($event, idDetalle(i))" />
+          </div>
+        }
+      </div>
+
+      @if (cargandoGraficos()) {
+        <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 animate-pulse">Cargando gráficos de detalle…</p>
+      }
     </div>
   }
 </app-window-panel>
+
+<!-- Modal Listado de Clientes del Cultivo -->
+<p-dialog
+  [header]="detalle()?.cultivo ?? ''"
+  [visible]="!!detalle()"
+  (visibleChange)="cerrarDetalle()"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '92vw', maxWidth: '1200px' }"
+>
+  @if (detalle(); as d) {
+    @if (ubicacion(); as u) {
+      <!-- Vista de Mapa -->
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            class="mis-btn mis-btn-ghost !p-2"
+            (click)="volverAlListadoDeClientes()"
+            aria-label="Volver al listado de clientes"
+          >
+            <i class="pi pi-arrow-left"></i>
+          </button>
+          <h3 class="text-[14px] font-semibold text-[var(--mis-text-primary)] m-0 truncate">{{ u.etiqueta }}</h3>
+        </div>
+
+        <div class="h-[60vh] min-h-[360px]">
+          <app-mapa-ubicacion [lat]="u.lat" [lng]="u.lng" [etiqueta]="u.etiqueta" />
+        </div>
+      </div>
+    } @else {
+      <!-- Vista de Tabla de Clientes -->
+      <div class="flex flex-col gap-3">
+        <div class="grid gap-3 grid-cols-2 xl:grid-cols-4">
+          <div class="mis-card p-3 flex flex-col gap-0.5">
+            <span class="text-[11px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">Saldo cartera</span>
+            <span class="text-base font-semibold text-[var(--mis-text-primary)]">S/ {{ d.totales.saldoCartera | number: '1.0-0' }}</span>
+          </div>
+          <div class="mis-card p-3 flex flex-col gap-0.5">
+            <span class="text-[11px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">Saldo vencido</span>
+            <span class="text-base font-semibold text-[var(--mis-text-primary)]">S/ {{ d.totales.saldoVencido | number: '1.0-0' }}</span>
+          </div>
+          <div class="mis-card p-3 flex flex-col gap-0.5">
+            <span class="text-[11px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">Extensión</span>
+            <span class="text-base font-semibold text-[var(--mis-text-primary)]">{{ d.totales.extension | number: '1.0-0' }}</span>
+          </div>
+          <div class="mis-card p-3 flex flex-col gap-0.5">
+            <span class="text-[11px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">% vencido</span>
+            <span class="text-base font-semibold text-[var(--mis-text-primary)]">{{ d.totales.porcentajeVencido | number: '1.0-2' }}%</span>
+          </div>
+        </div>
+
+        <app-data-table
+          [columns]="columnasDetalle"
+          [data]="d.filas"
+          [searchFields]="busquedaDetalle"
+          searchPlaceholder="Buscar por producto, cliente, estado o cuenta..."
+          emptyMessage="No se encontraron clientes para este cultivo."
+          emptyHint="Ajusta la búsqueda o los filtros para ver más resultados."
+        >
+          <ng-template appDataTableCell="HDESCLI" let-row>
+            <span class="font-medium text-[var(--mis-text-primary)]">{{ row.HDESCLI }}</span>
+          </ng-template>
+
+          <ng-template appDataTableCell="HCTACLI" let-row>
+            <span class="font-mono text-[var(--mis-text-secondary)]">{{ row.HCTACLI }}</span>
+          </ng-template>
+
+          <ng-template appDataTableCell="HCAPMON" let-row>
+            <span class="tabular-nums">{{ row.HCAPMON | number: '1.0-0' }}</span>
+          </ng-template>
+
+          <ng-template appDataTableCell="HVENMON" let-row>
+            <span class="tabular-nums" [style.color]="+row.HVENMON > 0 ? 'var(--mis-danger)' : null">
+              {{ row.HVENMON | number: '1.0-0' }}
+            </span>
+          </ng-template>
+
+          <ng-template appDataTableCell="HEXTENS" let-row>
+            <span class="tabular-nums">{{ row.HEXTENS | number: '1.0-0' }}</span>
+          </ng-template>
+
+          <ng-template appDataTableCell="ubicacion" let-row>
+            <p-button
+              icon="pi pi-map-marker"
+              [text]="true"
+              size="small"
+              severity="primary"
+              pTooltip="Ver ubicación en el mapa"
+              tooltipPosition="top"
+              [ariaLabel]="'Ver ubicación de ' + row.HDESCLI"
+              (onClick)="onClienteSeleccionado(row)"
+            ></p-button>
+          </ng-template>
+        </app-data-table>
+      </div>
+    }
+  }
+</p-dialog>

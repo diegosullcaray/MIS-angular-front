@@ -19,8 +19,19 @@ export function mapearBloqueReporte(r: IWinderResponse): TablaReporteResultado {
 
 /** Mismo mapeo, para el motor `table.regular` (columnas dinámicas) — ver `mapearBloqueReporte()`. */
 export function mapearTablaRegular(r: IWinderResponse): TablaDinamicaResultado {
-  const resultado = (r.body as TablaRegularResponseBody | null)?.resultado;
-  const columnas = resultado?.headers ? (JSON.parse(resultado.headers) as ColumnaDinamica[]) : [];
+  const body = (typeof r?.body === 'string' ? seguroParse<TablaRegularResponseBody>(r.body) : r?.body) as
+    | TablaRegularResponseBody
+    | null
+    | undefined;
+  const resultado = typeof body?.resultado === 'string' ? seguroParse<TablaRegularResultadoRaw>(body.resultado) : body?.resultado;
+
+  let columnas: ColumnaDinamica[] = [];
+  if (Array.isArray(resultado?.headers)) {
+    columnas = resultado.headers as ColumnaDinamica[];
+  } else if (typeof resultado?.headers === 'string') {
+    columnas = seguroParse<ColumnaDinamica[]>(resultado.headers) ?? [];
+  }
+
   const filas = (resultado?.data as Record<string, unknown>[]) ?? [];
   const kpis = mapearKpis(resultado, filas);
   return kpis ? { columnas, filas, kpis } : { columnas, filas };
@@ -102,11 +113,30 @@ interface BloqueGraficoCrudo {
 /** Mapeo del motor de gráficos (`graphicData`) — a diferencia de `mapearBloqueReporte()`, `result` es un array de bloques, no uno solo (ver `ModReportesService.getGraphicData()`). */
 export function mapearBloquesGrafico(r: IWinderResponse): BloqueGrafico[] {
   const result = ((r.body as { result?: BloqueGraficoCrudo[] } | null)?.result ?? []) as BloqueGraficoCrudo[];
-  return result.map((bloque) => ({
-    titulo: bloque.graphName ?? '',
-    subtitulo: bloque.graphSubName,
-    categorias: bloque.categories?.[0]?.columnDef ?? [],
-    series: (bloque.series ?? []).map((s) => ({ nombre: s.name ?? '', datos: s.data ?? [], color: s.color })),
-    tituloEjeY: bloque.getUnitGraph,
-  }));
+  return result.map((bloque) => {
+    let subtitulo = bloque.graphSubName;
+    const series = (bloque.series ?? []).map((s) => ({ nombre: s.name ?? '', datos: s.data ?? [], color: s.color }));
+    if (!subtitulo && series.length > 0) {
+      const lineas: string[] = [];
+      series.forEach((s) => {
+        const ultimos = (s.datos ?? []).filter((d): d is number => d !== null && d !== undefined);
+        if (ultimos.length > 0) {
+          const ultimo = ultimos[ultimos.length - 1];
+          const unit = (bloque.getUnitGraph ?? '').toLowerCase().includes('porcentaje') || s.nombre.includes('%') ? '%' : '';
+          const numFmt = typeof ultimo === 'number' ? (unit ? ultimo.toFixed(2) : ultimo.toLocaleString('en-US')) : String(ultimo);
+          lineas.push(`${s.nombre}: ${numFmt}${unit ? ' ' + unit : ''}`);
+        }
+      });
+      if (lineas.length > 0) {
+        subtitulo = lineas.join(' | ');
+      }
+    }
+    return {
+      titulo: bloque.graphName ?? '',
+      subtitulo,
+      categorias: bloque.categories?.[0]?.columnDef ?? [],
+      series,
+      tituloEjeY: bloque.getUnitGraph,
+    };
+  });
 }

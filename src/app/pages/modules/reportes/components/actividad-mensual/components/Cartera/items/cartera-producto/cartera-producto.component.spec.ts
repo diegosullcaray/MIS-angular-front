@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { CarteraProductoComponent } from './cartera-producto.component';
 import { ActividadMensualCraService } from '../../../../services/actividad-mensual-cra.service';
-import { TABLA_VACIA } from '../../../../../../models/tabla-reporte.model';
+import { CARTERA_PRODUCTO_VACIO } from './models/cartera-producto.model';
 import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 1, cod_rel: '100', desc_rel: 'Unidad 100', lvl: 1 };
@@ -12,7 +12,7 @@ describe('CarteraProductoComponent', () => {
   let servicioSpy: { carteraProducto: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    servicioSpy = { carteraProducto: vi.fn().mockReturnValue(of({ tabla1: TABLA_VACIA })) };
+    servicioSpy = { carteraProducto: vi.fn().mockReturnValue(of(CARTERA_PRODUCTO_VACIO)) };
 
     TestBed.configureTestingModule({
       imports: [CarteraProductoComponent],

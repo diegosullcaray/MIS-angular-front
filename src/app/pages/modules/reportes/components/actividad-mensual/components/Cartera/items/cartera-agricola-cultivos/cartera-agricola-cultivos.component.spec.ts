@@ -12,12 +12,14 @@ describe('CarteraAgricolaCultivosComponent', () => {
   let servicioSpy: {
     periodos: ReturnType<typeof vi.fn>;
     carteraAgricola: ReturnType<typeof vi.fn>;
+    detalleGraficosAgricola: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
     servicioSpy = {
       periodos: vi.fn().mockReturnValue(of([{ id: '2026-08', desc: 'Agosto 2026' }])),
       carteraAgricola: vi.fn().mockReturnValue(of(CARTERA_AGRICOLA_VACIA)),
+      detalleGraficosAgricola: vi.fn().mockReturnValue(of({ graficos: [], filasPorGrafico: {} })),
     };
 
     TestBed.configureTestingModule({

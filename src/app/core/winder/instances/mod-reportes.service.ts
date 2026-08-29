@@ -21,9 +21,11 @@ export class ModReportesService extends AntService {
    *
    * @param codRep Código del reporte (`cod_rep`, ej: `'RS_BASE_NEG_01'`).
    * @param params Parámetros propios del reporte (ej: `{ nom: termino }`).
+   * @param context Contexto HTTP opcional — para reportes pesados que necesiten
+   *   un `TIMEOUT_MS` mayor al de 30 s por defecto.
    */
-  public getRegularTableResult(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
-    return this.getSimpleResponseString('table.regular', { ...params, cod_rep: codRep }, 'resultado');
+  public getRegularTableResult(codRep: string, params: Record<string, unknown>, context?: HttpContext): Observable<IWinderResponse> {
+    return this.getSimpleResponseString('table.regular', { ...params, cod_rep: codRep }, 'resultado', context);
   }
 
   /**

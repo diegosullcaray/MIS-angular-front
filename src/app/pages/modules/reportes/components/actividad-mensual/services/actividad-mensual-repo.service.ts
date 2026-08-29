@@ -1,12 +1,15 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpContext } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
+import { TIMEOUT_MS, TIMEOUT_REPORTE_PESADO_MS } from '../../../../../../core/interceptors/auth.interceptor';
 import type { ColumnaDinamica, TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../models/tabla-dinamica.model';
 import type { CmgCarteraResultado, TarjetaCmgCartera } from '../../actividad-diaria/components/Cartera/models/cmg-cartera.model';
 import type { CarteraAgricolaResultado, TotalAgro, DetalleAgricolaResultado } from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
 import { GRAFICOS_AGRICOLA, TOTALES_AGRO } from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
 import type { BloqueGrafico } from '../../../../../../shared/ui/graficos/models/grafico-comun.model';
+import { colorSerieReporte } from '../../../../../../shared/ui/graficos/utils/paleta-colores.util';
 import type { OpcionFiltro } from '../../../../../../shared/ui/formularios/opcion-filtro.model';
 
 @Injectable({ providedIn: 'root' })
@@ -28,14 +31,20 @@ export class ActividadMensualRepoService {
     });
   }
 
-  /** Estructura de Desembolsos (`RS_DESEMB_01`). */
-  estructuraDesembolsos(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
+  /** Estructura de Desembolsos — versión mensual (`RS_DESEMB_02`, con filtro de periodos).
+   *
+   * El legado `desembolsos-m` usa `RS_DESEMB_02` con la fecha seleccionada del filtro `RS_FECH`,
+   * a diferencia de la versión diaria que usa `RS_DESEMB_01` con la fecha de corte del usuario.
+   * Timeout extendido a 3 min (180 s) — es más pesado que otros reportes mensuales.
+   */
+  estructuraDesembolsosMensual(nodo: NodoConsulta, fec: string): Observable<TablaDinamicaResultado> {
+    const context = new HttpContext().set(TIMEOUT_MS, 180_000);
     return this.bloques
-      .tablaRegularCon('RS_DESEMB_01', {
+      .tablaRegularCon('RS_DESEMB_02', {
         tip_cod: nodo.tip_cod,
         cod_rel: nodo.cod_rel,
-        fec: this.bloques.fecha(),
-      })
+        fec: fec || this.bloques.fecha(),
+      }, context)
       .pipe(map((tabla) => aplicarEstilosEstructuraDesembolsos(tabla)));
   }
 
@@ -58,8 +67,8 @@ export class ActividadMensualRepoService {
   }
 
   /** Detalle gráficos agrícola (`RS_AGROMIX_02` al `_05`). */
-  detalleGraficosAgricola(nodo: NodoConsulta): Observable<DetalleAgricolaResultado> {
-    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: this.bloques.fecha() };
+  detalleGraficosAgricola(nodo: NodoConsulta, fecha?: string): Observable<DetalleAgricolaResultado> {
+    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: fecha || this.bloques.fecha() };
     const observables = GRAFICOS_AGRICOLA.map((g: { codRep: string }) =>
       this.reportes.getRegularTableResult(g.codRep, params),
     );
@@ -189,9 +198,14 @@ function totalesAgro(primeraFila: Record<string, unknown>, mesAnterior: Record<s
 function seriesDeGrafico(headers: string | undefined): Pick<BloqueGrafico, 'categorias' | 'series'> {
   if (!headers) return { categorias: [], series: [] };
   const datos = JSON.parse(headers) as { categories?: string[]; series?: { name: string; data: (number | null)[] }[] };
+  const esUnica = (datos.series ?? []).length === 1;
   return {
     categorias: datos.categories ?? [],
-    series: (datos.series ?? []).map((s) => ({ nombre: s.name, datos: s.data })),
+    series: (datos.series ?? []).map((s) => ({
+      nombre: s.name,
+      datos: s.data,
+      color: colorSerieReporte(s.name, esUnica),
+    })),
   };
 }
 
@@ -208,9 +222,10 @@ function getEstiloCeldaEstructuraDesembolsos(
   columnKey: string,
   grupoColumnas: string[],
 ): Record<string, string> | undefined {
+  if (!fila || !columnKey) return undefined;
   const idRango = Number(fila['IDRango'] ?? fila['idrango'] ?? fila['ID_RANGO']);
-  const desRango = String(fila['DES_RANGO'] ?? fila['des_rango'] ?? '').toLowerCase();
-  const esFilaObjetivo = idRango === 12 || desRango.includes('part') || desRango.includes('total') || fila['style'] === 1;
+  const desRango = String(fila['DES_RANGO'] ?? fila['des_rango'] ?? fila['RangoDesembolso'] ?? '').toLowerCase();
+  const esFilaObjetivo = idRango === 12 || desRango.includes('%') || desRango.includes('part');
 
   if (!esFilaObjetivo) return undefined;
 
@@ -230,7 +245,7 @@ function getEstiloCeldaEstructuraDesembolsos(
   const index = ordenados.findIndex((item) => item.key.toLowerCase() === columnKey.toLowerCase());
   if (index === -1) return undefined;
 
-  let color = COLORES_CRONOLOGICOS_DESEMB[index];
+  let color = COLORES_CRONOLOGICOS_DESEMB[index] ?? COLORES_CRONOLOGICOS_DESEMB[0];
   if (grupoColumnas.length === 3) {
     const mapaTres = [COLORES_CRONOLOGICOS_DESEMB[0], COLORES_CRONOLOGICOS_DESEMB[2], COLORES_CRONOLOGICOS_DESEMB[4]];
     color = mapaTres[index] ?? COLORES_CRONOLOGICOS_DESEMB[0];
@@ -246,19 +261,31 @@ function getEstiloCeldaEstructuraDesembolsos(
 }
 
 export function aplicarEstilosEstructuraDesembolsos(tabla: TablaDinamicaResultado): TablaDinamicaResultado {
-  const columnasOpe = ['1_Ope', '2_Ope', '3_Ope'];
-  const columnasMon = ['1_MON', '2_MON', '3_MON'];
+  if (!tabla || !tabla.columnas) return tabla;
+
+  // Detecta dinámicamente las columnas _Ope y _MON presentes en los headers
+  // (3 columnas en la versión diaria RS_DESEMB_01, 5 columnas en la mensual RS_DESEMB_02)
+  function todasLasColumnas(cols: ColumnaDinamica[]): ColumnaDinamica[] {
+    return cols.flatMap((c) => [c, ...(c.subs ? todasLasColumnas(c.subs) : [])]);
+  }
+
+  const todasLasKeys = todasLasColumnas(tabla.columnas)
+    .map((c) => c.key)
+    .filter((k): k is string => Boolean(k));
+  const columnasOpe = todasLasKeys.filter((k) => /^\d+_ope$/i.test(k)).sort();
+  const columnasMon = todasLasKeys.filter((k) => /^\d+_mon$/i.test(k)).sort();
 
   function procesarColumnas(cols: ColumnaDinamica[]): ColumnaDinamica[] {
     return cols.map((col) => {
       const nuevaCol = { ...col };
-      const isOpe = columnasOpe.some((k) => k.toLowerCase() === col.key.toLowerCase());
-      const isMon = columnasMon.some((k) => k.toLowerCase() === col.key.toLowerCase());
+      const colKey = col.key ? col.key.toLowerCase() : '';
+      const isOpe = colKey ? columnasOpe.some((k) => k.toLowerCase() === colKey) : false;
+      const isMon = colKey ? columnasMon.some((k) => k.toLowerCase() === colKey) : false;
 
-      if (isOpe) {
+      if (isOpe && col.key) {
         nuevaCol.cellStyleFn = (_v, fila) =>
           getEstiloCeldaEstructuraDesembolsos(fila, col.key, columnasOpe);
-      } else if (isMon) {
+      } else if (isMon && col.key) {
         nuevaCol.cellStyleFn = (_v, fila) =>
           getEstiloCeldaEstructuraDesembolsos(fila, col.key, columnasMon);
       }
@@ -271,8 +298,9 @@ export function aplicarEstilosEstructuraDesembolsos(tabla: TablaDinamicaResultad
   }
 
   return {
+    ...tabla,
     columnas: procesarColumnas(tabla.columnas),
-    filas: tabla.filas,
+    filas: tabla.filas ?? [],
   };
 }
 

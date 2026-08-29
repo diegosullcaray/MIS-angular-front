@@ -2,7 +2,7 @@
   <ng-template pTemplate="header">
     @for (fila of encabezados().filas; track $index) {
       <tr>
-        @for (columna of fila; track columna.key) {
+        @for (columna of fila; track (columna.key ?? columna.label ?? $index)) {
           <th
             [attr.colspan]="columna.colspan"
             [attr.rowspan]="columna.rowspan"
@@ -20,17 +20,21 @@
   <ng-template pTemplate="body" let-fila>
     <tr
       [class.font-bold]="destacada(fila)"
+      [class.fila-destacada]="destacada(fila)"
+      [class.bg-slate-100]="destacada(fila)"
+      [class.dark:bg-slate-800]="destacada(fila)"
       [class.cursor-pointer]="seleccionable() && !columnasClicables().length"
-      [style.background-color]="destacada(fila) ? 'var(--mis-hover)' : null"
       (click)="onClickFila(fila)"
     >
       @for (columna of encabezados().columnasHoja; track columna.key) {
         <td
           class="text-[13px] whitespace-nowrap"
+          [class.bg-slate-100]="destacada(fila)"
+          [class.dark:bg-slate-800]="destacada(fila)"
+          [class.font-bold]="destacada(fila)"
           [class]="alineacion(columna)"
           [class.cursor-pointer]="clicable(columna)"
           [class.underline]="clicable(columna)"
-          [class.font-bold]="fondoCelda(fila, columna)"
           [style]="estiloCelda(fila, columna)"
           (click)="onClickCelda(columna, fila)"
         >

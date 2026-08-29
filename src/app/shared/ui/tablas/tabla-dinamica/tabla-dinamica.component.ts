@@ -92,7 +92,7 @@ export class TablaDinamicaComponent {
     return signo > 0 ? 'var(--mis-success)' : 'var(--mis-danger)';
   }
 
-  /** Estilo de celda dinámico: combina `cellStyle`, `cellStyleFn`, `fondoDinamico` y color sin colisiones. */
+  /** Estilo de celda dinámico: combina `cellStyle`, `cellStyleFn`, `fondoDinamico`, `destacada` y color sin colisiones. */
   protected estiloCelda(fila: Record<string, unknown>, columna: ColumnaDinamica): Record<string, string> | null {
     const res: Record<string, string> = {};
     if (columna.cellStyle) {
@@ -106,6 +106,9 @@ export class TablaDinamicaComponent {
     if (fondo && !res['background-color'] && !res['background']) {
       res['background-color'] = fondo;
     }
+    if (this.destacada(fila) && !res['background-color'] && !res['background']) {
+      res['background-color'] = 'var(--mis-primary-light, #E8EDF5)';
+    }
     const colorTexto = this.color(fila, columna) ?? this.colorFondoDinamico(fila, columna);
     if (colorTexto && !res['color']) {
       res['color'] = colorTexto;
@@ -115,7 +118,8 @@ export class TablaDinamicaComponent {
 
   /** Fila "destacada" del backend (`row.style === 1` en el legado — total/resumen). */
   protected destacada(fila: Record<string, unknown>): boolean {
-    return fila['style'] === 1;
+    if (!fila) return false;
+    return Number(fila['style']) === 1 || String(fila['RangoDesembolso'] ?? fila['DES_RANGO'] ?? '').toLowerCase().includes('total');
   }
 
   /** Si hay que dibujar el punto de semáforo de esta celda (columna con `semaforoKey` y valor presente en la fila). */

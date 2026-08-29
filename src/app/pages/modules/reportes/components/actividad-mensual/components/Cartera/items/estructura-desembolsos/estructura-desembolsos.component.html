@@ -6,6 +6,14 @@
       (nodoSeleccionado)="onNivelSeleccionado($event)"
       (error)="onErrorJerarquia()"
     />
+    <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+      <app-select-filtro
+        etiqueta="Fecha Cierre"
+        [opciones]="opcionesFechaBase()"
+        [valor]="fechaBase()"
+        (valorChange)="fechaBase.set($event)"
+      />
+    </div>
   </div>
 
   @if (!nivelActual()) {
@@ -15,7 +23,7 @@
     />
   } @else {
     <div class="mis-card p-3 overflow-x-auto">
-      <app-tabla-dinamica [columnas]="columnas()" [filas]="filas()" [cargando]="cargando()" />
+      <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
     </div>
   }
 </app-window-panel>
