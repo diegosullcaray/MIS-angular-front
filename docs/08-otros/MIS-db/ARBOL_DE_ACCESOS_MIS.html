@@ -1,0 +1,1295 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<title>Árbol de Accesos MIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+
+<style>
+  :root {
+    --ground:      #F5F7F9;
+    --surface:     #FFFFFF;
+    --surface-2:   #EDF1F5;
+    --ink:         #151A21;
+    --ink-2:       #4E5866;
+    --ink-3:       #838D9B;
+    --rule:        #DCE2E9;
+    --rule-strong: #C3CCD6;
+    --accent:      #2B5E8F;
+    --accent-soft: #E6EEF6;
+    --allow:       #2C7A57;
+    --deny:        #AE3B34;
+    --shadow:      0 1px 2px rgba(21, 26, 33, .05);
+
+    --sans:  "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: "IBM Plex Serif", ui-serif, Georgia, "Times New Roman", serif;
+    --mono:  "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0E1218;
+      --surface:     #151A22;
+      --surface-2:   #1B222C;
+      --ink:         #E4E9EF;
+      --ink-2:       #9AA5B3;
+      --ink-3:       #6E7887;
+      --rule:        #242C37;
+      --rule-strong: #333D4A;
+      --accent:      #7CAEDC;
+      --accent-soft: #17222E;
+      --allow:       #5CBE90;
+      --deny:        #E08078;
+      --shadow:      0 1px 2px rgba(0, 0, 0, .35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0E1218;
+    --surface:     #151A22;
+    --surface-2:   #1B222C;
+    --ink:         #E4E9EF;
+    --ink-2:       #9AA5B3;
+    --ink-3:       #6E7887;
+    --rule:        #242C37;
+    --rule-strong: #333D4A;
+    --accent:      #7CAEDC;
+    --accent-soft: #17222E;
+    --allow:       #5CBE90;
+    --deny:        #E08078;
+    --shadow:      0 1px 2px rgba(0, 0, 0, .35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+
+  /* ---------- Cabecera ---------- */
+  .masthead {
+    border-bottom: 1px solid var(--rule);
+    padding: 56px 0 32px;
+    margin-bottom: 40px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(30px, 4.4vw, 46px);
+    line-height: 1.12;
+    letter-spacing: -.015em;
+    margin: 0 0 16px;
+    text-wrap: balance;
+    max-width: 20ch;
+  }
+  .standfirst {
+    font-size: 17px;
+    color: var(--ink-2);
+    max-width: 62ch;
+    margin: 0 0 28px;
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--surface);
+    overflow: hidden;
+    margin: 0;
+  }
+  .fact {
+    flex: 1 1 165px;
+    padding: 12px 16px;
+    border-right: 1px solid var(--rule);
+  }
+  .fact:last-child { border-right: 0; }
+  .fact dt {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 3px;
+  }
+  .fact dd {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* ---------- Rejilla ---------- */
+  .grid { display: block; }
+  @media (min-width: 1000px) {
+    .grid {
+      display: grid;
+      grid-template-columns: 178px minmax(0, 1fr);
+      gap: 56px;
+      align-items: start;
+    }
+  }
+
+  nav.index { display: none; }
+  @media (min-width: 1000px) {
+    nav.index {
+      display: block;
+      position: sticky;
+      top: 24px;
+    }
+  }
+  nav.index p {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 12px;
+  }
+  nav.index ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  nav.index a {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 6px;
+    padding: 5px 0;
+    color: var(--ink-2);
+    text-decoration: none;
+    font-size: 13.5px;
+    border-top: 1px solid var(--rule);
+    transition: color .12s;
+  }
+  nav.index li:first-child a { border-top: 0; }
+  nav.index a span { font-family: var(--mono); font-size: 11px; color: var(--ink-3); padding-top: 2px; }
+  nav.index a:hover, nav.index a:hover span { color: var(--accent); }
+  nav.index a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- Secciones ---------- */
+  main { min-width: 0; }
+  section { margin-bottom: 60px; scroll-margin-top: 20px; }
+  section > :last-child { margin-bottom: 0; }
+
+  .sec-head {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    align-items: baseline;
+    gap: 8px;
+    border-top: 2px solid var(--ink);
+    padding-top: 12px;
+    margin-bottom: 22px;
+  }
+  .sec-head b {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: .06em;
+  }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 1.24;
+    letter-spacing: -.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 15.5px;
+    margin: 32px 0 10px;
+  }
+  h3:first-of-type { margin-top: 0; }
+  h4 {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 26px 0 8px;
+  }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  ul, ol.body { margin: 0 0 14px; padding-left: 20px; max-width: 70ch; }
+  li { margin-bottom: 6px; }
+  strong { font-weight: 600; }
+  a { color: var(--accent); }
+
+  code {
+    font-family: var(--mono);
+    font-size: .875em;
+    background: var(--surface-2);
+    border-radius: 2px;
+    padding: .1em .34em;
+    color: var(--ink);
+    word-break: break-word;
+  }
+
+  /* ---------- Bloques SQL ---------- */
+  .sql {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 3px;
+    overflow-x: auto;
+    margin: 0 0 18px;
+    box-shadow: var(--shadow);
+  }
+  .sql pre {
+    margin: 0;
+    padding: 16px 18px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.62;
+    tab-size: 4;
+  }
+  .sql .cm { color: var(--ink-3); }
+  .sql .kw { color: var(--accent); font-weight: 500; }
+  .filename {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    color: var(--ink-3);
+    padding: 8px 18px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface-2);
+  }
+
+  /* ---------- Tablas ---------- */
+  .tablewrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--surface);
+    margin: 0 0 18px;
+    box-shadow: var(--shadow);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13.5px;
+    min-width: 520px;
+  }
+  caption {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .06em;
+    color: var(--ink-2);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface-2);
+  }
+  caption b { color: var(--ink); font-weight: 500; }
+  th {
+    text-align: left;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 10.5px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--rule-strong);
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--ink-2);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.col, td.typ { font-family: var(--mono); font-size: 12.5px; color: var(--ink); white-space: nowrap; }
+  td.typ { color: var(--ink-2); font-size: 12px; }
+  td.num { font-variant-numeric: tabular-nums; }
+
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: .07em;
+    padding: 1px 5px;
+    border-radius: 2px;
+    border: 1px solid var(--rule-strong);
+    color: var(--ink-2);
+    margin-right: 3px;
+    white-space: nowrap;
+  }
+  .badge.pk { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  /* ---------- Figuras ---------- */
+  figure {
+    margin: 0 0 20px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--surface);
+    padding: 18px 18px 0;
+    box-shadow: var(--shadow);
+  }
+  .figscroll { overflow-x: auto; }
+  figure svg { display: block; max-width: 100%; height: auto; min-width: 620px; }
+  figcaption {
+    font-size: 13px;
+    color: var(--ink-2);
+    border-top: 1px solid var(--rule);
+    margin-top: 16px;
+    padding: 12px 0;
+    max-width: 76ch;
+  }
+  .svg-box { fill: var(--surface); stroke: var(--rule-strong); }
+  .svg-box-a { fill: var(--accent-soft); stroke: var(--accent); }
+  .svg-name { font-family: var(--mono); font-size: 12px; fill: var(--ink); }
+  .svg-sub  { font-family: var(--sans); font-size: 10px; fill: var(--ink-3); }
+  .svg-lbl  { font-family: var(--mono); font-size: 10px; fill: var(--ink-3); }
+  .svg-line { stroke: var(--rule-strong); fill: none; stroke-width: 1.2; }
+  .svg-line-a { stroke: var(--accent); fill: none; stroke-width: 1.4; }
+
+  /* ---------- Nota / reglas / árbol ---------- */
+  .note {
+    border-left: 3px solid var(--rule-strong);
+    padding: 2px 0 2px 16px;
+    margin: 0 0 18px;
+    color: var(--ink-2);
+    font-size: 14px;
+    max-width: 68ch;
+  }
+  .note strong { color: var(--ink); }
+
+  .rules {
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--surface);
+    margin: 0 0 18px;
+    box-shadow: var(--shadow);
+  }
+  .rule-row {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+  .rule-row:last-child { border-bottom: 0; }
+  .rule-row b {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .rule-row p { margin: 0; font-size: 14px; color: var(--ink-2); max-width: none; }
+  .rule-row p em { color: var(--ink); font-style: normal; font-weight: 500; }
+
+  .tree {
+    white-space: pre;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 0 0 18px;
+    color: var(--ink-2);
+    box-shadow: var(--shadow);
+  }
+  .tree b { color: var(--ink); font-weight: 500; }
+  .tree i { color: var(--ink-3); font-style: normal; }
+
+  .allow { color: var(--allow); font-weight: 500; }
+  .deny  { color: var(--deny);  font-weight: 500; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    margin-top: 20px;
+    padding-top: 20px;
+    font-size: 13px;
+    color: var(--ink-3);
+    max-width: 70ch;
+  }
+  footer p { margin: 0 0 8px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">MIS · Módulo de accesos, seguridad y navegación</p>
+    <h1>Un árbol para la navegación, dos relaciones N:M para el acceso</h1>
+    <p class="standfirst">
+      Modelo relacional planteado desde cero para PostgreSQL: autenticación, RBAC dinámico y un
+      catálogo de reportes jerárquico de profundidad ilimitada, resuelto en una sola consulta por sesión.
+    </p>
+    <dl class="facts">
+      <div class="fact"><dt>Motor</dt><dd>PostgreSQL 14+</dd></div>
+      <div class="fact"><dt>Esquema</dt><dd>seg</dd></div>
+      <div class="fact"><dt>Tablas</dt><dd>11</dd></div>
+      <div class="fact"><dt>Patrón del árbol</dt><dd>Adyacencia + path</dd></div>
+      <div class="fact"><dt>Scripts</dt><dd>MIS-db/sql</dd></div>
+    </dl>
+  </header>
+
+  <div class="grid">
+
+    <nav class="index" aria-label="Índice">
+      <p>Contenido</p>
+      <ol>
+        <li><a href="#modelo"><span>01</span>El modelo</a></li>
+        <li><a href="#tablas"><span>02</span>Catálogo de tablas</a></li>
+        <li><a href="#arbol"><span>03</span>El árbol</a></li>
+        <li><a href="#herencia"><span>04</span>Herencia y precedencia</a></li>
+        <li><a href="#ddl"><span>05</span>Scripts DDL</a></li>
+        <li><a href="#cte"><span>06</span>Consulta recursiva</a></li>
+        <li><a href="#backend"><span>07</span>Lectura y operación</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============================ 01 ============================ -->
+      <section id="modelo">
+        <div class="sec-head"><b>01</b><h2>El modelo en una vista</h2></div>
+
+        <p>
+          Todo el módulo se articula sobre tres piezas: un <strong>árbol auto-referenciado</strong> que
+          contiene menús y reportes, y dos <strong>relaciones N:M</strong> —usuario↔rol y rol↔nodo— que
+          se resuelven con tablas puente. Las demás tablas sostienen a estas tres.
+        </p>
+
+        <figure>
+          <div class="figscroll">
+            <svg viewBox="0 0 960 300" role="img" aria-label="Diagrama entidad-relación: positions y users se conectan a roles mediante las tablas puente position_roles y user_roles; roles se conecta a nodes mediante node_permissions; nodes se auto-referencia por parent_id.">
+              <defs>
+                <marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M 0 1 L 7 4 L 0 7 z" fill="currentColor"/>
+                </marker>
+                <marker id="ar-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M 0 1 L 7 4 L 0 7 z" fill="var(--accent)"/>
+                </marker>
+              </defs>
+
+              <rect class="svg-box" x="20" y="40" width="150" height="46" rx="2"/>
+              <text class="svg-name" x="34" y="61">positions</text>
+              <text class="svg-sub"  x="34" y="76">puesto / cargo</text>
+
+              <rect class="svg-box" x="20" y="190" width="150" height="46" rx="2"/>
+              <text class="svg-name" x="34" y="211">users</text>
+              <text class="svg-sub"  x="34" y="226">identidad + credencial</text>
+
+              <rect class="svg-box-a" x="210" y="40" width="150" height="46" rx="2"/>
+              <text class="svg-name" x="224" y="61">position_roles</text>
+              <text class="svg-sub"  x="224" y="76">N:M puesto ↔ rol</text>
+
+              <rect class="svg-box-a" x="210" y="190" width="150" height="46" rx="2"/>
+              <text class="svg-name" x="224" y="211">user_roles</text>
+              <text class="svg-sub"  x="224" y="226">N:M usuario ↔ rol</text>
+
+              <rect class="svg-box" x="400" y="115" width="150" height="46" rx="2"/>
+              <text class="svg-name" x="414" y="136">roles</text>
+              <text class="svg-sub"  x="414" y="151">catálogo dinámico</text>
+
+              <rect class="svg-box-a" x="590" y="115" width="150" height="46" rx="2"/>
+              <text class="svg-name" x="604" y="136">node_permissions</text>
+              <text class="svg-sub"  x="604" y="151">N:M rol ↔ nodo</text>
+
+              <rect class="svg-box" x="780" y="115" width="150" height="46" rx="2"/>
+              <text class="svg-name" x="794" y="136">nodes</text>
+              <text class="svg-sub"  x="794" y="151">árbol de navegación</text>
+
+              <g color="var(--ink-3)"><path class="svg-line" d="M 95 86 L 95 190" marker-end="url(#ar)"/></g>
+              <text class="svg-lbl" x="103" y="142">position_id</text>
+
+              <g color="var(--ink-3)"><path class="svg-line" d="M 170 63 L 210 63" marker-end="url(#ar)"/></g>
+              <text class="svg-lbl" x="190" y="55" text-anchor="middle">1:N</text>
+
+              <g color="var(--ink-3)"><path class="svg-line" d="M 170 213 L 210 213" marker-end="url(#ar)"/></g>
+              <text class="svg-lbl" x="190" y="205" text-anchor="middle">1:N</text>
+
+              <g color="var(--ink-3)"><path class="svg-line" d="M 360 63 L 380 63 L 380 128 L 400 128" marker-end="url(#ar)"/></g>
+              <g color="var(--ink-3)"><path class="svg-line" d="M 360 213 L 380 213 L 380 148 L 400 148" marker-end="url(#ar)"/></g>
+
+              <g color="var(--ink-3)"><path class="svg-line" d="M 550 138 L 590 138" marker-end="url(#ar)"/></g>
+              <text class="svg-lbl" x="570" y="130" text-anchor="middle">1:N</text>
+
+              <g color="var(--ink-3)"><path class="svg-line" d="M 740 138 L 780 138" marker-end="url(#ar)"/></g>
+              <text class="svg-lbl" x="760" y="130" text-anchor="middle">N:1</text>
+
+              <path class="svg-line-a" d="M 810 161 L 810 195 L 900 195 L 900 161" marker-end="url(#ar-a)"/>
+              <text class="svg-lbl" x="855" y="215" text-anchor="middle" fill="var(--accent)">parent_id</text>
+              <text class="svg-sub"  x="855" y="230" text-anchor="middle">auto-referencia</text>
+            </svg>
+          </div>
+          <figcaption>
+            Núcleo del esquema <code>seg</code>. En azul, las tres piezas que resuelven el requerimiento:
+            las dos tablas puente N:M y la auto-referencia que convierte a <code>nodes</code> en un árbol
+            de profundidad ilimitada. Un usuario recibe roles por dos vías —directa y por su puesto— y
+            cada rol alcanza nodos a través de <code>node_permissions</code>.
+          </figcaption>
+        </figure>
+
+        <div class="note">
+          <strong>Lo que cambia frente al esquema heredado.</strong> SSOWS modela la navegación como cuatro
+          tablas encadenadas (<code>sistemas → secciones → subsecciones → modulos</code>) y la tabla
+          <code>permisos</code> arrastra las cuatro llaves foráneas a la vez. Eso fija la profundidad en
+          cuatro niveles, obliga a un JOIN de cuatro tablas en cada lectura de menú y exige una fila de
+          permiso por hoja. Aquí, la misma información vive en un árbol único.
+        </div>
+      </section>
+
+      <!-- ============================ 02 ============================ -->
+      <section id="tablas">
+        <div class="sec-head"><b>02</b><h2>Catálogo de tablas</h2></div>
+
+        <div class="tablewrap">
+          <table>
+            <caption>Las <b>11 tablas</b> del esquema <b>seg</b></caption>
+            <thead>
+              <tr><th>Tabla</th><th>Función</th><th>Llave primaria</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="col">areas</td><td>Unidad organizativa, auto-jerárquica</td><td class="typ">id</td></tr>
+              <tr><td class="col">positions</td><td>Puesto de trabajo / cargo</td><td class="typ">id</td></tr>
+              <tr><td class="col">users</td><td>Identidad, credenciales y estado de la cuenta</td><td class="typ">id</td></tr>
+              <tr><td class="col">user_position_history</td><td>Histórico puesto↔usuario, solo inserción</td><td class="typ">id</td></tr>
+              <tr><td class="col">roles</td><td>Catálogo dinámico de roles</td><td class="typ">id</td></tr>
+              <tr><td class="col">user_roles</td><td><strong>N:M usuario↔rol</strong>, con vigencia</td><td class="typ">(user_id, role_id)</td></tr>
+              <tr><td class="col">position_roles</td><td>N:M puesto↔rol: roles automáticos por cargo</td><td class="typ">(position_id, role_id)</td></tr>
+              <tr><td class="col">nodes</td><td><strong>Árbol de navegación y reportes</strong></td><td class="typ">id</td></tr>
+              <tr><td class="col">node_permissions</td><td><strong>N:M rol↔nodo</strong>, con herencia y negación</td><td class="typ">id · UK (role_id, node_id)</td></tr>
+              <tr><td class="col">user_sessions</td><td>Sesiones activas y refresh tokens</td><td class="typ">id (UUID)</td></tr>
+              <tr><td class="col">security_events</td><td>Bitácora de seguridad</td><td class="typ">id</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>positions — puestos de trabajo</h3>
+        <div class="tablewrap">
+          <table>
+            <caption><b>seg.positions</b></caption>
+            <thead><tr><th>Columna</th><th>Tipo</th><th>Restricción</th><th>Notas</th></tr></thead>
+            <tbody>
+              <tr><td class="col">id</td><td class="typ">INTEGER IDENTITY</td><td><span class="badge pk">PK</span></td><td></td></tr>
+              <tr><td class="col">code</td><td class="typ">VARCHAR(30)</td><td><span class="badge">UNIQUE</span> NOT NULL</td><td>Equivale a <code>usuarios.tcodipues</code></td></tr>
+              <tr><td class="col">name</td><td class="typ">VARCHAR(150)</td><td>NOT NULL</td><td>Equivale a <code>usuarios.tdescpues</code></td></tr>
+              <tr><td class="col">area_id</td><td class="typ">INTEGER</td><td><span class="badge">FK</span> → areas</td><td><code>ON DELETE RESTRICT</code></td></tr>
+              <tr><td class="col">reports_to_id</td><td class="typ">INTEGER</td><td><span class="badge">FK</span> → positions</td><td>Organigrama; CHECK anti-auto-referencia</td></tr>
+              <tr><td class="col">hierarchy_level</td><td class="typ">SMALLINT</td><td>CHECK 0–999</td><td>Menor = más poder</td></tr>
+              <tr><td class="col">is_active</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>users — autenticación</h3>
+        <div class="tablewrap">
+          <table>
+            <caption><b>seg.users</b> · columnas relevantes</caption>
+            <thead><tr><th>Columna</th><th>Tipo</th><th>Restricción</th><th>Notas</th></tr></thead>
+            <tbody>
+              <tr><td class="col">id</td><td class="typ">BIGINT IDENTITY</td><td><span class="badge pk">PK</span></td><td>Subrogada: la clave natural cambia, esta no</td></tr>
+              <tr><td class="col">employee_code</td><td class="typ">VARCHAR(20)</td><td><span class="badge">UNIQUE</span> NOT NULL</td><td>Clave natural del maestro de personal</td></tr>
+              <tr><td class="col">username</td><td class="typ">VARCHAR(60)</td><td><span class="badge">UNIQUE</span> NOT NULL</td><td></td></tr>
+              <tr><td class="col">email</td><td class="typ">CITEXT</td><td><span class="badge">UNIQUE</span> NOT NULL</td><td>Insensible a mayúsculas por tipo, no por función</td></tr>
+              <tr><td class="col">password_hash</td><td class="typ">VARCHAR(255)</td><td>—</td><td>NULL = usuario solo federado (OAuth/SSO)</td></tr>
+              <tr><td class="col">password_algo</td><td class="typ">VARCHAR(20)</td><td>CHECK argon2id / bcrypt</td><td>Permite rehash progresivo sin migración</td></tr>
+              <tr><td class="col">mfa_enabled</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td></td></tr>
+              <tr><td class="col">status</td><td class="typ">VARCHAR(15)</td><td>CHECK 5 valores</td><td>ACTIVE · INACTIVE · BLOCKED · SUSPENDED · PENDING</td></tr>
+              <tr><td class="col">position_id</td><td class="typ">INTEGER</td><td><span class="badge">FK</span> → positions</td><td>Puesto <em>vigente</em>; el histórico va aparte</td></tr>
+              <tr><td class="col">failed_attempts</td><td class="typ">SMALLINT</td><td>CHECK ≥ 0</td><td>Bloqueo por intentos fallidos</td></tr>
+              <tr><td class="col">locked_until</td><td class="typ">TIMESTAMPTZ</td><td>—</td><td></td></tr>
+              <tr><td class="col">deleted_at</td><td class="typ">TIMESTAMPTZ</td><td>—</td><td>Borrado lógico: preserva la bitácora</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>roles, user_roles y position_roles — el RBAC</h3>
+        <div class="tablewrap">
+          <table>
+            <caption><b>seg.roles</b></caption>
+            <thead><tr><th>Columna</th><th>Tipo</th><th>Restricción</th><th>Notas</th></tr></thead>
+            <tbody>
+              <tr><td class="col">id</td><td class="typ">INTEGER IDENTITY</td><td><span class="badge pk">PK</span></td><td></td></tr>
+              <tr><td class="col">code</td><td class="typ">VARCHAR(40)</td><td><span class="badge">UNIQUE</span> NOT NULL</td><td><code>ADMIN_SISTEMA</code>, <code>SUPERVISOR_AREA</code>…</td></tr>
+              <tr><td class="col">hierarchy_level</td><td class="typ">SMALLINT</td><td>CHECK 0–999</td><td>Gobierna quién puede asignar a quién</td></tr>
+              <tr><td class="col">parent_role_id</td><td class="typ">INTEGER</td><td><span class="badge">FK</span> → roles</td><td>Jerarquía de <em>delegación</em>, no de permisos</td></tr>
+              <tr><td class="col">grants_full_access</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>Bypass total; sustituye el hack de IDs negativos</td></tr>
+              <tr><td class="col">is_system</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>Rol protegido: la UI no puede borrarlo</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <caption><b>seg.user_roles</b> · la relación N:M del requerimiento</caption>
+            <thead><tr><th>Columna</th><th>Tipo</th><th>Restricción</th><th>Notas</th></tr></thead>
+            <tbody>
+              <tr><td class="col">user_id</td><td class="typ">BIGINT</td><td><span class="badge pk">PK</span> <span class="badge">FK</span> → users</td><td><code>ON DELETE CASCADE</code></td></tr>
+              <tr><td class="col">role_id</td><td class="typ">INTEGER</td><td><span class="badge pk">PK</span> <span class="badge">FK</span> → roles</td><td><code>ON DELETE CASCADE</code></td></tr>
+              <tr><td class="col">valid_from</td><td class="typ">TIMESTAMPTZ</td><td>NOT NULL</td><td rowspan="2">Coberturas de vacaciones y accesos de auditoría que caducan solos</td></tr>
+              <tr><td class="col">valid_until</td><td class="typ">TIMESTAMPTZ</td><td>CHECK &gt; valid_from</td></tr>
+              <tr><td class="col">granted_by</td><td class="typ">BIGINT</td><td><span class="badge">FK</span> → users</td><td>Trazabilidad de quién otorgó</td></tr>
+              <tr><td class="col">is_active</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>Revocación reversible sin perder la traza</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          <code>position_roles</code> tiene la misma forma <code>(position_id, role_id)</code> y es la pieza
+          que abarata el alta de personal: el empleado nuevo hereda los roles de su cargo sin que nadie
+          toque permisos. Los roles efectivos de un usuario son la unión de ambas vías.
+        </p>
+
+        <h3>nodes — el árbol</h3>
+        <div class="tablewrap">
+          <table>
+            <caption><b>seg.nodes</b> · las tres últimas columnas son <b>derivadas</b>, las calcula un trigger</caption>
+            <thead><tr><th>Columna</th><th>Tipo</th><th>Restricción</th><th>Notas</th></tr></thead>
+            <tbody>
+              <tr><td class="col">id</td><td class="typ">BIGINT IDENTITY</td><td><span class="badge pk">PK</span></td><td></td></tr>
+              <tr><td class="col">parent_id</td><td class="typ">BIGINT</td><td><span class="badge">FK</span> → nodes</td><td><strong>Fuente de verdad.</strong> <code>ON DELETE RESTRICT</code></td></tr>
+              <tr><td class="col">code</td><td class="typ">VARCHAR(60)</td><td><span class="badge">UNIQUE</span> NOT NULL</td><td>Identificador estable ≡ <code>cod_sec</code> de Ant</td></tr>
+              <tr><td class="col">name</td><td class="typ">VARCHAR(150)</td><td>NOT NULL</td><td>≡ <code>desc_sec</code></td></tr>
+              <tr><td class="col">node_type</td><td class="typ">VARCHAR(10)</td><td>CHECK 6 valores</td><td>SYSTEM · FOLDER · REPORT · PAGE · ACTION · EXTERNAL</td></tr>
+              <tr><td class="col">route</td><td class="typ">VARCHAR(250)</td><td><span class="badge">UNIQUE</span> parcial</td><td>≡ <code>act_sec</code>. Obligatoria solo en nodos navegables</td></tr>
+              <tr><td class="col">icon</td><td class="typ">VARCHAR(60)</td><td>—</td><td>≡ <code>icon_sec</code></td></tr>
+              <tr><td class="col">display_order</td><td class="typ">SMALLINT</td><td>CHECK ≥ 0</td><td>≡ <code>order_sec</code></td></tr>
+              <tr><td class="col">is_active</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>Apaga el nodo para todos</td></tr>
+              <tr><td class="col">is_visible</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>Accesible por URL pero oculto en el menú</td></tr>
+              <tr><td class="col">requires_mfa</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>Exige segundo factor vigente al entrar</td></tr>
+              <tr><td class="col">metadata</td><td class="typ">JSONB</td><td>NOT NULL</td><td>Parámetros del reporte, workspace de Power BI, remote</td></tr>
+              <tr><td class="col">path</td><td class="typ">LTREE</td><td>NOT NULL · derivada</td><td><code>4.17.92</code> · índice GiST</td></tr>
+              <tr><td class="col">depth</td><td class="typ">SMALLINT</td><td>NOT NULL · derivada</td><td>Especificidad de una concesión</td></tr>
+              <tr><td class="col">sort_path</td><td class="typ">TEXT</td><td>NOT NULL · derivada</td><td>Ordena el árbol entero con un solo <code>ORDER BY</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Dos restricciones cierran el modelo: <code>(parent_id IS NULL) = (node_type = 'SYSTEM')</code>
+          —toda raíz es un subsistema y todo subsistema es raíz, que es exactamente la primera columna
+          del sidebar del MIS— y la que exige <code>route</code> en los nodos navegables y la prohíbe en
+          carpetas y acciones.
+        </p>
+
+        <h3>node_permissions — el permiso</h3>
+        <div class="tablewrap">
+          <table>
+            <caption><b>seg.node_permissions</b> · una fila puede cubrir un subárbol completo</caption>
+            <thead><tr><th>Columna</th><th>Tipo</th><th>Restricción</th><th>Notas</th></tr></thead>
+            <tbody>
+              <tr><td class="col">id</td><td class="typ">BIGINT IDENTITY</td><td><span class="badge pk">PK</span></td><td></td></tr>
+              <tr><td class="col">role_id</td><td class="typ">INTEGER</td><td><span class="badge">FK</span> <span class="badge">UK</span></td><td rowspan="2">UNIQUE (role_id, node_id): una sola concesión por par</td></tr>
+              <tr><td class="col">node_id</td><td class="typ">BIGINT</td><td><span class="badge">FK</span> <span class="badge">UK</span></td></tr>
+              <tr><td class="col">grant_type</td><td class="typ">VARCHAR(5)</td><td>CHECK ALLOW / DENY</td><td>El DENY expresa «todo menos esto»</td></tr>
+              <tr><td class="col">applies_to</td><td class="typ">VARCHAR(7)</td><td>CHECK NODE / SUBTREE</td><td><strong>Aquí se decide si hereda</strong></td></tr>
+              <tr><td class="col">can_view</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>≡ <code>tindileer</code></td></tr>
+              <tr><td class="col">can_create</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>≡ <code>tindicrea</code></td></tr>
+              <tr><td class="col">can_update</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>≡ <code>tindiactu</code></td></tr>
+              <tr><td class="col">can_delete</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>≡ <code>tindielim</code></td></tr>
+              <tr><td class="col">can_export</td><td class="typ">BOOLEAN</td><td>NOT NULL</td><td>Descarga XLSX/PDF: el permiso que la reportería sí necesita</td></tr>
+              <tr><td class="col">valid_until</td><td class="typ">TIMESTAMPTZ</td><td>—</td><td>Acceso temporal a un reporte</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          Un <code>DENY</code> es una negación completa: una restricción <code>CHECK</code> impide guardar
+          un DENY con banderas en <code>TRUE</code>, de modo que nunca existe una fila cuyo significado
+          dependa de cómo la lea el backend. Para revocar solo una acción se usa un <code>ALLOW</code>
+          más profundo con menos banderas.
+        </div>
+      </section>
+
+      <!-- ============================ 03 ============================ -->
+      <section id="arbol">
+        <div class="sec-head"><b>03</b><h2>El árbol: adyacencia como verdad, path como índice</h2></div>
+
+        <p>
+          La pregunta era lista de adyacencia o conjuntos anidados. La respuesta es que ninguna de las dos
+          basta sola, porque el árbol tiene dos perfiles de uso opuestos: <strong>se escribe poco pero de
+          forma desordenada</strong> —el administrador crea, renombra y sobre todo <em>mueve</em> carpetas
+          de reportes— y <strong>se lee constantemente</strong>, una vez por cada sesión que se abre.
+        </p>
+
+        <div class="tablewrap">
+          <table>
+            <caption>Coste de cada patrón sobre las dos operaciones que importan</caption>
+            <thead><tr><th>Patrón</th><th>Leer un subárbol</th><th>Mover un nodo</th><th>Integridad</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Adyacencia pura</td>
+                <td>Recursión en cada consulta</td>
+                <td>UPDATE de 1 fila</td>
+                <td>FK nativa</td>
+              </tr>
+              <tr>
+                <td>Conjuntos anidados</td>
+                <td>Rango <code>lft/rgt</code>, muy rápido</td>
+                <td><span class="deny">Reescribe media tabla</span></td>
+                <td>Sin FK real</td>
+              </tr>
+              <tr>
+                <td><strong>Adyacencia + path derivado</strong></td>
+                <td><span class="allow">Operador <code>&lt;@</code> sobre índice GiST</span></td>
+                <td><span class="allow">1 UPDATE + 1 sentencia</span></td>
+                <td>FK nativa</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Por eso <code>nodes</code> tiene <strong><code>parent_id</code> como única fuente de verdad</strong>
+          —con llave foránea real, <code>ON DELETE RESTRICT</code> y guarda anti-ciclo— y tres columnas
+          derivadas que ningún proceso escribe a mano: las calcula el trigger <code>trg_nodes_build_path</code>
+          en cada inserción y en cada movimiento.
+        </p>
+
+        <div class="tree"><b>REPORTES</b>              <i>id=4  · path='4'          · depth=0</i>
+├─ <b>Comercial</b>          <i>id=17 · path='4.17'       · depth=1</i>
+│  ├─ Colocaciones       <i>id=92 · path='4.17.92'    · depth=2</i>
+│  └─ Mora de Cartera    <i>id=93 · path='4.17.93'    · depth=2</i>
+│     └─ Descargar       <i>id=99 · path='4.17.93.99' · ACTION</i>
+└─ <b>Riesgos</b>            <i>id=18 · path='4.18'       · depth=1</i>
+   └─ Cartera en Riesgo  <i>id=94 · path='4.18.94'    · depth=2</i></div>
+
+        <p>
+          Con esos derivados, las lecturas que antes exigían recursión se vuelven filtros indexados:
+          el subárbol completo de un nodo es <code>n.path &lt;@ raiz.path</code>, las migas de pan son
+          esa misma comparación leída al revés, y el orden del menú es <code>ORDER BY sort_path</code>
+          —sin ordenar nada en memoria.
+        </p>
+
+        <h3>Mover una rama</h3>
+        <p>
+          Es la operación que descarta a los conjuntos anidados. Reasignar <code>parent_id</code> dispara
+          un trigger que reescribe los derivados de <em>todos</em> los descendientes en una única
+          sentencia, sin recursión y sin tocar ningún otro nodo del árbol:
+        </p>
+
+        <div class="sql">
+          <div class="filename">02_funciones_triggers.sql · fn_nodes_move_subtree</div>
+<pre><span class="kw">UPDATE</span> seg.nodes c
+   <span class="kw">SET</span> path      = NEW.path || subpath(c.path, nlevel(OLD.path)),
+       depth     = (NEW.depth + nlevel(c.path) - nlevel(OLD.path))::smallint,
+       sort_path = NEW.sort_path || substr(c.sort_path, length(OLD.sort_path) + 1)
+ <span class="kw">WHERE</span> c.path &lt;@ OLD.path
+   <span class="kw">AND</span> c.id &lt;&gt; NEW.id;</pre>
+        </div>
+
+        <div class="note">
+          <strong>Continuidad con el backend Ant.</strong> El legacy ya devuelve el menú como lista de
+          adyacencia en <code>list_sec</code>, así que la migración es un mapeo directo de campos:
+          <code>cod_sec → code</code>, <code>cod_par → parent_id</code>, <code>desc_sec → name</code>,
+          <code>act_sec → route</code>, <code>icon_sec → icon</code>, <code>order_sec → display_order</code>.
+        </div>
+      </section>
+
+      <!-- ============================ 04 ============================ -->
+      <section id="herencia">
+        <div class="sec-head"><b>04</b><h2>Herencia: explícita por concesión</h2></div>
+
+        <p>
+          La herencia no es una propiedad del árbol sino de <em>cada concesión</em>. La columna
+          <code>applies_to</code> lo decide fila por fila:
+        </p>
+
+        <ul>
+          <li><code>SUBTREE</code> — el nodo y <strong>todos</strong> sus descendientes. Una fila cubre una
+            carpeta entera, incluidos los reportes que se creen después.</li>
+          <li><code>NODE</code> — exactamente ese nodo. Sirve para conceder un reporte suelto sin abrir la
+            carpeta que lo contiene.</li>
+        </ul>
+
+        <figure>
+          <div class="figscroll">
+            <svg viewBox="0 0 940 350" role="img" aria-label="Resolución de permisos sobre el árbol: una concesión ALLOW de alcance SUBTREE en la raíz alcanza los seis nodos; un DENY de alcance SUBTREE en Riesgos apaga esa rama; un ALLOW de alcance NODE más profundo sobre Cartera en Riesgo la vuelve a encender, y su carpeta padre reaparece solo como contenedor.">
+              <defs>
+                <marker id="tick" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 7 4 L 0 7 z" fill="currentColor"/>
+                </marker>
+              </defs>
+
+              <text class="svg-lbl" x="430" y="26" fill="var(--accent)">1 · ALLOW SUBTREE</text>
+              <text class="svg-sub" x="430" y="39">origen nivel 0</text>
+              <text class="svg-lbl" x="600" y="26" fill="var(--deny)">2 · DENY SUBTREE</text>
+              <text class="svg-sub" x="600" y="39">origen nivel 1</text>
+              <text class="svg-lbl" x="740" y="26" fill="var(--allow)">3 · ALLOW NODE</text>
+              <text class="svg-sub" x="740" y="39">origen nivel 2 · gana</text>
+              <text class="svg-lbl" x="915" y="26" text-anchor="end">resultado</text>
+
+              <g stroke="var(--rule-strong)" stroke-width="1.1" fill="none">
+                <path d="M 40 86 L 40 260 M 40 122 L 62 122 M 40 260 L 62 260"/>
+                <path d="M 72 134 L 72 218 M 72 170 L 94 170 M 72 218 L 94 218"/>
+                <path d="M 104 272 L 104 306 M 104 306 L 126 306"/>
+              </g>
+
+              <rect class="svg-box-a" x="28" y="56" width="230" height="30" rx="2"/>
+              <text class="svg-name" x="40" y="76">REPORTES</text>
+
+              <rect class="svg-box" x="60" y="104" width="198" height="30" rx="2"/>
+              <text class="svg-name" x="72" y="124">REP_COMERCIAL</text>
+
+              <rect class="svg-box" x="92" y="152" width="166" height="30" rx="2"/>
+              <text class="svg-name" x="104" y="172">REP_COL_DIA</text>
+
+              <rect class="svg-box" x="92" y="200" width="166" height="30" rx="2"/>
+              <text class="svg-name" x="104" y="220">REP_MORA</text>
+
+              <rect class="svg-box" x="60" y="242" width="198" height="30" rx="2"/>
+              <text class="svg-name" x="72" y="262">REP_RIESGOS</text>
+
+              <rect class="svg-box" x="92" y="290" width="166" height="30" rx="2"/>
+              <text class="svg-name" x="104" y="310">REP_CARTERA</text>
+
+              <path d="M 438 62 L 424 62 L 424 314 L 438 314" stroke="var(--accent)" stroke-width="1.3" fill="none"/>
+              <path d="M 268 71 L 418 71" stroke="var(--accent)" stroke-width="1.2" fill="none" color="var(--accent)" marker-end="url(#tick)"/>
+
+              <path d="M 608 248 L 594 248 L 594 314 L 608 314" stroke="var(--deny)" stroke-width="1.3" fill="none"/>
+              <path d="M 268 257 L 588 257" stroke="var(--deny)" stroke-width="1.2" stroke-dasharray="4 3" fill="none" color="var(--deny)" marker-end="url(#tick)"/>
+
+              <path d="M 268 305 L 734 305" stroke="var(--allow)" stroke-width="1.2" fill="none" color="var(--allow)" marker-end="url(#tick)"/>
+
+              <text class="svg-lbl" x="915" y="76"  text-anchor="end" fill="var(--allow)">visible</text>
+              <text class="svg-lbl" x="915" y="124" text-anchor="end" fill="var(--allow)">visible</text>
+              <text class="svg-lbl" x="915" y="172" text-anchor="end" fill="var(--allow)">visible</text>
+              <text class="svg-lbl" x="915" y="220" text-anchor="end" fill="var(--allow)">visible</text>
+              <text class="svg-lbl" x="915" y="262" text-anchor="end">contenedor</text>
+              <text class="svg-lbl" x="915" y="310" text-anchor="end" fill="var(--allow)">visible</text>
+            </svg>
+          </div>
+          <figcaption>
+            Las tres concesiones actúan sobre el mismo árbol. La primera baja desde la raíz y alcanza los
+            seis nodos; la segunda apaga la rama de Riesgos; la tercera, por ser <em>más profunda</em>,
+            vuelve a encender <code>REP_CARTERA</code>. <code>REP_RIESGOS</code> sigue denegado, pero
+            reaparece en el menú marcado como <em>contenedor</em>: es el camino que lleva a un hijo
+            permitido, y sin él el menú saldría desconectado.
+          </figcaption>
+        </figure>
+
+        <h3>Reglas de resolución</h3>
+        <p>
+          Están implementadas una sola vez, en <code>seg.fn_user_node_access</code>, y las consumen tanto
+          el menú como el guard del backend. Esa unicidad es deliberada: es lo que impide que la
+          navegación y la autorización lleguen a decir cosas distintas.
+        </p>
+
+        <div class="rules">
+          <div class="rule-row"><b>R1</b><p><em>SUBTREE propaga hacia abajo; NODE no.</em> La herencia se declara, no se asume.</p></div>
+          <div class="rule-row"><b>R2</b><p><em>Gana la concesión cuyo nodo de origen es más profundo.</em> La excepción explícita vence a la regla general.</p></div>
+          <div class="rule-row"><b>R3</b><p><em>A igual profundidad, DENY vence a ALLOW.</em></p></div>
+          <div class="rule-row"><b>R4</b><p><em>A igual profundidad, varios ALLOW suman sus banderas</em> (<code>bool_or</code>): los roles de un usuario se acumulan, nunca se restan entre sí.</p></div>
+          <div class="rule-row"><b>R5</b><p><em>Un rol con <code>grants_full_access</code> ve el árbol completo</em>, sin necesidad de filas en <code>node_permissions</code>.</p></div>
+        </div>
+
+        <div class="note">
+          Si la política corporativa exige el modelo ACL clásico —<strong>una negación en cualquier nivel
+          gana siempre</strong>, sin excepciones más profundas— basta sustituir un CTE de la consulta
+          principal; la variante está escrita en <code>04_consultas_navegacion.sql</code> como Consulta A'.
+        </div>
+
+        <h3>El caso que motivó la negación explícita</h3>
+        <p>
+          «El rol ve todo el sistema excepto la sección Seguridad» es una regla real del sistema heredado.
+          Allí exigió una fila de permiso por cada módulo, generada por script. Aquí son dos filas:
+        </p>
+
+        <div class="sql">
+          <div class="filename">03_seed_demo.sql</div>
+<pre><span class="cm">-- Todo el subarbol de Seguridad...</span>
+(ADMIN_GENERAL, SEGURIDAD, <span class="kw">'ALLOW'</span>, <span class="kw">'SUBTREE'</span>, ...)
+<span class="cm">-- ...excepto el editor del arbol.</span>
+(ADMIN_GENERAL, SEG_NODOS, <span class="kw">'DENY'</span>,  <span class="kw">'SUBTREE'</span>, ...)</pre>
+        </div>
+      </section>
+
+      <!-- ============================ 05 ============================ -->
+      <section id="ddl">
+        <div class="sec-head"><b>05</b><h2>Scripts DDL</h2></div>
+
+        <p>
+          Extractos de las tablas centrales. El script completo —11 tablas, triggers, funciones y datos de
+          prueba— está en <code>MIS-db/sql/</code>, en cuatro archivos que se ejecutan en orden.
+        </p>
+
+        <h4>Relación N:M usuario ↔ rol</h4>
+        <div class="sql">
+          <div class="filename">01_ddl_seguridad.sql</div>
+<pre><span class="kw">CREATE TABLE</span> seg.user_roles (
+    user_id     BIGINT      <span class="kw">NOT NULL REFERENCES</span> seg.users(id) <span class="kw">ON DELETE CASCADE</span>,
+    role_id     INTEGER     <span class="kw">NOT NULL REFERENCES</span> seg.roles(id) <span class="kw">ON DELETE CASCADE</span>,
+    valid_from  TIMESTAMPTZ <span class="kw">NOT NULL DEFAULT</span> now(),
+    valid_until TIMESTAMPTZ,                                  <span class="cm">-- NULL = indefinido</span>
+    is_active   BOOLEAN     <span class="kw">NOT NULL DEFAULT</span> TRUE,
+    granted_by  BIGINT      <span class="kw">REFERENCES</span> seg.users(id) <span class="kw">ON DELETE SET NULL</span>,
+    granted_at  TIMESTAMPTZ <span class="kw">NOT NULL DEFAULT</span> now(),
+
+    <span class="kw">CONSTRAINT</span> user_roles_pk           <span class="kw">PRIMARY KEY</span> (user_id, role_id),
+    <span class="kw">CONSTRAINT</span> user_roles_validity_chk <span class="kw">CHECK</span> (valid_until <span class="kw">IS NULL OR</span> valid_until &gt; valid_from)
+);
+<span class="kw">CREATE INDEX</span> user_roles_role_idx <span class="kw">ON</span> seg.user_roles(role_id) <span class="kw">WHERE</span> is_active;</pre>
+        </div>
+
+        <h4>Árbol de navegación</h4>
+        <div class="sql">
+          <div class="filename">01_ddl_seguridad.sql</div>
+<pre><span class="kw">CREATE TABLE</span> seg.nodes (
+    id            BIGINT       <span class="kw">GENERATED ALWAYS AS IDENTITY PRIMARY KEY</span>,
+    parent_id     BIGINT       <span class="kw">REFERENCES</span> seg.nodes(id) <span class="kw">ON DELETE RESTRICT</span>,
+    code          VARCHAR(60)  <span class="kw">NOT NULL</span>,      <span class="cm">-- equivale a cod_sec del backend Ant</span>
+    name          VARCHAR(150) <span class="kw">NOT NULL</span>,      <span class="cm">-- equivale a desc_sec</span>
+    description   VARCHAR(400),
+    node_type     VARCHAR(10)  <span class="kw">NOT NULL</span>,
+    route         VARCHAR(250),               <span class="cm">-- equivale a act_sec (ruta Angular)</span>
+    icon          VARCHAR(60),                <span class="cm">-- equivale a icon_sec</span>
+    display_order SMALLINT     <span class="kw">NOT NULL DEFAULT</span> 100,
+    is_active     BOOLEAN      <span class="kw">NOT NULL DEFAULT</span> TRUE,
+    is_visible    BOOLEAN      <span class="kw">NOT NULL DEFAULT</span> TRUE,
+    requires_mfa  BOOLEAN      <span class="kw">NOT NULL DEFAULT</span> FALSE,
+    metadata      JSONB        <span class="kw">NOT NULL DEFAULT</span> <span class="kw">'{}'</span>::jsonb,
+
+    <span class="cm">-- Columnas derivadas: las calcula trg_nodes_build_path. No escribir a mano.</span>
+    path          LTREE        <span class="kw">NOT NULL</span>,      <span class="cm">-- '4.17.92'</span>
+    depth         SMALLINT     <span class="kw">NOT NULL</span>,      <span class="cm">-- 0 = raiz</span>
+    sort_path     TEXT         <span class="kw">NOT NULL</span>,      <span class="cm">-- preorden del menu</span>
+
+    created_at    TIMESTAMPTZ  <span class="kw">NOT NULL DEFAULT</span> now(),
+    updated_at    TIMESTAMPTZ  <span class="kw">NOT NULL DEFAULT</span> now(),
+
+    <span class="kw">CONSTRAINT</span> nodes_code_uk        <span class="kw">UNIQUE</span> (code),
+    <span class="kw">CONSTRAINT</span> nodes_no_self_parent <span class="kw">CHECK</span> (parent_id <span class="kw">IS DISTINCT FROM</span> id),
+    <span class="kw">CONSTRAINT</span> nodes_type_chk       <span class="kw">CHECK</span> (node_type <span class="kw">IN</span>
+        (<span class="kw">'SYSTEM'</span>,<span class="kw">'FOLDER'</span>,<span class="kw">'REPORT'</span>,<span class="kw">'PAGE'</span>,<span class="kw">'ACTION'</span>,<span class="kw">'EXTERNAL'</span>)),
+
+    <span class="cm">-- Toda raiz es un SYSTEM y todo SYSTEM es raiz.</span>
+    <span class="kw">CONSTRAINT</span> nodes_root_chk       <span class="kw">CHECK</span> ((parent_id <span class="kw">IS NULL</span>) = (node_type = <span class="kw">'SYSTEM'</span>)),
+
+    <span class="cm">-- Solo los nodos navegables tienen ruta.</span>
+    <span class="kw">CONSTRAINT</span> nodes_route_chk      <span class="kw">CHECK</span> (
+        (node_type <span class="kw">IN</span> (<span class="kw">'REPORT'</span>,<span class="kw">'PAGE'</span>,<span class="kw">'EXTERNAL'</span>) <span class="kw">AND</span> route <span class="kw">IS NOT NULL</span>) <span class="kw">OR</span>
+        (node_type <span class="kw">IN</span> (<span class="kw">'SYSTEM'</span>,<span class="kw">'FOLDER'</span>,<span class="kw">'ACTION'</span>)   <span class="kw">AND</span> route <span class="kw">IS NULL</span>)
+    )
+);
+
+<span class="kw">CREATE UNIQUE INDEX</span> nodes_route_uk   <span class="kw">ON</span> seg.nodes(route) <span class="kw">WHERE</span> route <span class="kw">IS NOT NULL</span>;
+<span class="kw">CREATE        INDEX</span> nodes_parent_idx <span class="kw">ON</span> seg.nodes(parent_id);
+<span class="kw">CREATE        INDEX</span> nodes_path_gist  <span class="kw">ON</span> seg.nodes <span class="kw">USING</span> GIST (path);
+<span class="kw">CREATE        INDEX</span> nodes_sort_idx   <span class="kw">ON</span> seg.nodes(sort_path) <span class="kw">WHERE</span> is_active;</pre>
+        </div>
+
+        <h4>Permisos rol ↔ nodo</h4>
+        <div class="sql">
+          <div class="filename">01_ddl_seguridad.sql</div>
+<pre><span class="kw">CREATE TABLE</span> seg.node_permissions (
+    id          BIGINT      <span class="kw">GENERATED ALWAYS AS IDENTITY PRIMARY KEY</span>,
+    role_id     INTEGER     <span class="kw">NOT NULL REFERENCES</span> seg.roles(id) <span class="kw">ON DELETE CASCADE</span>,
+    node_id     BIGINT      <span class="kw">NOT NULL REFERENCES</span> seg.nodes(id) <span class="kw">ON DELETE CASCADE</span>,
+
+    grant_type  VARCHAR(5)  <span class="kw">NOT NULL DEFAULT</span> <span class="kw">'ALLOW'</span>,   <span class="cm">-- ALLOW o DENY</span>
+    applies_to  VARCHAR(7)  <span class="kw">NOT NULL DEFAULT</span> <span class="kw">'SUBTREE'</span>, <span class="cm">-- NODE = sin herencia</span>
+
+    can_view    BOOLEAN     <span class="kw">NOT NULL DEFAULT</span> TRUE,
+    can_create  BOOLEAN     <span class="kw">NOT NULL DEFAULT</span> FALSE,
+    can_update  BOOLEAN     <span class="kw">NOT NULL DEFAULT</span> FALSE,
+    can_delete  BOOLEAN     <span class="kw">NOT NULL DEFAULT</span> FALSE,
+    can_export  BOOLEAN     <span class="kw">NOT NULL DEFAULT</span> FALSE,
+
+    is_active   BOOLEAN     <span class="kw">NOT NULL DEFAULT</span> TRUE,
+    valid_until TIMESTAMPTZ,
+    granted_by  BIGINT      <span class="kw">REFERENCES</span> seg.users(id) <span class="kw">ON DELETE SET NULL</span>,
+    granted_at  TIMESTAMPTZ <span class="kw">NOT NULL DEFAULT</span> now(),
+
+    <span class="kw">CONSTRAINT</span> node_permissions_uk        <span class="kw">UNIQUE</span> (role_id, node_id),
+    <span class="kw">CONSTRAINT</span> node_permissions_grant_chk <span class="kw">CHECK</span> (grant_type <span class="kw">IN</span> (<span class="kw">'ALLOW'</span>,<span class="kw">'DENY'</span>)),
+    <span class="kw">CONSTRAINT</span> node_permissions_scope_chk <span class="kw">CHECK</span> (applies_to <span class="kw">IN</span> (<span class="kw">'NODE'</span>,<span class="kw">'SUBTREE'</span>)),
+
+    <span class="cm">-- Una negacion es completa: no puede traer banderas en TRUE.</span>
+    <span class="kw">CONSTRAINT</span> node_permissions_deny_chk  <span class="kw">CHECK</span> (
+        grant_type = <span class="kw">'ALLOW'</span>
+        <span class="kw">OR NOT</span> (can_view <span class="kw">OR</span> can_create <span class="kw">OR</span> can_update <span class="kw">OR</span> can_delete <span class="kw">OR</span> can_export)
+    )
+);
+
+<span class="kw">CREATE INDEX</span> node_permissions_role_idx <span class="kw">ON</span> seg.node_permissions(role_id) <span class="kw">WHERE</span> is_active;</pre>
+        </div>
+
+        <h4>Trigger que mantiene el path</h4>
+        <div class="sql">
+          <div class="filename">02_funciones_triggers.sql</div>
+<pre><span class="cm">-- En PostgreSQL los DEFAULT (incluida la columna IDENTITY) ya estan resueltos</span>
+<span class="cm">-- cuando corre un trigger BEFORE INSERT: NEW.id esta disponible para el path.</span>
+<span class="kw">CREATE OR REPLACE FUNCTION</span> seg.fn_nodes_build_path() <span class="kw">RETURNS</span> trigger
+<span class="kw">LANGUAGE</span> plpgsql <span class="kw">AS</span> $fn$
+<span class="kw">DECLARE</span>
+    v_parent seg.nodes%ROWTYPE;
+    v_key    TEXT;
+<span class="kw">BEGIN</span>
+    v_key := lpad(NEW.display_order::text, 5, <span class="kw">'0'</span>) || <span class="kw">'-'</span> || lpad(NEW.id::text, 12, <span class="kw">'0'</span>);
+
+    <span class="kw">IF</span> NEW.parent_id <span class="kw">IS NULL THEN</span>
+        NEW.path := text2ltree(NEW.id::text);  NEW.depth := 0;  NEW.sort_path := v_key;
+        <span class="kw">RETURN</span> NEW;
+    <span class="kw">END IF</span>;
+
+    <span class="kw">SELECT</span> * <span class="kw">INTO</span> v_parent <span class="kw">FROM</span> seg.nodes <span class="kw">WHERE</span> id = NEW.parent_id;
+
+    <span class="cm">-- Guarda anti-ciclo: un nodo no puede colgar de su propio descendiente.</span>
+    <span class="kw">IF</span> NEW.id = <span class="kw">ANY</span> (string_to_array(v_parent.path::text, <span class="kw">'.'</span>)::bigint[]) <span class="kw">THEN</span>
+        <span class="kw">RAISE EXCEPTION</span> <span class="kw">'Ciclo detectado: % no puede colgar de %'</span>, NEW.id, NEW.parent_id;
+    <span class="kw">END IF</span>;
+
+    NEW.path      := v_parent.path || NEW.id::text;
+    NEW.depth     := (v_parent.depth + 1)::smallint;
+    NEW.sort_path := v_parent.sort_path || <span class="kw">'.'</span> || v_key;
+    <span class="kw">RETURN</span> NEW;
+<span class="kw">END</span>;
+$fn$;</pre>
+        </div>
+      </section>
+
+      <!-- ============================ 06 ============================ -->
+      <section id="cte">
+        <div class="sec-head"><b>06</b><h2>La consulta: árbol autorizado en un viaje</h2></div>
+
+        <p>
+          Un solo <code>WITH RECURSIVE</code> resuelve las cuatro cosas que el menú necesita: qué roles
+          tiene el usuario, hasta dónde llega cada concesión, quién gana en los conflictos y qué carpetas
+          hay que añadir para que el árbol quede conectado.
+        </p>
+
+        <div class="sql">
+          <div class="filename">04_consultas_navegacion.sql · Consulta A · $1 = users.id</div>
+<pre><span class="kw">WITH RECURSIVE</span>
+<span class="cm">-- 1) Roles efectivos: directos + heredados del puesto ------------------------</span>
+roles_efectivos <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> ur.role_id
+      <span class="kw">FROM</span> seg.user_roles ur
+      <span class="kw">JOIN</span> seg.roles r <span class="kw">ON</span> r.id = ur.role_id <span class="kw">AND</span> r.is_active
+     <span class="kw">WHERE</span> ur.user_id = $1
+       <span class="kw">AND</span> ur.is_active
+       <span class="kw">AND</span> ur.valid_from &lt;= now()
+       <span class="kw">AND</span> (ur.valid_until <span class="kw">IS NULL OR</span> ur.valid_until &gt; now())
+    <span class="kw">UNION</span>
+    <span class="kw">SELECT</span> pr.role_id
+      <span class="kw">FROM</span> seg.users u
+      <span class="kw">JOIN</span> seg.position_roles pr <span class="kw">ON</span> pr.position_id = u.position_id <span class="kw">AND</span> pr.is_active
+      <span class="kw">JOIN</span> seg.roles r           <span class="kw">ON</span> r.id = pr.role_id <span class="kw">AND</span> r.is_active
+     <span class="kw">WHERE</span> u.id = $1 <span class="kw">AND</span> u.status = <span class="kw">'ACTIVE'</span> <span class="kw">AND</span> u.deleted_at <span class="kw">IS NULL</span>
+),
+
+<span class="cm">-- 2) Concesiones aplicables (+ bypass del superadministrador) ----------------</span>
+concesiones <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> np.node_id <span class="kw">AS</span> origen_id, np.grant_type, np.applies_to,
+           np.can_view, np.can_create, np.can_update, np.can_delete, np.can_export
+      <span class="kw">FROM</span> seg.node_permissions np
+     <span class="kw">WHERE</span> np.role_id <span class="kw">IN</span> (<span class="kw">SELECT</span> role_id <span class="kw">FROM</span> roles_efectivos)
+       <span class="kw">AND</span> np.is_active
+       <span class="kw">AND</span> (np.valid_until <span class="kw">IS NULL OR</span> np.valid_until &gt; now())
+    <span class="kw">UNION ALL</span>
+    <span class="kw">SELECT</span> n.id, <span class="kw">'ALLOW'</span>, <span class="kw">'SUBTREE'</span>, TRUE, TRUE, TRUE, TRUE, TRUE
+      <span class="kw">FROM</span> seg.nodes n
+     <span class="kw">WHERE</span> n.parent_id <span class="kw">IS NULL</span>
+       <span class="kw">AND EXISTS</span> (<span class="kw">SELECT</span> 1 <span class="kw">FROM</span> roles_efectivos re
+                     <span class="kw">JOIN</span> seg.roles r <span class="kw">ON</span> r.id = re.role_id
+                    <span class="kw">WHERE</span> r.grants_full_access)
+),
+
+<span class="cm">-- 3) Herencia hacia abajo: n.path &lt;@ o.path = "n es o, o desciende de o" ----</span>
+alcance <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> n.id <span class="kw">AS</span> node_id, o.depth <span class="kw">AS</span> especificidad, c.grant_type,
+           c.can_view, c.can_create, c.can_update, c.can_delete, c.can_export
+      <span class="kw">FROM</span> concesiones c
+      <span class="kw">JOIN</span> seg.nodes o <span class="kw">ON</span> o.id = c.origen_id
+      <span class="kw">JOIN</span> seg.nodes n <span class="kw">ON</span> (c.applies_to = <span class="kw">'SUBTREE'</span> <span class="kw">AND</span> n.path &lt;@ o.path)
+                       <span class="kw">OR</span> (c.applies_to = <span class="kw">'NODE'</span>    <span class="kw">AND</span> n.id   =  o.id)
+     <span class="kw">WHERE</span> n.is_active
+),
+
+<span class="cm">-- 4) Precedencia: gana lo mas especifico; a igual nivel, la negacion vence ---</span>
+ganadoras <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> a.*, <span class="kw">MAX</span>(a.especificidad) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> a.node_id) <span class="kw">AS</span> nivel_ganador
+      <span class="kw">FROM</span> alcance a
+),
+resueltos <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> g.node_id,
+           bool_or(g.grant_type = <span class="kw">'DENY'</span>) <span class="kw">AS</span> denegado,
+           bool_or(g.can_view)   <span class="kw">AS</span> can_view,
+           bool_or(g.can_create) <span class="kw">AS</span> can_create,
+           bool_or(g.can_update) <span class="kw">AS</span> can_update,
+           bool_or(g.can_delete) <span class="kw">AS</span> can_delete,
+           bool_or(g.can_export) <span class="kw">AS</span> can_export
+      <span class="kw">FROM</span> ganadoras g
+     <span class="kw">WHERE</span> g.especificidad = g.nivel_ganador
+     <span class="kw">GROUP BY</span> g.node_id
+),
+permitidos <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> * <span class="kw">FROM</span> resueltos <span class="kw">WHERE NOT</span> denegado <span class="kw">AND</span> can_view
+),
+
+<span class="cm">-- 5) Cierre ascendente (RECURSIVO): las carpetas contenedoras del camino -----</span>
+<span class="cm">--    UNION (no UNION ALL) corta la recursion al reconverger en un ancestro.</span>
+arbol <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> n.id, n.parent_id
+      <span class="kw">FROM</span> seg.nodes n
+      <span class="kw">JOIN</span> permitidos p <span class="kw">ON</span> p.node_id = n.id
+     <span class="kw">WHERE</span> n.node_type &lt;&gt; <span class="kw">'ACTION'</span>      <span class="cm">-- las ACTION son permisos, no menu</span>
+       <span class="kw">AND</span> n.is_visible
+    <span class="kw">UNION</span>
+    <span class="kw">SELECT</span> padre.id, padre.parent_id
+      <span class="kw">FROM</span> seg.nodes padre
+      <span class="kw">JOIN</span> arbol a <span class="kw">ON</span> a.parent_id = padre.id
+     <span class="kw">WHERE</span> padre.is_active <span class="kw">AND</span> padre.is_visible
+)
+
+<span class="kw">SELECT</span> n.id, n.parent_id, n.code, n.name, n.node_type, n.route, n.icon,
+       n.depth, n.display_order, n.metadata, n.requires_mfa,
+       <span class="kw">CASE WHEN</span> p.node_id <span class="kw">IS NULL THEN</span> <span class="kw">'CONTAINER'</span> <span class="kw">ELSE</span> <span class="kw">'GRANTED'</span> <span class="kw">END</span> <span class="kw">AS</span> access_source,
+       <span class="kw">COALESCE</span>(p.can_create, FALSE) <span class="kw">AS</span> can_create,
+       <span class="kw">COALESCE</span>(p.can_update, FALSE) <span class="kw">AS</span> can_update,
+       <span class="kw">COALESCE</span>(p.can_delete, FALSE) <span class="kw">AS</span> can_delete,
+       <span class="kw">COALESCE</span>(p.can_export, FALSE) <span class="kw">AS</span> can_export
+  <span class="kw">FROM</span> arbol a
+  <span class="kw">JOIN</span> seg.nodes n       <span class="kw">ON</span> n.id = a.id
+  <span class="kw">LEFT JOIN</span> permitidos p <span class="kw">ON</span> p.node_id = n.id
+ <span class="kw">ORDER BY</span> n.sort_path;   <span class="cm">-- preorden exacto del menu, sin ordenar en memoria</span></pre>
+        </div>
+
+        <h3>Resultado sobre los datos de prueba</h3>
+        <p>
+          Para un usuario cuyo puesto le da el rol <code>SUPERVISOR_AREA</code>, con una concesión
+          <code>SUBTREE</code> sobre la carpeta Comercial y una <code>NODE</code> sobre un reporte suelto
+          de Riesgos:
+        </p>
+
+        <div class="tablewrap">
+          <table>
+            <caption>Salida de la Consulta A, ya ordenada por <b>sort_path</b></caption>
+            <thead><tr><th>code</th><th class="num">depth</th><th>node_type</th><th>access_source</th><th>can_export</th></tr></thead>
+            <tbody>
+              <tr><td class="col">REPORTES</td><td class="num">0</td><td class="typ">SYSTEM</td><td>CONTAINER</td><td>false</td></tr>
+              <tr><td class="col">REP_COMERCIAL</td><td class="num">1</td><td class="typ">FOLDER</td><td><span class="allow">GRANTED</span></td><td>true</td></tr>
+              <tr><td class="col">REP_COL_DIA</td><td class="num">2</td><td class="typ">REPORT</td><td><span class="allow">GRANTED</span></td><td>true</td></tr>
+              <tr><td class="col">REP_MORA</td><td class="num">2</td><td class="typ">REPORT</td><td><span class="allow">GRANTED</span></td><td>true</td></tr>
+              <tr><td class="col">REP_RIESGOS</td><td class="num">1</td><td class="typ">FOLDER</td><td>CONTAINER</td><td>false</td></tr>
+              <tr><td class="col">REP_CARTERA</td><td class="num">2</td><td class="typ">REPORT</td><td><span class="allow">GRANTED</span></td><td>false</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Las dos filas <code>CONTAINER</code> son la razón de ser de la recursión: ninguna tiene concesión
+          propia, pero sin ellas los reportes permitidos colgarían de la nada. <code>REP_CARTERA</code>
+          aparece sin <code>can_export</code> porque su concesión <code>NODE</code> no incluyó esa bandera:
+          el usuario ve el reporte, no puede descargarlo.
+        </p>
+
+        <h3>Variante portátil</h3>
+        <p>
+          <code>ltree</code> es específico de PostgreSQL. Si el MIS debe convivir con el Oracle del backend
+          Ant, la Consulta B del mismo archivo usa solo <code>parent_id</code> y <code>depth</code>,
+          propagando la herencia con un segundo término recursivo en lugar del operador <code>&lt;@</code>.
+          Se ejecuta igual en Oracle, SQL Server, MySQL 8+ y MariaDB 10.2+.
+        </p>
+      </section>
+
+      <!-- ============================ 07 ============================ -->
+      <section id="backend">
+        <div class="sec-head"><b>07</b><h2>Lectura y operación</h2></div>
+
+        <h3>El contrato con el frontend no cambia</h3>
+        <p>
+          <code>GET /api/v1/navegacion/arbol</code> ejecuta la Consulta A y devuelve una lista
+          <strong>plana ya ordenada</strong>. El servicio Node la convierte en JSON anidado en una pasada
+          O(n) agrupando por <code>parent_id</code> en un <code>Map</code> —el mismo algoritmo que
+          <code>MenuStgService</code> ya usa hoy contra <code>list_sec</code>, así que el front recibe la
+          misma forma de datos que consume ahora.
+        </p>
+
+        <h3>Coste real</h3>
+        <p>
+          Con el volumen del MIS —unos 240 reportes, del orden de 400 nodos, ~30 roles y unos pocos miles
+          de filas en <code>node_permissions</code>— todo cabe en memoria y la consulta responde en
+          milisegundos. Las recomendaciones operativas son, en ese orden:
+        </p>
+        <ol class="body">
+          <li>Cachear el resultado por <code>user_id</code> con TTL corto (5 min), como ya hace
+            <code>AuthorizationService</code>, e invalidar al cambiar roles o permisos.</li>
+          <li>No materializar nada todavía. Una vista materializada <code>mv_user_node_access</code> solo
+            se justifica por encima de ~5.000 nodos con ~10.000 usuarios.</li>
+          <li>Autorizar <strong>siempre</strong> en el backend con <code>seg.fn_user_can($1,$2,$3)</code>.
+            El árbol que se envía al frontend es información de presentación, no un control de acceso.</li>
+        </ol>
+
+        <h3>Lo que el modelo deja preparado</h3>
+        <ul>
+          <li><strong>Explicabilidad.</strong> La Consulta D devuelve la cadena rol → nodo de origen →
+            alcance que concede o niega un acceso. Es lo que responde «¿por qué este usuario ve este
+            reporte?» sin leer código.</li>
+          <li><strong>Recertificación de accesos.</strong> La Consulta F da la matriz inversa —qué roles
+            alcanzan un nodo y a cuántos usuarios afecta— que piden las revisiones periódicas de
+            privilegios.</li>
+          <li><strong>Caducidad automática.</strong> <code>user_roles.valid_until</code> y
+            <code>node_permissions.valid_until</code> hacen que las coberturas temporales expiren solas,
+            sin depender de que alguien recuerde revocarlas.</li>
+          <li><strong>Sin IDs negativos.</strong> <code>is_system</code> y <code>grants_full_access</code>
+            sustituyen el <code>SSO_SUPERADMIN = -1</code> que el sistema heredado usa para no chocar con
+            el autoincremento.</li>
+        </ul>
+
+        <footer>
+          <p>
+            Scripts en <code>MIS-db/sql/</code>: <code>01_ddl_seguridad.sql</code> ·
+            <code>02_funciones_triggers.sql</code> · <code>03_seed_demo.sql</code> ·
+            <code>04_consultas_navegacion.sql</code>. Se ejecutan en ese orden.
+          </p>
+          <p>
+            Los scripts no se han ejecutado contra un motor: conviene aplicarlos primero sobre una base
+            desechable antes de llevarlos a un entorno real.
+          </p>
+        </footer>
+      </section>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>
