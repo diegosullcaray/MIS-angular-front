@@ -13,7 +13,6 @@ import { RecaudosServiciosService } from '../../services/recaudos-servicios.serv
   standalone: true,
   imports: [ReporteSimpleComponent],
   templateUrl: './recaudos-servicios.component.html',
-  styleUrl: './recaudos-servicios.component.css',
 })
 export class RecaudosServiciosComponent extends ReporteSimpleBase {
   private readonly servicio = inject(RecaudosServiciosService);

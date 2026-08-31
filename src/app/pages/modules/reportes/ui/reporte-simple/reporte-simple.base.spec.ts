@@ -6,7 +6,7 @@ import type { Observable } from 'rxjs';
 import { ReporteSimpleBase } from './reporte-simple.base';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import type { NodoConsulta } from '../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../components/actividad-diaria/components/Captaciones/models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../models/tabla-reporte.model';
 
 const NODO = { tip_cod: 2, cod_rel: 'AG01', lvl: 2 };
 

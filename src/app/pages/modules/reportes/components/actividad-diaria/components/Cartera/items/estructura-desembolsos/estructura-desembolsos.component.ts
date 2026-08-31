@@ -15,7 +15,6 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
   standalone: true,
   imports: [HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent],
   templateUrl: './estructura-desembolsos.component.html',
-  styleUrl: './estructura-desembolsos.component.css',
 })
 export class EstructuraDesembolsosComponent {
   private readonly servicio = inject(CarteraRepositorioService);

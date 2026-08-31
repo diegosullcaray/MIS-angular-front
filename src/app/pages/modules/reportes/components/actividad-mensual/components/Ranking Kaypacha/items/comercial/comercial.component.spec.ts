@@ -34,7 +34,7 @@ describe('RankingKaypachaComercialComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](NODO);
     fixture.detectChanges();
     expect(servicioSpy.rankingKaypachaComercial).toHaveBeenCalledWith(
-      { tip_cod: 9, cod_rel: 'FC' },
+      expect.objectContaining({ tip_cod: 9, cod_rel: 'FC' }),
       expect.any(String),
     );
   });

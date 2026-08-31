@@ -23,7 +23,6 @@ import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas
   standalone: true,
   imports: [HierSelectorComponent, GraficoMixtoComponent, EmptyStateComponent, ListSkeletonComponent, WindowPanelComponent],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css',
 })
 export class CeroCuotasDashboardComponent {
   private readonly servicio = inject(CeroCuotasNuevasService);

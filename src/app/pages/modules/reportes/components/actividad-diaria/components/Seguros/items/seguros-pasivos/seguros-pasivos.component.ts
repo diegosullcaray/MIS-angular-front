@@ -29,7 +29,6 @@ import { SegurosService } from '../../services/seguros.service';
   standalone: true,
   imports: [HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
   templateUrl: './seguros-pasivos.component.html',
-  styleUrl: './seguros-pasivos.component.css',
 })
 export class SegurosPasivosComponent {
   private readonly servicio = inject(SegurosService);

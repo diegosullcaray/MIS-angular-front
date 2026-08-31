@@ -21,7 +21,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SelectModule, FormsModule, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent],
   templateUrl: './monitor-reprogramados.component.html',
-  styleUrl: './monitor-reprogramados.component.css',
 })
 export class MonitorReprogramadosComponent {
   private readonly servicio = inject(AvanceComercialService);

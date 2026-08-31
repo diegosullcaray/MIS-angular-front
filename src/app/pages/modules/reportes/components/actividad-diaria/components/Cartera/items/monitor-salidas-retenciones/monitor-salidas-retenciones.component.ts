@@ -40,7 +40,6 @@ import { MonitorSalidasService } from '../../services/monitor-salidas.service';
     WindowPanelComponent,
   ],
   templateUrl: './monitor-salidas-retenciones.component.html',
-  styleUrl: './monitor-salidas-retenciones.component.css',
 })
 export class MonitorSalidasRetencionesComponent {
   private readonly servicio = inject(MonitorSalidasService);

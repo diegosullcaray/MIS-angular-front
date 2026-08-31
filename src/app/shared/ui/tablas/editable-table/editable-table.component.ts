@@ -12,7 +12,6 @@ import { formatearNumero } from '../../../utils/formato.util';
   standalone: true,
   imports: [TableModule, FormsModule, InputTextModule, SkeletonModule],
   templateUrl: './editable-table.component.html',
-  styleUrl: './editable-table.component.css',
 })
 export class EditableTableComponent<T extends FilaTabla = FilaTabla> {
   readonly columnas = input.required<ColumnaTabla[]>();

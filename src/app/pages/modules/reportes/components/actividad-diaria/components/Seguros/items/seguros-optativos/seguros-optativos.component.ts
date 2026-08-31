@@ -38,7 +38,6 @@ import { SegurosService } from '../../services/seguros.service';
     WindowPanelComponent,
   ],
   templateUrl: './seguros-optativos.component.html',
-  styleUrl: './seguros-optativos.component.css',
 })
 export class SegurosOptativosComponent {
   private readonly servicio = inject(SegurosService);

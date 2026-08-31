@@ -16,7 +16,6 @@ import { VinculacionCarteraService } from '../../services/vinculacion-cartera.se
   standalone: true,
   imports: [KpiTileComponent, HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent],
   templateUrl: './vinculacion-cartera.component.html',
-  styleUrl: './vinculacion-cartera.component.css',
 })
 export class VinculacionCarteraComponent {
   private readonly servicio = inject(VinculacionCarteraService);

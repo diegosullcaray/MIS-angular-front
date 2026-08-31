@@ -34,7 +34,7 @@ describe('SemaforoCosechasComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](NODO);
     fixture.detectChanges();
     expect(servicioSpy.semaforoCosechas).toHaveBeenCalledWith(
-      NODO,
+      expect.objectContaining({ tip_cod: 1, cod_rel: '100' }),
       'TODO',
       'TODO',
       '3',

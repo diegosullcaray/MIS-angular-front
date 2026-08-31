@@ -8,7 +8,6 @@ import { MonetizadoCardComponent } from '../monetizado-card/monetizado-card.comp
   standalone: true,
   imports: [MonetizadoCardComponent],
   templateUrl: './perfil-card.component.html',
-  styleUrl: './perfil-card.component.css',
 })
 export class PerfilCardComponent {
   protected readonly incentivos = inject(IncentivosService);

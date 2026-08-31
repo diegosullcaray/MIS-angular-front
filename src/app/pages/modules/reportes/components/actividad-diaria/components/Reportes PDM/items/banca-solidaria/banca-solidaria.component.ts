@@ -36,7 +36,6 @@ import { ReportesPdmService } from '../../services/reportes-pdm.service';
     WindowPanelComponent,
   ],
   templateUrl: './banca-solidaria.component.html',
-  styleUrl: './banca-solidaria.component.css',
 })
 export class BancaSolidariaComponent {
   private readonly servicio = inject(ReportesPdmService);

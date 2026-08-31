@@ -16,7 +16,6 @@ import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../mo
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './monitor-metas-desembolso.component.html',
-  styleUrl: './monitor-metas-desembolso.component.css',
 })
 export class MonitorMetasDesembolsoAnalistaComponent {
   private readonly servicio = inject(MonitorMetasDesembolsoService);

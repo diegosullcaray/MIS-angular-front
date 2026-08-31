@@ -15,7 +15,6 @@ import { GestionPasivoComercialService } from '../../services/gestion-pasivo-com
   standalone: true,
   imports: [HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent],
   templateUrl: './gestion-pasivo-comercial.component.html',
-  styleUrl: './gestion-pasivo-comercial.component.css',
 })
 export class GestionPasivoComercialComponent {
   private readonly servicio = inject(GestionPasivoComercialService);

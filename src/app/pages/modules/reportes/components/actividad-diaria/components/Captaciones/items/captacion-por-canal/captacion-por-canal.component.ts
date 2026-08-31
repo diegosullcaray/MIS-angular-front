@@ -15,7 +15,6 @@ import { CaptacionPorCanalService } from '../../../Captaciones/services/captacio
   standalone: true,
   imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent],
   templateUrl: './captacion-por-canal.component.html',
-  styleUrl: './captacion-por-canal.component.css',
 })
 export class CaptacionPorCanalComponent {
   private readonly servicio = inject(CaptacionPorCanalService);

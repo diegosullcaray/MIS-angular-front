@@ -13,7 +13,6 @@ import { CarteraCraService } from '../../services/cartera-cra.service';
   standalone: true,
   imports: [ReporteSimpleComponent],
   templateUrl: './saldo-cartera.component.html',
-  styleUrl: './saldo-cartera.component.css',
 })
 export class SaldoCarteraComponent extends ReporteBloquesBase {
   private readonly servicio = inject(CarteraCraService);

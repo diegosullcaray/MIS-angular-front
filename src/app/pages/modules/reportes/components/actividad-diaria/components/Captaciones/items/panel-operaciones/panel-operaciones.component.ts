@@ -18,7 +18,6 @@ import { PanelOperacionesService } from '../../services/panel-operaciones.servic
   standalone: true,
   imports: [HierSelectorComponent, TablaReporteComponent, SelectFiltroComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
   templateUrl: './panel-operaciones.component.html',
-  styleUrl: './panel-operaciones.component.css',
 })
 export class PanelOperacionesComponent {
   private readonly servicio = inject(PanelOperacionesService);

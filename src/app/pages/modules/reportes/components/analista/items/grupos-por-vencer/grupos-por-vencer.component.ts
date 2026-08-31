@@ -15,7 +15,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './grupos-por-vencer.component.html',
-  styleUrl: './grupos-por-vencer.component.css',
 })
 export class GruposPorVencerComponent {
   private readonly servicio = inject(GruposPorVencerService);

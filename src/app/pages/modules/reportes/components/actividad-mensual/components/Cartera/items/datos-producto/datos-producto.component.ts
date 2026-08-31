@@ -33,6 +33,13 @@ export class DatosProductoComponent extends ReporteBloquesBase {
     'N° Operaciones',
   ] as const;
 
+  protected override readonly notas = [
+    undefined,
+    undefined,
+    '<b>Los datos de Bancarización se compara con el último RCC disponible a la fecha.</b>',
+    '<b>Los datos de Bancarización se compara con el último RCC disponible a la fecha.</b>',
+  ];
+
   protected override consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.datosProducto(nodo, this.fechaBase());
   }

@@ -18,7 +18,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent, AgregarProspectoDialogComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './prospecto-corresponsal.component.html',
-  styleUrl: './prospecto-corresponsal.component.css',
 })
 export class ProspectoCorresponsalComponent {
   private readonly servicio = inject(ProspectoCorresponsalService);

@@ -28,7 +28,6 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
     WindowPanelComponent,
   ],
   templateUrl: './ranking-comercial.component.html',
-  styleUrl: './ranking-comercial.component.css',
 })
 export class RankingComercialComponent {
   private readonly servicio = inject(CarteraRepositorioService);

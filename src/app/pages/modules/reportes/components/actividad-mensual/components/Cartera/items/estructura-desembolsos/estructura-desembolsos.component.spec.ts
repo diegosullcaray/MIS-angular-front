@@ -9,10 +9,16 @@ import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 const NODO: HierarquiaNodo = { tip_cod: 1, cod_rel: '100', desc_rel: 'Unidad 100', lvl: 1 };
 
 describe('EstructuraDesembolsosComponent', () => {
-  let servicioSpy: { estructuraDesembolsos: ReturnType<typeof vi.fn> };
+  let servicioSpy: {
+    estructuraDesembolsosMensual: ReturnType<typeof vi.fn>;
+    periodos: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
-    servicioSpy = { estructuraDesembolsos: vi.fn().mockReturnValue(of(TABLA_DINAMICA_VACIA)) };
+    servicioSpy = {
+      estructuraDesembolsosMensual: vi.fn().mockReturnValue(of(TABLA_DINAMICA_VACIA)),
+      periodos: vi.fn().mockReturnValue(of([{ id: '2026-08', label: '2026-08' }])),
+    };
 
     TestBed.configureTestingModule({
       imports: [EstructuraDesembolsosComponent],
@@ -28,11 +34,14 @@ describe('EstructuraDesembolsosComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('al seleccionar nivel debe llamar a estructuraDesembolsos', () => {
+  it('al seleccionar nivel debe llamar a estructuraDesembolsosMensual', () => {
     const fixture = TestBed.createComponent(EstructuraDesembolsosComponent);
     fixture.detectChanges();
     fixture.componentInstance['onNivelSeleccionado'](NODO);
     fixture.detectChanges();
-    expect(servicioSpy.estructuraDesembolsos).toHaveBeenCalledWith({ tip_cod: 1, cod_rel: '100' });
+    expect(servicioSpy.estructuraDesembolsosMensual).toHaveBeenCalledWith(
+      expect.objectContaining({ tip_cod: 1, cod_rel: '100' }),
+      expect.any(String),
+    );
   });
 });

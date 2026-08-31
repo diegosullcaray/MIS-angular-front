@@ -31,7 +31,7 @@
           class="text-[13px] whitespace-nowrap"
           [class.bg-slate-100]="destacada(fila)"
           [class.dark:bg-slate-800]="destacada(fila)"
-          [class.font-bold]="destacada(fila)"
+          [class.font-bold]="destacada(fila) || (fondoDinamico() && signoFondoDinamico(fila, columna) !== null)"
           [class]="alineacion(columna)"
           [class.cursor-pointer]="clicable(columna)"
           [class.underline]="clicable(columna)"

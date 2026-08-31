@@ -13,7 +13,6 @@ import { CarteraMoraCraService } from '../../services/cartera-mora-cra.service';
   standalone: true,
   imports: [ReporteSimpleComponent],
   templateUrl: './portafolios-supervision.component.html',
-  styleUrl: './portafolios-supervision.component.css',
 })
 export class PortafoliosSupervisionComponent extends ReporteBloquesBase {
   private readonly servicio = inject(CarteraMoraCraService);

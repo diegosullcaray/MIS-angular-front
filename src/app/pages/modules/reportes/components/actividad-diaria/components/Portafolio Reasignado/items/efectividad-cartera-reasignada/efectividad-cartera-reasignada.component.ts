@@ -23,7 +23,6 @@ import { PortafolioReasignadoService } from '../../services/portafolio-reasignad
     WindowPanelComponent,
   ],
   templateUrl: './efectividad-cartera-reasignada.component.html',
-  styleUrl: './efectividad-cartera-reasignada.component.css',
 })
 export class EfectividadCarteraReasignadaComponent {
   private readonly servicio = inject(PortafolioReasignadoService);

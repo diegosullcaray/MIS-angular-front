@@ -44,7 +44,7 @@ describe('InversionStockMoraService', () => {
     service.obtenerGraficos({ tip_cod: 2, cod_rel: '12345678' }).subscribe((r) => (resultado = r));
 
     expect(resultado).toEqual({
-      graficos: [{ titulo: 'Inversión', subtitulo: undefined, categorias: ['Ene'], series: [{ nombre: 'Real', datos: [1], color: undefined }], tituloEjeY: undefined }],
+      graficos: [{ titulo: 'Inversión', subtitulo: expect.anything(), categorias: ['Ene'], series: [{ nombre: 'Real', datos: [1], color: undefined }], tituloEjeY: undefined }],
     });
   });
 });

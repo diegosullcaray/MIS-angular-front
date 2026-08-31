@@ -15,7 +15,6 @@ import { SeguimientoBancaPreferenteService } from '../../../services/seguimiento
   standalone: true,
   imports: [ReporteSimpleComponent, SelectFiltroComponent],
   templateUrl: './gestion-banca-preferente.component.html',
-  styleUrl: './gestion-banca-preferente.component.css',
 })
 export class GestionBancaPreferenteComponent extends ReporteSimpleBase {
   private readonly servicio = inject(SeguimientoBancaPreferenteService);

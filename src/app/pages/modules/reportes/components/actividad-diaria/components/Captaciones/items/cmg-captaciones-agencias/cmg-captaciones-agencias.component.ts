@@ -15,7 +15,6 @@ import { CmgCaptacionesAgenciasService } from '../../services/cmg-captaciones-ag
   standalone: true,
   imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent],
   templateUrl: './cmg-captaciones-agencias.component.html',
-  styleUrl: './cmg-captaciones-agencias.component.css',
 })
 export class CmgCaptacionesAgenciasComponent {
   private readonly servicio = inject(CmgCaptacionesAgenciasService);

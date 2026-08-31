@@ -23,7 +23,6 @@ import type { FiltrosMonitorEfectividades } from '../../models/monitor-efectivid
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './monitor-efectividades.component.html',
-  styleUrl: './monitor-efectividades.component.css',
 })
 export class MonitorEfectividadesComponent {
   private readonly servicio = inject(MonitorEfectividadesService);

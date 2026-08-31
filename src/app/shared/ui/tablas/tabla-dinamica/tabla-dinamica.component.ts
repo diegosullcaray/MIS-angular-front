@@ -71,7 +71,7 @@ export class TablaDinamicaComponent {
   }
 
   /** Con `fondoDinamico`, el signo del valor de esta celda; `null` fuera de rango o en "Descripción". */
-  private signoFondoDinamico(fila: Record<string, unknown>, columna: ColumnaDinamica): 1 | -1 | null {
+  protected signoFondoDinamico(fila: Record<string, unknown>, columna: ColumnaDinamica): 1 | -1 | null {
     if (!this.fondoDinamico() || columna.label === 'Descripción') return null;
     const numero = Number(fila[columna.key]);
     if (Number.isNaN(numero) || numero === 0) return null;

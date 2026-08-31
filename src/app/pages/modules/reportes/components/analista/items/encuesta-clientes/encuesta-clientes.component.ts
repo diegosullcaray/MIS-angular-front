@@ -28,7 +28,6 @@ import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../..
   standalone: true,
   imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './encuesta-clientes.component.html',
-  styleUrl: './encuesta-clientes.component.css',
 })
 export class EncuestaClientesComponent {
   private readonly servicio = inject(EncuestaClientesService);

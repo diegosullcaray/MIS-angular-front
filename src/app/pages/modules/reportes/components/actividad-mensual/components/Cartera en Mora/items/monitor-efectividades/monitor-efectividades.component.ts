@@ -33,6 +33,13 @@ export class MonitorEfectividadesComponent extends ReporteBloquesBase {
     'Resumen de Gestiones Ingresadas en Tramo 1-30',
   ] as const;
 
+  protected override readonly notas = [
+    undefined,
+    undefined,
+    '<b>a:</b> Número de clientes de riesgo alto y medio alto en el tramo de -30-0.',
+    '<b>a:</b> Número de clientes de riesgo alto y medio alto en el tramo de 1-30.',
+  ];
+
   protected override consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.monitorEfectividades(nodo, this.fechaBase());
   }

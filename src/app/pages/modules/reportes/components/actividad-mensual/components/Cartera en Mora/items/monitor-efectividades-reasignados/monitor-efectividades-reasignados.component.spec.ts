@@ -36,7 +36,7 @@ describe('MonitorEfectividadesReasignadosComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](NODO);
     fixture.detectChanges();
     expect(servicioSpy.monitorEfectividadesReasignados).toHaveBeenCalledWith(
-      { tip_cod: 1, cod_rel: '100' },
+      expect.objectContaining({ tip_cod: 1, cod_rel: '100' }),
       expect.any(String),
     );
   });

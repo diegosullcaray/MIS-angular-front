@@ -15,7 +15,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './cero-cuotas.component.html',
-  styleUrl: './cero-cuotas.component.css',
 })
 export class CeroCuotasComponent {
   private readonly servicio = inject(CeroCuotasService);

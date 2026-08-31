@@ -23,7 +23,6 @@ import type { NodoJerarquiaAncla, SectoristaItem } from '../../models/colaborado
     WindowPanelComponent,
   ],
   templateUrl: './categorizacion-dashboard.component.html',
-  styleUrl: './categorizacion-dashboard.component.css',
 })
 export class CategorizacionDashboardComponent implements OnInit {
   private readonly categorizacion = inject(CategorizacionService);

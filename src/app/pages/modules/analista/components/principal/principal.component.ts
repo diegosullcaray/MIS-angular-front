@@ -49,7 +49,6 @@ const COLORES_EVOLUTIVO = [COLOR_PRIMARY, COLOR_SECONDARY, PALETA_TRAMOS[2]];
     WindowPanelComponent,
   ],
   templateUrl: './principal.component.html',
-  styleUrl: './principal.component.css',
 })
 export class PrincipalComponent implements OnInit {
   private readonly analista = inject(AnalistaService);

@@ -123,12 +123,14 @@ export function mapearBloquesGrafico(r: IWinderResponse): BloqueGrafico[] {
         if (ultimos.length > 0) {
           const ultimo = ultimos[ultimos.length - 1];
           const unit = (bloque.getUnitGraph ?? '').toLowerCase().includes('porcentaje') || s.nombre.includes('%') ? '%' : '';
-          const numFmt = typeof ultimo === 'number' ? (unit ? ultimo.toFixed(2) : ultimo.toLocaleString('en-US')) : String(ultimo);
-          lineas.push(`${s.nombre}: ${numFmt}${unit ? ' ' + unit : ''}`);
+          const numFmt = typeof ultimo === 'number'
+            ? (unit ? `${ultimo.toFixed(1)}%` : ultimo.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }))
+            : String(ultimo);
+          lineas.push(`<span style="color:#15803d; font-weight:bold;">${s.nombre}:&nbsp;&nbsp;${numFmt}</span>`);
         }
       });
       if (lineas.length > 0) {
-        subtitulo = lineas.join(' | ');
+        subtitulo = lineas.join('<br>');
       }
     }
     return {

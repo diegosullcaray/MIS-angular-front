@@ -41,7 +41,6 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
     WindowPanelComponent,
   ],
   templateUrl: './gestion-comercial.component.html',
-  styleUrl: './gestion-comercial.component.css',
 })
 export class GestionComercialComponent {
   private readonly servicio = inject(CarteraRepositorioService);

@@ -25,7 +25,6 @@ import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../..
   standalone: true,
   imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './clientes-reprogramados.component.html',
-  styleUrl: './clientes-reprogramados.component.css',
 })
 export class ClientesReprogramadosComponent {
   private readonly servicio = inject(ClientesReprogramadosService);

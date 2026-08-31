@@ -59,7 +59,6 @@ function columnasComposicion(prefijo: 'd' | 'g', tipo: TipoColumna): ColumnaTabl
   standalone: true,
   imports: [HierSelectorComponent, EditableTableComponent, TabsModule, ButtonModule, WindowPanelComponent],
   templateUrl: './cartera-creditos.component.html',
-  styleUrl: './cartera-creditos.component.css',
 })
 export class CarteraCreditosComponent {
   private readonly presupuesto = inject(PresupuestoService);

@@ -17,7 +17,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, InputTextModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './canal-alterno.component.html',
-  styleUrl: './canal-alterno.component.css',
 })
 export class CanalAlternoComponent {
   private readonly servicio = inject(CanalAlternoService);

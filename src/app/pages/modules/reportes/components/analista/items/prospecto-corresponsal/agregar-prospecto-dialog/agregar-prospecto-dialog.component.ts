@@ -21,7 +21,6 @@ import type { OpcionJerarquia, ProspectoCorresponsalForm } from '../../../models
   standalone: true,
   imports: [FormsModule, DialogModule, ButtonModule, SelectModule, InputTextModule],
   templateUrl: './agregar-prospecto-dialog.component.html',
-  styleUrl: './agregar-prospecto-dialog.component.css',
 })
 export class AgregarProspectoDialogComponent {
   private readonly servicio = inject(ProspectoCorresponsalService);

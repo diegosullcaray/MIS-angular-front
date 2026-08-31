@@ -15,7 +15,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './clientes-potenciales.component.html',
-  styleUrl: './clientes-potenciales.component.css',
 })
 export class ClientesPotencialesComponent {
   private readonly servicio = inject(ClientesPotencialesService);

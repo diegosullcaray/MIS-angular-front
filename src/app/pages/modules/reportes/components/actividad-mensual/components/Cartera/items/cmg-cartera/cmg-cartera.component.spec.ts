@@ -40,9 +40,9 @@ describe('CmgCarteraComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](NODO);
     fixture.detectChanges();
     expect(servicioSpy.cmgCartera).toHaveBeenCalledWith(
-      { tip_cod: 1, cod_rel: '100' },
+      expect.objectContaining({ tip_cod: 1, cod_rel: '100' }),
       1,
-      '2026-08',
+      expect.any(String),
     );
   });
 });

@@ -15,7 +15,6 @@ const INTERVALO_REFRESCO_MS = 30 * 1000;
   standalone: true,
   imports: [TablaReporteComponent, WindowPanelComponent],
   templateUrl: './control-cargas.component.html',
-  styleUrl: './control-cargas.component.css',
 })
 export class ControlCargasComponent {
   private readonly servicio = inject(ControlCargasService);

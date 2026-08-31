@@ -22,7 +22,6 @@ const OPCIONES_SISTEMATICA = [
   standalone: true,
   imports: [DialogModule, ButtonModule, InputNumberModule, SelectModule, FormsModule, DecimalPipe],
   templateUrl: './calculadora-dialog.component.html',
-  styleUrl: './calculadora-dialog.component.css',
 })
 export class CalculadoraDialogComponent {
   protected readonly incentivos = inject(IncentivosService);

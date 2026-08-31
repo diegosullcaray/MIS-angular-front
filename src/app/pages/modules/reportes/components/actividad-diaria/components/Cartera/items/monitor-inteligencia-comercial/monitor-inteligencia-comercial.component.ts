@@ -14,7 +14,6 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
   standalone: true,
   imports: [HierSelectorComponent, EmptyStateComponent, WindowPanelComponent],
   templateUrl: './monitor-inteligencia-comercial.component.html',
-  styleUrl: './monitor-inteligencia-comercial.component.css',
 })
 export class MonitorInteligenciaComercialComponent {
   private readonly servicio = inject(CarteraRepositorioService);

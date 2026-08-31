@@ -15,7 +15,6 @@ import type { BloqueGrafico } from '../../../../../../../shared/ui/graficos/mode
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, GraficoMixtoComponent, WindowPanelComponent],
   templateUrl: './inversion-stock-mora.component.html',
-  styleUrl: './inversion-stock-mora.component.css',
 })
 export class InversionStockMoraComponent {
   private readonly servicio = inject(InversionStockMoraService);

@@ -18,8 +18,6 @@ import { opcionesMixto } from '../utils/highcharts-factory.util';
   template: `
     <app-grafico-base
       [opciones]="opciones()"
-      [titulo]="datos().titulo"
-      [subtitulo]="datos().subtitulo ?? ''"
       (puntoSeleccionado)="puntoSeleccionado.emit($event)"
     />
   `,

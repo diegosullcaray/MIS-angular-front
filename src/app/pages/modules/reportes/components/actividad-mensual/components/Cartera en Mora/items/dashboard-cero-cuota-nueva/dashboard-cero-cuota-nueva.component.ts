@@ -1,11 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
-import type { Observable } from 'rxjs';
-import { ReporteSimpleComponent } from '../../../../../../ui/reporte-simple/reporte-simple.component';
-import { ReporteSimpleBase } from '../../../../../../ui/reporte-simple/reporte-simple.base';
+import { Component, effect, inject, signal } from '@angular/core';
+import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
+import { GraficoMixtoComponent } from '../../../../../../../../../shared/ui/graficos/grafico-mixto/grafico-mixto.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
-import { PARAMS_HIER_UNIDAD } from '../../../../../../models/jerarquia.model';
-import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../../../../models/tabla-reporte.model';
+import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
+import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
+import { ToastService } from '../../../../../../../../../shared/services/toast.service';
+import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
+import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
+import type { BloqueGrafico } from '../../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import {
   generarOpcionesFechaBase,
   fechaBasePorDefecto,
@@ -16,17 +18,54 @@ import { ActividadMensualCraService } from '../../../../services/actividad-mensu
 @Component({
   selector: 'app-mensual-dashboard-cero-cuota-nueva',
   standalone: true,
-  imports: [ReporteSimpleComponent, SelectFiltroComponent],
+  imports: [
+    HierSelectorComponent,
+    GraficoMixtoComponent,
+    SelectFiltroComponent,
+    EmptyStateComponent,
+    WindowPanelComponent,
+  ],
   templateUrl: './dashboard-cero-cuota-nueva.component.html',
   styleUrl: './dashboard-cero-cuota-nueva.component.css',
 })
-export class DashboardCeroCuotaNuevaComponent extends ReporteSimpleBase {
+export class DashboardCeroCuotaNuevaComponent {
   private readonly servicio = inject(ActividadMensualCraService);
+  private readonly toast = inject(ToastService);
+
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly opcionesFechaBase = generarOpcionesFechaBase();
   protected readonly fechaBase = signal<string>(fechaBasePorDefecto());
 
-  protected override consultar(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.servicio.dashboardCeroCuotaNueva(nodo, this.fechaBase());
+  protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
+  protected readonly cargando = signal(false);
+  protected readonly graficos = signal<BloqueGrafico[]>([]);
+  protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
+
+  constructor() {
+    effect(() => {
+      const nodo = this.nivelActual();
+      const fec = this.fechaBase();
+      if (nodo) this.cargar(nodo, fec);
+    });
+  }
+
+  protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
+    this.nivelActual.set(nodo);
+  }
+
+  private cargar(nodo: HierarquiaNodo, fec: string): void {
+    this.cargando.set(true);
+    this.servicio
+      .dashboardCeroCuotaNueva({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, fec)
+      .subscribe({
+        next: (graficos) => {
+          this.graficos.set(graficos);
+          this.cargando.set(false);
+        },
+        error: () => {
+          this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+          this.cargando.set(false);
+        },
+      });
   }
 }

@@ -23,7 +23,6 @@ import { TabsModule } from 'primeng/tabs';
   standalone: true,
   imports: [HierSelectorComponent, TablaReporteComponent, SelectFiltroComponent, EmptyStateComponent, WindowPanelComponent,TabsModule],
   templateUrl: './gestion-tasas-pasivas.component.html',
-  styleUrl: './gestion-tasas-pasivas.component.css',
 })
 export class GestionTasasPasivasComponent {
   private readonly servicio = inject(GestionTasasPasivasService);

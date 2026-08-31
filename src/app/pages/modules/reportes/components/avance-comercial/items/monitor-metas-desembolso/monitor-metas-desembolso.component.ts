@@ -20,7 +20,6 @@ import { TabsModule } from 'primeng/tabs';
   standalone: true,
   imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent, TabsModule],
   templateUrl: './monitor-metas-desembolso.component.html',
-  styleUrl: './monitor-metas-desembolso.component.css',
 })
 export class MonitorMetasDesembolsoComponent {
   private readonly servicio = inject(AvanceComercialService);

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
@@ -6,7 +6,7 @@ import { mapearBloquesGrafico } from '../../../../../utils/reportes-mapeo.util';
 import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
 import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { IWinderResponse } from '../../../../../../../../core/winder/winder/winder.interface';
-import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
 
 /** Los dos cortes por los que "Top" pide cada uno de sus bloques — legado `tip_cod2`. */
 const CORTES_TOP = [

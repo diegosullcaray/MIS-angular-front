@@ -92,6 +92,7 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
   const tipoBase = forma === 'columna' ? 'column' : forma === 'linea' ? 'spline' : 'bar';
 
   const series: SeriesOptionsType[] = bloque.series.map((serie, i) => {
+    const simbolos = ['circle', 'diamond', 'square', 'triangle', 'triangle-down'];
     let color = serie.color;
     if (!color) {
       const nombreLower = (serie.nombre ?? '').toLowerCase();
@@ -99,6 +100,9 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
         color = '#0284C7'; // Azul para barras Real
       } else if (nombreLower.includes('meta') || nombreLower.includes('ppto') || nombreLower.includes('presupuesto')) {
         color = '#1D396E'; // Navy para Meta
+      } else if (bloque.series.length > 1) {
+        const paleta = ['#0284C7', '#003f5c', '#16a34a', '#bc5090', '#ff7c43', '#2f9bd8'];
+        color = paleta[i % paleta.length];
       } else {
         color = '#0284C7'; // Azul corporativo por defecto
       }
@@ -171,7 +175,7 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
           ...(esApilado ? { color: '#ffffff' } : {}),
         },
       },
-      ...(forma === 'linea' ? { connectNulls: true, marker: { enabled: true, radius: 3 } } : {}),
+      ...(forma === 'linea' ? { connectNulls: true, marker: { enabled: true, radius: 4, symbol: simbolos[i % simbolos.length] } } : {}),
     };
   });
 
@@ -192,7 +196,9 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
           text: bloque.subtitulo,
           useHTML: true,
           align: 'right',
-          style: { color: '#16a34a', fontSize: '13px' },
+          verticalAlign: 'top',
+          y: 0,
+          style: { color: '#16a34a', fontSize: '12px', lineHeight: '16px' },
         }
       : undefined,
     xAxis: {
@@ -243,7 +249,7 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
           : { formatter: formateadorEjeValor, style: estiloTexto },
         opposite: true,
         gridLineWidth: 0,
-        visible: true,
+        visible: secundarias.length > 0,
         ...(secundarias.length === 0 ? { linkedTo: 0 } : {}),
       },
     ],

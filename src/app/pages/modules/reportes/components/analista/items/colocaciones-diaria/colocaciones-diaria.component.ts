@@ -15,7 +15,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './colocaciones-diaria.component.html',
-  styleUrl: './colocaciones-diaria.component.css',
 })
 export class ColocacionesDiariaComponent {
   private readonly servicio = inject(ColocacionesDiariaService);

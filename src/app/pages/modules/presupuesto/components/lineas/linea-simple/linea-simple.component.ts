@@ -16,7 +16,6 @@ import type { FilaLineaSimple, LineaSimpleConfig, ResumenMetadata } from '../../
   standalone: true,
   imports: [HierSelectorComponent, EditableTableComponent, ButtonModule, WindowPanelComponent],
   templateUrl: './linea-simple.component.html',
-  styleUrl: './linea-simple.component.css',
 })
 export class LineaSimpleComponent<F extends FilaLineaSimple = FilaLineaSimple> {
   private readonly presupuesto = inject(PresupuestoService);

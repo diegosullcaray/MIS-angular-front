@@ -33,7 +33,6 @@ import { ReporteReasignadoTabsBase } from '../../ui/reporte-reasignado.base';
     DetalleReasignadoComponent,
   ],
   templateUrl: './monitor-efectividades-reasignados.component.html',
-  styleUrl: './monitor-efectividades-reasignados.component.css',
 })
 export class MonitorEfectividadesReasignadosComponent extends ReporteReasignadoTabsBase {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;

@@ -34,7 +34,6 @@ const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   standalone: true,
   imports: [FormsModule, SelectModule, InputTextModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './datos-clientes.component.html',
-  styleUrl: './datos-clientes.component.css',
 })
 export class DatosClientesComponent {
   private readonly servicio = inject(DatosClientesService);

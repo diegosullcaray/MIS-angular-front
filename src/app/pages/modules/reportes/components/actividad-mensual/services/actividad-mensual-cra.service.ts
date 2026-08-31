@@ -10,6 +10,11 @@ import {
   type TasasMesProductoResultado,
   extraerTarjetasTasasProducto,
 } from '../components/Cartera/items/tasas-mes-producto/models/tasas-mes-producto.model';
+import {
+  type MoraEfectividadTramosResultado,
+  extraerTarjetasMoraEfectividad,
+} from '../components/Cartera en Mora/items/mora-efectividad-tramos/models/mora-efectividad-tramos.model';
+import type { BloqueGrafico } from '../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
 @Injectable({ providedIn: 'root' })
 export class ActividadMensualCraService {
@@ -182,8 +187,15 @@ export class ActividadMensualCraService {
   }
 
   /** Mora y Efectividad por Tramos (`mor-efe` -> `rma/administracion/Mora/mora_efectividad_tramos_rma_01`, host `cra-v3`). */
-  moraEfectividadTramos(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarDeprecado('rma/administracion/Mora/mora_efectividad_tramos_rma_01', nodo, fec ? { fec } : undefined);
+  moraEfectividadTramos(nodo: NodoConsulta, fec?: string): Observable<MoraEfectividadTramosResultado> {
+    return this.bloques
+      .graficos('rma/administracion/Mora/mora_efectividad_tramos_rma_01', nodo, fec ? { fec } : undefined)
+      .pipe(
+        map((graficos) => ({
+          graficos,
+          tarjetas: extraerTarjetasMoraEfectividad(graficos),
+        }))
+      );
   }
 
   /** Monitor Efectividades Reasignados (`mon-efec-reasig` -> `RS_MON_EFECREASIGM`, host `cra-v12`). */
@@ -199,8 +211,8 @@ export class ActividadMensualCraService {
   }
 
   /** Dashboard Cero Cuota Nueva (`graf-dashboard-CN` -> `rma/administracion/mora/Dashboard_rma_01`, host `cra-v3`). */
-  dashboardCeroCuotaNueva(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarDeprecado('rma/administracion/mora/Dashboard_rma_01', nodo, fec ? { fec } : undefined);
+  dashboardCeroCuotaNueva(nodo: NodoConsulta, fec?: string): Observable<BloqueGrafico[]> {
+    return this.bloques.graficos('rma/administracion/mora/Dashboard_rma_01', nodo, fec ? { fec } : undefined);
   }
 
   /** Gestión de Cartera Reasignada Mes (`gest_cart_her` -> `RS_AGE_COM_CRM`, host `cra-v11`). */

@@ -16,7 +16,6 @@ import { RankingMujerService } from '../../services/ranking-mujer.service';
   standalone: true,
   imports: [HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
   templateUrl: './ranking-clientes.component.html',
-  styleUrl: './ranking-clientes.component.css',
 })
 export class RankingClientesComponent {
   private readonly servicio = inject(RankingMujerService);

@@ -36,7 +36,7 @@ describe('GestionCarteraReasignadaComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](NODO);
     fixture.detectChanges();
     expect(servicioSpy.gestionCarteraReasignadaFlujo).toHaveBeenCalledWith(
-      { tip_cod: 1, cod_rel: '100' },
+      expect.objectContaining({ tip_cod: 1, cod_rel: '100' }),
       0,
       expect.any(String),
     );

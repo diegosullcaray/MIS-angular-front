@@ -4,7 +4,7 @@
       {{ titulo() }}
     </h3>
     @if (subtitulo()) {
-      <span class="text-[11px] text-[var(--mis-text-tertiary)]">{{ subtitulo() }}</span>
+      <span class="text-[11px] text-[var(--mis-text-tertiary)]" [innerHTML]="subtitulo()"></span>
     }
   </div>
 }

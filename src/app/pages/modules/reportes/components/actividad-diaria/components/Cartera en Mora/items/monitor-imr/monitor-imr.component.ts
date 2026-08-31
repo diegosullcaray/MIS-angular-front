@@ -54,7 +54,6 @@ import { MonitorImrService } from '../../services/monitor-imr.service';
     WindowPanelComponent,
   ],
   templateUrl: './monitor-imr.component.html',
-  styleUrl: './monitor-imr.component.css',
 })
 export class MonitorImrComponent {
   private readonly servicio = inject(MonitorImrService);

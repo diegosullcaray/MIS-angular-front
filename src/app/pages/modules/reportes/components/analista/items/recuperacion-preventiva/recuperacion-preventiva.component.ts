@@ -15,7 +15,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './recuperacion-preventiva.component.html',
-  styleUrl: './recuperacion-preventiva.component.css',
 })
 export class RecuperacionPreventivaComponent {
   private readonly servicio = inject(RecuperacionPreventivaService);

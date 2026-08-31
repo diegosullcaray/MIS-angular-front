@@ -20,7 +20,6 @@ import { CmgClientesPasivosService } from '../../../services/cmg-clientes-pasivo
   standalone: true,
   imports: [ReporteSimpleComponent, SelectFiltroComponent],
   templateUrl: './cmg-clientes-flujo-detalle.component.html',
-  styleUrl: './cmg-clientes-flujo-detalle.component.css',
 })
 export class CmgClientesFlujoDetalleComponent extends ReporteSimpleBase {
   private readonly servicio = inject(CmgClientesPasivosService);

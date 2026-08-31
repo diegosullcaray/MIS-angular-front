@@ -29,7 +29,6 @@ import { CampanasService } from '../../services/campanas.service';
   standalone: true,
   imports: [ReporteSimpleComponent, SelectFiltroComponent],
   templateUrl: './mentoring.component.html',
-  styleUrl: './mentoring.component.css',
 })
 export class MentoringComponent {
   private readonly servicio = inject(CampanasService);

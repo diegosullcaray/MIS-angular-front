@@ -16,7 +16,6 @@ import { MovimientoClientesService } from '../../services/movimiento-clientes.se
   standalone: true,
   imports: [TablaDinamicaComponent, WindowPanelComponent, TabsModule],
   templateUrl: './movimiento-clientes.component.html',
-  styleUrl: './movimiento-clientes.component.css',
 })
 export class MovimientoClientesComponent {
   private readonly servicio = inject(MovimientoClientesService);

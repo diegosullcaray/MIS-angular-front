@@ -1,10 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { OpcionFiltro } from '../../../../../models/filtros.model';
-import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
 
 /**
  * Los seis reportes de "Tablero Digital".

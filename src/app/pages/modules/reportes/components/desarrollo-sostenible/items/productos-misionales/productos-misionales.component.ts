@@ -20,7 +20,6 @@ import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../m
   standalone: true,
   imports: [FormsModule, HierSelectorComponent, TablaDinamicaComponent, SelectModule, TabsModule, SkeletonModule, WindowPanelComponent],
   templateUrl: './productos-misionales.component.html',
-  styleUrl: './productos-misionales.component.css',
 })
 export class ProductosMisionalesComponent {
   private readonly servicio = inject(DesarrolloSostenibleService);

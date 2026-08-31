@@ -27,7 +27,6 @@ const CRITERIOS_MOVILIDAD: string[] = [
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TabsModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './planilla-movilidad.component.html',
-  styleUrl: './planilla-movilidad.component.css',
 })
 export class PlanillaMovilidadComponent {
   private readonly servicio = inject(PlanillaMovilidadService);

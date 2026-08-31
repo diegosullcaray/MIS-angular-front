@@ -14,7 +14,6 @@ import { AlternateUsuario } from '../../../../auth/model/auth-session.model';
   imports: [DialogModule, ButtonModule, NgIconComponent],
   viewProviders: [provideIcons({ lucideUsers })],
   templateUrl: './cambiar-usuario-dialog.component.html',
-  styleUrl: './cambiar-usuario-dialog.component.css',
 })
 export class CambiarUsuarioDialogComponent {
   private readonly auth = inject(AuthService);

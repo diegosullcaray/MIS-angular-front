@@ -27,7 +27,6 @@ import { ReporteReasignadoTabsBase } from '../../ui/reporte-reasignado.base';
     DetalleReasignadoComponent,
   ],
   templateUrl: './gestion-cartera-reasignada.component.html',
-  styleUrl: './gestion-cartera-reasignada.component.css',
 })
 export class GestionCarteraReasignadaComponent extends ReporteReasignadoTabsBase {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;

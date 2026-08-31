@@ -1,11 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+﻿import { Component, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ReporteSimpleComponent } from '../../../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteSimpleBase } from '../../../../../../../../ui/reporte-simple/reporte-simple.base';
 import { SelectFiltroComponent } from '../../../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../../../Captaciones/models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../../../../../../../models/tabla-reporte.model';
 import { OPCIONES_TIPO_CUOTA_BASE, TIPO_CUOTA_BASE_POR_DEFECTO } from '../../../../models/cartera-en-mora.model';
 import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas.service';
 
@@ -21,7 +21,6 @@ import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas
   standalone: true,
   imports: [ReporteSimpleComponent, SelectFiltroComponent],
   templateUrl: './base-gestion.component.html',
-  styleUrl: './base-gestion.component.css',
 })
 export class CeroCuotasBaseGestionComponent extends ReporteSimpleBase {
   private readonly servicio = inject(CeroCuotasNuevasService);

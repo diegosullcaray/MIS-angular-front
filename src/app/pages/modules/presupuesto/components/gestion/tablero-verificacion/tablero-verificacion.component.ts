@@ -28,7 +28,6 @@ import type { LogVerificacionFila } from '../../../models/tablero-verificacion.m
     WindowPanelComponent,
   ],
   templateUrl: './tablero-verificacion.component.html',
-  styleUrl: './tablero-verificacion.component.css',
 })
 export class TableroVerificacionComponent {
   private readonly presupuesto = inject(PresupuestoService);

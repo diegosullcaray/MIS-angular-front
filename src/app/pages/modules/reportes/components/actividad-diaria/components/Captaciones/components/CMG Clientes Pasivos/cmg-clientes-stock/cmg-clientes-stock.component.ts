@@ -13,7 +13,6 @@ import { CmgClientesPasivosService } from '../../../services/cmg-clientes-pasivo
   standalone: true,
   imports: [ReporteSimpleComponent],
   templateUrl: './cmg-clientes-stock.component.html',
-  styleUrl: './cmg-clientes-stock.component.css',
 })
 export class CmgClientesStockComponent extends ReporteSimpleBase {
   private readonly servicio = inject(CmgClientesPasivosService);

@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import { derivadosDeFilaTotal, type BancaSolidariaResultado } from '../models/banca-solidaria.model';
-import type { ReporteBloqueUnico } from '../../Captaciones/models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
 
 /**
  * Los dos reportes de "Reportes PDM", que no comparten motor:

@@ -15,7 +15,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './desempeno-social-analista.component.html',
-  styleUrl: './desempeno-social-analista.component.css',
 })
 export class DesempenoSocialAnalistaComponent {
   private readonly servicio = inject(DesempenoSocialAnalistaService);

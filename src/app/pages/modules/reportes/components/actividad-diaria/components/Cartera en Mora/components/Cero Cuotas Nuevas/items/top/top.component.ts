@@ -22,7 +22,6 @@ import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas
   standalone: true,
   imports: [ReporteSimpleComponent, SelectFiltroComponent],
   templateUrl: './top.component.html',
-  styleUrl: './top.component.css',
 })
 export class CeroCuotasTopComponent extends ReporteBloquesBase {
   private readonly servicio = inject(CeroCuotasNuevasService);

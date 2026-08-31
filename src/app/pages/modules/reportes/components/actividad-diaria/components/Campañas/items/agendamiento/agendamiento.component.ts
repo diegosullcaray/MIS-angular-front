@@ -48,7 +48,6 @@ import { CampanasService } from '../../services/campanas.service';
     WindowPanelComponent,
   ],
   templateUrl: './agendamiento.component.html',
-  styleUrl: './agendamiento.component.css',
 })
 export class AgendamientoComponent {
   private readonly servicio = inject(CampanasService);

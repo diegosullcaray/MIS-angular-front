@@ -49,7 +49,12 @@ export class BloqueReporteService {
    * el nodo completo, el resto de sus campos no viaja.
    */
   regular(codRep: string, nodo: NodoConsulta, extra: Record<string, unknown> = {}): Observable<TablaReporteResultado> {
-    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: this.fec(), ...extra };
+    const params = {
+      tip_cod: nodo.tip_cod,
+      cod_rel: nodo.cod_rel,
+      ...(extra['fecha'] || extra['fec'] ? {} : { fec: this.fec() }),
+      ...extra,
+    };
     return this.reportes.getRegularData(codRep, params).pipe(map(mapearBloqueReporte));
   }
 
@@ -151,7 +156,10 @@ export class BloqueReporteService {
    * Movimiento de Clientes no manda ninguno. Por eso los pone cada service.
    */
   tablaRegularCon(codRep: string, params: Record<string, unknown> = {}, context?: HttpContext): Observable<TablaDinamicaResultado> {
-    return this.reportes.getRegularTableResult(codRep, params, context).pipe(map(mapearTablaRegular));
+    const peticion$ = context
+      ? this.reportes.getRegularTableResult(codRep, params, context)
+      : this.reportes.getRegularTableResult(codRep, params);
+    return peticion$.pipe(map(mapearTablaRegular));
   }
 
   /**
@@ -184,13 +192,23 @@ export class BloqueReporteService {
 
   /** Un bloque del strand "deprecado" (`reportData`) — reportes cuya entrada de `cra-map.ts` no declara `reportType`. */
   deprecado(codRep: string, nodo: NodoConsulta, extra: Record<string, unknown> = {}): Observable<TablaReporteResultado> {
-    return this.reportes.getDeprecatedData(codRep, { ...nodo, fec: this.fec(), ...extra }).pipe(map(mapearBloqueReporte));
+    const params = {
+      ...nodo,
+      ...(extra['fecha'] || extra['fec'] ? {} : { fec: this.fec() }),
+      ...extra,
+    };
+    return this.reportes.getDeprecatedData(codRep, params).pipe(map(mapearBloqueReporte));
   }
 
   /** Un bloque de gráficos Highcharts (`graphicData`). */
   graficos(codRep: string, nodo: NodoConsulta, extra: Record<string, unknown> = {}): Observable<BloqueGrafico[]> {
+    const params = {
+      ...nodo,
+      ...(extra['fecha'] || extra['fec'] ? {} : { fec: this.fec() }),
+      ...extra,
+    };
     return this.reportes
-      .getGraphicData(codRep, { ...nodo, fec: this.fec(), ...extra })
+      .getGraphicData(codRep, params)
       .pipe(
         map(mapearBloquesGrafico),
         catchError(() => of([]))

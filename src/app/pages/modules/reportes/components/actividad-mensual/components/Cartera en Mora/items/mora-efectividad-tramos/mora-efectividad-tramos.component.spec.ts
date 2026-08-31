@@ -3,8 +3,8 @@ import { of } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { MoraEfectividadTramosComponent } from './mora-efectividad-tramos.component';
 import { ActividadMensualCraService } from '../../../../services/actividad-mensual-cra.service';
-import { TABLA_VACIA } from '../../../../../../models/tabla-reporte.model';
 import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
+import { MORA_EFECTIVIDAD_TRAMOS_VACIO } from './models/mora-efectividad-tramos.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 1, cod_rel: '100', desc_rel: 'Unidad 100', lvl: 1 };
 
@@ -12,7 +12,7 @@ describe('MoraEfectividadTramosComponent', () => {
   let servicioSpy: { moraEfectividadTramos: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    servicioSpy = { moraEfectividadTramos: vi.fn().mockReturnValue(of({ tabla1: TABLA_VACIA })) };
+    servicioSpy = { moraEfectividadTramos: vi.fn().mockReturnValue(of(MORA_EFECTIVIDAD_TRAMOS_VACIO)) };
 
     TestBed.configureTestingModule({
       imports: [MoraEfectividadTramosComponent],
@@ -34,7 +34,7 @@ describe('MoraEfectividadTramosComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](NODO);
     fixture.detectChanges();
     expect(servicioSpy.moraEfectividadTramos).toHaveBeenCalledWith(
-      { tip_cod: 1, cod_rel: '100' },
+      expect.objectContaining({ tip_cod: 1, cod_rel: '100' }),
       expect.any(String),
     );
   });

@@ -16,7 +16,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './campana-agil.component.html',
-  styleUrl: './campana-agil.component.css',
 })
 export class CampanaAgilComponent {
   private readonly servicio = inject(CampanaAgilService);

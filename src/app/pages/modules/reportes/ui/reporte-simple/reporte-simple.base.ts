@@ -4,8 +4,7 @@ import { ToastService } from '../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../utils/hier-selector-error.util';
 import type { NodoConsulta } from '../../services/bloque-reporte.service';
 import type { HierarquiaNodo } from '../../models/jerarquia.model';
-import { TABLA_VACIA, type TablaReporteResultado } from '../../models/tabla-reporte.model';
-import type { ReporteBloqueUnico } from '../../components/actividad-diaria/components/Captaciones/models/captaciones.model';
+import { TABLA_VACIA, type TablaReporteResultado, type ReporteBloqueUnico } from '../../models/tabla-reporte.model';
 
 /**
  * Estado de un reporte de un solo bloque, para usar con `ReporteSimpleComponent`.

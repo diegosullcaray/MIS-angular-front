@@ -64,7 +64,6 @@ function filaEncabezadoVisible(columnas: ColumnaReporte[]): ColumnaReporte[] {
   standalone: true,
   imports: [TableModule],
   templateUrl: './tabla-reporte.component.html',
-  styleUrl: './tabla-reporte.component.css',
 })
 export class TablaReporteComponent {
   readonly encabezados = input.required<FilaEncabezadoReporte[]>();

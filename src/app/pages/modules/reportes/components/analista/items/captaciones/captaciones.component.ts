@@ -15,7 +15,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './captaciones.component.html',
-  styleUrl: './captaciones.component.css',
 })
 export class CaptacionesComponent {
   private readonly servicio = inject(CaptacionesService);

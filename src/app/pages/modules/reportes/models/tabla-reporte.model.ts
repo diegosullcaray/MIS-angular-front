@@ -1,7 +1,5 @@
 import type { FilaEncabezadoReporte, FilaReporte } from '../../../../shared/ui/tablas/models/tabla-reporte.model';
 
-// El contrato de render (columnas, encabezados, filas) vive junto a `<app-tabla-reporte>`;
-// acá queda el sobre que devuelve el motor de reportes, que es de este módulo.
 export type { ColumnaReporte, FilaEncabezadoColumna, FilaEncabezadoReporte, FilaReporte } from '../../../../shared/ui/tablas/models/tabla-reporte.model';
 
 /** Resultado de un bloque del motor de reportes "mixtos" (tabla multi-encabezado o tarjeta KPI, según `cod_rep`). */
@@ -14,6 +12,12 @@ export interface TablaReporteResultado {
 /** Contrato estándar para reportes de un solo bloque (ReporteSimpleBase). */
 export interface ReporteBloqueUnico {
   tabla1: TablaReporteResultado;
+}
+
+/** Contrato estándar para reportes de dos bloques. */
+export interface ReporteDosBloques {
+  tabla1: TablaReporteResultado;
+  tabla2: TablaReporteResultado;
 }
 
 /** Estado inicial de un bloque aún sin cargar. */

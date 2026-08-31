@@ -23,7 +23,6 @@ import type { HierarquiaNodo, JerarquiaResponseBody, NivelJerarquiaDropdown, Par
   standalone: true,
   imports: [FormsModule, SelectModule, ButtonModule],
   templateUrl: './hier-selector.component.html',
-  styleUrl: './hier-selector.component.css',
 })
 export class HierSelectorComponent implements OnInit {
   private readonly antAdmin = inject(ModSysAdminService);

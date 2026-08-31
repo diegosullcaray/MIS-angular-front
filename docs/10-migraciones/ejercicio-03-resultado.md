@@ -63,7 +63,7 @@ Se completó exitosamente la migración del módulo **Actividad Mensual** (35 re
 - **Compilación de pruebas unitarias**: `npx tsc --noEmit -p tsconfig.spec.json` (Exitoso, código 0).
 - **Ejecución total de pruebas unitarias (`npm test`)**:
   - `244/244` archivos de prueba pasados.
-  - `1,480/1,480` tests unitarios pasados (0 errores/fallas).
+  - `1,488/1,488` tests unitarios pasados (0 errores/fallas).
 - **Ejecución total de pruebas E2E con Playwright (`npm run e2e`)**:
   - `365/365` tests E2E ejecutados y aprobados (100% éxito) en navegadores Desktop Chrome y Mobile Pixel 7.
   - `70/70` tests específicos de smoke del módulo Actividad Mensual ejecutados exitosamente (`e2e/actividad-mensual.spec.ts`).

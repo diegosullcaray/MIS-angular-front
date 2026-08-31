@@ -50,7 +50,6 @@ import { CarteraMoraCraService } from '../../services/cartera-mora-cra.service';
     WindowPanelComponent,
   ],
   templateUrl: './monitor-efectividades.component.html',
-  styleUrl: './monitor-efectividades.component.css',
 })
 export class MonitorEfectividadesComponent {
   private readonly servicio = inject(CarteraMoraCraService);

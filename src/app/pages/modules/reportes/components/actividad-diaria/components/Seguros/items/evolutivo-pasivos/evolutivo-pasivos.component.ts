@@ -24,7 +24,6 @@ import { SegurosService } from '../../services/seguros.service';
   standalone: true,
   imports: [HierSelectorComponent, GraficoMixtoComponent, EmptyStateComponent, ListSkeletonComponent, WindowPanelComponent],
   templateUrl: './evolutivo-pasivos.component.html',
-  styleUrl: './evolutivo-pasivos.component.css',
 })
 export class EvolutivoPasivosComponent {
   private readonly servicio = inject(SegurosService);

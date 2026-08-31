@@ -17,7 +17,6 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   standalone: true,
   imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent],
   templateUrl: './desempeno-social.component.html',
-  styleUrl: './desempeno-social.component.css',
 })
 export class DesempenoSocialComponent {
   private readonly servicio = inject(DesarrolloSostenibleService);

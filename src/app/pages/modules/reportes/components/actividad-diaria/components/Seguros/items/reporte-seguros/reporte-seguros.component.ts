@@ -16,7 +16,6 @@ import { SegurosService } from '../../services/seguros.service';
   standalone: true,
   imports: [ReporteSimpleComponent],
   templateUrl: './reporte-seguros.component.html',
-  styleUrl: './reporte-seguros.component.css',
 })
 export class ReporteSegurosComponent extends ReporteBloquesBase {
   private readonly servicio = inject(SegurosService);

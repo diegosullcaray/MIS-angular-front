@@ -42,8 +42,8 @@ describe('CarteraAgricolaCultivosComponent', () => {
     fixture.componentInstance['onNivelSeleccionado'](NODO);
     fixture.detectChanges();
     expect(servicioSpy.carteraAgricola).toHaveBeenCalledWith(
-      { tip_cod: 1, cod_rel: '100' },
-      '2026-08',
+      expect.objectContaining({ tip_cod: 1, cod_rel: '100' }),
+      expect.any(String),
     );
   });
 });

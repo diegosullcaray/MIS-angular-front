@@ -15,7 +15,6 @@ import { CaptacionCanalOperacionesService } from '../../services/captacion-canal
   standalone: true,
   imports: [ReporteSimpleComponent, SelectFiltroComponent],
   templateUrl: './captacion-canal-operaciones.component.html',
-  styleUrl: './captacion-canal-operaciones.component.css',
 })
 export class CaptacionCanalOperacionesComponent extends ReporteSimpleBase {
   private readonly servicio = inject(CaptacionCanalOperacionesService);

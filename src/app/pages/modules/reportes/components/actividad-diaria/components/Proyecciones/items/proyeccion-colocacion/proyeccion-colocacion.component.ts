@@ -21,7 +21,6 @@ import { ProyeccionesService } from '../../services/proyecciones.service';
   standalone: true,
   imports: [ReporteSimpleComponent],
   templateUrl: './proyeccion-colocacion.component.html',
-  styleUrl: './proyeccion-colocacion.component.css',
 })
 export class ProyeccionColocacionComponent extends ReporteBloquesBase {
   private readonly servicio = inject(ProyeccionesService);

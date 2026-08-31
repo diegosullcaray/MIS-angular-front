@@ -21,7 +21,6 @@ import type { KpiOperacionesDesembolsadas } from '../../../avance-comercial/mode
   standalone: true,
   imports: [FormsModule, HierSelectorComponent, TablaReporteComponent, SelectModule, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent],
   templateUrl: './monitor-productos-misionales.component.html',
-  styleUrl: './monitor-productos-misionales.component.css',
 })
 export class MonitorProductosMisionalesComponent {
   private readonly servicio = inject(DesarrolloSostenibleService);

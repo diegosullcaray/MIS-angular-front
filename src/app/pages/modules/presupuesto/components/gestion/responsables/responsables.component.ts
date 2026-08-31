@@ -44,7 +44,6 @@ const COLUMNAS: ColumnaTabla[] = [
     WindowPanelComponent,
   ],
   templateUrl: './responsables.component.html',
-  styleUrl: './responsables.component.css',
 })
 export class ResponsablesComponent implements OnInit {
   private readonly presupuesto = inject(PresupuestoService);
