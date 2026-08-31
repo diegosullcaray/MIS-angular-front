@@ -1,156 +1,129 @@
 <!-- Panel de módulo como ventana macOS: el colaborador en pantalla va como
      subtítulo de la barra, igual que una ventana muestra qué tiene abierto. -->
-<app-window-panel
-  titulo="Categorización"
-  [subtitulo]="perfil()?.nombre ?? ''"
-  [actualizando]="cargando()"
-  [permitirActualizar]="codBtActual() !== null"
-  etiquetaActualizar="Actualizar categorización"
-  (actualizar)="reintentar()"
->
+<app-window-panel titulo="Categorización" [subtitulo]="perfil()?.nombre ?? ''" [actualizando]="cargando()"
+  [permitirActualizar]="codBtActual() !== null" etiquetaActualizar="Actualizar categorización"
+  (actualizar)="reintentar()">
   @if (esAdmin()) {
-    <button
-      ventana-acciones
-      type="button"
-      class="mis-window-btn"
-      (click)="abrirSelector()"
-      aria-label="Buscar colaborador"
-      pTooltip="Buscar colaborador"
-      tooltipPosition="bottom"
-    >
-      <i class="pi pi-search text-[14px]"></i>
-    </button>
+  <button ventana-acciones type="button" class="mis-window-btn" (click)="abrirSelector()"
+    aria-label="Buscar colaborador" pTooltip="Buscar colaborador" tooltipPosition="bottom">
+    <i class="pi pi-search text-[14px]"></i>
+  </button>
   }
 
   @if (cargando()) {
-    <div class="p-2">
-      <app-list-skeleton [rows]="[1, 2, 3]" [cols]="[1, 2, 3, 4]" />
-    </div>
+  <div class="p-2">
+    <app-list-skeleton [rows]="[1, 2, 3]" [cols]="[1, 2, 3, 4]" />
+  </div>
   } @else if (error()) {
-    <app-inline-error titulo="No se pudo cargar la categorización" [detalle]="error()!" (reintentar)="reintentar()" />
+  <app-inline-error titulo="No se pudo cargar la categorización" [detalle]="error()!" (reintentar)="reintentar()" />
   } @else if (!perfil()) {
-    <app-empty-state titulo="Elige un colaborador" descripcion="Busca un colaborador para ver su categorización." />
+  <app-empty-state titulo="Elige un colaborador" descripcion="Busca un colaborador para ver su categorización." />
   } @else {
-    <!-- Fila 1: perfil + imagen, dos columnas, cada una ajustada a su propio contenido -->
-    <div class="flex flex-col lg:flex-row items-start gap-4">
-      <!-- Tarjeta de perfil -->
-      <div class="lg:w-[380px] shrink-0 rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-4 flex flex-col gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-14 h-14 rounded-full bg-[var(--mis-primary-light)] flex items-center justify-center shrink-0">
-            <i class="pi pi-user text-2xl text-[var(--mis-primary-text)]"></i>
-          </div>
-          <div class="flex flex-col gap-0.5 min-w-0">
-            <span class="text-[16px] font-semibold text-[var(--mis-text-primary)] truncate">{{ perfil()!.nombre }}</span>
-            <span class="text-[13px] text-[var(--mis-text-secondary)] truncate">{{ perfil()!.cargo }}</span>
-          </div>
+  <!-- Fila 1: perfil + imagen, dos columnas, cada una ajustada a su propio contenido -->
+  <div class="flex flex-col lg:flex-row items-start gap-4">
+    <!-- Tarjeta de perfil -->
+    <div
+      class="lg:w-[380px] shrink-0 rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-4 flex flex-col gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-14 h-14 rounded-full bg-[var(--mis-primary-light)] flex items-center justify-center shrink-0">
+          <i class="pi pi-user text-2xl text-[var(--mis-primary-text)]"></i>
         </div>
-
-        <dl class="grid grid-cols-2 gap-x-3 gap-y-2 text-[13px]">
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Unidad</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.unidad || '—' }}</dd>
-          </div>
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Corredor</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.corredor || '—' }}</dd>
-          </div>
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Territorio</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.territorio || '—' }}</dd>
-          </div>
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Categoría</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)] font-semibold">{{ perfil()!.categoria || '—' }}</dd>
-          </div>
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Género</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.genero || '—' }}</dd>
-          </div>
-        </dl>
-      </div>
-
-      <!-- Imagen explicativa -->
-      <div class="flex-1 min-w-0 flex justify-center rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2 overflow-hidden">
-        <img
-          src="/assets/images/fc/modules/categoriacion/categorizacion2.png"
-          alt="Requisitos + Desempeño = Categoriza"
-          class="max-w-full max-h-[190px] w-auto h-auto object-contain rounded-lg"
-        />
-      </div>
-    </div>
-
-    <!-- Fila 2: Estado Requisitos + Resultados de Comisión, a todo lo ancho -->
-    <div class="flex flex-col gap-5">
-      <div class="flex flex-col gap-2.5">
-        <h3 class="m-0 text-base font-semibold text-[var(--mis-primary-text)]">Estado Requisitos</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          @for (r of requisitos(); track r.etiqueta) {
-            <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2.5 flex flex-col items-center gap-1 text-center">
-              <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{ r.etiqueta }}</span>
-              <span
-                class="text-[16px] font-bold"
-                [class.text-[var(--mis-success)]]="r.cumplido"
-                [class.text-[var(--mis-danger)]]="!r.cumplido"
-              >
-                {{ r.valor || '—' }}
-              </span>
-              @if (r.etiqueta === 'Formación') {
-                <div class="flex flex-col gap-1 text-[10px] leading-snug">
-                  <span>
-                    Si no eres apto, ingresa
-                    <a
-                      href="https://mfbbva.csod.com/client/mfbbva/default.aspx"
-                      target="_blank"
-                      rel="noopener"
-                      class="font-semibold text-[var(--mis-secondary)] hover:underline"
-                    >aquí</a>
-                  </span>
-                  <span>
-                    Guía para desarrollar el catálogo:
-                    <a
-                      href="https://docs.google.com/presentation/d/1tJrj2KN3KXtQVLU0OCBS4n4NUsR1BwVykEa1SUV6kCs/edit#slide=id.p1"
-                      target="_blank"
-                      rel="noopener"
-                      class="font-semibold text-[var(--mis-secondary)] hover:underline"
-                    >Link</a>
-                  </span>
-                </div>
-              }
-            </div>
-          }
+        <div class="flex flex-col gap-0.5 min-w-0">
+          <span class="text-[16px] font-semibold text-[var(--mis-text-primary)] truncate">{{ perfil()!.nombre }}</span>
+          <span class="text-[13px] text-[var(--mis-text-secondary)] truncate">{{ perfil()!.cargo }}</span>
         </div>
       </div>
 
-      <div class="flex flex-col gap-2.5">
+      <dl class="grid grid-cols-2 gap-x-3 gap-y-2 text-[13px]">
         <div class="flex flex-col gap-0.5">
-          <h3 class="m-0 text-base font-semibold text-[var(--mis-primary-text)]">Resultados de Comisión</h3>
-          <p class="m-0 text-[12px] text-[var(--mis-text-tertiary)]">
-            *Las comisiones derivadas de campañas de gradualidad y/o similares no se consideran dentro del cómputo de meses necesarios para categorizar.
-          </p>
+          <dt class="text-[var(--mis-secondary)] font-medium">Unidad</dt>
+          <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.unidad || '—' }}</dd>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          @for (c of comisiones(); track $index) {
-            <div class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2.5 flex flex-col items-center gap-1 text-center">
-              <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{ c.periodo || '—' }}</span>
-              <span
-                class="text-[15px] font-bold"
-                [class.text-[var(--mis-success)]]="c.cumplido"
-                [class.text-[var(--mis-danger)]]="!c.cumplido"
-              >
-                {{ c.valor || '—' }}
-              </span>
-            </div>
+        <div class="flex flex-col gap-0.5">
+          <dt class="text-[var(--mis-secondary)] font-medium">Corredor</dt>
+          <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.corredor || '—' }}</dd>
+        </div>
+        <div class="flex flex-col gap-0.5">
+          <dt class="text-[var(--mis-secondary)] font-medium">Territorio</dt>
+          <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.territorio || '—' }}</dd>
+        </div>
+        <div class="flex flex-col gap-0.5">
+          <dt class="text-[var(--mis-secondary)] font-medium">Categoría</dt>
+          <dd class="m-0 text-[var(--mis-text-primary)] font-semibold">{{ perfil()!.categoria || '—' }}</dd>
+        </div>
+        <div class="flex flex-col gap-0.5">
+          <dt class="text-[var(--mis-secondary)] font-medium">Género</dt>
+          <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.genero || '—' }}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Imagen explicativa -->
+    <div
+      class="flex-1 min-w-0 flex justify-center rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2 overflow-hidden">
+      <img src="/assets/images/fc/modules/categoriacion/categorizacion2.png" alt="Requisitos + Desempeño = Categoriza"
+        class="max-w-full max-h-[80vh] w-auto h-[350px] object-contain rounded-lg">
+    </div>
+  </div>
+
+  <!-- Fila 2: Estado Requisitos + Resultados de Comisión, a todo lo ancho -->
+  <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-2.5">
+      <h3 class="m-0 text-base font-semibold text-[var(--mis-primary-text)]">Estado Requisitos</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        @for (r of requisitos(); track r.etiqueta) {
+        <div
+          class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2.5 flex flex-col items-center gap-1 text-center">
+          <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{ r.etiqueta }}</span>
+          <span class="text-[16px] font-bold" [class.text-[var(--mis-success)]]="r.cumplido"
+            [class.text-[var(--mis-danger)]]="!r.cumplido">
+            {{ r.valor || '—' }}
+          </span>
+          @if (r.etiqueta === 'Formación') {
+          <div class="flex flex-col gap-1 text-[10px] leading-snug">
+            <span>
+              Si no eres apto, ingresa
+              <a href="https://mfbbva.csod.com/client/mfbbva/default.aspx" target="_blank" rel="noopener"
+                class="font-semibold text-[var(--mis-secondary)] hover:underline">aquí</a>
+            </span>
+            <span>
+              Guía para desarrollar el catálogo:
+              <a href="https://docs.google.com/presentation/d/1tJrj2KN3KXtQVLU0OCBS4n4NUsR1BwVykEa1SUV6kCs/edit#slide=id.p1"
+                target="_blank" rel="noopener"
+                class="font-semibold text-[var(--mis-secondary)] hover:underline">Link</a>
+            </span>
+          </div>
           }
         </div>
+        }
       </div>
     </div>
+
+    <div class="flex flex-col gap-2.5">
+      <div class="flex flex-col gap-0.5">
+        <h3 class="m-0 text-base font-semibold text-[var(--mis-primary-text)]">Resultados de Comisión</h3>
+        <p class="m-0 text-[12px] text-[var(--mis-text-tertiary)]">
+          *Las comisiones derivadas de campañas de gradualidad y/o similares no se consideran dentro del cómputo de
+          meses necesarios para categorizar.
+        </p>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        @for (c of comisiones(); track $index) {
+        <div
+          class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2.5 flex flex-col items-center gap-1 text-center">
+          <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{ c.periodo || '—' }}</span>
+          <span class="text-[15px] font-bold" [class.text-[var(--mis-success)]]="c.cumplido"
+            [class.text-[var(--mis-danger)]]="!c.cumplido">
+            {{ c.valor || '—' }}
+          </span>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
   }
 
-  <app-selector-sectorista-dialog
-    [visible]="dialogAbierto()"
-    [sectoristas]="sectoristas()"
-    [cargando]="cargandoSectoristas()"
-    (visibleChange)="dialogAbierto.set($event)"
-    (sectoristaSeleccionado)="onSectoristaSeleccionado($event)"
-  />
+  <app-selector-sectorista-dialog [visible]="dialogAbierto()" [sectoristas]="sectoristas()"
+    [cargando]="cargandoSectoristas()" (visibleChange)="dialogAbierto.set($event)"
+    (sectoristaSeleccionado)="onSectoristaSeleccionado($event)" />
 </app-window-panel>
