@@ -4,7 +4,7 @@ import { BloqueReporteService, type NodoConsulta } from '../../../../../services
 import type { ReporteBloqueUnico } from '../models/captaciones.model';
 import { COD_CAPTACIONES } from '../constantes/captaciones.constantes';
 
-/** "Captación por Canal Operaciones" — legado `capta-caract-canal-operacional`, `module: 'CARACT_pas'`, `jerar: MAC_2`, filtros `prod` y `segmento`. */
+/** "Captación por Canal Operaciones" — legado `capta-caract-canal-operacional`, filtros `prod` y `segmento`. */
 @Injectable({ providedIn: 'root' })
 export class CaptacionCanalOperacionesService {
   private readonly bloques = inject(BloqueReporteService);

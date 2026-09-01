@@ -12,17 +12,17 @@ import { COD_CAPTACIONES } from '../constantes/captaciones.constantes';
 export class CmgClientesPasivosService {
   private readonly bloques = inject(BloqueReporteService);
 
-  /** Flujo — `module: 'CMG_CLI_PAS'`, filtro `agru`. */
+  /** Flujo — filtro `agru`. */
   flujo(nodo: NodoConsulta, agru: string): Observable<ReporteBloqueUnico> {
     return this.unBloque(COD_CAPTACIONES.clientesPasivosFlujo, nodo, { agru });
   }
 
-  /** Stock — `module: 'CMG_CLI_PAS_STOCK'`, sin filtros. Ojo: su bloque es el `_02`, no el `_01` como los otros dos. */
+  /** Stock — sin filtros. Ojo: su bloque es el `_02`, no el `_01` como los otros dos. */
   stock(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.unBloque(COD_CAPTACIONES.clientesPasivosStock, nodo);
   }
 
-  /** Detalle del flujo — `module: 'CMG_CLI_PAS_DETA'`, filtros `agru` y `grupo`. */
+  /** Detalle del flujo — filtros `agru` y `grupo`. */
   flujoDetalle(nodo: NodoConsulta, agru: string, grupo: string): Observable<ReporteBloqueUnico> {
     return this.unBloque(COD_CAPTACIONES.clientesPasivosFlujoDetalle, nodo, { agru, grupo });
   }

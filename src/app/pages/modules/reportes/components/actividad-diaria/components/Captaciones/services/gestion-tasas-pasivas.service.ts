@@ -10,7 +10,7 @@ export interface FiltrosTasasPasivas {
   var: number;
 }
 
-/** "Gestión de Tasas Pasivas" — legado `tasa-pas`, `module: 'GST_PASIVA'`, `jerar: OFI_1`. Los dos bloques se distinguen por `calc`. */
+/** "Gestión de Tasas Pasivas" — legado `tasa-pas`. Los dos bloques se distinguen por `calc`. */
 @Injectable({ providedIn: 'root' })
 export class GestionTasasPasivasService {
   private readonly bloques = inject(BloqueReporteService);

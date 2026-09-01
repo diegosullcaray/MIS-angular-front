@@ -4,7 +4,7 @@ import { BloqueReporteService, type NodoConsulta } from '../../../../../services
 import { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
 import { COD_CAPTACIONES } from '../constantes/captaciones.constantes';
 
-/** "Captaciones por Canal" (CAPTACIONES RED) — legado `cap-age`, `jerar: OFI_1`. Su entrada de `cra-map.ts` no declara `reportType`, así que va por el strand deprecado. */
+/** "Captaciones por Canal" (CAPTACIONES RED) — legado `cap-age`. Su entrada de `cra-map.ts` no declara `reportType`, así que va por el strand deprecado. */
 @Injectable({ providedIn: 'root' })
 export class CaptacionPorCanalService {
   private readonly bloques = inject(BloqueReporteService);

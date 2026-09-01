@@ -4,7 +4,7 @@ import { BloqueReporteService, type NodoConsulta } from '../../../../../services
 import type { ReporteDosBloques } from '../models/captaciones.model';
 import { BLOQUES_PANEL_OPERACIONES } from '../constantes/captaciones.constantes';
 
-/** "Panel Operaciones" — legado `panel-operaciones`, `module: 'TB_PANEL_OPE'`, `jerar: MAC_2`, filtro `prod`. */
+/** "Panel Operaciones" — legado `panel-operaciones`, filtro `prod`. */
 @Injectable({ providedIn: 'root' })
 export class PanelOperacionesService {
   private readonly bloques = inject(BloqueReporteService);

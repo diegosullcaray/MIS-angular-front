@@ -4,7 +4,7 @@ import { BloqueReporteService, type NodoConsulta } from '../../../../../services
 import type { ReporteBloqueUnico } from '../models/captaciones.model';
 import { COD_CAPTACIONES } from '../constantes/captaciones.constantes';
 
-/** "CMG Captaciones - Agencias" — legado `cmg-capta01`, `cra-map.ts`: `module: 'GCMGCAP'`, `jerar: OFI_1`. */
+/** "CMG Captaciones - Agencias" — legado `cmg-capta01`. */
 @Injectable({ providedIn: 'root' })
 export class CmgCaptacionesAgenciasService {
   private readonly bloques = inject(BloqueReporteService);

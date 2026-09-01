@@ -4,7 +4,7 @@ import { BloqueReporteService, type NodoConsulta } from '../../../../../services
 import type { ReporteBloqueUnico } from '../models/captaciones.model';
 import { COD_CAPTACIONES } from '../constantes/captaciones.constantes';
 
-/** "Recaudo de Servicios" — legado `recaudo-serv-pas`, `module: 'RECSERV_PAS'`, `jerar: MAC_2`, sin filtros propios. */
+/** "Recaudo de Servicios" — legado `recaudo-serv-pas`, sin filtros propios. */
 @Injectable({ providedIn: 'root' })
 export class RecaudosServiciosService {
   private readonly bloques = inject(BloqueReporteService);

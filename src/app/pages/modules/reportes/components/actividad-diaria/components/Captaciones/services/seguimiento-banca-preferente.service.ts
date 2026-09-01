@@ -12,12 +12,12 @@ import { COD_CAPTACIONES } from '../constantes/captaciones.constantes';
 export class SeguimientoBancaPreferenteService {
   private readonly bloques = inject(BloqueReporteService);
 
-  /** "Seguimiento Captaciones Banca Preferente" — `module: 'CAP_SEGUI_BP'`, filtro `prod`. */
+  /** "Seguimiento Captaciones Banca Preferente" — filtro `prod`. */
   bancaPreferente(nodo: NodoConsulta, prod: string): Observable<ReporteBloqueUnico> {
     return this.unBloque(COD_CAPTACIONES.seguimientoBancaPreferente, nodo, { prod });
   }
 
-  /** "Gestión Red de Agencias" — `module: 'CAP_SEGUI_FC_BP'`, sin filtros. */
+  /** "Gestión Red de Agencias" — sin filtros. */
   redAgencias(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.unBloque(COD_CAPTACIONES.seguimientoRedAgencias, nodo);
   }
