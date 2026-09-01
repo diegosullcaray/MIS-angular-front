@@ -1,0 +1,50 @@
+.mis-anuncios {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-3);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.mis-anuncio {
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  padding: var(--mis-space-3);
+  background: var(--mis-panel-bg);
+}
+
+.mis-anuncio-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mis-space-2);
+  margin-bottom: var(--mis-space-2);
+}
+
+.mis-anuncio-fecha {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+}
+
+.mis-anuncio-titulo {
+  margin: 0 0 var(--mis-space-1);
+  font-size: var(--mis-text-base);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+}
+
+.mis-anuncio-cuerpo {
+  margin: 0;
+  font-size: var(--mis-text-sm);
+  line-height: var(--mis-leading-normal);
+  color: var(--mis-text-secondary);
+}
+
+.mis-anuncios-vacio {
+  margin: 0 0 var(--mis-space-3);
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-secondary);
+}

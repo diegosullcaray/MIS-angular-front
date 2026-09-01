@@ -1,6 +1,19 @@
+<!-- Máscara del modo "superpuesto": el rail se abre POR ENCIMA del contenido y
+     esto es lo que lo cierra al tocar afuera, igual que el `layout-mask` del
+     layout de PrimeNG. En los otros modos el rail es fijo y no existe. -->
+@if (superpuesto() && railAbierto()) {
+  <button
+    type="button"
+    class="sidebar-mask hidden sm:block fixed inset-0 z-30 border-0 cursor-default"
+    (click)="cerrarRail()"
+    aria-label="Cerrar el menú de sistemas"
+  ></button>
+}
+
 <!-- Col 1: Tira de íconos — barra inferior fija en mobile (estilo Facebook), rail vertical desde sm: -->
 <aside
   id="tour-sidebar-icons"
+  [class.sidebar-rail--abierto]="railAbierto()"
   class="sidebar-rail fixed bottom-0 inset-x-0 z-40 w-full h-16 flex flex-row items-center justify-between gap-0 px-1 pb-[env(safe-area-inset-bottom)] overflow-hidden scrollbar-none sm:static sm:inset-auto sm:z-auto sm:w-[var(--mis-sidebar-col1-w)] sm:h-full sm:flex-col sm:items-center sm:justify-start sm:gap-0 sm:px-0 sm:py-1 sm:pb-1 sm:border-r sm:border-[var(--mis-border)]"
   aria-label="Sistemas"
 >
@@ -11,17 +24,17 @@
        Solo en el rail vertical: en mobile la Col 1 es una barra inferior de
        64px y ahí el alto es para los íconos. -->
   <a
-    class="hidden sm:flex items-center justify-center w-full h-9 shrink-0 mb-1 no-underline"
+    class="sidebar-wordmark hidden sm:flex items-center justify-center w-full h-9 shrink-0 mb-1 no-underline"
     routerLink="/app/dashboard"
     aria-label="MIS — ir al inicio"
   >
     <img src="assets/images/fc/logos/mis_white.png" alt="MIS" class="h-4 w-auto opacity-90 hover:opacity-100 transition-opacity" />
   </a>
 
-  <div class="hidden sm:block sm:w-7 sm:h-[1px] sm:mx-0 sm:mb-1 bg-white/12 shrink-0"></div>
+  <div class="sidebar-separador hidden sm:block sm:w-7 sm:h-[1px] sm:mx-0 sm:mb-1 bg-white/12 shrink-0"></div>
 
   <!-- Contenedor relativo en mobile para alojar los íconos y las flechas de desplazamiento; rail vertical scrollable en desktop -->
-  <div class="relative flex-1 flex flex-row items-center overflow-hidden w-full h-full sm:flex-col sm:min-h-0 sm:overflow-hidden">
+  <div class="sidebar-rail-cuerpo relative flex-1 flex flex-row items-center overflow-hidden w-full h-full sm:flex-col sm:min-h-0 sm:overflow-hidden">
     <!-- Flecha izquierda en mobile con difuminado gradual -->
     @if (puedeScrollIzquierda()) {
       <button
@@ -38,7 +51,7 @@
     <div
       #scrollContainer
       (scroll)="onScrollMobile()"
-      class="flex flex-row items-center justify-start gap-3 flex-1 overflow-x-auto overflow-y-hidden w-full px-7 scrollbar-none sm:flex-col sm:items-center sm:justify-start sm:gap-[2px] sm:px-0 sm:w-full sm:h-full sm:min-h-0 sm:overflow-y-auto sm:overflow-x-hidden"
+      class="sidebar-rail-scroll flex flex-row items-center justify-start gap-3 flex-1 overflow-x-auto overflow-y-hidden w-full px-7 scrollbar-none sm:flex-col sm:items-center sm:justify-start sm:gap-[2px] sm:px-0 sm:w-full sm:h-full sm:min-h-0 sm:overflow-y-auto sm:overflow-x-hidden"
     >
       @for (icon of iconos(); track icon.id) {
         <button
@@ -50,7 +63,7 @@
           [attr.aria-current]="iconActivoId() === icon.id ? 'page' : null"
         >
           <i [class]="icon.icono + ' text-[20px]'"></i>
-          <span class="text-[9px] font-medium text-center leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]">{{ icon.etiqueta }}</span>
+          <span class="sidebar-etiqueta text-[9px] font-medium text-center leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]">{{ icon.etiqueta }}</span>
         </button>
       }
     </div>

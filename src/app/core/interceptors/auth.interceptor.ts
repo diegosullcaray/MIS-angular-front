@@ -62,7 +62,7 @@ export const authInterceptor: HttpInterceptorFn = (
   return next(authReq).pipe(
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse && error.status === 401 && !esLogin) {
-        auth.cerrarSesion();
+        void auth.cerrarSesion();
       }
       return throwError(() => error);
     })

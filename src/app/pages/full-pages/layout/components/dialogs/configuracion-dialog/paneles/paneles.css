@@ -1,0 +1,227 @@
+/* Estilos compartidos por las pantallas de configuración (Col 3 del diálogo).
+   Un solo archivo para las tres: son la misma retícula de "grupo → fila →
+   control", y separarlo por panel solo duplicaría los mismos tokens. */
+
+.mis-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-6);
+}
+
+.mis-panel-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-2);
+  align-items: flex-start;
+}
+
+.mis-panel-subtitulo {
+  margin: 0;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+}
+
+.mis-panel-ayuda {
+  margin: 0;
+  font-size: var(--mis-text-xs);
+  line-height: var(--mis-leading-normal);
+  color: var(--mis-text-secondary);
+}
+
+.mis-panel-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mis-space-4);
+  width: 100%;
+  padding: var(--mis-space-3);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  background: var(--mis-panel-bg);
+}
+
+/* El control sigue siendo operable (o deshabilitado por su propio `disabled`);
+   la opacidad solo dice que ahora mismo no tiene efecto visible. */
+.mis-panel-fila--apagada {
+  opacity: 0.55;
+}
+
+.mis-panel-fila-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mis-panel-fila-nombre {
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-medium);
+  color: var(--mis-text-primary);
+}
+
+/* ── Fondos ───────────────────────────────────────────────────────────── */
+
+.mis-fondos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--mis-space-3);
+}
+
+.mis-fondo {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mis-fondo-muestra {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--mis-radius-md);
+  border: 2px solid var(--mis-border);
+  background-position: center;
+  transition: border-color var(--mis-transition-fast), box-shadow var(--mis-transition-fast);
+}
+
+.mis-fondo:hover .mis-fondo-muestra {
+  border-color: var(--mis-border-strong);
+}
+
+.mis-fondo--activo .mis-fondo-muestra {
+  border-color: var(--mis-secondary);
+  box-shadow: var(--mis-shadow-focus);
+}
+
+.mis-fondo-nombre {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-secondary);
+}
+
+.mis-fondo--activo .mis-fondo-nombre {
+  color: var(--mis-text-primary);
+  font-weight: var(--mis-font-medium);
+}
+
+/* ── Acentos ──────────────────────────────────────────────────────────── */
+
+.mis-acentos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mis-space-2);
+}
+
+.mis-acento {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--mis-radius-full);
+  border: 2px solid transparent;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  padding: 0;
+}
+
+.mis-acento--activo {
+  border-color: var(--mis-text-primary);
+}
+
+/* ── Modos del menú ───────────────────────────────────────────────────── */
+
+.mis-modos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-2);
+}
+
+.mis-modo {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mis-space-3);
+  padding: var(--mis-space-3);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  background: var(--mis-panel-bg);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--mis-transition-fast), background var(--mis-transition-fast);
+}
+
+.mis-modo:hover {
+  border-color: var(--mis-border-strong);
+}
+
+.mis-modo--activo {
+  border-color: var(--mis-secondary);
+  background: var(--mis-secondary-light);
+}
+
+.mis-modo i {
+  font-size: 16px;
+  color: var(--mis-text-secondary);
+  margin-top: 2px;
+}
+
+.mis-modo--activo i {
+  color: var(--mis-secondary);
+}
+
+.mis-modo-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mis-modo-nombre {
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-medium);
+  color: var(--mis-text-primary);
+}
+
+/* ── Lista de anuncios del panel ──────────────────────────────────────── */
+
+.mis-anuncios-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-2);
+}
+
+.mis-anuncio-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-1);
+  padding: var(--mis-space-3);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  background: var(--mis-panel-bg);
+}
+
+.mis-anuncio-item-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mis-space-2);
+}

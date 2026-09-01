@@ -1,4 +1,19 @@
 <div class="flex items-center gap-3 h-full w-full px-4 relative">
+  <!-- Botón del rail: solo existe en el modo de menú "superpuesto", donde el
+       rail no está anclado y este es el único camino para abrirlo. En los
+       demás modos el rail se ve siempre y el botón sobra. -->
+  @if (menuSuperpuesto()) {
+    <button
+      class="hidden sm:flex w-8 h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      (click)="alternarRail()"
+      [attr.aria-expanded]="shell.railSuperpuestoAbierto()"
+      aria-label="Mostrar u ocultar el menú de sistemas"
+      title="Menú de sistemas"
+    >
+      <ng-icon name="lucideMenu" size="16" />
+    </button>
+  }
+
   <!-- Breadcrumb minimalista. El wordmark MIS ya no vive acá (se movió al tope
        del rail, ver `sidebar.component.html`), y ese espacio liberado es el que
        permite mostrarlo también en mobile: es el ÚNICO lugar donde se ve la
@@ -19,12 +34,30 @@
     <!-- Alternar tema claro/oscuro -->
     <button
       class="w-8 h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
-      (click)="theme.alternar()"
+      (click)="alternarTema()"
       [attr.aria-label]="theme.oscuro() ? 'Activar modo claro' : 'Activar modo oscuro'"
       [attr.aria-pressed]="theme.oscuro()"
       [title]="theme.oscuro() ? 'Modo claro' : 'Modo oscuro'"
     >
       <ng-icon [name]="theme.oscuro() ? 'lucideSun' : 'lucideMoon'" size="15" />
+    </button>
+
+    <!-- Anuncios del sistema. Muestra un punto solo cuando queda algo sin leer;
+         el diálogo se abre solo la primera vez y desde acá se relee cuando se
+         quiera. -->
+    <button
+      class="relative w-8 h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      (click)="anuncios.abrir()"
+      aria-label="Anuncios del sistema"
+      title="Anuncios"
+    >
+      <ng-icon name="lucideBell" size="15" />
+      @if (anuncios.hayPendientes()) {
+        <span
+          class="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--mis-secondary)]"
+          aria-hidden="true"
+        ></span>
+      }
     </button>
 
     <!-- Pill de usuario minimalista -->

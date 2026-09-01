@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
@@ -6,19 +6,9 @@ import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/wind
 import { BuscadorComponent } from '../../../../../shared/ui/buscador/buscador.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
+import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
 import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
-
-const CLAVE_STORAGE_VISTA = 'mis-explorador-vista';
-
-function leerVistaGuardada(): 'cuadricula' | 'lista' {
-  try {
-    const valor = localStorage.getItem(CLAVE_STORAGE_VISTA);
-    if (valor === 'lista' || valor === 'cuadricula') return valor;
-  } catch {
-    // Almacenamiento no disponible
-  }
-  return 'cuadricula';
-}
+import type { VistaExplorador } from '../../../../../core/preferencias/dominio/preferencias.model';
 
 /** Explorador de archivos del sistema activo — reemplaza al panel de links de la Col 2. */
 @Component({
@@ -31,17 +21,15 @@ export class ExploradorSistemaComponent {
   private readonly navegacion = inject(NavegacionSistemasService);
   private readonly shell = inject(ShellStateService);
   private readonly router = inject(Router);
+  private readonly preferencias = inject(PreferenciasService);
 
   protected readonly panel = this.navegacion.panelActivo;
-  protected readonly vista = signal<'cuadricula' | 'lista'>(leerVistaGuardada());
 
-  protected cambiarVista(nuevaVista: 'cuadricula' | 'lista'): void {
-    this.vista.set(nuevaVista);
-    try {
-      localStorage.setItem(CLAVE_STORAGE_VISTA, nuevaVista);
-    } catch {
-      // Ignorar errores de almacenamiento
-    }
+  /** La vista es una preferencia más: se elige acá y también en Configuración → Estructura. */
+  protected readonly vista = computed(() => this.preferencias.estructura().vistaExplorador);
+
+  protected cambiarVista(nuevaVista: VistaExplorador): void {
+    this.preferencias.setVistaExplorador(nuevaVista);
   }
 
   /** Carpetas primero y, dentro de cada grupo, alfabético — como el explorador de Windows. */

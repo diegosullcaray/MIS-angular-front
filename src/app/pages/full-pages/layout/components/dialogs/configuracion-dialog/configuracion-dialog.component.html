@@ -93,21 +93,35 @@
         </div>
       </div>
 
-      <!-- Contenido de ejemplo: la pantalla real de cada ajuste todavía no existe. -->
       <div class="mis-config-panel">
-        <div class="mis-config-aviso">
-          <i class="pi pi-info-circle" aria-hidden="true"></i>
-          <span>Vista de ejemplo. Los controles reales de este ajuste se conectan más adelante.</span>
-        </div>
-
-        <ul class="mis-config-ejemplos">
-          @for (ejemplo of item().ejemplos; track $index) {
-            <li class="mis-config-ejemplo">
-              <span class="mis-config-ejemplo-nombre">{{ ejemplo }}</span>
-              <span class="mis-config-ejemplo-estado">Pendiente</span>
-            </li>
+        <!-- Los items con `panel` ya tienen controles reales; el resto sigue
+             mostrando la maqueta hasta que le toque su turno. -->
+        @switch (item().panel) {
+          @case ('apariencia') {
+            <app-panel-apariencia />
           }
-        </ul>
+          @case ('estructura') {
+            <app-panel-estructura />
+          }
+          @case ('anuncios') {
+            <app-panel-anuncios />
+          }
+          @default {
+            <div class="mis-config-aviso">
+              <i class="pi pi-info-circle" aria-hidden="true"></i>
+              <span>Vista de ejemplo. Los controles reales de este ajuste se conectan más adelante.</span>
+            </div>
+
+            <ul class="mis-config-ejemplos">
+              @for (ejemplo of item().ejemplos ?? []; track $index) {
+                <li class="mis-config-ejemplo">
+                  <span class="mis-config-ejemplo-nombre">{{ ejemplo }}</span>
+                  <span class="mis-config-ejemplo-estado">Pendiente</span>
+                </li>
+              }
+            </ul>
+          }
+        }
       </div>
     </section>
   </div>

@@ -9,6 +9,7 @@ export class ShellStateService {
   private readonly _sidebarIconActivo = signal<string>('host-inicio');
   private readonly _cerrandoSesion = signal(false);
   private readonly _contenidoPendienteSeleccion = signal(false);
+  private readonly _railSuperpuestoAbierto = signal(false);
 
   /** Usuario autenticado actualmente. */
   readonly usuarioActivo = this._usuarioActivo.asReadonly();
@@ -21,6 +22,9 @@ export class ShellStateService {
 
   /** Muestra el overlay de "Cerrando sesión…"; lo lee `AppComponent` para pintarlo fuera de ancestros con `backdrop-filter`/`transform`, que rompen `position: fixed`. */
   readonly cerrandoSesion = this._cerrandoSesion.asReadonly();
+
+  /** Solo aplica al modo de menú `superpuesto`: si el rail de sistemas está desplegado sobre el contenido. En los otros modos el rail es fijo y esto no se mira. */
+  readonly railSuperpuestoAbierto = this._railSuperpuestoAbierto.asReadonly();
 
   /** Se cambió de sistema pero aún no se eligió sub-ítem: el shell oculta el `<router-outlet>` (que sigue mostrando el sistema anterior) y pinta un loader. */
   readonly contenidoPendienteSeleccion = this._contenidoPendienteSeleccion.asReadonly();
@@ -72,9 +76,14 @@ export class ShellStateService {
     this._contenidoPendienteSeleccion.set(valor);
   }
 
+  setRailSuperpuestoAbierto(valor: boolean): void {
+    this._railSuperpuestoAbierto.set(valor);
+  }
+
   cerrarSesion(): void {
     this._usuarioActivo.set(null);
     this._menuItemActivo.set(null);
     this._cerrandoSesion.set(false);
+    this._railSuperpuestoAbierto.set(false);
   }
 }

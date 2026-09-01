@@ -1,0 +1,49 @@
+<div class="mis-panel">
+  <section class="mis-panel-grupo">
+    <div class="mis-panel-fila">
+      <div class="mis-panel-fila-texto">
+        <span class="mis-panel-fila-nombre">No mostrarme anuncios</span>
+        <span class="mis-panel-ayuda">
+          El aviso deja de aparecer al entrar. Podés seguir leyéndolos desde la campana del header.
+        </span>
+      </div>
+      <p-toggleswitch
+        [ngModel]="silenciados().silenciar"
+        (ngModelChange)="setSilenciar($event)"
+        inputId="mis-silenciar-anuncios"
+      />
+    </div>
+  </section>
+
+  <section class="mis-panel-grupo">
+    <p-button
+      label="Volver a mostrar los anuncios leídos"
+      icon="pi pi-refresh"
+      [text]="true"
+      severity="secondary"
+      [disabled]="silenciados().vistos.length === 0 && !silenciados().silenciar"
+      (click)="reiniciar()"
+    />
+    <p class="mis-panel-ayuda">
+      Marcados como leídos: {{ silenciados().vistos.length }}.
+    </p>
+  </section>
+
+  <section class="mis-panel-grupo">
+    <h4 class="mis-panel-subtitulo">Publicados</h4>
+    <ul class="mis-anuncios-lista">
+      @for (anuncio of anuncios.historial(); track anuncio.id) {
+        <li class="mis-anuncio-item">
+          <div class="mis-anuncio-item-cabecera">
+            <p-tag [value]="etiqueta(anuncio.severidad)" [severity]="severidad(anuncio.severidad)" />
+            <time class="mis-panel-ayuda" [attr.datetime]="anuncio.fecha">{{ anuncio.fecha }}</time>
+          </div>
+          <span class="mis-panel-fila-nombre">{{ anuncio.titulo }}</span>
+          <span class="mis-panel-ayuda">{{ anuncio.cuerpo }}</span>
+        </li>
+      } @empty {
+        <li class="mis-panel-ayuda">No hay anuncios publicados.</li>
+      }
+    </ul>
+  </section>
+</div>

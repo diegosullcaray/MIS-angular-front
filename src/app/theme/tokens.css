@@ -61,6 +61,9 @@
   /* Wallpaper del shell. Arranca con el de mobile; los `@media` de más abajo
      lo suben a la versión de escritorio y, en oscuro, a la propia de ese tema. */
   --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper_cell.jpg');
+  /* Color plano bajo el wallpaper. Vale `transparent` mientras el fondo sea una
+     foto; lo pisa `AparienciaDomAdaptador` cuando el usuario elige un color. */
+  --mis-wallpaper-color: transparent;
   /* Velo sobre el wallpaper — transparente en claro, oscurece la foto en oscuro. */
   --mis-wallpaper-velo: transparent;
   /* Fondo de overlays a pantalla completa (spinner, redirect). */

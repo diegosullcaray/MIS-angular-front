@@ -1,6 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { ThemeService } from './theme.service';
 
+/**
+ * `ThemeService` dejó de guardar la preferencia: ahora solo la aplica. Quién la
+ * elige y dónde queda guardada es asunto de `PreferenciasService`, que tiene sus
+ * propios tests — acá se verifica únicamente que el modo termine reflejado en
+ * la clase `.dark` de <html>, que es el contrato con PrimeNG y con `tokens.css`.
+ */
 describe('ThemeService', () => {
   let mediaOscuro: boolean;
 
@@ -11,7 +17,6 @@ describe('ThemeService', () => {
 
   beforeEach(() => {
     mediaOscuro = false;
-    localStorage.clear();
     document.documentElement.classList.remove('dark');
 
     window.matchMedia = ((consulta: string) => ({
@@ -22,9 +27,9 @@ describe('ThemeService', () => {
     })) as unknown as typeof window.matchMedia;
   });
 
-  it('arranca en oscuro cuando no hay preferencia guardada, sin mirar al sistema', () => {
-    // El SO está en claro y aun así el sistema arranca oscuro: es el tema por
-    // defecto del producto, no un reflejo de `prefers-color-scheme`.
+  it('arranca en oscuro sin mirar al sistema', () => {
+    // El SO está en claro y aun así arranca oscuro: es el tema por defecto del
+    // producto, no un reflejo de `prefers-color-scheme`.
     mediaOscuro = false;
     const theme = crear();
 
@@ -34,17 +39,18 @@ describe('ThemeService', () => {
   });
 
   it('en modo "sistema" sigue a prefers-color-scheme', () => {
-    localStorage.setItem('mis-tema', 'sistema');
     mediaOscuro = true;
     const theme = crear();
+    theme.setModo('sistema');
 
     expect(theme.oscuro()).toBe(true);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
   it('aplica y quita la clase .dark en <html> al cambiar de modo', () => {
-    localStorage.setItem('mis-tema', 'claro');
     const theme = crear();
+
+    theme.setModo('claro');
     expect(document.documentElement.classList.contains('dark')).toBe(false);
 
     theme.setModo('oscuro');
@@ -54,28 +60,11 @@ describe('ThemeService', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 
-  it('persiste la preferencia y la recupera en la siguiente sesión', () => {
+  it('no guarda nada: la preferencia la persiste PreferenciasService', () => {
     crear().setModo('claro');
     TestBed.resetTestingModule();
 
-    expect(crear().modo()).toBe('claro');
-  });
-
-  it('alternar() usa el tema visible como punto de partida', () => {
-    localStorage.setItem('mis-tema', 'sistema');
-    mediaOscuro = true;
-    const theme = crear();
-
-    // En "sistema" con el SO en oscuro, lo visible es oscuro: alternar va a claro.
-    theme.alternar();
-    expect(theme.modo()).toBe('claro');
-
-    theme.alternar();
-    expect(theme.modo()).toBe('oscuro');
-  });
-
-  it('ignora un valor corrupto en localStorage y cae al tema por defecto', () => {
-    localStorage.setItem('mis-tema', 'turquesa');
+    // Sin persistencia propia, un servicio nuevo vuelve al tema por defecto.
     expect(crear().modo()).toBe('oscuro');
   });
 });

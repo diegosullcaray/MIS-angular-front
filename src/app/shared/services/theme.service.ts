@@ -1,20 +1,26 @@
 import { Injectable, computed, signal } from '@angular/core';
+import type { ModoTema } from '../../core/preferencias/dominio/preferencias.model';
 
-export type ModoTema = 'claro' | 'oscuro' | 'sistema';
-
-const STORAGE_KEY = 'mis-tema';
-const MODOS: readonly ModoTema[] = ['claro', 'oscuro', 'sistema'];
+export type { ModoTema };
 
 /** Tema con el que arranca el sistema mientras el usuario no elija otro. */
 const MODO_POR_DEFECTO: ModoTema = 'oscuro';
 
-/** Tema claro/oscuro del Host. Arranca en `oscuro` (`MODO_POR_DEFECTO`) — no en `sistema` — y solo cambia si el usuario elige un tema; esa elección queda guardada y manda sobre el arranque. */
+/**
+ * Adaptador del tema claro/oscuro: resuelve el modo `sistema` contra
+ * `prefers-color-scheme` y refleja el resultado en la clase `.dark` de
+ * `<html>` —el mismo selector que declara `providePrimeNG`.
+ *
+ * No persiste nada. La preferencia vive en `PreferenciasService`, que es quien
+ * llama a `setModo` al arrancar y en cada cambio; separarlo evita tener el tema
+ * guardado en dos sitios y hace que el borrado de sesión sea uno solo.
+ */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private readonly _modo = signal<ModoTema>(this.leerPreferencia());
+  private readonly _modo = signal<ModoTema>(MODO_POR_DEFECTO);
   private readonly _sistemaOscuro = signal(this.consultarSistema());
 
-  /** Preferencia elegida por el usuario (`sistema` sigue al sistema operativo). */
+  /** Preferencia vigente (`sistema` sigue al sistema operativo). */
   readonly modo = this._modo.asReadonly();
 
   /** Tema efectivamente aplicado, ya resuelto el modo `sistema`. */
@@ -30,31 +36,12 @@ export class ThemeService {
   setModo(modo: ModoTema): void {
     this._modo.set(modo);
     this.aplicar();
-    try {
-      localStorage.setItem(STORAGE_KEY, modo);
-    } catch {
-      // Modo privado / storage bloqueado: el tema sigue vivo en memoria.
-    }
-  }
-
-  /** Alterna claro ↔ oscuro tomando el tema visible como punto de partida. */
-  alternar(): void {
-    this.setModo(this.oscuro() ? 'claro' : 'oscuro');
   }
 
   private aplicar(): void {
     const oscuro = this.oscuro();
     document.documentElement.classList.toggle('dark', oscuro);
     document.documentElement.style.colorScheme = oscuro ? 'dark' : 'light';
-  }
-
-  private leerPreferencia(): ModoTema {
-    try {
-      const guardado = localStorage.getItem(STORAGE_KEY);
-      return MODOS.includes(guardado as ModoTema) ? (guardado as ModoTema) : MODO_POR_DEFECTO;
-    } catch {
-      return MODO_POR_DEFECTO;
-    }
   }
 
   private consultarSistema(): boolean {

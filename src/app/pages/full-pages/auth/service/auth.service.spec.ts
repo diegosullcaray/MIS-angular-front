@@ -56,6 +56,15 @@ function crearOAuthServiceFalso(overrides: Partial<Record<keyof OAuthService, un
   } as unknown as OAuthService;
 }
 
+/**
+ * `cerrarSesion()` pasó a ser asíncrono: antes de navegar espera al borrado del
+ * navegador (localStorage, cookies, cachés). Los tests que verifican la
+ * redirección tienen que dejar correr esas microtareas primero.
+ */
+async function agotarMicrotareas(): Promise<void> {
+  for (let i = 0; i < 20; i++) await Promise.resolve();
+}
+
 describe('AuthService', () => {
   let service: AuthService;
   let shell: ShellStateService;
@@ -158,7 +167,8 @@ describe('AuthService', () => {
     await service.completarLoginGoogle();
     expect(shell.usuarioActivo()).not.toBeNull();
 
-    vi.advanceTimersByTime(30 * 60 * 1000);
+    await vi.advanceTimersByTimeAsync(30 * 60 * 1000);
+    await agotarMicrotareas();
 
     expect(shell.usuarioActivo()).toBeNull();
     expect(service.token()).toBeNull();
@@ -199,7 +209,7 @@ describe('AuthService', () => {
     expect(shell.usuarioActivo()?.id).toBe('u-1');
   });
 
-  it('restaurarSesion() descarta y redirige a "Sesión expirada" (401) si la sesión ya venció (pasaron los 30 min)', () => {
+  it('restaurarSesion() descarta y redirige a "Sesión expirada" (401) si la sesión ya venció (pasaron los 30 min)', async () => {
     configurar();
     const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     sessionStorage.setItem(
@@ -212,6 +222,7 @@ describe('AuthService', () => {
     );
 
     service.restaurarSesion();
+    await agotarMicrotareas();
 
     expect(shell.usuarioActivo()).toBeNull();
     expect(service.token()).toBeNull();
@@ -219,7 +230,7 @@ describe('AuthService', () => {
     expect(navSpy).toHaveBeenCalledWith('/error/401');
   });
 
-  it('restaurarSesion() reprograma la expulsión automática con el tiempo restante de una sesión aún vigente', () => {
+  it('restaurarSesion() reprograma la expulsión automática con el tiempo restante de una sesión aún vigente', async () => {
     vi.useFakeTimers();
     configurar();
     const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
@@ -235,7 +246,8 @@ describe('AuthService', () => {
     service.restaurarSesion();
     expect(shell.usuarioActivo()?.id).toBe('u-1');
 
-    vi.advanceTimersByTime(5000);
+    await vi.advanceTimersByTimeAsync(5000);
+    await agotarMicrotareas();
 
     expect(shell.usuarioActivo()).toBeNull();
     expect(sessionStorage.getItem('mis.sesion')).toBeNull();

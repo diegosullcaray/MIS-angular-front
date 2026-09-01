@@ -1,0 +1,62 @@
+<div class="mis-panel">
+  <section class="mis-panel-grupo">
+    <h4 class="mis-panel-subtitulo" id="mis-modo-label">Menú de sistemas</h4>
+    <p class="mis-panel-ayuda">
+      En pantallas chicas el menú siempre es la barra inferior: estos modos aplican desde tablet.
+    </p>
+
+    <ul class="mis-modos" aria-labelledby="mis-modo-label">
+      @for (modo of modos; track modo.clave) {
+        <li>
+          <button
+            type="button"
+            class="mis-modo"
+            [class.mis-modo--activo]="esModo(modo.clave)"
+            [attr.aria-pressed]="esModo(modo.clave)"
+            (click)="setModo(modo.clave)"
+          >
+            <i [class]="modo.icono" aria-hidden="true"></i>
+            <span class="mis-modo-texto">
+              <span class="mis-modo-nombre">{{ modo.etiqueta }}</span>
+              <span class="mis-panel-ayuda">{{ modo.descripcion }}</span>
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="mis-panel-grupo">
+    <div class="mis-panel-fila" [class.mis-panel-fila--apagada]="etiquetasBloqueadas()">
+      <div class="mis-panel-fila-texto">
+        <span class="mis-panel-fila-nombre">Mostrar el nombre de cada sistema</span>
+        <span class="mis-panel-ayuda">
+          @if (etiquetasBloqueadas()) {
+            El modo delgado muestra solo los íconos.
+          } @else {
+            Sin los nombres, el menú se angosta y gana ancho el contenido.
+          }
+        </span>
+      </div>
+      <p-toggleswitch
+        [ngModel]="estructura().etiquetasSidebar"
+        (ngModelChange)="setEtiquetas($event)"
+        [disabled]="etiquetasBloqueadas()"
+        inputId="mis-etiquetas-sidebar"
+      />
+    </div>
+  </section>
+
+  <section class="mis-panel-grupo">
+    <h4 class="mis-panel-subtitulo">Vista del explorador</h4>
+    <p class="mis-panel-ayuda">Con cuál de las dos abre el explorador de cada sistema.</p>
+    <p-selectbutton
+      [options]="vistas"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false"
+      [ngModel]="estructura().vistaExplorador"
+      (ngModelChange)="setVista($event)"
+    />
+  </section>
+</div>

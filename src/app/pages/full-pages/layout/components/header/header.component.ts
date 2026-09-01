@@ -8,7 +8,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideChevronDown, lucideUser, lucideSettings,
   lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
-  lucideUsers, lucideSun, lucideMoon
+  lucideUsers, lucideSun, lucideMoon, lucideMenu
 } from '@ng-icons/lucide';
 
 // PrimeNG
@@ -20,6 +20,8 @@ import type { MenuItem } from 'primeng/api';
 // Servicios y Componentes
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { ThemeService } from '../../../../../shared/services/theme.service';
+import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
+import { AnunciosService } from '../../../../../core/preferencias/aplicacion/anuncios.service';
 import { AuthService } from '../../../auth/service/auth.service';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
@@ -38,7 +40,7 @@ import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
     provideIcons({
       lucideChevronDown, lucideUser, lucideSettings,
       lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
-      lucideUsers, lucideSun, lucideMoon
+      lucideUsers, lucideSun, lucideMoon, lucideMenu
     })
   ],
   templateUrl: './header.component.html',
@@ -49,6 +51,8 @@ export class HeaderComponent {
   protected readonly shell = inject(ShellStateService);
   protected readonly auth = inject(AuthService);
   protected readonly theme = inject(ThemeService);
+  protected readonly anuncios = inject(AnunciosService);
+  private readonly preferencias = inject(PreferenciasService);
   private readonly router = inject(Router);
   private readonly menuStg = inject(MenuStgService);
   private readonly navegacion = inject(NavegacionSistemasService);
@@ -70,6 +74,12 @@ export class HeaderComponent {
   );
 
   // ─── Estado Computado ─────────────────────────────────────────────────────
+
+  /** En modo superpuesto el rail no está anclado: el header es su único disparador. */
+  protected readonly menuSuperpuesto = computed(
+    () => this.preferencias.estructura().modoSidebar === 'superpuesto',
+  );
+
   protected readonly rolLabel = computed(() => {
     const roles: Record<string, string> = {
       'admin-sistema': 'Admin Sistema',
@@ -103,6 +113,10 @@ export class HeaderComponent {
     this.dropdownOpen.update(v => !v);
   }
 
+  protected alternarRail(): void {
+    this.shell.setRailSuperpuestoAbierto(!this.shell.railSuperpuestoAbierto());
+  }
+
   protected pedirConfirmacionSalir(): void {
     this.cerrarDropdownYAbrir(this.confirmarSalirOpen);
   }
@@ -115,6 +129,11 @@ export class HeaderComponent {
     this.cerrarDropdownYAbrir(this.configuracionOpen);
   }
 
+  /** El tema se cambia por preferencias: `ThemeService` solo pinta, no guarda. */
+  protected alternarTema(): void {
+    this.preferencias.alternarTema();
+  }
+
   protected volverAUsuarioOriginal(): void {
     this.dropdownOpen.set(false);
     this.auth.volverAUsuarioOriginal();
@@ -125,7 +144,7 @@ export class HeaderComponent {
     // El overlay de carga (spinner) se maneja a nivel raíz para evitar problemas de z-index
     this.shell.setCerrandoSesion(true);
     await new Promise((resolve) => setTimeout(resolve, 5000));
-    this.auth.cerrarSesion();
+    await this.auth.cerrarSesion();
   }
 
   // ─── Métodos Privados ─────────────────────────────────────────────────────

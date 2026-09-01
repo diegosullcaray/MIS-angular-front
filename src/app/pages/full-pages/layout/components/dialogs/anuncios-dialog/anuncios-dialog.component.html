@@ -1,0 +1,34 @@
+<p-dialog
+  header="Anuncios"
+  [visible]="anuncios.abierto()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  appendTo="body"
+  [style]="{ width: '560px', maxWidth: '95vw' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  @if (soloHistorial()) {
+    <p class="mis-anuncios-vacio">No hay novedades sin leer. Estos son los últimos anuncios publicados.</p>
+  }
+
+  <ul class="mis-anuncios">
+    @for (anuncio of listado(); track anuncio.id) {
+      <li class="mis-anuncio">
+        <div class="mis-anuncio-cabecera">
+          <p-tag [value]="etiqueta(anuncio.severidad)" [severity]="severidad(anuncio.severidad)" />
+          <time class="mis-anuncio-fecha" [attr.datetime]="anuncio.fecha">{{ anuncio.fecha }}</time>
+        </div>
+        <h4 class="mis-anuncio-titulo">{{ anuncio.titulo }}</h4>
+        <p class="mis-anuncio-cuerpo">{{ anuncio.cuerpo }}</p>
+      </li>
+    } @empty {
+      <li class="mis-anuncios-vacio">No hay anuncios publicados.</li>
+    }
+  </ul>
+
+  <ng-template pTemplate="footer">
+    <p-button label="No mostrar anuncios" [text]="true" severity="secondary" (click)="silenciar()" />
+    <p-button label="Entendido" (click)="cerrar()" />
+  </ng-template>
+</p-dialog>
