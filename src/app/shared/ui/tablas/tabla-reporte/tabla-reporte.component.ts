@@ -7,21 +7,15 @@ function numeroColumnas(cols: ColumnaReporte['cols']): number {
 }
 
 /**
- * Quita las columnas `hidden` de una fila de encabezado y reparte, si hace falta, el `colspan`
- * que las cubra.
+ * Quita las columnas `hidden` de una fila de encabezado y reparte el `colspan`
+ * que las cubra, solo si hace falta.
  *
- * El backend manda la columna del semáforo oculta, pegada al dato que anota, y espera que ese
- * dato la cubra con `cols: 2` (punto + número). Pero unas veces la oculta va **antes** del dato
- * (`[8] TMMSALDO(2)` en `CARACT_pas_01`) y otras **después** (`meta(1) [meta_sem]` en
- * `DESEMP_SOC_01`), y las dos formas son localmente indistinguibles.
- *
- * Lo que sí las distingue es si la fila ya cierra: el ancho de la grilla es el total de columnas
- * (visibles + ocultas), así que cuando lo declarado por las visibles ya llega a ese total, cada
- * oculta tiene dueño y no hay nada que ensanchar. Ensanchar igual —como se hacía antes— metía un
- * `colspan` de más: en `CARACT_pas_01` la columna "Meta" absorbía el punto del par siguiente y
- * todas las columnas a partir de ahí quedaban corridas.
- *
- * Solo cuando falta ancho se reparte, y ahí sí vale la heurística de vecindad.
+ * El backend manda la columna del semáforo oculta pegada al dato que anota, y
+ * espera que ese dato la cubra con `cols: 2`. Pero unas veces va antes del dato
+ * y otras después, y localmente son indistinguibles: lo que las separa es si la
+ * fila ya cierra. Cuando lo declarado por las visibles ya llega al ancho total,
+ * cada oculta tiene dueño y ensanchar mete un `colspan` de más que corre todas
+ * las columnas siguientes. Solo si falta ancho se reparte por vecindad.
  */
 function filaEncabezadoVisible(columnas: ColumnaReporte[]): ColumnaReporte[] {
   const visibles = columnas.filter((columna) => !columna.hidden);

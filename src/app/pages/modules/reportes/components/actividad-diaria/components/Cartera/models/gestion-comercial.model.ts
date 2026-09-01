@@ -88,41 +88,21 @@ export const COLUMNAS_GESTION_CLIENTES: ColumnaDinamica[] = [
 ];
 
 /**
- * Los seis gráficos ACTIVOS, con el título que les pone la plantilla del
- * legado, en su mismo orden, y cómo hay que pintar cada uno.
+ * Los seis gráficos activos, con el título y el orden del legado. Falta el
+ * `GRAF_GEST_COM_03`, que ahí está comentado, y los dos "Ingresos y Salidas"
+ * (`_04` y `_06`) repiten título a propósito: es el mismo gráfico con cortes
+ * distintos.
  *
- * `GRAF_GEST_COM_03` ("Variación Stock Clientes", sin el corte `T`) NO va: en
- * el legado ese bloque de gráfico está comentado (`<!-- ... -->`), solo queda
- * activo el de `GRAF_GEST_COM_05`. Y los dos "Ingresos y Salidas" —`_04` y
- * `_06`— llevan literalmente el MISMO título en el legado: no es un error de
- * este archivo, es que muestra el mismo gráfico dos veces con cortes
- * distintos y sin nada en el texto que los distinga.
+ * De cada uno solo se declara lo que `<app-grafico-mixto>` no puede deducir:
+ * el `formato`, qué serie va en porcentaje sobre el eje secundario
+ * (`esPorcentaje`), cuál es un NIVEL que va como spline en ese eje para no
+ * compartir escala con su variación (`esNivel`), y el color que el legado fija
+ * a mano (`colorDeSerie`; en hexadecimal, porque Highcharts no resuelve tokens
+ * CSS). "Ingresos y Salidas" no lo declara: sus colores vienen en el payload.
  *
- * El legado arma un `Highcharts.Options` a mano por gráfico; acá los seis pasan
- * por `<app-grafico-mixto>`, así que de cada uno solo queda lo que la fábrica
- * compartida no puede deducir sola:
- *
- * - `formato`: soles en los de importe, número pelado en los de clientes.
- * - `esPorcentaje`: la serie llega en fracción y el legado la pinta en % sobre
- *   el eje secundario (la TAPP de "Desembolsos Diarios").
- * - `esNivel`: los dos evolutivos que combinan un NIVEL con su VARIACIÓN. El
- *   legado pinta el nivel como línea y la variación como columnas, cada uno con
- *   su eje; acá el nivel se manda al eje secundario (`secundaria`), que es lo
- *   que lo convierte en spline. Sin eso las dos series comparten escala y la
- *   variación queda pegada al cero.
- * - `colorDeSerie`: el color que el legado fija a mano por serie (Highcharts no
- *   resuelve tokens CSS, así que van en hexadecimal literal, igual que
- *   `paleta-colores.util.ts`). Sin esto, la fábrica compartida les asigna un
- *   color genérico por rol que no es el del legado. `Ingresos y Salidas`
- *   (`_04`/`_06`) no tiene entrada: el legado pinta esas series con el color
- *   que ya trae el propio payload del backend, sin fijar nada a mano.
- *
- * El orden importa: en el legado las dos tablas de variación
- * (`RS_GEST_COM_02`/`_03`) no cuelgan de ninguna pestaña, van intercaladas
- * en este mismo bloque de gráficos — "Var Saldo Cartera Vigente" justo
- * después de "Saldo Cartera Vigente" (`_02`) y "Var Clientes Stock" al final,
- * después del segundo "Ingresos y Salidas" (`_04`). El componente las inserta
- * ahí por posición, no por pestaña.
+ * El orden importa: las dos tablas de variación no cuelgan de ninguna pestaña
+ * sino que van intercaladas en este bloque, y el componente las inserta por
+ * posición (ver `INDICE_TRAS_VAR_SALDO` e `INDICE_TRAS_VAR_CLIENTES`).
  */
 export interface GraficoGestionComercial {
   codRep: string;

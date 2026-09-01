@@ -11,18 +11,13 @@ import type { TablaDinamicaResultado } from '../../../../../../models/tabla-dina
 import { SegurosService } from '../../services/seguros.service';
 
 /**
- * "Seguros Pasivos"
- * (`repositorio/actividad-diaria/seguros-pasivos/seguros-pasivos`) — legado
- * `repositorio/seguros-pasivos`, motor `table.regular`.
+ * Seguros Pasivos — legado `repositorio/seguros-pasivos`.
  *
- * Cinco PESTAÑAS, como el `mat-tab-group` del legado — no cinco tablas
- * apiladas. El orden es el de la pantalla, no el de las llamadas: el resumen
- * (`_03`) va primero aunque se pida tercero.
- *
- * La quinta ("Protección 360") queda vacía a propósito: el template del legado
- * la declara con `dataSource5`/`headerDefs5`, pero esas variables ni siquiera
- * existen en su componente, así que allá tampoco muestra nada. Se deja la
- * pestaña para no cambiar la navegación del reporte.
+ * Cinco pestañas, no cinco tablas apiladas, y el orden es el de la pantalla: el
+ * resumen va primero aunque se pida tercero. La quinta ("Protección 360") queda
+ * vacía a propósito — en el legado tampoco muestra nada, porque las variables
+ * que su plantilla declara no existen en el componente. Se deja para no cambiar
+ * la navegación del reporte.
  */
 @Component({
   selector: 'app-seguros-pasivos',

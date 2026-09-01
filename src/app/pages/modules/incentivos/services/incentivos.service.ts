@@ -21,12 +21,12 @@ import type { AsesorPickItem, NodoJerarquiaIncentivo } from '../models/incentivo
 import type { ResultadoDetalleVariable } from '../models/incentivos-detalle.model';
 import type { ResultadoBancarizacion } from '../models/incentivos-bancarizacion.model';
 import type { AsesoresBody, BancarizacionBody, DetalleVariableBody, ListaJerarquiaBody, ResultadosBody, SimulacionBody } from '../models/incentivos-api-response.model';
-
-/** `cod_jer` de la jerarquía organizativa — mismo código que usan Presupuesto/Kaypacha para `base_hier`. */
-const COD_JERARQUIA_ORGANIZATIVA = 9;
-
-/** Modelo de campaña — fijo en `'2026'` (la campaña 2025 ya cerró). */
-const MODELO_CAMPANIA = '2026';
+import {
+  CABECERA_FINANCIERA_CONFIANZA,
+  CLAVES_INCENTIVOS,
+  COD_JERARQUIA_ORGANIZATIVA,
+  MODELO_CAMPANIA,
+} from '../constantes/incentivos.constantes';
 
 /** Forma cruda de `incentivos4.resultados4`/`.resultados5` (`resultado`). */
 
@@ -189,7 +189,7 @@ export class IncentivosService {
   /** Financiera Confianza consolidada — atajos "FC Individual"/"FC Grupal" del selector de nivel (solo visibles para el nivel más alto). */
   seleccionarFinancieraConfianza(claUsu: 1 | 2): void {
     this.seleccionarNivel(
-      { nombre: 'FINANCIERA CONFIANZA', nivel: 'TOTAL', descripcionNivel: 'FC', imagenUrl: 'assets/images/fc/avatars/mis_wait.png' },
+      CABECERA_FINANCIERA_CONFIANZA,
       { tipCod: 7, codRel: '231', claUsu }
     );
   }
@@ -260,26 +260,26 @@ export class IncentivosService {
     this.tablaEfectividad.set(ds.ds2 ?? []);
 
     let sem = marcarVisibles(crearPerfilSemDefault(), cfg.prof);
-    sem = asignarValores(sem, ds4, 'val', 'flag_', '');
+    sem = asignarValores(sem, ds4, 'val', CLAVES_INCENTIVOS.flag, '');
     this.semaforo.set(sem);
 
-    const flagAct = Number(ds4['flag_act'] ?? 0);
+    const flagAct = Number(ds4[CLAVES_INCENTIVOS.flagActivo] ?? 0);
     const situacion = resolverSituacion(flagAct);
 
     let avances = marcarVisibles(crearAvancesDefault(), cfg.avanS);
     avances = marcarHabilitados(avances, cfg.avanE);
-    avances = asignarValores(avances, ds3, 'val', '', '_avan_fix');
-    avances = asignarValores(avances, ds3, 'per', '', '_avan_floor');
+    avances = asignarValores(avances, ds3, 'val', '', CLAVES_INCENTIVOS.sufijoAvance);
+    avances = asignarValores(avances, ds3, 'per', '', CLAVES_INCENTIVOS.sufijoAvancePorcentaje);
     this.avances.set(avances);
 
     let superPlus = marcarVisibles(crearSuperPlusDefault(), cfg.supS);
     superPlus = marcarHabilitados(superPlus, cfg.supE);
-    superPlus = asignarValores(superPlus, ds4, 'val', 'bos_', '');
+    superPlus = asignarValores(superPlus, ds4, 'val', CLAVES_INCENTIVOS.bonoSuperPlus, '');
     this.superPlus.set(superPlus);
 
-    const bonoBase = sumarPorIds(ds4, cfg.prof, 'bob_', '');
-    const bonoPlus = sumarPorIds(ds4, cfg.prof, 'bop_', '');
-    const bonoSuperPlus = sumarPorIds(ds4, cfg.calS, 'bos_', '');
+    const bonoBase = sumarPorIds(ds4, cfg.prof, CLAVES_INCENTIVOS.bonoBase, '');
+    const bonoPlus = sumarPorIds(ds4, cfg.prof, CLAVES_INCENTIVOS.bonoPlus, '');
+    const bonoSuperPlus = sumarPorIds(ds4, cfg.calS, CLAVES_INCENTIVOS.bonoSuperPlus, '');
     const bonoTotal = bonoBase + bonoPlus + bonoSuperPlus;
 
     this.monetizado.update((actual) => ({
@@ -294,15 +294,15 @@ export class IncentivosService {
     }));
 
     let vars = marcarVisibles(crearCalculadoraDefault().variables, cfg.prof);
-    vars = asignarValores(vars, ds3, 'val', '', '_real');
-    vars = asignarValores(vars, ds3, 'met', '', '_met');
-    vars = asignarValores(vars, ds4, 'bob', 'bob_', '');
-    vars = asignarValores(vars, ds4, 'bop', 'bop_', '');
+    vars = asignarValores(vars, ds3, 'val', '', CLAVES_INCENTIVOS.sufijoReal);
+    vars = asignarValores(vars, ds3, 'met', '', CLAVES_INCENTIVOS.sufijoMeta);
+    vars = asignarValores(vars, ds4, 'bob', CLAVES_INCENTIVOS.bonoBase, '');
+    vars = asignarValores(vars, ds4, 'bop', CLAVES_INCENTIVOS.bonoPlus, '');
 
     let plus = marcarVisibles(crearCalculadoraDefault().plus, cfg.supS);
     plus = marcarHabilitados(plus, cfg.calE);
-    plus = asignarValores(plus, ds3, 'val', '', '_real');
-    plus = asignarValores(plus, ds4, 'bos', 'bos_', '');
+    plus = asignarValores(plus, ds3, 'val', '', CLAVES_INCENTIVOS.sufijoReal);
+    plus = asignarValores(plus, ds4, 'bos', CLAVES_INCENTIVOS.bonoSuperPlus, '');
 
     if (nivel.claUsu === 1) {
       const idxEfec1 = vars.findIndex((v) => v.id === 'efec1' && v.show);
@@ -349,12 +349,12 @@ export class IncentivosService {
         const ds = (respuesta.body as SimulacionBody | null)?.resultado;
         if (!ds) return false;
 
-        const bonoBase = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, 'bob_', '');
-        const bonoPlus = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, 'bop_', '');
-        const bonoSuperPlus = sumarPorIds(ds, calc.plus.filter((p) => p.suma).map((p) => p.id), 'bos_', '');
+        const bonoBase = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, CLAVES_INCENTIVOS.bonoBase, '');
+        const bonoPlus = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, CLAVES_INCENTIVOS.bonoPlus, '');
+        const bonoSuperPlus = sumarPorIds(ds, calc.plus.filter((p) => p.suma).map((p) => p.id), CLAVES_INCENTIVOS.bonoSuperPlus, '');
 
-        const variables = asignarValores(asignarValores(calc.variables, ds, 'bob', 'bob_', ''), ds, 'bop', 'bop_', '');
-        const plus = asignarValores(calc.plus, ds, 'bos', 'bos_', '');
+        const variables = asignarValores(asignarValores(calc.variables, ds, 'bob', CLAVES_INCENTIVOS.bonoBase, ''), ds, 'bop', CLAVES_INCENTIVOS.bonoPlus, '');
+        const plus = asignarValores(calc.plus, ds, 'bos', CLAVES_INCENTIVOS.bonoSuperPlus, '');
 
         this.calculadora.set({
           ...calc,
@@ -364,7 +364,7 @@ export class IncentivosService {
           bonoPlus,
           bonoSuperPlus,
           bonoTotal: bonoBase + bonoPlus + bonoSuperPlus,
-          activo: Number(ds['flag_act'] ?? calc.activo),
+          activo: Number(ds[CLAVES_INCENTIVOS.flagActivo] ?? calc.activo),
         });
         return true;
       })

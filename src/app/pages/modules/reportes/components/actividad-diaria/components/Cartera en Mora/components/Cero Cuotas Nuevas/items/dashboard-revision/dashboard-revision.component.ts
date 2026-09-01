@@ -11,20 +11,16 @@ import type { BloqueGrafico } from '../../../../../../../../../../../shared/ui/g
 import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas.service';
 
 /**
- * "Dashboard en Revisión" de Cero Cuotas Nuevas
- * (`repositorio/actividad-diaria/mora/cero-cuotas`) — legado
- * `repositorio/cero-cuotas`, bloques `REP_CERCUOT_01` y `_02`.
+ * Dashboard en Revisión de Cero Cuotas Nuevas — legado `repositorio/cero-cuotas`.
  *
- * Son los cuatro gráficos de cero cuotas del legado: evolución en número y en
- * S/MM, y su apertura por tramos de atraso.
+ * Los cuatro gráficos del legado: evolución en número y en S/MM, y su apertura
+ * por tramos de atraso.
  *
- * PENDIENTE: el legado monta además, en el mismo archivo, la cabecera "Avance
- * Comercial / Banca Individual" (cuatro KPI con meta y avance) y dos mapas de
- * calor, que salen de los strands `RS_GEST_COM_*` / `GRAF_GEST_COM_*` — los
- * mismos de "Gestión Comercial" — con un cálculo de metas propio. Esa parte
- * queda fuera de esta migración a propósito: no se puede reproducir sin
- * confirmar de dónde sale cada meta, y ponerle números inventados a un tablero
- * de banca es peor que no mostrarlos.
+ * PENDIENTE: el legado monta además la cabecera "Avance Comercial / Banca
+ * Individual" (cuatro KPI con meta) y dos mapas de calor, con un cálculo de
+ * metas propio sobre los strands de Gestión Comercial. Queda fuera a propósito:
+ * no se puede reproducir sin confirmar de dónde sale cada meta, y poner números
+ * inventados en un tablero de banca es peor que no mostrarlos.
  */
 @Component({
   selector: 'app-cero-cuotas-dashboard-revision',

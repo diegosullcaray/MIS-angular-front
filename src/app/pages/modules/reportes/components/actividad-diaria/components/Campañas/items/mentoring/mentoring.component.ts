@@ -10,18 +10,12 @@ import { TODO } from '../../../Portafolio Reasignado/models/portafolio-reasignad
 import { CampanasService } from '../../services/campanas.service';
 
 /**
- * "Reporte Mentoring" (`leg/com/rda/adm/RMentoring`) — legado `RMENTORIN`
- * (host `cra-v1p7`).
+ * Reporte Mentoring — legado `RMENTORIN` (host `cra-v1p7`).
  *
- * No extiende `ReporteSimpleBase`: el legado
- * (`report-cra-v1p7.component.ts`) trae un filtro propio, "Asesor", cuyas
- * OPCIONES dependen del nivel elegido —no es un catálogo fijo, sale de
- * `SEL_JER_MENTORING_01` para ese nodo— y hace falta orquestar ese fetch
- * aparte del de la tabla.
- *
- * Al cambiar de nivel el legado descarta el asesor elegido y vuelve a
- * `'TODO'` (`renderUltGestion()` crea un `SelectService` nuevo cada vez);
- * acá se replica con `ultimoNodo` para no confundir "cambió el nivel" con
+ * No extiende `ReporteSimpleBase` porque su filtro "Asesor" no es un catálogo
+ * fijo: las opciones dependen del nivel elegido y hay que pedirlas aparte de la
+ * tabla. Al cambiar de nivel el legado descarta el asesor y vuelve a "TODO";
+ * acá lo replica `ultimoNodo`, que es lo que distingue "cambió el nivel" de
  * "cambió el asesor" dentro del mismo efecto.
  */
 @Component({

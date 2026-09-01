@@ -43,19 +43,9 @@ export class ResumenMovilidadService {
   }
 
   /**
-   * "Resumen de Movilidad Recuperaciones" — legado `res-mov-rec` (`RESNMOVR_01`,
-   * host `cra-v6`).
-   *
-   * **No usa la jerarquía.** `cra-v6` arma los parámetros del nodo y después los
-   * PISA enteros con los del usuario logueado:
-   *
-   * ```js
-   * params = { secuency: '[{"tip_cod":2,"cod_rel":"'+num_doc+'","order":0}]',
-   *            tip_cod: 2, cod_rel: num_doc }
-   * ```
-   *
-   * Encima va el `fec` que declara su tabla en el mapa. Por eso este método no
-   * recibe nodo: el reporte es siempre el del propio usuario.
+   * Resumen de Movilidad · Recuperaciones. No usa la jerarquía: el host `cra-v6`
+   * arma los parámetros del nodo y después los pisa con los del usuario
+   * logueado, así que el reporte es siempre el suyo — de ahí que no reciba nodo.
    */
   recuperaciones(documento: string): Observable<ReporteBloqueUnico> {
     const params = {

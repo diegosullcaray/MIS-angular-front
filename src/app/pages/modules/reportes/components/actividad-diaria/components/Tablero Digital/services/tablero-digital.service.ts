@@ -8,23 +8,11 @@ import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.mod
 import { COD_TABLERO_DIGITAL } from '../constantes/tablero-digital.constantes';
 
 /**
- * Los seis reportes de "Tablero Digital".
- *
- * Todos declaran `reportType: ReportType.REGULAR` en `cra-map.ts`, pero no se
- * piden igual: lo que cambia es el HOST y el `id` que declara cada entrada.
- *
- * - `TABDIG`, `TABDIG_VR2`, `GCTABDIG_VR2_OPE`, `RVIUWGCOR` y `RVIUWGCORE`
- *   cuelgan de hosts `cra-v1p1`/`cra-v1p4`, que arman
- *   `{ ...getParamsAdd(), ...filter, ...level }`. Como sus tablas declaran
- *   `params: { fec: fec_day_ult }`, eso equivale exactamente a `regular()`.
- * - `RDETCORR` cuelga de `cra-V10`, que es PAGINADO: manda `pagen` y el nodo
- *   COMPLETO. Sin eso el backend responde "Resultado vacio para: regularData".
- * - "Tablero Digital Comercial" no está en `cra-map.ts`: vive en el repositorio
- *   (`RS_TAB_COM_01`, motor `table.regular`) y su corte sale de un selector de
- *   periodo propio (`RS_FECH`), no de la fecha del usuario.
- *
- * OJO con los `id`: "Gestión por Canal" y "Gestión (Corresponsal)" declaran
- * `_02`, no `_01`. Sus entradas del mapa no tienen un `_01` activo.
+ * Los seis reportes de Tablero Digital. Todos son `REGULAR`, pero no se piden
+ * igual: cuatro cuelgan de hosts `cra-v1p1`/`v1p4` y equivalen a `regular()`;
+ * el detalle de corresponsales va por el host paginado; y el Tablero Comercial
+ * no está en `cra-map.ts` sino en el repositorio, con su propio selector de
+ * periodo. Los códigos están en `constantes/`.
  */
 @Injectable({ providedIn: 'root' })
 export class TableroDigitalService {
