@@ -19,11 +19,11 @@
   } @else if (!perfil()) {
   <app-empty-state titulo="Elige un colaborador" descripcion="Busca un colaborador para ver su categorización." />
   } @else {
-  <!-- Fila 1: perfil + imagen, dos columnas, cada una ajustada a su propio contenido -->
-  <div class="flex flex-col lg:flex-row items-start gap-4">
+  <!-- Fila 1: perfil + imagen guía, dos columnas que estiran perfectamente en desktop y se apilan al 100% en mobile -->
+  <div class="flex flex-col lg:flex-row items-stretch gap-4 w-full">
     <!-- Tarjeta de perfil -->
     <div
-      class="lg:w-[380px] shrink-0 rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-4 flex flex-col gap-4">
+      class="w-full lg:w-[380px] shrink-0 rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-4 flex flex-col gap-4 shadow-xs">
       <div class="flex items-center gap-3">
         <div class="w-14 h-14 rounded-full bg-[var(--mis-primary-light)] flex items-center justify-center shrink-0">
           <i class="pi pi-user text-2xl text-[var(--mis-primary-text)]"></i>
@@ -58,29 +58,46 @@
       </dl>
     </div>
 
-    <!-- Imagen explicativa -->
+    <!-- Imagen explicativa de la Guía -->
     <div
-      class="flex-1 min-w-0 flex justify-center rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2 overflow-hidden">
-      <img src="/assets/images/fc/modules/categoriacion/categorizacion2.png" alt="Requisitos + Desempeño = Categoriza"
-        class="max-w-full max-h-[80vh] w-auto h-[350px] object-contain rounded-lg">
+      class="relative group w-full flex-1 min-w-0 flex items-center justify-center rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 sm:p-4 shadow-xs self-stretch overflow-hidden">
+      <img
+        src="/assets/images/fc/modules/categoriacion/categorizacion2.png"
+        alt="Guía de Categorización: Requisitos + Desempeño = Categoriza"
+        class="w-full h-auto max-h-[360px] object-contain rounded-lg transition-transform duration-200 cursor-pointer"
+        (click)="previewGuia.set(true)"
+        pTooltip="Clic para ampliar guía"
+        tooltipPosition="top"
+      />
+      <!-- Botón para ampliar guía en mobile y desktop -->
+      <button
+        type="button"
+        class="absolute top-3 right-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-black/60 hover:bg-black/80 text-white rounded-full p-2 w-8 h-8 flex items-center justify-center border-0 cursor-pointer shadow-md"
+        (click)="previewGuia.set(true)"
+        aria-label="Ampliar guía de categorización"
+        pTooltip="Ampliar guía"
+        tooltipPosition="left"
+      >
+        <i class="pi pi-search-plus text-xs"></i>
+      </button>
     </div>
   </div>
 
   <!-- Fila 2: Estado Requisitos + Resultados de Comisión, a todo lo ancho -->
-  <div class="flex flex-col gap-5">
+  <div class="flex flex-col gap-5 w-full">
     <div class="flex flex-col gap-2.5">
       <h3 class="m-0 text-base font-semibold text-[var(--mis-primary-text)]">Estado Requisitos</h3>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         @for (r of requisitos(); track r.etiqueta) {
         <div
-          class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2.5 flex flex-col items-center gap-1 text-center">
+          class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center justify-between gap-1 text-center min-h-[90px] shadow-xs">
           <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{ r.etiqueta }}</span>
           <span class="text-[16px] font-bold" [class.text-[var(--mis-success)]]="r.cumplido"
             [class.text-[var(--mis-danger)]]="!r.cumplido">
             {{ r.valor || '—' }}
           </span>
           @if (r.etiqueta === 'Formación') {
-          <div class="flex flex-col gap-1 text-[10px] leading-snug">
+          <div class="flex flex-col gap-1 text-[11px] leading-snug mt-1 pt-1 border-t border-[var(--mis-border)] w-full">
             <span>
               Si no eres apto, ingresa
               <a href="https://mfbbva.csod.com/client/mfbbva/default.aspx" target="_blank" rel="noopener"
@@ -110,7 +127,7 @@
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         @for (c of comisiones(); track $index) {
         <div
-          class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2.5 flex flex-col items-center gap-1 text-center">
+          class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2.5 flex flex-col items-center justify-center gap-1 text-center shadow-xs">
           <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{ c.periodo || '—' }}</span>
           <span class="text-[15px] font-bold" [class.text-[var(--mis-success)]]="c.cumplido"
             [class.text-[var(--mis-danger)]]="!c.cumplido">
@@ -121,6 +138,24 @@
       </div>
     </div>
   </div>
+
+  <!-- Diálogo para ampliar la guía en pantalla completa / lightbox -->
+  <p-dialog
+    [(visible)]="previewGuia"
+    header="Guía de Categorización: Requisitos + Desempeño = Categoriza"
+    [modal]="true"
+    [dismissableMask]="true"
+    [style]="{ width: '92vw', maxWidth: '1100px' }"
+    styleClass="mis-dialog"
+  >
+    <div class="flex items-center justify-center p-2 overflow-auto bg-[var(--mis-panel-bg)] rounded-lg">
+      <img
+        src="/assets/images/fc/modules/categoriacion/categorizacion2.png"
+        alt="Guía de Categorización"
+        class="w-full h-auto max-h-[85vh] object-contain rounded"
+      />
+    </div>
+  </p-dialog>
   }
 
   <app-selector-sectorista-dialog [visible]="dialogAbierto()" [sectoristas]="sectoristas()"

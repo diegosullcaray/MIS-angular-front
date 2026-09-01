@@ -23,12 +23,14 @@ export class DriverTourService {
 
     const { customButtonClasses, ...driverConfig } = config;
 
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+
     const defaultConfig: Partial<Config> = {
       animate: true,
       smoothScroll: true,
       allowKeyboardControl: true,
       skipMissingElement: true,
-      stagePadding: 8,
+      stagePadding: isMobile ? 4 : 8,
       stageRadius: 10,
       overlayColor: 'rgba(15, 23, 42, 0.65)',
       allowClose: true,
@@ -55,9 +57,27 @@ export class DriverTourService {
       },
     };
 
+    const sanitizedSteps = isMobile && driverConfig.steps
+      ? driverConfig.steps.map((step) => {
+          if (!step.popover) return step;
+          const popover = { ...step.popover };
+          // En móvil, la barra de sistemas vive fija en el borde inferior.
+          if (step.element === '#tour-sidebar-icons') {
+            popover.side = 'top';
+            popover.align = 'center';
+          } else if (popover.side === 'left' || popover.side === 'right') {
+            // En móvil (<640px) no hay margen horizontal suficiente; ubicar verticalmente.
+            popover.side = 'bottom';
+            popover.align = 'center';
+          }
+          return { ...step, popover };
+        })
+      : driverConfig.steps;
+
     const finalConfig: Config = {
       ...defaultConfig,
       ...driverConfig,
+      ...(sanitizedSteps ? { steps: sanitizedSteps } : {}),
     };
 
     this.driverObj = driver(finalConfig);
