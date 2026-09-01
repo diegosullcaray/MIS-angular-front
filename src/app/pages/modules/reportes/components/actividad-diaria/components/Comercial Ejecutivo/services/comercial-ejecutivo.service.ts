@@ -2,6 +2,7 @@
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
+import { COD_COMERCIAL_EJECUTIVO } from '../constantes/comercial-ejecutivo.constantes';
 
 /**
  * Los cuatro reportes de "Comercial Ejecutivo".
@@ -16,22 +17,22 @@ export class ComercialEjecutivoService {
 
   /** "Desembolsos" — legado `desem-reacfae` (`DESEMBOLSOS`, "sin FAE ni Reactiva"). */
   desembolsos(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque('DESEMBOLSOS_01', nodo);
+    return this.unBloque(COD_COMERCIAL_EJECUTIVO.desembolsos, nodo);
   }
 
   /** "Clientes" — legado `cli` (`Clientes`). Ojo: el `cod_rep` va con esa capitalización exacta. */
   clientes(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque('Clientes_01', nodo);
+    return this.unBloque(COD_COMERCIAL_EJECUTIVO.clientes, nodo);
   }
 
   /** "Agro" — legado `agro` (`AGRO`). */
   agro(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque('AGRO_01', nodo);
+    return this.unBloque(COD_COMERCIAL_EJECUTIVO.agro, nodo);
   }
 
   /** "PDM" — legado `pdm` (`PDM`). */
   pdm(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque('PDM_01', nodo);
+    return this.unBloque(COD_COMERCIAL_EJECUTIVO.pdm, nodo);
   }
 
   private unBloque(codRep: string, nodo: NodoConsulta): Observable<ReporteBloqueUnico> {

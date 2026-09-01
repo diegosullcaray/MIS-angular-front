@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteAutonomias } from '../models/autonomias.model';
+import { COD_ANALISTA } from '../constantes/analista.constantes';
 
 /** Datos de "Autonomías" (legado `leg/com/rda/sec/aut`, `ReportCrsV1Component` + `crs-map.ts`: `LST_AUT`). */
 @Injectable({ providedIn: 'root' })
@@ -20,7 +21,7 @@ export class AutonomiasService {
   /** Autonomías de un asesor — único bloque (`LST_AUT_01`). */
   obtenerAutonomias(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteAutonomias> {
     return this.reportes
-      .getRegularData('LST_AUT_01', { ...asesor, c_aut: 3, aut: 2 })
+      .getRegularData(COD_ANALISTA.autonomias, { ...asesor, c_aut: 3, aut: 2 })
       .pipe(map((respuesta) => ({ tabla1: mapearBloqueReporte(respuesta) })));
   }
 }

@@ -7,6 +7,7 @@ import { fechaUltimoDia } from '../../../utils/fecha-reporte.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import { TABLA_VACIA } from '../../../models/tabla-reporte.model';
 import type { ReportePlanillaMovilidad } from '../models/planilla-movilidad.model';
+import { COD_ANALISTA_MULTIBLOQUE } from '../constantes/analista.constantes';
 
 /** Datos de "Planilla de Movilidad" (legado `leg/com/rda/sec/plan-mov-sec`, `ReportCrsv5Component` + `crs-map.ts`: `PLANMOV`). */
 @Injectable({ providedIn: 'root' })
@@ -30,10 +31,10 @@ export class PlanillaMovilidadService {
         })
       );
     return forkJoin({
-      tabla1: pedirBloque('PLANMOV_01'),
-      tabla2: pedirBloque('PLANMOV_02'),
-      tabla3: pedirBloque('PLANMOV_03'),
-      tabla4: pedirBloque('PLANMOV_04'),
+      tabla1: pedirBloque(COD_ANALISTA_MULTIBLOQUE.planillaMovilidad[0]),
+      tabla2: pedirBloque(COD_ANALISTA_MULTIBLOQUE.planillaMovilidad[1]),
+      tabla3: pedirBloque(COD_ANALISTA_MULTIBLOQUE.planillaMovilidad[2]),
+      tabla4: pedirBloque(COD_ANALISTA_MULTIBLOQUE.planillaMovilidad[3]),
     });
   }
 }

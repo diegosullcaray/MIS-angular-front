@@ -3,10 +3,9 @@ import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import { ShellStateService } from '../../../../../../core/services/shell-state.service';
 import type { ReporteBloqueUnico } from '../components/Captaciones/models/captaciones.model';
+import { COD_RESUMEN_MOVILIDAD, TIP_COD_PERSONA } from '../constantes/resumen-movilidad.constantes';
 
 /** `tip_cod` de la jerarquía de personas — el que usa `cra-v6` para consultar por documento. */
-const TIP_COD_PERSONA = 2;
-
 /**
  * Los dos "Resumen de Movilidad".
  *
@@ -30,7 +29,7 @@ export class ResumenMovilidadService {
    * `params`, así que no lleva `fec`.
    */
   comercial(nodo: NodoConsulta, pagina = 1): Observable<ReporteBloqueUnico> {
-    return this.bloques.regularPaginado('RESNMOV_01', nodo, {}, pagina).pipe(map((tabla1) => ({ tabla1 })));
+    return this.bloques.regularPaginado(COD_RESUMEN_MOVILIDAD.comercial, nodo, {}, pagina).pipe(map((tabla1) => ({ tabla1 })));
   }
 
   /**
@@ -66,7 +65,7 @@ export class ResumenMovilidadService {
       cod_rel: documento,
     };
     return this.bloques
-      .regularExacto('RESNMOVR_01', { tip_cod: TIP_COD_PERSONA, cod_rel: documento }, params)
+      .regularExacto(COD_RESUMEN_MOVILIDAD.recuperaciones, { tip_cod: TIP_COD_PERSONA, cod_rel: documento }, params)
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 }

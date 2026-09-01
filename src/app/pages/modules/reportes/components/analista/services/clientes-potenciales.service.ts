@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteClientesPotenciales } from '../models/clientes-potenciales.model';
+import { COD_ANALISTA } from '../constantes/analista.constantes';
 
 /** Datos de "Clientes Potenciales" (legado `leg/com/rda/sec/cli_pot`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/cli_pot/cli_pot_sec`). */
 @Injectable({ providedIn: 'root' })
@@ -20,7 +21,7 @@ export class ClientesPotencialesService {
   /** Clientes potenciales de un asesor — único bloque (`cli_pot_sec_01`). */
   obtenerClientesPotenciales(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteClientesPotenciales> {
     return this.reportes
-      .getDeprecatedData('rda/sectorista/cli_pot/cli_pot_sec_01', asesor)
+      .getDeprecatedData(COD_ANALISTA.clientesPotenciales, asesor)
       .pipe(map((respuesta) => ({ tabla1: mapearBloqueReporte(respuesta) })));
   }
 }

@@ -6,25 +6,42 @@
  * salió, que es el dato que hace falta para rastrearlo.
  */
 
-/** Reportes del motor "mixto" (`regularData`), host `cra-*`. */
+/** Reportes del motor "mixto" (`regularData`), hosts `cra-*`. */
 export const COD_CARTERA_CRA = {
-  /** Resumen de Cartera por Grupo. */
-  resumenGrupo: 'RESINCGRUP_01',
-  /** Resumen de Mora por Grupo. */
-  resumenMoraGrupo: 'RESMORAGP_01',
-  /** Reporte de Actividad Grupal. */
-  actividadGrupal: 'RACTGP_01',
-  /** Detalle de Incentivos PDM. */
-  detalleIncentivosPdm: 'DET_INCEN_PDM_01',
-  /** Descuentos de crédito. */
-  descuentosCredito: 'DESCRED_01',
-  /** Gestión Comercial de Créditos. */
-  gestionComercialCreditos: 'GCOMCRE_02',
-  /** Datos del prospecto. */
-  datosProspecto: 'RS_DAT_PRO',
-  /** Saldo de cartera. */
-  saldoCartera: 'RS_SAL_CAR',
+  /** `port-agro`. */
+  portafolioAgro: 'PortafolioAgro_01',
+  /** `des-cred`. */
+  destinoCredito: 'DESCRED_01',
+  /** `com-cre`. */
+  comiteCreditos: 'GCOMCRE_02',
+  /** `rep-aut-tas-diaria`. */
+  rankingAutonomias: 'reporte_autonomia_newdiaria_01',
+  /** `ract-gp` — activas PDM. */
+  activasPdm: 'RACTGP_01',
+  /** `resmora-gp` — mora PDM. */
+  moraPdm: 'RESMORAGP_01',
+  /** `resinc-grup` — detalle de incentivos PDM, paginado. */
+  detalleIncentivosPdm: 'RESINCGRUP_01',
+  /** `det-incen-pdm` — desembolsos PDM, paginado y con el corte como `fecha`. */
+  desembolsosPdm: 'DET_INCEN_PDM_01',
 } as const;
+
+/** Reportes de varios bloques, en el orden en que el legado los pinta. */
+export const COD_CARTERA_CRA_MULTIBLOQUE = {
+  /** `sal-car` — el `_04` y el `_05` van primero. Todos piden `fecha`. */
+  saldoCartera: ['RS_SAL_CAR_04', 'RS_SAL_CAR_05', 'RS_SAL_CAR_01', 'RS_SAL_CAR_02', 'RS_SAL_CAR_03'],
+  /** `dat-pro` — todos piden `fecha`. */
+  datosProducto: ['RS_DAT_PRO_01', 'RS_DAT_PRO_02', 'RS_DAT_PRO_03', 'RS_DAT_PRO_04'],
+  /** `desem-diario` — cinco bloques sin filtros propios. */
+  desembolsosDiarios: ['DesemDiario_01', 'DesemDiario_02', 'DesemDiario_03', 'DesemDiario_04', 'DesemDiario_05'],
+} as const;
+
+/**
+ * Autonomía de Tasas (`gst-activas`): un bloque por variable, y el orden NO es
+ * el numérico — el legado pinta la 10 antes que la 9. El `var` de cada petición
+ * es el mismo número que va en el código, con dos dígitos.
+ */
+export const VARIABLES_AUTONOMIA_TASAS = [1, 2, 3, 4, 5, 6, 7, 8, 10, 9] as const;
 
 /** Reportes del motor `table.regular` (columnas dinámicas), legado `repositorio/*`. */
 export const COD_CARTERA_REPO = {
