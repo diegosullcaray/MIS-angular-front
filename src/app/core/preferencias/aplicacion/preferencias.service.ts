@@ -12,15 +12,7 @@ import type {
   VistaExplorador,
 } from '../dominio/preferencias.model';
 
-/**
- * Caso de uso de las preferencias del Host: es la ÚNICA vía por la que la
- * interfaz lee o cambia un ajuste.
- *
- * Orquesta tres colaboradores y nada más — el repositorio (dónde se guarda),
- * el adaptador de apariencia (cómo se pinta) y `ThemeService` (claro/oscuro) —
- * de modo que ni los componentes conocen `localStorage` ni el dominio conoce
- * al DOM.
- */
+/** Caso de uso de las preferencias del Host. */
 @Injectable({ providedIn: 'root' })
 export class PreferenciasService {
   private readonly repositorio = inject(REPOSITORIO_PREFERENCIAS);
@@ -113,11 +105,7 @@ export class PreferenciasService {
     this.repositorio.limpiar();
   }
 
-  /**
-   * Deja las preferencias en fábrica SIN volver a escribirlas: lo usa el cierre
-   * de sesión, donde el almacenamiento ya se vació por completo y guardar de
-   * nuevo dejaría rastro del usuario que se acaba de ir.
-   */
+  /** Restablece preferencias sin guardar (para cierre de sesión). */
   olvidar(): void {
     this._preferencias.set(PREFERENCIAS_POR_DEFECTO);
   }

@@ -20,6 +20,7 @@ Cada carpeta tiene su propio README con la API y ejemplos.
 | [`loading-overlay/`](./loading-overlay/README.md) | Spinner global (vía `LoadingService`) |
 | [`mapas/`](./mapas/README.md) | Mapas sobre MapLibre (`<app-mapa-ubicacion>`) |
 | [`redirect-overlay/`](./redirect-overlay/README.md) | Transición al salir a una plataforma externa |
+| [`reporte-simple/`](./reporte-simple/README.md) | Contenedor reutilizable para reportes con jerarquía, tablas y bloques |
 | [`tablas/`](./tablas/README.md) | Multi-encabezado, columnas anidadas y celdas editables |
 | [`window-panel/`](./window-panel/README.md) | Panel de módulo con cromo de ventana macOS |
 
@@ -36,6 +37,11 @@ Un componente compartido necesita tipos, y no todos son de UI. El criterio:
 
 Por eso `reportes/models/tabla-reporte.model.ts` existe todavía: importa de acá el contrato de
 render y le suma el sobre que devuelve su motor de reportes.
+
+También se aceptan contenedores de composición como `reporte-simple`: si la pieza solo define la
+estructura visual y la integración con `app-hier-selector` / `app-tabla-reporte`, entonces es un
+componente de UI compartible. La lógica de negocio y los mapeos del endpoint siguen perteneciendo a
+`pages/modules/reportes`.
 
 ## Dependencias hacia afuera
 

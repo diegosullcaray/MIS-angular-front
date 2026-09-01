@@ -19,17 +19,13 @@ import { TOTALES_AGRO } from '../models/cartera-agricola.model';
 import type { BloqueGrafico, FormatoValor } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { OpcionFiltro } from '../../../../../../../../shared/ui/formularios/opcion-filtro.model';
 
-/** Los reportes de Cartera que viven en el `repositorio` del legado (motor `table.regular`). */
+/** Servicio de repositorio para reportes de Cartera. */
 @Injectable({ providedIn: 'root' })
 export class CarteraRepositorioService {
   private readonly bloques = inject(BloqueReporteService);
   private readonly reportes = inject(ModReportesService);
 
-  /**
-   * "Estructura de Desembolsos" — legado `repositorio/desembolsos` (`RS_DESEMB_01`).
-   * Aplica coloración condicional en la fila de distribución porcentual (IDRango 12)
-   * según el ranking de mayor a menor valor para _Ope y _MON.
-   */
+  /** Estructura de Desembolsos. */
   estructuraDesembolsos(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
     return this.bloques
       .tablaRegularCon('RS_DESEMB_01', {
@@ -40,12 +36,7 @@ export class CarteraRepositorioService {
       .pipe(map((tabla) => aplicarEstilosEstructuraDesembolsos(tabla)));
   }
 
-  /**
-   * "Cartera Agrícola - Cultivos" — legado `repositorio/agro-mix-d` (`RS_AGROMIX_01`).
-   *
-   * Las tarjetas de mes anterior salen de `meta1[0]` y las del mes en curso de
-   * la primera fila de la tabla, igual que el legado.
-   */
+  /** Cartera Agrícola - Cultivos. */
   carteraAgricola(nodo: NodoConsulta): Observable<CarteraAgricolaResultado> {
     const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: this.bloques.fecha() };
     return this.reportes.getRegularTableResult('RS_AGROMIX_01', params).pipe(
@@ -63,13 +54,7 @@ export class CarteraRepositorioService {
     );
   }
 
-  /**
-   * Los cuatro gráficos del detalle por cultivo — legado `RS_AGROMIX_02` al `_05`.
-   *
-   * Cada bloque trae su `{categories, series}` dentro de `resultado.headers`;
-   * `resultado.data` son las filas de clientes, y solo hacen falta las de los
-   * dos gráficos que abren el modal de detalle (el `detailDataMap` del legado).
-   */
+  /** Gráficos del detalle por cultivo. */
   detalleGraficosAgricola(nodo: NodoConsulta): Observable<DetalleAgricolaResultado> {
     const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: this.bloques.fecha() };
     const bloques = GRAFICOS_AGRICOLA.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
@@ -88,22 +73,12 @@ export class CarteraRepositorioService {
     );
   }
 
-  /** Las opciones del selector de periodo de "Gestión Comercial" (legado `loadFilter()`). */
+  /** Opciones del selector de periodo de Gestión Comercial. */
   periodosGestionComercial(): Observable<OpcionFiltro[]> {
     return this.bloques.periodos('RS_FECH02');
   }
 
-  /**
-   * "Gestión Comercial" — legado `repositorio/gestion-comercial`.
-   *
-   * Todo el reporte cuelga del mismo nodo y la misma fecha: las tres tablas
-   * (`RS_GEST_COM_01` al `_03`) y los siete gráficos (`GRAF_GEST_COM_*`) se
-   * piden juntos. `RS_GEST_COM_01` alimenta dos tablas con el mismo `data` y,
-   * además, las tarjetas del encabezado (su fila 0 es la de totales).
-   *
-   * La `fecha` es la del selector de periodo; si no llega, la de corte del
-   * usuario, que es con la que abre el legado.
-   */
+  /** Gestión Comercial. */
   gestionComercial(nodo: NodoConsulta, fecha = this.bloques.fecha()): Observable<GestionComercialResultado> {
     const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fecha };
     const tablas = ['RS_GEST_COM_01', 'RS_GEST_COM_02', 'RS_GEST_COM_03'].map((c) =>
@@ -126,13 +101,7 @@ export class CarteraRepositorioService {
     );
   }
 
-  /**
-   * "CMG Cartera" — legado `repositorio/cmg-cartera`.
-   *
-   * Son dos consultas con nombres de parámetro que no coinciden entre sí (el
-   * `_01` manda `codrel`/`Fecha`, el `_02` `cod_rel`/`fec`): así están en el
-   * legado y el backend las espera así.
-   */
+  /** CMG Cartera. */
   cmgCartera(nodo: NodoConsulta, fase: number): Observable<CmgCarteraResultado> {
     const fecha = this.bloques.fecha();
     const tabla$ = this.reportes.getRegularTableResult('CMG_CARTERA_01', {
@@ -163,34 +132,15 @@ export class CarteraRepositorioService {
     );
   }
 
-  /**
-   * "Ranking Comercial" — legado `repositorio/ranking-comercial` (`RS_RANK_COM_01`).
-   *
-   * NO usa la jerarquía: el legado manda `territorio` y `corredor` en `'0'`
-   * fijo, trae el ranking completo y filtra en el cliente por unidad, corredor
-   * y territorio. Por eso este método no recibe nodo.
-   *
-   * Las tres columnas `*_Semaforo` no vienen del backend: las arma el cliente
-   * comparando cada avance contra el `Timing` (días transcurridos) de la fila,
-   * por eso las cabeceras son fijas y no las del payload.
-   */
+  /** Ranking Comercial. */
   rankingComercial(): Observable<TablaDinamicaResultado> {
-    // El legado manda `territorio` y `corredor` en '0' FIJO: este reporte no usa
-    // la jerarquía, trae el ranking completo y filtra del lado del cliente.
     const params = { territorio: '0', corredor: '0', fecha: this.bloques.fecha() };
     return this.bloques
       .tablaRegularCon('RS_RANK_COM_01', params)
       .pipe(map(({ filas }) => ({ columnas: COLUMNAS_RANKING_COMERCIAL, filas: filas.map(conSemaforos) })));
   }
 
-  /**
-   * "Monitor de Inteligencia de Negocios" — legado `repositorio/mon-int-comer`
-   * (`RS_MON_INT_COM_01`).
-   *
-   * No devuelve una tabla, así que no pasa por `tablaRegularCon`: el tablero
-   * de columnas y tarjetas viene dentro de `resultado.headers`, que el legado
-   * desenvuelve un nivel cuando llega anidado.
-   */
+  /** Monitor de Inteligencia de Negocios. */
   monitorInteligencia(nodo: NodoConsulta): Observable<ColumnaMonitor[]> {
     const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fecha: this.bloques.fecha() };
     return this.reportes.getRegularTableResult('RS_MON_INT_COM_01', params).pipe(
@@ -204,25 +154,20 @@ export class CarteraRepositorioService {
   }
 }
 
-/** El `resultado` crudo de una respuesta del motor `table.regular`. */
+/** Obtiene el resultado crudo. */
 function crudo(r: { body?: unknown }): TablaRegularResultadoRaw | undefined {
   return (r.body as { resultado?: TablaRegularResultadoRaw } | null)?.resultado;
 }
 
-/** El legado descarta las columnas que el backend marca como ocultas. */
+/** Filtra columnas visibles. */
 function columnasVisibles(headers: string | undefined): ColumnaDinamica[] {
   if (!headers) return [];
   const todas = JSON.parse(headers) as (ColumnaDinamica & { cellStyle?: { display?: string } })[];
   return todas.filter((h) => h.cellStyle?.display?.toLowerCase() !== 'none');
 }
 
-/**
- * Las tarjetas del encabezado. Las de saldo salen de la fila 18 de la tabla
- * por índice fijo, tal cual el legado; si el reporte devuelve menos filas se
- * quedan sin valor en vez de romper la pantalla.
- */
+/** Construye las tarjetas del encabezado. */
 function tarjetas(filasTabla: Record<string, unknown>[], kpis: Record<string, unknown>): TarjetaCmgCartera[] {
-  // `tasaminima` llega como `"42.07%"` (string, con el signo de porcentaje) — se descarta todo lo que no sea dígito/signo/punto.
   const num = (v: unknown) => Number(String(v ?? '0').replace(/[^0-9.-]/g, '')) || 0;
   const fila18 = filasTabla[18] as Record<string, unknown> | undefined;
   const fila16 = filasTabla[16] as Record<string, unknown> | undefined;
@@ -268,29 +213,14 @@ function tarjetas(filasTabla: Record<string, unknown>[], kpis: Record<string, un
   ];
 }
 
-/**
- * Las "bolas" de semáforo de la tabla de CMG Cartera (TMM, TAM y la tercera
- * columna de control): el legado antepone un ícono coloreado a las columnas
- * 9/11/13 según el signo (-1/0/1) de las columnas de control 8/10/12, ocultas
- * (`cellStyle.display: 'none'`) pero presentes en la fila. Se marca cada
- * columna visible con su `semaforoKey` para que `app-tabla-dinamica` dibuje
- * el mismo punto (`pi-circle-fill`) y los mismos colores que ya usa
- * `app-tabla-reporte` en el resto de la app.
- */
+/** Mapeo de columnas con semáforo. */
 const SEMAFOROS_CMG_CARTERA: Readonly<Record<string, string>> = { '9': '8', '11': '10', '13': '12' };
 
 function conColumnasSemaforo(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
   return columnas.map((c) => (SEMAFOROS_CMG_CARTERA[c.key] ? { ...c, semaforoKey: SEMAFOROS_CMG_CARTERA[c.key] } : c));
 }
 
-/**
- * Señal del semáforo de un avance contra el timing del mes: `1` en meta, `0` cerca, `-1` lejos.
- *
- * El legado devolvía el emoji ya incrustado en el texto (`🟢 15.28%`). Acá se devuelve solo la
- * señal, y la pinta `<app-tabla-dinamica>` con el mismo punto que el resto del sistema
- * (`semaforoKey`): así el indicador es consistente y el porcentaje queda como número, ordenable
- * y formateable.
- */
+/** Calcula señal del semáforo. */
 function semaforo(avanceCrudo: unknown, timingDecimal: number): number | '' {
   const avance = Number(avanceCrudo);
   if (avanceCrudo == null || Number.isNaN(avance)) return '';
@@ -300,7 +230,7 @@ function semaforo(avanceCrudo: unknown, timingDecimal: number): number | '' {
   return avance / timingDecimal >= 0.8 ? 0 : -1;
 }
 
-/** Claves de avance del legado y la columna calculada que alimenta cada una. */
+/** Claves de avance y columnas destino. */
 const AVANCES: [origen: string, destino: string][] = [
   ['Percent_Cumpl', 'Percent_Cumpl_Semaforo'],
   ['percent_cumpl_desemb', 'percent_cumpl_desemb_Semaforo'],
@@ -313,7 +243,7 @@ function conSemaforos(fila: Record<string, unknown>): Record<string, unknown> {
   return { ...fila, ...calculadas };
 }
 
-/** Cada total del encabezado: valor de hoy contra el del mes anterior (`meta1`). */
+/** Calcula totales comparativos. */
 function totalesAgro(primeraFila: Record<string, unknown>, mesAnterior: Record<string, unknown>): TotalAgro[] {
   return TOTALES_AGRO.map(({ clave, etiqueta, formato }) => {
     const actual = Number(primeraFila[clave] ?? 0);
@@ -322,7 +252,7 @@ function totalesAgro(primeraFila: Record<string, unknown>, mesAnterior: Record<s
   });
 }
 
-/** Los bloques de gráfico traen su `{categories, series}` serializado en `headers`. */
+/** Extrae series del gráfico. */
 function seriesDeGrafico(headers: string | undefined): Pick<BloqueGrafico, 'categorias' | 'series'> {
   if (!headers) return { categorias: [], series: [] };
   const datos = JSON.parse(headers) as { categories?: string[]; series?: { name: string; data: (number | null)[] }[] };
@@ -332,15 +262,7 @@ function seriesDeGrafico(headers: string | undefined): Pick<BloqueGrafico, 'cate
   };
 }
 
-/**
- * Un gráfico de "Gestión Comercial".
- *
- * Estos siete bloques NO traen su `{categories, series}` en `headers` como el
- * resto: el legado lo busca primero en `data[0]`, en el PRIMER campo de la fila
- * (su nombre cambia según el bloque), y solo cae a `headers` si `data` viene
- * vacío. Leer únicamente `headers` era lo que dejaba los siete gráficos en
- * blanco.
- */
+/** Procesa un gráfico de Gestión Comercial. */
 function graficoGestionComercial(
   resultado: TablaRegularResultadoRaw | undefined,
   config: GraficoGestionComercial,
@@ -359,8 +281,6 @@ function graficoGestionComercial(
     series: (datos.series ?? []).map((s) => {
       const nombre = s.name ?? '';
       const color = colorDeSerie?.(nombre);
-      // El legado multiplica la TAPP por 100 y la rotula con "%"; el "%" en el
-      // nombre es lo que manda la serie al eje secundario como spline.
       if (esPorcentaje?.(nombre)) {
         return { nombre: `${nombre} %`, datos: (s.data ?? []).map((v) => (v == null ? v : v * 100)), ...(color ? { color } : {}) };
       }
@@ -374,7 +294,7 @@ function graficoGestionComercial(
   };
 }
 
-/** `data[0][primer campo]` y, si no hay filas, `headers` — el orden del legado. */
+/** Obtiene la carga útil del gráfico. */
 function cargaUtilGrafico(resultado: TablaRegularResultadoRaw | undefined): unknown {
   const primeraFila = (resultado?.data as Record<string, unknown>[] | undefined)?.[0];
   if (primeraFila) {
@@ -389,7 +309,7 @@ interface DatosGraficoCrudo {
   series?: { name?: string; data?: (number | null)[] }[];
 }
 
-/** El payload llega serializado casi siempre, pero algunos bloques ya lo mandan como objeto. */
+/** Parsea datos del gráfico. */
 function parseGrafico(carga: unknown): DatosGraficoCrudo | undefined {
   if (carga && typeof carga === 'object') return carga as DatosGraficoCrudo;
   if (typeof carga !== 'string' || carga === '') return undefined;
@@ -400,7 +320,7 @@ function parseGrafico(carga: unknown): DatosGraficoCrudo | undefined {
   }
 }
 
-/** Tabla cuyas cabeceras vienen en el propio payload. */
+/** Construye tabla desde el resultado. */
 function tablaDeResultado(resultado: TablaRegularResultadoRaw | undefined): TablaDinamicaResultado {
   return {
     columnas: resultado?.headers ? (JSON.parse(resultado.headers) as ColumnaDinamica[]) : [],

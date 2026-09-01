@@ -3,14 +3,7 @@ import { aclarar, hexARgba, mezclar, oscurecer, textoSobre } from '../dominio/co
 import { fondoEfectivo } from '../dominio/preferencias.model';
 import type { PreferenciasApariencia, PreferenciasEstructura } from '../dominio/preferencias.model';
 
-/**
- * Único punto donde las preferencias se convierten en pixeles.
- *
- * Escribe variables CSS *inline* en `<html>`, que por especificidad ganan a
- * `:root`, a `.dark` y a los `@media` de `tokens.css`. Quitar la variable
- * (`removeProperty`) devuelve el control a la hoja de estilos, así que
- * "volver a lo de fábrica" no necesita conocer el valor original.
- */
+/** Adaptador de apariencia: convierte preferencias en variables CSS. */
 @Injectable({ providedIn: 'root' })
 export class AparienciaDomAdaptador {
   private get raiz(): HTMLElement {
@@ -23,11 +16,7 @@ export class AparienciaDomAdaptador {
     this.aplicarAcento(apariencia.acento, oscuro);
   }
 
-  /**
-   * Publica la estructura del menú como atributos de `<html>`. Van como datos y
-   * no como clases para que cada componente del shell reaccione desde su propio
-   * CSS (`:host-context(html[data-menu='...'])`) sin pasarse inputs entre sí.
-   */
+  /** Publica el modo del menú como atributo de `<html>`. */
   aplicarEstructura(estructura: PreferenciasEstructura): void {
     this.raiz.dataset['menu'] = estructura.modoSidebar;
     // El modo delgado es "solo íconos" por definición: ahí la preferencia de

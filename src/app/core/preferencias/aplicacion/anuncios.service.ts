@@ -3,15 +3,7 @@ import { PreferenciasService } from './preferencias.service';
 import { CATALOGO_ANUNCIOS } from '../dominio/anuncios.puerto';
 import { comunicadoVigente, estaPendiente } from '../dominio/anuncio.model';
 
-/**
- * Caso de uso del comunicado del sistema.
- *
- * El requerimiento era concreto: el diálogo spameaba en cada inicio de sesión.
- * La corrección no es un `if` en el componente sino una regla de dominio
- * (`estaPendiente`) alimentada por los ids que el usuario ya cerró, que viven
- * en las preferencias. El comunicado se muestra una vez; si no queda nada
- * pendiente, el diálogo directamente no se abre.
- */
+/** Caso de uso del comunicado del sistema. */
 @Injectable({ providedIn: 'root' })
 export class AnunciosService {
   private readonly catalogo = inject(CATALOGO_ANUNCIOS);
@@ -29,11 +21,7 @@ export class AnunciosService {
     estaPendiente(this.comunicado(), this.preferencias.anuncios().vistos),
   );
 
-  /**
-   * Abre el diálogo si —y solo si— hay algo nuevo que decir y el usuario no
-   * silenció los comunicados. Es idempotente: llamarlo dos veces en la misma
-   * sesión no reabre nada.
-   */
+  /** Abre el diálogo si hay algo nuevo y no está silenciado. */
   abrirSiCorresponde(): void {
     if (this.preferencias.anuncios().silenciar) return;
     if (!this.hayPendientes()) return;
@@ -45,10 +33,7 @@ export class AnunciosService {
     this._abierto.set(true);
   }
 
-  /**
-   * Cierra el diálogo dando por visto el comunicado que mostró. Ese registro es
-   * lo que evita que la misma pieza vuelva en el próximo inicio de sesión.
-   */
+  /** Cierra el diálogo marcando el comunicado como visto. */
   cerrar(): void {
     const comunicado = this.comunicado();
     if (comunicado) this.preferencias.marcarAnunciosVistos([comunicado.id]);

@@ -16,29 +16,12 @@ export class ModReportesService extends AntService {
     });
   }
 
-  /**
-   * Resultado de una tabla genérica del motor de reportes.
-   *
-   * @param codRep Código del reporte (`cod_rep`, ej: `'RS_BASE_NEG_01'`).
-   * @param params Parámetros propios del reporte (ej: `{ nom: termino }`).
-   * @param context Contexto HTTP opcional — para reportes pesados que necesiten
-   *   un `TIMEOUT_MS` mayor al de 30 s por defecto.
-   */
+  /** Resultado de una tabla genérica del motor de reportes. */
   public getRegularTableResult(codRep: string, params: Record<string, unknown>, context?: HttpContext): Observable<IWinderResponse> {
     return this.getSimpleResponseString('table.regular', { ...params, cod_rep: codRep }, 'resultado', context);
   }
 
-  /**
-   * Resultado de un bloque del motor de reportes "mixtos" (tabla
-   * multi-encabezado o tarjeta KPI, según el `cod_rep`) — cada bloque de un
-   * reporte tiene su propio `cod_rep` (ej. `Monitor_Dese_01`, `Monitor_Dese_02`),
-   * igual que `getRNameCompleted()` armaba `nombre + sufijo` en el legado.
-   *
-   * @param codRep Código del bloque del reporte (`cod_rep`, ej: `'Monitor_Dese_01'`).
-   * @param params Parámetros propios del bloque + jerarquía elegida (`tip_cod`/`cod_rel`).
-   * @param context Contexto HTTP opcional — lo usan los reportes de data masiva
-   *   para pedir un `TIMEOUT_MS` más largo que el de 30 s por defecto.
-   */
+  /** Resultado de un bloque del motor de reportes "mixtos". */
   public getRegularData(
     codRep: string,
     params: Record<string, unknown>,
@@ -47,12 +30,12 @@ export class ModReportesService extends AntService {
     return this.getSimpleResponseString('regularData', { ...params, cod_rep: codRep }, 'result', context);
   }
 
-  /** Variante "deprecada" del motor de reportes "mixtos" (strand `reportData` en vez de `regularData`) — el propio legado la marca como obsoleta (`ComercialService.getReportData()`: "está usando un método depreciado") pero algunos reportes todavía no fueron migrados a `regularData` del lado del backend (ej. "Cartera", `rda/sectorista/cartera/cartera_sec`). */
+  /** Variante obsoleta del motor de reportes mixtos (strand `reportData`). */
   public getDeprecatedData(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
     return this.getSimpleResponseString('reportData', { ...params, cod_rep: codRep }, 'result');
   }
 
-  /** Bloques de gráfico del motor de reportes "mixtos" (strand `graphicData`, `ReportType.GRAPHIC` del legado — `ReportCrsV2Component`/`GraphicService`). */
+  /** Bloques de gráfico del motor de reportes mixtos. */
   public getGraphicData(codRep: string, params: Record<string, unknown>): Observable<IWinderResponse> {
     return this.getSimpleResponseString('graphicData', { ...params, cod_rep: codRep }, 'result');
   }

@@ -6,23 +6,7 @@ function numeroColumnas(cols: ColumnaReporte['cols']): number {
   return cols ? Number(cols) : 1;
 }
 
-/**
- * Quita las columnas `hidden` de una fila de encabezado y reparte, si hace falta, el `colspan`
- * que las cubra.
- *
- * El backend manda la columna del semáforo oculta, pegada al dato que anota, y espera que ese
- * dato la cubra con `cols: 2` (punto + número). Pero unas veces la oculta va **antes** del dato
- * (`[8] TMMSALDO(2)` en `CARACT_pas_01`) y otras **después** (`meta(1) [meta_sem]` en
- * `DESEMP_SOC_01`), y las dos formas son localmente indistinguibles.
- *
- * Lo que sí las distingue es si la fila ya cierra: el ancho de la grilla es el total de columnas
- * (visibles + ocultas), así que cuando lo declarado por las visibles ya llega a ese total, cada
- * oculta tiene dueño y no hay nada que ensanchar. Ensanchar igual —como se hacía antes— metía un
- * `colspan` de más: en `CARACT_pas_01` la columna "Meta" absorbía el punto del par siguiente y
- * todas las columnas a partir de ahí quedaban corridas.
- *
- * Solo cuando falta ancho se reparte, y ahí sí vale la heurística de vecindad.
- */
+/** Quita las columnas `hidden` de una fila de encabezado y reparte el `colspan`. */
 function filaEncabezadoVisible(columnas: ColumnaReporte[]): ColumnaReporte[] {
   const visibles = columnas.filter((columna) => !columna.hidden);
   const declarado = visibles.reduce((total, columna) => total + numeroColumnas(columna.cols), 0);
@@ -58,7 +42,7 @@ function filaEncabezadoVisible(columnas: ColumnaReporte[]): ColumnaReporte[] {
   return resultado;
 }
 
-/** Tabla genérica del motor de reportes "mixtos", dirigida 100% por los datos del backend porque cada `cod_rep` trae columnas distintas. */
+/** Tabla genérica para reportes. */
 @Component({
   selector: 'app-tabla-reporte',
   standalone: true,
@@ -69,19 +53,11 @@ export class TablaReporteComponent {
   readonly encabezados = input.required<FilaEncabezadoReporte[]>();
   readonly filas = input.required<FilaReporte[]>();
   readonly cargando = input(false);
-  /** Si `true`, cada fila del cuerpo se puede clickear (cursor + `filaSeleccionada`) — ej. "Encuesta Clientes", elegir un cliente de la lista. */
+  /** Si `true`, cada fila del cuerpo se puede clickear. */
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<FilaReporte>();
 
-  /**
-   * Deja que el texto de cabeceras y celdas haga salto de línea, para que la
-   * tabla entre en el ancho de la pantalla en vez de generar scroll horizontal.
-   *
-   * Por defecto va en `nowrap`, que es lo que corresponde a los reportes anchos:
-   * ahí el scroll es preferible a apretar veinte columnas. Lo activan los
-   * reportes de pocas columnas y encabezados largos —"Proyección Diaria
-   * Colocación"— donde el `nowrap` sacaba scroll sin necesidad.
-   */
+  /** Ajustar ancho de columnas al contenido. */
   readonly ajustarAncho = input(false);
 
   protected claseCelda(): string {
@@ -92,18 +68,18 @@ export class TablaReporteComponent {
     return this.ajustarAncho() ? 'whitespace-normal break-words' : 'whitespace-nowrap';
   }
 
-  /** Columnas de una fila de encabezado, tolerando `columns` ausente o con huecos: estos `computed` corren dentro de la detección de cambios y una excepción congelaría toda la app, no solo la tabla. */
+  /** Extrae las columnas de una fila de encabezado. */
   private columnasDe(fila: FilaEncabezadoReporte | undefined): ColumnaReporte[] {
     return (fila?.columns ?? []).filter((columna): columna is ColumnaReporte => columna != null);
   }
 
-  /** Columnas "hoja" (con datos) de todas las filas de encabezado, en el orden que indica `isdata` — `setdisplayedData()` del legado. */
+  /** Columnas hoja con datos. */
   protected readonly columnasDato = computed(() => {
     const todas = this.encabezados().flatMap((fila) => this.columnasDe(fila));
     return todas.filter((c) => c.isdata != null).sort((a, b) => (a.isdata ?? 0) - (b.isdata ?? 0));
   });
 
-  /** Filas de encabezado sin las columnas `hidden`: no ocupan `<th>` pero su dato sigue en el cuerpo vía `columnasDato`. */
+  /** Filas de encabezado visibles. */
   protected readonly filasEncabezado = computed(() =>
     this.encabezados().map((filaEnc) => filaEncabezadoVisible(this.columnasDe(filaEnc)))
   );
@@ -112,12 +88,12 @@ export class TablaReporteComponent {
     return fila[columna.columnDef];
   }
 
-  /** Fondo del `<th>`: `style` es un objeto estructurado, no CSS inline — volcarlo entero tapaba los números de las columnas de datos. */
+  /** Fondo del encabezado. */
   protected fondoEncabezado(columna: ColumnaReporte): string {
     return columna.style?.background ?? 'var(--mis-primary)';
   }
 
-  /** Color del texto en el `<th>`: respeta el estilo del backend o resalta en verde si indica Real. */
+  /** Color del texto del encabezado. */
   protected colorEncabezado(columna: ColumnaReporte): string {
     const styleColor = columna.style ? (columna.style['color'] as string | undefined) : undefined;
     if (styleColor) return styleColor;
@@ -128,7 +104,7 @@ export class TablaReporteComponent {
     return 'var(--mis-text-on-primary)';
   }
 
-  /** Ancho fijo del encabezado si el backend lo indica — `c.style?.desktop?.width` del legado. */
+  /** Ancho del encabezado. */
   protected anchoEncabezado(columna: ColumnaReporte): string | null {
     // En modo ajustado no se respeta el ancho fijo del backend: es justamente lo
     // que fuerza el scroll horizontal que este modo viene a evitar.
@@ -136,17 +112,17 @@ export class TablaReporteComponent {
     return columna.style?.desktop?.width ?? null;
   }
 
-  /** Fondo de una celda del cuerpo: viene por FILA, no por columna — `row['background_' + c.columnDef]` del legado. */
+  /** Fondo de celda. */
   protected fondoCelda(fila: FilaReporte, columna: ColumnaReporte): string | null {
     return (fila[`background_${columna.columnDef}`] as string | undefined) ?? null;
   }
 
-  /** Color del texto de una celda suelta — `row['color_' + c.columnDef]` del legado. */
+  /** Color del texto de celda. */
   protected colorCelda(fila: FilaReporte, columna: ColumnaReporte): string | null {
     return (fila[`color_${columna.columnDef}`] as string | undefined) ?? null;
   }
 
-  /** Énfasis del texto de una celda suelta — `row['style_' + c.columnDef]` del legado (`green-text`/`red-text`/`orange-text`), misma convención de signo que el semáforo: `1` bien, `0` alerta, `-1` mal. */
+  /** Clase de texto para celda. */
   protected claseTextoCelda(fila: FilaReporte, columna: ColumnaReporte): string {
     const estilo = fila[`style_${columna.columnDef}`];
     if (estilo === null || estilo === undefined || estilo === '') return '';
@@ -157,7 +133,7 @@ export class TablaReporteComponent {
     return '';
   }
 
-  /** Fondo de la fila completa — `row.background` del legado. */
+  /** Fondo de la fila completa. */
   protected fondoFila(fila: FilaReporte): string | null {
     return (fila['background'] as string | undefined) ?? null;
   }
@@ -170,21 +146,21 @@ export class TablaReporteComponent {
     return columna.format?.['type'] === 'traffic-light';
   }
 
-  /** Si hay que dibujar el ícono de semáforo para esta celda — no alcanza con `esSemaforo()` (columna) sola: algunos reportes declaran la columna de semáforo pero el backend nunca manda valor para ninguna fila (ej. "TAM" en `DESEMP_SOC_01`). */
+  /** Determina si se dibuja el semáforo. */
   protected mostrarSemaforo(fila: FilaReporte, columna: ColumnaReporte): boolean {
     if (!this.esSemaforo(columna)) return false;
     const valor = this.valor(fila, columna);
     return valor !== null && valor !== undefined && valor !== '';
   }
 
-  /** Alineación de la celda de datos: números/porcentajes a la derecha, todo lo demás (texto, fechas) a la izquierda; semáforos centrados y estrechos (`width_gt_xs_tl` del legado) — sin acotar el ancho, el punto queda perdido en una columna tan ancha como las de datos. */
+  /** Alineación de la celda de datos. */
   protected alineacion(columna: ColumnaReporte): string {
     if (this.esSemaforo(columna)) return 'text-center w-8 px-1';
     const tipo = columna.format?.['type'];
     return tipo === 'number' || tipo === 'percent' ? 'text-right' : 'text-left';
   }
 
-  /** Énfasis de fila según `fila['style']` — misma convención del legado (`row.style`, `table-multiheader.component.html`: `level-1..5`), pero sin las reglas CSS originales (el `.scss` del legado estaba vacío en el volcado). */
+  /** Estilos de la fila completa. */
   protected claseFila(fila: FilaReporte): string {
     return fila['style'] === 1 ? 'font-bold bg-[var(--mis-primary-light)]' : '';
   }
@@ -203,7 +179,7 @@ export class TablaReporteComponent {
     }
   }
 
-  /** Color del ícono de semáforo — misma convención confirmada en el propio código del legado (`table-multiheader.component.html`: `'green-icon':c.cell(row)==1, 'orange-icon':c.cell(row)==0, 'red-icon':c.cell(row)==-1`, con `==` — el legado comparaba suelto a propósito): `1` = éxito, `0` = alerta, `-1` = peligro, cualquier otro valor = neutro. */
+  /** Color del ícono de semáforo. */
   protected colorSemaforo(valor: unknown): string {
     if (valor === null || valor === undefined || valor === '') return 'text-[var(--mis-text-tertiary)]';
     const num = Number(valor);

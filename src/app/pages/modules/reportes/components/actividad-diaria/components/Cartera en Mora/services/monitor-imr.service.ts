@@ -12,7 +12,7 @@ import {
   type TarjetaImr,
 } from '../models/cartera-en-mora.model';
 
-/** Forma cruda de `resultado` de `mon_imr.resultados`. */
+/** Forma cruda del resultado IMR. */
 interface ResultadoImrCrudo {
   cards?: TarjetaImr[];
   table?: Record<string, unknown>[];
@@ -20,25 +20,13 @@ interface ResultadoImrCrudo {
   dataHeaders?: { Headers?: string }[];
 }
 
-/**
- * "Monitor IMR" — legado `repositorio/mon-imr`.
- *
- * Como "Monitor Salidas y Retenciones", es de los pocos reportes que no pasan
- * por el módulo `reporting`: usa el `rep2` del backend (puerto 6304) con sus
- * propios strands `mon_imr.resultados` / `mon_imr.detalle`.
- */
+/** Servicio de Monitor IMR. */
 @Injectable({ providedIn: 'root' })
 export class MonitorImrService {
   private readonly rep2 = inject(ModRep2Service);
   private readonly shell = inject(ShellStateService);
 
-  /**
-   * Tarjetas, tabla y encabezados del nivel elegido.
-   *
-   * A diferencia de Monitor Salidas, acá las columnas NO están hardcodeadas:
-   * el backend las manda como JSON string en `dataHeaders[0].Headers`, y el
-   * legado descarta las que vienen ocultas (`cellStyle.display: 'none'`).
-   */
+  /** Resultados del nivel elegido. */
   resultados(nodo: NodoConsulta, imp: number): Observable<ResultadoImr> {
     return this.rep2.getMonImrResultados({ ...this.paramsBase(nodo), imp }).pipe(
       map((r) => {
@@ -53,12 +41,7 @@ export class MonitorImrService {
     );
   }
 
-  /**
-   * Listado de clientes detrás de una tarjeta o celda.
-   *
-   * `metrica` es la clave de la tarjeta/columna (`sali1`..`sali5`) y el backend
-   * la espera traducida a su `tip` (1 a 5) — legado `lista-clientes.component.ts`.
-   */
+  /** Listado de clientes. */
   detalle(nodo: NodoConsulta, metrica: string, top: number): Observable<Record<string, unknown>[]> {
     const params = { ...this.paramsBase(nodo), tip: TIPO_DETALLE_IMR[metrica] ?? 1, top };
     return this.rep2
@@ -66,7 +49,7 @@ export class MonitorImrService {
       .pipe(map((r) => ((r.body as { resultado?: Record<string, unknown>[] } | null)?.resultado ?? [])));
   }
 
-  /** Encabezados del backend, sin las columnas que el legado deja ocultas. */
+  /** Extrae encabezados activos. */
   private columnas(dataHeaders: { Headers?: string }[] | undefined): ColumnaDinamica[] {
     const crudo = dataHeaders?.[0]?.Headers;
     if (!crudo) return [];
@@ -74,11 +57,7 @@ export class MonitorImrService {
     return columnas.filter((c) => c.cellStyle?.['display']?.toLowerCase() !== 'none');
   }
 
-  /**
-   * `fec` va en `YYYYMMDD` sin guiones, igual que en Monitor Salidas: este
-   * reporte pega directo contra `rep2` (`MonImrAntService.getDataSources()` del
-   * legado), que manda `profile.curr_fec` tal cual, sin reformatear.
-   */
+  /** Parámetros base para la consulta. */
   private paramsBase(nodo: NodoConsulta): Record<string, unknown> {
     return {
       tip_cod: nodo.tip_cod,

@@ -8,16 +8,7 @@ import { ShellStateService } from '../../../core/services/shell-state.service';
 import { fechaCorteJerarquia } from './fecha-corte.util';
 import type { HierarquiaNodo, JerarquiaResponseBody, NivelJerarquiaDropdown, ParamsJerarquia } from './jerarquia.model';
 
-/**
- * Selector de jerarquía organizativa en cascada horizontal, mediante un `p-select` por nivel
- * traído del backend.
- *
- * Es el equivalente del `hier-rem-selector` del legado STG, que era **uno solo** para todo el
- * sistema: Reportes y Presupuesto lo configuraban igual (`confHier` con `roots`, `cod_hier`,
- * `params_hier`, `max_lvl`) y pegaban a las mismas dos llamadas de `admin`
- * (`base_hier` / `level_hier`). Al migrarse cada módulo por separado quedaron dos copias que
- * divergieron; ésta las reunifica y ofrece como opt-in lo que cada una había agregado.
- */
+/** Selector de jerarquía organizativa en cascada horizontal. */
 @Component({
   selector: 'app-hier-selector',
   standalone: true,
@@ -46,7 +37,7 @@ export class HierSelectorComponent implements OnInit {
   readonly reintentarSinFecha = input(false);
 
   readonly nodoSeleccionado = output<HierarquiaNodo>();
-  /** Ruta completa de la raíz al nivel elegido — el array que emitía `hier-rem-selector`. */
+  /** Ruta completa de la raíz al nivel elegido. */
   readonly rutaSeleccionada = output<HierarquiaNodo[]>();
   /** Solo se emite si falla o queda vacía la carga inicial (raíz o su primer nivel) — el único caso en que este componente nunca llega a emitir `nodoSeleccionado`, así el contenedor puede apagar su propio loading en vez de quedarse esperando para siempre. */
   readonly error = output<void>();
@@ -128,7 +119,7 @@ export class HierSelectorComponent implements OnInit {
     });
   }
 
-  /** Una llamada a `level_hier`, con o sin el filtro de fecha. */
+  /** Una llamada a nivel de jerarquía. */
   private pedirNivel(tip_cod: number, cod_rels: string[], lvl: number, paramsFec?: { key: string; val: string }) {
     return this.antAdmin
       .getLevelHierarchy(this.paramsHier().code, lvl, tip_cod, cod_rels, paramsFec)
@@ -174,7 +165,7 @@ export class HierSelectorComponent implements OnInit {
     }
   }
 
-  /** El backend rotula el nodo con una clave distinta según la jerarquía; se unifica en `des_rel`/`desc_rel`. */
+  /** Normaliza el nodo con descripciones unificadas. */
   private normalizarNodo(nodo: HierarquiaNodo, nivel: number): HierarquiaNodo {
     const etiqueta =
       nodo.des_rel ||

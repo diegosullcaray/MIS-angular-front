@@ -50,10 +50,7 @@ export const colorPosNegStyleFn = (val: unknown): Record<string, string> | undef
   return { color: '#22c55e', 'font-weight': 'bold' };
 };
 
-/**
- * `RS_GEST_COM_01` alimenta dos tablas con el mismo `data` y distintas
- * columnas: el legado las declara fijas en `tablaTab1` y `tablaTab2`.
- */
+/** Columnas para tabla de Gestión Producción. */
 export const COLUMNAS_GESTION_PRODUCCION: ColumnaDinamica[] = [
   { key: 'descripcion', label: 'Descripción' },
   { key: 'prod_ind', label: 'Product.', format: decimal },
@@ -87,43 +84,7 @@ export const COLUMNAS_GESTION_CLIENTES: ColumnaDinamica[] = [
   { key: 'TMMCLINUEV', label: 'TMM Clientes Nuevos', format: entero, cellStyleFn: colorPosNegStyleFn },
 ];
 
-/**
- * Los seis gráficos ACTIVOS, con el título que les pone la plantilla del
- * legado, en su mismo orden, y cómo hay que pintar cada uno.
- *
- * `GRAF_GEST_COM_03` ("Variación Stock Clientes", sin el corte `T`) NO va: en
- * el legado ese bloque de gráfico está comentado (`<!-- ... -->`), solo queda
- * activo el de `GRAF_GEST_COM_05`. Y los dos "Ingresos y Salidas" —`_04` y
- * `_06`— llevan literalmente el MISMO título en el legado: no es un error de
- * este archivo, es que muestra el mismo gráfico dos veces con cortes
- * distintos y sin nada en el texto que los distinga.
- *
- * El legado arma un `Highcharts.Options` a mano por gráfico; acá los seis pasan
- * por `<app-grafico-mixto>`, así que de cada uno solo queda lo que la fábrica
- * compartida no puede deducir sola:
- *
- * - `formato`: soles en los de importe, número pelado en los de clientes.
- * - `esPorcentaje`: la serie llega en fracción y el legado la pinta en % sobre
- *   el eje secundario (la TAPP de "Desembolsos Diarios").
- * - `esNivel`: los dos evolutivos que combinan un NIVEL con su VARIACIÓN. El
- *   legado pinta el nivel como línea y la variación como columnas, cada uno con
- *   su eje; acá el nivel se manda al eje secundario (`secundaria`), que es lo
- *   que lo convierte en spline. Sin eso las dos series comparten escala y la
- *   variación queda pegada al cero.
- * - `colorDeSerie`: el color que el legado fija a mano por serie (Highcharts no
- *   resuelve tokens CSS, así que van en hexadecimal literal, igual que
- *   `paleta-colores.util.ts`). Sin esto, la fábrica compartida les asigna un
- *   color genérico por rol que no es el del legado. `Ingresos y Salidas`
- *   (`_04`/`_06`) no tiene entrada: el legado pinta esas series con el color
- *   que ya trae el propio payload del backend, sin fijar nada a mano.
- *
- * El orden importa: en el legado las dos tablas de variación
- * (`RS_GEST_COM_02`/`_03`) no cuelgan de ninguna pestaña, van intercaladas
- * en este mismo bloque de gráficos — "Var Saldo Cartera Vigente" justo
- * después de "Saldo Cartera Vigente" (`_02`) y "Var Clientes Stock" al final,
- * después del segundo "Ingresos y Salidas" (`_04`). El componente las inserta
- * ahí por posición, no por pestaña.
- */
+/** Configuración de los gráficos activos para Gestión Comercial. */
 export interface GraficoGestionComercial {
   codRep: string;
   titulo: string;
@@ -136,13 +97,13 @@ export interface GraficoGestionComercial {
 
 const sinVariacion = (nombre: string) => !nombre.toLowerCase().includes('var');
 
-/** `prepareResumenChart()`: Desembolsos en columna, TAPP en línea sobre el eje secundario. */
+/** Colores para gráfico de Desembolsos Diarios. */
 const coloresDesembolsosDiarios = (nombre: string) => (nombre.toLowerCase().includes('tapp') ? '#3F51B5' : '#4DD0E1');
 
-/** `prepareSaldoCarteraVigente()` / `prepareVariacionCliStockChart()`: mismo par nivel/variación en los dos evolutivos. */
+/** Colores para gráficos de nivel y variación. */
 const coloresNivelYVariacion = (nombre: string) => (sinVariacion(nombre) ? '#1565C0' : '#80DEEA');
 
-/** `prepareVariacionStockChartT()`: tres colores según si el nombre trae "VARIACION", "META" o ninguno. */
+/** Colores para gráfico de Variación Stock Clientes. */
 function colorVariacionStockClientes(nombre: string): string {
   const mayus = nombre.toUpperCase();
   if (mayus.includes('VARIACION') && !mayus.includes('META')) return '#c5be97';
@@ -194,21 +155,15 @@ export const GRAFICOS_GESTION_COMERCIAL: GraficoGestionComercial[] = [
   // Acá va, al final, la tabla "Var Clientes Stock" (`RS_GEST_COM_03`).
 ];
 
-/** Índice (0-based) de `GRAFICOS_GESTION_COMERCIAL` tras el cual va cada tabla de variación. */
+/** Índices para intercalar tablas de variación. */
 export const INDICE_TRAS_VAR_SALDO = 3;
 export const INDICE_TRAS_VAR_CLIENTES = GRAFICOS_GESTION_COMERCIAL.length - 1;
 
-/**
- * Los KPIs del encabezado — legado `setKpiValues()`, que los saca de la PRIMERA
- * FILA de `RS_GEST_COM_01` (la de totales), no de un bloque aparte.
- *
- * Se guardan en crudo, en la unidad que manda el backend; la división entre mil
- * o entre un millón la hace la plantilla, igual que el legado.
- */
+/** KPIs del encabezado extraídos de la primera fila. */
 export interface KpisGestionComercial {
   productividad: number;
   tmmProductividad: number;
-  /** Ya multiplicado por 100 (el backend lo manda como fracción). */
+  /** Cumplimiento de productividad (%). */
   cumplProductividad: number;
   avanceProductividad: number;
   metaProductividad: number;
@@ -265,7 +220,7 @@ export const KPIS_GESTION_COMERCIAL_VACIOS: KpisGestionComercial = {
   clientesNuevos: 0, tmmClientesNuevos: 0, cumplClientesNuevos: 0, avanceClientesNuevos: 0, metaClientesNuevos: 0,
 };
 
-/** Arma los KPIs desde la fila total de `RS_GEST_COM_01` — legado `setKpiValues()`. */
+/** Extrae KPIs desde la fila de totales. */
 export function kpisDeFilaTotal(filas: readonly Record<string, unknown>[]): KpisGestionComercial {
   const fila = filas[0];
   if (!fila) return KPIS_GESTION_COMERCIAL_VACIOS;
@@ -281,7 +236,7 @@ export function kpisDeFilaTotal(filas: readonly Record<string, unknown>[]): Kpis
   const varCarteraVigente = num('HVSALVIGMN');
   const rodamiento = num('HRODAM');
   const metaCancelacion = num('hvalvar_136');
-  // El legado no lo pide al backend: lo despeja de los otros tres.
+
   const cancelacionVigente = desembolsos - varCarteraVigente - rodamiento;
 
   return {
@@ -331,16 +286,7 @@ export function kpisDeFilaTotal(filas: readonly Record<string, unknown>[]): Kpis
   };
 }
 
-/**
- * Semáforo de un cumplimiento (en %): verde desde el 100 %, ámbar desde el 80 %,
- * rojo por debajo — legado `obtenerClaseColor()`.
- *
- * OJO: el legado lo llama con dos escalas distintas (`kpi_perc_cumpl`, ya
- * multiplicado por 100, y `cumpldesembolsometadi`, en fracción) y adentro vuelve
- * a multiplicar, así que los cumplimientos que ya venían en % siempre le salían
- * verdes. Acá el helper recibe SIEMPRE el porcentaje y compara contra 100/80,
- * que es lo que la pantalla quiere decir.
- */
+/** Retorna la clase CSS del semáforo según el cumplimiento (en %). */
 export function claseCumplimiento(porcentaje: number): string {
   if (porcentaje >= 100) return 'text-[var(--mis-success)]';
   if (porcentaje >= 80) return 'text-orange-500';
@@ -348,15 +294,15 @@ export function claseCumplimiento(porcentaje: number): string {
 }
 
 export interface GestionComercialResultado {
-  /** Mismo `data` de `RS_GEST_COM_01`, que se pinta con dos juegos de columnas. */
+  /** Filas de la tabla principal. */
   filas: Record<string, unknown>[];
-  /** `RS_GEST_COM_02` — "Var Saldo Cartera Vigente"; trae sus propias cabeceras. */
+  /** Tabla de Variación Saldo Vigente. */
   varSaldoVigente: TablaDinamicaResultado;
-  /** `RS_GEST_COM_03` — "Var Clientes Stock"; ídem. */
+  /** Tabla de Variación Clientes Stock. */
   varClientesStock: TablaDinamicaResultado;
-  /** Las tarjetas del encabezado, sacadas de la fila total de `RS_GEST_COM_01`. */
+  /** Tarjetas del encabezado. */
   kpis: KpisGestionComercial;
-  /** Cada gráfico ya listo para `<app-grafico-mixto>`, con su formato de tooltip. */
+  /** Gráficos del reporte. */
   graficos: (BloqueGrafico & { formato: FormatoValor })[];
 }
 

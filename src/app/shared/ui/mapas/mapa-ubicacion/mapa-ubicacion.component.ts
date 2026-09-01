@@ -13,12 +13,12 @@ import {
 import { MapLibreMap, Marker } from 'maplibre-gl';
 import { ThemeService } from '../../../services/theme.service';
 
-/** Centro del Perú — encuadre inicial del legado (`L.latLng(-9.189967, -75.015152)`). */
+/** Centro del Perú — encuadre inicial. */
 const CENTRO_PERU: [number, number] = [-75.015152, -9.189967];
-/** Mismo acercamiento que usaba el legado al enfocar un cliente. */
+/** Acercamiento al enfocar un cliente. */
 const ZOOM_CLIENTE = 14;
 
-/** Mosaicos de OpenStreetMap, los mismos del legado — no requieren API key. */
+/** Mosaicos de OpenStreetMap, sin API key. */
 const ESTILO_OSM = {
   version: 8 as const,
   sources: {
@@ -36,14 +36,7 @@ const ESTILO_OSM = {
   layers: [{ id: 'osm', type: 'raster' as const, source: 'osm' }],
 };
 
-/**
- * Mapa de la ubicación de un cliente — reemplaza el Leaflet del legado
- * (`detalle-dialog.component.ts`) por MapLibre GL JS.
- *
- * El modo oscuro se resuelve con un filtro CSS sobre el canvas: los mosaicos de
- * OSM solo existen en claro, y filtrar solo el canvas deja el pin y los
- * controles con sus colores reales (viven en capas DOM aparte).
- */
+/** Mapa de ubicación de un cliente (MapLibre GL). */
 @Component({
   selector: 'app-mapa-ubicacion',
   standalone: true,
@@ -176,7 +169,7 @@ export class MapaUbicacionComponent implements AfterViewInit {
     this.mapa?.zoomOut();
   }
 
-  /** Vuelve al cliente tras haber navegado por el mapa. */
+  /** Vuelve al cliente tras navegar por el mapa. */
   protected recentrar(): void {
     this.mapa?.easeTo({ center: [this.lng(), this.lat()], zoom: ZOOM_CLIENTE, duration: 500 });
   }

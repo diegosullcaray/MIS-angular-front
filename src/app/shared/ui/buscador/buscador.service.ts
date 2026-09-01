@@ -196,7 +196,7 @@ interface MejorEnAtributo extends Coincidencia {
   token: Token;
 }
 
-/** Índice en memoria con el contrato de un índice de Algolia, resuelto en el cliente: el corpus son unos cientos de nodos y no sale de la app. */
+/** Índice en memoria con contrato similar a Algolia. */
 export class IndiceBuscador<T> {
   private readonly documentos: Documento<T>[];
 
@@ -263,7 +263,7 @@ export class IndiceBuscador<T> {
     };
   }
 
-  /** Corre la consulta, reintentando sin algunas palabras si la estrategia lo permite; devuelve el conjunto filtrado y el sin filtrar (para contar facetas). */
+  /** Busca con reintentos si la estrategia lo permite. */
   private buscarSoltandoPalabras(
     palabras: string[],
     tipoConsulta: TipoConsulta,
@@ -295,7 +295,7 @@ export class IndiceBuscador<T> {
     return { coincidentes: [], sinFiltrarFacetas: [], palabrasUsadas: 0 };
   }
 
-  /** Criterios de ranking del registro, o `null` si no matchea todas las palabras exigidas; el prefijo solo aplica a la última palabra de la consulta original. */
+  /** Criterios de ranking del registro. */
   private evaluar(
     doc: Documento<T>,
     palabrasExigidas: string[],
@@ -392,7 +392,7 @@ export class IndiceBuscador<T> {
     return mejorProximidad === Infinity ? 0 : mejorProximidad;
   }
 
-  /** Desempate de Algolia: compara los criterios de a uno y corta en el primero que difiere; si todos empatan entra el ranking personalizado. */
+  /** Desempate por criterios de ranking. */
   private comparar(a: { doc: Documento<T>; ranking: CriteriosRanking }, b: { doc: Documento<T>; ranking: CriteriosRanking }): number {
     if (a.ranking.typos !== b.ranking.typos) return a.ranking.typos - b.ranking.typos;
     if (a.ranking.palabras !== b.ranking.palabras) return b.ranking.palabras - a.ranking.palabras;
@@ -411,7 +411,7 @@ export class IndiceBuscador<T> {
     return Object.entries(filtros).every(([faceta, valores]) => !valores.length || valores.includes(doc.facetas[faceta]));
   }
 
-  /** Conteos por faceta, cada una ignorando su propio filtro (disyuntivo): si no, elegir un valor dejaría el resto en 0 y sin salida. */
+  /** Conteos por faceta, ignorando el propio filtro (disyuntivo). */
   private contarFacetas(docs: Documento<T>[], filtros: Record<string, string[]>): Facetas {
     const facetas: Facetas = {};
 
@@ -523,7 +523,7 @@ export class IndiceBuscador<T> {
   }
 }
 
-/** Fábrica de índices en memoria con la relevancia de Algolia; los contratos están calcados de su API, así que migrar sería reimplementar solo este servicio. */
+/** Fábrica de índices de búsqueda en memoria. */
 @Injectable({ providedIn: 'root' })
 export class BuscadorService {
   crearIndice<T>(config: ConfiguracionIndice<T>, objetos: readonly T[]): IndiceBuscador<T> {

@@ -8,14 +8,7 @@ export interface ResultadoBorrado {
   readonly caches: number;
 }
 
-/**
- * Adaptador de todo lo que el navegador guarda por su cuenta.
- *
- * Existe para que el caso de uso de cierre de sesión no hable con
- * `localStorage`, `document.cookie` ni `caches` directamente: son cuatro APIs
- * distintas, cada una con su forma de fallar, y todas tienen que poder
- * fallar sin dejar el cierre de sesión a medias.
- */
+/** Adaptador de almacenamiento del navegador. */
 @Injectable({ providedIn: 'root' })
 export class AlmacenamientoNavegador {
   /** Vacía `localStorage` entero. */
@@ -38,16 +31,7 @@ export class AlmacenamientoNavegador {
     }
   }
 
-  /**
-   * Caduca todas las cookies visibles desde JavaScript. Las `HttpOnly` no se
-   * ven desde acá y solo las puede matar el backend — el borrado es de lo que
-   * el navegador expone, no una garantía sobre la sesión del servidor.
-   *
-   * Se repite el vencimiento por cada prefijo del dominio y por cada nivel de
-   * la ruta actual porque una cookie solo se borra desde el mismo `domain` y
-   * `path` con los que se escribió; sin eso, quedan vivas las que se fijaron
-   * en el dominio padre.
-   */
+  /** Caduca todas las cookies visibles desde JavaScript. */
   limpiarCookies(): number {
     try {
       const cookies = document.cookie.split(';').map((c) => c.split('=')[0].trim()).filter(Boolean);
@@ -68,11 +52,7 @@ export class AlmacenamientoNavegador {
     }
   }
 
-  /**
-   * Borra las cachés de la Cache API — las que llena el service worker de la
-   * PWA con el app-shell. Es asíncrono y de mejor esfuerzo: si el navegador no
-   * expone `caches`, devuelve 0 en vez de fallar.
-   */
+  /** Borra las cachés de la Cache API. */
   async limpiarCaches(): Promise<number> {
     try {
       if (typeof caches === 'undefined') return 0;
@@ -85,10 +65,7 @@ export class AlmacenamientoNavegador {
     }
   }
 
-  /**
-   * Da de baja los service workers registrados. Sin esto, el worker anterior
-   * sigue sirviendo el app-shell cacheado aunque las cachés estén vacías.
-   */
+  /** Da de baja los service workers registrados. */
   async desregistrarServiceWorkers(): Promise<number> {
     try {
       if (typeof navigator === 'undefined' || !navigator.serviceWorker?.getRegistrations) return 0;

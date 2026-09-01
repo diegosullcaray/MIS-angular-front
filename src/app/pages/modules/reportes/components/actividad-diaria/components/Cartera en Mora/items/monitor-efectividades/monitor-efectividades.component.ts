@@ -22,21 +22,7 @@ import {
 import { OPCIONES_PRECOSECHA } from '../../models/cartera-en-mora.model';
 import { CarteraMoraCraService } from '../../services/cartera-mora-cra.service';
 
-/**
- * "Monitor Efectividades" (`leg/com/rda/adm/mon-efec`) — legado `RS_MON_EFEC`
- * (host `cra-v4`).
- *
- * Dos pestañas, como el legado:
- *
- * - **Monitor de Efectividades**: los bloques `_01` y `_03` (este último dos
- *   veces, una por tramo). Sin filtros propios.
- * - **Detalle de Efectividades**: el bloque `_02`, el único con filtros y el
- *   único paginado.
- *
- * Los diez filtros son los del `_02` en el legado: siete salen del `filter` de
- * `com-map.module.ts` y los otros tres (`resp`, `fcompro`, `nom`) los agrega el
- * propio host desde sus `BehaviorSubject`. Todos arrancan en "TODO".
- */
+/** Componente de Monitor Efectividades. */
 @Component({
   selector: 'app-monitor-efectividades',
   standalone: true,
@@ -62,7 +48,7 @@ export class MonitorEfectividadesComponent {
   protected readonly opcionesSiNo = OPCIONES_SI_NO;
   protected readonly opcionesTramoDias = OPCIONES_TRAMO_DIAS_GESTION;
   protected readonly opcionesPrecosecha = OPCIONES_PRECOSECHA;
-  /** Las trae el backend (`SEL_EFEC_01`); hasta que lleguen, solo "TODO". */
+  /** Opciones de última gestión. */
   protected readonly opcionesUltimaGestion = signal<OpcionFiltro[]>([{ id: TODO, desc: 'TODO' }]);
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
@@ -72,7 +58,7 @@ export class MonitorEfectividadesComponent {
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargandoResumen);
   protected readonly tablasResumen = signal<TablaReporteResultado[]>([]);
 
-  /** `content.higher`/`lower` de los tres bloques del resumen. */
+  /** Bloques de resumen. */
   protected readonly bloquesResumen = [
     { titulo: 'Monitor de Efectividades', nota: undefined as string | undefined },
     {
@@ -104,10 +90,10 @@ export class MonitorEfectividadesComponent {
   protected readonly fechaCompromiso = signal<Date | null>(null);
   protected readonly asesor = signal('');
   protected readonly pagina = signal(1);
-  /** El legado solo consulta el asesor al pulsar "Buscar", no mientras se escribe. */
+  /** Asesor buscado. */
   protected readonly asesorBuscado = signal('');
 
-  /** Total de filas que declara el backend, para el paginador. */
+  /** Total de filas declaradas. */
   protected readonly total = computed(() => Number(this.tablaDetalle().additional?.['Total'] ?? 0));
 
   constructor() {
@@ -135,7 +121,7 @@ export class MonitorEfectividadesComponent {
     this.nivelActual.set(nodo);
   }
 
-  /** Los diez filtros traducidos a los parámetros exactos que espera el backend. */
+  /** Parámetros de filtros de detalle. */
   private filtrosDetalle(): Record<string, unknown> {
     return {
       tramof: this.tramo(),
@@ -170,7 +156,7 @@ export class MonitorEfectividadesComponent {
     });
   }
 
-  /** Botón "Buscar asesor" del legado: recién ahí viaja el texto. */
+  /** Handler de búsqueda de asesor. */
   protected onBuscarAsesor(): void {
     this.pagina.set(1);
     this.asesorBuscado.set(this.asesor());

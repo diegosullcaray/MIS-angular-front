@@ -1,11 +1,4 @@
-/**
- * Fábrica de configuraciones de Highcharts.
- *
- * Acá se centraliza todo lo repetitivo (fondo, tipografía, ejes, tooltip corporativo, paleta).
- * Los componentes de reporte nunca arman un `Highcharts.Options` a mano: le pasan data simple a
- * `<app-grafico-mixto>` / `<app-grafico-pie>`, y esos llaman a estas funciones. Si mañana hay que
- * cambiar el estilo de todas las barras del sistema, se cambia una sola vez acá.
- */
+/** Fábrica de configuraciones de Highcharts centralizada. */
 // El build ESM de Highcharts 13 solo expone `default` en runtime, pero sus
 // tipos son exports con nombre — de ahí la importación partida en dos.
 import Highcharts from 'highcharts';
@@ -25,23 +18,13 @@ import type {
 } from '../models/grafico-comun.model';
 import { AZUL, PALETA_SERIES, colorSerieReporte, esPorcentaje, tokensTema } from './paleta-colores.util';
 
-/**
- * Infiere la forma del gráfico a partir de las series, replicando qué config del legado le toca
- * a cada bloque:
- * - 1 sola serie → barra horizontal simple (`clientesPorCultivoOptions`)
- * - 1 métrica base + N "%" → barra horizontal + spline(s) (`saldoPorCultivoOptions`, `saldoVencidoPorCultivoOptions`)
- * - 2+ métricas base → columnas verticales + spline (`resumenGeneralOptions`)
- */
+/** Infiere la forma del gráfico a partir de las series. */
 function inferirTipo(series: readonly SerieGrafico[]): 'barra' | 'columna' {
   if (series.length === 1) return 'barra';
   return series.filter((s) => !esPorcentaje(s.nombre)).length === 1 ? 'barra' : 'columna';
 }
 
-/**
- * Base común a todos los gráficos: sin título ni créditos, tipografía heredada y tooltip
- * con los colores del tema. `fondoTransparente` sirve para los gráficos embebidos en tarjetas
- * que ya traen su propio fondo (dashboard del analista).
- */
+/** Base común a todos los gráficos. */
 export function opcionesBase(oscuro: boolean, fondoTransparente = false): Options {
   const { fondo, texto, textoFuerte, linea } = tokensTema(oscuro);
   return {
@@ -65,14 +48,7 @@ export function opcionesBase(oscuro: boolean, fondoTransparente = false): Option
   };
 }
 
-/**
- * Gráfico de barras/columnas/líneas a partir de un `BloqueGrafico`.
- *
- * Highcharts es lo que permite el combo que pide el reporte: barra HORIZONTAL
- * (`chart.type: 'bar'`, que invierte los ejes) con las líneas de porcentaje encima. Es justo lo
- * que ApexCharts no soporta ("Horizontal bars are not supported in a mixed/combo chart"), y por
- * eso las barras desaparecían.
- */
+/** Gráfico de barras/columnas/líneas a partir de un `BloqueGrafico`. */
 export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: OpcionesGrafico = {}): Options {
   const { tipo = 'auto', formato = 'soles', fondoTransparente = false, apilado = false } = config;
   const esApilado = apilado || Boolean(bloque.apilado);
@@ -305,7 +281,7 @@ export function opcionesPie(porciones: readonly PorcionGrafico[], oscuro: boolea
   };
 }
 
-/** Miles/millones abreviados — el legado dividía entre 1e6 y sufijaba " M". */
+/** Miles/millones abreviados en etiquetas del eje. */
 function formateadorEjeValor(this: AxisLabelsFormatterContextObject): string {
   const valor = Number(this.value);
   if (!Number.isFinite(valor)) return String(this.value);
@@ -314,14 +290,7 @@ function formateadorEjeValor(this: AxisLabelsFormatterContextObject): string {
   return Highcharts.numberFormat(valor, 0, '.', ',');
 }
 
-/**
- * Mismo formato del legado: los "%" con 2 decimales, el resto según `formato` (soles en los
- * reportes de cartera, número pelado donde la métrica no es dinero).
- *
- * Desde Highcharts 12 el `this` del formatter es el `Point` (ya no el viejo
- * `TooltipFormatterContextObject` con `.points`), así que para el tooltip compartido las series
- * hermanas se leen de `chart.hoverPoints`.
- */
+/** Formatea el tooltip compartido. */
 function formateadorTooltip(formato: FormatoValor): TooltipFormatterCallbackFunction {
   return function (this: Point): string {
     const puntos = this.series.chart.hoverPoints ?? [this];

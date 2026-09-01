@@ -27,20 +27,7 @@ import {
 } from '../../models/cartera-en-mora.model';
 import { MonitorImrService } from '../../services/monitor-imr.service';
 
-/**
- * "Monitor IMR" (`repositorio/actividad-diaria/cartera/mon-imr`) — legado
- * `repositorio/mon-imr`.
- *
- * Misma forma que "Monitor Salidas y Retenciones": tarjetas arriba, tabla del
- * nivel abajo y un diálogo con el listado de clientes.
- *
- * Dos diferencias con aquel:
- *
- * - Las columnas de la tabla las manda el backend, no están hardcodeadas.
- * - **Las tarjetas NO abren detalle.** En el legado `detCard()` deja comentada
- *   la apertura del diálogo y `getCardValStyle()` no devuelve subrayado: son
- *   solo lectura. El único punto de entrada al detalle es la tabla.
- */
+/** Componente de Monitor IMR. */
 @Component({
   selector: 'app-monitor-imr',
   standalone: true,
@@ -75,13 +62,13 @@ export class MonitorImrComponent {
   protected readonly filas = computed(() => this.resultado().table);
   protected readonly columnas = computed(() => this.resultado().columnas);
 
-  /** Métrica abierta en el detalle (`sali1`..`sali5`); `null` mantiene el diálogo cerrado. */
+  /** Métrica abierta en el detalle. */
   protected readonly metrica = signal<string | null>(null);
   protected readonly tope = signal(TOPE_DETALLE_IMR_POR_DEFECTO);
   protected readonly clientes = signal<Record<string, unknown>[]>([]);
   protected readonly cargandoDetalle = signal(false);
 
-  /** Nodo cuyo detalle se está viendo: el del nivel o el de una fila de la tabla. */
+  /** Nodo de detalle. */
   private nodoDetalle: HierarquiaNodo | null = null;
 
   protected readonly tituloDetalle = computed(() => TITULO_DETALLE_IMR[this.metrica() ?? ''] ?? '');
@@ -108,16 +95,7 @@ export class MonitorImrComponent {
   }
 
 
-  /**
-   * Clic en la tabla — replica el `ddEvent()` del legado, que hace tres cosas
-   * distintas según la COLUMNA tocada:
-   *
-   * - `desc` baja un nivel en la jerarquía (no abre nada);
-   * - `sali2`/`sali3` abren el listado de clientes de esa fila;
-   * - cualquier otra columna no hace nada.
-   *
-   * En los tres casos las filas de total (`style === 1`) quedan afuera.
-   */
+  /** Maneja el clic en la tabla. */
   protected onCelda({ clave, fila }: { clave: string; fila: Record<string, unknown> }): void {
     if (esFilaTotal(fila)) return;
 

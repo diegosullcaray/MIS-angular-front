@@ -4,7 +4,7 @@ import { TableModule } from 'primeng/table';
 import { aplanarEncabezados } from './tabla-dinamica.util';
 import type { ColumnaDinamica } from '../models/tabla-dinamica.model';
 
-/** Tabla del motor `table.regular` (columnas dinámicas) — reemplaza a `stg-table2` del legado (`shared/components/stg-table2`). */
+/** Tabla dinámica (reemplaza a `stg-table2`). */
 @Component({
   selector: 'app-tabla-dinamica',
   standalone: true,
@@ -18,29 +18,16 @@ export class TablaDinamicaComponent {
   readonly columnas = input.required<ColumnaDinamica[]>();
   readonly filas = input.required<Record<string, unknown>[]>();
   readonly cargando = input(false);
-  /** Pinta en verde/rojo las columnas de variación — legado `aplicarEstilos()` de `carterizacion-cap-com`, que lo aplica a toda clave que contenga `var`. */
+  /** Pinta en verde/rojo las columnas de variación. */
   readonly colorearVariaciones = input(false);
 
-  /**
-   * Fondo dinámico verde/rojo según el signo del valor — legado
-   * `fondoDinamicoFn()` de `gestion-comercial.component.ts`, que lo aplica a
-   * TODA columna salvo "Descripción" (a diferencia de `colorearVariaciones`,
-   * que solo mira las claves con `var`).
-   */
+  /** Fondo dinámico verde/rojo según el signo del valor. */
   readonly fondoDinamico = input(false);
 
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<Record<string, unknown>>();
 
-  /**
-   * Claves de columna que son "clicables" — equivalente al `onClickCell` de
-   * `stg-table2` del legado, donde cada reporte decidía qué hacer según
-   * `evt.key`.
-   *
-   * Vacío (por defecto) mantiene el comportamiento de fila entera. Con valores,
-   * solo esas celdas responden al clic y emiten `celdaSeleccionada`, que es lo
-   * que necesitan los reportes cuyo legado abre cosas distintas por columna.
-   */
+  /** Claves de columna que son clicables. */
   readonly columnasClicables = input<readonly string[]>([]);
   readonly celdaSeleccionada = output<{ clave: string; fila: Record<string, unknown> }>();
 
@@ -116,7 +103,7 @@ export class TablaDinamicaComponent {
     return Object.keys(res).length > 0 ? res : null;
   }
 
-  /** Fila "destacada" del backend (`row.style === 1` en el legado — total/resumen). */
+  /** Fila destacada. */
   protected destacada(fila: Record<string, unknown>): boolean {
     if (!fila) return false;
     return Number(fila['style']) === 1 || String(fila['RangoDesembolso'] ?? fila['DES_RANGO'] ?? '').toLowerCase().includes('total');
@@ -129,7 +116,7 @@ export class TablaDinamicaComponent {
     return valor !== null && valor !== undefined && valor !== '';
   }
 
-  /** Mismos colores que `app-tabla-reporte` (`colorSemaforo`): `1` éxito, `0` alerta, `-1` peligro, cualquier otro valor neutro. */
+  /** Colores del semáforo. */
   protected colorSemaforo(fila: Record<string, unknown>, columna: ColumnaDinamica): string {
     const valor = columna.semaforoKey ? fila[columna.semaforoKey] : undefined;
     const num = Number(valor);
@@ -149,12 +136,7 @@ export class TablaDinamicaComponent {
     return 'bg-gray-400';
   }
 
-  /**
-   * Números pegados a la derecha, texto a la izquierda — misma regla que
-   * `app-tabla-reporte`. A diferencia de esa tabla, aquí el semáforo no es una
-   * columna aparte: comparte celda con su valor (`semaforoKey`), así que sigue
-   * la alineación normal del valor en vez de la angosta y centrada.
-   */
+  /** Alineación de la celda. */
   protected alineacion(columna: ColumnaDinamica): string {
     const tipo = columna.format?.type;
     return tipo === 'integer' || tipo === 'decimal' || tipo === 'percent' ? 'text-right' : 'text-left';

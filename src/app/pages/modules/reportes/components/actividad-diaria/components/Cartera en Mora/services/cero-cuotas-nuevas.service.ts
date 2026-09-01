@@ -1,4 +1,4 @@
-﻿import { Injectable, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
@@ -8,32 +8,19 @@ import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/m
 import type { IWinderResponse } from '../../../../../../../../core/winder/winder/winder.interface';
 import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
 
-/** Los dos cortes por los que "Top" pide cada uno de sus bloques — legado `tip_cod2`. */
+/** Cortes para Top. */
 const CORTES_TOP = [
   { tip_cod2: '20', etiqueta: 'Territorio' },
   { tip_cod2: '18', etiqueta: 'Unidad' },
 ] as const;
 
-/**
- * Los reportes del nodo "Cero Cuotas Nuevas".
- *
- * Comparten jerarquía `UNI_1` y el corte como `fec`, pero no el strand: el
- * Dashboard es el único que no declara `reportType` en `cra-map.ts` y además
- * trae `graphic` en vez de `table`, así que va por `graphicData`. El resto son
- * `REGULAR`, y "Base de Gestión" encima es de los paginados (`cra-V10`).
- */
+/** Servicios para reportes de Cero Cuotas Nuevas. */
 @Injectable({ providedIn: 'root' })
 export class CeroCuotasNuevasService {
   private readonly bloques = inject(BloqueReporteService);
   private readonly reportes = inject(ModReportesService);
 
-  /**
-   * "Dashboard" — legado `graf-dashboard` (`rda/administracion/mora/Dashboard_rda`).
-   *
-   * Su entrada de `cra-map.ts` no declara `reportType` y su único bloque está
-   * en `graphic`, no en `table`: se pide por `graphicData` y devuelve gráficos,
-   * no una tabla. El `fec` va como filtro (`renderDate_Hoy()`).
-   */
+  /** Dashboard de Cero Cuotas Nuevas. */
   dashboard(nodo: NodoConsulta): Observable<BloqueGrafico[]> {
     return this.reportes
       .getGraphicData('rda/administracion/mora/Dashboard_rda_01', {
@@ -44,10 +31,7 @@ export class CeroCuotasNuevasService {
       .pipe(map(mapearBloquesGrafico));
   }
 
-  /**
-   * "Cuadro de Mando" — legado `cmd-cerocuotanueva` (`CMCUONUEV`), dos bloques
-   * que comparten los filtros `prod` (índice del producto) y `tipcuota`.
-   */
+  /** Cuadro de Mando. */
   cuadroMando(nodo: NodoConsulta, filtros: Record<string, unknown>): Observable<TablaReporteResultado[]> {
     return this.bloques.regulares(
       ['_01', '_02'].map((id) => ({ codRep: `CMCUONUEV${id}`, extra: filtros })),
@@ -55,13 +39,7 @@ export class CeroCuotasNuevasService {
     );
   }
 
-  /**
-   * "Top" — legado `Top-CeroCuota` (`CEROCUOTA_TOPCNUEVA`).
-   *
-   * Cinco bloques (`_01` a `_05`) pedidos cada uno por sus dos cortes
-   * (`tip_cod2` 20 territorio y 18 unidad), en ese orden intercalado: es el que
-   * el legado apila en pantalla, no primero todos los territorios.
-   */
+  /** Reporte Top. */
   top(nodo: NodoConsulta, filtros: Record<string, unknown>): Observable<TablaReporteResultado[]> {
     const bloques = ['_01', '_02', '_03', '_04', '_05'].flatMap((id) =>
       CORTES_TOP.map((corte) => ({
@@ -72,23 +50,12 @@ export class CeroCuotasNuevasService {
     return this.bloques.regulares(bloques, nodo);
   }
 
-  /**
-   * "Base de Gestión" — legado `list-cero-cuotas` (`LCCUOTANUEVA`), con su
-   * filtro `tipcuota`. Va por el host paginado `report-cra-V10`.
-   */
+  /** Base de Gestión. */
   baseGestion(nodo: NodoConsulta, filtros: Record<string, unknown>): Observable<ReporteBloqueUnico> {
     return this.bloques.regularPaginado('LCCUOTANUEVA_01', nodo, filtros).pipe(map((tabla1) => ({ tabla1 })));
   }
 
-  /**
-   * "Dashboard en Revisión" — legado `repositorio/cero-cuotas`, bloques
-   * `REP_CERCUOT_01` y `_02`.
-   *
-   * Van por `table.regular` con `fecha` (con guiones), no por el motor "mixto".
-   * El legado lee las columnas POR POSICIÓN (`Object.values(row)[n]`), no por
-   * nombre, así que acá se hace igual: los `data` de estos dos bloques no traen
-   * claves estables.
-   */
+  /** Dashboard en Revisión. */
   dashboardRevision(nodo: NodoConsulta): Observable<BloqueGrafico[]> {
     const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fecha: this.bloques.fecha() };
     return forkJoin([
@@ -127,18 +94,13 @@ export class CeroCuotasNuevasService {
   }
 }
 
-/** `resultado.data` de un bloque `table.regular`, ya como array de filas. */
+/** Extrae filas del resultado. */
 function filasDe(r: IWinderResponse): Record<string, unknown>[] {
   const resultado = (r.body as { resultado?: { data?: unknown[] } } | null)?.resultado;
   return (resultado?.data as Record<string, unknown>[]) ?? [];
 }
 
-/**
- * Arma un `BloqueGrafico` leyendo las columnas por posición, como el legado.
- *
- * La categoría de cada punto es la columna 1, y los montos (`enMillones`) se
- * dividen entre 1.000.000 igual que el `parseMM()` del legado.
- */
+/** Construye un bloque de gráfico a partir de filas. */
 function grafico(
   titulo: string,
   filas: Record<string, unknown>[],

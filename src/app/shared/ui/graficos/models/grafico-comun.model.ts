@@ -1,4 +1,4 @@
-/** Una serie de datos de un gráfico (legado `GraphicService.setSerie()`). */
+/** Una serie de datos de un gráfico. */
 export interface SerieGrafico {
   nombre: string;
   datos: (number | null)[];
@@ -16,14 +16,7 @@ export interface SerieGrafico {
   secundaria?: boolean;
 }
 
-/**
- * Un bloque de gráfico del motor de reportes "mixtos" (legado `ReportCrsV2Component`/`GraphicService`)
- * — un mismo `cod_rep` puede devolver varios de estos en un array (`result`), cada uno un gráfico
- * independiente (ej. "Inversión" y "Stock de Mora" del mismo bloque).
- *
- * Es el formato simple que consumen `<app-grafico-mixto>` y las funciones de
- * `utils/highcharts-factory.util.ts`: categorías + series, sin nada de Highcharts.
- */
+/** Bloque de gráfico. */
 export interface BloqueGrafico {
   titulo: string;
   subtitulo?: string;

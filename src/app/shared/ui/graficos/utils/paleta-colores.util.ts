@@ -1,12 +1,6 @@
-/**
- * Colores corporativos de Financiera Confianza y tokens de tema para Highcharts.
- *
- * Highcharts no resuelve variables CSS dentro de su configuración, así que los valores de
- * `tokens.css` se repiten acá en hexadecimal. Este archivo es el único lugar donde viven:
- * antes estaban copiados en `grafico-highcharts`, `grafico-reporte` y `principal` (analista).
- */
+/** Colores corporativos y tokens de tema para Highcharts. */
 
-/** Paleta por rol de serie de los reportes mixtos (legado `agro-mix-d.component.ts`). */
+/** Paleta de series de reportes mixtos. */
 export const NAVY = '#003f5c';
 export const MAGENTA = '#bc5090';
 export const NARANJA = '#ff7c43';
@@ -70,11 +64,7 @@ export function esPorcentaje(nombre: string): boolean {
   return nombre.includes('%');
 }
 
-/**
- * Color de una serie de reporte mixto según su rol y su nombre — mismas reglas que el legado:
- * la métrica base va navy (magenta si es de vencidos) y su porcentaje naranja (ámbar si es de
- * vencidos). Una serie sola va azul.
- */
+/** Color de una serie de reporte mixto según su rol. */
 export function colorSerieReporte(nombre: string, unicaSerie: boolean): string {
   const n = (nombre ?? '').toLowerCase();
   if (unicaSerie) return AZUL;

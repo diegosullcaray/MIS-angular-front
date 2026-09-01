@@ -75,7 +75,7 @@ export class HeaderComponent {
 
   // ─── Estado Computado ─────────────────────────────────────────────────────
 
-  /** En modo superpuesto el rail no está anclado: el header es su único disparador. */
+  /** Determina si el sidebar está en modo superpuesto. */
   protected readonly menuSuperpuesto = computed(
     () => this.preferencias.estructura().modoSidebar === 'superpuesto',
   );
@@ -92,7 +92,7 @@ export class HeaderComponent {
   // ─── Configuración de Breadcrumb ──────────────────────────────────────────
   protected readonly breadcrumbHome: MenuItem = { icon: 'pi pi-home', routerLink: '/app/dashboard' };
 
-  /** Ruta de navegación superior. Mientras está a la vista el explorador del sistema, refleja la carpeta abierta ahí (que no es una URL); si no, se deriva de la URL activa. */
+  /** Breadcrumb dinámico según la ruta activa o el explorador. */
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
     if (this.shell.contenidoPendienteSeleccion()) return this.breadcrumbExplorador();
 
@@ -129,7 +129,7 @@ export class HeaderComponent {
     this.cerrarDropdownYAbrir(this.configuracionOpen);
   }
 
-  /** El tema se cambia por preferencias: `ThemeService` solo pinta, no guarda. */
+  /** Alterna el tema claro/oscuro. */
   protected alternarTema(): void {
     this.preferencias.alternarTema();
   }
@@ -149,7 +149,7 @@ export class HeaderComponent {
 
   // ─── Métodos Privados ─────────────────────────────────────────────────────
 
-  /** Helper para cerrar el menú y abrir un dialog específico. */
+  /** Cierra el dropdown y abre un dialog. */
   private cerrarDropdownYAbrir(modalSignal: typeof this.confirmarSalirOpen): void {
     this.dropdownOpen.set(false);
     modalSignal.set(true);
@@ -189,7 +189,7 @@ export class HeaderComponent {
     });
   }
 
-  /** Genera el breadcrumb dinámico extrayendo datos del árbol del menú STG (sistemas remotos). */
+  /** Breadcrumb para rutas de sistemas remotos (STG). */
   private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
     const hallazgo = this.menuStg.buscarPorRuta(url);
 
