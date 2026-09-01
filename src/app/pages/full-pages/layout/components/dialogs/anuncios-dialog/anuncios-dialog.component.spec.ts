@@ -8,10 +8,16 @@ import { PreferenciasLocalStorageRepositorio } from '../../../../../../core/pref
 import type { Anuncio } from '../../../../../../core/preferencias/dominio/anuncio.model';
 
 const CATALOGO: readonly Anuncio[] = [
-  { id: 'uno', titulo: 'Nueva configuración de diseño', cuerpo: 'Podés elegir el fondo.', severidad: 'novedad', fecha: '2026-08-02' },
-  { id: 'dos', titulo: 'Ventana de mantenimiento', cuerpo: 'Sábado de 2 a 4.', severidad: 'mantenimiento', fecha: '2026-08-01' },
+  {
+    id: 'vinculacion-cartera-captaciones',
+    imagen: 'assets/images/fc/ads/Comunicado.png',
+    alt: 'Nuevos paneles: Vinculación de Cartera - Captaciones.',
+    ancho: 780,
+    alto: 815,
+  },
 ];
 
+/** El comunicado ES una imagen, y hay una sola: no hay título, cuerpo ni recorrido. */
 describe('AnunciosDialogComponent', () => {
   function crear() {
     TestBed.configureTestingModule({
@@ -24,6 +30,11 @@ describe('AnunciosDialogComponent', () => {
     return TestBed.createComponent(AnunciosDialogComponent);
   }
 
+  function imagenes(): HTMLImageElement[] {
+    // `p-dialog` con `appendTo="body"`: el contenido no vive en el fixture.
+    return Array.from(document.body.querySelectorAll<HTMLImageElement>('img.mis-anuncio-imagen'));
+  }
+
   beforeEach(() => localStorage.clear());
   afterEach(() => localStorage.clear());
 
@@ -31,20 +42,24 @@ describe('AnunciosDialogComponent', () => {
     const fixture = crear();
     fixture.detectChanges();
 
-    // `p-dialog` con `appendTo="body"`: el contenido no vive en el fixture.
-    expect(document.body.textContent).not.toContain('Nueva configuración de diseño');
+    expect(imagenes()).toHaveLength(0);
   });
 
-  it('muestra los anuncios pendientes cuando se abre', () => {
+  it('muestra UNA sola imagen, con su alt y sus medidas reales', () => {
     const fixture = crear();
     TestBed.inject(AnunciosService).abrirSiCorresponde();
     fixture.detectChanges();
 
-    expect(document.body.textContent).toContain('Nueva configuración de diseño');
-    expect(document.body.textContent).toContain('Ventana de mantenimiento');
+    const [img, ...resto] = imagenes();
+    expect(resto).toHaveLength(0);
+    expect(img.getAttribute('src')).toBe('assets/images/fc/ads/Comunicado.png');
+    expect(img.getAttribute('alt')).toContain('Vinculación de Cartera');
+    // Sin `width`/`height` el diálogo salta de tamaño cuando la imagen carga.
+    expect(img.getAttribute('width')).toBe('780');
+    expect(img.getAttribute('height')).toBe('815');
   });
 
-  it('cerrarlo deja marcados como leídos los anuncios que mostró', () => {
+  it('cerrarlo deja el comunicado marcado como leído', () => {
     const fixture = crear();
     const anuncios = TestBed.inject(AnunciosService);
     anuncios.abrirSiCorresponde();
@@ -54,10 +69,10 @@ describe('AnunciosDialogComponent', () => {
     fixture.detectChanges();
 
     expect(anuncios.abierto()).toBe(false);
-    expect([...TestBed.inject(PreferenciasService).anuncios().vistos].sort()).toEqual(['dos', 'uno']);
+    expect(TestBed.inject(PreferenciasService).anuncios().vistos).toEqual(['vinculacion-cartera-captaciones']);
   });
 
-  it('abierto a pedido sin novedades, muestra el historial y lo dice', () => {
+  it('abierto a pedido con el comunicado ya leído, lo dice y lo sigue mostrando', () => {
     const fixture = crear();
     const anuncios = TestBed.inject(AnunciosService);
     anuncios.abrirSiCorresponde();
@@ -66,7 +81,7 @@ describe('AnunciosDialogComponent', () => {
     anuncios.abrir();
     fixture.detectChanges();
 
-    expect(document.body.textContent).toContain('No hay novedades sin leer');
-    expect(document.body.textContent).toContain('Nueva configuración de diseño');
+    expect(document.body.textContent).toContain('Ya leíste este comunicado');
+    expect(imagenes()).toHaveLength(1);
   });
 });

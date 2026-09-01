@@ -1,16 +1,16 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { PreferenciasService } from './preferencias.service';
 import { CATALOGO_ANUNCIOS } from '../dominio/anuncios.puerto';
-import { anunciosPendientes } from '../dominio/anuncio.model';
+import { comunicadoVigente, estaPendiente } from '../dominio/anuncio.model';
 
 /**
- * Caso de uso de los anuncios del sistema.
+ * Caso de uso del comunicado del sistema.
  *
  * El requerimiento era concreto: el diálogo spameaba en cada inicio de sesión.
  * La corrección no es un `if` en el componente sino una regla de dominio
- * (`anunciosPendientes`) alimentada por los ids que el usuario ya cerró, que
- * viven en las preferencias. Un anuncio se muestra una vez; si no queda
- * ninguno pendiente, el diálogo directamente no se abre.
+ * (`estaPendiente`) alimentada por los ids que el usuario ya cerró, que viven
+ * en las preferencias. El comunicado se muestra una vez; si no queda nada
+ * pendiente, el diálogo directamente no se abre.
  */
 @Injectable({ providedIn: 'root' })
 export class AnunciosService {
@@ -21,19 +21,17 @@ export class AnunciosService {
   private readonly _abierto = signal(false);
   readonly abierto = this._abierto.asReadonly();
 
-  /** Anuncios vigentes que este usuario todavía no cerró. */
-  readonly pendientes = computed(() =>
-    anunciosPendientes(this.catalogo, this.preferencias.anuncios().vistos, this.hoy()),
+  /** El comunicado publicado hoy — hay uno solo a la vez, o ninguno. */
+  readonly comunicado = computed(() => comunicadoVigente(this.catalogo, this.hoy()));
+
+  /** `true` si el usuario todavía no lo cerró: es lo que enciende el punto del header. */
+  readonly hayPendientes = computed(() =>
+    estaPendiente(this.comunicado(), this.preferencias.anuncios().vistos),
   );
-
-  /** Todo el catálogo vigente, visto o no: es lo que muestra el panel de configuración. */
-  readonly historial = computed(() => anunciosPendientes(this.catalogo, [], this.hoy()));
-
-  readonly hayPendientes = computed(() => this.pendientes().length > 0);
 
   /**
    * Abre el diálogo si —y solo si— hay algo nuevo que decir y el usuario no
-   * silenció los anuncios. Es idempotente: llamarlo dos veces en la misma
+   * silenció los comunicados. Es idempotente: llamarlo dos veces en la misma
    * sesión no reabre nada.
    */
   abrirSiCorresponde(): void {
@@ -42,21 +40,22 @@ export class AnunciosService {
     this._abierto.set(true);
   }
 
-  /** Abre el diálogo a pedido del usuario, aunque no haya nada pendiente. */
+  /** Abre el diálogo a pedido del usuario, aunque ya lo haya leído. */
   abrir(): void {
     this._abierto.set(true);
   }
 
   /**
-   * Cierra el diálogo dando por vistos los anuncios que mostró. Ese registro es
-   * lo que evita que el mismo aviso vuelva en el próximo inicio de sesión.
+   * Cierra el diálogo dando por visto el comunicado que mostró. Ese registro es
+   * lo que evita que la misma pieza vuelva en el próximo inicio de sesión.
    */
   cerrar(): void {
-    this.preferencias.marcarAnunciosVistos(this.pendientes().map((a) => a.id));
+    const comunicado = this.comunicado();
+    if (comunicado) this.preferencias.marcarAnunciosVistos([comunicado.id]);
     this._abierto.set(false);
   }
 
-  /** "No volver a mostrarme anuncios": apaga el diálogo hasta que se reactive. */
+  /** "No volver a mostrarme comunicados": apaga el diálogo hasta que se reactive. */
   silenciar(): void {
     this.preferencias.setSilenciarAnuncios(true);
     this.cerrar();

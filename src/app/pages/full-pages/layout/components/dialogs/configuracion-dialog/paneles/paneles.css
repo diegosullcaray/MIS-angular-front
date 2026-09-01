@@ -54,6 +54,25 @@
   min-width: 0;
 }
 
+/* El control de la derecha NO se comprime. `p-toggleswitch` y `p-colorpicker`
+   tienen ancho intrínseco (34px y 28px); sin esto, al angostarse la columna del
+   diálogo el flex los aplastaba por debajo de ese ancho y el excedente salía
+   como scroll horizontal — el que se veía en el diálogo de configuración. El
+   que cede es el texto, que ya tiene `min-width: 0`. */
+.mis-panel-fila > :not(.mis-panel-fila-texto) {
+  flex-shrink: 0;
+}
+
+/* La muestra del selector de color es el único indicio de qué color está
+   elegido: sobre el panel oscuro, sin borde propio, se perdía contra el fondo. */
+:host ::ng-deep .p-colorpicker-preview {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--mis-border-strong);
+  border-radius: var(--mis-radius-md);
+  cursor: pointer;
+}
+
 .mis-panel-fila-nombre {
   font-size: var(--mis-text-sm);
   font-weight: var(--mis-font-medium);
@@ -197,31 +216,30 @@
   color: var(--mis-text-primary);
 }
 
-/* ── Lista de anuncios del panel ──────────────────────────────────────── */
+/* ── Comunicado publicado ─────────────────────────────────────────────── */
 
-.mis-anuncios-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* Es una vista previa de la pieza vigente, no una galería: hay un comunicado a
+   la vez. Al tocarla se abre el mismo visor que sale al entrar. */
+.mis-anuncio-miniatura {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--mis-space-2);
-}
-
-.mis-anuncio-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--mis-space-1);
-  padding: var(--mis-space-3);
+  max-width: 260px;
+  padding: 0;
   border: 1px solid var(--mis-border);
   border-radius: var(--mis-radius-md);
-  background: var(--mis-panel-bg);
+  background: #ffffff;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color var(--mis-transition-fast), box-shadow var(--mis-transition-fast);
 }
 
-.mis-anuncio-item-cabecera {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--mis-space-2);
+.mis-anuncio-miniatura:hover {
+  border-color: var(--mis-secondary);
+  box-shadow: var(--mis-shadow-focus);
+}
+
+/* La pieza entera, sin recortar: es lo que el usuario va a abrir. */
+.mis-anuncio-miniatura img {
+  display: block;
+  width: 100%;
+  height: auto;
 }

@@ -8,7 +8,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideChevronDown, lucideUser, lucideSettings,
   lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
-  lucideUsers, lucideSun, lucideMoon, lucideMenu
+  lucideUsers, lucideSun, lucideMoon, lucideMenu, lucideMegaphone
 } from '@ng-icons/lucide';
 
 // PrimeNG
@@ -40,7 +40,7 @@ import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
     provideIcons({
       lucideChevronDown, lucideUser, lucideSettings,
       lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
-      lucideUsers, lucideSun, lucideMoon, lucideMenu
+      lucideUsers, lucideSun, lucideMoon, lucideMenu, lucideMegaphone
     })
   ],
   templateUrl: './header.component.html',

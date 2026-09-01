@@ -69,8 +69,15 @@ export const SECCIONES_CONFIGURACION: readonly SeccionConfiguracion[] = [
         clave: 'anuncios',
         etiqueta: 'Anuncios',
         icono: 'pi pi-megaphone',
-        descripcion: 'El aviso que aparece al entrar: cuándo se muestra y qué se publicó.',
+        descripcion: 'Los comunicados que aparecen al entrar: cuándo se muestran y cuáles se publicaron.',
         panel: 'anuncios',
+      },
+      {
+        clave: 'notificaciones',
+        etiqueta: 'Notificaciones',
+        icono: 'pi pi-bell',
+        descripcion: 'Los avisos que genera el sistema por tu actividad: qué recibís y por qué canal.',
+        ejemplos: ['Avisos dentro del sistema', 'Resumen por correo', 'Alertas de reportes programados'],
       },
       {
         clave: 'preferencias',

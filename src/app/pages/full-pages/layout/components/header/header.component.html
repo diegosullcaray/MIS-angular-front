@@ -42,16 +42,17 @@
       <ng-icon [name]="theme.oscuro() ? 'lucideSun' : 'lucideMoon'" size="15" />
     </button>
 
-    <!-- Anuncios del sistema. Muestra un punto solo cuando queda algo sin leer;
-         el diálogo se abre solo la primera vez y desde acá se relee cuando se
-         quiera. -->
+    <!-- Comunicados. Va con megáfono y NO con campana: la campana es de
+         notificaciones, que es otro ajuste y otro tipo de aviso. Muestra un
+         punto solo cuando queda algo sin leer; el diálogo se abre solo la
+         primera vez y desde acá se relee cuando se quiera. -->
     <button
       class="relative w-8 h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
       (click)="anuncios.abrir()"
-      aria-label="Anuncios del sistema"
-      title="Anuncios"
+      aria-label="Comunicados del sistema"
+      title="Comunicados"
     >
-      <ng-icon name="lucideBell" size="15" />
+      <ng-icon name="lucideMegaphone" size="15" />
       @if (anuncios.hayPendientes()) {
         <span
           class="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--mis-secondary)]"

@@ -50,6 +50,7 @@
       </div>
       <p-colorpicker
         format="hex"
+        appendTo="body"
         [ngModel]="apariencia().colorFondo"
         (ngModelChange)="elegirColorFondo($event)"
         inputId="mis-color-fondo"
@@ -78,6 +79,7 @@
       <li>
         <p-colorpicker
           format="hex"
+          appendTo="body"
           [ngModel]="apariencia().acento"
           (ngModelChange)="setAcento($event)"
           inputId="mis-color-acento"

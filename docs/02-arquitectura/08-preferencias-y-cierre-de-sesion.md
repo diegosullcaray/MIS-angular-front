@@ -101,24 +101,44 @@ abrir.
 El diálogo de anuncios aparecía en **cada inicio de sesión**. La corrección no es
 un `if` en el componente: es una regla de dominio.
 
-`anunciosPendientes(catalogo, vistos, hoy)` devuelve los anuncios vigentes que el
-usuario todavía no cerró. `AnunciosService.abrirSiCorresponde()` —que
-`ShellLayoutComponent` llama una sola vez, al entrar con un usuario autenticado—
-solo abre el diálogo si esa lista no está vacía y el usuario no los silenció.
-Cerrar el diálogo marca como vistos los anuncios que mostró, y con la lista al
-día el resultado es vacío: el aviso no vuelve.
+Un anuncio **es una imagen**: las piezas que publica Comunicación Interna ya
+vienen diseñadas y viven en `src/assets/images/fc/ads`. No hay título, cuerpo ni
+severidad — y hay **un comunicado vigente a la vez**, así que el visor muestra
+una sola imagen, sin recorrido ni paginación.
 
-Reglas del catálogo (`anuncios-del-sistema.ts`):
+`comunicadoVigente(catalogo, hoy)` devuelve la pieza publicada —el primer
+elemento del catálogo que no haya caducado— y `estaPendiente(anuncio, vistos)`
+dice si todavía hay que mostrarla. `AnunciosService.abrirSiCorresponde()` —que
+`ShellLayoutComponent` llama una sola vez, al entrar con un usuario
+autenticado— solo abre el diálogo si esa pieza sigue sin leerse y el usuario no
+la silenció. Cerrar el diálogo registra su `id` como visto, y con eso el aviso
+no vuelve.
 
-- El `id` es la identidad anti-spam. Corregir una errata no exige un id nuevo;
-  querer que todos vuelvan a verlo, sí (`...-v2`).
-- `vigenteHasta` es para lo que caduca (una ventana de mantenimiento).
+Publicar el siguiente comunicado (`anuncios-del-sistema.ts`):
+
+1. Dejar la imagen nueva en `src/assets/images/fc/ads`.
+2. Agregar su entrada **arriba** de `ANUNCIOS_DEL_SISTEMA`, con un `id` nuevo y
+   las medidas reales del archivo en `ancho`/`alto` — con ellas el navegador
+   reserva el espacio y el diálogo no salta mientras la imagen carga.
+
+Reglas del catálogo:
+
+- El `id` es la identidad anti-spam. Reemplazar la imagen para corregir una
+  errata no exige un id nuevo; querer que todos la vuelvan a ver, sí.
+- `vigenteHasta` es para lo que caduca: pasada esa fecha queda vigente el
+  siguiente de la lista.
 - `fijo` reaparece en cada ingreso aunque se cierre — para avisos que tienen que
   estar delante del usuario mientras duren.
 
 El catálogo se inyecta por el token `CATALOGO_ANUNCIOS`: hoy es una constante y
 mañana puede ser un servicio contra el backend sin tocar el caso de uso ni el
 diálogo.
+
+**Anuncios no es Notificaciones.** Son dos ajustes distintos en Configuración →
+General y se distinguen también por el ícono: los comunicados van con megáfono
+(`pi pi-megaphone`, y `lucideMegaphone` en el header) y las notificaciones —los
+avisos que genera el sistema por la actividad del usuario— con campana
+(`pi pi-bell`).
 
 ## Cierre de sesión
 
@@ -152,6 +172,18 @@ se acaba de cerrar.
 - **Configuración → Estructura** (`panel-estructura.component`): modo del menú,
   etiquetas y vista del explorador.
 - **Configuración → Anuncios** (`panel-anuncios.component`): silenciar, volver a
-  mostrar los leídos y releer lo publicado.
-- **Header**: el botón de tema, la campana de anuncios (con punto cuando queda
+  mostrar el comunicado leído y ver la pieza vigente.
+- **Header**: el botón de tema, el megáfono de comunicados (con punto cuando hay
   algo sin leer) y, solo en modo superpuesto, el botón que abre el rail.
+
+## Tests
+
+- Unitarios: `anuncio.model.spec.ts` (la regla anti-spam), `anuncios.service.spec.ts`,
+  `preferencias.service.spec.ts` (persistencia y variables CSS aplicadas),
+  `limpieza-sesion.service.spec.ts` y `almacenamiento-navegador.spec.ts` (borrado total).
+- E2E: `e2e/comunicados.spec.ts` (se abre en el primer ingreso y no vuelve) y
+  `e2e/configuracion.spec.ts` (el fondo se aplica y persiste, el selector de
+  color recibe el puntero, ninguna pantalla genera scroll horizontal).
+- `inyectarSesionVigente` siembra los comunicados silenciados: sin eso su
+  máscara modal taparía lo que prueban los demás specs. `comunicados.spec.ts`
+  usa `inyectarSesionSinPreferencias` para verlos, como un usuario nuevo.
