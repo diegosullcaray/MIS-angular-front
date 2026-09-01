@@ -14,8 +14,21 @@ import {
   type MoraEfectividadTramosResultado,
   extraerTarjetasMoraEfectividad,
 } from '../components/Cartera en Mora/items/mora-efectividad-tramos/models/mora-efectividad-tramos.model';
+import {
+  BLOQUES_MONITOR_EFECTIVIDADES,
+  BLOQUES_PROGRAMAS_GOBIERNO,
+  COD_MENSUAL_CRA,
+  COD_MENSUAL_DEPRECADO,
+  COD_MENSUAL_MULTIBLOQUE,
+} from '../constantes/actividad-mensual.constantes';
 import type { BloqueGrafico } from '../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
+/**
+ * Los reportes de Actividad Mensual que cuelgan de los hosts `cra-*`.
+ *
+ * Solo arma peticiones: los `cod_rep`, con su ruta del legado y su host, están
+ * en `constantes/actividad-mensual.constantes.ts`.
+ */
 @Injectable({ providedIn: 'root' })
 export class ActividadMensualCraService {
   private readonly bloques = inject(BloqueReporteService);
@@ -25,70 +38,70 @@ export class ActividadMensualCraService {
     return obs.pipe(map((tabla1: TablaReporteResultado) => ({ tabla1 })));
   }
 
+  /** Varios bloques del mismo reporte, todos con los mismos parámetros. */
+  private mismosParams(
+    codReps: readonly string[],
+    nodo: NodoConsulta,
+    extra?: Record<string, unknown>,
+  ): Observable<TablaReporteResultado[]> {
+    return this.bloques.regulares(
+      codReps.map((codRep) => ({ codRep, ...(extra ? { extra } : {}) })),
+      nodo,
+    );
+  }
+
   private consultarDeprecado(codRep: string, nodo: NodoConsulta, extra?: Record<string, unknown>): Observable<ReporteBloqueUnico> {
     const obs = extra && Object.keys(extra).length > 0 ? this.bloques.deprecado(codRep, nodo, extra) : this.bloques.deprecado(codRep, nodo);
     return obs.pipe(map((tabla1: TablaReporteResultado) => ({ tabla1 })));
   }
 
-  /** Plan de Datos (`app_uso_m` -> `P_Datos_01`, host `cra-v1p1`). */
+  /** Plan de Datos. */
   planDatos(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('P_Datos_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.planDatos, nodo, fec ? { fec } : undefined);
   }
 
-  /** Huella Carbono (`huella-carbono-m` -> `HCARBONO_01`, host `cra-v3`). */
+  /** Huella Carbono. */
   huellaCarbono(nodo: NodoConsulta, cargambiental: string, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('HCARBONO_01', nodo, { cargambiental, ...(fec ? { fec } : {}) });
+    return this.consultarRegular(COD_MENSUAL_CRA.huellaCarbono, nodo, { cargambiental, ...(fec ? { fec } : {}) });
   }
 
-  /** Gestión Cartera Reasignada Flujo (`gest_cart_her-flujo` -> `RS_AGE_COM_CRM_F`, host `cra-v11`). */
+  /** Gestión Cartera Reasignada Flujo. */
   gestionCarteraReasignadaFlujo(nodo: NodoConsulta, ver: number, fecha?: string): Observable<TablaReporteResultado[]> {
     const f = fecha ?? this.bloques.fecha();
-    return this.bloques.regulares(
-      [
-        { codRep: 'RS_AGE_COM_CRM_F_01', extra: { ver, fecha: f } },
-        { codRep: 'RS_AGE_COM_CRM_F_02', extra: { ver, fecha: f } },
-      ],
-      nodo,
-    );
+    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.gestionCarteraReasignadaFlujo, nodo, { ver, fecha: f });
   }
 
-  /** Gestión Cartera Stock (`gest_cart_stock` -> `RS_AGE_COM_CRM_S`, host `cra-v11`). */
+  /** Gestión Cartera Stock. */
   gestionCarteraStock(nodo: NodoConsulta, ver: number, tipo_ase: number, fecha?: string): Observable<TablaReporteResultado[]> {
     const f = fecha ?? this.bloques.fecha();
-    return this.bloques.regulares(
-      [
-        { codRep: 'RS_AGE_COM_CRM_S_03', extra: { ver, tipo_ase, fecha: f } },
-        { codRep: 'RS_AGE_COM_CRM_S_04', extra: { ver, tipo_ase, fecha: f } },
-      ],
-      nodo,
-    );
+    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.gestionCarteraStock, nodo, { ver, tipo_ase, fecha: f });
   }
 
-  /** CMG Captaciones (`cmg-capta` -> `GCMGCAP_01`, host `cra-v3`). */
+  /** CMG Captaciones. */
   cmgCaptaciones(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('GCMGCAP_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.cmgCaptaciones, nodo, fec ? { fec } : undefined);
   }
 
-  /** Seguimiento BP (`seg-bp-men` -> `CAP_SEGUI_BP_01`, host `cra-v3`). */
+  /** Seguimiento BP. */
   seguimientoBp(nodo: NodoConsulta, prod: string, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('CAP_SEGUI_BP_01', nodo, { prod, ...(fec ? { fec } : {}) });
+    return this.consultarRegular(COD_MENSUAL_CRA.seguimientoBp, nodo, { prod, ...(fec ? { fec } : {}) });
   }
 
-  /** Captación por Canal Comercial (`capta-caract-canal-comercial-m` -> `CARACT_CARTERA_M_01`, host `cra-v1p1`). */
+  /** Captación por Canal Comercial. */
   captacionCanalComercial(nodo: NodoConsulta, prod: string, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('CARACT_CARTERA_M_01', nodo, { prod, ...(fec ? { fec } : {}) });
+    return this.consultarRegular(COD_MENSUAL_CRA.captacionCanalComercial, nodo, { prod, ...(fec ? { fec } : {}) });
   }
 
-  /** Captación Operacional (`capta-caract-canal-operacional-m` -> `CARACT_pas_M_01`, host `cra-v1p1`). */
+  /** Captación Operacional. */
   captacionOperacional(nodo: NodoConsulta, prod: string, segmento: string, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('CARACT_pas_M_01', nodo, { prod, segmento, ...(fec ? { fec } : {}) });
+    return this.consultarRegular(COD_MENSUAL_CRA.captacionOperacional, nodo, { prod, segmento, ...(fec ? { fec } : {}) });
   }
 
-  /** Cartera por Producto (`cart-prod` -> gráfico `cartera_producto_rma_01`, tabla `cartera_producto_rma_02`, host `cra-v3`). */
+  /** Cartera por Producto. */
   carteraProducto(nodo: NodoConsulta, fec?: string): Observable<CarteraProductoResultado> {
     const extra = fec ? { fec } : undefined;
-    const tabla$ = this.bloques.deprecado('rma/administracion/Cartera/cartera_producto_rma_02', nodo, extra);
-    const graficos$ = this.bloques.graficos('rma/administracion/Cartera/cartera_producto_rma_01', nodo, extra);
+    const tabla$ = this.bloques.deprecado(COD_MENSUAL_DEPRECADO.carteraProductoTabla, nodo, extra);
+    const graficos$ = this.bloques.graficos(COD_MENSUAL_DEPRECADO.carteraProductoGraficos, nodo, extra);
 
     return forkJoin({ tabla: tabla$, graficos: graficos$ }).pipe(
       map(({ tabla, graficos }) => ({
@@ -99,42 +112,30 @@ export class ActividadMensualCraService {
     );
   }
 
-  /** Programas del Gobierno (`pro-gob-m` -> `RPROGOB_M`, host `cra-v1p3`). */
+  /** Programas del Gobierno. */
   programasGobierno(nodo: NodoConsulta, fec?: string): Observable<TablaReporteResultado[]> {
     const extraFec = fec ? { fec } : {};
-    return this.bloques.regulares(
-      [
-        { codRep: 'RPROGOB_M_01', extra: { var: 1, ...extraFec } },
-        { codRep: 'RPROGOB_M_02', extra: { var: 2, ...extraFec } },
-        { codRep: 'RPROGOB_M_03', extra: { var: 1, ...extraFec } },
-        { codRep: 'RPROGOB_M_04', extra: { var: 2, ...extraFec } },
-      ],
-      nodo,
-    );
+    const bloques = BLOQUES_PROGRAMAS_GOBIERNO.map(({ codRep, var: variante }) => ({
+      codRep,
+      extra: { var: variante, ...extraFec },
+    }));
+    return this.bloques.regulares(bloques, nodo);
   }
 
-  /** Contratación Electrónica (`cont-elect-m` -> `CONT_ELECT_M`, host `cra-v1p1`). */
+  /** Contratación Electrónica. */
   contratacionElectronica(nodo: NodoConsulta, fec?: string): Observable<TablaReporteResultado[]> {
-    const extra = fec ? { fec } : undefined;
-    return this.bloques.regulares(
-      [
-        { codRep: 'CONT_ELECT_M_01', ...(extra ? { extra } : {}) },
-        { codRep: 'CONT_ELECT_M_02', ...(extra ? { extra } : {}) },
-        { codRep: 'CONT_ELECT_M_03', ...(extra ? { extra } : {}) },
-      ],
-      nodo,
-    );
+    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.contratacionElectronica, nodo, fec ? { fec } : undefined);
   }
 
-  /** Ranking de Autonomías de Tasas (`rep-aut-tas` -> `reporte_autonomia_new_01`, host `cra-v1p1`). */
+  /** Ranking de Autonomías de Tasas. */
   rankingAutonomiasTasas(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('reporte_autonomia_new_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.rankingAutonomiasTasas, nodo, fec ? { fec } : undefined);
   }
 
-  /** Tasas Mes por Producto (`tp-mes` -> `rma/administracion/Cartera/tasa_producto_rma_01`, host `cra-v3`). */
+  /** Tasas Mes por Producto. */
   tasasMesProducto(nodo: NodoConsulta, fec?: string): Observable<TasasMesProductoResultado> {
     return this.bloques
-      .graficos('rma/administracion/Cartera/tasa_producto_rma_01', nodo, fec ? { fec } : undefined)
+      .graficos(COD_MENSUAL_DEPRECADO.tasasMesProducto, nodo, fec ? { fec } : undefined)
       .pipe(
         map((graficos) => ({
           graficos,
@@ -143,53 +144,41 @@ export class ActividadMensualCraService {
       );
   }
 
-  /** Comite de Créditos (`seg_comite` -> `SEGUI_COMITE_01`, host `cra-v3`). */
+  /** Comite de Créditos. */
   comiteCreditos(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('SEGUI_COMITE_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.comiteCreditos, nodo, fec ? { fec } : undefined);
   }
 
-  /** Datos por Producto (`dat-prod-men` -> `RS_DAT_PRO`, host `cra-v3`). */
+  /** Datos por Producto. */
   datosProducto(nodo: NodoConsulta, fecha?: string): Observable<TablaReporteResultado[]> {
     const f = fecha ?? this.bloques.fecha();
-    return this.bloques.regulares(
-      [
-        { codRep: 'RS_DAT_PRO_01', extra: { fecha: f } },
-        { codRep: 'RS_DAT_PRO_02', extra: { fecha: f } },
-        { codRep: 'RS_DAT_PRO_03', extra: { fecha: f } },
-        { codRep: 'RS_DAT_PRO_04', extra: { fecha: f } },
-      ],
-      nodo,
-    );
+    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.datosProducto, nodo, { fecha: f });
   }
 
-  /** CMG Cartera en Mora (`cmg-mora` -> `cuadro_Variable_M_01`, host `cra-v1p1`). */
+  /** CMG Cartera en Mora. */
   cmgCarteraMora(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('cuadro_Variable_M_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.cmgCarteraMora, nodo, fec ? { fec } : undefined);
   }
 
-  /** Evolutivo Cosechas (`graf-cosechas` -> `rma/administracion/Riesgos/grafico_cosechas_01`, host `cra-v3`). */
+  /** Evolutivo Cosechas. */
   evolutivoCosechas(nodo: NodoConsulta, prod: string, subpro: string, madu: string, op: string, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarDeprecado('rma/administracion/Riesgos/grafico_cosechas_01', nodo, { prod, subpro, madu, op, ...(fec ? { fec } : {}) });
+    return this.consultarDeprecado(COD_MENSUAL_DEPRECADO.evolutivoCosechas, nodo, { prod, subpro, madu, op, ...(fec ? { fec } : {}) });
   }
 
-  /** Monitor Efectividades (`mon-efec` -> `RS_MON_EFECM`, host `cra-v4`). */
+  /** Monitor Efectividades. */
   monitorEfectividades(nodo: NodoConsulta, fecha?: string): Observable<TablaReporteResultado[]> {
     const f = fecha ?? this.bloques.fecha();
-    return this.bloques.regulares(
-      [
-        { codRep: 'RS_MON_EFECM_01', extra: { fecha: f } },
-        { codRep: 'RS_MON_EFECM_02', extra: { fecha: f } },
-        { codRep: 'RS_MON_EFECM_03', extra: { fecha: f, tram: '1. -30-0' } },
-        { codRep: 'RS_MON_EFECM_03', extra: { fecha: f, tram: '2. 1-30' } },
-      ],
-      nodo,
-    );
+    const bloques = BLOQUES_MONITOR_EFECTIVIDADES.map(({ codRep, tram }) => ({
+      codRep,
+      extra: { fecha: f, ...(tram ? { tram } : {}) },
+    }));
+    return this.bloques.regulares(bloques, nodo);
   }
 
-  /** Mora y Efectividad por Tramos (`mor-efe` -> `rma/administracion/Mora/mora_efectividad_tramos_rma_01`, host `cra-v3`). */
+  /** Mora y Efectividad por Tramos. */
   moraEfectividadTramos(nodo: NodoConsulta, fec?: string): Observable<MoraEfectividadTramosResultado> {
     return this.bloques
-      .graficos('rma/administracion/Mora/mora_efectividad_tramos_rma_01', nodo, fec ? { fec } : undefined)
+      .graficos(COD_MENSUAL_DEPRECADO.moraEfectividadTramos, nodo, fec ? { fec } : undefined)
       .pipe(
         map((graficos) => ({
           graficos,
@@ -198,77 +187,65 @@ export class ActividadMensualCraService {
       );
   }
 
-  /** Monitor Efectividades Reasignados (`mon-efec-reasig` -> `RS_MON_EFECREASIGM`, host `cra-v12`). */
+  /** Monitor Efectividades Reasignados. */
   monitorEfectividadesReasignados(nodo: NodoConsulta, fecha?: string): Observable<TablaReporteResultado[]> {
     const f = fecha ?? this.bloques.fecha();
-    return this.bloques.regulares(
-      [
-        { codRep: 'RS_MON_EFECREASIGM_01', extra: { fecha: f } },
-        { codRep: 'RS_MON_EFECREASIGM_02', extra: { fecha: f } },
-      ],
-      nodo,
-    );
+    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.monitorEfectividadesReasignados, nodo, { fecha: f });
   }
 
-  /** Dashboard Cero Cuota Nueva (`graf-dashboard-CN` -> `rma/administracion/mora/Dashboard_rma_01`, host `cra-v3`). */
+  /** Dashboard Cero Cuota Nueva. */
   dashboardCeroCuotaNueva(nodo: NodoConsulta, fec?: string): Observable<BloqueGrafico[]> {
-    return this.bloques.graficos('rma/administracion/mora/Dashboard_rma_01', nodo, fec ? { fec } : undefined);
+    return this.bloques.graficos(COD_MENSUAL_DEPRECADO.dashboardCeroCuotaNueva, nodo, fec ? { fec } : undefined);
   }
 
-  /** Gestión de Cartera Reasignada Mes (`gest_cart_her` -> `RS_AGE_COM_CRM`, host `cra-v11`). */
+  /** Gestión de Cartera Reasignada Mes. */
   gestionCarteraReasignadaMes(nodo: NodoConsulta, ver: number, fecha?: string): Observable<TablaReporteResultado[]> {
     const f = fecha ?? this.bloques.fecha();
-    return this.bloques.regulares(
-      [
-        { codRep: 'RS_AGE_COM_CRM_01', extra: { ver, fecha: f } },
-        { codRep: 'RS_AGE_COM_CRM_02', extra: { ver, fecha: f } },
-      ],
-      nodo,
-    );
+    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.gestionCarteraReasignadaMes, nodo, { ver, fecha: f });
   }
 
-  /** CMG Cartera en Mora Sin Impulsa (`cmg-mora-simp-m` -> `cmg_mora_simp_m_01`, host `cra-v1p1`). */
+  /** CMG Cartera en Mora Sin Impulsa. */
   cmgCarteraMoraSinImpulsa(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('cmg_mora_simp_m_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.cmgCarteraMoraSinImpulsa, nodo, fec ? { fec } : undefined);
   }
 
-  /** Semáforo de Cosechas (`sema-cosechas` -> `COSESEMAFORO_01`, host `cra-v1p1`). */
+  /** Semáforo de Cosechas. */
   semaforoCosechas(nodo: NodoConsulta, prod: string, subpro: string, madu: string, op: string, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('COSESEMAFORO_01', nodo, { prod, subpro, madu, op, ...(fec ? { fec } : {}) });
+    return this.consultarRegular(COD_MENSUAL_CRA.semaforoCosechas, nodo, { prod, subpro, madu, op, ...(fec ? { fec } : {}) });
   }
 
-  /** CMG Clientes del Activo (`cmg-cli` -> `rma/administracion/Clientes/cmg_clientes_rma_01`, host `cra-v2`). */
+  /** CMG Clientes del Activo. */
   cmgClientesActivo(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarDeprecado('rma/administracion/Clientes/cmg_clientes_rma_01', nodo, fec ? { fec } : undefined);
+    return this.consultarDeprecado(COD_MENSUAL_DEPRECADO.cmgClientesActivo, nodo, fec ? { fec } : undefined);
   }
 
-  /** Desempeño Social (`desemp-social` -> `DESEMP_SOC_01`, host `cra-v3`). */
+  /** Desempeño Social. */
   desempenoSocial(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('DESEMP_SOC_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.desempenoSocial, nodo, fec ? { fec } : undefined);
   }
 
-  /** CMG Clientes Flujo (`cmg_cliente_flujo` -> `CMG_CLIF_01`, host `cra-v3`). */
+  /** CMG Clientes Flujo. */
   cmgClientesFlujo(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('CMG_CLIF_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.cmgClientesFlujo, nodo, fec ? { fec } : undefined);
   }
 
-  /** Resultados por Unidad de Negocio (`res-un` -> `resultado_unidad_negocio_rma_01`, host `cra-v1p1`). */
+  /** Resultados por Unidad de Negocio. */
   resultadosUnidadNegocio(nodo: NodoConsulta, canal: string, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('resultado_unidad_negocio_rma_01', nodo, { canal, ...(fec ? { fec } : {}) });
+    return this.consultarRegular(COD_MENSUAL_CRA.resultadosUnidadNegocio, nodo, { canal, ...(fec ? { fec } : {}) });
   }
 
-  /** Ranking Kaypacha Comercial (`rank-kay` -> `rankKay_01`, host `cra-v1p8`). */
+  /** Ranking Kaypacha Comercial. */
   rankingKaypachaComercial(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('rankKay_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.rankingKaypachaComercial, nodo, fec ? { fec } : undefined);
   }
 
-  /** Ranking Kaypacha Operaciones (`rank-kay-ope` -> `rankKayOpe_01`, host `cra-v1p8`). */
+  /** Ranking Kaypacha Operaciones. */
   rankingKaypachaOperaciones(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('rankKayOpe_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.rankingKaypachaOperaciones, nodo, fec ? { fec } : undefined);
   }
 
-  /** Ranking Kaypacha Recuperaciones (`rank-kay-recu` -> `rankKayrecu_01`, host `cra-v1p8`). */
+  /** Ranking Kaypacha Recuperaciones. */
   rankingKaypachaRecuperaciones(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular('rankKayrecu_01', nodo, fec ? { fec } : undefined);
+    return this.consultarRegular(COD_MENSUAL_CRA.rankingKaypachaRecuperaciones, nodo, fec ? { fec } : undefined);
   }
 }

@@ -142,3 +142,21 @@ export function mapearBloquesGrafico(r: IWinderResponse): BloqueGrafico[] {
     };
   });
 }
+
+/** El `resultado` crudo de una respuesta del motor `table.regular`, sin mapear. */
+export function resultadoCrudo(r: { body?: unknown }): TablaRegularResultadoRaw | undefined {
+  return (r.body as { resultado?: TablaRegularResultadoRaw } | null)?.resultado;
+}
+
+/** Tabla cuyas cabeceras vienen serializadas en el propio payload. */
+export function tablaDeResultado(resultado: TablaRegularResultadoRaw | undefined): TablaDinamicaResultado {
+  return {
+    columnas: resultado?.headers ? (JSON.parse(resultado.headers) as ColumnaDinamica[]) : [],
+    filas: (resultado?.data ?? []) as Record<string, unknown>[],
+  };
+}
+
+/** Las filas de un `resultado` crudo, ya tipadas. */
+export function filasDeResultado(resultado: TablaRegularResultadoRaw | undefined): Record<string, unknown>[] {
+  return (resultado?.data ?? []) as Record<string, unknown>[];
+}

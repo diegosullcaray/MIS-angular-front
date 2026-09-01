@@ -3,101 +3,104 @@ import { HttpContext } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
-import { TIMEOUT_MS, TIMEOUT_REPORTE_PESADO_MS } from '../../../../../../core/interceptors/auth.interceptor';
-import type { ColumnaDinamica, TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../models/tabla-dinamica.model';
-import type { CmgCarteraResultado, TarjetaCmgCartera } from '../../actividad-diaria/components/Cartera/models/cmg-cartera.model';
-import type { CarteraAgricolaResultado, TotalAgro, DetalleAgricolaResultado } from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
-import { GRAFICOS_AGRICOLA, TOTALES_AGRO } from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
-import type { BloqueGrafico } from '../../../../../../shared/ui/graficos/models/grafico-comun.model';
-import { colorSerieReporte } from '../../../../../../shared/ui/graficos/utils/paleta-colores.util';
+import { TIMEOUT_MS } from '../../../../../../core/interceptors/auth.interceptor';
+import { filasDeResultado, resultadoCrudo, tablaDeResultado } from '../../../utils/reportes-mapeo.util';
+import { COD_MENSUAL_REPO, TIMEOUT_ESTRUCTURA_DESEMBOLSOS_MS } from '../constantes/actividad-mensual.constantes';
+import { aplicarEstilosEstructuraDesembolsos } from '../utils/estructura-desembolsos.util';
+import { seriesDeGraficoConColor, tarjetasCmgCarteraMensual } from '../utils/actividad-mensual-mapeo.util';
+import {
+  columnasVisibles,
+  conColumnasSemaforo,
+  totalesAgro,
+} from '../../actividad-diaria/components/Cartera/utils/cartera-mapeo.util';
+import { GRAFICOS_AGRICOLA } from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
+import type { TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../models/tabla-dinamica.model';
+import type { CmgCarteraResultado } from '../../actividad-diaria/components/Cartera/models/cmg-cartera.model';
+import type {
+  CarteraAgricolaResultado,
+  DetalleAgricolaResultado,
+} from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
 import type { OpcionFiltro } from '../../../../../../shared/ui/formularios/opcion-filtro.model';
 
+/**
+ * Los reportes mensuales del `repositorio` del legado (motor `table.regular`).
+ *
+ * Solo arma peticiones: los `cod_rep` están en `constantes/` y el mapeo de cada
+ * payload en `utils/`. Varios comparten reporte con la versión diaria, y por eso
+ * reutilizan el mapeo de Cartera en vez de duplicarlo.
+ */
 @Injectable({ providedIn: 'root' })
 export class ActividadMensualRepoService {
   private readonly bloques = inject(BloqueReporteService);
   private readonly reportes = inject(ModReportesService);
 
-  /** Opciones de periodos para reportes con filtro de cierre mensual. */
-  periodos(codRep = 'RS_FECH'): Observable<OpcionFiltro[]> {
+  /** Opciones del filtro de cierre mensual. */
+  periodos(codRep: string = COD_MENSUAL_REPO.periodos): Observable<OpcionFiltro[]> {
     return this.bloques.periodos(codRep);
   }
 
-  /** Tablero Digital Comercial (`RS_TAB_COM_01`). */
+  /** Tablero Digital Comercial. */
   tableroDigitalComercial(nodo: NodoConsulta, fecha?: string): Observable<TablaDinamicaResultado> {
-    return this.bloques.tablaRegularCon('RS_TAB_COM_01', {
-      tip_cod: nodo.tip_cod,
-      cod_rel: nodo.cod_rel,
-      fec: fecha || this.bloques.fecha(),
-    });
+    return this.bloques.tablaRegularCon(COD_MENSUAL_REPO.tableroDigitalComercial, this.paramsConFecha(nodo, fecha));
   }
 
-  /** Estructura de Desembolsos — versión mensual (`RS_DESEMB_02`, con filtro de periodos).
-   *
-   * El legado `desembolsos-m` usa `RS_DESEMB_02` con la fecha seleccionada del filtro `RS_FECH`,
-   * a diferencia de la versión diaria que usa `RS_DESEMB_01` con la fecha de corte del usuario.
-   * Timeout extendido a 3 min (180 s) — es más pesado que otros reportes mensuales.
-   */
+  /** Estructura de Desembolsos mensual, con su coloración condicional. */
   estructuraDesembolsosMensual(nodo: NodoConsulta, fec: string): Observable<TablaDinamicaResultado> {
-    const context = new HttpContext().set(TIMEOUT_MS, 180_000);
+    const context = new HttpContext().set(TIMEOUT_MS, TIMEOUT_ESTRUCTURA_DESEMBOLSOS_MS);
     return this.bloques
-      .tablaRegularCon('RS_DESEMB_02', {
-        tip_cod: nodo.tip_cod,
-        cod_rel: nodo.cod_rel,
-        fec: fec || this.bloques.fecha(),
-      }, context)
-      .pipe(map((tabla) => aplicarEstilosEstructuraDesembolsos(tabla)));
+      .tablaRegularCon(COD_MENSUAL_REPO.estructuraDesembolsos, this.paramsConFecha(nodo, fec), context)
+      .pipe(map(aplicarEstilosEstructuraDesembolsos));
   }
 
-  /** Cartera Agrícola - Cultivos (`RS_AGROMIX_01`). */
+  /** Cartera Agrícola · Cultivos. Las tarjetas del mes anterior salen de `meta1[0]`. */
   carteraAgricola(nodo: NodoConsulta, fecha?: string): Observable<CarteraAgricolaResultado> {
-    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: fecha || this.bloques.fecha() };
-    return this.reportes.getRegularTableResult('RS_AGROMIX_01', params).pipe(
-      map((r: { body?: unknown }) => {
-        const resultado = crudo(r);
-        const filas = (resultado?.data ?? []) as Record<string, unknown>[];
-        const meta = (typeof resultado?.meta1 === 'string' ? JSON.parse(resultado.meta1) : resultado?.meta1) as
-          | Record<string, unknown>[]
-          | undefined;
-        return {
-          tabla: { columnas: resultado?.headers ? (JSON.parse(resultado.headers) as ColumnaDinamica[]) : [], filas },
-          totales: totalesAgro(filas[0] ?? {}, meta?.[0] ?? {}),
-        };
-      }),
-    );
+    return this.reportes
+      .getRegularTableResult(COD_MENSUAL_REPO.carteraAgricola, this.paramsConFecha(nodo, fecha))
+      .pipe(
+        map((r) => {
+          const resultado = resultadoCrudo(r);
+          const meta = parseMeta(resultado);
+          return {
+            tabla: tablaDeResultado(resultado),
+            totales: totalesAgro(filasDeResultado(resultado)[0] ?? {}, meta?.[0] ?? {}),
+          };
+        }),
+      );
   }
 
-  /** Detalle gráficos agrícola (`RS_AGROMIX_02` al `_05`). */
+  /** Los cuatro gráficos del detalle por cultivo. */
   detalleGraficosAgricola(nodo: NodoConsulta, fecha?: string): Observable<DetalleAgricolaResultado> {
-    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: fecha || this.bloques.fecha() };
-    const observables = GRAFICOS_AGRICOLA.map((g: { codRep: string }) =>
-      this.reportes.getRegularTableResult(g.codRep, params),
-    );
+    const params = this.paramsConFecha(nodo, fecha);
+    const bloques = GRAFICOS_AGRICOLA.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
 
-    return forkJoin(observables).pipe(
-      map((respuestas: { body?: unknown }[]) => {
+    return forkJoin(bloques).pipe(
+      map((respuestas) => {
         const filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
-        const graficos = respuestas.map((r: { body?: unknown }, i: number) => {
+        const graficos = respuestas.map((r, i) => {
           const { titulo, id } = GRAFICOS_AGRICOLA[i];
-          const resultado = crudo(r);
-          if (id) filasPorGrafico[id] = (resultado?.data ?? []) as Record<string, unknown>[];
-          return { titulo, ...seriesDeGrafico(resultado?.headers) };
+          const resultado = resultadoCrudo(r);
+          if (id) filasPorGrafico[id] = filasDeResultado(resultado);
+          return { titulo, ...seriesDeGraficoConColor(resultado?.headers) };
         });
         return { graficos, filasPorGrafico };
       }),
     );
   }
 
-  /** CMG Cartera (`CMG_CARTERA_01` y `_02`). */
+  /**
+   * CMG Cartera. Las dos consultas usan nombres de parámetro distintos entre sí
+   * (`codrel`/`Fecha` una, `cod_rel`/`fec` la otra): así los espera el backend.
+   */
   cmgCartera(nodo: NodoConsulta, fase: number, fecha?: string): Observable<CmgCarteraResultado> {
     const fecCorte = fecha || this.bloques.fecha();
-    const tabla$ = this.reportes.getRegularTableResult('CMG_CARTERA_01', {
+    const tabla$ = this.reportes.getRegularTableResult(COD_MENSUAL_REPO.cmgCarteraTabla, {
       codrel: nodo.cod_rel,
       Fecha: fecCorte,
       tipcod: nodo.tip_cod,
       met: '1',
       prod: fase,
     });
-    const kpis$ = this.reportes.getRegularTableResult('CMG_CARTERA_02', {
+    const kpis$ = this.reportes.getRegularTableResult(COD_MENSUAL_REPO.cmgCarteraKpis, {
       tipcod: nodo.tip_cod,
       cod_rel: nodo.cod_rel,
       tipmet: '1',
@@ -105,202 +108,26 @@ export class ActividadMensualRepoService {
       fec: fecCorte,
     });
 
-    return forkJoin({ respTabla: tabla$, respKpis: kpis$ }).pipe(
-      map(({ respTabla, respKpis }) => {
-        const rTabla = crudo(respTabla as { body?: unknown });
-        const filas = (rTabla?.data ?? []) as Record<string, unknown>[];
-        const kpis = ((crudo(respKpis as { body?: unknown })?.data ?? []) as Record<string, unknown>[])[0] ?? {};
+    return forkJoin([tabla$, kpis$]).pipe(
+      map(([respTabla, respKpis]) => {
+        const rTabla = resultadoCrudo(respTabla);
+        const filas = filasDeResultado(rTabla);
+        const kpis = filasDeResultado(resultadoCrudo(respKpis))[0] ?? {};
         return {
           tabla: { columnas: conColumnasSemaforo(columnasVisibles(rTabla?.headers)), filas },
-          tarjetas: tarjetas(filas, kpis),
+          tarjetas: tarjetasCmgCarteraMensual(filas, kpis),
         };
       }),
     );
   }
-}
 
-function crudo(r: { body?: unknown }): TablaRegularResultadoRaw | undefined {
-  return (r?.body as { resultado?: TablaRegularResultadoRaw } | null)?.resultado;
-}
-
-function columnasVisibles(headers: string | undefined): ColumnaDinamica[] {
-  if (!headers) return [];
-  const todas = JSON.parse(headers) as (ColumnaDinamica & { cellStyle?: { display?: string } })[];
-  return todas.filter((h) => h.cellStyle?.display?.toLowerCase() !== 'none');
-}
-
-function tarjetas(filasTabla: Record<string, unknown>[], kpis: Record<string, unknown>): TarjetaCmgCartera[] {
-  const num = (v: unknown) => Number(String(v ?? '0').replace(/[^0-9.-]/g, '')) || 0;
-  const fila18 = filasTabla[18] as Record<string, unknown> | undefined;
-  const fila16 = filasTabla[16] as Record<string, unknown> | undefined;
-
-  const saldoMedio = num(fila18?.[6]);
-  const saldoMedioAnterior = num(fila18?.[5]);
-  const deltaSaldo = saldoMedio - saldoMedioAnterior;
-
-  const rawTappMes = String(fila16?.[6] ?? '').trim();
-  const rawTappMinima = String(kpis['tasaminima'] ?? '').trim();
-  const numTappMes = fila16?.[6] == null ? 0 : num(fila16[6]);
-  const numTappMinima = kpis['tasaminima'] == null ? 0 : num(kpis['tasaminima']);
-  const deltaPbs = Math.round((numTappMes - numTappMinima) * 100);
-  const senalTapp = numTappMes >= numTappMinima ? 1 : -1;
-  const senalSaldo = deltaSaldo >= 0 ? 1 : -1;
-
-  const displayTappMes = rawTappMes ? (rawTappMes.includes('%') ? rawTappMes : `${numTappMes.toFixed(2)} %`) : '—';
-  const displayTappMin = rawTappMinima ? (rawTappMinima.includes('%') ? rawTappMinima : `${numTappMinima.toFixed(2)} %`) : '—';
-
-  return [
-    {
-      etiqueta: 'Monto Desembolsado (miles PEN)',
-      valor: num(kpis['des_acum']) / 1000,
-      comparativo: `Meta ${(num(kpis['meta_des_acum']) / 1000).toLocaleString('es-PE', { maximumFractionDigits: 0 })}`,
-      senal: 0,
-      cumplimiento: kpis['cumpl_des_acum'] == null ? undefined : num(kpis['cumpl_des_acum']),
-    },
-    {
-      etiqueta: 'Ope. Desembolsada (Nro)',
-      valor: num(kpis['ope_acum_']),
-      comparativo: `Meta ${num(kpis['meta_ope_acum_']).toLocaleString('es-PE')}`,
-      senal: 0,
-      cumplimiento: kpis['cumpl_ope_acum'] == null ? undefined : num(kpis['cumpl_ope_acum']),
-    },
-    {
-      etiqueta: 'TAPP Mes / TAPP Mínima',
-      valor: displayTappMes,
-      comparativo: `Mínima ${displayTappMin}`,
-      senal: senalTapp,
-      delta: `${deltaPbs >= 0 ? '+' : ''}${deltaPbs.toLocaleString('es-PE')} pbs`,
-    },
-    {
-      etiqueta: 'Saldo Medio Vigente (miles PEN)',
-      valor: saldoMedio,
-      comparativo: `Mes anterior ${saldoMedioAnterior.toLocaleString('es-PE', { maximumFractionDigits: 0 })}`,
-      senal: senalSaldo,
-      delta: `${deltaSaldo >= 0 ? '+' : ''}${Math.round(deltaSaldo).toLocaleString('es-PE')}`,
-    },
-  ];
-}
-
-const SEMAFOROS_CMG_CARTERA: Readonly<Record<string, string>> = { '9': '8', '11': '10', '13': '12' };
-
-function conColumnasSemaforo(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
-  return columnas.map((c) => (SEMAFOROS_CMG_CARTERA[c.key] ? { ...c, semaforoKey: SEMAFOROS_CMG_CARTERA[c.key] } : c));
-}
-
-function totalesAgro(primeraFila: Record<string, unknown>, mesAnterior: Record<string, unknown>): TotalAgro[] {
-  return TOTALES_AGRO.map(({ clave, etiqueta, formato }: { clave: string; etiqueta: string; formato: 'entero' | 'moneda' }) => {
-    const actual = Number(primeraFila[clave] ?? 0);
-    const anterior = Number(mesAnterior[clave] ?? 0);
-    return { etiqueta, formato, actual, anterior, senal: Math.sign(actual - anterior) };
-  });
-}
-
-function seriesDeGrafico(headers: string | undefined): Pick<BloqueGrafico, 'categorias' | 'series'> {
-  if (!headers) return { categorias: [], series: [] };
-  const datos = JSON.parse(headers) as { categories?: string[]; series?: { name: string; data: (number | null)[] }[] };
-  const esUnica = (datos.series ?? []).length === 1;
-  return {
-    categorias: datos.categories ?? [],
-    series: (datos.series ?? []).map((s) => ({
-      nombre: s.name,
-      datos: s.data,
-      color: colorSerieReporte(s.name, esUnica),
-    })),
-  };
-}
-
-const COLORES_CRONOLOGICOS_DESEMB = [
-  { bg: '#22c55e', text: '#ffffff' }, // Verde (menor valor)
-  { bg: '#84cc16', text: '#ffffff' }, // Verde limón
-  { bg: '#eab308', text: '#000000' }, // Amarillo
-  { bg: '#f97316', text: '#ffffff' }, // Naranja
-  { bg: '#ef4444', text: '#ffffff' }, // Rojo (mayor valor)
-];
-
-function getEstiloCeldaEstructuraDesembolsos(
-  fila: Record<string, unknown>,
-  columnKey: string,
-  grupoColumnas: string[],
-): Record<string, string> | undefined {
-  if (!fila || !columnKey) return undefined;
-  const idRango = Number(fila['IDRango'] ?? fila['idrango'] ?? fila['ID_RANGO']);
-  const desRango = String(fila['DES_RANGO'] ?? fila['des_rango'] ?? fila['RangoDesembolso'] ?? '').toLowerCase();
-  const esFilaObjetivo = idRango === 12 || desRango.includes('%') || desRango.includes('part');
-
-  if (!esFilaObjetivo) return undefined;
-
-  const parseNum = (v: unknown): number => {
-    if (v == null) return 0;
-    const clean = String(v).replace(/%/g, '').replace(/,/g, '').trim();
-    const num = parseFloat(clean);
-    return isNaN(num) ? 0 : num;
-  };
-
-  const valoresGrupo = grupoColumnas.map((col) => ({
-    key: col,
-    value: parseNum(fila[col]),
-  }));
-
-  const ordenados = [...valoresGrupo].sort((a, b) => a.value - b.value);
-  const index = ordenados.findIndex((item) => item.key.toLowerCase() === columnKey.toLowerCase());
-  if (index === -1) return undefined;
-
-  let color = COLORES_CRONOLOGICOS_DESEMB[index] ?? COLORES_CRONOLOGICOS_DESEMB[0];
-  if (grupoColumnas.length === 3) {
-    const mapaTres = [COLORES_CRONOLOGICOS_DESEMB[0], COLORES_CRONOLOGICOS_DESEMB[2], COLORES_CRONOLOGICOS_DESEMB[4]];
-    color = mapaTres[index] ?? COLORES_CRONOLOGICOS_DESEMB[0];
+  private paramsConFecha(nodo: NodoConsulta, fecha?: string): Record<string, unknown> {
+    return { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: fecha || this.bloques.fecha() };
   }
-
-  return {
-    'background-color': color.bg,
-    color: color.text,
-    'font-weight': 'bold',
-    'text-align': 'center',
-    'border-radius': '4px',
-  };
 }
 
-export function aplicarEstilosEstructuraDesembolsos(tabla: TablaDinamicaResultado): TablaDinamicaResultado {
-  if (!tabla || !tabla.columnas) return tabla;
-
-  // Detecta dinámicamente las columnas _Ope y _MON presentes en los headers
-  // (3 columnas en la versión diaria RS_DESEMB_01, 5 columnas en la mensual RS_DESEMB_02)
-  function todasLasColumnas(cols: ColumnaDinamica[]): ColumnaDinamica[] {
-    return cols.flatMap((c) => [c, ...(c.subs ? todasLasColumnas(c.subs) : [])]);
-  }
-
-  const todasLasKeys = todasLasColumnas(tabla.columnas)
-    .map((c) => c.key)
-    .filter((k): k is string => Boolean(k));
-  const columnasOpe = todasLasKeys.filter((k) => /^\d+_ope$/i.test(k)).sort();
-  const columnasMon = todasLasKeys.filter((k) => /^\d+_mon$/i.test(k)).sort();
-
-  function procesarColumnas(cols: ColumnaDinamica[]): ColumnaDinamica[] {
-    return cols.map((col) => {
-      const nuevaCol = { ...col };
-      const colKey = col.key ? col.key.toLowerCase() : '';
-      const isOpe = colKey ? columnasOpe.some((k) => k.toLowerCase() === colKey) : false;
-      const isMon = colKey ? columnasMon.some((k) => k.toLowerCase() === colKey) : false;
-
-      if (isOpe && col.key) {
-        nuevaCol.cellStyleFn = (_v, fila) =>
-          getEstiloCeldaEstructuraDesembolsos(fila, col.key, columnasOpe);
-      } else if (isMon && col.key) {
-        nuevaCol.cellStyleFn = (_v, fila) =>
-          getEstiloCeldaEstructuraDesembolsos(fila, col.key, columnasMon);
-      }
-
-      if (nuevaCol.subs && nuevaCol.subs.length > 0) {
-        nuevaCol.subs = procesarColumnas(nuevaCol.subs);
-      }
-      return nuevaCol;
-    });
-  }
-
-  return {
-    ...tabla,
-    columnas: procesarColumnas(tabla.columnas),
-    filas: tabla.filas ?? [],
-  };
+/** `meta1` llega serializado en unos bloques y ya parseado en otros. */
+function parseMeta(resultado: TablaRegularResultadoRaw | undefined): Record<string, unknown>[] | undefined {
+  const meta = resultado?.meta1;
+  return (typeof meta === 'string' ? JSON.parse(meta) : meta) as Record<string, unknown>[] | undefined;
 }
-
