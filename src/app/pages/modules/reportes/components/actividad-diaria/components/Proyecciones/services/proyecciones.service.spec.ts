@@ -68,7 +68,7 @@ describe('ProyeccionesService', () => {
   });
 
   /**
-   * Tarea 1 de `incidencias-proeyecciones.md`: el reporte se caía con el 500
+   * Incidencia reportada en Proyecciones: el reporte se caía con el 500
    * (`NullPointerException: Resultado vacio para: regularData`) y no terminaba
    * de cargar dentro del timeout global de 30 s.
    */

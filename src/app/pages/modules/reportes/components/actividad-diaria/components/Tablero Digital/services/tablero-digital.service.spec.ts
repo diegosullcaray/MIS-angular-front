@@ -17,7 +17,7 @@ function usuario(): UsuarioActivo {
  * Los seis reportes de "Tablero Digital", resueltos contra `cra-map.ts` y
  * `rda-administracion-routing.module.ts`.
  *
- * Este spec existe porque `docs/10-migraciones/ejercicio-03.md` propuso otros
+ * Este spec existe porque el enunciado de la migración propuso otros
  * `cod_rep`, otros `id` y otras jerarquías, ninguno de los cuales está en el
  * legado. Lo que se fija acá es el mapa real.
  */
@@ -53,7 +53,7 @@ describe('TableroDigitalService', () => {
 
   /**
    * Los dos reportes de "Gestión" declaran `_02` en el mapa. Pedir `_01` —que
-   * es lo que propone `ejercicio-03.md`— apunta a un bloque que no existe.
+   * es lo que proponía ese enunciado— apunta a un bloque que no existe.
    */
   it.each([
     ['gestionCanal', 'GCTABDIG_VR2_OPE_02'],

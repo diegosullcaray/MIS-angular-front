@@ -1,7 +1,7 @@
 import { derivadosDeFilaTotal, KPIS_BANCA_SOLIDARIA_VACIOS } from './banca-solidaria.model';
 
 /**
- * Regresión de la tarea 3 de `incidencias-proeyecciones.md`: "faltan las
+ * Regresión de una incidencia reportada en Proyecciones: "faltan las
  * tarjetas de indicadores (KPIs) y las gráficas del dashboard legacy".
  *
  * Igual que en Gestión Comercial y Seguros Optativos, no son bloques aparte: el

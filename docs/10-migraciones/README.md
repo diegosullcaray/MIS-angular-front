@@ -1,37 +1,33 @@
-# Migraciones — Actividad Diaria
+# Migración del legado STG
 
-Carpeta de trabajo de la migración del sistema legado STG a la app Host.
+Lo que queda de la migración del sistema legado a la app Host, una vez que el
+código migrado pasó a ser la fuente de verdad.
 
-## Por dónde empezar
+| Archivo | Qué es |
+|---|---|
+| [`sintaxis.json`](sintaxis.json) | Inventario del árbol de "Actividad Diaria" del legado: nodos, reportes y rutas. Se actualiza cuando cambia el menú del legado. |
 
-| Archivo | Qué es | Cuándo se toca |
-|---|---|---|
-| [`sintaxis.json`](sintaxis.json) | Inventario del árbol de "Actividad Diaria": nodos, reportes y rutas | Cuando cambia el menú del legado |
-| [`estado-migracion.md`](estado-migracion.md) | Qué está migrado y qué falta, auditado contra el código real | Al terminar cada ejercicio |
-| [`promt-01.md`](promt-01.md) | El prompt de migración (v2) | Cuando un ejercicio deja una lección nueva |
-| [`ejercicio-02.md`](ejercicio-02.md) | Enunciado del lote 02 | — |
+El código fuente del legado, que es la referencia real al migrar una pantalla,
+está en [`../07-modulos/`](../07-modulos/).
 
-## Historial
+## Cómo se migra una pantalla
 
-| Ejercicio | Módulo | Alcance | Resultado |
-|---|---|---|---|
-| 01 | Cartera en Mora | 17 pantallas | [`ejercicio-01-resultado.md`](ejercicio-01-resultado.md) · enunciado original en [`ejercicico-01.md`](ejercicico-01.md) |
-| 02 | Seguros · Campañas · Comercial Ejecutivo · Proyecciones · Reportes PDM · Movilidad | 17 reportes | [`ejercicio-02-resultado.md`](ejercicio-02-resultado.md) |
+1. Buscá la pantalla en `docs/07-modulos/` y leé **su componente entero**, no la
+   primera mitad: es donde suelen estar los bloques comentados, las pestañas y
+   los filtros que no se ven desde arriba.
+2. Resolvé el `cod_rep`, el host y el motor contra `cra-map.ts` y los
+   `report-cra-*` del legado. **El motor lo decide el host, no el `reportType`
+   del mapa.**
+3. Seguí [`../02-arquitectura/02-anatomia-de-un-modulo.md`](../02-arquitectura/02-anatomia-de-un-modulo.md)
+   para dónde va cada cosa, y
+   [`../02-arquitectura/03-tablas-de-reportes.md`](../02-arquitectura/03-tablas-de-reportes.md)
+   para la tabla.
+4. Migrá **lo que el legado muestra**, ni más ni menos. Si una parte no se puede
+   reproducir sin inventar datos —una meta que no se sabe de dónde sale, por
+   ejemplo—, se deja fuera y se anota como pendiente. Poner números inventados en
+   un tablero de banca es peor que no mostrarlos.
 
-Con el ejercicio 02, los 24 reportes que `sintaxis.json` detalla quedan
-migrados. Lo único que falta del árbol son los nodos `Aplicativo Móvil` y
-`Tablero Digital`, que el JSON declara sin `elementos`.
+## Registro de lo migrado
 
-## Ciclo de trabajo
-
-1. Tomar el enunciado del ejercicio y el prompt (`promt-01.md`).
-2. Migrar, verificando contra el legado (nunca asumiendo).
-3. Verificar: `tsc` app + spec, build de producción, `ng test`, smoke e2e.
-4. Escribir `ejercicio-NN-resultado.md`.
-5. Actualizar `estado-migracion.md` (trae el script para regenerar la tabla).
-6. Si el ejercicio dejó una lección que se puede generalizar, incorporarla al
-   prompt y anotarla en su tabla de cambios.
-
-El paso 6 es el que hace que esto mejore: el prompt v2 salió del ejercicio 01, y
-las dos trampas nuevas (comentarios en el mapa legado, `OFI_3` ≠ oficina)
-salieron de auditar el lote del ejercicio 02 antes de empezarlo.
+No se lleva en un `.md`: se lee del código. El inventario de pantallas son los
+`.routes.ts` de cada módulo, y lo que funciona lo dicen los tests.
