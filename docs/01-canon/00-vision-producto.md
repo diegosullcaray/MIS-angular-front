@@ -1,6 +1,6 @@
 # 00 — Visión de producto: el MIS Host es un router de sistemas
 
-> **Documentacion:** [Indice](../README.md) | [Arquitectura del código actual](../02-arquitectura/05-arquitectura-frontend-actual.md)
+> **Documentacion:** [Indice](../README.md) | [Cómo funciona el sistema](../02-arquitectura/01-como-funciona-el-sistema.md)
 
 > Este documento es la entrada al canon: la frase que hay que poder repetir de memoria
 > antes de leer el resto de la documentación técnica.
@@ -71,4 +71,4 @@ cada fila vive en el TRD.
 
 Para el detalle técnico de cómo está construido el código hoy (arranque, login, guards,
 convención de módulo, obtención de datos) ver
-[`05-arquitectura-frontend-actual.md`](../02-arquitectura/05-arquitectura-frontend-actual.md).
+[`01-como-funciona-el-sistema.md`](../02-arquitectura/01-como-funciona-el-sistema.md).

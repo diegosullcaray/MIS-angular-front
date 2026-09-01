@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteCaptaciones } from '../models/captaciones.model';
+import { COD_ANALISTA_MULTIBLOQUE } from '../constantes/analista.constantes';
 
 /** Datos de "Captaciones" (legado `leg/com/rda/sec/capta`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/captaciones/captacion_sec`). */
 @Injectable({ providedIn: 'root' })
@@ -20,9 +21,15 @@ export class CaptacionesService {
   /** Captaciones de un asesor — 3 bloques (`..._sec_01`/`_02`/`_03`). */
   obtenerCaptaciones(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteCaptaciones> {
     return forkJoin({
-      tabla1: this.reportes.getDeprecatedData('rda/sectorista/captaciones/captacion_sec_01', asesor).pipe(map(mapearBloqueReporte)),
-      tabla2: this.reportes.getDeprecatedData('rda/sectorista/captaciones/captacion_sec_02', asesor).pipe(map(mapearBloqueReporte)),
-      tabla3: this.reportes.getDeprecatedData('rda/sectorista/captaciones/captacion_sec_03', asesor).pipe(map(mapearBloqueReporte)),
+      tabla1: this.bloque(COD_ANALISTA_MULTIBLOQUE.captaciones[0], asesor),
+      tabla2: this.bloque(COD_ANALISTA_MULTIBLOQUE.captaciones[1], asesor),
+      tabla3: this.bloque(COD_ANALISTA_MULTIBLOQUE.captaciones[2], asesor),
     });
   }
+
+  /** Un bloque del reporte, ya mapeado. */
+  private bloque(codRep: string, asesor: { tip_cod: number; cod_rel: string }) {
+    return this.reportes.getDeprecatedData(codRep, asesor).pipe(map(mapearBloqueReporte));
+  }
+
 }

@@ -6,6 +6,7 @@ import { fechaUltimoDia } from '../../../utils/fecha-reporte.util';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas, ReporteMonitorMetasDesembolso } from '../models/avance-comercial.model';
+import { COD_AVANCE_COMERCIAL } from '../constantes/avance-comercial.constantes';
 
 /** Datos de los reportes del dominio "Avance Comercial": Monitor Metas Desembolso y Monitor Reprogramados. */
 @Injectable({ providedIn: 'root' })
@@ -15,10 +16,10 @@ export class AvanceComercialService {
   /** "Monitor Metas Desembolso" (`Monitor_Dese_01..04`) para un nivel de jerarquía. */
   obtenerMonitorMetasDesembolso(nivel: Pick<HierarquiaNodo, 'tip_cod' | 'cod_rel'>): Observable<ReporteMonitorMetasDesembolso> {
     return forkJoin({
-      t1: this.ant.getRegularData('Monitor_Dese_01', { ...nivel, tipmet: 1 }).pipe(map(mapearBloqueReporte)),
-      t2: this.ant.getRegularData('Monitor_Dese_02', { ...nivel, tipmet: 1 }).pipe(map(mapearBloqueReporte)),
-      t3: this.ant.getRegularData('Monitor_Dese_03', { ...nivel, tipmet: 1 }).pipe(map(mapearBloqueReporte)),
-      t4: this.ant.getRegularData('Monitor_Dese_04', nivel).pipe(map(mapearBloqueReporte)),
+      t1: this.ant.getRegularData(COD_AVANCE_COMERCIAL.monitorMetasDesembolso[0], { ...nivel, tipmet: 1 }).pipe(map(mapearBloqueReporte)),
+      t2: this.ant.getRegularData(COD_AVANCE_COMERCIAL.monitorMetasDesembolso[1], { ...nivel, tipmet: 1 }).pipe(map(mapearBloqueReporte)),
+      t3: this.ant.getRegularData(COD_AVANCE_COMERCIAL.monitorMetasDesembolso[2], { ...nivel, tipmet: 1 }).pipe(map(mapearBloqueReporte)),
+      t4: this.ant.getRegularData(COD_AVANCE_COMERCIAL.monitorMetasDesembolso[3], nivel).pipe(map(mapearBloqueReporte)),
     }).pipe(
       map(({ t1, t2, t3, t4 }) => ({
         kpiOperaciones: (t1.additional as unknown as KpiOperacionesDesembolsadas | undefined) ?? null,
@@ -34,7 +35,7 @@ export class AvanceComercialService {
   /** "Monitor Reprogramados" (`RS_MON_REP_01`) para un nivel de jerarquía + tipo (operaciones/saldo). */
   obtenerMonitorReprogramados(nivel: Pick<HierarquiaNodo, 'tip_cod' | 'cod_rel'>, tipo: 1 | 2): Observable<TablaReporteResultado> {
     return this.ant
-      .getRegularData('RS_MON_REP_01', {
+      .getRegularData(COD_AVANCE_COMERCIAL.monitorReprogramados, {
         tip_cod: nivel.tip_cod,
         cod_rel: nivel.cod_rel,
         car: tipo,

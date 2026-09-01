@@ -84,7 +84,7 @@ describe('opcionesMixto: eje secundario', () => {
 });
 
 /**
- * Tarea 3 de `incidencias-proeyecciones.md`: "Estado de Renovación (Base
+ * Incidencia reportada en Proyecciones: "Estado de Renovación (Base
  * Inicial)" es una DONA en el legado (`innerSize: '65%'`), no una torta llena.
  */
 describe('opcionesPie: dona', () => {

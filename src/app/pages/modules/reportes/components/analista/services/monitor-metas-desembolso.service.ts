@@ -9,6 +9,7 @@ import type {
   KpiOperacionesDesembolsadas,
   ReporteMonitorMetasDesembolso,
 } from '../models/monitor-metas-desembolso.model';
+import { COD_ANALISTA_MULTIBLOQUE } from '../constantes/analista.constantes';
 
 /** Datos de "Monitor de Desembolsos" (legado `leg/com/rda/sec/mon-desem`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/monitor_metas_desembolsos/monitor_metas_desem_sec`). */
 @Injectable({ providedIn: 'root' })
@@ -25,13 +26,13 @@ export class MonitorMetasDesembolsoService {
   obtenerMonitorMetasDesembolso(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteMonitorMetasDesembolso> {
     return forkJoin({
       t1: this.reportes
-        .getDeprecatedData('rda/sectorista/monitor_metas_desembolsos/monitor_metas_desem_sec_01', { ...asesor, tipmet: 1 })
+        .getDeprecatedData(COD_ANALISTA_MULTIBLOQUE.monitorMetasDesembolso[0], { ...asesor, tipmet: 1 })
         .pipe(map(mapearBloqueReporte)),
       t2: this.reportes
-        .getDeprecatedData('rda/sectorista/monitor_metas_desembolsos/monitor_metas_desem_sec_02', { ...asesor, tipmet: 1 })
+        .getDeprecatedData(COD_ANALISTA_MULTIBLOQUE.monitorMetasDesembolso[1], { ...asesor, tipmet: 1 })
         .pipe(map(mapearBloqueReporte)),
       t3: this.reportes
-        .getDeprecatedData('rda/sectorista/monitor_metas_desembolsos/monitor_metas_desem_sec_03', asesor)
+        .getDeprecatedData(COD_ANALISTA_MULTIBLOQUE.monitorMetasDesembolso[2], asesor)
         .pipe(map(mapearBloqueReporte)),
     }).pipe(
       map(({ t1, t2, t3 }) => ({

@@ -18,23 +18,16 @@ import {
 import { CampanasService } from '../../services/campanas.service';
 
 /**
- * "Agendamiento" (`repositorio/actividad-diaria/campanias/agendamiento`) —
- * legado `repositorio/agenda-comercial`.
+ * Agendamiento — legado `repositorio/agenda-comercial`.
  *
- * Cuatro tablas del motor `table.regular`, UNA POR PESTAÑA — el legado las
- * reparte en un `mat-tab-group` (`Resumen Total`, `Resumen por Bases`,
- * `Detalle Bases Vivas`, `Detalle Bases Automáticos y express`), no apiladas.
+ * Cuatro tablas, una por pestaña. Los filtros no son los mismos en todas: el
+ * legado oculta "Nivel de Fuga" en "Detalle Bases Vivas" y solo ahí muestra el
+ * rango de fechas; "Nivel de propensión" está en las cuatro. Por eso cada
+ * pestaña pone los suyos en vez de compartir una franja fija.
  *
- * Los tres filtros no son los mismos en las cuatro: `onTabChanged()` del
- * legado oculta "Nivel de Fuga" en "Detalle Bases Vivas" y solo muestra
- * "Rango de fechas Cancela" ahí. "Nivel de propensión" es el único que no
- * lleva `*ngIf` y está en las cuatro. Por eso cada pestaña pone sus propios
- * filtros en vez de compartir una franja fija arriba.
- *
- * Las cuatro tablas se piden siempre juntas — cualquier filtro dispara las
- * cuatro consultas, esté la pestaña que esté activa — así que el rango
- * elegido en "Detalle Bases Vivas" también llega al `RS_AGE_COM_03` de
- * "Detalle Bases Automáticos y express", aunque ese filtro no se vea ahí.
+ * Las cuatro se piden siempre juntas —cualquier filtro dispara las cuatro
+ * consultas—, así que el rango elegido en "Detalle Bases Vivas" también llega
+ * al bloque de la última pestaña aunque ahí ese filtro no se vea.
  */
 @Component({
   selector: 'app-agendamiento',

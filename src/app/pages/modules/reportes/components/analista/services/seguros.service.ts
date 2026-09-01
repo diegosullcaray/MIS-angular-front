@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteSeguros } from '../models/seguros.model';
+import { COD_ANALISTA } from '../constantes/analista.constantes';
 
 /** Datos de "Seguros" (legado `leg/com/rda/sec/seg`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/seguros/seguros_sec`). */
 @Injectable({ providedIn: 'root' })
@@ -20,7 +21,7 @@ export class SegurosService {
   /** Seguros de un asesor — único bloque (`seguros_sec_01`). */
   obtenerSeguros(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteSeguros> {
     return this.reportes
-      .getDeprecatedData('rda/sectorista/seguros/seguros_sec_01', asesor)
+      .getDeprecatedData(COD_ANALISTA.seguros, asesor)
       .pipe(map((respuesta) => ({ tabla1: mapearBloqueReporte(respuesta) })));
   }
 }

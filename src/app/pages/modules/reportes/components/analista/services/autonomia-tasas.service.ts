@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteAutonomiaTasas } from '../models/autonomia-tasas.model';
+import { BLOQUES_AUTONOMIA_TASAS_ANALISTA } from '../constantes/analista.constantes';
 
 /** Datos de "Reporte de Autonomía de Tasas" (legado `leg/com/rda/sec/aut-tasa`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/Reporte_Autonomia_Tasas/reporte_autonomia_tasa_sec`). */
 @Injectable({ providedIn: 'root' })
@@ -19,12 +20,9 @@ export class AutonomiaTasasService {
 
   /** Autonomía de tasas de un asesor — 4 bloques, cada uno con su propio `var` fijo. */
   obtenerAutonomiaTasas(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteAutonomiaTasas> {
-    const modulo = 'rda/sectorista/Reporte_Autonomia_Tasas/reporte_autonomia_tasa_sec';
-    return forkJoin({
-      tabla1: this.reportes.getDeprecatedData(`${modulo}_01`, { ...asesor, var: '4' }).pipe(map(mapearBloqueReporte)),
-      tabla2: this.reportes.getDeprecatedData(`${modulo}_02`, { ...asesor, var: '1' }).pipe(map(mapearBloqueReporte)),
-      tabla3: this.reportes.getDeprecatedData(`${modulo}_03`, { ...asesor, var: '3' }).pipe(map(mapearBloqueReporte)),
-      tabla4: this.reportes.getDeprecatedData(`${modulo}_04`, { ...asesor, var: '2' }).pipe(map(mapearBloqueReporte)),
-    });
+    const [b1, b2, b3, b4] = BLOQUES_AUTONOMIA_TASAS_ANALISTA;
+    const bloque = ({ codRep, var: variante }: { codRep: string; var: string }) =>
+      this.reportes.getDeprecatedData(codRep, { ...asesor, var: variante }).pipe(map(mapearBloqueReporte));
+    return forkJoin({ tabla1: bloque(b1), tabla2: bloque(b2), tabla3: bloque(b3), tabla4: bloque(b4) });
   }
 }

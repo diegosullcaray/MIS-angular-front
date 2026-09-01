@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { FiltrosMonitorEfectividades, ReporteMonitorEfectividades } from '../models/monitor-efectividades.model';
+import { COD_ANALISTA } from '../constantes/analista.constantes';
 
 /** Datos de "Detalle Monitor de Efectividades Asesor" (legado `leg/com/rda/sec/mon_efec_sec`, `ReportCrsV3Component` + `crs-map.ts`: `RS_MON_EFEC_SEC`). */
 @Injectable({ providedIn: 'root' })
@@ -23,7 +24,7 @@ export class MonitorEfectividadesService {
     filtros: FiltrosMonitorEfectividades
   ): Observable<ReporteMonitorEfectividades> {
     return this.reportes
-      .getRegularData('RS_MON_EFEC_SEC_01', { ...asesor, ...filtros, pagen: 1 })
+      .getRegularData(COD_ANALISTA.monitorEfectividades, { ...asesor, ...filtros, pagen: 1 })
       .pipe(map((respuesta) => ({ tabla1: mapearBloqueReporte(respuesta) })));
   }
 }

@@ -12,6 +12,7 @@ import type {
   ReporteProductosMisionales,
 } from '../models/desarrollo-sostenible.model';
 import type { KpiOperacionesDesembolsadas } from '../../avance-comercial/models/avance-comercial.model';
+import { COD_DESARROLLO_SOSTENIBLE, COLUMNAS_KPI_MISIONAL } from '../constantes/desarrollo-sostenible.constantes';
 
 /** `DESEMP_SOC_01` ata cada semáforo oculto a la columna que le SIGUE en el arreglo, no a la que tiene delante: el semáforo pegado a "META" (`col_8`) en realidad colorea "TMM"; el pegado a "TMM" (`col_10`) colorea "TAM" — y "META" nunca tiene semáforo propio (confirmado contra el legado). */
 export function corregirSemaforosDesempenoSocial(resultado: TablaReporteResultado): TablaReporteResultado {
@@ -19,13 +20,13 @@ export function corregirSemaforosDesempenoSocial(resultado: TablaReporteResultad
   if (!filaNivel1) return resultado;
 
   const porDef = new Map(filaNivel1.columns.map((c) => [c.columnDef, c] as const));
-  const meta = porDef.get('col_7');
-  const semMeta = porDef.get('col_8');
-  const tmm = porDef.get('col_9');
-  const semTmm = porDef.get('col_10');
-  const tam = porDef.get('col_11');
-  const semTam = porDef.get('col_12');
-  const distanciaMeta = porDef.get('col_13');
+  const meta = porDef.get(COLUMNAS_KPI_MISIONAL.meta);
+  const semMeta = porDef.get(COLUMNAS_KPI_MISIONAL.semaforoMeta);
+  const tmm = porDef.get(COLUMNAS_KPI_MISIONAL.tmm);
+  const semTmm = porDef.get(COLUMNAS_KPI_MISIONAL.semaforoTmm);
+  const tam = porDef.get(COLUMNAS_KPI_MISIONAL.tam);
+  const semTam = porDef.get(COLUMNAS_KPI_MISIONAL.semaforoTam);
+  const distanciaMeta = porDef.get(COLUMNAS_KPI_MISIONAL.distanciaMeta);
   if (!meta || !semMeta || !tmm || !semTmm || !tam || !semTam || !distanciaMeta) return resultado;
 
   const encabezado: ColumnaReporte[] = [
@@ -56,8 +57,8 @@ export class DesarrolloSostenibleService {
     const params = { ...nivel, prod, tipmet: 1 };
 
     return forkJoin({
-      simple: this.ant.getRegularData('Monitor_Dese_misi_02', params).pipe(map(mapearBloqueReporte)),
-      kpi: this.ant.getRegularData('Monitor_Dese_misi_01', params).pipe(map(mapearBloqueReporte)),
+      simple: this.ant.getRegularData(COD_DESARROLLO_SOSTENIBLE.misionalSimple, params).pipe(map(mapearBloqueReporte)),
+      kpi: this.ant.getRegularData(COD_DESARROLLO_SOSTENIBLE.misionalKpi, params).pipe(map(mapearBloqueReporte)),
     }).pipe(
       map(({ simple, kpi }) => ({
         kpiOperaciones: (kpi.additional as unknown as KpiOperacionesDesembolsadas | undefined) ?? null,
@@ -70,7 +71,7 @@ export class DesarrolloSostenibleService {
   /** "Desempeño Social" (`DESEMP_SOC_01`) para un nivel de jerarquía. */
   obtenerDesempenoSocial(nivel: Pick<HierarquiaNodo, 'tip_cod' | 'cod_rel'>): Observable<TablaReporteResultado> {
     return this.ant
-      .getRegularData('DESEMP_SOC_01', { tip_cod: nivel.tip_cod, cod_rel: nivel.cod_rel, fec: fechaUltimoDia() })
+      .getRegularData(COD_DESARROLLO_SOSTENIBLE.desempenoSocial, { tip_cod: nivel.tip_cod, cod_rel: nivel.cod_rel, fec: fechaUltimoDia() })
       .pipe(map(mapearBloqueReporte), map(corregirSemaforosDesempenoSocial));
   }
 

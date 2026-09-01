@@ -22,7 +22,13 @@ import {
 import { OPCIONES_PRECOSECHA } from '../../models/cartera-en-mora.model';
 import { CarteraMoraCraService } from '../../services/cartera-mora-cra.service';
 
-/** Componente de Monitor Efectividades. */
+/**
+ * Monitor Efectividades — legado `RS_MON_EFEC` (host `cra-v4`).
+ *
+ * Dos pestañas, como el legado: el resumen (bloques `_01` y `_03`, este último
+ * una vez por tramo, sin filtros propios) y el detalle (bloque `_02`, el único
+ * con filtros y el único paginado). Sus diez filtros arrancan todos en "TODO".
+ */
 @Component({
   selector: 'app-monitor-efectividades',
   standalone: true,

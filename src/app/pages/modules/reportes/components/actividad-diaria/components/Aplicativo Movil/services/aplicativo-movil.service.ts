@@ -2,6 +2,7 @@
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
+import { COD_APLICATIVO_MOVIL } from '../constantes/aplicativo-movil.constantes';
 
 /** El único reporte de "Aplicativo Móvil". */
 @Injectable({ providedIn: 'root' })
@@ -17,6 +18,6 @@ export class AplicativoMovilService {
    * `regular()` por su cuenta no corresponde acá.
    */
   usoApp(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.bloques.regularExacto('APP_USO_01', nodo).pipe(map((tabla1) => ({ tabla1 })));
+    return this.bloques.regularExacto(COD_APLICATIVO_MOVIL.usoApp, nodo).pipe(map((tabla1) => ({ tabla1 })));
   }
 }

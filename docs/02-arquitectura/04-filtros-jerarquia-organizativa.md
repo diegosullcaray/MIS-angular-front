@@ -6,7 +6,7 @@ Este documento especifica la arquitectura, flujo reactivo de datos en cascada, f
 
 ## 1. Visión General
 
-El selector de jerarquía ([`HierSelectorComponent`](../../src/app/pages/modules/presupuesto/ui/hier-selector/hier-selector.component.ts)) es un componente standalone construido bajo los estándares de **Angular 22 Zoneless + Signal Forms**.
+El selector de jerarquía ([`HierSelectorComponent`](../../src/app/shared/ui/hier-selector/hier-selector.component.ts)) es un componente standalone construido bajo los estándares de **Angular 22 Zoneless + Signal Forms**.
 
 Resuelve el problema de navegación dentro del árbol de la entidad (Financiera → Territorio → Corredor → Administrador → Agencia → Banca Preferente) mediante un conjunto dinámico de desplegables PrimeNG `<p-select>`.
 

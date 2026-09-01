@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteCartera } from '../models/cartera.model';
+import { COD_ANALISTA_MULTIBLOQUE } from '../constantes/analista.constantes';
 
 /** Datos de "Cartera" (legado `leg/com/rda/sec/cartera`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/cartera/cartera_sec`). */
 @Injectable({ providedIn: 'root' })
@@ -20,8 +21,14 @@ export class CarteraService {
   /** Cartera de un asesor — 2 bloques (`rda/sectorista/cartera/cartera_sec_01`/`_02`). */
   obtenerCartera(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteCartera> {
     return forkJoin({
-      tabla1: this.reportes.getDeprecatedData('rda/sectorista/cartera/cartera_sec_01', asesor).pipe(map(mapearBloqueReporte)),
-      tabla2: this.reportes.getDeprecatedData('rda/sectorista/cartera/cartera_sec_02', asesor).pipe(map(mapearBloqueReporte)),
+      tabla1: this.bloque(COD_ANALISTA_MULTIBLOQUE.cartera[0], asesor),
+      tabla2: this.bloque(COD_ANALISTA_MULTIBLOQUE.cartera[1], asesor),
     });
   }
+
+  /** Un bloque del reporte, ya mapeado. */
+  private bloque(codRep: string, asesor: { tip_cod: number; cod_rel: string }) {
+    return this.reportes.getDeprecatedData(codRep, asesor).pipe(map(mapearBloqueReporte));
+  }
+
 }

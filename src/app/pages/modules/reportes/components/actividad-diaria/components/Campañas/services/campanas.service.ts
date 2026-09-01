@@ -5,6 +5,7 @@ import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamic
 import type { OpcionFiltro } from '../../../../../models/filtros.model';
 import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
 import { TODO } from '../../Portafolio Reasignado/models/portafolio-reasignado.model';
+import { COD_CAMPANAS } from '../constantes/campanas.constantes';
 
 /** Filtros de Agendamiento. */
 export interface FiltrosAgenda {
@@ -21,13 +22,13 @@ export class CampanasService {
   /** Reporte de Apadrinamiento. */
   apadrinamiento(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.bloques
-      .regular('R_APADRINA_01', nodo, { fecha: this.bloques.fec() })
+      .regular(COD_CAMPANAS.apadrinamiento, nodo, { fecha: this.bloques.fec() })
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 
   /** Opciones de Asesor para Mentoring. */
   opcionesAsesorMentoring(nodo: NodoConsulta): Observable<OpcionFiltro<string>[]> {
-    return this.bloques.regularLento('SEL_JER_MENTORING_01', nodo).pipe(
+    return this.bloques.regularLento(COD_CAMPANAS.opcionesAsesorMentoring, nodo).pipe(
       map((tabla) => [
         { id: TODO, desc: 'TODO' },
         ...tabla.body.map((fila) => ({ id: String(fila['id'] ?? ''), desc: String(fila['desc'] ?? fila['id'] ?? '') })),
@@ -38,7 +39,7 @@ export class CampanasService {
   /** Reporte de Mentoring. */
   mentoring(nodo: NodoConsulta, resp: string = TODO): Observable<ReporteBloqueUnico> {
     return this.bloques
-      .regularLento('RMENTORIN_01', nodo, { fec: this.bloques.fec(), resp })
+      .regularLento(COD_CAMPANAS.mentoring, nodo, { fec: this.bloques.fec(), resp })
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 
@@ -52,10 +53,10 @@ export class CampanasService {
       prop: filtros.prop,
     };
     return forkJoin([
-      this.bloques.tablaRegularCon('RS_AGE_COM_01', { ...base, mode: 1 }),
-      this.bloques.tablaRegularCon('RS_AGE_COM_01', { ...base, mode: 2 }),
-      this.bloques.tablaRegularCon('RS_AGE_COM_02', { ...base, mode: 1, nom: filtros.rango }),
-      this.bloques.tablaRegularCon('RS_AGE_COM_03', { ...base, mode: 1, nom: filtros.rango }),
+      this.bloques.tablaRegularCon(COD_CAMPANAS.agendamientoBases, { ...base, mode: 1 }),
+      this.bloques.tablaRegularCon(COD_CAMPANAS.agendamientoBases, { ...base, mode: 2 }),
+      this.bloques.tablaRegularCon(COD_CAMPANAS.agendamientoDetalle, { ...base, mode: 1, nom: filtros.rango }),
+      this.bloques.tablaRegularCon(COD_CAMPANAS.agendamientoResumen, { ...base, mode: 1, nom: filtros.rango }),
     ]);
   }
 }

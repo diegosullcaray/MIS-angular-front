@@ -451,7 +451,7 @@ describe('TablaReporteComponent', () => {
   });
 
   /**
-   * Tarea 2 de `incidencias-proeyecciones.md`: "las dos tablas generan scroll
+   * Incidencia reportada en Proyecciones: "las dos tablas generan scroll
    * horizontal innecesario". Con pocas columnas y encabezados largos, el
    * `nowrap` por defecto y el ancho fijo del backend sacan scroll sin
    * necesidad; `ajustarAncho` deja que el texto salte de línea.

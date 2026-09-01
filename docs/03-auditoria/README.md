@@ -1,60 +1,44 @@
-# Auditoría de Arquitectura — MIS Host
+# Seguridad — backlog abierto
 
-Revisión completa del código, la configuración de build, el modelo de seguridad y el
-rendimiento del portal MIS Host (Financiera Confianza), realizada el **14 de agosto de 2026**
-sobre la rama `main` (commit `04aa220`, 161 commits de historia).
-
-## Documentos
+Los hallazgos de la auditoría de arquitectura del **14 de agosto de 2026**, con
+lo que sigue pendiente. Se conserva porque **la mayoría de los hallazgos críticos
+siguen abiertos**: es un backlog de seguridad, no un informe histórico.
 
 | Documento | Contenido |
 |---|---|
-| [`01-mapa-del-sistema.md`](./01-mapa-del-sistema.md) | Cómo está construido el sistema hoy: arranque, capas, flujo de autenticación, protocolo Winder/Ant, inventario de módulos y métricas del código |
-| [`02-hallazgos.md`](./02-hallazgos.md) | Los 21 hallazgos ordenados por severidad, cada uno con evidencia verificada, impacto y corrección propuesta |
-| [`03-plan-de-accion.md`](./03-plan-de-accion.md) | Plan por fases con esfuerzo estimado y criterios de aceptación |
+| [`02-hallazgos.md`](./02-hallazgos.md) | Los hallazgos por severidad, cada uno con su evidencia, impacto y corrección propuesta |
+| [`03-plan-de-accion.md`](./03-plan-de-accion.md) | Plan por fases, con esfuerzo estimado y criterios de aceptación |
 
-## Estado del sistema en una frase
+## Lo que sigue abierto y es crítico
 
-La aplicación está **bien construida a nivel de código** —Angular 22 zoneless, señales,
-carga diferida por módulo, 1013 pruebas unitarias, comentarios que explican el *porqué*— pero
-tiene **fallas graves en la capa de configuración y en el modelo de seguridad** que la hacen
-insegura para operar en producción tal como está.
+- **C-2 · Las claves AES viajan en el bundle público.** Cualquiera que descargue
+  la aplicación las tiene. Requiere rotarlas y mover el cifrado al servidor.
+- **C-3 · AES-128-CBC con IV fijo en cero y sin autenticación.** El mismo texto
+  produce siempre el mismo cifrado, y nada garantiza que el mensaje no fue
+  alterado.
+- **C-4 · La autorización vive solo en el cliente.** El rol se deriva de un campo
+  del perfil y los guards corren en el navegador: no hay verificación en
+  servidor. Sigue además el token de relleno `'winder-session-token'` cuando el
+  backend no emite uno.
+- **A-5 · Sin política de seguridad de contenido (CSP).**
+- **A-6 · OAuth con flujo implícito**, en vez de *code flow* con PKCE.
 
-## Métricas verificadas
+Los tres primeros necesitan acuerdo con el equipo de backend: no se resuelven
+solo desde el frontend.
 
-| Métrica | Valor |
-|---|---|
-| Archivos TypeScript | 482 (35 583 líneas) |
-| Componentes | 107 |
-| Plantillas HTML | 106 |
-| Pruebas unitarias | 1013 en 171 archivos — **22 fallando** |
-| Pruebas E2E (Playwright) | 14 especificaciones |
-| Bundle inicial | 595,73 kB sin comprimir / 110,22 kB transferidos |
-| Fragmentos diferidos | 114 |
-| Presupuesto de bundle | **Excedido en 95,73 kB** (límite 500 kB) |
-| Componentes con OnPush | **0 de 107** |
-| Configuración de ESLint | **No existe** |
-| Pipeline de CI/CD | **No existe** |
+## Lo que ya se cerró
 
-## Resumen de hallazgos
+- **C-1 · Suplantación de identidad en el build de producción** — resuelto en la
+  Fase 0 (`fileReplacements`, `isDevMode()` y verificación del bundle en cada
+  build).
+- **M-6 · Los archivos de entorno divergían** — tipados y alineados.
+- **A-4 · Pruebas rojas** — el proyecto está en verde y la suite crece con cada
+  cambio.
 
-| Severidad | Cantidad | Los más importantes |
-|---|---|---|
-| **Crítico** | 4 | Suplantación de identidad en producción; secretos AES en el bundle; cifrado con IV fijo; autorización solo en el cliente |
-| **Alto** | 6 | Sin `strict` en TypeScript; sin ESLint; sin CI; 22 pruebas rojas que no bloquean nada; sin CSP; OAuth con flujo implícito |
-| **Medio** | 8 | Singleton con estado mutable en `WinderService`; sin OnPush; overlay de carga global; menú que no reintenta; entornos divergentes |
-| **Bajo** | 3 | Código legado dentro del repo; README genérico; sin monitorización |
+## Lo que quedó desfasado
 
-## Estado de la corrección
-
-**Fase 0 aplicada el 15/08/2026.** Los hallazgos **C-1** y **M-6** están corregidos y
-verificados; el resto sigue abierto. Ver [`03-plan-de-accion.md`](./03-plan-de-accion.md).
-
-Lo que se hizo: se creó el contrato `Environment` que tipa ambos archivos de entorno, se
-activó `fileReplacements` en `angular.json`, se sustituyó el guardián
-`!environment.production` por `isDevMode()` —una condición de compilación en lugar de un
-dato— y se añadió `npm run verify:bundle`, que falla el build si vuelve a filtrarse
-configuración de desarrollo.
-
-La capacidad de probar con distintos usuarios en desarrollo **se mantiene**, y ahora se cambia
-de perfil desde `localStorage` sin editar archivos. Ver
-[C-1](./02-hallazgos.md#c-1--suplantación-de-identidad-en-el-build-de-producción).
+Las métricas del informe (número de tests, inventario de módulos, tamaño del
+bundle) son del 14 de agosto de 2026 y ya no valen: el sistema creció mucho
+desde entonces. Tomá el documento por sus **hallazgos**, no por sus números. El
+mapa del sistema que acompañaba a la auditoría se borró y lo reemplaza
+[`02-arquitectura/01-como-funciona-el-sistema.md`](../02-arquitectura/01-como-funciona-el-sistema.md).

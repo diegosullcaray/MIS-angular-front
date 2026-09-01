@@ -1,7 +1,7 @@
 import type { BloqueGrafico } from '../../../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { FilaReporte, TablaReporteResultado } from '../../../../../../../models/tabla-reporte.model';
 
-/** Tarjeta KPI estándar del Design System (07-guia-estilos-kpis-reportes.md). */
+/** Tarjeta KPI estándar del Design System (docs/02-arquitectura/05-guia-estilos-kpis-reportes.md). */
 export interface TarjetaKpiCarteraProducto {
   etiqueta: string;
   valor: number | string;
