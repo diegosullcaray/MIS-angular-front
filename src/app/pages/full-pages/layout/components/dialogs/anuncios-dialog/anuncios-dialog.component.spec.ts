@@ -72,7 +72,7 @@ describe('AnunciosDialogComponent', () => {
     expect(TestBed.inject(PreferenciasService).anuncios().vistos).toEqual(['vinculacion-cartera-captaciones']);
   });
 
-  it('abierto a pedido con el comunicado ya leído, lo dice y lo sigue mostrando', () => {
+  it('abierto a pedido con el comunicado ya leído, muestra la pieza y nada más', () => {
     const fixture = crear();
     const anuncios = TestBed.inject(AnunciosService);
     anuncios.abrirSiCorresponde();
@@ -81,7 +81,8 @@ describe('AnunciosDialogComponent', () => {
     anuncios.abrir();
     fixture.detectChanges();
 
-    expect(document.body.textContent).toContain('Ya leíste este comunicado');
+    // Releerlo no cambia lo que se ve: la pieza sola, sin avisos de estado.
+    expect(document.body.textContent).not.toContain('Ya leíste');
     expect(imagenes()).toHaveLength(1);
   });
 });

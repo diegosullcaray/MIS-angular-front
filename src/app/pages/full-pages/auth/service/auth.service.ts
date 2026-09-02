@@ -30,6 +30,8 @@ export class AuthService {
 
   readonly token = this._token.asReadonly();
   readonly alternates = this._alternates.asReadonly();
+  /** Identidad propia mientras se está viendo como un alterno (null si no). */
+  readonly usuarioOriginal = this._usuarioOriginal.asReadonly();
   
   /** Indica si se está operando como un usuario alterno. */
   readonly esUsuarioAlterno = computed(() => this._usuarioOriginal() !== null);

@@ -51,6 +51,8 @@
   --mis-window-bar-border: rgba(29, 57, 110, 0.12);
   --mis-window-btn-hover: rgba(29, 57, 110, 0.08);
   --mis-window-btn-active: rgba(29, 57, 110, 0.16);
+  /* Luz del semáforo que la ventana no ofrece (minimizar/zoom en un diálogo). */
+  --mis-window-light-apagada: rgba(29, 57, 110, 0.16);
 
   /* Superficies translúcidas sobre el wallpaper (header, tarjetas del shell). */
   --mis-surface-translucido: rgba(255,255,255,0.85);
@@ -68,6 +70,8 @@
   --mis-wallpaper-velo: transparent;
   /* Fondo de overlays a pantalla completa (spinner, redirect). */
   --mis-overlay-bg: rgba(255,255,255,0.72);
+  /* Velo detrás de un diálogo modal — oscurece el shell sin apagarlo. */
+  --mis-dialog-mask: rgba(15, 23, 42, 0.32);
   /* Realce de fila/hover en tablas y listas. */
   --mis-hover-bg: rgba(29,57,110,0.04);
   --mis-scrollbar-thumb: rgba(29,57,110,0.20);
@@ -167,6 +171,7 @@
   --mis-window-bar-border: rgba(255, 255, 255, 0.10);
   --mis-window-btn-hover: rgba(255, 255, 255, 0.10);
   --mis-window-btn-active: rgba(255, 255, 255, 0.18);
+  --mis-window-light-apagada: rgba(255, 255, 255, 0.18);
 
   --mis-surface-translucido: rgba(22,34,56,0.85);
   --mis-surface-elevado: rgba(26,40,66,0.95);
@@ -177,6 +182,7 @@
      una superficie sólida en oscuro. */
   --mis-wallpaper-velo: rgba(8,14,26,0.90);
   --mis-overlay-bg: rgba(8,14,26,0.78);
+  --mis-dialog-mask: rgba(3, 8, 18, 0.55);
   --mis-hover-bg: rgba(0,162,255,0.08);
   --mis-scrollbar-thumb: rgba(0,162,255,0.25);
   --mis-scrollbar-thumb-hover: rgba(0,162,255,0.45);

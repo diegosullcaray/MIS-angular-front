@@ -14,40 +14,4 @@
       />
     </div>
   </section>
-
-  <section class="mis-panel-grupo">
-    <p-button
-      label="Volver a mostrar el comunicado leído"
-      icon="pi pi-refresh"
-      [text]="true"
-      severity="secondary"
-      [disabled]="ajustes().vistos.length === 0 && !ajustes().silenciar"
-      (click)="reiniciar()"
-    />
-    <p class="mis-panel-ayuda">
-      @if (anuncios.hayPendientes()) {
-        Tenés un comunicado sin leer.
-      } @else {
-        No tenés comunicados sin leer.
-      }
-    </p>
-  </section>
-
-  <section class="mis-panel-grupo">
-    <h4 class="mis-panel-subtitulo" id="mis-anuncios-label">Comunicado publicado</h4>
-    <p class="mis-panel-ayuda">Hay uno vigente a la vez: el último que se subió.</p>
-
-    @if (anuncios.comunicado(); as pieza) {
-      <button
-        type="button"
-        class="mis-anuncio-miniatura"
-        (click)="abrirVisor()"
-        aria-labelledby="mis-anuncios-label"
-      >
-        <img [src]="pieza.imagen" [alt]="pieza.alt" [width]="pieza.ancho" [height]="pieza.alto" loading="lazy" decoding="async" />
-      </button>
-    } @else {
-      <p class="mis-panel-ayuda">No hay comunicados publicados.</p>
-    }
-  </section>
 </div>

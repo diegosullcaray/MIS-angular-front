@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { AnunciosService } from '../../../../../../core/preferencias/aplicacion/anuncios.service';
@@ -23,9 +23,6 @@ export class AnunciosDialogComponent {
   protected readonly anuncios = inject(AnunciosService);
 
   protected readonly comunicado = this.anuncios.comunicado;
-
-  /** Abierto a pedido con el comunicado ya leído: se avisa que no hay novedad. */
-  protected readonly yaLeido = computed(() => !this.anuncios.hayPendientes());
 
   protected cerrar(): void {
     this.anuncios.cerrar();

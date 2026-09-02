@@ -220,26 +220,3 @@
 
 /* Es una vista previa de la pieza vigente, no una galería: hay un comunicado a
    la vez. Al tocarla se abre el mismo visor que sale al entrar. */
-.mis-anuncio-miniatura {
-  width: 100%;
-  max-width: 260px;
-  padding: 0;
-  border: 1px solid var(--mis-border);
-  border-radius: var(--mis-radius-md);
-  background: #ffffff;
-  cursor: pointer;
-  overflow: hidden;
-  transition: border-color var(--mis-transition-fast), box-shadow var(--mis-transition-fast);
-}
-
-.mis-anuncio-miniatura:hover {
-  border-color: var(--mis-secondary);
-  box-shadow: var(--mis-shadow-focus);
-}
-
-/* La pieza entera, sin recortar: es lo que el usuario va a abrir. */
-.mis-anuncio-miniatura img {
-  display: block;
-  width: 100%;
-  height: auto;
-}

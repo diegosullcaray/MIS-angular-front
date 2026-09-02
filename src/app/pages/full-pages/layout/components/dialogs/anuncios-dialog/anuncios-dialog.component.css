@@ -1,6 +1,9 @@
+/* La pieza va a sangre: sin marco ni relleno, el comunicado ocupa todo el
+   cuerpo del diálogo. El fondo solo se ve cuando la imagen es más angosta que
+   la ventana. */
 .mis-anuncio-figura {
   margin: 0;
-  padding: var(--mis-space-3);
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,22 +17,17 @@
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: min(68vh, 640px);
+  max-height: min(80vh, 860px);
   object-fit: contain;
-  border-radius: var(--mis-radius-md);
   background: #ffffff;
 }
 
+/* El diálogo se ajusta a la pieza (`width: auto`), así que sin imagen el
+   ancho lo marca este texto: un tope para que no salga en una sola línea. */
 .mis-anuncios-nota {
   margin: 0;
-  padding: var(--mis-space-3) var(--mis-space-3) 0;
+  padding: var(--mis-space-5);
+  max-width: 42ch;
   font-size: var(--mis-text-sm);
   color: var(--mis-text-secondary);
-}
-
-:host ::ng-deep .mis-anuncios-dialog .p-dialog-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--mis-space-2);
 }

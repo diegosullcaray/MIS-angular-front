@@ -5,15 +5,11 @@
   [modal]="true"
   appendTo="body"
   styleClass="mis-anuncios-dialog"
-  [style]="{ width: 'min(760px, 94vw)' }"
+  [style]="{ width: 'auto', maxWidth: 'min(880px, 96vw)' }"
   [contentStyle]="{ padding: '0', overflow: 'hidden' }"
   [draggable]="false"
   [resizable]="false"
 >
-  @if (yaLeido()) {
-    <p class="mis-anuncios-nota">Ya leíste este comunicado. Es el último publicado.</p>
-  }
-
   @if (comunicado(); as pieza) {
     <figure class="mis-anuncio-figura">
       <!-- `width`/`height` son las medidas reales del archivo: el navegador

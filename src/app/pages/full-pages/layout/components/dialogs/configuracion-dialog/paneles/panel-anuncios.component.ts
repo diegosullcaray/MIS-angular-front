@@ -1,14 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { AnunciosService } from '../../../../../../../core/preferencias/aplicacion/anuncios.service';
 import { PreferenciasService } from '../../../../../../../core/preferencias/aplicacion/preferencias.service';
 
 /**
- * Pantalla "Anuncios": el control del usuario sobre los comunicados que antes
- * salían en cada inicio de sesión. Desde acá se apagan del todo, se vuelven a
- * habilitar los ya leídos y se relee lo publicado.
+ * Pantalla "Anuncios": el único control del usuario sobre los comunicados es
+ * verlos o no al entrar. La lectura sigue estando en el botón de comunicados
+ * del header, así que el panel no repite ni el estado ni la pieza publicada.
  *
  * No se confunde con "Notificaciones", que es otro ajuste: los comunicados son
  * las piezas que publica Comunicación Interna; las notificaciones son los
@@ -17,26 +15,16 @@ import { PreferenciasService } from '../../../../../../../core/preferencias/apli
 @Component({
   selector: 'app-panel-anuncios',
   standalone: true,
-  imports: [FormsModule, ButtonModule, ToggleSwitchModule],
+  imports: [FormsModule, ToggleSwitchModule],
   templateUrl: './panel-anuncios.component.html',
   styleUrl: './paneles.css',
 })
 export class PanelAnunciosComponent {
   private readonly preferencias = inject(PreferenciasService);
-  protected readonly anuncios = inject(AnunciosService);
 
   protected readonly ajustes = this.preferencias.anuncios;
 
   protected setSilenciar(valor: boolean): void {
     this.preferencias.setSilenciarAnuncios(valor);
-  }
-
-  protected reiniciar(): void {
-    this.preferencias.reiniciarAnuncios();
-  }
-
-  /** Abre el visor en el comunicado elegido — el mismo diálogo que sale al entrar. */
-  protected abrirVisor(): void {
-    this.anuncios.abrir();
   }
 }
