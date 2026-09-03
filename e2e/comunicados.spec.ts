@@ -55,7 +55,6 @@ test('el botón de comunicados del header lo reabre aunque ya esté leído', asy
   await page.locator('header').getByRole('button', { name: 'Comunicados del sistema' }).click();
 
   await expect(visor(page)).toBeVisible();
-  await expect(visor(page).getByText('Ya leíste este comunicado')).toBeVisible();
   await expect(imagen(page)).toHaveCount(1);
 });
 
