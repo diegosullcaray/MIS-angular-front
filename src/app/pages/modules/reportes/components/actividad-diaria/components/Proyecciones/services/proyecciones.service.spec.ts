@@ -1,10 +1,6 @@
-import { HttpContext } from '@angular/common/http';
+import { HttpContext, HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import {
-  TIMEOUT_MS,
-  TIMEOUT_REPORTE_PESADO_MS,
-} from '../../../../../../../../core/interceptors/auth.interceptor';
 import { ProyeccionesService } from './proyecciones.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
@@ -70,24 +66,25 @@ describe('ProyeccionesService', () => {
   /**
    * Incidencia reportada en Proyecciones: el reporte se caía con el 500
    * (`NullPointerException: Resultado vacio para: regularData`) y no terminaba
-   * de cargar dentro del timeout global de 30 s.
+   * de cargar dentro del timeout global de 30 s. Hoy no hay timeout global, así
+   * que lo único que queda es tolerar el bloque vacío.
    */
-  describe('timeout y bloques vacíos de "Proyección colocación"', () => {
+  describe('bloques vacíos de "Proyección colocación"', () => {
     /** El `HttpContext` es el tercer argumento de `getRegularData`. */
     function contextoDe(indice: number): HttpContext | undefined {
       return getRegularData.mock.calls[indice][2];
     }
 
-    it('los dos bloques piden el timeout largo', () => {
+    it('los dos bloques van sin contexto de timeout', () => {
       servicio.colocacion(NODO).subscribe();
 
-      expect(contextoDe(0)?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
-      expect(contextoDe(1)?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
+      expect(contextoDe(0)).toBeUndefined();
+      expect(contextoDe(1)).toBeUndefined();
     });
 
     it('un bloque sin datos no tumba al otro: queda como tabla vacía', () => {
       getRegularData
-        .mockReturnValueOnce(throwError(() => new Error('500 Resultado vacio para: regularData')))
+        .mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Resultado vacio para: regularData' })))
         .mockReturnValueOnce(of(RESPUESTA));
 
       let tablas: unknown[] | undefined;
@@ -97,7 +94,7 @@ describe('ProyeccionesService', () => {
       expect(tablas?.[0]).toEqual({ headers: [], body: [], additional: {} });
     });
 
-    it('"Proyección diaria" NO pide el timeout largo: se queda con el global', () => {
+    it('"Proyección diaria" tampoco', () => {
       servicio.diariaColocacion(NODO).subscribe();
 
       expect(contextoDe(0)).toBeUndefined();

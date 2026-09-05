@@ -1,5 +1,4 @@
 import {
-  HttpContextToken,
   HttpInterceptorFn,
   HttpRequest,
   HttpHandlerFn,
@@ -7,26 +6,10 @@ import {
   HttpErrorResponse,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError, Observable, timeout } from 'rxjs';
+import { catchError, throwError, Observable } from 'rxjs';
 import { ShellStateService } from '../services/shell-state.service';
 import { AuthService } from '../../pages/full-pages/auth/service/auth.service';
 import { environment } from '../../../environments/environment';
-
-/** Timeout en ms para requests al backend Ant (igual que el STG). */
-const ANT_TIMEOUT_MS = 30_000;
-
-/**
- * Timeout propio de una request, en ms.
- *
- * Existe porque unos pocos reportes mueven tanta data que no entran en los 30 s
- * por defecto ("Seguimiento Reprogramados", "Seguimiento de Portafolio"). Subir
- * el global para todos sería peor: dejaría a la app esperando el doble ante
- * cualquier request realmente colgada. Así solo esperan de más los que lo piden.
- */
-export const TIMEOUT_MS = new HttpContextToken<number>(() => ANT_TIMEOUT_MS);
-
-/** Timeout de los reportes de data masiva. */
-export const TIMEOUT_REPORTE_PESADO_MS = 120_000;
 
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -35,9 +18,14 @@ export const authInterceptor: HttpInterceptorFn = (
   const auth = inject(AuthService);
   const shell = inject(ShellStateService);
 
-  // El protocolo Winder cifra su propia autenticación: solo se le pone timeout.
+  // El protocolo Winder cifra su propia autenticación: la request va tal cual.
+  //
+  // Sin timeout, a propósito. El STG original no impone ninguno, y varios
+  // reportes de data masiva tardan legítimamente más que cualquier límite que
+  // se elija: recortarlos convertía una consulta lenta en una pantalla vacía.
+  // Quien manda es el backend; si la consulta muere, muere con su error.
   if (req.url.startsWith(environment.requestConfigRootURL)) {
-    return next(req).pipe(timeout(req.context.get(TIMEOUT_MS)));
+    return next(req);
   }
 
   // angular-oauth2-oidc usa HttpClient: no debe llevar el Bearer del Host ni cerrar sesión en un 401.

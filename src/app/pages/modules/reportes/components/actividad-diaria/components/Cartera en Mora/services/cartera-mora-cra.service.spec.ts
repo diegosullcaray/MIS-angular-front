@@ -1,9 +1,5 @@
-import { HttpContext } from '@angular/common/http';
+import { HttpContext, HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import {
-  TIMEOUT_MS,
-  TIMEOUT_REPORTE_PESADO_MS,
-} from '../../../../../../../../core/interceptors/auth.interceptor';
 import { of, throwError } from 'rxjs';
 import { CarteraMoraCraService } from './cartera-mora-cra.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
@@ -81,7 +77,7 @@ describe('CarteraMoraCraService', () => {
     it('un bloque que falla no tumba a los demás: devuelve tabla vacía', () => {
       getRegularData
         .mockReturnValueOnce(of(RESPUESTA))
-        .mockReturnValueOnce(throwError(() => new Error('500 Resultado vacio para: regularData')))
+        .mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Resultado vacio para: regularData' })))
         .mockReturnValueOnce(of(RESPUESTA));
 
       let tablas: unknown[] | undefined;
@@ -89,6 +85,21 @@ describe('CarteraMoraCraService', () => {
 
       expect(tablas).toHaveLength(3);
       expect(tablas?.[1]).toEqual({ headers: [], body: [], additional: {} });
+    });
+
+    /**
+     * La otra cara de lo mismo: lo que se absorbe es la RESPUESTA del servidor.
+     * Si la request nunca llegó (`status: 0` — red caída, cancelada) no hay
+     * bloque vacío que mostrar, y taparlo con una tabla en blanco haría que la
+     * pantalla mienta.
+     */
+    it('una caída de red NO se disfraza de tabla vacía: el error se propaga', () => {
+      getRegularData.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 0, statusText: 'Unknown Error' })));
+
+      let fallo: unknown;
+      servicio.monitorEfectividadesResumen(NODO).subscribe({ error: (e) => (fallo = e) });
+
+      expect(fallo).toBeInstanceOf(HttpErrorResponse);
     });
 
     it('ningún bloque de `-v4` manda `fec`: el host solo manda los params del mapa y el nodo', () => {
@@ -137,10 +148,11 @@ describe('CarteraMoraCraService', () => {
 
   /**
    * Tareas 3 y 4 de `incidencias-mora-actualizado.md`: los dos reportes de data
-   * masiva se cortaban por el timeout global de 30 s. Piden el suyo por
-   * `HttpContext` en vez de subir el global para toda la app.
+   * masiva se cortaban a los 30 s. La respuesta fue un timeout largo por
+   * `HttpContext`; hoy es no tener ninguno, igual que el STG, así que lo que se
+   * fija es que NADIE mande un contexto de timeout — ni los pesados ni el resto.
    */
-  describe('timeout largo de los reportes pesados', () => {
+  describe('sin timeout: ningún reporte impone un techo de espera', () => {
     /** El `HttpContext` es el tercer argumento de `getRegularData`. */
     function contextoDe(indice: number): HttpContext | undefined {
       return getRegularData.mock.calls[indice][2];
@@ -149,19 +161,19 @@ describe('CarteraMoraCraService', () => {
     it.each([
       ['seguimientoReprogramados'],
       ['reportePagoPuntual'],
-    ])('"%s" pide el timeout largo', (metodo) => {
+    ])('"%s" no manda contexto de timeout', (metodo) => {
       (servicio[metodo as 'seguimientoReprogramados' | 'reportePagoPuntual'])(NODO).subscribe();
 
-      expect(contextoDe(0)?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
+      expect(contextoDe(0)).toBeUndefined();
     });
 
-    it('"Seguimiento de Portafolio" lo pide en sus tres bloques', () => {
+    it('"Seguimiento de Portafolio" tampoco, en ninguno de sus tres bloques', () => {
       servicio.seguimientoPortafolio(NODO).subscribe();
 
-      for (let i = 0; i < 3; i++) expect(contextoDe(i)?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
+      for (let i = 0; i < 3; i++) expect(contextoDe(i)).toBeUndefined();
     });
 
-    it('un reporte normal NO pide timeout largo: se queda con el global', () => {
+    it('un reporte normal tampoco', () => {
       servicio.cmgMora(NODO).subscribe();
 
       expect(contextoDe(0)).toBeUndefined();

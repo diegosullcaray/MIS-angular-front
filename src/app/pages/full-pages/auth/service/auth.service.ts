@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { LimpiezaSesionService } from '../../../../core/preferencias/aplicacion/limpieza-sesion.service';
+import { JerarquiaCacheService } from '../../../../shared/ui/hier-selector/jerarquia-cache.service';
 import { ModSysLoginService } from '../../../../core/winder/instances/mod-sys-login.service';
 import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
@@ -22,6 +23,7 @@ export class AuthService {
   private readonly modSysLoginService = inject(ModSysLoginService);
   private readonly oauthService = inject(OAuthService);
   private readonly limpieza = inject(LimpiezaSesionService);
+  private readonly jerarquiaCache = inject(JerarquiaCacheService);
 
   private readonly _token = signal<string | null>(null);
   private readonly _alternates = signal<AlternateUsuario[]>([]);
@@ -97,6 +99,8 @@ export class AuthService {
       const lr = await this.procesarLogin(this.modSysLoginService.altLogin(alterno.email));
       const usuarioAlterno = this.mapearUsuario(lr.profile!, { email: alterno.email, nombre: alterno.nombre });
 
+      // El árbol organizativo depende de quién mira: el del alterno no es el propio.
+      this.jerarquiaCache.limpiar();
       this._usuarioOriginal.set(usuarioActual);
       this.shell.setUsuarioActivo(usuarioAlterno);
       this.actualizarSesionPersistida(usuarioAlterno, usuarioActual);
@@ -109,6 +113,7 @@ export class AuthService {
     const original = this._usuarioOriginal();
     if (!original) return;
 
+    this.jerarquiaCache.limpiar();
     this._usuarioOriginal.set(null);
     this.shell.setUsuarioActivo(original);
     this.actualizarSesionPersistida(original, null);

@@ -11,6 +11,8 @@ Tailwind v4.
 | Entender cómo está construido | [`02-arquitectura/01-como-funciona-el-sistema.md`](./02-arquitectura/01-como-funciona-el-sistema.md) |
 | Agregar o tocar un módulo | [`02-arquitectura/02-anatomia-de-un-modulo.md`](./02-arquitectura/02-anatomia-de-un-modulo.md) |
 | Crear la tabla de un reporte | [`02-arquitectura/03-tablas-de-reportes.md`](./02-arquitectura/03-tablas-de-reportes.md) |
+| Entender un término del payload o del negocio | [`01-canon/01-diccionario.md`](./01-canon/01-diccionario.md) |
+| Saber por qué algo carga lento o no carga | [`02-arquitectura/07-rendimiento-legacy-vs-host.md`](./02-arquitectura/07-rendimiento-legacy-vs-host.md) |
 
 ## Índice
 
@@ -19,6 +21,7 @@ Tailwind v4.
 | Documento | Contenido |
 |---|---|
 | [`00-vision-producto.md`](./01-canon/00-vision-producto.md) | Qué es el MIS Host y su identidad de interacción |
+| [`01-diccionario.md`](./01-canon/01-diccionario.md) | El vocabulario del sistema: protocolo Winder, los cuatro motores, parámetros del payload, jerarquía, negocio y arquitectura |
 
 ### 02 · Arquitectura
 
@@ -30,6 +33,7 @@ Tailwind v4.
 | [`04-filtros-jerarquia-organizativa.md`](./02-arquitectura/04-filtros-jerarquia-organizativa.md) | `HierSelectorComponent`: cascada, fallback de fecha de corte y loader global |
 | [`05-guia-estilos-kpis-reportes.md`](./02-arquitectura/05-guia-estilos-kpis-reportes.md) | Estándar visual de las tarjetas KPI |
 | [`06-preferencias-y-cierre-de-sesion.md`](./02-arquitectura/06-preferencias-y-cierre-de-sesion.md) | Preferencias de interfaz (fondo, acento, menú, anuncios) y el borrado total al cerrar sesión |
+| [`07-rendimiento-legacy-vs-host.md`](./02-arquitectura/07-rendimiento-legacy-vs-host.md) | Por qué el STG cargaba más rápido: el timeout que el original no tiene, los errores disfrazados de tabla vacía y el caché de jerarquía |
 
 ### 03 · Auditoría
 
@@ -40,6 +44,7 @@ Tailwind v4.
 | [`03-plan-de-accion.md`](./03-auditoria/03-plan-de-accion.md) | Plan por fases con esfuerzo y criterios de aceptación |
 | [`04-pruebas-responsive-y-color.md`](./03-auditoria/04-pruebas-responsive-y-color.md) | La batería de responsive en 13 dispositivos Android/iOS y las pruebas de contraste y armonía de color sobre los tokens |
 | [`05-incidencias.md`](./03-auditoria/05-incidencias.md) | Historial de los defectos que esa batería encontró y cómo se corrigieron |
+| [`06-incidencias-rendimiento.md`](./03-auditoria/06-incidencias-rendimiento.md) | Auditoría contra el STG original: los 5 defectos de carga de datos y rendimiento, con sus mediciones |
 
 ### Material de referencia
 

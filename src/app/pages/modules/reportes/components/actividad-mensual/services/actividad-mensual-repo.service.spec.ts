@@ -57,17 +57,18 @@ describe('ActividadMensualRepoService', () => {
     expect(res).toBe(TABLA_DINAMICA_VACIA);
   });
 
-  it('estructuraDesembolsosMensual debe llamar a tablaRegularCon con RS_DESEMB_02', async () => {
+  /**
+   * Antes mandaba un `HttpContext` con un timeout de 3 min propio. Ya no hay
+   * timeout que subir —el interceptor no impone ninguno—, así que la llamada
+   * queda con los dos argumentos de siempre.
+   */
+  it('estructuraDesembolsosMensual debe llamar a tablaRegularCon con RS_DESEMB_02, sin contexto', async () => {
     const res = await firstValueFrom(service.estructuraDesembolsosMensual(nodo, '2026-08-28'));
-    expect(tablaRegularCon).toHaveBeenCalledWith(
-      'RS_DESEMB_02',
-      {
-        tip_cod: nodo.tip_cod,
-        cod_rel: nodo.cod_rel,
-        fec: '2026-08-28',
-      },
-      expect.anything()
-    );
+    expect(tablaRegularCon).toHaveBeenCalledWith('RS_DESEMB_02', {
+      tip_cod: nodo.tip_cod,
+      cod_rel: nodo.cod_rel,
+      fec: '2026-08-28',
+    });
     expect(res).toEqual(TABLA_DINAMICA_VACIA);
   });
 

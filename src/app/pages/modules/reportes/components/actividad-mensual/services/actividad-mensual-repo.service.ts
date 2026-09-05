@@ -1,11 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpContext } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
-import { TIMEOUT_MS } from '../../../../../../core/interceptors/auth.interceptor';
 import { filasDeResultado, resultadoCrudo, tablaDeResultado } from '../../../utils/reportes-mapeo.util';
-import { COD_MENSUAL_REPO, TIMEOUT_ESTRUCTURA_DESEMBOLSOS_MS } from '../constantes/actividad-mensual.constantes';
+import { COD_MENSUAL_REPO } from '../constantes/actividad-mensual.constantes';
 import { aplicarEstilosEstructuraDesembolsos } from '../utils/estructura-desembolsos.util';
 import { seriesDeGraficoConColor, tarjetasCmgCarteraMensual } from '../utils/actividad-mensual-mapeo.util';
 import {
@@ -46,9 +44,8 @@ export class ActividadMensualRepoService {
 
   /** Estructura de Desembolsos mensual, con su coloración condicional. */
   estructuraDesembolsosMensual(nodo: NodoConsulta, fec: string): Observable<TablaDinamicaResultado> {
-    const context = new HttpContext().set(TIMEOUT_MS, TIMEOUT_ESTRUCTURA_DESEMBOLSOS_MS);
     return this.bloques
-      .tablaRegularCon(COD_MENSUAL_REPO.estructuraDesembolsos, this.paramsConFecha(nodo, fec), context)
+      .tablaRegularCon(COD_MENSUAL_REPO.estructuraDesembolsos, this.paramsConFecha(nodo, fec))
       .pipe(map(aplicarEstilosEstructuraDesembolsos));
   }
 

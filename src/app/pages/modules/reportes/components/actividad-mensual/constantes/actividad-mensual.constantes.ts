@@ -120,9 +120,6 @@ export const COD_MENSUAL_REPO = {
   cmgCarteraKpis: 'CMG_CARTERA_02',
 } as const;
 
-/** Estructura de Desembolsos mensual es más pesada que el resto: 3 min de techo. */
-export const TIMEOUT_ESTRUCTURA_DESEMBOLSOS_MS = 180_000;
-
 /**
  * Escala de la fila de distribución porcentual de Estructura de Desembolsos:
  * del menor valor (verde) al mayor (rojo). Con solo tres columnas se usan los

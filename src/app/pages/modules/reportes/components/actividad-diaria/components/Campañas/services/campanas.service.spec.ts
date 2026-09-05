@@ -1,10 +1,6 @@
 import { HttpContext } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import {
-  TIMEOUT_MS,
-  TIMEOUT_REPORTE_PESADO_MS,
-} from '../../../../../../../../core/interceptors/auth.interceptor';
 import { CampanasService } from './campanas.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
@@ -51,11 +47,15 @@ describe('CampanasService', () => {
       expect(getRegularData.mock.calls[0][1]).toMatchObject({ resp: 'TTABA100' });
     });
 
-    it('pide el timeout largo: el reporte movía tanta data que no entraba en los 30 s por defecto', () => {
+    /**
+     * Antes pedía un timeout largo para no morir en los 30 s del interceptor.
+     * Ese techo ya no existe —el STG no impone ninguno— y el reporte no manda
+     * ningún contexto propio: se apoya en que nadie lo va a cortar.
+     */
+    it('no impone ningún timeout: el bloque tarda lo que tarda el backend', () => {
       servicio.mentoring(NODO).subscribe();
 
-      const contexto = getRegularData.mock.calls[0][2] as HttpContext | undefined;
-      expect(contexto?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
+      expect(getRegularData.mock.calls[0][2] as HttpContext | undefined).toBeUndefined();
     });
   });
 
@@ -64,15 +64,14 @@ describe('CampanasService', () => {
       return of({ code: '0', headers: {}, body: { result: { headers: [], body: filas, additional: {} } } });
     }
 
-    it('pide `SEL_JER_MENTORING_01` con exactamente `{ tip_cod, cod_rel }`, sin `fec` y con timeout pesado', () => {
+    it('pide `SEL_JER_MENTORING_01` con exactamente `{ tip_cod, cod_rel }`, sin `fec` y sin timeout', () => {
       getRegularData.mockReturnValue(respuestaAsesores([]));
 
       servicio.opcionesAsesorMentoring(NODO).subscribe();
 
       expect(getRegularData.mock.calls[0][0]).toBe('SEL_JER_MENTORING_01');
       expect(getRegularData.mock.calls[0][1]).toEqual({ tip_cod: 9, cod_rel: 'FC' });
-      const contexto = getRegularData.mock.calls[0][2] as HttpContext | undefined;
-      expect(contexto?.get(TIMEOUT_MS)).toBe(TIMEOUT_REPORTE_PESADO_MS);
+      expect(getRegularData.mock.calls[0][2] as HttpContext | undefined).toBeUndefined();
     });
 
     it('antepone "TODO" a los asesores que devuelve el backend', () => {

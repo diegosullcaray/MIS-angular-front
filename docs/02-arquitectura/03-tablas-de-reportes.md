@@ -266,9 +266,9 @@ Para una tabla nueva:
 
 | Síntoma | Causa |
 |---|---|
-| HTTP 500 `Resultado vacio para: regularData` | El bloque no devolvió filas. Usá `regularTolerante()`. |
+| HTTP 500 `Resultado vacio para: regularData` | El bloque no devolvió filas. Usá `regularTolerante()`, que absorbe la respuesta del servidor pero deja pasar la caída de red. |
 | HTTP 500 al pedir un reporte que en el mapa figura `REGULAR` | El host no lee `reportType`. Probá `regularExacto()`. |
 | Tabla vacía en un reporte paginado | Falta `pagen` o el nodo completo: usá `regularPaginado()`. |
-| Se corta por timeout | Reporte de data masiva: `regularLento()`. |
+| El reporte tarda muchísimo | Es lo esperado en los de data masiva y **ya no se corta**: el interceptor no impone timeout (ver [`07-rendimiento-legacy-vs-host.md`](./07-rendimiento-legacy-vs-host.md)). Marcalo con `regularLento()` para que se sepa que es de los que tardan. |
 | Columnas corridas a partir de una | Un `colspan` de más en el encabezado; revisá las columnas ocultas. |
 | El gráfico o la tabla salen en blanco | El payload venía en `data[0]` y se leyó solo `headers`, o al revés. |

@@ -1,8 +1,9 @@
 # Auditoría
 
-Dos cosas conviven en esta carpeta: el **backlog de seguridad** (abierto, de la
-auditoría de arquitectura del 14 de agosto de 2026) y la **batería de pruebas de
-responsive y de color** con el historial de lo que encontró.
+Tres cosas conviven en esta carpeta: el **backlog de seguridad** (abierto, de la
+auditoría de arquitectura del 14 de agosto de 2026), la **batería de pruebas de
+responsive y de color** con el historial de lo que encontró, y la **auditoría de
+rendimiento contra el STG original**.
 
 | Documento | Contenido |
 |---|---|
@@ -10,6 +11,7 @@ responsive y de color** con el historial de lo que encontró.
 | [`03-plan-de-accion.md`](./03-plan-de-accion.md) | Plan por fases, con esfuerzo estimado y criterios de aceptación |
 | [`04-pruebas-responsive-y-color.md`](./04-pruebas-responsive-y-color.md) | Qué cubre la batería de responsive (13 dispositivos Android/iOS) y de contraste/armonía de color sobre los tokens, y cómo correrla |
 | [`05-incidencias.md`](./05-incidencias.md) | Historial de los 26 defectos que esa batería destapó y cómo se corrigió cada uno |
+| [`06-incidencias-rendimiento.md`](./06-incidencias-rendimiento.md) | Auditoría contra el STG original: por qué el legado cargaba más rápido, con los 5 defectos que salieron |
 
 ## Seguridad — backlog abierto
 

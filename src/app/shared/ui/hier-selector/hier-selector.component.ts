@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { ModSysAdminService } from '../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../core/services/shell-state.service';
 import { fechaCorteJerarquia } from './fecha-corte.util';
+import { JerarquiaCacheService } from './jerarquia-cache.service';
 import type { HierarquiaNodo, JerarquiaResponseBody, NivelJerarquiaDropdown, ParamsJerarquia } from './jerarquia.model';
 
 /** Selector de jerarquía organizativa en cascada horizontal. */
@@ -18,6 +19,7 @@ import type { HierarquiaNodo, JerarquiaResponseBody, NivelJerarquiaDropdown, Par
 export class HierSelectorComponent implements OnInit {
   private readonly antAdmin = inject(ModSysAdminService);
   private readonly shell = inject(ShellStateService);
+  private readonly cache = inject(JerarquiaCacheService);
 
   readonly paramsHier = input.required<ParamsJerarquia>();
   readonly placeholder = input('Elegir jerarquía');
@@ -67,9 +69,13 @@ export class HierSelectorComponent implements OnInit {
     this.cargando.set(true);
     const email = this.shell.usuarioActivo()?.email ?? '';
 
-    this.antAdmin
-      .getBaseHierarchy(email, this.paramsHier().code)
-      .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.base_hierarchy ?? []))
+    const codJer = this.paramsHier().code;
+    this.cache
+      .obtener(this.cache.claveBase(email, codJer), () =>
+        this.antAdmin
+          .getBaseHierarchy(email, codJer)
+          .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.base_hierarchy ?? [])),
+      )
       .subscribe({
         next: (raiz) => {
           if (raiz && raiz.length > 0) {
@@ -119,11 +125,20 @@ export class HierSelectorComponent implements OnInit {
     });
   }
 
-  /** Una llamada a nivel de jerarquía. */
+  /**
+   * Una llamada a nivel de jerarquía, servida desde el caché cuando ya se pidió.
+   *
+   * La clave lleva la fecha de corte, así que cambiar de corte no reusa el árbol
+   * del anterior.
+   */
   private pedirNivel(tip_cod: number, cod_rels: string[], lvl: number, paramsFec?: { key: string; val: string }) {
-    return this.antAdmin
-      .getLevelHierarchy(this.paramsHier().code, lvl, tip_cod, cod_rels, paramsFec)
-      .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.level_hierarchy ?? []));
+    const codJer = this.paramsHier().code;
+    const clave = this.cache.claveNivel(codJer, lvl, tip_cod, cod_rels, paramsFec?.val);
+    return this.cache.obtener(clave, () =>
+      this.antAdmin
+        .getLevelHierarchy(codJer, lvl, tip_cod, cod_rels, paramsFec)
+        .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.level_hierarchy ?? [])),
+    );
   }
 
   private fallarNivel(esCargaInicial: boolean): void {

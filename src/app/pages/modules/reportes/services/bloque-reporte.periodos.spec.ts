@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { BloqueReporteService } from './bloque-reporte.service';
@@ -116,11 +117,21 @@ describe('BloqueReporteService.periodos()', () => {
   });
 
   it('un error del backend tampoco tumba la pantalla', () => {
-    getRegularTableResult.mockReturnValue(throwError(() => new Error('500')));
+    getRegularTableResult.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
     let opciones: OpcionFiltro[] | undefined;
     servicio.periodos('RS_FECH').subscribe((o) => (opciones = o));
 
     expect(opciones).toEqual([]);
+  });
+
+  /** Sin red no hay "sin periodos": hay una consulta que no se hizo. */
+  it('una caída de red sí se propaga, en vez de dejar el filtro vacío', () => {
+    getRegularTableResult.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 0 })));
+
+    let fallo: unknown;
+    servicio.periodos('RS_FECH').subscribe({ error: (e) => (fallo = e) });
+
+    expect(fallo).toBeInstanceOf(HttpErrorResponse);
   });
 });
