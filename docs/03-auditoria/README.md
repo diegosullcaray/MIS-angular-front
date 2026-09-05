@@ -12,6 +12,7 @@ rendimiento contra el STG original**.
 | [`04-pruebas-responsive-y-color.md`](./04-pruebas-responsive-y-color.md) | Qué cubre la batería de responsive (13 dispositivos Android/iOS) y de contraste/armonía de color sobre los tokens, y cómo correrla |
 | [`05-incidencias.md`](./05-incidencias.md) | Historial de los 26 defectos que esa batería destapó y cómo se corrigió cada uno |
 | [`06-incidencias-rendimiento.md`](./06-incidencias-rendimiento.md) | Auditoría contra el STG original: por qué el legado cargaba más rápido, con los 5 defectos que salieron |
+| [`07-pentest-seguridad.md`](./07-pentest-seguridad.md) | Prueba de penetración: confirma con evidencia en vivo las claves en repo público y revisa cifrado, XSS, sesión y autorización |
 
 ## Seguridad — backlog abierto
 

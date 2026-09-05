@@ -45,6 +45,7 @@ Tailwind v4.
 | [`04-pruebas-responsive-y-color.md`](./03-auditoria/04-pruebas-responsive-y-color.md) | La batería de responsive en 13 dispositivos Android/iOS y las pruebas de contraste y armonía de color sobre los tokens |
 | [`05-incidencias.md`](./03-auditoria/05-incidencias.md) | Historial de los defectos que esa batería encontró y cómo se corrigieron |
 | [`06-incidencias-rendimiento.md`](./03-auditoria/06-incidencias-rendimiento.md) | Auditoría contra el STG original: los 5 defectos de carga de datos y rendimiento, con sus mediciones |
+| [`07-pentest-seguridad.md`](./03-auditoria/07-pentest-seguridad.md) | Pentest de seguridad: hallazgos explotables y de diseño, con qué se corrige en el frontend y qué necesita el backend |
 
 ### Material de referencia
 
