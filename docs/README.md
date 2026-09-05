@@ -31,13 +31,15 @@ Tailwind v4.
 | [`05-guia-estilos-kpis-reportes.md`](./02-arquitectura/05-guia-estilos-kpis-reportes.md) | Estándar visual de las tarjetas KPI |
 | [`06-preferencias-y-cierre-de-sesion.md`](./02-arquitectura/06-preferencias-y-cierre-de-sesion.md) | Preferencias de interfaz (fondo, acento, menú, anuncios) y el borrado total al cerrar sesión |
 
-### 03 · Seguridad
+### 03 · Auditoría
 
 | Documento | Contenido |
 |---|---|
-| [`README.md`](./03-auditoria/README.md) | Estado del backlog de seguridad |
-| [`02-hallazgos.md`](./03-auditoria/02-hallazgos.md) | Los hallazgos con su evidencia, impacto y corrección propuesta |
+| [`README.md`](./03-auditoria/README.md) | Estado del backlog de seguridad y guía de la carpeta |
+| [`02-hallazgos.md`](./03-auditoria/02-hallazgos.md) | Los hallazgos de seguridad con su evidencia, impacto y corrección propuesta |
 | [`03-plan-de-accion.md`](./03-auditoria/03-plan-de-accion.md) | Plan por fases con esfuerzo y criterios de aceptación |
+| [`04-pruebas-responsive-y-color.md`](./03-auditoria/04-pruebas-responsive-y-color.md) | La batería de responsive en 13 dispositivos Android/iOS y las pruebas de contraste y armonía de color sobre los tokens |
+| [`05-incidencias.md`](./03-auditoria/05-incidencias.md) | Historial de los defectos que esa batería encontró y cómo se corrigieron |
 
 ### Material de referencia
 

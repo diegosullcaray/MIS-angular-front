@@ -218,3 +218,18 @@
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* Objetivo táctil de los enlaces del breadcrumb en móvil.
+   Son enlaces dentro de una línea de texto, así que su mínimo es el 24×24 de
+   WCAG 2.5.8 (AA) y no el 44×44 de los botones de acción: estirarlos a 44 de
+   ancho haría de una ruta profunda una tira interminable. El alto sí llega al
+   del header, que es lo que hace cómodo el toque. */
+@media (max-width: 639px) {
+  .header-breadcrumb ::ng-deep .p-breadcrumb-item-link {
+    min-width: 24px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

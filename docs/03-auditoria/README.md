@@ -1,13 +1,20 @@
-# Seguridad — backlog abierto
+# Auditoría
 
-Los hallazgos de la auditoría de arquitectura del **14 de agosto de 2026**, con
-lo que sigue pendiente. Se conserva porque **la mayoría de los hallazgos críticos
-siguen abiertos**: es un backlog de seguridad, no un informe histórico.
+Dos cosas conviven en esta carpeta: el **backlog de seguridad** (abierto, de la
+auditoría de arquitectura del 14 de agosto de 2026) y la **batería de pruebas de
+responsive y de color** con el historial de lo que encontró.
 
 | Documento | Contenido |
 |---|---|
-| [`02-hallazgos.md`](./02-hallazgos.md) | Los hallazgos por severidad, cada uno con su evidencia, impacto y corrección propuesta |
+| [`02-hallazgos.md`](./02-hallazgos.md) | Hallazgos de seguridad por severidad, cada uno con su evidencia, impacto y corrección propuesta |
 | [`03-plan-de-accion.md`](./03-plan-de-accion.md) | Plan por fases, con esfuerzo estimado y criterios de aceptación |
+| [`04-pruebas-responsive-y-color.md`](./04-pruebas-responsive-y-color.md) | Qué cubre la batería de responsive (13 dispositivos Android/iOS) y de contraste/armonía de color sobre los tokens, y cómo correrla |
+| [`05-incidencias.md`](./05-incidencias.md) | Historial de los 26 defectos que esa batería destapó y cómo se corrigió cada uno |
+
+## Seguridad — backlog abierto
+
+Se conserva porque **la mayoría de los hallazgos críticos siguen abiertos**: es
+un backlog, no un informe histórico.
 
 ## Lo que sigue abierto y es crítico
 
@@ -30,7 +37,10 @@ solo desde el frontend.
 
 - **C-1 · Suplantación de identidad en el build de producción** — resuelto en la
   Fase 0 (`fileReplacements`, `isDevMode()` y verificación del bundle en cada
-  build).
+  build). **Atención**: el guardián de esta corrección —`scripts/verificar-bundle.mjs`—
+  había sido borrado, dejando `npm run build:prod` roto y la protección caída sin
+  aviso. Se restauró; el detalle está en
+  [`05-incidencias.md`](./05-incidencias.md) (B-07).
 - **M-6 · Los archivos de entorno divergían** — tipados y alineados.
 - **A-4 · Pruebas rojas** — el proyecto está en verde y la suite crece con cada
   cambio.
