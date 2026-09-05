@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval, startWith, switchMap } from 'rxjs';
-import { TablaReporteComponent } from '../../ui/tabla-reporte/tabla-reporte.component';
-import { ControlCargasService } from '../../services/control-cargas.service';
+import { TablaReporteComponent } from '../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
+import { ControlCargasService } from './control-cargas.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../models/tabla-reporte.model';
@@ -15,7 +15,6 @@ const INTERVALO_REFRESCO_MS = 30 * 1000;
   standalone: true,
   imports: [TablaReporteComponent, WindowPanelComponent],
   templateUrl: './control-cargas.component.html',
-  styleUrl: './control-cargas.component.css',
 })
 export class ControlCargasComponent {
   private readonly servicio = inject(ControlCargasService);

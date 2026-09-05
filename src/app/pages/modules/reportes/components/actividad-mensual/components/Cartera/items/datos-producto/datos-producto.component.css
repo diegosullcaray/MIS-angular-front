@@ -1,0 +1,4 @@
+/* Estilos encapsulados para datos-producto */
+:host {
+  display: block;
+}

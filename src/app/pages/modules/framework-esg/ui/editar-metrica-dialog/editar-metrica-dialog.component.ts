@@ -15,7 +15,6 @@ import type { EsgMetricaFila } from '../../models/metrica.model';
   standalone: true,
   imports: [DialogModule, ButtonModule, InputTextModule, SelectModule, FormsModule],
   templateUrl: './editar-metrica-dialog.component.html',
-  styleUrl: './editar-metrica-dialog.component.css',
 })
 export class EditarMetricaDialogComponent {
   private readonly esg = inject(FrameworkEsgService);

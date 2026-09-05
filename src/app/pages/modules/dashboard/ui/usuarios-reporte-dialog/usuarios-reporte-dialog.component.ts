@@ -17,7 +17,6 @@ const TODOS_NOMBRE = 'Todos';
   standalone: true,
   imports: [DialogModule, ButtonModule, InputTextModule, ListboxModule, FormsModule],
   templateUrl: './usuarios-reporte-dialog.component.html',
-  styleUrl: './usuarios-reporte-dialog.component.css',
 })
 export class UsuariosReporteDialogComponent {
   private readonly dashboard = inject(DashboardService);

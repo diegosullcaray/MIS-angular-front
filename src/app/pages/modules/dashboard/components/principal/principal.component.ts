@@ -14,7 +14,6 @@ import type { ReporteDashboard } from '../../models/reporte.model';
   standalone: true,
   imports: [TableModule, SkeletonModule, TooltipModule, UsuariosReporteDialogComponent, WindowPanelComponent],
   templateUrl: './principal.component.html',
-  styleUrl: './principal.component.css',
 })
 export class PrincipalComponent {
   protected readonly dashboard = inject(DashboardService);

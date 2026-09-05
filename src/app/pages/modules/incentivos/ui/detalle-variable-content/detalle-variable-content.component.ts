@@ -20,7 +20,6 @@ type FormatoRanking = 'entero' | 'decimal' | 'porcentaje' | 'pbs';
   standalone: true,
   imports: [TableModule, ButtonModule, SkeletonModule],
   templateUrl: './detalle-variable-content.component.html',
-  styleUrl: './detalle-variable-content.component.css',
 })
 export class DetalleVariableContentComponent {
   private readonly incentivos = inject(IncentivosService);

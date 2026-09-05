@@ -1,0 +1,4 @@
+/* Estilos encapsulados para cmg-clientes-flujo */
+:host {
+  display: block;
+}

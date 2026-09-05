@@ -28,5 +28,5 @@ export const environment: Environment = {
   },
 
   /** Identidad para pruebas locales. Para cambiar de perfil no edites este archivo: localStorage.setItem('mis.devUser', 'flor.garcia@confianza.pe'); location.reload(); localStorage.removeItem('mis.devUser'); location.reload(); // cuenta real nilda.quilla@ comercial · giomara.acevedo@ operaciones (157) · flor.garcia@ asesor */
-  devUser: 'oscar.sanchez@confianza.pe',
+  devUser: 'manuel.garcia@confianza.pe',
 };

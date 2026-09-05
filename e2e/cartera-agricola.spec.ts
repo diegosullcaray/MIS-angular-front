@@ -50,7 +50,7 @@ async function mockBackend(page: Page) {
  */
 async function clicEnPrimeraBarra(page: Page, indiceGrafico: number) {
   const barra = page
-    .locator('app-grafico-highcharts')
+    .locator('app-grafico-mixto')
     .nth(indiceGrafico)
     .locator('.highcharts-series-group .highcharts-series-0 path.highcharts-point')
     .first();

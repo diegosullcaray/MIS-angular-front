@@ -11,6 +11,10 @@
   position: relative;
   isolation: isolate;
   background-image: var(--mis-wallpaper);
+  /* Color plano debajo de la imagen: es lo que se ve cuando el usuario elige un
+     fondo sólido, porque entonces `--mis-wallpaper` pasa a valer `none`. */
+  background-color: var(--mis-wallpaper-color, transparent);
+  transition: background-color var(--mis-transition-base);
 }
 
 .shell-wallpaper::before {
@@ -43,4 +47,15 @@
 :host ::ng-deep .mis-spinner .p-progressspinner-circle {
   stroke: var(--mis-secondary, #00A2FF);
   animation-duration: 1.6s;
+}
+
+/* ── Modo de menú "horizontal" ────────────────────────────────────────────
+   El rail deja de ser una columna a la izquierda y pasa a ser una banda: el
+   shell tiene que apilar en el otro eje. `data-menu` lo escribe
+   `AparienciaDomAdaptador` desde las preferencias. Solo desde `sm`: en móvil
+   el rail siempre es la barra inferior fija. */
+@media (min-width: 640px) {
+  :host-context(html[data-menu='horizontal']) .shell-wallpaper {
+    flex-direction: column;
+  }
 }

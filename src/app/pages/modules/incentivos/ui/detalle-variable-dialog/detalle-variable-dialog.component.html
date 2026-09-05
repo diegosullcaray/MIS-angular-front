@@ -8,9 +8,9 @@
   appendTo="body"
 >
   <ng-template pTemplate="header">
-    <div class="flex items-center gap-2.5">
-      <i [class]="icono() + ' text-[18px] text-white'"></i>
-      <span class="font-bold text-[15px] text-white tracking-wide">{{ titulo() }}</span>
+    <div class="flex items-center gap-2 min-w-0">
+      <i [class]="icono() + ' text-[13px] text-[var(--mis-text-secondary)]'"></i>
+      <span class="text-[13px] font-semibold text-[var(--mis-text-primary)] truncate">{{ titulo() }}</span>
     </div>
   </ng-template>
 

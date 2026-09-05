@@ -1,0 +1,24 @@
+<app-reporte-simple
+  titulo="Resultados por Unidad de Negocio"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <div filtros>
+    <app-select-filtro
+      etiqueta="Canal"
+      [opciones]="opcionesCanal"
+      [valor]="canal()"
+      (valorChange)="canal.set($event)"
+    />
+    <app-select-filtro
+      etiqueta="Fecha Cierre"
+      [opciones]="opcionesFechaBase"
+      [valor]="fechaBase()"
+      (valorChange)="fechaBase.set($event)"
+    />
+  </div>
+</app-reporte-simple>

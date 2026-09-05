@@ -2,54 +2,54 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
-import type { ColumnaDinamica, TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../../../models/tabla-dinamica.model';
-import type { ColumnaMonitor } from '../models/monitor-inteligencia.model';
+import { filasDeResultado, resultadoCrudo, tablaDeResultado } from '../../../../../utils/reportes-mapeo.util';
+import { aplicarEstilosEstructuraDesembolsos } from '../../../../actividad-mensual/utils/estructura-desembolsos.util';
+import { COD_CARTERA_REPO, PARAMS_RANKING_COMERCIAL, TABLAS_GESTION_COMERCIAL } from '../constantes/cartera.constantes';
+import {
+  columnasVisibles,
+  conColumnasSemaforo,
+  conSemaforos,
+  graficoGestionComercial,
+  seriesDeGrafico,
+  tarjetasCmgCartera,
+  totalesAgro,
+} from '../utils/cartera-mapeo.util';
 import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas';
-import type { CmgCarteraResultado, TarjetaCmgCartera } from '../models/cmg-cartera.model';
-import type { CarteraAgricolaResultado, TotalAgro, DetalleAgricolaResultado } from '../models/cartera-agricola.model';
 import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
-import { GRAFICOS_GESTION_COMERCIAL, type GestionComercialResultado } from '../models/gestion-comercial.model';
-import { TOTALES_AGRO } from '../models/cartera-agricola.model';
-import type { BloqueGrafico } from '../../../../../models/grafico-reporte.model';
+import { GRAFICOS_GESTION_COMERCIAL, kpisDeFilaTotal } from '../models/gestion-comercial.model';
+import type { TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../../../models/tabla-dinamica.model';
+import type { ColumnaMonitor } from '../models/monitor-inteligencia.model';
+import type { CmgCarteraResultado } from '../models/cmg-cartera.model';
+import type { CarteraAgricolaResultado, DetalleAgricolaResultado } from '../models/cartera-agricola.model';
+import type { GestionComercialResultado } from '../models/gestion-comercial.model';
+import type { OpcionFiltro } from '../../../../../../../../shared/ui/formularios/opcion-filtro.model';
 
-/** Los reportes de Cartera que viven en el `repositorio` del legado (motor `table.regular`). */
+/**
+ * Los reportes de Cartera que viven en el `repositorio` del legado (motor
+ * `table.regular`). Acá solo se arman las peticiones: los `cod_rep` están en
+ * `constantes/` y el mapeo de cada payload en `utils/`.
+ */
 @Injectable({ providedIn: 'root' })
 export class CarteraRepositorioService {
   private readonly bloques = inject(BloqueReporteService);
   private readonly reportes = inject(ModReportesService);
 
-  /**
-   * "Estructura de Desembolsos" — legado `repositorio/desembolsos` (`RS_DESEMB_01`).
-   *
-   * El legado además corre un `processHeaders()` que asigna un `cellRenderer`
-   * a algunas subcolumnas, pero esa función devuelve el valor sin tocarlo en
-   * las dos ramas: es código muerto y no se porta.
-   */
+  /** Estructura de Desembolsos, con la coloración condicional de la fila de distribución. */
   estructuraDesembolsos(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
-    return this.bloques.tablaRegularCon('RS_DESEMB_01', {
-      tip_cod: nodo.tip_cod,
-      cod_rel: nodo.cod_rel,
-      fec: this.bloques.fecha(),
-    });
+    return this.bloques
+      .tablaRegularCon(COD_CARTERA_REPO.estructuraDesembolsos, { ...this.paramsNodo(nodo), fec: this.bloques.fecha() })
+      .pipe(map(aplicarEstilosEstructuraDesembolsos));
   }
 
-  /**
-   * "Cartera Agrícola - Cultivos" — legado `repositorio/agro-mix-d` (`RS_AGROMIX_01`).
-   *
-   * Las tarjetas de mes anterior salen de `meta1[0]` y las del mes en curso de
-   * la primera fila de la tabla, igual que el legado.
-   */
+  /** Cartera Agrícola · Cultivos. Las tarjetas del mes anterior salen de `meta1[0]`. */
   carteraAgricola(nodo: NodoConsulta): Observable<CarteraAgricolaResultado> {
-    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: this.bloques.fecha() };
-    return this.reportes.getRegularTableResult('RS_AGROMIX_01', params).pipe(
+    return this.reportes.getRegularTableResult(COD_CARTERA_REPO.carteraAgricola, this.paramsConFecha(nodo)).pipe(
       map((r) => {
-        const resultado = crudo(r);
-        const filas = (resultado?.data ?? []) as Record<string, unknown>[];
-        const meta = (typeof resultado?.meta1 === 'string' ? JSON.parse(resultado.meta1) : resultado?.meta1) as
-          | Record<string, unknown>[]
-          | undefined;
+        const resultado = resultadoCrudo(r);
+        const filas = filasDeResultado(resultado);
+        const meta = parseMeta(resultado);
         return {
-          tabla: { columnas: resultado?.headers ? (JSON.parse(resultado.headers) as ColumnaDinamica[]) : [], filas },
+          tabla: tablaDeResultado(resultado),
           totales: totalesAgro(filas[0] ?? {}, meta?.[0] ?? {}),
         };
       }),
@@ -57,14 +57,11 @@ export class CarteraRepositorioService {
   }
 
   /**
-   * Los cuatro gráficos del detalle por cultivo — legado `RS_AGROMIX_02` al `_05`.
-   *
-   * Cada bloque trae su `{categories, series}` dentro de `resultado.headers`;
-   * `resultado.data` son las filas de clientes, y solo hacen falta las de los
-   * dos gráficos que abren el modal de detalle (el `detailDataMap` del legado).
+   * Los cuatro gráficos del detalle por cultivo. Solo dos de ellos usan sus
+   * filas: son los que abren el modal de detalle (el `detailDataMap` del legado).
    */
   detalleGraficosAgricola(nodo: NodoConsulta): Observable<DetalleAgricolaResultado> {
-    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: this.bloques.fecha() };
+    const params = this.paramsConFecha(nodo);
     const bloques = GRAFICOS_AGRICOLA.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
 
     return forkJoin(bloques).pipe(
@@ -72,8 +69,8 @@ export class CarteraRepositorioService {
         const filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
         const graficos = respuestas.map((r, i) => {
           const { titulo, id } = GRAFICOS_AGRICOLA[i];
-          const resultado = crudo(r);
-          if (id) filasPorGrafico[id] = (resultado?.data ?? []) as Record<string, unknown>[];
+          const resultado = resultadoCrudo(r);
+          if (id) filasPorGrafico[id] = filasDeResultado(resultado);
           return { titulo, ...seriesDeGrafico(resultado?.headers) };
         });
         return { graficos, filasPorGrafico };
@@ -81,50 +78,51 @@ export class CarteraRepositorioService {
     );
   }
 
+  /** Opciones del selector de periodo de Gestión Comercial. */
+  periodosGestionComercial(): Observable<OpcionFiltro[]> {
+    return this.bloques.periodos(COD_CARTERA_REPO.periodosGestionComercial);
+  }
+
   /**
-   * "Gestión Comercial" — legado `repositorio/gestion-comercial`.
-   *
-   * Todo el reporte cuelga del mismo nodo y la misma fecha: las tres tablas
-   * (`RS_GEST_COM_01` al `_03`) y los siete gráficos (`GRAF_GEST_COM_*`) se
-   * piden juntos. `RS_GEST_COM_01` alimenta dos tablas con el mismo `data`.
+   * Gestión Comercial: las tres tablas y los gráficos cuelgan del mismo nodo y
+   * la misma fecha, así que se piden juntos. La fecha es la del selector de
+   * periodo; si no llega, la de corte del usuario.
    */
-  gestionComercial(nodo: NodoConsulta): Observable<GestionComercialResultado> {
-    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fecha: this.bloques.fecha() };
-    const tablas = ['RS_GEST_COM_01', 'RS_GEST_COM_02', 'RS_GEST_COM_03'].map((c) =>
-      this.reportes.getRegularTableResult(c, params),
-    );
+  gestionComercial(nodo: NodoConsulta, fecha = this.bloques.fecha()): Observable<GestionComercialResultado> {
+    const params = { ...this.paramsNodo(nodo), fecha };
+    const tablas = TABLAS_GESTION_COMERCIAL.map((c) => this.reportes.getRegularTableResult(c, params));
     const graficos = GRAFICOS_GESTION_COMERCIAL.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
 
     return forkJoin([...tablas, ...graficos]).pipe(
       map((respuestas) => {
-        const [r01, r02, r03, ...rGraficos] = respuestas.map(crudo);
+        const [r01, r02, r03, ...rGraficos] = respuestas.map(resultadoCrudo);
+        const filas = filasDeResultado(r01);
         return {
-          filas: (r01?.data ?? []) as Record<string, unknown>[],
+          filas,
           varSaldoVigente: tablaDeResultado(r02),
           varClientesStock: tablaDeResultado(r03),
-          graficos: rGraficos.map((r, i) => ({ titulo: GRAFICOS_GESTION_COMERCIAL[i].titulo, ...seriesDeGrafico(r?.headers) })),
+          kpis: kpisDeFilaTotal(filas),
+          graficos: rGraficos.map((r, i) => graficoGestionComercial(r, GRAFICOS_GESTION_COMERCIAL[i])),
         };
       }),
     );
   }
 
   /**
-   * "CMG Cartera" — legado `repositorio/cmg-cartera`.
-   *
-   * Son dos consultas con nombres de parámetro que no coinciden entre sí (el
-   * `_01` manda `codrel`/`Fecha`, el `_02` `cod_rel`/`fec`): así están en el
-   * legado y el backend las espera así.
+   * CMG Cartera. Las dos consultas usan nombres de parámetro distintos entre sí
+   * (`codrel`/`Fecha` una, `cod_rel`/`fec` la otra): así están en el legado y
+   * así los espera el backend.
    */
   cmgCartera(nodo: NodoConsulta, fase: number): Observable<CmgCarteraResultado> {
     const fecha = this.bloques.fecha();
-    const tabla$ = this.reportes.getRegularTableResult('CMG_CARTERA_01', {
+    const tabla$ = this.reportes.getRegularTableResult(COD_CARTERA_REPO.cmgCarteraTabla, {
       codrel: nodo.cod_rel,
       Fecha: fecha,
       tipcod: nodo.tip_cod,
       met: '1',
       prod: fase,
     });
-    const kpis$ = this.reportes.getRegularTableResult('CMG_CARTERA_02', {
+    const kpis$ = this.reportes.getRegularTableResult(COD_CARTERA_REPO.cmgCarteraKpis, {
       tipcod: nodo.tip_cod,
       cod_rel: nodo.cod_rel,
       tipmet: '1',
@@ -134,182 +132,57 @@ export class CarteraRepositorioService {
 
     return forkJoin([tabla$, kpis$]).pipe(
       map(([respTabla, respKpis]) => {
-        const rTabla = crudo(respTabla);
-        const filas = (rTabla?.data ?? []) as Record<string, unknown>[];
-        const kpis = ((crudo(respKpis)?.data ?? []) as Record<string, unknown>[])[0] ?? {};
+        const rTabla = resultadoCrudo(respTabla);
+        const filas = filasDeResultado(rTabla);
+        const kpis = filasDeResultado(resultadoCrudo(respKpis))[0] ?? {};
         return {
           tabla: { columnas: conColumnasSemaforo(columnasVisibles(rTabla?.headers)), filas },
-          tarjetas: tarjetas(filas, kpis),
+          tarjetas: tarjetasCmgCartera(filas, kpis),
         };
       }),
     );
   }
 
   /**
-   * "Ranking Comercial" — legado `repositorio/ranking-comercial` (`RS_RANK_COM_01`).
-   *
-   * Ojo con los parámetros: este reporte manda el nodo como
-   * `territorio`/`corredor`, no como `tip_cod`/`cod_rel`.
-   *
-   * Las tres columnas `*_Semaforo` no vienen del backend: las arma el cliente
-   * comparando cada avance contra el `Timing` (días transcurridos) de la fila,
-   * por eso las cabeceras son fijas y no las del payload.
+   * Ranking Comercial. No usa la jerarquía —de ahí que no reciba nodo—: trae el
+   * ranking completo y se filtra del lado del cliente. Sus tres columnas de
+   * semáforo tampoco vienen del backend, las calcula `conSemaforos`.
    */
-  rankingComercial(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
-    const params = { territorio: nodo.cod_rel, corredor: nodo.tip_cod, fecha: this.bloques.fecha() };
+  rankingComercial(): Observable<TablaDinamicaResultado> {
+    const params = { ...PARAMS_RANKING_COMERCIAL, fecha: this.bloques.fecha() };
     return this.bloques
-      .tablaRegularCon('RS_RANK_COM_01', params)
+      .tablaRegularCon(COD_CARTERA_REPO.rankingComercial, params)
       .pipe(map(({ filas }) => ({ columnas: COLUMNAS_RANKING_COMERCIAL, filas: filas.map(conSemaforos) })));
   }
 
   /**
-   * "Monitor de Inteligencia de Negocios" — legado `repositorio/mon-int-comer`
-   * (`RS_MON_INT_COM_01`).
-   *
-   * No devuelve una tabla, así que no pasa por `tablaRegularCon`: el tablero
-   * de columnas y tarjetas viene dentro de `resultado.headers`, que el legado
-   * desenvuelve un nivel cuando llega anidado.
+   * Monitor de Inteligencia de Negocios. No devuelve una tabla: el tablero de
+   * columnas y tarjetas viene dentro de `headers`, que el legado desenvuelve un
+   * nivel cuando llega anidado.
    */
   monitorInteligencia(nodo: NodoConsulta): Observable<ColumnaMonitor[]> {
-    const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fecha: this.bloques.fecha() };
-    return this.reportes.getRegularTableResult('RS_MON_INT_COM_01', params).pipe(
+    const params = { ...this.paramsNodo(nodo), fecha: this.bloques.fecha() };
+    return this.reportes.getRegularTableResult(COD_CARTERA_REPO.monitorInteligencia, params).pipe(
       map((r) => {
-        const crudo = (r.body as { resultado?: TablaRegularResultadoRaw } | null)?.resultado?.headers;
+        const crudo = resultadoCrudo(r)?.headers;
         if (!crudo) return [];
         const parseado = JSON.parse(crudo) as ColumnaMonitor[] | ColumnaMonitor[][];
         return Array.isArray(parseado[0]) ? (parseado[0] as ColumnaMonitor[]) : (parseado as ColumnaMonitor[]);
       }),
     );
   }
+
+  private paramsNodo(nodo: NodoConsulta): Record<string, unknown> {
+    return { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel };
+  }
+
+  private paramsConFecha(nodo: NodoConsulta): Record<string, unknown> {
+    return { ...this.paramsNodo(nodo), fec: this.bloques.fecha() };
+  }
 }
 
-/** El `resultado` crudo de una respuesta del motor `table.regular`. */
-function crudo(r: { body?: unknown }): TablaRegularResultadoRaw | undefined {
-  return (r.body as { resultado?: TablaRegularResultadoRaw } | null)?.resultado;
-}
-
-/** El legado descarta las columnas que el backend marca como ocultas. */
-function columnasVisibles(headers: string | undefined): ColumnaDinamica[] {
-  if (!headers) return [];
-  const todas = JSON.parse(headers) as (ColumnaDinamica & { cellStyle?: { display?: string } })[];
-  return todas.filter((h) => h.cellStyle?.display?.toLowerCase() !== 'none');
-}
-
-/**
- * Las tarjetas del encabezado. Las de saldo salen de la fila 18 de la tabla
- * por índice fijo, tal cual el legado; si el reporte devuelve menos filas se
- * quedan sin valor en vez de romper la pantalla.
- */
-function tarjetas(filasTabla: Record<string, unknown>[], kpis: Record<string, unknown>): TarjetaCmgCartera[] {
-  // `tasaminima` llega como `"42.07%"` (string, con el signo de porcentaje) — se descarta todo lo que no sea dígito/signo/punto.
-  const num = (v: unknown) => Number(String(v ?? '0').replace(/[^0-9.-]/g, '')) || 0;
-  const fila18 = filasTabla[18] as Record<string, unknown> | undefined;
-  const fila16 = filasTabla[16] as Record<string, unknown> | undefined;
-
-  const saldoMedio = num(fila18?.[6]);
-  const saldoMedioAnterior = num(fila18?.[5]);
-  const deltaSaldo = saldoMedio - saldoMedioAnterior;
-
-  const tappMes = fila16?.[6] == null ? undefined : num(fila16[6]);
-  const tappMinima = kpis['tasaminima'] == null ? undefined : num(kpis['tasaminima']);
-  const deltaPbs = tappMes === undefined || tappMinima === undefined ? undefined : Math.round((tappMes - tappMinima) * 100);
-  const senalTapp = deltaPbs === undefined ? 0 : Math.sign(deltaPbs);
-
-  return [
-    {
-      etiqueta: 'Monto Desembolsado (miles PEN)',
-      valor: num(kpis['des_acum']) / 1000,
-      comparativo: `Meta ${(num(kpis['meta_des_acum']) / 1000).toLocaleString('es-PE', { maximumFractionDigits: 0 })}`,
-      senal: 0,
-      cumplimiento: kpis['cumpl_des_acum'] == null ? undefined : num(kpis['cumpl_des_acum']),
-    },
-    {
-      etiqueta: 'Ope. Desembolsada (Nro)',
-      valor: num(kpis['ope_acum_']),
-      comparativo: `Meta ${num(kpis['meta_ope_acum_']).toLocaleString('es-PE')}`,
-      senal: 0,
-      cumplimiento: kpis['cumpl_ope_acum'] == null ? undefined : num(kpis['cumpl_ope_acum']),
-    },
-    {
-      etiqueta: 'TAPP Mes / TAPP Mínima',
-      valor: String(fila16?.[6] ?? ''),
-      comparativo: String(kpis['tasaminima'] ?? ''),
-      senal: senalTapp,
-      delta: deltaPbs === undefined ? undefined : `${deltaPbs.toLocaleString('es-PE')} pbs`,
-    },
-    {
-      etiqueta: 'Saldo Medio Vigente (miles PEN)',
-      valor: saldoMedio,
-      comparativo: `Mes anterior ${saldoMedioAnterior.toLocaleString('es-PE', { maximumFractionDigits: 0 })}`,
-      senal: Math.sign(deltaSaldo),
-      delta: Math.round(deltaSaldo).toLocaleString('es-PE'),
-    },
-  ];
-}
-
-/**
- * Las "bolas" de semáforo de la tabla de CMG Cartera (TMM, TAM y la tercera
- * columna de control): el legado antepone un ícono coloreado a las columnas
- * 9/11/13 según el signo (-1/0/1) de las columnas de control 8/10/12, ocultas
- * (`cellStyle.display: 'none'`) pero presentes en la fila. Se marca cada
- * columna visible con su `semaforoKey` para que `app-tabla-dinamica` dibuje
- * el mismo punto (`pi-circle-fill`) y los mismos colores que ya usa
- * `app-tabla-reporte` en el resto de la app.
- */
-const SEMAFOROS_CMG_CARTERA: Readonly<Record<string, string>> = { '9': '8', '11': '10', '13': '12' };
-
-function conColumnasSemaforo(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
-  return columnas.map((c) => (SEMAFOROS_CMG_CARTERA[c.key] ? { ...c, semaforoKey: SEMAFOROS_CMG_CARTERA[c.key] } : c));
-}
-
-/** Avance con su semáforo delante, en el formato exacto del legado (`🟢 15.28%`). */
-function semaforo(avanceCrudo: unknown, timingDecimal: number): string {
-  const avance = Number(avanceCrudo);
-  if (avanceCrudo == null || Number.isNaN(avance)) return '';
-
-  const formateado = `${(avance * 100).toFixed(2)}%`;
-  if (timingDecimal === 0) return formateado;
-
-  const icono = avance >= timingDecimal ? '🟢' : avance / timingDecimal >= 0.8 ? '🟡' : '🔴';
-  return `${icono} ${formateado}`;
-}
-
-/** Claves de avance del legado y la columna calculada que alimenta cada una. */
-const AVANCES: [origen: string, destino: string][] = [
-  ['Percent_Cumpl', 'Percent_Cumpl_Semaforo'],
-  ['percent_cumpl_desemb', 'percent_cumpl_desemb_Semaforo'],
-  ['percent_cumpl_varsalv', 'percent_cumpl_varsalv_Semaforo'],
-];
-
-function conSemaforos(fila: Record<string, unknown>): Record<string, unknown> {
-  const timing = fila['Timing'] ? Number(fila['Timing']) / 100 : 0;
-  const calculadas = Object.fromEntries(AVANCES.map(([origen, destino]) => [destino, semaforo(fila[origen], timing)]));
-  return { ...fila, ...calculadas };
-}
-
-/** Cada total del encabezado: valor de hoy contra el del mes anterior (`meta1`). */
-function totalesAgro(primeraFila: Record<string, unknown>, mesAnterior: Record<string, unknown>): TotalAgro[] {
-  return TOTALES_AGRO.map(({ clave, etiqueta, formato }) => {
-    const actual = Number(primeraFila[clave] ?? 0);
-    const anterior = Number(mesAnterior[clave] ?? 0);
-    return { etiqueta, formato, actual, anterior, senal: Math.sign(actual - anterior) };
-  });
-}
-
-/** Los bloques de gráfico traen su `{categories, series}` serializado en `headers`. */
-function seriesDeGrafico(headers: string | undefined): Pick<BloqueGrafico, 'categorias' | 'series'> {
-  if (!headers) return { categorias: [], series: [] };
-  const datos = JSON.parse(headers) as { categories?: string[]; series?: { name: string; data: (number | null)[] }[] };
-  return {
-    categorias: datos.categories ?? [],
-    series: (datos.series ?? []).map((s) => ({ nombre: s.name, datos: s.data })),
-  };
-}
-
-/** Tabla cuyas cabeceras vienen en el propio payload. */
-function tablaDeResultado(resultado: TablaRegularResultadoRaw | undefined): TablaDinamicaResultado {
-  return {
-    columnas: resultado?.headers ? (JSON.parse(resultado.headers) as ColumnaDinamica[]) : [],
-    filas: (resultado?.data ?? []) as Record<string, unknown>[],
-  };
+/** `meta1` llega serializado en unos bloques y ya parseado en otros. */
+function parseMeta(resultado: TablaRegularResultadoRaw | undefined): Record<string, unknown>[] | undefined {
+  const meta = resultado?.meta1;
+  return (typeof meta === 'string' ? JSON.parse(meta) : meta) as Record<string, unknown>[] | undefined;
 }

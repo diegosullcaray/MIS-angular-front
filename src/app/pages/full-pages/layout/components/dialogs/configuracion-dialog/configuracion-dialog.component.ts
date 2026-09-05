@@ -1,6 +1,9 @@
 import { Component, computed, input, linkedSignal, output, signal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { PanelAparienciaComponent } from './paneles/panel-apariencia.component';
+import { PanelEstructuraComponent } from './paneles/panel-estructura.component';
+import { PanelAnunciosComponent } from './paneles/panel-anuncios.component';
 import { SECCIONES_CONFIGURACION } from './configuracion.model';
 import type { ItemConfiguracion, SeccionConfiguracion } from './configuracion.model';
 
@@ -16,7 +19,7 @@ function normalizar(texto: string): string {
 @Component({
   selector: 'app-configuracion-dialog',
   standalone: true,
-  imports: [DialogModule, ButtonModule],
+  imports: [DialogModule, ButtonModule, PanelAparienciaComponent, PanelEstructuraComponent, PanelAnunciosComponent],
   templateUrl: './configuracion-dialog.component.html',
   styleUrl: './configuracion-dialog.component.css',
 })

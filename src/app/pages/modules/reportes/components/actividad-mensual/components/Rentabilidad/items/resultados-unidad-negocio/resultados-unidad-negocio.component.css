@@ -1,0 +1,4 @@
+/* Estilos encapsulados para resultados-unidad-negocio */
+:host {
+  display: block;
+}

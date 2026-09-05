@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico } from '../../../models/captaciones.model';
+import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
+import { COD_CLIENTES } from '../constantes/clientes.constantes';
 
 /**
  * Los reportes de Clientes que salen del `report-cra-v1p1` del legado: un solo
@@ -13,17 +14,17 @@ export class ClientesSimplesService {
 
   /** "Clientes Nuevos y Recurrentes" — legado `cli-nue-rec`, `module: 'Clientes_nuevoRec'`. */
   nuevosRecurrentes(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque('Clientes_nuevoRec_01', nodo);
+    return this.unBloque(COD_CLIENTES.nuevosRecurrentes, nodo);
   }
 
   /** "Clientes y Operaciones" — legado `cli-ope`, `module: 'Clientes_Ope'`. */
   operaciones(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque('Clientes_Ope_01', nodo);
+    return this.unBloque(COD_CLIENTES.operaciones, nodo);
   }
 
   /** "Clientes Flujo" — legado `cmg_cliente_flujo`, `module: 'CMG_CLIF'`. */
   cmgFlujo(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque('CMG_CLIF_01', nodo);
+    return this.unBloque(COD_CLIENTES.cmgFlujo, nodo);
   }
 
   /**
@@ -33,7 +34,7 @@ export class ClientesSimplesService {
    */
   cmgStock(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.bloques
-      .deprecado('rda/administracion/clientes/cmg_cliente_01', nodo)
+      .deprecado(COD_CLIENTES.cmgStock, nodo)
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 

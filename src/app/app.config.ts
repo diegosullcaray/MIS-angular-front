@@ -18,7 +18,11 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
-import { ThemeService } from './pages/full-pages/layout/services/theme.service';
+import { PreferenciasService } from './core/preferencias/aplicacion/preferencias.service';
+import { REPOSITORIO_PREFERENCIAS } from './core/preferencias/dominio/repositorio-preferencias.puerto';
+import { PreferenciasLocalStorageRepositorio } from './core/preferencias/infraestructura/preferencias-local-storage.repositorio';
+import { CATALOGO_ANUNCIOS } from './core/preferencias/dominio/anuncios.puerto';
+import { ANUNCIOS_DEL_SISTEMA } from './core/preferencias/infraestructura/anuncios-del-sistema';
 import { FUENTE_BUSQUEDA } from './shared/ui/buscador/fuente-busqueda';
 import { FuenteNavegacionService } from './pages/full-pages/layout/services/fuente-navegacion.service';
 import { FuenteDashboardsService } from './pages/modules/dashboard/services/fuente-dashboards.service';
@@ -41,8 +45,14 @@ export const appConfig: ApplicationConfig = {
     // para que authGuard no expulse al usuario al refrescar la página.
     provideAppInitializer(() => inject(AuthService).restaurarSesion()),
 
-    // Aplica el tema guardado antes del primer render (evita el parpadeo claro).
-    provideAppInitializer(() => void inject(ThemeService)),
+    // Preferencias de interfaz: `localStorage` es hoy el único adaptador del
+    // puerto, y cambiarlo por uno contra el backend es cambiar este `provide`.
+    { provide: REPOSITORIO_PREFERENCIAS, useExisting: PreferenciasLocalStorageRepositorio },
+    { provide: CATALOGO_ANUNCIOS, useValue: ANUNCIOS_DEL_SISTEMA },
+
+    // Aplica tema, fondo, acento y modo de menú antes del primer render
+    // (evita el parpadeo del aspecto por defecto).
+    provideAppInitializer(() => void inject(PreferenciasService)),
 
     // PrimeNG con tema personalizado macOS
     providePrimeNG({

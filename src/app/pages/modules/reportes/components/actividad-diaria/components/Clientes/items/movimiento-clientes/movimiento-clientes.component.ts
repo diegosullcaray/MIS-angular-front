@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
-import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
+import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import {
@@ -16,7 +16,6 @@ import { MovimientoClientesService } from '../../services/movimiento-clientes.se
   standalone: true,
   imports: [TablaDinamicaComponent, WindowPanelComponent, TabsModule],
   templateUrl: './movimiento-clientes.component.html',
-  styleUrl: './movimiento-clientes.component.css',
 })
 export class MovimientoClientesComponent {
   private readonly servicio = inject(MovimientoClientesService);

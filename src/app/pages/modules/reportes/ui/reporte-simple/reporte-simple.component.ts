@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
-import { HierSelectorComponent } from '../hier-selector/hier-selector.component';
-import { TablaReporteComponent } from '../tabla-reporte/tabla-reporte.component';
+import { HierSelectorComponent } from '../../../../../shared/ui/hier-selector/hier-selector.component';
+import { TablaReporteComponent } from '../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
@@ -11,6 +11,12 @@ import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
 export interface BloqueReporte {
   titulo?: string;
   tabla: TablaReporteResultado;
+  /**
+   * Nota al pie de ESTE bloque — el `content.lower` del legado, que va por tabla y no por
+   * reporte (ej. en "Datos por Producto" solo `_03` y `_04` llevan la suya). Para una leyenda
+   * única de todo el reporte está el slot `[nota]`.
+   */
+  nota?: string;
 }
 
 /** Una pestaña, para los reportes cuyo host del legado reparte los bloques en `mat-tab`s. */
@@ -34,6 +40,8 @@ export interface PestanaReporte {
   imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
   template: `
     <app-window-panel [titulo]="titulo()" [subtitulo]="subtitulo()" [permitirActualizar]="false" [conFiltros]="true">
+      
+      <!-- ZONA DE FILTROS -->
       <div ventana-filtros class="flex flex-col gap-3">
         <app-hier-selector
           [paramsHier]="paramsHier()"
@@ -41,9 +49,12 @@ export interface PestanaReporte {
           (nodoSeleccionado)="nivelSeleccionado.emit($event)"
           (error)="errorJerarquia.emit()"
         />
-        <ng-content select="[filtros]" />
+        <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+          <ng-content select="[filtros]" />
+        </div>
       </div>
 
+      <!-- ZONA DE CONTENIDO PRINCIPAL (Estado Vacío, Pestañas o Bloques Apilados) -->
       @if (!nivel()) {
         <app-empty-state [titulo]="tituloVacio()" [descripcion]="descripcionVacio()" />
       } @else if (pestanas(); as tabs) {
@@ -62,9 +73,12 @@ export interface PestanaReporte {
                       @if (bloque.titulo) {
                         <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
                       }
-                      <div class="mis-card p-3 overflow-x-auto">
-                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" />
+                      <div class="mis-card p-3" [class.overflow-x-auto]="!ajustarAncho()">
+                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
                       </div>
+                      @if (bloque.nota) {
+                        <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
+                      }
                     </section>
                   }
                 </div>
@@ -72,7 +86,6 @@ export interface PestanaReporte {
             }
           </p-tabpanels>
         </p-tabs>
-        <ng-content select="[nota]" />
       } @else {
         <div class="flex flex-col gap-5">
           @for (bloque of lista(); track $index) {
@@ -80,14 +93,26 @@ export interface PestanaReporte {
               @if (bloque.titulo) {
                 <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
               }
-              <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" />
+              <div class="mis-card p-3" [class.overflow-x-auto]="!ajustarAncho()">
+                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
               </div>
+              @if (bloque.nota) {
+                <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
+              }
             </section>
           }
         </div>
-        <ng-content select="[nota]" />
       }
+
+      <!-- ZONA INFERIOR DE PROYECCIÓN (Notas y otros elementos html) -->
+      <div class="flex flex-col gap-3 mt-4">
+        <!-- Esto proyectará tu <p nota> -->
+        <ng-content select="[nota]" />
+        
+        <!-- Esto proyectará tu <h1>HOLA</h1> y cualquier etiqueta sin atributos -->
+        <ng-content /> 
+      </div>
+
     </app-window-panel>
   `,
 })
@@ -106,6 +131,11 @@ export class ReporteSimpleComponent {
   /** Reparte los bloques en pestañas, como hacen los hosts `cra-v1p2` / `cra-aut-tasa`. */
   readonly pestanas = input<PestanaReporte[]>();
   readonly cargando = input(false);
+  /**
+   * Deja que las tablas hagan salto de línea para entrar en el ancho de la
+   * pantalla, en vez de sacar scroll horizontal. Ver `<app-tabla-reporte>`.
+   */
+  readonly ajustarAncho = input(false);
 
   protected readonly lista = computed<BloqueReporte[]>(() => {
     const varios = this.bloques();

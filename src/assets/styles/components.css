@@ -304,60 +304,180 @@
   padding: var(--mis-space-4) var(--mis-space-6);
 }
 
-/* ── Diálogos (p-dialog de PrimeNG) ────────────────────────── */
+/* ── Diálogos (p-dialog de PrimeNG) ───────────────────────────
+   Mismo cromo que la ventana de módulo (`.mis-window`): barra clara con el
+   semáforo a la izquierda, título centrado y cuerpo sobre superficie sólida.
+   Las luces no son markup propio — la barra de PrimeNG solo trae los botones
+   de cerrar y maximizar, así que se los repinta como semáforo y las que el
+   diálogo no ofrece se dibujan apagadas (grises) con pseudo-elementos, igual
+   que macOS con una ventana que no se puede minimizar ni hacer zoom.
+
+   Sin `!important`: PrimeNG emite su tema dentro de `@layer primeng` (ver
+   `providePrimeNG` en app.config.ts) y este archivo va sin capa, así que ya
+   gana el cascade. Además deja que `[contentStyle]` (inline) siga mandando. */
+.p-dialog-mask.p-overlay-mask {
+  background: var(--mis-dialog-mask);
+  backdrop-filter: blur(3px);
+}
+
 .p-dialog {
-  border-radius: var(--mis-radius-lg) !important;
-  overflow: hidden !important;
-  box-shadow: var(--mis-shadow-lg) !important;
-  border: 1px solid var(--mis-border) !important;
+  overflow: hidden;
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-glass-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: var(--mis-shadow-lg);
 }
 
+/* ── Barra de título ──────────────────────────────────────── */
+/* `grid` de 3 columnas (no flex) para que el título quede ópticamente
+   centrado aunque el semáforo ocupe la izquierda — ver `.mis-window-bar`. */
 .p-dialog .p-dialog-header {
-  background: var(--mis-primary) !important;
-  color: var(--mis-text-on-primary) !important;
-  padding: 1rem 1.25rem !important;
-  border-bottom: 1px solid var(--mis-border-strong) !important;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--mis-space-2);
+  height: var(--mis-window-bar-h);
+  min-height: var(--mis-window-bar-h);
+  padding: 0 var(--mis-space-3);
+  background: var(--mis-window-bar-bg);
+  color: var(--mis-text-primary);
+  border-bottom: 1px solid var(--mis-window-bar-border);
+  user-select: none;
 }
 
-.p-dialog .p-dialog-title,
-.p-dialog .p-dialog-header-title {
-  font-size: 1.125rem !important;
-  font-weight: 600 !important;
-  color: var(--mis-text-on-primary) !important;
+/* Columna 3 fantasma: compensa el ancho del semáforo. La fila explícita es
+   necesaria en los tres hijos: el título se escribe antes que las acciones en
+   el DOM, y sin ella la colocación automática manda el semáforo a una segunda
+   fila en vez de retroceder a la columna 1. */
+.p-dialog .p-dialog-header::after {
+  content: '';
+  grid-column: 3;
+  grid-row: 1;
 }
 
-.p-dialog .p-dialog-header-close-icon,
-.p-dialog .p-dialog-header-icon,
-.p-dialog .p-dialog-header-close-button .pi,
-.p-dialog .p-dialog-close-icon,
-.p-dialog [data-pc-section="closeicon"],
-.p-dialog [data-pc-section="closebutton"] {
-  color: var(--mis-text-on-primary) !important;
+/* El título va al centro; el `:not()` alcanza también al contenido que
+   proyecta un `pTemplate="header"` propio. */
+.p-dialog .p-dialog-header > *:not(.p-dialog-header-actions) {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  min-width: 0;
 }
 
-.p-dialog .p-dialog-header-close-button,
-.p-dialog .p-dialog-header-icon,
-.p-dialog [data-pc-section="closebutton"] {
-  border-radius: var(--mis-radius-sm) !important;
-  transition: background-color var(--mis-transition-fast) !important;
+.p-dialog .p-dialog-title {
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+  letter-spacing: 0.01em;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.p-dialog .p-dialog-header-close-button:hover,
-.p-dialog .p-dialog-header-icon:hover,
-.p-dialog [data-pc-section="closebutton"]:hover {
-  background: rgba(255, 255, 255, 0.18) !important;
+/* ── Semáforo ─────────────────────────────────────────────── */
+.p-dialog .p-dialog-header-actions {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
+/* Luces apagadas: amarilla (siempre, ningún diálogo minimiza) y verde
+   (solo si el diálogo no es `maximizable`, en cuyo caso hay botón real). */
+.p-dialog .p-dialog-header-actions::before,
+.p-dialog .p-dialog-header-actions::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-window-light-apagada);
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.18);
+}
+
+.p-dialog .p-dialog-header-actions::before { order: 2; }
+.p-dialog .p-dialog-header-actions::after { order: 4; }
+
+.p-dialog .p-dialog-header-actions:has(.p-dialog-maximize-button)::after {
+  display: none;
+}
+
+.p-dialog .p-dialog-close-button,
+.p-dialog .p-dialog-maximize-button {
+  width: 12px;
+  height: 12px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--mis-radius-full);
+  /* Aro interior: separa la luz del fondo claro sin usar un borde real. */
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.18);
+  transition: filter var(--mis-transition-fast);
+}
+
+.p-dialog .p-dialog-close-button,
+.p-dialog .p-dialog-close-button:hover,
+.p-dialog .p-dialog-close-button:focus {
+  order: 1;
+  background: #ff5f57;
+}
+
+.p-dialog .p-dialog-maximize-button,
+.p-dialog .p-dialog-maximize-button:hover,
+.p-dialog .p-dialog-maximize-button:focus {
+  order: 3;
+  background: #28c840;
+}
+
+.p-dialog .p-dialog-close-button:active,
+.p-dialog .p-dialog-maximize-button:active {
+  filter: brightness(0.85);
+}
+
+.p-dialog .p-dialog-close-button:focus-visible,
+.p-dialog .p-dialog-maximize-button:focus-visible {
+  outline: 2px solid var(--mis-secondary);
+  outline-offset: 2px;
+}
+
+/* Los glifos aparecen al pasar por la barra, no por cada luz (macOS). */
+.p-dialog .p-dialog-header-actions svg,
+.p-dialog .p-dialog-header-actions .p-icon,
+.p-dialog .p-dialog-header-actions .pi {
+  width: 8px;
+  height: 8px;
+  font-size: 8px;
+  color: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity var(--mis-transition-fast);
+}
+
+.p-dialog .p-dialog-header:hover .p-dialog-header-actions svg,
+.p-dialog .p-dialog-header:hover .p-dialog-header-actions .p-icon,
+.p-dialog .p-dialog-header:hover .p-dialog-header-actions .pi,
+.p-dialog .p-dialog-header-actions button:focus-visible svg,
+.p-dialog .p-dialog-header-actions button:focus-visible .p-icon,
+.p-dialog .p-dialog-header-actions button:focus-visible .pi {
+  opacity: 1;
+}
+
+/* ── Cuerpo y pie ─────────────────────────────────────────── */
 .p-dialog .p-dialog-content {
-  background: var(--mis-surface) !important;
-  color: var(--mis-text-primary) !important;
-  padding: 1.25rem !important;
+  background: var(--mis-surface);
+  color: var(--mis-text-primary);
+  padding: var(--mis-space-5);
 }
 
 .p-dialog .p-dialog-footer {
-  background: var(--mis-panel-bg) !important;
-  border-top: 1px solid var(--mis-border) !important;
-  padding: 0.875rem 1.25rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--mis-space-2);
+  background: var(--mis-panel-bg);
+  border-top: 1px solid var(--mis-border);
+  padding: var(--mis-space-3) var(--mis-space-5);
 }
 
 

@@ -1,0 +1,30 @@
+<app-reporte-simple
+  titulo="Uso del App"
+  subtitulo="Aplicativo Móvil"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <!-- `content.higher` y `content.lower` del mapa, tal cual los redacta el legado. -->
+  <div nota class="flex flex-col gap-2 text-[12px] text-[var(--mis-text-tertiary)] leading-relaxed">
+    <p class="m-0">
+      * Toda la información presentada considera solo las instancias y etapas del flujo de crédito, incluyendo comité de
+      crédito, por el aplicativo móvil (excluye Bantotal).
+    </p>
+    <p class="m-0">
+      ** El reporte considera las instancias ingresadas en el mes en curso contra el total de cada etapa del flujo
+      crediticio ingresadas.
+    </p>
+    <ul class="m-0 pl-4 list-disc flex flex-col gap-0.5">
+      <li><b>Efect Solicitud</b>: N.° de solicitudes ingresadas por el app que llegaron a desembolsar.</li>
+      <li><b>Efect E/P</b>: instancias que se envían a E/P por el APP.</li>
+      <li><b>Efect envío a Aprob.</b>: instancias que se envían a aprobación por el APP.</li>
+      <li><b>Efec Comité</b>: total de desembolsos contra instancias ingresadas por el APP con comités cerrados y aprobados.</li>
+      <li><b>Efect Firma Electr.</b>: total de solicitudes con marca de contratación electrónica contra el total de solicitudes ingresadas por el APP.</li>
+      <li><b>Desem. por Firma Electrónica</b>: instancias ingresadas por el App con marca de contratación electrónica contra el total de desembolsos.</li>
+    </ul>
+  </div>
+</app-reporte-simple>

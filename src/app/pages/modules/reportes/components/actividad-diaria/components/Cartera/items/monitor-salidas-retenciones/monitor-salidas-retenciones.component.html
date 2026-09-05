@@ -27,7 +27,22 @@
         >
           <span class="text-[11px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">{{ t.lbl }}</span>
 
-          <div class="flex items-baseline gap-2">
+          <div class="flex items-center gap-2">
+            @if (t.tl != null && t.tl !== -99) {
+              <span
+                class="inline-block w-3 h-3 rounded-full shrink-0"
+                [class.bg-emerald-500]="t.tl === 1"
+                [class.bg-amber-500]="t.tl === 0"
+                [class.bg-red-500]="t.tl === -1"
+              ></span>
+            } @else if (t.typ === 'percent') {
+              <span
+                class="inline-block w-3 h-3 rounded-full shrink-0"
+                [class.bg-emerald-500]="t.val >= 0.95"
+                [class.bg-amber-500]="t.val >= 0.9025 && t.val < 0.95"
+                [class.bg-red-500]="t.val < 0.9025"
+              ></span>
+            }
             <span class="text-lg font-semibold text-[var(--mis-text-primary)]" [class.underline]="tarjetaAbreDetalle(i)">
               @if (t.typ === 'percent') {
                 {{ t.val * 100 | number: '1.0-2' }}%
@@ -79,8 +94,14 @@
   <div class="flex flex-col gap-3">
     <app-select-filtro etiqueta="Mostrar" [opciones]="opcionesTope" [(valor)]="tope" ancho="w-36" />
 
-    <div class="overflow-x-auto">
-      <app-tabla-dinamica [columnas]="columnasClientes" [filas]="clientes()" [cargando]="cargandoDetalle()" />
-    </div>
+    <app-data-table
+      [columns]="columnasClientes"
+      [data]="clientes()"
+      [loading]="cargandoDetalle()"
+      [searchFields]="busquedaClientes"
+      searchPlaceholder="Buscar por nombre, unidad o asesor..."
+      emptyMessage="No se encontraron clientes."
+      emptyHint="Ajusta la búsqueda o los filtros para ver más resultados."
+    />
   </div>
 </p-dialog>

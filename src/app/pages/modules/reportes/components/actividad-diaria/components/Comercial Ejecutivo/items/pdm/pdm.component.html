@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="PDM"
+  subtitulo="Comercial Ejecutivo"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

@@ -12,6 +12,8 @@
   <div ventana-filtros class="flex items-center gap-3 flex-wrap">
     <app-hier-selector
       [paramsHier]="paramsHier"
+      [anchoCompleto]="true"
+      [reintentarSinFecha]="true"
       [raizFija]="raizFija"
       (rutaSeleccionada)="onRutaSeleccionada($event)"
     />

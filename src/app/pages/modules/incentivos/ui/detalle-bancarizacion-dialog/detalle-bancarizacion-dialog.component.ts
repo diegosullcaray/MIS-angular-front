@@ -13,7 +13,6 @@ import type { ResultadoBancarizacion } from '../../models/incentivos-bancarizaci
   standalone: true,
   imports: [DialogModule, TableModule, SkeletonModule, DecimalPipe],
   templateUrl: './detalle-bancarizacion-dialog.component.html',
-  styleUrl: './detalle-bancarizacion-dialog.component.css',
 })
 export class DetalleBancarizacionDialogComponent {
   private readonly incentivos = inject(IncentivosService);

@@ -1,32 +1,6 @@
-:host ::ng-deep .riesgo-dialog .p-dialog-header {
-  border-top-left-radius: var(--mis-radius-md);
-  border-top-right-radius: var(--mis-radius-md);
-}
-
-:host ::ng-deep .riesgo-dialog .p-dialog-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--mis-text-on-primary);
-}
-
-:host ::ng-deep .riesgo-dialog .p-dialog-header-close-icon {
-  color: var(--mis-text-on-primary);
-}
-
-:host ::ng-deep .riesgo-dialog .p-dialog-header-close-button:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
+/* El cromo del diálogo (barra, semáforo, cuerpo y pie) es el estándar de
+   `assets/styles/components.css`; acá solo queda lo propio de esta pantalla. */
 :host ::ng-deep .riesgo-dialog .p-dialog-content {
-  padding: 1.25rem;
-  background: var(--mis-surface);
-  color: var(--mis-text-primary);
-}
-
-:host ::ng-deep .riesgo-dialog .p-dialog-footer {
-  background: var(--mis-bg);
-  border-top: 1px solid var(--mis-border);
-  padding: 0.875rem 1.25rem;
-  border-bottom-left-radius: var(--mis-radius-md);
-  border-bottom-right-radius: var(--mis-radius-md);
+  max-height: 72vh;
+  overflow-y: auto;
 }

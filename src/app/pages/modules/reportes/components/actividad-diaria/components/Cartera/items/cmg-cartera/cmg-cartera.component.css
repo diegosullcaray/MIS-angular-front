@@ -1,0 +1,15 @@
+/* Riel de acento de cada tarjeta — mismo recurso que `<app-kpi-tile>`. Usa el azul del sistema:
+   este panel no lleva el verde de división (eso es solo `cartera-agricola-cultivos`). */
+.tarjeta-cmg {
+  position: relative;
+  overflow: hidden;
+}
+
+.tarjeta-cmg::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-primary);
+}

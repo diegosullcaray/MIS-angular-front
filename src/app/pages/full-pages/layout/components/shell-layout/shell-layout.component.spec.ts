@@ -26,6 +26,9 @@ class StubLoadingOverlayComponent {}
 @Component({ selector: 'app-explorador-sistema', standalone: true, template: '<div class="stub-explorador"></div>' })
 class StubExploradorSistemaComponent {}
 
+@Component({ selector: 'app-anuncios-dialog', standalone: true, template: '' })
+class StubAnunciosDialogComponent {}
+
 describe('ShellLayoutComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -40,6 +43,7 @@ describe('ShellLayoutComponent', () => {
           StubRedirectOverlayComponent,
           StubLoadingOverlayComponent,
           StubExploradorSistemaComponent,
+          StubAnunciosDialogComponent,
         ],
       },
     });

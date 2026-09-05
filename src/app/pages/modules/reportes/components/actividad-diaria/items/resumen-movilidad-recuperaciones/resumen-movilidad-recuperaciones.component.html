@@ -1,0 +1,21 @@
+<app-window-panel
+  titulo="Resumen de Movilidad Recuperaciones"
+  subtitulo="Actividad Diaria"
+  [permitirActualizar]="false"
+  [conFiltros]="false"
+>
+  @if (sinDocumento()) {
+    <app-empty-state
+      titulo="No se pudo identificar al usuario"
+      descripcion="Este reporte se consulta con el documento del usuario y el backend no lo devolvió al iniciar sesión. Vuelve a entrar y, si sigue igual, avisa a Sistemas."
+    />
+  } @else {
+    <!--
+      Sin selector de jerarquía a propósito: el legado consulta siempre por el
+      usuario logueado y descarta el nodo (ver `report-cra-v6`).
+    -->
+    <div class="mis-card p-3 overflow-x-auto">
+      <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" [cargando]="cargando()" />
+    </div>
+  }
+</app-window-panel>

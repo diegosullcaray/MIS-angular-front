@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Gestión Canal Tablero Digital"
+  subtitulo="Tablero Digital · Operaciones"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

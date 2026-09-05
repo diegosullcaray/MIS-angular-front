@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
+import { LimpiezaSesionService } from '../../../../core/preferencias/aplicacion/limpieza-sesion.service';
 import { ModSysLoginService } from '../../../../core/winder/instances/mod-sys-login.service';
 import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
@@ -20,6 +21,7 @@ export class AuthService {
   private readonly router = inject(Router);
   private readonly modSysLoginService = inject(ModSysLoginService);
   private readonly oauthService = inject(OAuthService);
+  private readonly limpieza = inject(LimpiezaSesionService);
 
   private readonly _token = signal<string | null>(null);
   private readonly _alternates = signal<AlternateUsuario[]>([]);
@@ -28,6 +30,8 @@ export class AuthService {
 
   readonly token = this._token.asReadonly();
   readonly alternates = this._alternates.asReadonly();
+  /** Identidad propia mientras se está viendo como un alterno (null si no). */
+  readonly usuarioOriginal = this._usuarioOriginal.asReadonly();
   
   /** Indica si se está operando como un usuario alterno. */
   readonly esUsuarioAlterno = computed(() => this._usuarioOriginal() !== null);
@@ -119,7 +123,7 @@ export class AuthService {
       if (!sesion?.token || !sesion?.usuario?.id) return;
 
       if (sesion.expiraEn && Date.now() >= sesion.expiraEn) {
-        this.cerrarSesion('/error/401');
+        void this.cerrarSesion('/error/401');
         return;
       }
 
@@ -134,16 +138,31 @@ export class AuthService {
     }
   }
 
-  cerrarSesion(rutaDestino = '/login'): void {
+  /**
+   * Cierra la sesión y deja el navegador limpio: `localStorage`,
+   * `sessionStorage`, cookies, cachés de la PWA y service workers. En un equipo
+   * compartido el siguiente usuario no debe encontrar nada del anterior, por eso
+   * el borrado es total y no una lista de claves conocidas.
+   *
+   * Se navega al login DESPUÉS del borrado para no dejarlo a medias; si algo
+   * falla, se navega igual — quedarse en la sesión sería peor.
+   */
+  async cerrarSesion(rutaDestino = '/login'): Promise<void> {
     this.oauthService.logOut();
     this._token.set(null);
     this._alternates.set([]);
     this._usuarioOriginal.set(null);
     this.shell.cerrarSesion();
-    sessionStorage.removeItem(SESSION_KEY);
     this.limpiarTimerExpiracion();
-    
-    if (rutaDestino) this.router.navigateByUrl(rutaDestino);
+
+    try {
+      await this.limpieza.limpiarTodo();
+    } catch {
+      // El borrado ya es de mejor esfuerzo por dentro; que falle no puede
+      // impedir que el usuario quede fuera de la sesión.
+    }
+
+    if (rutaDestino) await this.router.navigateByUrl(rutaDestino);
   }
 
   // ─── Privados ────────────────────────────────────────────────────────────
@@ -167,6 +186,7 @@ export class AuthService {
       codBt: profile.cod_bt,
       fechaCorte: profile.curr_fec,
       fechasHabilitadas: profile.hab_fec,
+      numDoc: profile.num_doc,
     };
   }
 
@@ -201,9 +221,9 @@ export class AuthService {
     const restante = expiraEn - Date.now();
     
     if (restante <= 0) {
-      this.cerrarSesion('/error/401');
+      void this.cerrarSesion('/error/401');
     } else {
-      this.timerExpiracion = setTimeout(() => this.cerrarSesion('/error/401'), restante);
+      this.timerExpiracion = setTimeout(() => void this.cerrarSesion('/error/401'), restante);
     }
   }
 

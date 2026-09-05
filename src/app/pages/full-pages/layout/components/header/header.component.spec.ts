@@ -33,6 +33,7 @@ describe('HeaderComponent', () => {
     cerrarSesion: ReturnType<typeof vi.fn>;
     esUsuarioAlterno: ReturnType<typeof vi.fn>;
     puedeCambiarUsuario: ReturnType<typeof vi.fn>;
+    usuarioOriginal: ReturnType<typeof vi.fn>;
     alternates: ReturnType<typeof vi.fn>;
     cambiarAUsuarioAlterno: ReturnType<typeof vi.fn>;
     volverAUsuarioOriginal: ReturnType<typeof vi.fn>;
@@ -51,6 +52,7 @@ describe('HeaderComponent', () => {
       cerrarSesion: vi.fn(),
       esUsuarioAlterno: vi.fn().mockReturnValue(false),
       puedeCambiarUsuario: vi.fn().mockReturnValue(false),
+      usuarioOriginal: vi.fn().mockReturnValue(null),
       alternates: vi.fn().mockReturnValue([]),
       cambiarAUsuarioAlterno: vi.fn().mockResolvedValue(undefined),
       volverAUsuarioOriginal: vi.fn(),
@@ -260,57 +262,81 @@ describe('HeaderComponent', () => {
     });
   });
 
-  describe('Cambiar usuario', () => {
-    it('no muestra "Cambiar usuario" ni "Mi usuario" cuando no aplica ninguno', async () => {
+  describe('Cambio de perfil', () => {
+    const ALTERNO = { email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz', cargo: 'Supervisor' };
+
+    it('no muestra otros perfiles cuando el usuario no tiene alternates', async () => {
+      const fixture = await crear('/app/dashboard');
+      fixture.componentInstance['toggleDropdown']();
+      fixture.detectChanges();
+
+      expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Otros perfiles');
+    });
+
+    it('lista los otros perfiles en el propio menú cuando el usuario tiene alternates', async () => {
+      authFalso.puedeCambiarUsuario.mockReturnValue(true);
+      authFalso.alternates.mockReturnValue([ALTERNO]);
       const fixture = await crear('/app/dashboard');
       fixture.componentInstance['toggleDropdown']();
       fixture.detectChanges();
 
       const texto = (fixture.nativeElement as HTMLElement).textContent ?? '';
-      expect(texto).not.toContain('Cambiar usuario');
-      expect(texto).not.toContain('Mi usuario');
+      expect(texto).toContain('Otros perfiles');
+      expect(texto).toContain('Carlos Ruiz');
     });
 
-    it('muestra "Cambiar usuario" cuando el usuario activo tiene alternates asignados', async () => {
-      authFalso.puedeCambiarUsuario.mockReturnValue(true);
-      const fixture = await crear('/app/dashboard');
-      fixture.componentInstance['toggleDropdown']();
-      fixture.detectChanges();
-
-      expect((fixture.nativeElement as HTMLElement).textContent).toContain('Cambiar usuario');
-    });
-
-    it('abrirCambiarUsuario() cierra el dropdown y abre el diálogo de cambiar usuario', async () => {
+    it('cambiarAPerfil() cambia de una y cierra el menú, sin diálogo de confirmación', async () => {
       const fixture = await crear('/app/dashboard');
       const instancia = fixture.componentInstance;
       instancia['toggleDropdown']();
 
-      instancia['abrirCambiarUsuario']();
+      await instancia['cambiarAPerfil'](ALTERNO);
 
+
+      expect(authFalso.cambiarAUsuarioAlterno).toHaveBeenCalledWith(ALTERNO);
       expect(instancia['dropdownOpen']()).toBe(false);
-      expect(instancia['cambiarUsuarioOpen']()).toBe(true);
+      expect(instancia['cambiandoPerfil']()).toBeNull();
     });
 
-    it('muestra "Mi usuario" y el aro de aviso en el avatar cuando se está viendo como un usuario alterno', async () => {
+    it('cambiarAPerfil() deja el menú abierto y avisa cuando el cambio falla', async () => {
+      authFalso.cambiarAUsuarioAlterno.mockRejectedValue(new Error('sin permiso'));
+      const fixture = await crear('/app/dashboard');
+      const instancia = fixture.componentInstance;
+      instancia['toggleDropdown']();
+
+      await instancia['cambiarAPerfil'](ALTERNO);
+
+      expect(instancia['dropdownOpen']()).toBe(true);
+      expect(instancia['cambiandoPerfil']()).toBeNull();
+    });
+
+    it('viendo como un alterno, el camino de vuelta es la identidad propia listada como un perfil más', async () => {
       authFalso.esUsuarioAlterno.mockReturnValue(true);
+      authFalso.usuarioOriginal.mockReturnValue(usuario());
       const fixture = await crear('/app/dashboard');
       fixture.componentInstance['toggleDropdown']();
       fixture.detectChanges();
 
       const el = fixture.nativeElement as HTMLElement;
-      expect(el.textContent).toContain('Mi usuario');
+      expect(el.textContent).toContain('Otros perfiles');
+      expect(el.textContent).toContain('Ana Torres');
+      // Sin opción aparte: la vuelta se elige donde se eligen los demás perfiles.
+      expect(el.textContent).not.toContain('Mi usuario');
       expect(el.querySelector('.avatar-alterno')).not.toBeNull();
     });
 
-    it('volverAUsuarioOriginal() cierra el dropdown y delega en AuthService', async () => {
+    it('elegir la identidad propia vuelve sin pasar por el backend', async () => {
+      authFalso.esUsuarioAlterno.mockReturnValue(true);
+      authFalso.usuarioOriginal.mockReturnValue(usuario());
       const fixture = await crear('/app/dashboard');
       const instancia = fixture.componentInstance;
       instancia['toggleDropdown']();
 
-      instancia['volverAUsuarioOriginal']();
+      await instancia['elegirPerfil'](instancia['otrosPerfiles']()[0]);
 
-      expect(instancia['dropdownOpen']()).toBe(false);
       expect(authFalso.volverAUsuarioOriginal).toHaveBeenCalled();
+      expect(authFalso.cambiarAUsuarioAlterno).not.toHaveBeenCalled();
+      expect(instancia['dropdownOpen']()).toBe(false);
     });
   });
 });

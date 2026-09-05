@@ -16,21 +16,12 @@ export class ModSysAdminService extends AntService {
     });
   }
 
-  /**
-   * Lista de secciones (ítems de menú) habilitadas para el usuario.
-   *
-   * @param email Email corporativo del usuario autenticado.
-   */
+  /** Lista de secciones habilitadas para el usuario. */
   public getMenuItems(email: string): Observable<IWinderResponse> {
     return this.getSimpleResponseString('list_sec', { email }, 'menu_response');
   }
 
-  /**
-   * Nivel base, TipCod y CodRel de la jerarquía solicitada para el usuario.
-   *
-   * @param email          Email del usuario.
-   * @param codHierarchy   Código de la jerarquía organizativa.
-   */
+  /** Nivel base de la jerarquía para el usuario. */
   public getBaseHierarchy(
     email: string,
     codHierarchy: number
@@ -42,15 +33,7 @@ export class ModSysAdminService extends AntService {
     );
   }
 
-  /**
-   * Detalle del nivel de jerarquía pedido para el TipCod y CodRel raíz.
-   *
-   * @param codHier   Código de jerarquía.
-   * @param lvlHier   Nivel dentro de la jerarquía.
-   * @param tipCod    Tipo de código del nodo raíz.
-   * @param codRels   Códigos relacionales del nodo raíz.
-   * @param params    Parámetros adicionales opcionales.
-   */
+  /** Detalle del nivel de jerarquía para el nodo raíz. */
   public getLevelHierarchy(
     codHier: number,
     lvlHier: number,
@@ -71,12 +54,7 @@ export class ModSysAdminService extends AntService {
     return this.getResponseString(s);
   }
 
-  /**
-   * Lista de sectoristas filtrada por tipo y código relacional.
-   *
-   * @param tipCod  Tipo de código.
-   * @param codRel  Código relacional.
-   */
+  /** Lista de sectoristas filtrada por tipo y código. */
   public getListPick01(
     tipCod: number,
     codRel: string
@@ -88,11 +66,7 @@ export class ModSysAdminService extends AntService {
     );
   }
 
-  /**
-   * Registra el tracking de la ruta visitada por el usuario.
-   *
-   * @param reg JSON serializado con la información de navegación.
-   */
+  /** Registra el tracking de la ruta visitada. */
   public postRouteTrack(reg: string): Observable<unknown> {
     const s = new Strand('reg_track_info', 'res');
     s.pushToPayload('reg_json', reg);

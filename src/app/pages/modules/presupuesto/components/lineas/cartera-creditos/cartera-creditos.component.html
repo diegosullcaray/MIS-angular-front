@@ -20,7 +20,7 @@
   }
 
   <div ventana-filtros class="flex items-center gap-3 flex-wrap">
-    <app-hier-selector [paramsHier]="paramsHier" (nodoSeleccionado)="onNivelSeleccionado($event)" />
+    <app-hier-selector [paramsHier]="paramsHier" [anchoCompleto]="true" [reintentarSinFecha]="true" (nodoSeleccionado)="onNivelSeleccionado($event)" />
   </div>
 
   <p-tabs [(value)]="tabActiva">

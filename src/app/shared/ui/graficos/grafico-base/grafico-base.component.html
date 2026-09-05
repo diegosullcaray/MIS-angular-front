@@ -1,0 +1,11 @@
+@if (titulo()) {
+  <div class="flex flex-col gap-0.5 mb-2">
+    <h3 class="m-0 text-[13px] font-semibold text-[var(--mis-text-secondary)] uppercase tracking-wide leading-tight">
+      {{ titulo() }}
+    </h3>
+    @if (subtitulo()) {
+      <span class="text-[11px] text-[var(--mis-text-tertiary)]" [innerHTML]="subtitulo()"></span>
+    }
+  </div>
+}
+<div #lienzo class="flex-1 min-h-0 w-full"></div>

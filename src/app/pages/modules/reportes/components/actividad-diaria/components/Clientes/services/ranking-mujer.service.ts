@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
+import { COD_CLIENTES } from '../constantes/clientes.constantes';
 
 /**
  * "Ranking Mujer" — legado `repositorio/ranking-mujer`: motor `table.regular`,
@@ -19,9 +20,10 @@ export class RankingMujerService {
 
   obtener(nodo: NodoConsulta): Observable<[TablaDinamicaResultado, TablaDinamicaResultado]> {
     const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: this.bloques.fecha() };
+    const [resumen, detalle] = COD_CLIENTES.rankingMujer;
     return forkJoin([
-      this.bloques.tablaRegularCon('RS_RANK_MUJ_01', params),
-      this.bloques.tablaRegularCon('RS_RANK_MUJ_02', params),
+      this.bloques.tablaRegularCon(resumen, params),
+      this.bloques.tablaRegularCon(detalle, params),
     ]);
   }
 }

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
-import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
-import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
+import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
+import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -15,7 +15,6 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
   standalone: true,
   imports: [HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent],
   templateUrl: './estructura-desembolsos.component.html',
-  styleUrl: './estructura-desembolsos.component.css',
 })
 export class EstructuraDesembolsosComponent {
   private readonly servicio = inject(CarteraRepositorioService);

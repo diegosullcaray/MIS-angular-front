@@ -1,9 +1,10 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
-import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
-import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
-import { SelectFiltroComponent } from '../../../../../../ui/select-filtro/select-filtro.component';
+import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
+import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
+import { DataTableComponent } from '../../../../../../../../../shared/ui/data-table/data-table.component';
+import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -11,13 +12,14 @@ import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selec
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import {
+  BUSQUEDA_CLIENTES_SALIDAS,
   COLUMNAS_CLIENTES_SALIDAS,
   COLUMNAS_SALIDAS,
   RESULTADO_SALIDAS_VACIO,
   TITULO_DETALLE,
   TOPES_DETALLE,
   TOPE_DETALLE_POR_DEFECTO,
-  colorChurn,
+  conSemaforoChurn,
   metricaDeTarjeta,
   type ResultadoSalidas,
 } from '../../models/monitor-salidas.model';
@@ -32,12 +34,12 @@ import { MonitorSalidasService } from '../../services/monitor-salidas.service';
     DialogModule,
     HierSelectorComponent,
     TablaDinamicaComponent,
+    DataTableComponent,
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
   ],
   templateUrl: './monitor-salidas-retenciones.component.html',
-  styleUrl: './monitor-salidas-retenciones.component.css',
 })
 export class MonitorSalidasRetencionesComponent {
   private readonly servicio = inject(MonitorSalidasService);
@@ -46,6 +48,7 @@ export class MonitorSalidasRetencionesComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly columnas = COLUMNAS_SALIDAS;
   protected readonly columnasClientes = COLUMNAS_CLIENTES_SALIDAS;
+  protected readonly busquedaClientes = BUSQUEDA_CLIENTES_SALIDAS;
   protected readonly opcionesTope: OpcionFiltro<number>[] = TOPES_DETALLE.map((t) => ({ id: t, desc: `Top ${t}` }));
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
@@ -54,7 +57,11 @@ export class MonitorSalidasRetencionesComponent {
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   protected readonly tarjetas = computed(() => this.resultado().cards);
-  protected readonly filas = computed(() => this.resultado().table);
+  /**
+   * Las filas con su semáforo de churn ya calculado — es lo que dibuja el punto
+   * de color de la columna "Churn rate", como el `trafficFn` del legado.
+   */
+  protected readonly filas = computed(() => conSemaforoChurn(this.resultado().table));
 
   /** Métrica abierta en el detalle (`sali1`/`sali3`/`clive`); `null` mantiene el modal cerrado. */
   protected readonly metrica = signal<string | null>(null);
@@ -93,9 +100,6 @@ export class MonitorSalidasRetencionesComponent {
     });
   }
 
-  protected colorDeChurn(fila: Record<string, unknown>): string {
-    return colorChurn(fila['ret'] as number);
-  }
 
   /** Las tarjetas 0 y 3 no abren detalle en el legado. */
   protected tarjetaAbreDetalle(indice: number): boolean {

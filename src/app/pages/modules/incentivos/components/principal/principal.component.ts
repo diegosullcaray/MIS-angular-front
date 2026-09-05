@@ -30,7 +30,6 @@ import type { DetalleAvanceEvent, DetalleSuperPlusEvent, DetalleTablaVariableEve
     WindowPanelComponent,
   ],
   templateUrl: './principal.component.html',
-  styleUrl: './principal.component.css',
 })
 export class PrincipalComponent {
   protected readonly incentivos = inject(IncentivosService);

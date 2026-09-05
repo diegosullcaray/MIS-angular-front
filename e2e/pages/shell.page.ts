@@ -13,11 +13,20 @@ export class ShellPage {
   }
 
   /**
-   * Fija el tema antes de que arranque la app (`ThemeService` lo lee de
-   * `localStorage` al construirse). Sin esto se usa el default, que es oscuro.
+   * Fija el tema antes de que arranque la app. El tema vive en las preferencias
+   * (`PreferenciasService`), no en una clave propia: `ThemeService` solo lo
+   * aplica. Se conservan los comunicados silenciados, como en
+   * `inyectarSesionVigente`. Sin esto se usa el default, que es oscuro.
    */
   async fijarTema(modo: 'claro' | 'oscuro'): Promise<void> {
-    await this.page.addInitScript((m) => localStorage.setItem('mis-tema', m), modo);
+    await this.page.addInitScript(
+      (m) =>
+        localStorage.setItem(
+          'mis.preferencias',
+          JSON.stringify({ apariencia: { tema: m }, anuncios: { vistos: [], silenciar: true } })
+        ),
+      modo
+    );
   }
 
   /** Aside de Col 1 (íconos de sistemas) — barra inferior fija en mobile, rail vertical en desktop. */

@@ -1,0 +1,114 @@
+<app-window-panel titulo="CMG Cartera" [conFiltros]="true">
+  <div ventana-filtros class="flex flex-col gap-3">
+    <!-- Selector de Jerarquía (arriba) -->
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
+
+    <!-- Filtros Personales (abajo, dispuestos horizontalmente en desktop) -->
+    <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+      <app-select-filtro
+        etiqueta="Fase"
+        [opciones]="opcionesFase"
+        [valor]="fase()"
+        (valorChange)="fase.set($event)"
+      />
+      @if (periodos().length > 0) {
+        <app-select-filtro
+          etiqueta="Fecha Cierre"
+          [opciones]="periodos()"
+          [valor]="periodo()"
+          (valorChange)="periodo.set($event)"
+        />
+      }
+    </div>
+  </div>
+
+  @if (!nivelActual()) {
+    <app-empty-state
+      titulo="Elige un nivel"
+      descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte."
+    />
+  } @else {
+    <div class="flex flex-col gap-4 sm:gap-5 w-full">
+      @if (tarjetas().length > 0) {
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+          @for (tarjeta of tarjetas(); track tarjeta.etiqueta) {
+            <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex items-center justify-between gap-2.5 sm:gap-3">
+              <div class="flex flex-col gap-1 min-w-0 flex-1">
+                <!-- Etiqueta superior -->
+                <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] truncate">
+                  {{ tarjeta.etiqueta }}
+                </span>
+
+                <!-- Valor Principal -->
+                <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight truncate">
+                  @if (isNumeroFinito(tarjeta.valor)) {
+                    {{ +tarjeta.valor | number: '1.0-2' }}
+                  } @else {
+                    {{ tarjeta.valor }}
+                  }
+                </span>
+
+                <!-- Metadata / Comparativo -->
+                @if (tarjeta.comparativo) {
+                  <span class="text-[11px] sm:text-[12px] font-medium text-[var(--mis-text-secondary)] truncate">
+                    {{ tarjeta.comparativo }}
+                  </span>
+                }
+              </div>
+
+              <!-- Indicador visual (Knob circular o Trend Badge) -->
+              @if (tarjeta.cumplimiento !== undefined) {
+                <div class="flex items-center justify-center shrink-0">
+                  <p-knob
+                    [ngModel]="valorAnillo(tarjeta)"
+                    [readonly]="true"
+                    [size]="54"
+                    [strokeWidth]="6"
+                    [valueColor]="colorAnillo(valorAnillo(tarjeta))"
+                    rangeColor="var(--mis-border)"
+                    textColor="var(--mis-text-primary)"
+                    valueTemplate="{value}%"
+                  />
+                </div>
+              } @else if (tarjeta.delta) {
+                <div
+                  class="flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold shrink-0 shadow-sm transition-all"
+                  [class.trend-badge-positive]="tarjeta.senal >= 0"
+                  [class.trend-badge-negative]="tarjeta.senal < 0"
+                >
+                  @if (tarjeta.senal >= 0) {
+                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="19" x2="12" y2="5"></line>
+                      <polyline points="5 12 12 5 19 12"></polyline>
+                    </svg>
+                  } @else {
+                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <polyline points="19 12 12 19 5 12"></polyline>
+                    </svg>
+                  }
+                  <span>{{ tarjeta.delta }}</span>
+                </div>
+              }
+            </div>
+          }
+        </section>
+      }
+
+      <div class="mis-card p-3 overflow-x-auto w-full">
+        <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
+      </div>
+
+      <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+        <b>Días Hábiles:</b> A partir del día 15 calendario se comparan días hábiles faltantes para el cierre.<br />
+        <b>TMM — Tasa Mensual Móvil:</b> Var. fecha actual vs. mismo día del mes anterior.<br />
+        <b>TAM — Tasa Anual Móvil:</b> Var. fecha actual vs. mismo día del año anterior.
+      </p>
+    </div>
+  }
+</app-window-panel>

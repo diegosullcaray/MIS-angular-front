@@ -1,7 +1,7 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
-import { TablaDinamicaComponent } from '../../../../../../ui/tabla-dinamica/tabla-dinamica.component';
-import { SelectFiltroComponent } from '../../../../../../ui/select-filtro/select-filtro.component';
+import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
+import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
+import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -23,7 +23,6 @@ import { PortafolioReasignadoService } from '../../services/portafolio-reasignad
     WindowPanelComponent,
   ],
   templateUrl: './efectividad-cartera-reasignada.component.html',
-  styleUrl: './efectividad-cartera-reasignada.component.css',
 })
 export class EfectividadCarteraReasignadaComponent {
   private readonly servicio = inject(PortafolioReasignadoService);

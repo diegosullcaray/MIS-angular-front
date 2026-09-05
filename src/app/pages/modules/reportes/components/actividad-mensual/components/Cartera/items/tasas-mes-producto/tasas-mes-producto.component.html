@@ -1,0 +1,62 @@
+<app-window-panel titulo="Tasas Mes por Producto" subtitulo="Expresado en Porcentaje" [conFiltros]="true">
+  <div ventana-filtros class="flex flex-col gap-3">
+    <!-- Selector de Jerarquía -->
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
+
+    <!-- Filtro de Fecha -->
+    <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+      <app-select-filtro
+        etiqueta="Fecha Cierre"
+        [opciones]="opcionesFechaBase"
+        [valor]="fechaBase()"
+        (valorChange)="fechaBase.set($event)"
+      />
+    </div>
+  </div>
+
+  @if (!nivelActual()) {
+    <app-empty-state
+      titulo="Elige un nivel"
+      descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver las tasas por producto."
+    />
+  } @else {
+    <div class="flex flex-col gap-4 sm:gap-5 w-full">
+      <!-- 1. Tarjetas KPI por Producto -->
+      @if (tarjetas().length > 0) {
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+          @for (tarjeta of tarjetas(); track tarjeta.etiqueta) {
+            <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col justify-between gap-2">
+              <span class="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-[var(--mis-text-secondary)] line-clamp-1">
+                {{ tarjeta.etiqueta }}
+              </span>
+
+              <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight">
+                {{ tarjeta.valor }}
+              </span>
+
+              <span class="text-[11px] sm:text-[12px] font-medium text-[var(--mis-text-tertiary)]">
+                {{ tarjeta.comparativo }}
+              </span>
+            </div>
+          }
+        </section>
+      }
+
+      <!-- 2. Gráficos Highcharts de Tasas por Producto -->
+      @if (graficos().length > 0) {
+        <section class="grid grid-cols-1 xl:grid-cols-2 gap-4 w-full">
+          @for (grafico of graficos(); track grafico.titulo) {
+            <div class="mis-card p-3 sm:p-4 min-h-[380px] sm:min-h-[400px] flex flex-col">
+              <app-grafico-mixto [datos]="grafico" tipo="columna" />
+            </div>
+          }
+        </section>
+      }
+    </div>
+  }
+</app-window-panel>

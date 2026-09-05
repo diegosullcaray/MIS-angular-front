@@ -14,7 +14,6 @@ import type { SectoristaItem } from '../../models/colaborador.model';
   standalone: true,
   imports: [FormsModule, DialogModule, TableModule, ButtonModule, IconFieldModule, InputIconModule, InputTextModule],
   templateUrl: './selector-sectorista-dialog.component.html',
-  styleUrl: './selector-sectorista-dialog.component.css',
 })
 export class SelectorSectoristaDialogComponent {
   readonly visible = input(false);

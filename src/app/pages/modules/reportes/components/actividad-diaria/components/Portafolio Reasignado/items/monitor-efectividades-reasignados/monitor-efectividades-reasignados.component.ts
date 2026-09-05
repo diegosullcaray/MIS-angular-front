@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
-import { HierSelectorComponent } from '../../../../../../ui/hier-selector/hier-selector.component';
-import { TablaReporteComponent } from '../../../../../../ui/tabla-reporte/tabla-reporte.component';
-import { SelectFiltroComponent } from '../../../../../../ui/select-filtro/select-filtro.component';
+import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
+import { TablaReporteComponent } from '../../../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
+import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../models/jerarquia.model';
@@ -33,7 +33,6 @@ import { ReporteReasignadoTabsBase } from '../../ui/reporte-reasignado.base';
     DetalleReasignadoComponent,
   ],
   templateUrl: './monitor-efectividades-reasignados.component.html',
-  styleUrl: './monitor-efectividades-reasignados.component.css',
 })
 export class MonitorEfectividadesReasignadosComponent extends ReporteReasignadoTabsBase {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;

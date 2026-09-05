@@ -28,7 +28,6 @@ import type { FilaLead } from '../../models/listas.model';
     WindowPanelComponent,
   ],
   templateUrl: './priorizacion-leads.component.html',
-  styleUrl: './priorizacion-leads.component.css',
 })
 export class PriorizacionLeadsComponent implements OnInit {
   private readonly analista = inject(AnalistaService);

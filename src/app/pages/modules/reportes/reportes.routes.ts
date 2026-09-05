@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { ACTIVIDAD_DIARIA_ROUTES } from './components/actividad-diaria/actividad-diaria.routes';
+import { ACTIVIDAD_MENSUAL_ROUTES } from './components/actividad-mensual/actividad-mensual.routes';
 import { ANALISTA_ROUTES } from './components/analista/analista.routes';
 import { AVANCE_COMERCIAL_ROUTES } from './components/avance-comercial/avance-comercial.routes';
 import { DESARROLLO_SOSTENIBLE_ROUTES } from './components/desarrollo-sostenible/desarrollo-sostenible.routes';
@@ -12,6 +13,7 @@ export const REPORTES_ROUTE: Routes = [
     redirectTo: 'leg/com/rda/adm/mon-desem',
   },
   ...ACTIVIDAD_DIARIA_ROUTES,
+  ...ACTIVIDAD_MENSUAL_ROUTES,
   ...AVANCE_COMERCIAL_ROUTES,
   ...DESARROLLO_SOSTENIBLE_ROUTES,
   {

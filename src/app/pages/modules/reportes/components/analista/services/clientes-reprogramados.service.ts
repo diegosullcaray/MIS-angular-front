@@ -7,6 +7,7 @@ import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { TablaReporteResultado, FilaReporte } from '../../../models/tabla-reporte.model';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReprogramacionForm } from '../models/clientes-reprogramados.model';
+import { COD_ANALISTA } from '../constantes/analista.constantes';
 
 /** Datos de "Clientes Reprogramados" (legado `leg/com/rda/sec/repro`, `crs-repro.component.ts`). */
 @Injectable({ providedIn: 'root' })
@@ -22,11 +23,11 @@ export class ClientesReprogramadosService {
 
   /** Cartera de clientes en reprogramación de un asesor (`RES_SEC_REP_01`). */
   obtenerClientes(asesor: { tip_cod: number; cod_rel: string }): Observable<TablaReporteResultado> {
-    return this.reportes.getRegularData('RES_SEC_REP_01', asesor).pipe(map(mapearBloqueReporte));
+    return this.reportes.getRegularData(COD_ANALISTA.clientesReprogramados, asesor).pipe(map(mapearBloqueReporte));
   }
 
   /** Guarda las respuestas para un cliente — `UP_REPRO_01`. */
   guardar(cliente: FilaReporte, respuestas: ReprogramacionForm): Observable<unknown> {
-    return this.secciones.postRegularUpdate('UP_REPRO_01', { json: JSON.stringify({ ...cliente, ...respuestas }) });
+    return this.secciones.postRegularUpdate(COD_ANALISTA.clientesReprogramadosGuardar, { json: JSON.stringify({ ...cliente, ...respuestas }) });
   }
 }

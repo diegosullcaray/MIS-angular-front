@@ -1,0 +1,4 @@
+/* Estilos encapsulados para programas-gobierno */
+:host {
+  display: block;
+}

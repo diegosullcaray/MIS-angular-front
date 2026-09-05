@@ -1,0 +1,37 @@
+<app-window-panel
+  [conFiltros]="true"
+  titulo="Inversión y Stock de Mora"
+  [permitirActualizar]="false"
+>
+  <div ventana-filtros class="flex flex-col gap-1">
+    <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
+    <p-select
+      [options]="asesores()"
+      [ngModel]="asesorSeleccionado()"
+      (ngModelChange)="onAsesorSeleccionado($event)"
+      optionLabel="nombre"
+      dataKey="dni"
+      [filter]="true"
+      filterBy="nombre"
+      placeholder="Buscar asesor"
+      styleClass="w-72 text-[11.5px]"
+      ariaLabel="Asesor"
+    />
+  </div>
+
+  @if (!asesorSeleccionado()) {
+    <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">Elegí un asesor para ver su inversión y stock de mora.</p>
+  } @else if (cargando()) {
+    <div class="flex flex-col gap-4">
+      <p-skeleton height="320px" />
+    </div>
+  } @else {
+    <div class="flex flex-col gap-5">
+      @for (grafico of graficos(); track $index) {
+        <div class="mis-card p-3 h-[360px]">
+          <app-grafico-mixto [datos]="grafico" tipo="linea" />
+        </div>
+      }
+    </div>
+  }
+</app-window-panel>

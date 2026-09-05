@@ -12,29 +12,45 @@
   -webkit-backdrop-filter: var(--mis-sidebar-blur);
 }
 
-/* Flechas de desplazamiento de la barra inferior (mobile).
-   NO llevan color propio. El rail es navy translúcido sobre el wallpaper
-   borroso, así que su color ya compuesto es más claro que el token y además
-   cambia a lo largo de la barra (medido: de rgb(45,79,130) a rgb(61,86,132)
-   en claro) — ningún color fijo puede coincidir, y por eso el navy sólido que
-   tenían antes se veía como un parche oscuro. Sin fondo propio, el
-   `backdrop-filter` samplea lo que el rail ya pintó y la flecha queda del
-   mismo tono que la barra; el blur alcanza para difuminar los íconos que
-   pasan por debajo. */
+/* Flechas de desplazamiento de la barra inferior (mobile) */
 .sidebar-rail-edge {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  box-shadow: none !important;
 }
 
-/* Sin backdrop-filter no hay nada que difumine los íconos: ahí sí se cae al
-   navy sólido, que es también el fallback del propio rail. */
-@supports not (backdrop-filter: blur(1px)) {
-  .sidebar-rail-edge {
-    background: #1d396e;
+/* En mobile: fondo sólido navy para el bottom sidebar y difuminado suave en las flechas */
+@media (max-width: 639px) {
+  .sidebar-rail {
+    background: #1d396e !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.25);
   }
 
-  :host-context(.dark) .sidebar-rail-edge {
-    background: #09101d;
+  :host-context(.dark) .sidebar-rail {
+    background: #09101d !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.45);
+  }
+
+  .sidebar-rail-edge--left {
+    background: linear-gradient(to right, #1d396e 35%, rgba(29, 57, 110, 0.8) 65%, transparent 100%) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .sidebar-rail-edge--right {
+    background: linear-gradient(to left, #1d396e 35%, rgba(29, 57, 110, 0.8) 65%, transparent 100%) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  :host-context(.dark) .sidebar-rail-edge--left {
+    background: linear-gradient(to right, #09101d 35%, rgba(9, 16, 29, 0.8) 65%, transparent 100%) !important;
+  }
+
+  :host-context(.dark) .sidebar-rail-edge--right {
+    background: linear-gradient(to left, #09101d 35%, rgba(9, 16, 29, 0.8) 65%, transparent 100%) !important;
   }
 }
 
@@ -87,3 +103,94 @@
   }
 }
 
+
+/* ── Modos de menú ────────────────────────────────────────────────────────
+   `data-menu` / `data-menu-etiquetas` los escribe `AparienciaDomAdaptador` en
+   <html> a partir de las preferencias. Los cuatro modos son los mismos que
+   maneja el layout de PrimeNG (static / slim / overlay / horizontal).
+
+   Todo esto arranca en `sm`: por debajo el rail SIEMPRE es la barra inferior
+   fija, igual que en PrimeNG, donde el móvil siempre superpone. */
+@media (min-width: 640px) {
+  /* Delgado (slim) y "sin etiquetas": el rail se queda solo con los íconos.
+     El ancho no se toca acá — lo baja el token `--mis-sidebar-col1-w`, así el
+     resto del shell se acomoda sin saber de este componente. */
+  :host-context(html[data-menu-etiquetas='no']) .sidebar-etiqueta {
+    display: none;
+  }
+
+  /* Superpuesto (overlay): el rail sale del flujo y entra deslizándose sobre
+     el contenido. Oculto no debe recibir foco ni clicks, de ahí el
+     `visibility` además del desplazamiento. */
+  :host-context(html[data-menu='superpuesto']) .sidebar-rail {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition: transform var(--mis-transition-base), visibility var(--mis-transition-base);
+    box-shadow: var(--mis-shadow-lg);
+  }
+
+  :host-context(html[data-menu='superpuesto']) .sidebar-rail.sidebar-rail--abierto {
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  .sidebar-mask {
+    background: rgba(8, 14, 26, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  /* Horizontal: el rail deja de ser una columna y pasa a ser una banda bajo el
+     header. El `flex-direction: column` del contenedor del shell lo pone
+     `shell-layout.component.css`, que es quien controla ese eje. */
+  :host-context(html[data-menu='horizontal']) .sidebar-rail {
+    width: 100%;
+    height: 48px;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 var(--mis-space-2);
+    border-right: none;
+    border-bottom: 1px solid var(--mis-border);
+  }
+
+  :host-context(html[data-menu='horizontal']) .sidebar-rail-cuerpo {
+    flex-direction: row;
+    height: 100%;
+  }
+
+  :host-context(html[data-menu='horizontal']) .sidebar-rail-scroll {
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: var(--mis-space-1);
+  }
+
+  /* En horizontal el ícono y su nombre van uno al lado del otro: apilarlos
+     dentro de 48px de alto deja el texto cortado. */
+  :host-context(html[data-menu='horizontal']) .sidebar-icon-btn {
+    flex-direction: row;
+    gap: var(--mis-space-2);
+    width: auto;
+    height: 36px;
+    padding: 0 var(--mis-space-3);
+  }
+
+  :host-context(html[data-menu='horizontal']) .sidebar-etiqueta {
+    font-size: var(--mis-text-xs);
+    max-width: none;
+  }
+
+  /* El wordmark y su separador son del rail vertical: en una banda horizontal
+     ocupan el lugar de dos sistemas y no aportan (el logo ya está en el header). */
+  :host-context(html[data-menu='horizontal']) .sidebar-wordmark,
+  :host-context(html[data-menu='horizontal']) .sidebar-separador {
+    display: none;
+  }
+}

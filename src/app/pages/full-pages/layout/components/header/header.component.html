@@ -1,4 +1,19 @@
 <div class="flex items-center gap-3 h-full w-full px-4 relative">
+  <!-- Botón del rail: solo existe en el modo de menú "superpuesto", donde el
+       rail no está anclado y este es el único camino para abrirlo. En los
+       demás modos el rail se ve siempre y el botón sobra. -->
+  @if (menuSuperpuesto()) {
+    <button
+      class="hidden sm:flex w-8 h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      (click)="alternarRail()"
+      [attr.aria-expanded]="shell.railSuperpuestoAbierto()"
+      aria-label="Mostrar u ocultar el menú de sistemas"
+      title="Menú de sistemas"
+    >
+      <ng-icon name="lucideMenu" size="16" />
+    </button>
+  }
+
   <!-- Breadcrumb minimalista. El wordmark MIS ya no vive acá (se movió al tope
        del rail, ver `sidebar.component.html`), y ese espacio liberado es el que
        permite mostrarlo también en mobile: es el ÚNICO lugar donde se ve la
@@ -18,8 +33,8 @@
   <div class="flex items-center gap-2 relative">
     <!-- Alternar tema claro/oscuro -->
     <button
-      class="w-8 h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
-      (click)="theme.alternar()"
+      class="w-[44px] h-[44px] sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      (click)="alternarTema()"
       [attr.aria-label]="theme.oscuro() ? 'Activar modo claro' : 'Activar modo oscuro'"
       [attr.aria-pressed]="theme.oscuro()"
       [title]="theme.oscuro() ? 'Modo claro' : 'Modo oscuro'"
@@ -27,9 +42,28 @@
       <ng-icon [name]="theme.oscuro() ? 'lucideSun' : 'lucideMoon'" size="15" />
     </button>
 
+    <!-- Comunicados. Va con megáfono y NO con campana: la campana es de
+         notificaciones, que es otro ajuste y otro tipo de aviso. Muestra un
+         punto solo cuando queda algo sin leer; el diálogo se abre solo la
+         primera vez y desde acá se relee cuando se quiera. -->
+    <button
+      class="relative w-[44px] h-[44px] sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      (click)="anuncios.abrir()"
+      aria-label="Comunicados del sistema"
+      title="Comunicados"
+    >
+      <ng-icon name="lucideMegaphone" size="15" />
+      @if (anuncios.hayPendientes()) {
+        <span
+          class="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--mis-secondary)]"
+          aria-hidden="true"
+        ></span>
+      }
+    </button>
+
     <!-- Pill de usuario minimalista -->
     <div
-      class="flex items-center justify-center sm:justify-start gap-0 sm:gap-2 p-0.5 sm:pr-2 rounded-full border border-[var(--mis-border)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-panel-bg)] hover:border-[var(--mis-border-strong)] active:scale-95 sm:active:scale-100"
+      class="flex items-center justify-center sm:justify-start gap-0 sm:gap-2 p-0.5 sm:pr-2 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-full border border-[var(--mis-border)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-panel-bg)] hover:border-[var(--mis-border-strong)] active:scale-95 sm:active:scale-100"
       (click)="toggleDropdown()"
       (keydown.enter)="toggleDropdown()"
       tabindex="0"
@@ -54,74 +88,66 @@
       <ng-icon name="lucideChevronDown" size="12" class="hidden sm:block text-[var(--mis-text-tertiary)] transition-transform duration-150 shrink-0" [class.rotate-180]="dropdownOpen()" />
     </div>
 
-    <!-- Dropdown del usuario -->
+    <!-- Menú de perfil (mismo recorrido que el selector de perfiles de
+         Chrome: tarjeta de identidad, acciones y, al final, los otros perfiles
+         a un clic). -->
     @if (dropdownOpen()) {
-      <div
-        class="absolute top-[calc(100%+6px)] right-0 w-[230px] max-w-[calc(100vw-32px)] bg-[var(--mis-surface)]/95 backdrop-blur-md border border-[var(--mis-border)] rounded-xl shadow-[var(--mis-shadow-lg)] z-[var(--mis-z-dropdown)] overflow-hidden animate-dropdownFadeIn"
-        role="menu"
-      >
-        <div class="flex items-center gap-3 p-3 px-4">
+      <div class="perfil-menu animate-dropdownFadeIn" role="menu">
+        <div class="perfil-tarjeta">
           <div
-            class="relative w-8 h-8 rounded-full bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] flex items-center justify-center text-xs font-semibold shrink-0"
+            class="perfil-avatar"
             [class.avatar-alterno]="auth.esUsuarioAlterno()"
           >
             @if (auth.esUsuarioAlterno()) {
-              <ng-icon name="lucideUsers" size="14" aria-label="Viendo como otro usuario" />
+              <ng-icon name="lucideUsers" size="22" aria-label="Viendo como otro usuario" />
             } @else {
               {{ shell.inicialesUsuario() }}
             }
           </div>
-          <div class="min-w-0 flex-1">
-            <div class="text-xs font-semibold text-[var(--mis-text-primary)] truncate">{{ shell.usuarioActivo()?.nombre }}</div>
-            <div class="text-[11px] text-[var(--mis-text-tertiary)] truncate max-w-[150px]">{{ shell.usuarioActivo()?.email }}</div>
-          </div>
+          <p class="perfil-nombre">{{ shell.usuarioActivo()?.nombre }}</p>
+          <p class="perfil-email">{{ shell.usuarioActivo()?.email }}</p>
         </div>
 
-        <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
-
-        <button
-          class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] active:bg-[var(--mis-panel-bg)]"
-          role="menuitem"
-          (click)="abrirConfiguracion()"
-        >
-          <ng-icon name="lucideSettings" size="14" />
-          Configuración
+        <button class="perfil-item" role="menuitem" (click)="abrirConfiguracion()">
+          <ng-icon name="lucideSettings" size="15" />
+          <span class="perfil-item-nombre">Configuración</span>
         </button>
 
-        @if (auth.puedeCambiarUsuario()) {
-          <button
-            class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] active:bg-[var(--mis-panel-bg)]"
-            role="menuitem"
-            (click)="abrirCambiarUsuario()"
-          >
-            <ng-icon name="lucideUsers" size="14" />
-            Cambiar usuario
-          </button>
-        }
-        
-        @if (auth.esUsuarioAlterno()) {
-          <button
-            class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-text-primary)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-panel-bg)] active:bg-[var(--mis-panel-bg)]"
-            role="menuitem"
-            (click)="volverAUsuarioOriginal()"
-          >
-            <ng-icon name="lucideUser" size="14" />
-            Mi usuario
-          </button>
-        }
-        
-        <div class="h-[1px] bg-[var(--mis-border)] my-0.5"></div>
-        
-        <button
-          class="flex items-center gap-2.5 w-full p-2.5 px-4 border-0 bg-transparent text-xs text-[var(--mis-danger)] cursor-pointer transition-colors duration-150 hover:bg-[var(--mis-danger-light)] active:bg-[var(--mis-danger-light)]"
-          role="menuitem"
-          (click)="pedirConfirmacionSalir()"
-        >
-          <ng-icon name="lucideLogOut" size="14" />
-          Cerrar sesión
+        <button class="perfil-item perfil-item--peligro" role="menuitem" (click)="pedirConfirmacionSalir()">
+          <ng-icon name="lucideLogOut" size="15" />
+          <span class="perfil-item-nombre">Cerrar sesión</span>
         </button>
+
+        <!-- Otros perfiles: un clic cambia de cuenta, sin confirmación. Viendo
+             como un alterno, la única fila es la identidad propia: el camino de
+             vuelta vive acá y no en una opción aparte. -->
+        @if (otrosPerfiles().length) {
+          <div class="perfil-separador"></div>
+          <p class="perfil-seccion" id="perfil-otros">Otros perfiles</p>
+
+          @for (perfil of otrosPerfiles(); track perfil.clave) {
+            <button
+              class="perfil-item"
+              role="menuitem"
+              [disabled]="!!cambiandoPerfil()"
+              [attr.aria-busy]="cambiandoPerfil() === perfil.clave"
+              (click)="elegirPerfil(perfil)"
+            >
+              <span class="perfil-avatar-mini" aria-hidden="true">{{ inicialesDe(perfil.nombre) }}</span>
+              <span class="perfil-item-texto">
+                <span class="perfil-item-nombre">{{ perfil.nombre }}</span>
+                @if (perfil.detalle) {
+                  <span class="perfil-item-cargo">{{ perfil.detalle }}</span>
+                }
+              </span>
+              @if (cambiandoPerfil() === perfil.clave) {
+                <i class="pi pi-spin pi-spinner perfil-item-spinner" aria-hidden="true"></i>
+              }
+            </button>
+          }
+        }
       </div>
-      <!-- Overlay para cerrar dropdown al click fuera -->
+      <!-- Overlay para cerrar el menú al click fuera -->
       <div class="fixed inset-0 z-[calc(var(--mis-z-dropdown)-1)]" (click)="dropdownOpen.set(false)"></div>
     }
   </div>
@@ -159,11 +185,6 @@
     </div>
   </p-dialog>
 
-  <!-- Cambiar usuario (usuarios alternos) -->
-  <app-cambiar-usuario-dialog
-    [visible]="cambiarUsuarioOpen()"
-    (visibleChange)="cambiarUsuarioOpen.set($event)"
-  />
 
   <!-- Configuración del sistema -->
   <app-configuracion-dialog

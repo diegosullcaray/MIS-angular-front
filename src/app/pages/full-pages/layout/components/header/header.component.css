@@ -13,6 +13,158 @@
   box-shadow: 0 0 0 2px var(--mis-warning);
 }
 
+/* ── Menú de perfil ───────────────────────────────────────────
+   Mismo recorrido que el selector de perfiles de Chrome: tarjeta de identidad,
+   acciones y, al final, los otros perfiles a un clic. Con tokens, así que
+   sirve igual en claro y en oscuro. */
+.perfil-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: var(--mis-z-dropdown);
+  width: 288px;
+  max-width: calc(100vw - 32px);
+  padding: var(--mis-space-2) 0 var(--mis-space-2);
+  background: color-mix(in srgb, var(--mis-surface) 95%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: var(--mis-shadow-lg);
+  overflow: hidden;
+}
+
+/* Tarjeta de identidad: el bloque hundido con la foto grande y el correo. */
+.perfil-tarjeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mis-space-1);
+  margin: 0 var(--mis-space-2) var(--mis-space-2);
+  padding: var(--mis-space-4) var(--mis-space-3);
+  background: var(--mis-panel-bg);
+  border-radius: var(--mis-radius-md);
+  text-align: center;
+}
+
+.perfil-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--mis-space-1);
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-primary);
+  color: var(--mis-text-on-primary);
+  font-size: var(--mis-text-lg);
+  font-weight: var(--mis-font-semibold);
+}
+
+/* Una línea por dato: ni el nombre ni el correo parten la caja. */
+.perfil-nombre,
+.perfil-email,
+.perfil-item-nombre,
+.perfil-item-cargo {
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.perfil-nombre {
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+}
+
+.perfil-email {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+}
+
+/* ── Filas ─────────────────────────────────────────────────── */
+.perfil-item {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-3);
+  width: 100%;
+  padding: var(--mis-space-2) var(--mis-space-4);
+  border: 0;
+  background: transparent;
+  color: var(--mis-text-primary);
+  font-family: inherit;
+  font-size: var(--mis-text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast);
+}
+
+.perfil-item:hover:not(:disabled),
+.perfil-item:focus-visible {
+  background: var(--mis-hover-bg);
+}
+
+.perfil-item:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.perfil-item--peligro {
+  color: var(--mis-danger);
+}
+
+.perfil-item--peligro:hover:not(:disabled) {
+  background: var(--mis-danger-light);
+}
+
+.perfil-item-texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.perfil-item-cargo {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+}
+
+.perfil-item-spinner {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--mis-text-tertiary);
+}
+
+/* Avatar chico: ocupa el lugar del ícono, así la lista alinea con las acciones. */
+.perfil-avatar-mini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: -2px -4px;
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-secondary);
+  color: var(--mis-text-on-secondary);
+  font-size: 10px;
+  font-weight: var(--mis-font-semibold);
+  flex-shrink: 0;
+}
+
+.perfil-separador {
+  height: 1px;
+  margin: var(--mis-space-2) 0;
+  background: var(--mis-border);
+}
+
+.perfil-seccion {
+  margin: 0;
+  padding: var(--mis-space-1) var(--mis-space-4) var(--mis-space-2);
+  font-size: var(--mis-text-xs);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-secondary);
+}
+
 /* Breadcrumb integrado al header glass: sin fondo, sin borde ni padding propio */
 .header-breadcrumb ::ng-deep .p-breadcrumb {
   background: transparent;
@@ -65,4 +217,19 @@
 @keyframes dropdownFadeIn {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Objetivo táctil de los enlaces del breadcrumb en móvil.
+   Son enlaces dentro de una línea de texto, así que su mínimo es el 24×24 de
+   WCAG 2.5.8 (AA) y no el 44×44 de los botones de acción: estirarlos a 44 de
+   ancho haría de una ruta profunda una tira interminable. El alto sí llega al
+   del header, que es lo que hace cómodo el toque. */
+@media (max-width: 639px) {
+  .header-breadcrumb ::ng-deep .p-breadcrumb-item-link {
+    min-width: 24px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

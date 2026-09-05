@@ -9,7 +9,6 @@ import type { FilaLabelValor } from '../../models/comun.model';
   standalone: true,
   imports: [DialogModule, SkeletonModule],
   templateUrl: './detalle-tabla-dialog.component.html',
-  styleUrl: './detalle-tabla-dialog.component.css',
 })
 export class DetalleTablaDialogComponent {
   readonly visible = input(false);

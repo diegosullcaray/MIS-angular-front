@@ -7,7 +7,7 @@ import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
+import { HierSelectorComponent } from '../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { filtrarPorDescripcion } from '../../../utils/texto.util';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../../models/jerarquia.model';
@@ -28,7 +28,6 @@ import type { LogVerificacionFila } from '../../../models/tablero-verificacion.m
     WindowPanelComponent,
   ],
   templateUrl: './tablero-verificacion.component.html',
-  styleUrl: './tablero-verificacion.component.css',
 })
 export class TableroVerificacionComponent {
   private readonly presupuesto = inject(PresupuestoService);

@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteColocacionesDiaria } from '../models/colocaciones-diaria.model';
+import { COD_ANALISTA_MULTIBLOQUE } from '../constantes/analista.constantes';
 
 /** Datos de "Colocaciones diaria Operación, Monto y Recuperación" (legado `leg/com/rda/sec/proy_M6`, `ReportCrsV1Component` + `crs-map.ts`: `PROYEC_DIACOLREC_AS`). */
 @Injectable({ providedIn: 'root' })
@@ -20,9 +21,15 @@ export class ColocacionesDiariaService {
   /** Colocaciones diarias de un asesor — 3 bloques (`PROYEC_DIACOLREC_AS_01/_02/_03`). */
   obtenerColocacionesDiaria(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteColocacionesDiaria> {
     return forkJoin({
-      tabla1: this.reportes.getRegularData('PROYEC_DIACOLREC_AS_01', asesor).pipe(map(mapearBloqueReporte)),
-      tabla2: this.reportes.getRegularData('PROYEC_DIACOLREC_AS_02', asesor).pipe(map(mapearBloqueReporte)),
-      tabla3: this.reportes.getRegularData('PROYEC_DIACOLREC_AS_03', asesor).pipe(map(mapearBloqueReporte)),
+      tabla1: this.bloque(COD_ANALISTA_MULTIBLOQUE.colocacionesDiaria[0], asesor),
+      tabla2: this.bloque(COD_ANALISTA_MULTIBLOQUE.colocacionesDiaria[1], asesor),
+      tabla3: this.bloque(COD_ANALISTA_MULTIBLOQUE.colocacionesDiaria[2], asesor),
     });
   }
+
+  /** Un bloque del reporte, ya mapeado. */
+  private bloque(codRep: string, asesor: { tip_cod: number; cod_rel: string }) {
+    return this.reportes.getRegularData(codRep, asesor).pipe(map(mapearBloqueReporte));
+  }
+
 }

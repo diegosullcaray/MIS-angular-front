@@ -1,0 +1,13 @@
+<app-reporte-simple
+  titulo="Base de Gestión"
+  subtitulo="Cero Cuotas Nuevas"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <!-- `VariableNIngresoD()` del legado: filtra por texto, no por índice. -->
+  <app-select-filtro filtros etiqueta="Tipo" [opciones]="opcionesTipo" [(valor)]="tipo" ancho="w-44" />
+</app-reporte-simple>

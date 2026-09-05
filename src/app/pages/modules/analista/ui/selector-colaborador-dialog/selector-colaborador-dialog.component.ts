@@ -14,7 +14,6 @@ import type { ColaboradorItem } from '../../models/colaborador.model';
   standalone: true,
   imports: [FormsModule, DialogModule, TableModule, ButtonModule, IconFieldModule, InputIconModule, InputTextModule],
   templateUrl: './selector-colaborador-dialog.component.html',
-  styleUrl: './selector-colaborador-dialog.component.css',
 })
 export class SelectorColaboradorDialogComponent {
   readonly visible = input(false);

@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Seguimiento Reprogramados"
+  subtitulo="Cartera en Mora"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

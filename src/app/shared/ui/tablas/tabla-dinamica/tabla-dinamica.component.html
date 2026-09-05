@@ -1,0 +1,56 @@
+<p-table [value]="filas()" [loading]="cargando()" [scrollable]="true" scrollHeight="620px" styleClass="p-datatable-sm">
+  <ng-template pTemplate="header">
+    @for (fila of encabezados().filas; track $index) {
+      <tr>
+        @for (columna of fila; track (columna.key ?? columna.label ?? $index)) {
+          <th
+            [attr.colspan]="columna.colspan"
+            [attr.rowspan]="columna.rowspan"
+            class="text-[12px] uppercase text-center whitespace-nowrap border border-[var(--mis-text-on-primary)]/25"
+            style="color: var(--mis-text-on-primary);"
+            [style]="columna.style ?? null"
+            [style.background-color]="columna.style?.['background'] ?? 'var(--mis-primary)'"
+          >
+            {{ columna.label }}
+          </th>
+        }
+      </tr>
+    }
+  </ng-template>
+  <ng-template pTemplate="body" let-fila>
+    <tr
+      [class.font-bold]="destacada(fila)"
+      [class.fila-destacada]="destacada(fila)"
+      [class.bg-slate-100]="destacada(fila)"
+      [class.dark:bg-slate-800]="destacada(fila)"
+      [class.cursor-pointer]="seleccionable() && !columnasClicables().length"
+      (click)="onClickFila(fila)"
+    >
+      @for (columna of encabezados().columnasHoja; track columna.key) {
+        <td
+          class="text-[13px] whitespace-nowrap"
+          [class.bg-slate-100]="destacada(fila)"
+          [class.dark:bg-slate-800]="destacada(fila)"
+          [class.font-bold]="destacada(fila) || (fondoDinamico() && signoFondoDinamico(fila, columna) !== null)"
+          [class]="alineacion(columna)"
+          [class.cursor-pointer]="clicable(columna)"
+          [class.underline]="clicable(columna)"
+          [style]="estiloCelda(fila, columna)"
+          (click)="onClickCelda(columna, fila)"
+        >
+          @if (mostrarSemaforo(fila, columna)) {
+            <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(fila, columna)"></i>
+          }
+          {{ valor(fila, columna) }}
+        </td>
+      }
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="encabezados().columnasHoja.length || 1" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
+        Sin datos para mostrar.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

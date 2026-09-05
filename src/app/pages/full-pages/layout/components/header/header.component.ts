@@ -6,9 +6,9 @@ import { filter, map } from 'rxjs';
 // Iconos
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
-  lucideChevronDown, lucideUser, lucideSettings,
+  lucideChevronDown, lucideSettings,
   lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
-  lucideUsers, lucideSun, lucideMoon
+  lucideUsers, lucideSun, lucideMoon, lucideMenu, lucideMegaphone
 } from '@ng-icons/lucide';
 
 // PrimeNG
@@ -19,26 +19,39 @@ import type { MenuItem } from 'primeng/api';
 
 // Servicios y Componentes
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { ThemeService } from '../../services/theme.service';
+import { ThemeService } from '../../../../../shared/services/theme.service';
+import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
+import { AnunciosService } from '../../../../../core/preferencias/aplicacion/anuncios.service';
 import { AuthService } from '../../../auth/service/auth.service';
+import type { AlternateUsuario } from '../../../auth/model/auth-session.model';
+import { ToastService } from '../../../../../shared/services/toast.service';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
-import { CambiarUsuarioDialogComponent } from '../dialogs/cambiar-usuario-dialog/cambiar-usuario-dialog.component';
 import { ConfiguracionDialogComponent } from '../dialogs/configuracion-dialog/configuracion-dialog.component';
 import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
 
 
 
+/** Fila de la lista "Otros perfiles": un alterno, o la identidad propia cuando ya se está viendo como otro. */
+interface PerfilDelMenu {
+  clave: string;
+  nombre: string;
+  detalle?: string;
+  /** `true` cuando la fila devuelve a la identidad propia (no llama al backend). */
+  esOriginal: boolean;
+  alterno?: AlternateUsuario;
+}
+
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule, CambiarUsuarioDialogComponent, ConfiguracionDialogComponent],
+  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule, ConfiguracionDialogComponent],
   viewProviders: [
     provideIcons({
-      lucideChevronDown, lucideUser, lucideSettings,
+      lucideChevronDown, lucideSettings,
       lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
-      lucideUsers, lucideSun, lucideMoon
+      lucideUsers, lucideSun, lucideMoon, lucideMenu, lucideMegaphone
     })
   ],
   templateUrl: './header.component.html',
@@ -49,6 +62,9 @@ export class HeaderComponent {
   protected readonly shell = inject(ShellStateService);
   protected readonly auth = inject(AuthService);
   protected readonly theme = inject(ThemeService);
+  protected readonly anuncios = inject(AnunciosService);
+  private readonly toast = inject(ToastService);
+  private readonly preferencias = inject(PreferenciasService);
   private readonly router = inject(Router);
   private readonly menuStg = inject(MenuStgService);
   private readonly navegacion = inject(NavegacionSistemasService);
@@ -57,8 +73,9 @@ export class HeaderComponent {
   // ─── Estado Local (Signals) ───────────────────────────────────────────────
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
-  protected readonly cambiarUsuarioOpen = signal(false);
   protected readonly configuracionOpen = signal(false);
+  /** Email del perfil que se está activando (null = ninguno en curso). */
+  protected readonly cambiandoPerfil = signal<string | null>(null);
 
   /** URL actual capturada para reaccionar a cambios de ruta. */
   private readonly urlActual = toSignal(
@@ -70,6 +87,35 @@ export class HeaderComponent {
   );
 
   // ─── Estado Computado ─────────────────────────────────────────────────────
+
+  /** Determina si el sidebar está en modo superpuesto. */
+  protected readonly menuSuperpuesto = computed(
+    () => this.preferencias.estructura().modoSidebar === 'superpuesto',
+  );
+
+  /**
+   * Los perfiles a los que se puede saltar con un clic. Viendo como un alterno
+   * la lista es la identidad propia —el camino de vuelta, en el mismo lugar
+   * que el resto de los perfiles, como hace Chrome— y si no, los alternos
+   * asignados.
+   */
+  protected readonly otrosPerfiles = computed<PerfilDelMenu[]>(() => {
+    const original = this.auth.usuarioOriginal();
+    if (original) {
+      return [{ clave: original.email, nombre: original.nombre, detalle: original.email, esOriginal: true }];
+    }
+
+    if (!this.auth.puedeCambiarUsuario()) return [];
+
+    return this.auth.alternates().map((alterno) => ({
+      clave: alterno.email,
+      nombre: alterno.nombre,
+      detalle: alterno.cargo,
+      esOriginal: false,
+      alterno,
+    }));
+  });
+
   protected readonly rolLabel = computed(() => {
     const roles: Record<string, string> = {
       'admin-sistema': 'Admin Sistema',
@@ -82,7 +128,7 @@ export class HeaderComponent {
   // ─── Configuración de Breadcrumb ──────────────────────────────────────────
   protected readonly breadcrumbHome: MenuItem = { icon: 'pi pi-home', routerLink: '/app/dashboard' };
 
-  /** Ruta de navegación superior. Mientras está a la vista el explorador del sistema, refleja la carpeta abierta ahí (que no es una URL); si no, se deriva de la URL activa. */
+  /** Breadcrumb dinámico según la ruta activa o el explorador. */
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
     if (this.shell.contenidoPendienteSeleccion()) return this.breadcrumbExplorador();
 
@@ -103,16 +149,58 @@ export class HeaderComponent {
     this.dropdownOpen.update(v => !v);
   }
 
+  protected alternarRail(): void {
+    this.shell.setRailSuperpuestoAbierto(!this.shell.railSuperpuestoAbierto());
+  }
+
   protected pedirConfirmacionSalir(): void {
     this.cerrarDropdownYAbrir(this.confirmarSalirOpen);
   }
 
-  protected abrirCambiarUsuario(): void {
-    this.cerrarDropdownYAbrir(this.cambiarUsuarioOpen);
+  /** Un clic en una fila de "Otros perfiles": volver a la identidad propia o saltar a un alterno. */
+  protected async elegirPerfil(perfil: PerfilDelMenu): Promise<void> {
+    if (perfil.esOriginal) {
+      this.volverAUsuarioOriginal();
+      return;
+    }
+    await this.cambiarAPerfil(perfil.alterno!);
+  }
+
+  /**
+   * Cambia de perfil con un solo clic, como el selector de cuentas de Chrome:
+   * sin diálogo de por medio. El menú queda abierto mientras dura el cambio
+   * —con la fila marcada— y recién se cierra cuando la sesión ya es la otra.
+   */
+  protected async cambiarAPerfil(alterno: AlternateUsuario): Promise<void> {
+    if (this.cambiandoPerfil()) return;
+
+    this.cambiandoPerfil.set(alterno.email);
+    try {
+      await this.auth.cambiarAUsuarioAlterno(alterno);
+      this.dropdownOpen.set(false);
+    } catch (err: any) {
+      this.toast.error('No se pudo cambiar de perfil', err?.message);
+    } finally {
+      this.cambiandoPerfil.set(null);
+    }
+  }
+
+  /** Iniciales del avatar de un perfil alterno (el del activo lo da el shell). */
+  protected inicialesDe(nombre: string): string {
+    return nombre
+      .split(' ')
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase() ?? '')
+      .join('');
   }
 
   protected abrirConfiguracion(): void {
     this.cerrarDropdownYAbrir(this.configuracionOpen);
+  }
+
+  /** Alterna el tema claro/oscuro. */
+  protected alternarTema(): void {
+    this.preferencias.alternarTema();
   }
 
   protected volverAUsuarioOriginal(): void {
@@ -125,12 +213,12 @@ export class HeaderComponent {
     // El overlay de carga (spinner) se maneja a nivel raíz para evitar problemas de z-index
     this.shell.setCerrandoSesion(true);
     await new Promise((resolve) => setTimeout(resolve, 5000));
-    this.auth.cerrarSesion();
+    await this.auth.cerrarSesion();
   }
 
   // ─── Métodos Privados ─────────────────────────────────────────────────────
 
-  /** Helper para cerrar el menú y abrir un dialog específico. */
+  /** Cierra el dropdown y abre un dialog. */
   private cerrarDropdownYAbrir(modalSignal: typeof this.confirmarSalirOpen): void {
     this.dropdownOpen.set(false);
     modalSignal.set(true);
@@ -170,7 +258,7 @@ export class HeaderComponent {
     });
   }
 
-  /** Genera el breadcrumb dinámico extrayendo datos del árbol del menú STG (sistemas remotos). */
+  /** Breadcrumb para rutas de sistemas remotos (STG). */
   private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
     const hallazgo = this.menuStg.buscarPorRuta(url);
 

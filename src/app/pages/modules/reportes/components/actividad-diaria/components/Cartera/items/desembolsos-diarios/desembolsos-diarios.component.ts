@@ -13,7 +13,6 @@ import { CarteraCraService } from '../../services/cartera-cra.service';
   standalone: true,
   imports: [ReporteSimpleComponent],
   templateUrl: './desembolsos-diarios.component.html',
-  styleUrl: './desembolsos-diarios.component.css',
 })
 export class DesembolsosDiariosComponent extends ReporteBloquesBase {
   private readonly servicio = inject(CarteraCraService);

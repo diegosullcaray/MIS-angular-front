@@ -25,7 +25,6 @@ const ENLACES: EnlaceListaAnalista[] = [
   standalone: true,
   imports: [RouterLink, TooltipModule, WindowPanelComponent],
   templateUrl: './listas.component.html',
-  styleUrl: './listas.component.css',
 })
 export class ListasComponent {
   private readonly router = inject(Router);

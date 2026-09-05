@@ -1,0 +1,10 @@
+<app-reporte-simple
+  titulo="Apadrinamiento"
+  subtitulo="Campañas"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+/>

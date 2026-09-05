@@ -1,0 +1,4 @@
+/* Estilos encapsulados para monitor-efectividades */
+:host {
+  display: block;
+}

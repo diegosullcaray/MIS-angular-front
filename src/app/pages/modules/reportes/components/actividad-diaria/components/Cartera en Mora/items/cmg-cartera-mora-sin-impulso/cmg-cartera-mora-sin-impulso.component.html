@@ -1,0 +1,18 @@
+<app-reporte-simple
+  titulo="CMG Cartera en Mora Sin Impulso"
+  subtitulo="Cartera en Mora"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <!-- `content.lower` de `cmg_mora_simp_01` en `cra-map.ts`. -->
+  <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+    <b>A partir del día 15 calendario se comparan días hábiles faltantes para el cierre.</b><br />
+    <b>TMM — Tasa Mensual Móvil:</b> Var. fecha actual vs. mismo día del mes anterior.<br />
+    <b>TAM — Tasa Anual Móvil:</b> Var. fecha actual vs. mismo día del año anterior.<br />
+    <b>El gasto de provisión no incluye provisiones voluntarias.</b>
+  </p>
+</app-reporte-simple>

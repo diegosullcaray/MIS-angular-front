@@ -1,0 +1,18 @@
+<app-reporte-simple
+  titulo="PLAN DE DATOS"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <div filtros class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+    <app-select-filtro
+      etiqueta="Fecha Cierre"
+      [opciones]="opcionesFechaBase"
+      [valor]="fechaBase()"
+      (valorChange)="fechaBase.set($event)"
+    />
+  </div>
+</app-reporte-simple>

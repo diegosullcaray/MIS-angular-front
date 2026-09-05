@@ -1,0 +1,4 @@
+/* Estilos encapsulados para cmg-captaciones */
+:host {
+  display: block;
+}

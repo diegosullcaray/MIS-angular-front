@@ -1,0 +1,4 @@
+/* Estilos encapsulados para cmg-cartera-mora */
+:host {
+  display: block;
+}

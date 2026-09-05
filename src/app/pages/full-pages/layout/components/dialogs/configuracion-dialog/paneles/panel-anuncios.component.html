@@ -1,0 +1,17 @@
+<div class="mis-panel">
+  <section class="mis-panel-grupo">
+    <div class="mis-panel-fila">
+      <div class="mis-panel-fila-texto">
+        <span class="mis-panel-fila-nombre">No mostrarme comunicados</span>
+        <span class="mis-panel-ayuda">
+          Dejan de aparecer al entrar. Podés seguir leyéndolos desde el botón de comunicados del header.
+        </span>
+      </div>
+      <p-toggleswitch
+        [ngModel]="ajustes().silenciar"
+        (ngModelChange)="setSilenciar($event)"
+        inputId="mis-silenciar-anuncios"
+      />
+    </div>
+  </section>
+</div>

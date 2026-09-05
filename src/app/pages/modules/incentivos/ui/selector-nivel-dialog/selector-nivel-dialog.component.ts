@@ -20,7 +20,6 @@ type Vista = 'menu' | 'asesores' | 'jerarquia';
   standalone: true,
   imports: [DialogModule, ButtonModule, TableModule, InputTextModule, IconFieldModule, InputIconModule, FormsModule],
   templateUrl: './selector-nivel-dialog.component.html',
-  styleUrl: './selector-nivel-dialog.component.css',
 })
 export class SelectorNivelDialogComponent {
   private readonly router = inject(Router);

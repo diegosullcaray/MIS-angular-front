@@ -1,0 +1,101 @@
+<div class="mis-panel">
+  <section class="mis-panel-grupo">
+    <h4 class="mis-panel-subtitulo">Tema</h4>
+    <p class="mis-panel-ayuda">«Sistema» sigue lo que tenga configurado el equipo.</p>
+    <p-selectbutton
+      [options]="temas"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false"
+      [ngModel]="apariencia().tema"
+      (ngModelChange)="setTema($event)"
+      ariaLabelledBy="mis-tema-label"
+    />
+  </section>
+
+  <section class="mis-panel-grupo">
+    <h4 class="mis-panel-subtitulo" id="mis-fondo-label">Fondo del escritorio</h4>
+    <p class="mis-panel-ayuda">
+      Se aplica al instante y queda guardado en este equipo.
+    </p>
+
+    <ul class="mis-fondos" aria-labelledby="mis-fondo-label">
+      @for (fondo of fondos; track fondo.clave) {
+        <li>
+          <button
+            type="button"
+            class="mis-fondo"
+            [class.mis-fondo--activo]="esFondo(fondo.clave)"
+            [attr.aria-pressed]="esFondo(fondo.clave)"
+            (click)="elegirFondo(fondo.clave)"
+          >
+            <span
+              class="mis-fondo-muestra"
+              [style.background]="muestraDe(fondo)"
+              [style.background-size]="fondo.tipo === 'imagen' ? 'cover' : null"
+              aria-hidden="true"
+            ></span>
+            <span class="mis-fondo-nombre">{{ fondo.etiqueta }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+
+    <!-- El selector de color es el ajuste central del pedido: cualquier color
+         plano, no solo los del catálogo. -->
+    <div class="mis-panel-fila" [class.mis-panel-fila--apagada]="!fondoPersonalizadoActivo()">
+      <div class="mis-panel-fila-texto">
+        <span class="mis-panel-fila-nombre">Color personalizado</span>
+        <span class="mis-panel-ayuda">{{ apariencia().colorFondo }}</span>
+      </div>
+      <p-colorpicker
+        format="hex"
+        appendTo="body"
+        [ngModel]="apariencia().colorFondo"
+        (ngModelChange)="elegirColorFondo($event)"
+        inputId="mis-color-fondo"
+      />
+    </div>
+  </section>
+
+  <section class="mis-panel-grupo">
+    <h4 class="mis-panel-subtitulo" id="mis-acento-label">Color de acento</h4>
+    <p class="mis-panel-ayuda">Se usa en botones, enlaces, foco y series de los gráficos.</p>
+
+    <ul class="mis-acentos" aria-labelledby="mis-acento-label">
+      @for (acento of acentos; track acento) {
+        <li>
+          <button
+            type="button"
+            class="mis-acento"
+            [class.mis-acento--activo]="apariencia().acento === acento"
+            [style.background]="acento"
+            [attr.aria-label]="'Acento ' + acento"
+            [attr.aria-pressed]="apariencia().acento === acento"
+            (click)="setAcento(acento)"
+          ></button>
+        </li>
+      }
+      <li>
+        <p-colorpicker
+          format="hex"
+          appendTo="body"
+          [ngModel]="apariencia().acento"
+          (ngModelChange)="setAcento($event)"
+          inputId="mis-color-acento"
+        />
+      </li>
+    </ul>
+  </section>
+
+  <section class="mis-panel-grupo">
+    <p-button
+      label="Restablecer la apariencia"
+      icon="pi pi-refresh"
+      [text]="true"
+      severity="secondary"
+      [disabled]="esPorDefecto()"
+      (click)="restablecer()"
+    />
+  </section>
+</div>

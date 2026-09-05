@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteCanalAlterno } from '../models/canal-alterno.model';
+import { COD_ANALISTA } from '../constantes/analista.constantes';
 
 /** Datos de "Canal Alterno" (legado `leg/com/rda/sec/canal_alt`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/canal_alt/canal_alt_sec`). */
 @Injectable({ providedIn: 'root' })
@@ -20,7 +21,7 @@ export class CanalAlternoService {
   /** Canales alternativos de atención de un asesor — único bloque (`canal_alt_sec_01`). */
   obtenerCanalAlterno(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteCanalAlterno> {
     return this.reportes
-      .getDeprecatedData('rda/sectorista/canal_alt/canal_alt_sec_01', asesor)
+      .getDeprecatedData(COD_ANALISTA.canalAlterno, asesor)
       .pipe(map((respuesta) => ({ tabla1: mapearBloqueReporte(respuesta) })));
   }
 }

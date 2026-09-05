@@ -1,0 +1,368 @@
+{
+    "columnas": [
+        {
+            "label": "Rango Desembolso ",
+            "key": "RangoDesembolso",
+            "sticky": "true",
+            "cellStyle": {
+                "text-align": "left",
+                "max-width": "190px",
+                "min-width": "190px",
+                "width": "190px"
+            }
+        },
+        {
+            "label": "Número de Operaciones",
+            "subs": [
+                {
+                    "label": "30-jun.",
+                    "key": "1_Ope",
+                    "cellStyle": {
+                        "text-align": "right",
+                        "max-width": "20px",
+                        "min-width": "20px",
+                        "width": "20px"
+                    },
+                    "style": {
+                        "min-width": "70px",
+                        "width": "70px"
+                    }
+                },
+                {
+                    "label": "31-jul.",
+                    "key": "2_Ope",
+                    "cellStyle": {
+                        "text-align": "right",
+                        "max-width": "20px",
+                        "min-width": "20px",
+                        "width": "20px"
+                    },
+                    "style": {
+                        "min-width": "70px",
+                        "width": "70px"
+                    }
+                },
+                {
+                    "label": "24-ago.",
+                    "key": "3_Ope",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "70px",
+                        "width": "70px"
+                    }
+                },
+                {
+                    "label": "Var.ABS",
+                    "key": "Ope_Var",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "70px",
+                        "width": "70px"
+                    }
+                }
+            ]
+        },
+        {
+            "label": "Monto Desembolsado",
+            "subs": [
+                {
+                    "label": "30-jun.",
+                    "key": "1_MON",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "100px",
+                        "width": "100px"
+                    }
+                },
+                {
+                    "label": "31-jul.",
+                    "key": "2_MON",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "100px",
+                        "width": "100px"
+                    }
+                },
+                {
+                    "label": "24-ago.",
+                    "key": "3_MON",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "100px",
+                        "width": "100px"
+                    }
+                },
+                {
+                    "label": "Var.ABS",
+                    "key": "Mon_Var",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "100px",
+                        "width": "100px"
+                    }
+                }
+            ]
+        },
+        {
+            "label": "Tasa Activa Promedio %",
+            "subs": [
+                {
+                    "label": "30-jun.",
+                    "key": "1_mes",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "70px",
+                        "width": "70px"
+                    }
+                },
+                {
+                    "label": "31-jul.",
+                    "key": "2_mes",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "70px",
+                        "width": "70px"
+                    }
+                },
+                {
+                    "label": "24-ago.",
+                    "key": "3_mes",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "70px",
+                        "width": "70px"
+                    }
+                },
+                {
+                    "label": "Var.ABS",
+                    "key": "mes_var",
+                    "cellStyle": {
+                        "text-align": "right"
+                    },
+                    "style": {
+                        "min-width": "70px",
+                        "width": "70px"
+                    }
+                }
+            ]
+        }
+    ],
+    "filas": [
+        {
+            "style": 0,
+            "IDRango": 1,
+            "RangoDesembolso": "01. De 0 a 3,000",
+            "1_Ope": "21,298",
+            "2_Ope": "20,697",
+            "3_Ope": "15,988",
+            "Ope_Var": "-4,709",
+            "1_MON": "27,640,724",
+            "2_MON": "27,205,045",
+            "3_MON": "21,620,812",
+            "Mon_Var": "-5,584,234",
+            "1_mes": "88.50%",
+            "2_mes": "88.48%",
+            "3_mes": "88.47%",
+            "mes_var": "-0.01%"
+        },
+        {
+            "style": 0,
+            "IDRango": 2,
+            "RangoDesembolso": "02. De 3,000 a 5,000",
+            "1_Ope": "4,712",
+            "2_Ope": "4,279",
+            "3_Ope": "3,631",
+            "Ope_Var": "-648",
+            "1_MON": "16,167,072",
+            "2_MON": "14,574,348",
+            "3_MON": "12,425,050",
+            "Mon_Var": "-2,149,298",
+            "1_mes": "74.84%",
+            "2_mes": "72.54%",
+            "3_mes": "72.79%",
+            "mes_var": "0.25%"
+        },
+        {
+            "style": 0,
+            "IDRango": 3,
+            "RangoDesembolso": "03. De 5,000 a 10,000",
+            "1_Ope": "4,798",
+            "2_Ope": "4,835",
+            "3_Ope": "3,864",
+            "Ope_Var": "-971",
+            "1_MON": "28,418,445",
+            "2_MON": "28,652,039",
+            "3_MON": "22,821,949",
+            "Mon_Var": "-5,830,090",
+            "1_mes": "55.44%",
+            "2_mes": "54.60%",
+            "3_mes": "55.11%",
+            "mes_var": "0.51%"
+        },
+        {
+            "style": 0,
+            "IDRango": 4,
+            "RangoDesembolso": "04. De 10,000 a 20,000",
+            "1_Ope": "3,271",
+            "2_Ope": "3,382",
+            "3_Ope": "2,654",
+            "Ope_Var": "-728",
+            "1_MON": "39,579,677",
+            "2_MON": "40,684,974",
+            "3_MON": "31,993,628",
+            "Mon_Var": "-8,691,346",
+            "1_mes": "42.24%",
+            "2_mes": "42.14%",
+            "3_mes": "42.07%",
+            "mes_var": "-0.07%"
+        },
+        {
+            "style": 0,
+            "IDRango": 5,
+            "RangoDesembolso": "05. De 20,000 a 30,000",
+            "1_Ope": "1,293",
+            "2_Ope": "1,298",
+            "3_Ope": "1,020",
+            "Ope_Var": "-278",
+            "1_MON": "27,667,604",
+            "2_MON": "27,710,978",
+            "3_MON": "21,952,064",
+            "Mon_Var": "-5,758,914",
+            "1_mes": "33.54%",
+            "2_mes": "33.42%",
+            "3_mes": "33.18%",
+            "mes_var": "-0.24%"
+        },
+        {
+            "style": 0,
+            "IDRango": 6,
+            "RangoDesembolso": "06. De 30,000 a 50,000",
+            "1_Ope": "1,167",
+            "2_Ope": "1,143",
+            "3_Ope": "808",
+            "Ope_Var": "-335",
+            "1_MON": "39,598,442",
+            "2_MON": "38,704,303",
+            "3_MON": "27,332,241",
+            "Mon_Var": "-11,372,062",
+            "1_mes": "28.41%",
+            "2_mes": "28.37%",
+            "3_mes": "28.08%",
+            "mes_var": "-0.29%"
+        },
+        {
+            "style": 0,
+            "IDRango": 7,
+            "RangoDesembolso": "07. De 50,000 a 70,000",
+            "1_Ope": "1,201",
+            "2_Ope": "1,229",
+            "3_Ope": "822",
+            "Ope_Var": "-407",
+            "1_MON": "63,143,049",
+            "2_MON": "64,731,703",
+            "3_MON": "43,033,436",
+            "Mon_Var": "-21,698,267",
+            "1_mes": "19.92%",
+            "2_mes": "19.70%",
+            "3_mes": "20.25%",
+            "mes_var": "0.55%"
+        },
+        {
+            "style": 0,
+            "IDRango": 8,
+            "RangoDesembolso": "08. De 70,000 a 100,000",
+            "1_Ope": "882",
+            "2_Ope": "832",
+            "3_Ope": "585",
+            "Ope_Var": "-247",
+            "1_MON": "71,731,774",
+            "2_MON": "67,925,993",
+            "3_MON": "47,360,690",
+            "Mon_Var": "-20,565,303",
+            "1_mes": "17.29%",
+            "2_mes": "17.03%",
+            "3_mes": "17.17%",
+            "mes_var": "0.14%"
+        },
+        {
+            "style": 0,
+            "IDRango": 9,
+            "RangoDesembolso": "09. De 100,000 a más",
+            "1_Ope": "108",
+            "2_Ope": "83",
+            "3_Ope": "67",
+            "Ope_Var": "-16",
+            "1_MON": "14,046,940",
+            "2_MON": "10,406,270",
+            "3_MON": "8,775,700",
+            "Mon_Var": "-1,630,570",
+            "1_mes": "16.15%",
+            "2_mes": "16.20%",
+            "3_mes": "15.66%",
+            "mes_var": "-0.54%"
+        },
+        {
+            "style": 1,
+            "IDRango": 10,
+            "RangoDesembolso": "Total",
+            "1_Ope": "38,730",
+            "2_Ope": "37,778",
+            "3_Ope": "29,439",
+            "Ope_Var": "-8,339",
+            "1_MON": "327,993,727",
+            "2_MON": "320,595,654",
+            "3_MON": "237,315,570",
+            "Mon_Var": "-83,280,084",
+            "1_mes": "35.61%",
+            "2_mes": "35.46%",
+            "3_mes": "36.82%",
+            "mes_var": "1.40%"
+        },
+        {
+            "style": 1,
+            "IDRango": 11,
+            "RangoDesembolso": "Desembolsos >=PEN 50M",
+            "1_Ope": "2,191",
+            "2_Ope": "2,144",
+            "3_Ope": "1,474",
+            "Ope_Var": "-670",
+            "1_MON": "148,921,763",
+            "2_MON": "143,063,966",
+            "3_MON": "99,169,826",
+            "Mon_Var": "-43,894,140",
+            "1_mes": "18.30%",
+            "2_mes": "18.18%",
+            "3_mes": "18.37%",
+            "mes_var": "0.20%"
+        },
+        {
+            "style": 1,
+            "IDRango": 12,
+            "RangoDesembolso": "%Desembolsos>= PEN 50M",
+            "1_Ope": "6%",
+            "2_Ope": "6%",
+            "3_Ope": "5%",
+            "1_MON": "45%",
+            "2_MON": "45%",
+            "3_MON": "42%"
+        }
+    ]
+}

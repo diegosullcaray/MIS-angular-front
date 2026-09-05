@@ -1,0 +1,21 @@
+<app-reporte-simple
+  titulo="Reporte Mentoring"
+  subtitulo="Campañas"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <!--
+    El legado la trae de `SEL_JER_MENTORING_01` para el nodo elegido, no de un
+    catálogo fijo: por eso las opciones cambian con el nivel y no aparecen
+    hasta elegir uno.
+  -->
+  @if (!ocultarAsesor()) {
+    <div filtros class="flex flex-wrap items-end gap-3">
+      <app-select-filtro etiqueta="Asesor" [opciones]="opcionesAsesor()" [(valor)]="asesor" ancho="w-64" />
+    </div>
+  }
+</app-reporte-simple>

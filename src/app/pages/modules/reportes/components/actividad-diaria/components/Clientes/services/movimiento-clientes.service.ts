@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService } from '../../../../../services/bloque-reporte.service';
 import { type MovimientoClientesResultado } from '../models/movimiento-clientes.model';
+import { COD_CLIENTES } from '../constantes/clientes.constantes';
 
 /**
  * "Movimiento de Clientes" — legado `repositorio/movimiento-clientes`.
@@ -14,7 +15,7 @@ export class MovimientoClientesService {
   private readonly bloques = inject(BloqueReporteService);
 
   obtener(): Observable<MovimientoClientesResultado> {
-    return this.bloques.tablaRegularCon('MOVIMIENTO_CLIENTES_01').pipe(
+    return this.bloques.tablaRegularCon(COD_CLIENTES.movimientoClientes).pipe(
       map(({ columnas, filas }) => ({ columnas, grupos: agruparPorGru(filas) })),
     );
   }

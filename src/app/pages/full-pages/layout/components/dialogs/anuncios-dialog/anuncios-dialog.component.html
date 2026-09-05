@@ -1,0 +1,34 @@
+<p-dialog
+  header="Comunicado"
+  [visible]="anuncios.abierto()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  appendTo="body"
+  styleClass="mis-anuncios-dialog"
+  [style]="{ width: 'auto', maxWidth: 'min(880px, 96vw)' }"
+  [contentStyle]="{ padding: '0', overflow: 'hidden' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  @if (comunicado(); as pieza) {
+    <figure class="mis-anuncio-figura">
+      <!-- `width`/`height` son las medidas reales del archivo: el navegador
+           reserva el espacio con ellas y el diálogo no salta al cargar. -->
+      <img
+        class="mis-anuncio-imagen"
+        [src]="pieza.imagen"
+        [alt]="pieza.alt"
+        [width]="pieza.ancho"
+        [height]="pieza.alto"
+        decoding="async"
+      />
+    </figure>
+  } @else {
+    <p class="mis-anuncios-nota">No hay comunicados publicados.</p>
+  }
+
+  <ng-template pTemplate="footer">
+    <p-button label="No mostrar comunicados" [text]="true" severity="secondary" (click)="silenciar()" />
+    <p-button label="Entendido" (click)="cerrar()" />
+  </ng-template>
+</p-dialog>

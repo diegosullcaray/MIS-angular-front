@@ -21,6 +21,8 @@ export interface PerfilRaw {
     curr_fec?: string;
     /** Fechas de corte re-consultables, separadas por coma (`YYYYMMDD` cada una) — selector de fecha de Incentivos. */
     hab_fec?: string;
+    /** Documento del usuario. Lo usa el host `cra-v6` del legado, que arma sus consultas con el propio usuario en vez de con la jerarquía. */
+    num_doc?: string;
 }
 
 /** Un usuario alterno tal como lo devuelve el backend (`login_response.alternates`). */

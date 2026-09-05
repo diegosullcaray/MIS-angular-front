@@ -5,6 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { mapearBloqueReporte } from '../../../utils/reportes-mapeo.util';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ReporteRecuperacionPreventiva } from '../models/recuperacion-preventiva.model';
+import { COD_ANALISTA } from '../constantes/analista.constantes';
 
 /** Datos de "Recuperación Preventiva" (legado `leg/com/rda/sec/rec-prev`, `ReportCrsV1Component` + `crs-map.ts`: `rda/sectorista/recuperacion_preventiva/recuperacion_preventiva`). */
 @Injectable({ providedIn: 'root' })
@@ -20,7 +21,7 @@ export class RecuperacionPreventivaService {
   /** Créditos en recuperación preventiva de un asesor — único bloque (`recuperacion_preventiva_01`). */
   obtenerRecuperacionPreventiva(asesor: { tip_cod: number; cod_rel: string }): Observable<ReporteRecuperacionPreventiva> {
     return this.reportes
-      .getDeprecatedData('rda/sectorista/recuperacion_preventiva/recuperacion_preventiva_01', asesor)
+      .getDeprecatedData(COD_ANALISTA.recuperacionPreventiva, asesor)
       .pipe(map((respuesta) => ({ tabla1: mapearBloqueReporte(respuesta) })));
   }
 }

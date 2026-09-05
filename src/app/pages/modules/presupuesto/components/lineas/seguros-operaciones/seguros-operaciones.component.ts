@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { LineaSimpleComponent } from '../linea-simple/linea-simple.component';
 import { PresupuestoService } from '../../../services/presupuesto.service';
-import type { ColumnaTabla } from '../../../models/tabla.model';
+import type { ColumnaTabla } from '../../../../../../shared/ui/tablas/models/tabla-editable.model';
 import type { LineaSimpleConfig } from '../../../models/linea-simple.model';
 import type { FilaSegurosOperaciones } from '../../../models/seguros-operaciones.model';
 

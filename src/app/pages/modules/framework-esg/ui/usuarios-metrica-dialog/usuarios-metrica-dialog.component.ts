@@ -19,7 +19,6 @@ const TODOS_NOMBRE = 'Todos';
   standalone: true,
   imports: [DialogModule, ButtonModule, InputTextModule, SelectModule, ListboxModule, FormsModule],
   templateUrl: './usuarios-metrica-dialog.component.html',
-  styleUrl: './usuarios-metrica-dialog.component.css',
 })
 export class UsuariosMetricaDialogComponent {
   private readonly esg = inject(FrameworkEsgService);

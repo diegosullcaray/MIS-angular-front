@@ -1,0 +1,24 @@
+<app-reporte-simple
+  titulo="Huella Carbono"
+  [paramsHier]="paramsHier"
+  [nivel]="nivelActual()"
+  [tabla]="tabla()"
+  [cargando]="cargando()"
+  (nivelSeleccionado)="onNivelSeleccionado($event)"
+  (errorJerarquia)="onErrorJerarquia()"
+>
+  <div filtros class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+    <app-select-filtro
+      etiqueta="Fecha Cierre"
+      [opciones]="opcionesFechaBase"
+      [valor]="fechaBase()"
+      (valorChange)="fechaBase.set($event)"
+    />
+    <app-select-filtro
+      etiqueta="Carga Ambiental"
+      [opciones]="opcionesCargaAmbiental"
+      [valor]="cargaAmbiental()"
+      (valorChange)="cargaAmbiental.set($event)"
+    />
+  </div>
+</app-reporte-simple>

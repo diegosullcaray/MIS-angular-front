@@ -90,7 +90,7 @@
       </div>
 
       <!-- Contenedor central de la tabla de premiación con aura dorada -->
-      <div id="tour-ranking-tabla" class="relative w-full max-w-lg shrink-0">
+      <div id="tour-ranking-tabla" class="relative w-full max-w-lg min-w-0">
         <!-- Aura dorada de iluminación -->
         <div class="absolute -inset-3 bg-gradient-to-r from-amber-400/30 via-yellow-300/40 to-amber-500/30 rounded-2xl blur-xl opacity-90 animate-pulse pointer-events-none"></div>
 
@@ -104,7 +104,7 @@
         </div>
 
         <!-- Tabla destacada con todas las filas e índice z-10 -->
-        <div class="relative z-10 rounded-xl overflow-hidden border-2 border-amber-400/80 shadow-2xl bg-white/95">
+        <div class="relative z-10 rounded-xl overflow-hidden border-2 border-amber-400/80 shadow-2xl bg-[var(--mis-surface)]/95 backdrop-blur-xs">
           <app-ranking-table
             [titulo]="grupos()[0].hdester"
             [filas]="grupos()[0].filas"

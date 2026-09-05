@@ -3,6 +3,9 @@ import type { Page } from '@playwright/test';
 /** Misma clave que usa `AuthService` (ver `src/app/pages/full-pages/auth/service/auth.service.ts`). */
 export const SESSION_STORAGE_KEY = 'mis.sesion';
 
+/** Misma clave que usa `PreferenciasLocalStorageRepositorio`. */
+export const PREFERENCIAS_STORAGE_KEY = 'mis.preferencias';
+
 export const QUINCE_MINUTOS_MS = 15 * 60 * 1000;
 
 export interface UsuarioDePrueba {
@@ -52,10 +55,49 @@ async function inyectarSesion(
   );
 }
 
-/** Sesión válida por los 15 minutos completos — para specs del shell autenticado. */
+/**
+ * Sesión válida por los 15 minutos completos — para specs del shell autenticado.
+ * Silencia además los comunicados: si no, su diálogo modal se abriría encima y
+ * taparía lo que el spec viene a probar (ver `inyectarPreferencias`).
+ */
 export async function inyectarSesionVigente(page: Page): Promise<void> {
+  await inyectarSesionSinPreferencias(page);
+  await inyectarPreferencias(page);
+}
+
+/**
+ * La misma sesión vigente pero SIN sembrar preferencias, es decir con el
+ * `localStorage` limpio: es lo que ve un usuario que entra por primera vez.
+ * Lo usa `comunicados.spec.ts`, el único que necesita que el diálogo se abra.
+ */
+export async function inyectarSesionSinPreferencias(page: Page): Promise<void> {
   await inyectarSesion(page, Date.now() + QUINCE_MINUTOS_MS);
 }
+
+/**
+ * Preferencias de interfaz sembradas antes de que arranque la app.
+ *
+ * Se usa sobre todo para una cosa: **silenciar los comunicados**. El diálogo de
+ * anuncios se abre solo en el primer ingreso de un usuario, y con un
+ * `localStorage` limpio —que es lo que ve cada test— eso significa que se abre
+ * en TODOS. Su máscara modal tapa el header y el sidebar, así que sin esto
+ * cualquier spec del shell fallaría por un motivo que no está probando.
+ *
+ * El spec que sí prueba los comunicados (`comunicados.spec.ts`) no llama a esto
+ * y por eso los ve, igual que un usuario que entra por primera vez.
+ */
+export async function inyectarPreferencias(
+  page: Page,
+  preferencias: Record<string, unknown> = { anuncios: { vistos: [], silenciar: true } }
+): Promise<void> {
+  await page.addInitScript(
+    ({ key, preferencias }) => {
+      window.localStorage.setItem(key, JSON.stringify(preferencias));
+    },
+    { key: PREFERENCIAS_STORAGE_KEY, preferencias }
+  );
+}
+
 
 /**
  * Sesión vigente con usuarios alternos asignados (ver `AuthService.alternates`
@@ -63,6 +105,7 @@ export async function inyectarSesionVigente(page: Page): Promise<void> {
  */
 export async function inyectarSesionConAlternates(page: Page, alternates: AlternateDePrueba[]): Promise<void> {
   await inyectarSesion(page, Date.now() + QUINCE_MINUTOS_MS, { alternates });
+  await inyectarPreferencias(page);
 }
 
 /**
@@ -90,6 +133,7 @@ export async function inyectarSesionComoAlterno(
       expiraEn: Date.now() + QUINCE_MINUTOS_MS,
     }
   );
+  await inyectarPreferencias(page);
 }
 
 /** Sesión ya vencida — para el spec de expiración (`session-expiry.spec.ts`). */

@@ -1,5 +1,8 @@
 /** Estructura del menú de configuración — equivalente tipado del `menu-config.json` de la plantilla (`docs/08-otros/dialog-configuracion`), que ahí se leía por HTTP a través de un `MenuConfigService`. */
 
+/** Pantallas de configuración que ya tienen controles reales detrás. */
+export type PanelConfiguracion = 'apariencia' | 'estructura' | 'anuncios';
+
 /** Hoja del menú: una pantalla concreta de configuración. */
 export interface ItemConfiguracion {
   readonly clave: string;
@@ -7,8 +10,10 @@ export interface ItemConfiguracion {
   /** Clase de PrimeIcons (`pi pi-...`). */
   readonly icono: string;
   readonly descripcion: string;
-  /** Ajustes de muestra que se dibujan mientras la pantalla real no existe. Cuando cada item tenga su propio componente, esta lista desaparece. */
-  readonly ejemplos: readonly string[];
+  /** Pantalla real del ajuste. Sin ella, el item todavía es una maqueta. */
+  readonly panel?: PanelConfiguracion;
+  /** Ajustes de muestra que se dibujan mientras la pantalla real no existe. Cada item que estrena su `panel` deja de necesitarlos. */
+  readonly ejemplos?: readonly string[];
 }
 
 /** Agrupador de primer nivel (Col 1 del diálogo). */
@@ -50,22 +55,29 @@ export const SECCIONES_CONFIGURACION: readonly SeccionConfiguracion[] = [
         clave: 'apariencia',
         etiqueta: 'Apariencia',
         icono: 'pi pi-palette',
-        descripcion: 'Modo claro u oscuro, color de acento y fondo del escritorio.',
-        ejemplos: ['Modo de visualización', 'Color de acento', 'Imagen de fondo'],
+        descripcion: 'Modo claro u oscuro, fondo del escritorio y color de acento.',
+        panel: 'apariencia',
       },
       {
         clave: 'estructura',
         etiqueta: 'Estructura',
         icono: 'pi pi-bars',
-        descripcion: 'Cómo se ordenan el rail de sistemas y el explorador.',
-        ejemplos: ['Orden de los sistemas', 'Vista por defecto del explorador'],
+        descripcion: 'Cómo se comporta el menú de sistemas y con qué vista abre el explorador.',
+        panel: 'estructura',
+      },
+      {
+        clave: 'anuncios',
+        etiqueta: 'Anuncios',
+        icono: 'pi pi-megaphone',
+        descripcion: 'Los comunicados que aparecen al entrar: cuándo se muestran y cuáles se publicaron.',
+        panel: 'anuncios',
       },
       {
         clave: 'notificaciones',
         etiqueta: 'Notificaciones',
         icono: 'pi pi-bell',
-        descripcion: 'Qué avisos recibes y por qué canal.',
-        ejemplos: ['Avisos dentro del sistema', 'Resumen por correo'],
+        descripcion: 'Los avisos que genera el sistema por tu actividad: qué recibís y por qué canal.',
+        ejemplos: ['Avisos dentro del sistema', 'Resumen por correo', 'Alertas de reportes programados'],
       },
       {
         clave: 'preferencias',

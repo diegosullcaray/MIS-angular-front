@@ -1,0 +1,33 @@
+/* La pieza va a sangre: sin marco ni relleno, el comunicado ocupa todo el
+   cuerpo del diálogo. El fondo solo se ve cuando la imagen es más angosta que
+   la ventana. */
+.mis-anuncio-figura {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mis-panel-bg);
+}
+
+/* La pieza manda su proporción; el diálogo solo le pone un techo. `contain`
+   evita recortar un comunicado alto (los hay de 780×815 y de 1882×1642). */
+.mis-anuncio-imagen {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(80vh, 860px);
+  object-fit: contain;
+  background: #ffffff;
+}
+
+/* El diálogo se ajusta a la pieza (`width: auto`), así que sin imagen el
+   ancho lo marca este texto: un tope para que no salga en una sola línea. */
+.mis-anuncios-nota {
+  margin: 0;
+  padding: var(--mis-space-5);
+  max-width: 42ch;
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-secondary);
+}

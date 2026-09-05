@@ -1,0 +1,4 @@
+/* Estilos encapsulados para evolutivo-cosechas */
+:host {
+  display: block;
+}

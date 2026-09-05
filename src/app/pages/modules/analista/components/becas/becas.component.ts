@@ -40,7 +40,6 @@ import type { FilaBeca } from '../../models/listas.model';
     DetalleTablaDialogComponent,
   ],
   templateUrl: './becas.component.html',
-  styleUrl: './becas.component.css',
 })
 export class BecasComponent implements OnInit {
   private readonly analista = inject(AnalistaService);

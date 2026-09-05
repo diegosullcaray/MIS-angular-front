@@ -4,42 +4,32 @@
   [permitirActualizar]="false"
   [conFiltros]="true"
 >
-  <div ventana-filtros class="flex flex-col gap-3">
-    <app-hier-selector
-      [paramsHier]="paramsHier"
-      placeholder="Elegir nivel"
-      (nodoSeleccionado)="onNivelSeleccionado($event)"
-      (error)="onErrorJerarquia()"
-    />
-
-    <div class="flex flex-wrap items-end gap-3">
-      <div class="flex flex-col gap-0.5">
-        <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Unidad</span>
-        <input pInputText [ngModel]="unidad()" (ngModelChange)="unidad.set($event)" placeholder="Buscar unidad…" class="w-44 text-[11.5px]" />
-      </div>
-      <div class="flex flex-col gap-0.5">
-        <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Corredor</span>
-        <input pInputText [ngModel]="corredor()" (ngModelChange)="corredor.set($event)" placeholder="Buscar corredor…" class="w-44 text-[11.5px]" />
-      </div>
-      <div class="flex flex-col gap-0.5">
-        <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Territorio</span>
-        <p-select
-          [options]="territorios()"
-          optionLabel="desc"
-          optionValue="id"
-          [ngModel]="territorio()"
-          (ngModelChange)="territorio.set($event)"
-          styleClass="text-[11.5px] w-52"
-          ariaLabel="Territorio"
-        />
-      </div>
-    </div>
+  <!--
+    Sin selector de jerarquía a propósito: el legado pide el ranking completo y
+    filtra en el cliente, así que este reporte solo usa sus tres filtros propios.
+  -->
+  <div ventana-filtros class="flex flex-wrap items-end gap-3">
+    <app-input-filtro etiqueta="Unidad" placeholder="Buscar unidad…" [(valor)]="unidad" />
+    <app-input-filtro etiqueta="Corredor" placeholder="Buscar corredor…" [(valor)]="corredor" />
+    <app-select-filtro etiqueta="Territorio" [opciones]="territorios()" [(valor)]="territorio" ancho="w-52" />
   </div>
 
-  @if (!nivelActual()) {
-    <app-empty-state titulo="Elige un nivel" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte." />
+  @if (error()) {
+    <app-empty-state
+      titulo="No se pudo cargar el reporte"
+      descripcion="Vuelve a intentarlo en unos segundos."
+    />
   } @else {
-    <div class="mis-card p-3 overflow-x-auto">
+    <!-- "Avance Esperado (Timing)" del legado con tokens del sistema -->
+    <div class="flex items-center gap-3">
+      <div class="inline-flex items-center gap-2 bg-[var(--mis-surface)] border border-[var(--mis-border-strong)] px-4 py-1.5 rounded-full shadow-xs">
+        <i class="pi pi-clock text-[var(--mis-primary)] text-sm"></i>
+        <span class="text-xs font-semibold text-[var(--mis-text-primary)]">Avance Esperado (Timing):</span>
+        <span class="text-sm font-bold text-[var(--mis-primary-text)] tabular-nums">{{ avanceEsperado() | number: '1.2-2' }}%</span>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-[var(--mis-surface)] p-3 rounded-xl border border-[var(--mis-border)] overflow-x-auto shadow-xs">
       <app-tabla-dinamica [columnas]="columnas()" [filas]="filas()" [cargando]="cargando()" />
     </div>
   }

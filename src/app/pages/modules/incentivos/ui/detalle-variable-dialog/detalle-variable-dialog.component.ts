@@ -9,7 +9,6 @@ import type { ReqDetalleVariable } from '../../models/incentivos-detalle.model';
   standalone: true,
   imports: [DialogModule, DetalleVariableContentComponent],
   templateUrl: './detalle-variable-dialog.component.html',
-  styleUrl: './detalle-variable-dialog.component.css',
 })
 export class DetalleVariableDialogComponent {
   readonly visible = input(false);

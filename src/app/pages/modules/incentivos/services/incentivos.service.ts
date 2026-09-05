@@ -21,12 +21,12 @@ import type { AsesorPickItem, NodoJerarquiaIncentivo } from '../models/incentivo
 import type { ResultadoDetalleVariable } from '../models/incentivos-detalle.model';
 import type { ResultadoBancarizacion } from '../models/incentivos-bancarizacion.model';
 import type { AsesoresBody, BancarizacionBody, DetalleVariableBody, ListaJerarquiaBody, ResultadosBody, SimulacionBody } from '../models/incentivos-api-response.model';
-
-/** `cod_jer` de la jerarquía organizativa — mismo código que usan Presupuesto/Kaypacha para `base_hier`. */
-const COD_JERARQUIA_ORGANIZATIVA = 9;
-
-/** Modelo de campaña — fijo en `'2026'` (la campaña 2025 ya cerró). */
-const MODELO_CAMPANIA = '2026';
+import {
+  CABECERA_FINANCIERA_CONFIANZA,
+  CLAVES_INCENTIVOS,
+  COD_JERARQUIA_ORGANIZATIVA,
+  MODELO_CAMPANIA,
+} from '../constantes/incentivos.constantes';
 
 /** Forma cruda de `incentivos4.resultados4`/`.resultados5` (`resultado`). */
 
@@ -59,7 +59,7 @@ export class IncentivosService {
   readonly requiereSeleccionInicial = signal(false);
   readonly nivelesSelector = NIVELES_SELECTOR_JERARQUIA;
 
-  /** Fecha (`YYYYMMDD`) de los datos actualmente mostrados — la que el usuario eligió en el selector, o la de corte por defecto. */
+  /** Fecha YYYYMMDD de los datos mostrados. */
   readonly fechaActual = signal('');
 
   private raizJerarquia: { tipCod: number; codRel: string } | null = null;
@@ -90,12 +90,12 @@ export class IncentivosService {
     return this.shell.usuarioActivo()?.email ?? '';
   }
 
-  /** Fecha de corte de campaña (`YYYYMMDD`) — la elegida a mano (`seleccionarFecha`) o `profile.curr_fec` del backend; si ninguna llegó todavía, aproxima con la fecha real. */
+  /** Fecha de corte de campaña (YYYYMMDD). */
   fechaCorte(): string {
     return this.fechaSeleccionada ?? this.shell.usuarioActivo()?.fechaCorte ?? new Date().toISOString().slice(0, 10).replace(/-/g, '');
   }
 
-  /** Vuelve a cargar el Cuadro de Mando del nivel actual a otra fecha de corte (selector de fecha del panel de Monetización). */
+  /** Recarga datos a otra fecha de corte. */
   seleccionarFecha(fecha: string): void {
     this.fechaSeleccionada = fecha;
     const nivel = this.nivelActual();
@@ -137,7 +137,7 @@ export class IncentivosService {
     if (nivel) this.cargarDatos(nivel);
   }
 
-  /** Fechas de corte re-consultables (`profile.hab_fec`) más la fecha de corte vigente — selector de fecha del panel de Monetización. */
+  /** Fechas de corte re-consultables más la vigente. */
   private calcularFechasHabilitadas(): string[] {
     const usuario = this.shell.usuarioActivo();
     const habilitadas = (usuario?.fechasHabilitadas ?? '')
@@ -148,7 +148,7 @@ export class IncentivosService {
     return [...new Set(habilitadas)].sort().reverse();
   }
 
-  /** Carga la raíz de jerarquía para el selector de nivel, con el spinner de pantalla completa activo hasta que termine. */
+  /** Carga la raíz de jerarquía para el selector de nivel. */
   private cargarRaizJerarquia(): void {
     this.loading.show('Cargando jerarquía…');
     this.antAdmin.getBaseHierarchy(this.email, COD_JERARQUIA_ORGANIZATIVA).subscribe({
@@ -168,7 +168,7 @@ export class IncentivosService {
     });
   }
 
-  /** Niveles listados por `incentivos3.lista3` desde la raíz de jerarquía del usuario — selector "Unidades"/"Corredores"/"Territorios". */
+  /** Niveles listados desde la raíz de jerarquía del usuario. */
   obtenerNivelesJerarquia(tipCodListado: number): Observable<NodoJerarquiaIncentivo[]> {
     if (!this.raizJerarquia) return throwError(() => new Error('La jerarquía base todavía no está lista.'));
     const raiz = this.raizJerarquia;
@@ -177,7 +177,7 @@ export class IncentivosService {
       .pipe(map((r) => (r.body as ListaJerarquiaBody | null)?.resultado ?? []));
   }
 
-  /** Colaboradores listados por `list_pick_01` desde la raíz de jerarquía del usuario — selector "Asesores". */
+  /** Colaboradores disponibles para el selector. */
   obtenerAsesores(): Observable<AsesorPickItem[]> {
     if (!this.raizJerarquia) return throwError(() => new Error('La jerarquía base todavía no está lista.'));
     const raiz = this.raizJerarquia;
@@ -186,15 +186,15 @@ export class IncentivosService {
       .pipe(map((r) => (r.body as AsesoresBody | null)?.list_res ?? []));
   }
 
-  /** Financiera Confianza consolidada — atajos "FC Individual"/"FC Grupal" del selector de nivel (solo visibles para el nivel más alto). */
+  /** Financiera Confianza consolidada. */
   seleccionarFinancieraConfianza(claUsu: 1 | 2): void {
     this.seleccionarNivel(
-      { nombre: 'FINANCIERA CONFIANZA', nivel: 'TOTAL', descripcionNivel: 'FC', imagenUrl: 'assets/images/fc/avatars/mis_wait.png' },
+      CABECERA_FINANCIERA_CONFIANZA,
       { tipCod: 7, codRel: '231', claUsu }
     );
   }
 
-  /** Colaborador elegido en "Asesores" — arma el header del perfil y carga sus datos. */
+  /** Asesor elegido en el selector. */
   seleccionarAsesor(asesor: AsesorPickItem): void {
     const claUsu = asesor.cod_gru ?? 1;
     this.monetizado.update((actual) => ({ ...actual, mostrarModelo: claUsu === 1 }));
@@ -204,7 +204,7 @@ export class IncentivosService {
     );
   }
 
-  /** Nodo elegido en "Unidades"/"Corredores"/"Territorios" — arma el header del perfil y carga sus datos. */
+  /** Nodo elegido en el selector de jerarquía. */
   seleccionarNodoJerarquia(nodo: NodoJerarquiaIncentivo): void {
     this.monetizado.update((actual) => ({ ...actual, mostrarModelo: false }));
     this.seleccionarNivel(
@@ -260,26 +260,26 @@ export class IncentivosService {
     this.tablaEfectividad.set(ds.ds2 ?? []);
 
     let sem = marcarVisibles(crearPerfilSemDefault(), cfg.prof);
-    sem = asignarValores(sem, ds4, 'val', 'flag_', '');
+    sem = asignarValores(sem, ds4, 'val', CLAVES_INCENTIVOS.flag, '');
     this.semaforo.set(sem);
 
-    const flagAct = Number(ds4['flag_act'] ?? 0);
+    const flagAct = Number(ds4[CLAVES_INCENTIVOS.flagActivo] ?? 0);
     const situacion = resolverSituacion(flagAct);
 
     let avances = marcarVisibles(crearAvancesDefault(), cfg.avanS);
     avances = marcarHabilitados(avances, cfg.avanE);
-    avances = asignarValores(avances, ds3, 'val', '', '_avan_fix');
-    avances = asignarValores(avances, ds3, 'per', '', '_avan_floor');
+    avances = asignarValores(avances, ds3, 'val', '', CLAVES_INCENTIVOS.sufijoAvance);
+    avances = asignarValores(avances, ds3, 'per', '', CLAVES_INCENTIVOS.sufijoAvancePorcentaje);
     this.avances.set(avances);
 
     let superPlus = marcarVisibles(crearSuperPlusDefault(), cfg.supS);
     superPlus = marcarHabilitados(superPlus, cfg.supE);
-    superPlus = asignarValores(superPlus, ds4, 'val', 'bos_', '');
+    superPlus = asignarValores(superPlus, ds4, 'val', CLAVES_INCENTIVOS.bonoSuperPlus, '');
     this.superPlus.set(superPlus);
 
-    const bonoBase = sumarPorIds(ds4, cfg.prof, 'bob_', '');
-    const bonoPlus = sumarPorIds(ds4, cfg.prof, 'bop_', '');
-    const bonoSuperPlus = sumarPorIds(ds4, cfg.calS, 'bos_', '');
+    const bonoBase = sumarPorIds(ds4, cfg.prof, CLAVES_INCENTIVOS.bonoBase, '');
+    const bonoPlus = sumarPorIds(ds4, cfg.prof, CLAVES_INCENTIVOS.bonoPlus, '');
+    const bonoSuperPlus = sumarPorIds(ds4, cfg.calS, CLAVES_INCENTIVOS.bonoSuperPlus, '');
     const bonoTotal = bonoBase + bonoPlus + bonoSuperPlus;
 
     this.monetizado.update((actual) => ({
@@ -294,15 +294,15 @@ export class IncentivosService {
     }));
 
     let vars = marcarVisibles(crearCalculadoraDefault().variables, cfg.prof);
-    vars = asignarValores(vars, ds3, 'val', '', '_real');
-    vars = asignarValores(vars, ds3, 'met', '', '_met');
-    vars = asignarValores(vars, ds4, 'bob', 'bob_', '');
-    vars = asignarValores(vars, ds4, 'bop', 'bop_', '');
+    vars = asignarValores(vars, ds3, 'val', '', CLAVES_INCENTIVOS.sufijoReal);
+    vars = asignarValores(vars, ds3, 'met', '', CLAVES_INCENTIVOS.sufijoMeta);
+    vars = asignarValores(vars, ds4, 'bob', CLAVES_INCENTIVOS.bonoBase, '');
+    vars = asignarValores(vars, ds4, 'bop', CLAVES_INCENTIVOS.bonoPlus, '');
 
     let plus = marcarVisibles(crearCalculadoraDefault().plus, cfg.supS);
     plus = marcarHabilitados(plus, cfg.calE);
-    plus = asignarValores(plus, ds3, 'val', '', '_real');
-    plus = asignarValores(plus, ds4, 'bos', 'bos_', '');
+    plus = asignarValores(plus, ds3, 'val', '', CLAVES_INCENTIVOS.sufijoReal);
+    plus = asignarValores(plus, ds4, 'bos', CLAVES_INCENTIVOS.bonoSuperPlus, '');
 
     if (nivel.claUsu === 1) {
       const idxEfec1 = vars.findIndex((v) => v.id === 'efec1' && v.show);
@@ -333,7 +333,7 @@ export class IncentivosService {
     });
   }
 
-  /** Simulación de la Calculadora — arma el payload con `tip_cod`/`cod_rel`/`mar_ren` del nivel actual y actualiza los bonos calculados. */
+  /** Simulación de la Calculadora. */
   simular(valores: Record<string, number>): Observable<boolean> {
     const nivel = this.nivelActual();
     const calc = this.calculadora();
@@ -349,12 +349,12 @@ export class IncentivosService {
         const ds = (respuesta.body as SimulacionBody | null)?.resultado;
         if (!ds) return false;
 
-        const bonoBase = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, 'bob_', '');
-        const bonoPlus = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, 'bop_', '');
-        const bonoSuperPlus = sumarPorIds(ds, calc.plus.filter((p) => p.suma).map((p) => p.id), 'bos_', '');
+        const bonoBase = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, CLAVES_INCENTIVOS.bonoBase, '');
+        const bonoPlus = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, CLAVES_INCENTIVOS.bonoPlus, '');
+        const bonoSuperPlus = sumarPorIds(ds, calc.plus.filter((p) => p.suma).map((p) => p.id), CLAVES_INCENTIVOS.bonoSuperPlus, '');
 
-        const variables = asignarValores(asignarValores(calc.variables, ds, 'bob', 'bob_', ''), ds, 'bop', 'bop_', '');
-        const plus = asignarValores(calc.plus, ds, 'bos', 'bos_', '');
+        const variables = asignarValores(asignarValores(calc.variables, ds, 'bob', CLAVES_INCENTIVOS.bonoBase, ''), ds, 'bop', CLAVES_INCENTIVOS.bonoPlus, '');
+        const plus = asignarValores(calc.plus, ds, 'bos', CLAVES_INCENTIVOS.bonoSuperPlus, '');
 
         this.calculadora.set({
           ...calc,
@@ -364,14 +364,14 @@ export class IncentivosService {
           bonoPlus,
           bonoSuperPlus,
           bonoTotal: bonoBase + bonoPlus + bonoSuperPlus,
-          activo: Number(ds['flag_act'] ?? calc.activo),
+          activo: Number(ds[CLAVES_INCENTIVOS.flagActivo] ?? calc.activo),
         });
         return true;
       })
     );
   }
 
-  /** Datos del diálogo de detalle de variable (Cartera/Clientes/Efectividad/Productividad/Tasas/Retención). */
+  /** Datos del diálogo de detalle de variable. */
   obtenerDetalleVariable(
     req: 'getDetail' | 'getTasa' | 'getProd' | 'getRetencion',
     tipCod: number,
@@ -391,7 +391,7 @@ export class IncentivosService {
     return fuente$.pipe(map((r) => (r.body as DetalleVariableBody | null)?.resultado ?? null));
   }
 
-  /** Datos del diálogo de Bancarización (único consumidor de `comp:2`). */
+  /** Datos del diálogo de Bancarización. */
   obtenerBancarizacion(tipCod: number, codRel: string): Observable<ResultadoBancarizacion> {
     return this.ant.getCliBanc(tipCod, codRel, this.fechaCorte()).pipe(
       map((r) => {

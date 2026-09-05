@@ -1,8 +1,9 @@
-import { Component, inject, effect, signal, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import { Component, computed, inject, effect, signal, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
@@ -25,9 +26,14 @@ export class SidebarComponent implements AfterViewInit {
   private readonly navegacion = inject(NavegacionSistemasService);
   private readonly kaypacha = inject(KaypachaService);
   private readonly redirect = inject(RedirectOverlayService);
+  private readonly preferencias = inject(PreferenciasService);
   private readonly router = inject(Router);
 
   protected readonly iconActivoId = this.shell.sidebarIconActivo;
+
+  /** El rail no está anclado: se abre sobre el contenido y se cierra al elegir. */
+  protected readonly superpuesto = computed(() => this.preferencias.estructura().modoSidebar === 'superpuesto');
+  protected readonly railAbierto = this.shell.railSuperpuestoAbierto;
 
   /** Estado de visibilidad de las flechas de scroll horizontal en mobile. */
   protected readonly puedeScrollIzquierda = signal(false);
@@ -82,8 +88,16 @@ export class SidebarComponent implements AfterViewInit {
   /** Lista combinada de íconos base y los que provienen del backend STG. */
   protected readonly iconos = this.navegacion.iconos;
 
+  protected cerrarRail(): void {
+    this.shell.setRailSuperpuestoAbierto(false);
+  }
+
   /** Acción al hacer clic en un ícono de la columna principal (Col 1). */
   protected seleccionarIcono(icon: SidebarIcon): void {
+    // En superpuesto el rail tapa el contenido: elegir un sistema tiene que
+    // devolver la vista, no dejar el panel abierto encima de lo que se abrió.
+    this.cerrarRail();
+
     const eraActivo = this.shell.sidebarIconActivo();
     this.shell.setSidebarIconActivo(icon.id);
 

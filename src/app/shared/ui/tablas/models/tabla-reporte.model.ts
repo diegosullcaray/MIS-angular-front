@@ -1,0 +1,27 @@
+/** Contrato de render de `<app-tabla-reporte>`: cómo se dibuja una tabla multi-encabezado. */
+
+export interface FilaEncabezadoColumna {
+  columnDef: string;
+  /** Ausente en columnas `hidden` sin etiqueta propia (ej. el semáforo oculto de "TMM") — el backend directamente no manda la clave. */
+  header?: string;
+  cols?: number;
+  rows?: number;
+  isdata?: number;
+  /** Oculta el `<th>` de esta columna (no reserva espacio en la grilla de encabezado), sin afectar su dato en el cuerpo — igual que la clase `hidden` del legado (`table-multiheader.component.html`). */
+  hidden?: boolean;
+  format?: Record<string, unknown>;
+  /** Estilo **del encabezado** de la columna, no de sus celdas de datos — en el legado (`table-multiheader.component.html`) solo lo consume el `<th>` (`'background-color': c.style?.background`). */
+  style?: {
+    background?: string;
+    desktop?: { width?: string };
+    [clave: string]: unknown;
+  };
+}
+
+export type ColumnaReporte = FilaEncabezadoColumna;
+
+export interface FilaEncabezadoReporte {
+  columns: FilaEncabezadoColumna[];
+}
+
+export type FilaReporte = Record<string, unknown>;

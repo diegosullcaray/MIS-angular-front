@@ -21,7 +21,6 @@ function aYYYYMMDD(d: Date): string {
   standalone: true,
   imports: [DecimalPipe, FormsModule, DatePickerModule],
   templateUrl: './monetizado-card.component.html',
-  styleUrl: './monetizado-card.component.css',
 })
 export class MonetizadoCardComponent {
   protected readonly incentivos = inject(IncentivosService);

@@ -114,3 +114,90 @@
 .driver-popover-arrow-side-right.driver-popover-arrow {
   border-right-color: #FFFFFF !important;
 }
+
+/* ── Mobile Responsive Popover (≤ 640px) ─────────────────────── */
+@media (max-width: 640px) {
+  .driver-popover {
+    max-width: calc(100vw - 24px) !important;
+    width: calc(100vw - 24px) !important;
+    box-sizing: border-box !important;
+    padding: 14px 16px !important;
+    border-radius: 12px !important;
+    margin: 0 !important;
+  }
+
+  .driver-popover-title {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .driver-popover-description {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+
+  .driver-popover-footer {
+    margin-top: 12px !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .driver-popover-progress-text {
+    font-size: 10.5px !important;
+  }
+
+  .driver-popover-next-btn,
+  .driver-popover-prev-btn,
+  .driver-popover-close-btn {
+    padding: 5px 11px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* ── Dark Theme Support ────────────────────────────────────────── */
+:root[data-theme="dark"] .driver-popover,
+:root.dark .driver-popover {
+  background: var(--mis-surface, #1e293b) !important;
+  color: var(--mis-text-primary, #f8fafc) !important;
+  border-color: var(--mis-border-strong, rgba(255, 255, 255, 0.15)) !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+:root[data-theme="dark"] .driver-popover-title,
+:root.dark .driver-popover-title {
+  color: var(--mis-primary-light, #60a5fa) !important;
+}
+
+:root[data-theme="dark"] .driver-popover-description,
+:root.dark .driver-popover-description {
+  color: var(--mis-text-secondary, #cbd5e1) !important;
+}
+
+:root[data-theme="dark"] .driver-popover-prev-btn,
+:root.dark .driver-popover-prev-btn {
+  background: var(--mis-panel-bg, #334155) !important;
+  color: var(--mis-text-primary, #f8fafc) !important;
+  border-color: var(--mis-border, #475569) !important;
+}
+
+:root[data-theme="dark"] .driver-popover-prev-btn:hover,
+:root.dark .driver-popover-prev-btn:hover {
+  background: var(--mis-surface-hover, #475569) !important;
+}
+
+:root[data-theme="dark"] .driver-popover-arrow-side-top.driver-popover-arrow,
+:root.dark .driver-popover-arrow-side-top.driver-popover-arrow {
+  border-top-color: var(--mis-surface, #1e293b) !important;
+}
+:root[data-theme="dark"] .driver-popover-arrow-side-bottom.driver-popover-arrow,
+:root.dark .driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-bottom-color: var(--mis-surface, #1e293b) !important;
+}
+:root[data-theme="dark"] .driver-popover-arrow-side-left.driver-popover-arrow,
+:root.dark .driver-popover-arrow-side-left.driver-popover-arrow {
+  border-left-color: var(--mis-surface, #1e293b) !important;
+}
+:root[data-theme="dark"] .driver-popover-arrow-side-right.driver-popover-arrow,
+:root.dark .driver-popover-arrow-side-right.driver-popover-arrow {
+  border-right-color: var(--mis-surface, #1e293b) !important;
+}

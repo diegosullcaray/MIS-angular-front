@@ -5,7 +5,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { InputTextModule } from 'primeng/inputtext';
 import { PaginatorModule, type PaginatorState } from 'primeng/paginator';
 import { SelectModule } from 'primeng/select';
-import { TablaReporteComponent } from '../../../../../../ui/tabla-reporte/tabla-reporte.component';
+import { TablaReporteComponent } from '../../../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import type { TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
 

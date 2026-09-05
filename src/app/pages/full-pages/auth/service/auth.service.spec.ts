@@ -56,6 +56,15 @@ function crearOAuthServiceFalso(overrides: Partial<Record<keyof OAuthService, un
   } as unknown as OAuthService;
 }
 
+/**
+ * `cerrarSesion()` pasó a ser asíncrono: antes de navegar espera al borrado del
+ * navegador (localStorage, cookies, cachés). Los tests que verifican la
+ * redirección tienen que dejar correr esas microtareas primero.
+ */
+async function agotarMicrotareas(): Promise<void> {
+  for (let i = 0; i < 20; i++) await Promise.resolve();
+}
+
 describe('AuthService', () => {
   let service: AuthService;
   let shell: ShellStateService;
@@ -143,11 +152,11 @@ describe('AuthService', () => {
     expect(sessionStorage.getItem('mis.sesion')).toContain('winder-sid-1');
 
     const persistida = JSON.parse(sessionStorage.getItem('mis.sesion')!);
-    expect(persistida.expiraEn).toBeGreaterThan(Date.now() + 14 * 60 * 1000);
-    expect(persistida.expiraEn).toBeLessThanOrEqual(Date.now() + 15 * 60 * 1000);
+    expect(persistida.expiraEn).toBeGreaterThan(Date.now() + 29 * 60 * 1000);
+    expect(persistida.expiraEn).toBeLessThanOrEqual(Date.now() + 30 * 60 * 1000);
   });
 
-  it('borra las credenciales de sessionStorage y redirige a "Sesión expirada" (401) automáticamente a los 15 min de login, sin necesidad de recargar', async () => {
+  it('borra las credenciales de sessionStorage y redirige a "Sesión expirada" (401) automáticamente a los 30 min de login, sin necesidad de recargar', async () => {
     vi.useFakeTimers();
     configurar({
       hasValidIdToken: vi.fn().mockReturnValue(true),
@@ -158,7 +167,8 @@ describe('AuthService', () => {
     await service.completarLoginGoogle();
     expect(shell.usuarioActivo()).not.toBeNull();
 
-    vi.advanceTimersByTime(15 * 60 * 1000);
+    await vi.advanceTimersByTimeAsync(30 * 60 * 1000);
+    await agotarMicrotareas();
 
     expect(shell.usuarioActivo()).toBeNull();
     expect(service.token()).toBeNull();
@@ -199,7 +209,7 @@ describe('AuthService', () => {
     expect(shell.usuarioActivo()?.id).toBe('u-1');
   });
 
-  it('restaurarSesion() descarta y redirige a "Sesión expirada" (401) si la sesión ya venció (pasaron los 15 min)', () => {
+  it('restaurarSesion() descarta y redirige a "Sesión expirada" (401) si la sesión ya venció (pasaron los 30 min)', async () => {
     configurar();
     const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     sessionStorage.setItem(
@@ -212,6 +222,7 @@ describe('AuthService', () => {
     );
 
     service.restaurarSesion();
+    await agotarMicrotareas();
 
     expect(shell.usuarioActivo()).toBeNull();
     expect(service.token()).toBeNull();
@@ -219,7 +230,7 @@ describe('AuthService', () => {
     expect(navSpy).toHaveBeenCalledWith('/error/401');
   });
 
-  it('restaurarSesion() reprograma la expulsión automática con el tiempo restante de una sesión aún vigente', () => {
+  it('restaurarSesion() reprograma la expulsión automática con el tiempo restante de una sesión aún vigente', async () => {
     vi.useFakeTimers();
     configurar();
     const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
@@ -228,14 +239,15 @@ describe('AuthService', () => {
       JSON.stringify({
         token: 'jwt-vigente',
         usuario: { id: 'u-1', nombre: 'Ana Torres', email: 'ana.torres@confianza.pe', rol: 'admin-sistema', subsistemas: [] },
-        expiraEn: Date.now() + 5000, // quedan 5s de los 15min originales
+        expiraEn: Date.now() + 5000, // quedan 5s de los 30min originales
       })
     );
 
     service.restaurarSesion();
     expect(shell.usuarioActivo()?.id).toBe('u-1');
 
-    vi.advanceTimersByTime(5000);
+    await vi.advanceTimersByTimeAsync(5000);
+    await agotarMicrotareas();
 
     expect(shell.usuarioActivo()).toBeNull();
     expect(sessionStorage.getItem('mis.sesion')).toBeNull();
@@ -276,7 +288,7 @@ describe('AuthService', () => {
     await service.completarLoginGoogle();
 
     service.cerrarSesion('');
-    vi.advanceTimersByTime(15 * 60 * 1000);
+    vi.advanceTimersByTime(30 * 60 * 1000);
 
     expect(navSpy).not.toHaveBeenCalledWith('/error/401');
   });

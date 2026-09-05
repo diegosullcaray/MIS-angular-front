@@ -3,12 +3,12 @@ import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { PresupuestoService } from '../../../services/presupuesto.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
-import { HierSelectorComponent } from '../../../ui/hier-selector/hier-selector.component';
-import { EditableTableComponent } from '../../../ui/editable-table/editable-table.component';
+import { HierSelectorComponent } from '../../../../../../shared/ui/hier-selector/hier-selector.component';
+import { EditableTableComponent } from '../../../../../../shared/ui/tablas/editable-table/editable-table.component';
 import { WindowPanelComponent } from '../../../../../../shared/ui/window-panel/window-panel.component';
 import { calcularPuedeGuardar, calcularPuedeVerificar, esCeldaEditable } from '../../../utils/linea-simple-reglas.util';
 import { aplicarCascadaAsesores, calcularFilaCarteraCreditos, PRODUCTOS_COMPOSICION } from '../../../utils/cartera-creditos-calculo.util';
-import type { CeldaEditadaEvent, ColumnaTabla, TipoColumna } from '../../../models/tabla.model';
+import type { CeldaEditadaEvent, ColumnaTabla, TipoColumna } from '../../../../../../shared/ui/tablas/models/tabla-editable.model';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../../models/jerarquia.model';
 import type { ResumenMetadata } from '../../../models/linea-simple.model';
 import type { FilaCarteraCreditosComposicion, FilaCarteraCreditosVariables } from '../../../models/cartera-creditos.model';
@@ -59,7 +59,6 @@ function columnasComposicion(prefijo: 'd' | 'g', tipo: TipoColumna): ColumnaTabl
   standalone: true,
   imports: [HierSelectorComponent, EditableTableComponent, TabsModule, ButtonModule, WindowPanelComponent],
   templateUrl: './cartera-creditos.component.html',
-  styleUrl: './cartera-creditos.component.css',
 })
 export class CarteraCreditosComponent {
   private readonly presupuesto = inject(PresupuestoService);

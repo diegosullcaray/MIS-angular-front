@@ -7,6 +7,7 @@ import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
+import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
 import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sidebar.model';
 import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
 
@@ -363,5 +364,62 @@ describe('SidebarComponent', () => {
     const contenedor = (fixture.nativeElement as HTMLElement).querySelector('#tour-sidebar-icons > div:last-child') as HTMLElement;
     expect(contenedor.classList.contains('items-stretch')).toBe(false);
     expect(contenedor.classList.contains('items-center')).toBe(true);
+  });
+  // ── Modos de menú ────────────────────────────────────────────────────────
+  // Los cuatro modos (estático / delgado / superpuesto / horizontal) son los
+  // mismos que ofrece el layout de PrimeNG. El rail solo cambia de markup en
+  // el superpuesto —ahí se abre POR ENCIMA del contenido y necesita máscara—;
+  // el resto es CSS sobre `data-menu`, que escribe `PreferenciasService`.
+
+  it('en los modos anclados no hay máscara: el rail se ve siempre', () => {
+    const el = crear().nativeElement as HTMLElement;
+
+    expect(el.querySelector('.sidebar-mask')).toBeNull();
+    expect(el.querySelector('.sidebar-rail--abierto')).toBeNull();
+  });
+
+  it('en modo superpuesto el rail solo se abre cuando lo piden, y trae su máscara', () => {
+    TestBed.inject(PreferenciasService).setModoSidebar('superpuesto');
+    const fixture = crear();
+    const el = fixture.nativeElement as HTMLElement;
+
+    // Cerrado: sin máscara y sin la clase que lo desliza a la vista.
+    expect(el.querySelector('.sidebar-mask')).toBeNull();
+    expect(el.querySelector('.sidebar-rail--abierto')).toBeNull();
+
+    shell.setRailSuperpuestoAbierto(true);
+    fixture.detectChanges();
+
+    expect(el.querySelector('.sidebar-mask')).not.toBeNull();
+    expect(el.querySelector('.sidebar-rail--abierto')).not.toBeNull();
+  });
+
+  it('la máscara cierra el rail superpuesto', () => {
+    TestBed.inject(PreferenciasService).setModoSidebar('superpuesto');
+    const fixture = crear();
+    shell.setRailSuperpuestoAbierto(true);
+    fixture.detectChanges();
+
+    ((fixture.nativeElement as HTMLElement).querySelector('.sidebar-mask') as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    expect(shell.railSuperpuestoAbierto()).toBe(false);
+  });
+
+  it('elegir un sistema cierra el rail superpuesto: si no, taparía lo que se acaba de abrir', () => {
+    TestBed.inject(PreferenciasService).setModoSidebar('superpuesto');
+    const fixture = crear();
+    shell.setRailSuperpuestoAbierto(true);
+
+    (fixture.componentInstance as unknown as { seleccionarIcono(i: SidebarIcon): void }).seleccionarIcono({
+      id: 'host-inicio',
+      tipo: 'host-inicio',
+      icono: 'pi pi-home',
+      etiqueta: 'Inicio',
+      ruta: '/app/dashboard',
+      tienePanel: false,
+    });
+
+    expect(shell.railSuperpuestoAbierto()).toBe(false);
   });
 });
