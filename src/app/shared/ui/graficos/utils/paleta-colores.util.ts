@@ -4,12 +4,11 @@
 export const NAVY = '#003f5c';
 export const MAGENTA = '#bc5090';
 export const NARANJA = '#ff7c43';
-export const AMBAR = '#ffa600';
 export const AZUL = '#2f9bd8';
 
 /** Azul/navy del sistema — KPIs y series destacadas del dashboard. */
 export const COLOR_PRIMARY = '#1D396E';
-export const COLOR_SECONDARY = '#00A2FF';
+export const COLOR_SECONDARY = '#0094EA';
 
 /** Paleta de series genéricas con colores únicos y diferenciados. */
 export const PALETA_SERIES = [
@@ -22,11 +21,17 @@ export const PALETA_SERIES = [
   '#F97316', // Naranja
   '#14B8A6', // Teal
   '#6366F1', // Índigo
-  '#84CC16', // Lima
+  '#6AA312', // Lima
 ] as const;
 
 /** Paleta de los tramos de mora del dashboard del analista. */
-export const PALETA_TRAMOS = ['#16A34A', '#00A2FF', '#B45309', '#DC2626', '#7C3AED', '#334155'] as const;
+/**
+ * Tramos de mora del dashboard del analista: es una escala ORDENADA, así que lo
+ * que tiene que separarse es cada tramo del siguiente. El ocre y el gris no son
+ * los originales: `#B45309` quedaba a Delta E 9.9 del rojo de al lado y
+ * `#334155` desaparecía sobre el fondo oscuro del gráfico (1.57:1).
+ */
+export const PALETA_TRAMOS = ['#16A34A', '#0094EA', '#B8860B', '#DC2626', '#8040EE', '#606B7A'] as const;
 
 /** Tokens de tema resueltos para Highcharts (equivalen a `--mis-*` de `tokens.css`). */
 export interface TokensTema {

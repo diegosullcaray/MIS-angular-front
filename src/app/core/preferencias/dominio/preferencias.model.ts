@@ -112,7 +112,7 @@ export function buscarFondo(clave: string): OpcionFondo | undefined {
 
 /** Acentos sugeridos. El usuario igual puede elegir cualquier otro hex. */
 export const ACENTOS_SUGERIDOS: readonly string[] = [
-  '#00a2ff',
+  '#0094ea',
   '#035096',
   '#0ea5e9',
   '#14b8a6',
@@ -215,7 +215,7 @@ export const PREFERENCIAS_POR_DEFECTO: Preferencias = {
     tema: 'oscuro',
     fondo: 'institucional',
     colorFondo: '#1d396e',
-    acento: '#00a2ff',
+    acento: '#0094ea',
   },
   estructura: {
     modoSidebar: 'estatico',

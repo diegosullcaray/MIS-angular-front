@@ -49,7 +49,7 @@
             <td><i [class]="iconoTipo(reporte.reportType)" style="color: var(--mis-primary-text);"></i></td>
             <td>
               @if (reporte.reportType === 'PowerBIReport') {
-                <button type="button" class="text-[var(--mis-accent)] hover:underline text-[13px]" (click)="abrirReporte(reporte)">
+                <button type="button" class="text-[var(--mis-primary-text)] hover:underline text-[13px]" (click)="abrirReporte(reporte)">
                   {{ reporte.name }}
                 </button>
               } @else {

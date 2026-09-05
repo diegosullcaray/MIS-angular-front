@@ -43,8 +43,13 @@
   --mis-sidebar-blur: saturate(180%) blur(28px);
   --mis-nav-panel-bg: rgba(235, 241, 248, 0.78);
   --mis-panel-bg: #F8FAFC;
-  --mis-border: rgba(29,57,110,0.10);
+  --mis-border: rgba(29,57,110,0.12);
   --mis-border-strong: rgba(29,57,110,0.20);
+  /* Borde de un CONTROL (input, select): es lo único que lo delimita, así que
+     WCAG 1.4.11 le pide 3:1 contra la superficie. Los dos de arriba son
+     divisores decorativos y no llegan —ni tienen por qué—: subirlos encuadraría
+     toda la interfaz. */
+  --mis-border-control: #808FAD;
 
   /* Cromo de ventana macOS de los paneles de módulo (`.mis-window`). */
   --mis-window-bar-bg: linear-gradient(180deg, rgba(252,253,255,0.92) 0%, rgba(238,242,248,0.88) 100%);
@@ -90,25 +95,25 @@
   --mis-primary-text: #1D396E;
 
   /* Secundario: Sky Blue (tomado del hover real del árbol de navegación STG) */
-  --mis-secondary: #00A2FF;
+  --mis-secondary: #0094EA;
   --mis-secondary-hover: #0090E0;
   --mis-secondary-light: #E5F6FF;
 
   /* Acento */
-  --mis-accent: #00A2FF;
+  --mis-accent: #0094EA;
 
   /* Semánticos (estados) */
-  --mis-success:        #16A34A;
+  --mis-success:        #11803A;
   --mis-success-light:  #E7F6EC;
   --mis-warning:        #B45309;
   --mis-warning-light:  #FEF3C7;
-  --mis-danger:         #DC2626;
+  --mis-danger:         #D32424;
   --mis-danger-light:   #FDECEC;
 
   /* Textos (color de cuerpo real del sistema: #304156, no el navy de marca) */
   --mis-text-primary: #304156;
   --mis-text-secondary: #5A6A85;
-  --mis-text-tertiary: #94A3B8;
+  --mis-text-tertiary: #8390A2;
   --mis-text-on-primary: #FFFFFF;
   /* Navy oscuro, no blanco: el secundario es un celeste brillante (#00A2FF en
      claro, #4DC3FF en oscuro) y el texto blanco encima daba 2.8:1. El mismo
@@ -137,7 +142,7 @@
   --mis-shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --mis-shadow-md:    0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
   --mis-shadow-lg:    0 8px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
-  --mis-shadow-focus: 0 0 0 3px rgba(0, 162, 255, 0.35);
+  --mis-shadow-focus: 0 0 0 3px rgba(0, 148, 234, 0.35);
 
   --mis-transition-fast: 0.15s ease-in-out;
   --mis-transition-base: 0.2s ease-in-out;
@@ -166,6 +171,7 @@
   --mis-panel-bg: #1A2740;
   --mis-border: rgba(0,162,255,0.14);
   --mis-border-strong: rgba(0,162,255,0.28);
+  --mis-border-control: #0075B8;
 
   --mis-window-bar-bg: linear-gradient(180deg, rgba(38,52,79,0.92) 0%, rgba(26,37,58,0.88) 100%);
   --mis-window-bar-border: rgba(255, 255, 255, 0.10);
