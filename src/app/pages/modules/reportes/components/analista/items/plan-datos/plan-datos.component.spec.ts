@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { PlanDatosComponent } from './plan-datos.component';
@@ -23,7 +24,7 @@ describe('PlanDatosComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [PlanDatosComponent],
-      providers: [{ provide: PlanDatosService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, { provide: PlanDatosService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 

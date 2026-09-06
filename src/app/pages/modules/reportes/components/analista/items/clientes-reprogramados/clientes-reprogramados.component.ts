@@ -6,7 +6,6 @@ import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { ClientesReprogramadosService } from '../../services/clientes-reprogramados.service';
-import { ToastService } from '../../../../../../../shared/services/toast.service';
 import {
   REPROGRAMACION_FORM_VACIO,
   OPCIONES_PREG_01,
@@ -17,6 +16,7 @@ import {
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { ReprogramacionForm } from '../../models/clientes-reprogramados.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
+import { SelectorAsesorBase } from '../../ui/selector-asesor.base';
 import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../../../../models/tabla-reporte.model';
 
 /** "Clientes Reprogramados" — migrado de la ruta `leg/com/rda/sec/repro` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-repro`, `cod_rep: 'RES_SEC_REP'`/`'UP_REPRO_01'`). */
@@ -26,38 +26,21 @@ import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../..
   imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './clientes-reprogramados.component.html',
 })
-export class ClientesReprogramadosComponent {
+export class ClientesReprogramadosComponent extends SelectorAsesorBase {
   private readonly servicio = inject(ClientesReprogramadosService);
-  private readonly toast = inject(ToastService);
 
   protected readonly opcionesPreg01 = OPCIONES_PREG_01;
   protected readonly opcionesPreg02 = OPCIONES_PREG_02;
   protected readonly opcionesPreg03 = OPCIONES_PREG_03;
   protected readonly opcionesPreg04 = OPCIONES_PREG_04;
 
-
-  protected readonly asesores = signal<AsesorSec[]>([]);
-  protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);
-
   protected readonly tabActiva = signal('lista');
-  protected readonly cargando = signal(false);
   protected readonly guardando = signal(false);
 
   protected readonly tablaClientes = signal<TablaReporteResultado>(TABLA_VACIA);
   protected readonly clienteSeleccionado = signal<FilaReporte | null>(null);
 
   protected readonly model = signal<ReprogramacionForm>({ ...REPROGRAMACION_FORM_VACIO });
-
-  constructor() {
-    this.cargarAsesores();
-  }
-
-  private cargarAsesores(): void {
-    this.servicio.obtenerAsesores().subscribe({
-      next: (asesores) => this.asesores.set(asesores),
-      error: () => this.toast.error('No se pudo cargar la lista de asesores', 'Inténtalo de nuevo en unos segundos.'),
-    });
-  }
 
   protected onAsesorSeleccionado(asesor: AsesorSec | null): void {
     this.asesorSeleccionado.set(asesor);

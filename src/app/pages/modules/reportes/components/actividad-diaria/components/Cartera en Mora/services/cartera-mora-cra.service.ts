@@ -13,21 +13,16 @@ import type { ReporteBloqueUnico, TablaReporteResultado } from '../../../../../m
 import type { OpcionFiltro } from '../../../../../models/filtros.model';
 
 /**
- * Los reportes de "Cartera en Mora", que salen de los hosts `report-cra-*` del
- * legado con jerarquía `UNI_1`. Solo arma peticiones: los códigos están en
- * `constantes/`.
+ * "Cartera en Mora" (hosts `report-cra-*` del legado, jerarquía `UNI_1`). Solo
+ * arma peticiones; los códigos están en `constantes/`.
  *
  * Tres cosas que NO son intercambiables entre reportes:
- *
- * - **El strand lo decide el HOST, no el mapa.** El `reportType` de
- *   `cra-map.ts` solo lo consulta `report-cra-v1p1`; los hosts `-v4`, `-v7` y
- *   `-v11` llaman directo a `getRegularData()`. Pedir por `reportData` un
- *   reporte de esos da HTTP 500.
- * - **El nombre del corte cambia.** Unos piden `fec` (lo agrega
- *   `BloqueReporteService`) y otros `fecha`; los hosts `-v4`/`-v7` no reciben
- *   `fec` en absoluto y van por `regularExacto()`.
- * - **Un bloque vacío responde 500.** Dentro de un `forkJoin` eso tumba el
- *   reporte entero, así que los de varios bloques usan `regularTolerante()`.
+ * - **El strand lo decide el HOST, no el mapa.** `-v4`, `-v7` y `-v11` llaman
+ *   directo a `getRegularData()`; pedirlos por `reportData` da 500.
+ * - **El nombre del corte cambia**: `fec`, `fecha`, o ninguno (esos van por
+ *   `regularExacto()`).
+ * - **Un bloque vacío responde 500**, y en un `forkJoin` tumba el reporte: los
+ *   de varios bloques usan `regularTolerante()`.
  */
 @Injectable({ providedIn: 'root' })
 export class CarteraMoraCraService {

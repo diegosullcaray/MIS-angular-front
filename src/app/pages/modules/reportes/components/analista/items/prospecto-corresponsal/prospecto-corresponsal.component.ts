@@ -6,10 +6,10 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { AgregarProspectoDialogComponent } from './agregar-prospecto-dialog/agregar-prospecto-dialog.component';
 import { ProspectoCorresponsalService } from '../../services/prospecto-corresponsal.service';
-import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
+import { SelectorAsesorBase } from '../../ui/selector-asesor.base';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
 /** "Prospecto Corresponsal" — migrado de la ruta `leg/com/rda/sec/sec-prosp` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-prospe`, título real "Prospectos Corresponsales", `cod_rep: 'LIS_PROSPE'`). */
@@ -19,29 +19,13 @@ import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabl
   imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent, AgregarProspectoDialogComponent, TooltipModule, WindowPanelComponent],
   templateUrl: './prospecto-corresponsal.component.html',
 })
-export class ProspectoCorresponsalComponent {
+export class ProspectoCorresponsalComponent extends SelectorAsesorBase {
   private readonly servicio = inject(ProspectoCorresponsalService);
-  private readonly toast = inject(ToastService);
 
   protected readonly mostrarFiltros = signal(false);
   protected readonly dialogoVisible = signal(false);
 
-  protected readonly asesores = signal<AsesorSec[]>([]);
-  protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);
-
-  protected readonly cargando = signal(false);
   protected readonly tabla1 = signal<TablaReporteResultado>(TABLA_VACIA);
-
-  constructor() {
-    this.cargarAsesores();
-  }
-
-  private cargarAsesores(): void {
-    this.servicio.obtenerAsesores().subscribe({
-      next: (asesores) => this.asesores.set(asesores),
-      error: () => this.toast.error('No se pudo cargar la lista de asesores', 'Inténtalo de nuevo en unos segundos.'),
-    });
-  }
 
   protected onAsesorSeleccionado(asesor: AsesorSec | null): void {
     this.asesorSeleccionado.set(asesor);

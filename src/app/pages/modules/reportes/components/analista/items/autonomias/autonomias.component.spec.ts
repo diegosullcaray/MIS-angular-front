@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { AutonomiasComponent } from './autonomias.component';
@@ -23,7 +24,7 @@ describe('AutonomiasComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [AutonomiasComponent],
-      providers: [{ provide: AutonomiasService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, { provide: AutonomiasService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 

@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { MonitorEfectividadesComponent } from './monitor-efectividades.component';
@@ -23,7 +24,7 @@ describe('MonitorEfectividadesComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [MonitorEfectividadesComponent],
-      providers: [
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, 
         { provide: MonitorEfectividadesService, useValue: servicioFalso },
         ToastService,
         PrimeNgMessageService,

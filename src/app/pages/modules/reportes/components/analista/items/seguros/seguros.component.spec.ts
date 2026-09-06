@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { SegurosComponent } from './seguros.component';
@@ -23,7 +24,7 @@ describe('SegurosComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [SegurosComponent],
-      providers: [{ provide: SegurosService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, { provide: SegurosService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 

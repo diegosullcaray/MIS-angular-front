@@ -7,7 +7,6 @@ import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { DatosClientesService } from '../../services/datos-clientes.service';
-import { ToastService } from '../../../../../../../shared/services/toast.service';
 import {
   DATOS_CLIENTE_FORM_VACIO,
   REFERENCIA_BANTOTAL_VACIA,
@@ -24,6 +23,7 @@ import {
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { CelForm, DatosClienteForm, OpcionDato } from '../../models/datos-clientes.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
+import { SelectorAsesorBase } from '../../ui/selector-asesor.base';
 import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../../../../models/tabla-reporte.model';
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,9 +35,8 @@ const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   imports: [FormsModule, SelectModule, InputTextModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './datos-clientes.component.html',
 })
-export class DatosClientesComponent {
+export class DatosClientesComponent extends SelectorAsesorBase {
   private readonly servicio = inject(DatosClientesService);
-  private readonly toast = inject(ToastService);
 
   protected readonly opcionesTipoTele = OPCIONES_TIPO_TELE;
   protected readonly opcionesOpeTele = OPCIONES_OPE_TELE;
@@ -46,13 +45,9 @@ export class DatosClientesComponent {
   protected readonly opcionesVerificadorTele = OPCIONES_VERIFICADOR_TELE;
   protected readonly opcionesVerificadorCiiu = OPCIONES_VERIFICADOR_CIIU;
 
-
-  protected readonly asesores = signal<AsesorSec[]>([]);
-  protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);
   protected readonly ciiu = signal<OpcionDato[]>([]);
 
   protected readonly tabActiva = signal('lista');
-  protected readonly cargando = signal(false);
   protected readonly guardando = signal(false);
 
   protected readonly tablaClientes = signal<TablaReporteResultado>(TABLA_VACIA);
@@ -70,15 +65,8 @@ export class DatosClientesComponent {
   });
 
   constructor() {
-    this.cargarAsesores();
+    super();
     this.cargarCiiu();
-  }
-
-  private cargarAsesores(): void {
-    this.servicio.obtenerAsesores().subscribe({
-      next: (asesores) => this.asesores.set(asesores),
-      error: () => this.toast.error('No se pudo cargar la lista de asesores', 'Inténtalo de nuevo en unos segundos.'),
-    });
   }
 
   private cargarCiiu(): void {

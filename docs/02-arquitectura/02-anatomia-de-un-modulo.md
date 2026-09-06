@@ -4,7 +4,7 @@ Cómo se organiza por dentro un módulo de negocio, y **dónde va cada cosa**.
 La regla de fondo es una sola: *un service solo hace peticiones al backend*.
 Todo lo demás tiene su carpeta.
 
-## Las cinco carpetas
+## Las carpetas
 
 ```
 pages/modules/<modulo>/
@@ -12,9 +12,13 @@ pages/modules/<modulo>/
 ├── models/         tipos del dominio y del payload
 ├── utils/          funciones puras: payload crudo → modelo
 ├── services/       SOLO peticiones
+├── ui/             clases base y piezas compartidas entre los items
 └── items/          los componentes de pantalla
     └── <pantalla>/
 ```
+
+`ui/` solo aparece cuando hay algo que compartir: si el módulo tiene una sola
+pantalla, no existe.
 
 En `reportes`, que es el módulo grande, esa misma estructura se repite por
 subárea (`Cartera`, `Cartera en Mora`, `Captaciones`, …). Cada una es un módulo
@@ -95,10 +99,55 @@ export class CarteraRepositorioService {
 Si un método hace algo que no sea pedir y encadenar un mapeo, ese algo va a
 `utils/`.
 
+### `ui/`
+
+Lo que varias pantallas del módulo comparten: casi siempre una clase base con el
+estado y el flujo repetido.
+
+La regla para crear una: **cuando el mismo bloque aparece en tres o más items**.
+Antes de eso, duplicar es más barato que abstraer sobre un patrón que todavía no
+se estabilizó.
+
+Las que hay hoy:
+
+| Base | Dónde | Qué aporta |
+|---|---|---|
+| `ReporteSimpleBase` | `reportes/ui/reporte-simple/` | Reporte de un bloque con selector de jerarquía: consulta en un `effect`, así que cambiar un filtro vuelve a consultar solo |
+| `ReporteBloquesBase` | `reportes/ui/reporte-simple/` | La variante de varios bloques |
+| `ReporteReasignadoTabsBase` | `Portafolio Reasignado/ui/` | Reporte con pestañas propias |
+| `SelectorAsesorBase` | `analista/ui/` | El selector de asesor: carga la lista una vez y expone `asesores`/`asesorSeleccionado`/`cargando` |
+| `ReporteAsesorBase<T>` | `analista/ui/` | Lo anterior más el flujo completo: consulta, vuelca el resultado, avisa si vino vacío y maneja el error |
+
 ### `items/`
 
-Un componente por pantalla, con su `.ts`, `.html` y su `.spec.ts`. Los que solo
-muestran una tabla de un bloque extienden `ReporteSimpleBase`.
+Un componente por pantalla, con su `.ts`, `.html` y su `.spec.ts`. La mayoría
+extiende una base de `ui/` y solo aporta lo suyo.
+
+Un reporte de asesor completo queda así —el componente no repite ni la carga de
+la lista, ni el estado de carga, ni los toasts:
+
+```typescript
+export class SegurosComponent extends ReporteAsesorBase<ReporteSeguros> {
+  private readonly servicio = inject(SegurosService);
+
+  protected readonly tabla1 = signal<TablaReporteResultado>(TABLA_VACIA);
+
+  protected readonly avisoSinResultados = 'Este asesor no tiene seguros registrados…';
+  protected override readonly errorDeCarga = 'No se pudo cargar los seguros';
+
+  protected consultar(asesor: AsesorSec) {
+    return this.servicio.obtenerSeguros(this.nodoDe(asesor));
+  }
+
+  protected recibir({ tabla1 }: ReporteSeguros): boolean {
+    this.tabla1.set(tabla1);
+    return this.sinFilas(tabla1);
+  }
+}
+```
+
+En el spec hay que proveer `AsesorSecService`: la lista de asesores la pide la
+base, no el service de la pantalla.
 
 ## Cómo se agrega un reporte
 

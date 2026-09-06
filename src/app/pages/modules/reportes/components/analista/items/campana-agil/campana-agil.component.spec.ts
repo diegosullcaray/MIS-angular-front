@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { CampanaAgilComponent } from './campana-agil.component';
@@ -23,7 +24,7 @@ describe('CampanaAgilComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [CampanaAgilComponent],
-      providers: [{ provide: CampanaAgilService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, { provide: CampanaAgilService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 

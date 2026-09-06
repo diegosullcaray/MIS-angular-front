@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { PlanillaMovilidadComponent } from './planilla-movilidad.component';
@@ -25,7 +26,7 @@ describe('PlanillaMovilidadComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [PlanillaMovilidadComponent],
-      providers: [
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, 
         { provide: PlanillaMovilidadService, useValue: servicioFalso },
         ToastService,
         PrimeNgMessageService,

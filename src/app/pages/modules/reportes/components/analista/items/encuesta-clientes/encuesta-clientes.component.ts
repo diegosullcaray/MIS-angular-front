@@ -7,7 +7,6 @@ import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { EncuestaClientesService } from '../../services/encuesta-clientes.service';
-import { ToastService } from '../../../../../../../shared/services/toast.service';
 import {
   ENCUESTA_CLIENTE_FORM_VACIO,
   OPCIONES_AFEC_NEG,
@@ -20,6 +19,7 @@ import {
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { CiiuOpcion, EncuestaClienteForm } from '../../models/encuesta-clientes.model';
 import type { AsesorSec } from '../../models/asesor-sec.model';
+import { SelectorAsesorBase } from '../../ui/selector-asesor.base';
 import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../../../../models/tabla-reporte.model';
 
 /** "Encuesta Clientes" — migrado de la ruta `leg/com/rda/sec/cap-ret` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-cap-ret`, título real "Capacidad de Minorista", `cod_rep: 'LIS_CAPRET'`/`'UPD_CAPRET_01'`). */
@@ -29,9 +29,8 @@ import { TABLA_VACIA, type TablaReporteResultado, type FilaReporte } from '../..
   imports: [FormsModule, SelectModule, ButtonModule, TabsModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './encuesta-clientes.component.html',
 })
-export class EncuestaClientesComponent {
+export class EncuestaClientesComponent extends SelectorAsesorBase {
   private readonly servicio = inject(EncuestaClientesService);
-  private readonly toast = inject(ToastService);
 
   protected readonly opcionesAfecNeg = OPCIONES_AFEC_NEG;
   protected readonly opcionesFunNeg = OPCIONES_FUN_NEG;
@@ -39,13 +38,9 @@ export class EncuestaClientesComponent {
   protected readonly opcionesRedNeg = OPCIONES_RED_NEG;
   protected readonly opcionesSecEco = OPCIONES_SEC_ECO;
 
-
-  protected readonly asesores = signal<AsesorSec[]>([]);
-  protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);
   protected readonly ciiu = signal<CiiuOpcion[]>([]);
 
   protected readonly tabActiva = signal('lista');
-  protected readonly cargando = signal(false);
   protected readonly guardando = signal(false);
 
   protected readonly tablaClientes = signal<TablaReporteResultado>(TABLA_VACIA);
@@ -91,15 +86,8 @@ export class EncuestaClientesComponent {
   );
 
   constructor() {
-    this.cargarAsesores();
+    super();
     this.cargarCiiu();
-  }
-
-  private cargarAsesores(): void {
-    this.servicio.obtenerAsesores().subscribe({
-      next: (asesores) => this.asesores.set(asesores),
-      error: () => this.toast.error('No se pudo cargar la lista de asesores', 'Inténtalo de nuevo en unos segundos.'),
-    });
   }
 
   private cargarCiiu(): void {

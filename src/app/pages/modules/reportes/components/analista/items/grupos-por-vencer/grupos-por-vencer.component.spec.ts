@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { GruposPorVencerComponent } from './grupos-por-vencer.component';
@@ -23,7 +24,7 @@ describe('GruposPorVencerComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [GruposPorVencerComponent],
-      providers: [{ provide: GruposPorVencerService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, { provide: GruposPorVencerService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 

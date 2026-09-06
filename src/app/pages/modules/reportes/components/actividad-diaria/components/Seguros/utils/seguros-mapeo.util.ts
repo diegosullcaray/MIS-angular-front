@@ -8,17 +8,13 @@ interface BloqueGraficoSerializado {
 }
 
 /**
- * Traduce un bloque `GRAFSEGPAS_*` al contrato de `<app-grafico-mixto>`.
+ * Traduce un bloque `GRAFSEGPAS_*` a `<app-grafico-mixto>`. No usan la forma
+ * normal de `graphicData`: traen `categories` y `series` como TEXTO en
+ * `result.body[0]`, que el legado resolvía con `eval()` y acá se parsea.
  *
- * Estos bloques no devuelven la forma normal de `graphicData`: traen
- * `categories` y `series` como texto dentro de `result.body[0]`. El legado los
- * resuelve con `eval()`; acá se parsean como JSON.
- *
- * Devuelve `null` si el payload no se puede parsear, para que el componente
- * simplemente no pinte ese gráfico. OJO: si el backend emitiera literales de
- * JavaScript (claves sin comillas, comillas simples) `JSON.parse` falla y el
- * gráfico queda vacío en vez de mostrar datos equivocados — hay que capturar un
- * payload real y ajustar el parseo, no adivinar el formato.
+ * `null` si no se puede parsear, para no pintar el gráfico. Si el backend
+ * emitiera literales de JavaScript (claves sin comillas) `JSON.parse` falla:
+ * capturar un payload real antes de tocar el parseo, no adivinar.
  */
 export function graficoEvolutivoPasivos(
   r: IWinderResponse,

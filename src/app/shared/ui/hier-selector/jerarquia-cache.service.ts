@@ -6,42 +6,22 @@ import type { HierarquiaNodo } from '../../../pages/modules/reportes/models/jera
 const PREFIJO = 'mis.jerarquia.';
 
 /**
- * Caché de la jerarquía organizativa.
+ * Caché de la jerarquía. Sin él, cada pantalla que monta el selector repite
+ * `base_hier` + `level_hier` + el nivel siguiente EN SERIE antes de consultar
+ * el reporte (44 pantallas lo montan).
  *
- * Es la pieza que faltaba respecto del STG. Allá, `CacheService` guarda cada
- * nivel resuelto y `locally()` decide en una línea —`!isCache(r) ? external(r)
- * : internal(r)`— si sale a la red o lee de disco. Acá cada pantalla que
- * montaba el selector volvía a pedir `base_hier` + `level_hier` + el nivel
- * siguiente, **en serie**, antes de que arrancara la consulta del reporte: tres
- * viajes de ida y vuelta que el usuario espera mirando un spinner, y que se
- * repetían íntegros al cambiar de reporte. Eso es buena parte de lo que se
- * siente como "el legacy carga más rápido".
- *
- * Dos niveles, a propósito:
- *
- * - **Memoria** (`Map` de observables). Sirve la navegación dentro de la SPA y,
- *   de yapa, comparte la petición en vuelo: si dos componentes piden el mismo
- *   nivel a la vez sale una sola request. El STG dispara las dos, porque su
- *   caché recién se escribe en el `subscribe`.
- * - **`sessionStorage`**. Sobrevive al F5, que es lo que hace el caché del STG.
- *
- * Por qué `sessionStorage` y no `localStorage` como el STG: la clave del STG
- * —`{tip_cod, cod_rel, level_load, jerar}`— **no lleva la fecha de corte**, así
- * que su caché puede servir el árbol de ayer. Acá la fecha va en la clave y
- * además el caché muere con la pestaña: se gana la velocidad sin heredar esa
- * forma de quedar desactualizado.
+ * En memoria para la navegación —y de paso comparte la petición en vuelo— y en
+ * `sessionStorage` para sobrevivir al F5. No `localStorage` como el STG: su
+ * clave no lleva la fecha de corte y puede servir el árbol de ayer.
  */
 @Injectable({ providedIn: 'root' })
 export class JerarquiaCacheService {
   private readonly enMemoria = new Map<string, Observable<HierarquiaNodo[]>>();
 
   /**
-   * Devuelve lo cacheado para esa clave, o registra lo que produce `pedir()`.
-   *
-   * `shareReplay({ refCount: false })` es deliberado: sin él el valor se
-   * descartaría cuando el último suscriptor se va —o sea, al salir de la
-   * pantalla— y el siguiente montaje volvería a la red, que es justo lo que se
-   * está arreglando.
+   * Lo cacheado para esa clave, o lo que produzca `pedir()` la primera vez.
+   * `refCount: false` es deliberado: si no, el valor se descartaría al salir de
+   * la pantalla y el siguiente montaje volvería a la red.
    */
   obtener(clave: string, pedir: () => Observable<HierarquiaNodo[]>): Observable<HierarquiaNodo[]> {
     const yaEnMemoria = this.enMemoria.get(clave);

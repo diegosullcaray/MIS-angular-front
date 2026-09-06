@@ -4,7 +4,6 @@ import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { MonitorEfectividadesService } from '../../services/monitor-efectividades.service';
-import { ToastService } from '../../../../../../../shared/services/toast.service';
 import {
   FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO,
   OPCIONES_PRODUCTO,
@@ -14,6 +13,7 @@ import {
 } from '../../models/monitor-efectividades.model';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
+import { SelectorAsesorBase } from '../../ui/selector-asesor.base';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import type { FiltrosMonitorEfectividades } from '../../models/monitor-efectividades.model';
 
@@ -24,33 +24,17 @@ import type { FiltrosMonitorEfectividades } from '../../models/monitor-efectivid
   imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
   templateUrl: './monitor-efectividades.component.html',
 })
-export class MonitorEfectividadesComponent {
+export class MonitorEfectividadesComponent extends SelectorAsesorBase {
   private readonly servicio = inject(MonitorEfectividadesService);
-  private readonly toast = inject(ToastService);
 
   protected readonly opcionesTramo = OPCIONES_TRAMO;
   protected readonly opcionesProducto = OPCIONES_PRODUCTO;
   protected readonly opcionesSiNo = OPCIONES_SI_NO;
   protected readonly opcionesTramoDiasGestion = OPCIONES_TRAMO_DIAS_GESTION;
 
-
-  protected readonly asesores = signal<AsesorSec[]>([]);
-  protected readonly asesorSeleccionado = signal<AsesorSec | null>(null);
   protected readonly filtros = signal<FiltrosMonitorEfectividades>({ ...FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO });
 
-  protected readonly cargando = signal(false);
   protected readonly tabla1 = signal<TablaReporteResultado>(TABLA_VACIA);
-
-  constructor() {
-    this.cargarAsesores();
-  }
-
-  private cargarAsesores(): void {
-    this.servicio.obtenerAsesores().subscribe({
-      next: (asesores) => this.asesores.set(asesores),
-      error: () => this.toast.error('No se pudo cargar la lista de asesores', 'Inténtalo de nuevo en unos segundos.'),
-    });
-  }
 
   protected onAsesorSeleccionado(asesor: AsesorSec | null): void {
     this.asesorSeleccionado.set(asesor);

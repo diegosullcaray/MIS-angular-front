@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { CanalAlternoComponent } from './canal-alterno.component';
@@ -23,7 +24,7 @@ describe('CanalAlternoComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [CanalAlternoComponent],
-      providers: [{ provide: CanalAlternoService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, { provide: CanalAlternoService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 

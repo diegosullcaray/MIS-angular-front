@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { CeroCuotasComponent } from './cero-cuotas.component';
@@ -23,7 +24,7 @@ describe('CeroCuotasComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [CeroCuotasComponent],
-      providers: [{ provide: CeroCuotasService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, { provide: CeroCuotasService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 

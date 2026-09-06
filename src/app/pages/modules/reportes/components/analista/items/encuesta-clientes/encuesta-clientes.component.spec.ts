@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { EncuestaClientesComponent } from './encuesta-clientes.component';
@@ -36,7 +37,7 @@ describe('EncuestaClientesComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [EncuestaClientesComponent],
-      providers: [{ provide: EncuestaClientesService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, { provide: EncuestaClientesService, useValue: servicioFalso }, ToastService, PrimeNgMessageService],
     });
   });
 

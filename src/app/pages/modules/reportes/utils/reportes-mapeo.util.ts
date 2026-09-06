@@ -62,16 +62,12 @@ function mapearKpis(resultado: TablaRegularResultadoRaw | undefined, filas: Reco
 }
 
 /**
- * Opciones del selector de periodo de los reportes del repositorio — bloques
- * `RS_FECH` / `RS_FECH02` del legado (`loadFilter()`).
+ * Opciones del selector de periodo (bloques `RS_FECH`/`RS_FECH02`). No devuelve
+ * una tabla: la lista viaja como JSON serializado en
+ * `resultado.meta1[0].json_result`, con la forma `{ label, val }`.
  *
- * El bloque no devuelve una tabla: la lista viaja como JSON serializado dentro
- * de `resultado.meta1[0].json_result`, con la forma `{ label, val }` (el `val`
- * es la fecha de corte que después reemplaza a la del usuario).
- *
- * Devuelve `[]` ante cualquier payload que no se pueda leer: el legado hace lo
- * mismo (`catch` → `filter1 = []`) y así el reporte se queda con su corte por
- * defecto en vez de romperse.
+ * `[]` ante un payload ilegible, igual que el legado: el reporte se queda con
+ * su corte por defecto en vez de romperse.
  */
 export function mapearPeriodos(r: IWinderResponse): OpcionFiltro[] {
   const meta1 = (r.body as TablaRegularResponseBody | null)?.resultado?.meta1;

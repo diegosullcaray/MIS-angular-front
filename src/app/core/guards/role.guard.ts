@@ -5,16 +5,11 @@ import { ShellStateService } from '../services/shell-state.service';
 import { ToastService } from '../../shared/services/toast.service';
 
 /**
- * Guard funcional de fábrica para control de roles.
+ * Guard de rol: `canActivate: [roleGuard('admin-sistema')]`. Si no alcanza,
+ * redirige a `/app/dashboard`.
  *
- * Uso en rutas:
- * ```typescript
- * canActivate: [roleGuard('admin-sistema')]
- * ```
- *
- * Si el rol del usuario no coincide, redirige a /app/dashboard.
- * Regla: un rol más permisivo incluye los roles menos permisivos.
- * Jerarquía: admin-sistema > admin-general > supervisor-area
+ * Un rol más permisivo incluye a los menos permisivos:
+ * admin-sistema > admin-general > supervisor-area.
  */
 export function roleGuard(rolRequerido: RolSlug): CanActivateFn {
   return () => {

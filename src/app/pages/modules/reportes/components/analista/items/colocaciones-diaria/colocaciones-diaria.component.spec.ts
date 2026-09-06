@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { AsesorSecService } from '../../services/asesor-sec.service';
 import { of, throwError } from 'rxjs';
 import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { ColocacionesDiariaComponent } from './colocaciones-diaria.component';
@@ -25,7 +26,7 @@ describe('ColocacionesDiariaComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [ColocacionesDiariaComponent],
-      providers: [
+      providers: [{ provide: AsesorSecService, useValue: { obtenerAsesores: servicioFalso.obtenerAsesores } }, 
         { provide: ColocacionesDiariaService, useValue: servicioFalso },
         ToastService,
         PrimeNgMessageService,
