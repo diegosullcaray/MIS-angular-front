@@ -115,6 +115,26 @@ Las que hay hoy:
 | `ReporteSimpleBase` | `reportes/ui/reporte-simple/` | Reporte de un bloque con selector de jerarquía: consulta en un `effect`, así que cambiar un filtro vuelve a consultar solo |
 | `ReporteBloquesBase` | `reportes/ui/reporte-simple/` | La variante de varios bloques |
 | `ReporteReasignadoTabsBase` | `Portafolio Reasignado/ui/` | Reporte con pestañas propias |
+
+### El panel de ventana
+
+Toda pantalla se monta dentro de `<app-window-panel>`, que trae el cromo estilo
+macOS. Además del semáforo (rojo = inicio, amarillo = explorador, verde = zoom)
+lleva **una flecha de volver**, que es lo que se usa para el paso anterior:
+
+```html
+<app-window-panel
+  titulo="Becas"
+  etiquetaVolver="Volver a Listas"
+  volverA="/app/analista/listas"
+>
+```
+
+- `conVolver` (por defecto `true`) la muestra u oculta.
+- `volverA` fija un destino; sin él, la flecha vuelve en el historial.
+
+No hace falta proyectar un botón propio en `[ventana-navegacion]`: ese slot
+queda para navegación adicional.
 | `SelectorAsesorBase` | `analista/ui/` | El selector de asesor: carga la lista una vez y expone `asesores`/`asesorSeleccionado`/`cargando` |
 | `ReporteAsesorBase<T>` | `analista/ui/` | Lo anterior más el flujo completo: consulta, vuelca el resultado, avisa si vino vacío y maneja el error |
 

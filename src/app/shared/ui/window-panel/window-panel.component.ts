@@ -1,5 +1,6 @@
 import { Component, ElementRef, computed, effect, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
 import { TooltipModule } from 'primeng/tooltip';
@@ -20,12 +21,20 @@ const RUTA_HOME = '/app/dashboard';
 export class WindowPanelComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly shell = inject(ShellStateService);
 
   /** Título de la ventana (centrado en la barra, como en Finder). */
   readonly titulo = input<string>('');
   /** Texto secundario junto al título (ej. "Consultas y referencias"). */
   readonly subtitulo = input<string>('');
+
+  /** Flecha de volver, a la derecha del semáforo. */
+  readonly conVolver = input<boolean>(true);
+  /** Destino explícito de la flecha. Vacío = volver en el historial. */
+  readonly volverA = input<string>('');
+  /** Tooltip/aria-label de la flecha. */
+  readonly etiquetaVolver = input<string>('Volver');
 
   /** Muestra el botón de actualizar en la esquina. */
   readonly permitirActualizar = input<boolean>(true);
@@ -51,6 +60,8 @@ export class WindowPanelComponent {
   readonly cerrar = output<void>();
   /** Se emite al pulsar la luz amarilla, antes de volver al panel neutro. */
   readonly minimizar = output<void>();
+  /** Se emite al pulsar la flecha, antes de navegar. */
+  readonly volver = output<void>();
 
   protected readonly pantallaCompleta = signal(false);
 
@@ -77,6 +88,20 @@ export class WindowPanelComponent {
     effect((onCleanup) => {
       onCleanup(() => document.removeEventListener('fullscreenchange', alCambiar));
     });
+  }
+
+  /**
+   * Flecha: vuelve al destino que fije la pantalla o, si no fijó ninguno, al
+   * paso anterior del historial.
+   */
+  protected onVolver(): void {
+    this.volver.emit();
+    const destino = this.volverA();
+    if (destino) {
+      void this.router.navigateByUrl(destino);
+      return;
+    }
+    this.location.back();
   }
 
   /** Luz roja: cierra la pantalla y vuelve al inicio del shell. */

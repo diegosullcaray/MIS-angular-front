@@ -3,18 +3,8 @@
   [titulo]="reporte()?.name ?? 'Reporte'"
   subtitulo="Power BI"
   [permitirActualizar]="false"
+  etiquetaVolver="Volver a Dashboards Integrados"
 >
-  <button
-    ventana-navegacion
-    type="button"
-    class="mis-window-btn"
-    (click)="volver()"
-    aria-label="Volver a Dashboards Integrados"
-    pTooltip="Volver"
-    tooltipPosition="bottom"
-  >
-    <i class="pi pi-arrow-left text-[14px]"></i>
-  </button>
 
   <div class="flex-1 min-h-0 rounded-lg border border-[var(--mis-border)] overflow-hidden">
     @if (cargando()) {

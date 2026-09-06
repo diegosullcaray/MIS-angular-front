@@ -33,10 +33,6 @@ describe('Caché de jerarquía', () => {
       getLevelHierarchy: vi.fn().mockReturnValue(respuesta('level_hierarchy', [RAIZ])),
     };
 
-    // El caché de jerarquía persiste en `sessionStorage`: sin vaciarlo, un test
-    // le serviría a otro el árbol ya resuelto y nadie pediría nada.
-    sessionStorage.clear();
-
     TestBed.configureTestingModule({
       imports: [HierSelectorComponent],
       providers: [{ provide: ModSysAdminService, useValue: antAdmin }, ShellStateService],

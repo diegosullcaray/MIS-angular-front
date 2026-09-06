@@ -5,18 +5,9 @@
   [permitirActualizar]="colaborador() !== null"
   etiquetaActualizar="Actualizar leads"
   (actualizar)="reintentar()"
+  etiquetaVolver="Volver a Listas"
+  volverA="/app/analista/listas"
 >
-  <button
-    ventana-navegacion
-    type="button"
-    class="mis-window-btn"
-    (click)="volver()"
-    aria-label="Volver a Listas"
-    pTooltip="Volver a Listas"
-    tooltipPosition="bottom"
-  >
-    <i class="pi pi-arrow-left text-[14px]"></i>
-  </button>
 
   @if (esAdmin()) {
     <button

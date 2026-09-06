@@ -18,16 +18,16 @@
        del rail, ver `sidebar.component.html`), y ese espacio liberado es el que
        permite mostrarlo también en mobile: es el ÚNICO lugar donde se ve la
        ubicación y desde donde se sube de nivel en el explorador. -->
-  <div class="flex items-center gap-2.5 min-w-0 overflow-hidden">
+  <!-- Toma el espacio libre (antes lo hacía un spacer aparte): así la etiqueta
+       del nivel actual dispone de todo el ancho sobrante y se recorta con
+       puntos suspensivos en vez de partirse en varias líneas. -->
+  <div class="flex flex-1 items-center gap-2.5 min-w-0 overflow-hidden">
     <p-breadcrumb
       class="header-breadcrumb block min-w-0 text-xs"
       [model]="breadcrumbItems()"
       [home]="breadcrumbHome"
     />
   </div>
-
-  <!-- Spacer -->
-  <div class="flex-1"></div>
 
   <!-- Acciones de cabecera minimalistas -->
   <div class="flex items-center gap-2 relative">

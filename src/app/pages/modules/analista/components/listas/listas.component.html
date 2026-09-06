@@ -1,15 +1,6 @@
-<app-window-panel titulo="Listas" [permitirActualizar]="false">
-  <button
-    ventana-navegacion
-    type="button"
-    class="mis-window-btn"
-    (click)="volver()"
-    aria-label="Volver"
-    pTooltip="Volver"
-    tooltipPosition="bottom"
-  >
-    <i class="pi pi-arrow-left text-[14px]"></i>
-  </button>
+<app-window-panel titulo="Listas" [permitirActualizar]="false"
+  etiquetaVolver="Volver"
+>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     @for (enlace of enlaces; track enlace.ruta) {

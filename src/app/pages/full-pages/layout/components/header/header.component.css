@@ -173,25 +173,40 @@
   font-size: var(--mis-text-sm);
 }
 
-/* En mobile solo el nodo actual va con su nombre; los antecedentes se colapsan
-   a ".." para que la ruta entre en una línea por profunda que sea. Se oculta la
-   etiqueta en vez de quitarla del DOM, así el enlace sigue siendo clickeable y
-   se puede subir de nivel tocando los puntos. */
-@media (max-width: 639px) {
-  .header-breadcrumb ::ng-deep .p-breadcrumb-item:not(:last-child) .p-breadcrumb-item-label {
-    display: none;
-  }
-
-  .header-breadcrumb ::ng-deep .p-breadcrumb-item:not(:last-child) .p-breadcrumb-item-link::after {
-    content: '..';
-    letter-spacing: 1px;
-  }
+/* El plegado a "… › Página" lo hace `breadcrumbItems()`, que deja un enlace real
+   al nivel de arriba. Acá solo queda impedir que la etiqueta que sobrevive se
+   parta en varias líneas: es lo que descuadraba el header en mobile. */
+.header-breadcrumb ::ng-deep .p-breadcrumb-item-label,
+.header-breadcrumb ::ng-deep .p-breadcrumb-item-link {
+  white-space: nowrap;
 }
 
-/* En pantallas angostas una ruta profunda no debe empujar el menú de usuario
-   fuera del header: la fila se desplaza en horizontal, sin barra a la vista. */
+/* El nivel actual cede el ancho sobrante y se recorta con puntos suspensivos;
+   los anteriores mantienen el suyo, que ya es corto. */
+.header-breadcrumb ::ng-deep .p-breadcrumb-list > li:last-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.header-breadcrumb ::ng-deep .p-breadcrumb-list > li:last-child .p-breadcrumb-item-link {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.header-breadcrumb ::ng-deep .p-breadcrumb-list > li:last-child .p-breadcrumb-item-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Una ruta profunda no debe empujar el menú de usuario fuera del header. Como
+   `breadcrumbItems()` ya la pliega a dos elementos, alcanza con recortar: no
+   hace falta desplazamiento horizontal. */
 .header-breadcrumb {
-  overflow-x: auto;
+  width: 100%;
+  overflow: hidden;
   scrollbar-width: none;
 }
 

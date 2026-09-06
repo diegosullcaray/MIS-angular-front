@@ -35,6 +35,19 @@
         ></button>
       }
 
+      @if (conVolver()) {
+        <button
+          type="button"
+          class="mis-window-btn mis-window-volver"
+          (click)="onVolver()"
+          [attr.aria-label]="etiquetaVolver()"
+          [pTooltip]="etiquetaVolver()"
+          tooltipPosition="bottom"
+        >
+          <i class="pi pi-arrow-left text-[14px]"></i>
+        </button>
+      }
+
       <ng-content select="[ventana-navegacion]" />
     </div>
 
