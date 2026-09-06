@@ -41,7 +41,7 @@
 
       <section class="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <!-- PRODUCTIVIDAD -->
-        <div class="mis-card p-4 flex flex-col gap-3">
+        <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-3">
           <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Productividad</span>
           <div class="flex items-baseline justify-between gap-2">
             <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
@@ -74,7 +74,7 @@
         </div>
 
         <!-- TICKET PROM. -->
-        <div class="mis-card p-4 flex flex-col gap-3">
+        <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-3">
           <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Ticket Prom.</span>
           <div class="flex items-baseline justify-between gap-2">
             <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
@@ -99,7 +99,7 @@
         </div>
 
         <!-- DESEMBOLSOS -->
-        <div class="mis-card p-4 flex flex-col gap-3">
+        <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-3">
           <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Desembolsos</span>
           <div class="flex items-baseline justify-between gap-2">
             <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
@@ -132,7 +132,7 @@
         </div>
 
         <!-- CANCELACIÓN VIG. -->
-        <div class="mis-card p-4 flex flex-col gap-3">
+        <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-3">
           <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Cancelación Vig.</span>
           <!-- El legado no la pide al backend: la despeja de desembolsos, variación de saldo y rodamiento. -->
           <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
@@ -150,7 +150,7 @@
         </div>
 
         <!-- CARTERA VIGENTE -->
-        <div class="mis-card p-4 flex flex-col gap-3">
+        <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-3">
           <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Cartera Vigente</span>
           <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
             {{ k.carteraVigente / 1000000 | number: '1.1-3' }}
@@ -176,7 +176,7 @@
         </div>
 
         <!-- RODAMIENTO (+ el desglose vigente / no vigente) -->
-        <div class="mis-card p-4 flex flex-col gap-3">
+        <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-3">
           <div class="flex items-baseline justify-between gap-2">
             <div class="flex flex-col gap-1">
               <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Rodamiento</span>
@@ -207,7 +207,7 @@
         </div>
 
         <!-- STOCK CLIENTES -->
-        <div class="mis-card p-4 flex flex-col gap-3">
+        <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-3">
           <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Stock Clientes</span>
           <div class="flex items-baseline justify-between gap-2">
             <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
@@ -232,7 +232,7 @@
         </div>
 
         <!-- CLIENTES NUEVOS -->
-        <div class="mis-card p-4 flex flex-col gap-3">
+        <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-3">
           <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Clientes Nuevos</span>
           <div class="flex items-baseline justify-between gap-2">
             <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">

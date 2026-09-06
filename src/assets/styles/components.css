@@ -1029,3 +1029,54 @@ app-explorador-sistema {
   flex: 1;
   min-height: 0;
 }
+
+/* ── Tarjeta KPI ──────────────────────────────────────────────
+   El estándar de `docs/02-arquitectura/05-guia-estilos-kpis-reportes.md`.
+   Vive acá y no en cada componente porque son ~40 líneas idénticas que se
+   copiaban por pantalla; el riel toma `--mis-primary`, así que un panel que
+   redefine ese token (la agrícola, en verde) lo hereda sin tocar nada. */
+.kpi-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-border);
+  box-shadow: var(--mis-shadow-sm);
+  transition: transform var(--mis-transition-base), box-shadow var(--mis-transition-base),
+    border-color var(--mis-transition-base);
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mis-shadow-md);
+  border-color: var(--mis-border-strong);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--mis-primary), transparent);
+  opacity: 0;
+  transition: opacity var(--mis-transition-fast);
+}
+
+.kpi-card:hover::before {
+  opacity: 1;
+}
+
+/* Badges de tendencia. El borde va con el color semántico a baja opacidad para
+   que el chip se apoye en el fondo claro sin encuadrarse. */
+.trend-badge-positive {
+  background-color: var(--mis-success-light);
+  color: var(--mis-success);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+}
+
+.trend-badge-negative {
+  background-color: var(--mis-danger-light);
+  color: var(--mis-danger);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}

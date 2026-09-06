@@ -12,6 +12,8 @@
  * verde claro no llega al contraste mínimo.
  */
 :host {
+  display: block;
+  width: 100%;
   --mis-primary: #15803d;
   --mis-primary-hover: #166534;
   --mis-primary-light: rgba(22, 163, 74, 0.12);

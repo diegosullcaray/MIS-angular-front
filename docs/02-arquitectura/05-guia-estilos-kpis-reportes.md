@@ -199,17 +199,23 @@ export interface TarjetaKpi {
 
 ---
 
-## 6. Qué usar: `<app-kpi-tile>` o la plantilla de esta guía
+## 6. Dónde viven los estilos
 
-Conviven dos piezas y no son intercambiables:
+Hay **un solo patrón de KPI** en reportes: el de esta guía. `<app-kpi-tile>` existía como
+segunda pieza con otra escala tipográfica y se retiró — su única pantalla
+(*Vinculación Cartera*) usa ahora `.kpi-card`.
 
-| | Cuándo |
-|---|---|
-| **La plantilla de esta guía** (`.kpi-card` en el HTML del ítem) | Reportes: la fila de KPIs que encabeza un reporte, con knob de cumplimiento o badge de tendencia. Es el caso por defecto. |
-| **`<app-kpi-tile>`** (`shared/ui/kpi-tile/`) | *Stat tile* suelto: una etiqueta, el valor en forma compacta (`4.2 M`) y la variación contra un periodo con nombre. Sin knob ni meta. |
+`.kpi-card`, `.trend-badge-positive` y `.trend-badge-negative` están definidas **una sola
+vez** en `src/assets/styles/components.css`. No hace falta copiarlas al CSS del componente:
+antes eran ~40 líneas idénticas repetidas por pantalla.
 
-Tienen escalas tipográficas distintas a propósito —el tile lleva el valor más
-grande porque va solo—, así que **no se mezclan en la misma fila**.
+El riel superior toma `--mis-primary`, así que una pantalla que redefine ese token en su
+`:host` —la cartera agrícola, en verde de división— lo hereda sin tocar nada.
+
+**La polaridad la decide el negocio, no el signo.** En *Monitor IMR* un valor negativo es
+favorable (la mora baja) y en *Monitor Salidas* es desfavorable. Al aplicar
+`trend-badge-*`, mirá qué significa el movimiento en esa pantalla antes de asumir que
+negativo es rojo.
 
 ## 7. Checklist de Validación
 

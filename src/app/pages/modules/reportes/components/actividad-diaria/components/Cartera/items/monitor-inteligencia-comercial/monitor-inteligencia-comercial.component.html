@@ -14,20 +14,24 @@
   } @else {
     <div class="grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-4 items-start">
       @for (col of columnas(); track col.titulo) {
-        <section class="mis-card p-3 flex flex-col gap-2" [class.ring-1]="col.style === 1" [class.ring-[var(--mis-primary)]]="col.style === 1">
+        <section class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-2" [class.ring-1]="col.style === 1" [class.ring-[var(--mis-primary)]]="col.style === 1">
           <h2 class="text-[12px] font-semibold uppercase tracking-wide text-[var(--mis-text-secondary)] m-0">{{ col.titulo }}</h2>
 
           @for (card of col.tarjetas; track $index) {
             <article class="rounded-lg border border-[var(--mis-border)] p-2.5 flex flex-col gap-1">
-              <span class="text-[11px] text-[var(--mis-text-tertiary)]">{{ card.label }}</span>
+              <span class="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] truncate">{{ card.label }}</span>
 
               @if (card.tipo === 'estandar') {
-                <span class="text-lg font-semibold text-[var(--mis-text-primary)] leading-tight">{{ card.valor }}</span>
+                <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight">{{ card.valor }}</span>
 
                 @if (card.tendencias?.length) {
                   <div class="flex flex-wrap gap-x-3 gap-y-0.5">
                     @for (t of card.tendencias; track $index) {
-                      <span class="text-[12px] font-medium" [style.color]="t.esPositivo ? 'var(--mis-success)' : 'var(--mis-danger)'">
+                      <span
+                        class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full"
+                        [class.trend-badge-positive]="t.esPositivo"
+                        [class.trend-badge-negative]="!t.esPositivo"
+                      >
                         {{ t.esPositivo ? '▲' : '▼' }} {{ t.valor }}
                         @if (t.subLabel) {
                           <span class="text-[var(--mis-text-tertiary)] font-normal">{{ t.subLabel }}</span>
@@ -52,9 +56,13 @@
                 <div class="grid grid-cols-2 gap-2">
                   @for (item of card.items; track $index) {
                     <div class="flex flex-col gap-0.5">
-                      <span class="text-[10px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">{{ item.label }}</span>
+                      <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] truncate">{{ item.label }}</span>
                       <span class="text-[15px] font-semibold text-[var(--mis-text-primary)] leading-tight">{{ item.valor }}</span>
-                      <span class="text-[11px] font-medium" [style.color]="item.esPositivo ? 'var(--mis-success)' : 'var(--mis-danger)'">
+                      <span
+                        class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full"
+                        [class.trend-badge-positive]="item.esPositivo"
+                        [class.trend-badge-negative]="!item.esPositivo"
+                      >
                         {{ item.esPositivo ? '▲' : '▼' }} {{ item.tendencia }}
                       </span>
                     </div>

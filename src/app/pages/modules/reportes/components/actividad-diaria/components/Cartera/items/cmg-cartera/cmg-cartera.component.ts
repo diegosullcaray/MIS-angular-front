@@ -34,7 +34,6 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
     WindowPanelComponent,
   ],
   templateUrl: './cmg-cartera.component.html',
-  styleUrl: './cmg-cartera.component.css',
 })
 export class CmgCarteraComponent {
   private readonly servicio = inject(CarteraRepositorioService);
