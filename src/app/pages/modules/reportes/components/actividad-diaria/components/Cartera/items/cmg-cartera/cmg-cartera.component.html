@@ -15,11 +15,11 @@
     <div class="tarjeta-cmg mis-card p-2 pl-4 flex items-center justify-between gap-2">
       <div class="flex flex-col gap-1.5 min-w-0">
         <!-- La etiqueta va arriba: es lo que dice QUÉ se está mirando. -->
-        <span class="text-[11px] font-semibold uppercase tracking-wide text-[var(--mis-text-tertiary)] truncate">
+        <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] truncate">
           {{ t.etiqueta }}
         </span>
 
-        <span class="text-[30px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums truncate">
+        <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums truncate">
           @if (t.valor === '' || t.valor === null) {
           —
           } @else if (isNumeroFinito(t.valor)) {
@@ -42,7 +42,7 @@
       </div>
 
       @if (t.cumplimiento !== undefined) {
-      <p-knob [ngModel]="valorAnillo(t)" readonly [size]="68" [strokeWidth]="7" valueTemplate="{value}%"
+      <p-knob [ngModel]="valorAnillo(t)" readonly [size]="54" [strokeWidth]="6" valueTemplate="{value}%"
         [valueColor]="colorAnillo(valorAnillo(t))" rangeColor="var(--mis-border)"
         textColor="var(--mis-text-secondary)" />
       }

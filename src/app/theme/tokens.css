@@ -94,6 +94,12 @@
    */
   --mis-primary-text: #1D396E;
 
+  /* Dorado de Kaypacha: color de marca del reconocimiento, igual en los dos
+     temas. El texto va navy en ambos (6.19:1); con el texto primario del tema
+     oscuro daría 1.56:1 sobre el mismo fondo. */
+  --mis-kaypacha-oro: #EFB810;
+  --mis-kaypacha-oro-texto: #1D396E;
+
   /* Secundario: Sky Blue (tomado del hover real del árbol de navegación STG) */
   --mis-secondary: #0094EA;
   --mis-secondary-hover: #0090E0;
@@ -200,6 +206,9 @@
   --mis-primary-hover: #4C81CC;
   --mis-primary-light: #1D2D45;
   --mis-primary-text: #8FBEF5;
+
+  --mis-kaypacha-oro: #EFB810;
+  --mis-kaypacha-oro-texto: #1D396E;
 
   --mis-secondary: #4DC3FF;
   --mis-secondary-hover: #00A2FF;

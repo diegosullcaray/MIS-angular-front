@@ -28,8 +28,8 @@
     <div class="grid gap-4 grid-cols-1 sm:grid-cols-3">
       <div class="mis-card p-5 flex items-center justify-between gap-4 border-l-4 border-l-[var(--mis-primary)] shadow-[var(--mis-shadow-md)]">
         <div class="flex flex-col gap-1.5 min-w-0">
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Total Operaciones</span>
-          <span class="text-[30px] leading-none font-bold text-[var(--mis-text-primary)] tabular-nums">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Total Operaciones</span>
+          <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
             {{ k.totalOperaciones | number: '1.0-0' }}
           </span>
         </div>
@@ -40,8 +40,8 @@
 
       <div class="mis-card p-5 flex items-center justify-between gap-4 border-l-4 border-l-[var(--mis-success)] shadow-[var(--mis-shadow-md)]">
         <div class="flex flex-col gap-1.5 min-w-0">
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Total Seguros (Colocados)</span>
-          <span class="text-[30px] leading-none font-bold text-[var(--mis-text-primary)] tabular-nums">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Total Seguros (Colocados)</span>
+          <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
             {{ k.totalSeguros | number: '1.0-0' }}
           </span>
         </div>
@@ -52,8 +52,8 @@
 
       <div class="mis-card p-5 flex items-center justify-between gap-4 border-l-4 border-l-[var(--mis-warning)] shadow-[var(--mis-shadow-md)]">
         <div class="flex flex-col gap-1.5 min-w-0">
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Penetración Global</span>
-          <span class="text-[30px] leading-none font-bold text-[var(--mis-text-primary)] tabular-nums">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Penetración Global</span>
+          <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
             {{ k.penetracionGlobal | percent: '1.2-2' }}
           </span>
         </div>
@@ -78,7 +78,7 @@
                cuál pesa más, que es lo que la lista de números planos no mostraba. -->
           <div class="mis-card p-3 flex flex-col gap-2 transition-shadow hover:shadow-[var(--mis-shadow-md)]">
             <span class="text-[11px] text-[var(--mis-text-tertiary)] truncate" [title]="tipo.etiqueta">{{ tipo.etiqueta }}</span>
-            <span class="text-[20px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+            <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
               {{ tipo.valor | number: '1.0-0' }}
             </span>
             <div class="h-1 rounded-full bg-[var(--mis-border)] overflow-hidden">

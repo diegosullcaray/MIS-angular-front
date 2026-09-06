@@ -42,9 +42,9 @@
       <section class="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <!-- PRODUCTIVIDAD -->
         <div class="mis-card p-4 flex flex-col gap-3">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Productividad</span>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Productividad</span>
           <div class="flex items-baseline justify-between gap-2">
-            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+            <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
               {{ k.productividad | number: '1.2-2' }}
             </span>
             <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">
@@ -75,9 +75,9 @@
 
         <!-- TICKET PROM. -->
         <div class="mis-card p-4 flex flex-col gap-3">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Ticket Prom.</span>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Ticket Prom.</span>
           <div class="flex items-baseline justify-between gap-2">
-            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+            <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
               {{ k.ticket / 1000 | number: '1.2-2' }}<span class="text-[13px] font-normal text-[var(--mis-text-tertiary)] ml-1">mil</span>
             </span>
             <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">
@@ -100,9 +100,9 @@
 
         <!-- DESEMBOLSOS -->
         <div class="mis-card p-4 flex flex-col gap-3">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Desembolsos</span>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Desembolsos</span>
           <div class="flex items-baseline justify-between gap-2">
-            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+            <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
               {{ k.desembolsos / 1000000 | number: '1.1-2' }}<span class="text-[13px] font-normal text-[var(--mis-text-tertiary)] ml-0.5">M</span>
             </span>
             <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">
@@ -133,9 +133,9 @@
 
         <!-- CANCELACIÓN VIG. -->
         <div class="mis-card p-4 flex flex-col gap-3">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Cancelación Vig.</span>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Cancelación Vig.</span>
           <!-- El legado no la pide al backend: la despeja de desembolsos, variación de saldo y rodamiento. -->
-          <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
             {{ k.cancelacionVigente / 1000 | number: '1.0-1' }}
           </span>
           <div class="flex flex-col gap-1">
@@ -151,8 +151,8 @@
 
         <!-- CARTERA VIGENTE -->
         <div class="mis-card p-4 flex flex-col gap-3">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Cartera Vigente</span>
-          <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Cartera Vigente</span>
+          <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
             {{ k.carteraVigente / 1000000 | number: '1.1-3' }}
           </span>
           <div class="grid grid-cols-3 gap-2 border-t border-[var(--mis-border)] pt-2 text-[11px]">
@@ -179,8 +179,8 @@
         <div class="mis-card p-4 flex flex-col gap-3">
           <div class="flex items-baseline justify-between gap-2">
             <div class="flex flex-col gap-1">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Rodamiento</span>
-              <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+              <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Rodamiento</span>
+              <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
                 {{ k.rodamiento / 1000 | number: '1.0-1' }}
               </span>
             </div>
@@ -190,14 +190,14 @@
           </div>
           <div class="grid grid-cols-2 gap-3 border-t border-[var(--mis-border)] pt-2">
             <div class="flex flex-col border-r border-[var(--mis-border)] pr-3">
-              <span class="text-[10px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">No Vigente</span>
+              <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">No Vigente</span>
               <span class="text-[16px] font-semibold tabular-nums text-[var(--mis-text-primary)]">{{ k.saldoNoVigente / 1000 | number: '1.0-1' }}</span>
               <span class="text-[11px] tabular-nums" [class]="k.tmmSaldoNoVigente >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
                 TMM {{ k.tmmSaldoNoVigente / 1000 | number: '1.0-1' }}
               </span>
             </div>
             <div class="flex flex-col">
-              <span class="text-[10px] uppercase tracking-wide text-[var(--mis-text-tertiary)]">Vigente</span>
+              <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Vigente</span>
               <span class="text-[16px] font-semibold tabular-nums text-[var(--mis-text-primary)]">{{ k.saldoVigente / 1000 | number: '1.0-0' }}</span>
               <span class="text-[11px] tabular-nums" [class]="k.tmmSaldoVigente >= 0 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]'">
                 TMM {{ k.tmmSaldoVigente / 1000 | number: '1.0-0' }}
@@ -208,9 +208,9 @@
 
         <!-- STOCK CLIENTES -->
         <div class="mis-card p-4 flex flex-col gap-3">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Stock Clientes</span>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Stock Clientes</span>
           <div class="flex items-baseline justify-between gap-2">
-            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+            <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
               {{ k.clientesStock / 1000 | number: '1.1-3' }}
             </span>
             <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">
@@ -233,9 +233,9 @@
 
         <!-- CLIENTES NUEVOS -->
         <div class="mis-card p-4 flex flex-col gap-3">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Clientes Nuevos</span>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">Clientes Nuevos</span>
           <div class="flex items-baseline justify-between gap-2">
-            <span class="text-[26px] leading-none font-semibold text-[var(--mis-text-primary)] tabular-nums">
+            <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
               {{ k.clientesNuevos | number: '1.0-0' }}
             </span>
             <div class="text-[11px] text-right leading-snug text-[var(--mis-text-tertiary)]">

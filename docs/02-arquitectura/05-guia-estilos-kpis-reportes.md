@@ -199,7 +199,19 @@ export interface TarjetaKpi {
 
 ---
 
-## 6. Checklist de Validación
+## 6. Qué usar: `<app-kpi-tile>` o la plantilla de esta guía
+
+Conviven dos piezas y no son intercambiables:
+
+| | Cuándo |
+|---|---|
+| **La plantilla de esta guía** (`.kpi-card` en el HTML del ítem) | Reportes: la fila de KPIs que encabeza un reporte, con knob de cumplimiento o badge de tendencia. Es el caso por defecto. |
+| **`<app-kpi-tile>`** (`shared/ui/kpi-tile/`) | *Stat tile* suelto: una etiqueta, el valor en forma compacta (`4.2 M`) y la variación contra un periodo con nombre. Sin knob ni meta. |
+
+Tienen escalas tipográficas distintas a propósito —el tile lleva el valor más
+grande porque va solo—, así que **no se mezclan en la misma fila**.
+
+## 7. Checklist de Validación
 
 Al implementar o migrar un nuevo reporte con KPIs, verificar:
 - [x] **Tokens Dark Mode:** La tarjeta usa `var(--mis-surface)` y no blancos fijos.

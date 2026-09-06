@@ -9,9 +9,11 @@
 }
 
 /* Estilos exactos del legado Kaypacha3 para cabecera de ventana y tablas */
+/* Tokens y no valores fijos: el azul de marca cambia de tono en tema oscuro
+   (#035096 → #3E6FB5) y el texto encima tiene que seguirlo. */
 :host ::ng-deep .kaypacha-window-bar {
-  background-color: rgb(3, 80, 150) !important;
-  color: #ffffff !important;
+  background-color: var(--mis-primary) !important;
+  color: var(--mis-text-on-primary) !important;
 }
 
 /* Permitir que col.style de JSONNHEAD1 controle los colores dinámicos de las cabeceras (cyan, rosa, oliva, etc.) */
