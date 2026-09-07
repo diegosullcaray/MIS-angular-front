@@ -249,7 +249,45 @@ El estándar visual de las tarjetas está en
 
 ---
 
-## 7. Receta corta
+## 7. De dónde salen los colores de la tabla
+
+Ninguno de los dos componentes pinta la tabla: el color lo pone el preset
+`MisTheme` (`src/app/theme/mis-theme.ts`), en su bloque `components.datatable`.
+Ahí cada token de PrimeNG apunta a una variable del Host:
+
+| Token de PrimeNG | Variable | Qué pinta |
+|---|---|---|
+| `row.background` | `--mis-surface` | El fondo de una fila |
+| `row.stripedBackground` | `--mis-panel-bg` | La fila alterna de `[stripedRows]` |
+| `header.background`, `headerCell.background`, `footer*` | `--mis-panel-bg` | Encabezado y pie |
+| `bodyCell.borderColor` | `--mis-border` | La división **entre filas** |
+| `root.borderColor`, `header*.borderColor` | `--mis-border-strong` | El contorno y el corte del encabezado |
+| `row.hoverBackground` | `--mis-hover-bg` | El realce al pasar el cursor |
+| `row.selectedBackground` | `--mis-primary-light` | La fila seleccionada |
+
+Dos consecuencias prácticas:
+
+1. **Para cambiar el aspecto de todas las tablas se toca `tokens.css`, no los
+   componentes.** Y como los tokens ya cambian de valor con `.dark`, el bloque
+   del preset es uno solo para los dos temas.
+2. **Aura declara tres de esos tokens solo dentro de `colorScheme`**
+   (`root.borderColor`, `row.stripedBackground` y `bodyCell.selectedBorderColor`),
+   y lo declarado por esquema le gana a lo declarado arriba. Por eso el preset
+   los repite dentro de `colorScheme.light` y `colorScheme.dark` con el mismo
+   valor. Si se quitan esas tres líneas, las filas alternas vuelven al
+   `#020617` de Aura — ver **D-01** en
+   [`../03-auditoria/05-incidencias.md`](../03-auditoria/05-incidencias.md).
+
+Lo que sí manda sobre el token es el color que trae el backend por fila o por
+celda (`background`, `background_<columna>`): eso lo aplica el componente en
+línea y gana siempre. Es lo que dibuja los semáforos.
+
+Los umbrales de contraste de los divisores están fijados en
+`tokens.paleta.spec.ts`.
+
+---
+
+## 8. Receta corta
 
 Para una tabla nueva:
 
@@ -262,7 +300,7 @@ Para una tabla nueva:
 5. Componente con `<app-tabla-reporte>` o `<app-tabla-dinamica>`.
 6. Tests: unitario del mapeo y del componente.
 
-## 8. Errores frecuentes
+## 9. Errores frecuentes
 
 | Síntoma | Causa |
 |---|---|

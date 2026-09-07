@@ -111,6 +111,7 @@ describe.each(TEMAS)('Tokens de color — tema $nombre', ({ tokens }) => {
         razon(tokens, 'mis-border', 'mis-surface'),
       );
     });
+
   });
 
   describe('texto terciario (deshabilitado y metadatos, AA grande 3:1)', () => {
@@ -122,6 +123,30 @@ describe.each(TEMAS)('Tokens de color — tema $nombre', ({ tokens }) => {
         CONTRASTE.textoGrandeAA,
       );
     });
+  });
+});
+
+/**
+ * Divisores de tabla en modo oscuro.
+ *
+ * Las tablas dibujan sus divisiones con `--mis-border` (entre filas) y
+ * `--mis-border-strong` (contorno y corte del encabezado) — ver el bloque
+ * `datatable` de `mis-theme.ts`. El 1.2:1 de "bordes decorativos" es el piso de
+ * "se ve algo"; sobre el navy oscuro una retícula de datos necesita más margen,
+ * y los valores originales (1.24:1 y 1.61:1) se quedaban justo en ese piso.
+ *
+ * En claro no aplica: ahí el divisor apoya sobre blanco y el problema nunca se
+ * dio, así que sus tokens quedaron como estaban.
+ */
+describe('Tokens de color — divisores de tabla en oscuro', () => {
+  const { tokens } = TEMAS.find((t) => t.nombre === 'oscuro')!;
+
+  it('el divisor entre filas llega a 1.4:1', () => {
+    expect(razon(tokens, 'mis-border', 'mis-surface')).toBeGreaterThanOrEqual(1.4);
+  });
+
+  it('el divisor fuerte llega a 2:1', () => {
+    expect(razon(tokens, 'mis-border-strong', 'mis-surface')).toBeGreaterThanOrEqual(2);
   });
 });
 

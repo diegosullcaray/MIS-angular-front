@@ -27,13 +27,27 @@ describe('LoadingOverlayComponent', () => {
     expect(overlay).toBeNull();
   });
 
-  it('muestra el overlay y el spinner cuando isLoading es true', () => {
+  it('muestra el overlay con el Puma cuando isLoading es true', () => {
     mockEstado.set({ isLoading: true, requestCount: 1 });
     const fixture = TestBed.createComponent(LoadingOverlayComponent);
     fixture.detectChanges();
 
     const overlay = fixture.nativeElement.querySelector('.loading-overlay-wrapper');
     expect(overlay).toBeTruthy();
+    expect(overlay.getAttribute('aria-busy')).toBe('true');
+    expect(overlay.querySelector('img.loading-puma')?.getAttribute('src')).toContain('puma-carga.png');
+  });
+
+  // La mascota es decorativa: quien usa lector de pantalla necesita el texto,
+  // no la descripción del dibujo.
+  it('el Puma queda fuera del árbol de accesibilidad y siempre hay texto', () => {
+    mockEstado.set({ isLoading: true, requestCount: 1 });
+    const fixture = TestBed.createComponent(LoadingOverlayComponent);
+    fixture.detectChanges();
+
+    const overlay = fixture.nativeElement.querySelector('.loading-overlay-wrapper');
+    expect(overlay.querySelector('img')?.getAttribute('aria-hidden')).toBe('true');
+    expect(overlay.textContent).toContain('Cargando');
   });
 
   it('muestra el mensaje personalizado si está presente', () => {

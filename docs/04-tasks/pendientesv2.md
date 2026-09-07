@@ -8,15 +8,15 @@ Este documento centraliza y detalla todas las modificaciones de diseño de inter
 
 | # | Requerimiento | Tipo | Estado | Ficheros Clave / Ubicación |
 |---|---|---|---|---|
-| **1** | Tipografía más Gerencial | UI | Planificado | `src/app/theme/tokens.css` y `src/theme/mis-theme.ts` |
-| **2** | Redondear Decimales en KPIs | UI/UX | Planificado | CSS de `.kpi-card` y pipe de Angular en HTML |
-| **3** | Mantenimiento de Modo Oscuro en Tablas | UI | Planificado | `tokens.css` (bloque `.dark`) y `tokens.paleta.spec.ts` |
-| **4** | El Puma en Pantalla de Carga (Loading) | UI/UX | Planificado | `loading-overlay.component.ts` y SVG/PNG en assets |
-| **5** | Retirar Saludo de Bienvenida en Home | UX | Planificado | `principal.component.html` o layout principal |
-| **6** | Historial de Últimos Reportes (Home) | UX/Funcional | Planificado | `Preferencias` en core, `ReporteSimpleBase` y Home Grid |
-| **7** | Salvaguardar Funcionalidad de Drilldown | Funcional | Mandatorio | Mapeos en `utils/` de reportes y templates HTML de tablas |
-| **8** | Botón Amarillo macOS para Volver Atrás | UI/UX | Planificado | `<app-window-panel>` (header de ventana estilo macOS) |
-| **9** | Preservación de Estilo en Gráficos | UI/UX | Mandatorio | `PALETA_SERIES`, `PALETA_TRAMOS` y tests de accesibilidad |
+| **1** | Tipografía más Gerencial | UI | ✅ Implementado | `src/assets/fonts/Inter-Variable-*.woff2`, `src/assets/styles/fonts.css`, `src/app/theme/tokens.css` |
+| **2** | Redondear Decimales en KPIs | UI/UX | ✅ Implementado | Plantillas de los 5 reportes con montos en decimales |
+| **3** | Mantenimiento de Modo Oscuro en Tablas | UI | ✅ Implementado | `src/app/theme/mis-theme.ts`, `tokens.css` (`.dark`), `tokens.paleta.spec.ts` |
+| **4** | El Puma en Pantalla de Carga (Loading) | UI/UX | ✅ Implementado | `loading-overlay.component.*`, `src/assets/images/fc/puma-carga.png` |
+| **5** | Retirar Saludo de Bienvenida en Home | UX | ✅ Implementado | `src/app/pages/modules/home/components/inicio/` |
+| **6** | Historial de Últimos Reportes (Home) | UX/Funcional | ✅ Implementado | `core/preferencias/`, `core/recientes/`, `home/components/inicio/` |
+| **7** | Salvaguardar Funcionalidad de Drilldown | Funcional | ✅ Verificado | `hier-selector/` y `tablas/` sin cambios respecto de `main` |
+| **8** | Botón Amarillo macOS para Volver Atrás | UI/UX | ✅ Implementado | `shared/ui/window-panel/` |
+| **9** | Preservación de Estilo en Gráficos | UI/UX | ✅ Verificado | `graficos/` sin cambios; `paleta-colores.armonia.spec.ts` en verde |
 
 ---
 
@@ -114,3 +114,82 @@ Para asegurar que las modificaciones no rompan nada de lo que ya funciona perfec
    ```bash
    npx playwright test e2e/responsive-movil.spec.ts
    ```
+
+---
+
+## 📌 CIERRE: CÓMO QUEDÓ IMPLEMENTADO
+
+Las 9 tareas están cerradas. Donde la implementación se apartó de lo que pedía
+este documento, el motivo:
+
+### Tarea 5 · El Home no era `principal.component.html`
+
+`/app/dashboard` carga `HOME_ROUTES` → `src/app/pages/modules/home/components/inicio/`.
+Ese componente era **solo** el saludo, así que las tareas 5 y 6 se hicieron
+juntas: se retiró el saludo y en su lugar quedó el grid de recientes, dentro de
+un `<app-window-panel>` sin semáforo. El panel no es decoración: el contenido del
+shell se apoya sobre el wallpaper, que no garantiza contraste — el título sobre
+el logo de la marca era ilegible en oscuro. Es el mismo patrón que ya usa el
+explorador de sistemas.
+
+### Tarea 6 · Se guarda la ruta, y la captura es por router
+
+- **Ruta, no `cod_rep`.** El documento proponía `recientes?: string[]` con
+  códigos de reporte. Un `cod_rep` no identifica una URL del Host —el mismo
+  código vive bajo rutas distintas—, así que no permite volver a la pantalla.
+  Se guarda `{ ruta, titulo, fechaVisita, categoria? }`.
+- **Router, no las clases base.** Inyectar preferencias en `ReporteSimpleBase` y
+  `ReporteBloquesBase` obligaba a que cada una de las ~80 subclases pasara su
+  `cod_rep` y su título, porque las bases no los conocen. `RecientesService`
+  escucha `NavigationEnd` y cubre las 91 pantallas sin tocar ningún componente
+  de reporte; los reportes nuevos quedan cubiertos sin hacer nada.
+
+### Tarea 3 · El problema no estaba solo en los tokens
+
+Cambiar `--mis-surface`, `--mis-border` y `--mis-border-strong` no movía nada:
+las tablas se pintaban con la escala `surface` de Aura, no con los tokens del
+Host. Primero hubo que mapear el `datatable` del preset a las variables `--mis-*`
+y recién después subir los divisores. El detalle está en **D-01** de
+[`../03-auditoria/05-incidencias.md`](../03-auditoria/05-incidencias.md) y el
+mapeo, documentado en
+[`../02-arquitectura/03-tablas-de-reportes.md`](../02-arquitectura/03-tablas-de-reportes.md).
+
+**Solo se tocó el bloque `.dark`.** En claro el divisor apoya sobre blanco y
+nunca fue el problema; subirlo habría encuadrado toda la interfaz clara sin que
+nadie lo pidiera.
+
+### Tarea 2 · Entero salvo porcentajes y tasas
+
+No fue un reemplazo global de `'1.0-2'` por `'1.0-0'`: se revisó tarjeta por
+tarjeta. Quedaron con decimales los porcentajes, las tasas y los valores ya
+escalados (÷1000 o ÷1M, donde el decimal carga la magnitud — *Gestión
+Comercial*). La regla quedó en
+[`../02-arquitectura/05-guia-estilos-kpis-reportes.md`](../02-arquitectura/05-guia-estilos-kpis-reportes.md).
+
+### Tarea 8 · Se perdió «minimizar»
+
+El botón amarillo no era decorativo: llamaba a `onMinimizar()`, que dejaba el
+shell mostrando el explorador del sistema. Al darle la función de volver, esa
+acción desaparece — el explorador sigue accesible desde el rail. Se eliminaron
+`onMinimizar()`, el output `minimizar` y la flecha de «Volver» de la barra;
+ninguna pantalla escuchaba ese output.
+
+### Tarea 7 y 9 · Nombres del legado
+
+`(celdaClick)` y `NodoConsulta` son nombres del STG; en el Host el drilldown son
+`(nodoSeleccionado)` de `HierSelectorComponent` y `(filaSeleccionada)` de
+`<app-tabla-reporte>`. Ambos archivos —y toda la carpeta `graficos/`— quedaron
+**byte a byte iguales a `main`**, con sus specs en verde.
+
+### Estado de la verificación
+
+```
+npx tsc --noEmit -p tsconfig.json     limpio
+npx ng test --watch=false             1800 en verde (base: 1787)
+npx playwright test                   519 en verde, 1 omitida (base: 509)
+npm run build:prod                    bundle limpio
+```
+
+De paso se corrigió un defecto que venía en rojo desde el 02-09 y que no es de
+este lote: la luz del semáforo de los diálogos desbordaba 2 px (**D-02** en el
+historial de incidencias).

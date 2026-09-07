@@ -16,11 +16,11 @@
         ></button>
         <button
           type="button"
-          class="mis-window-light mis-window-light--minimizar"
-          data-glifo="−"
-          (click)="onMinimizar()"
-          aria-label="Minimizar y elegir otra opción del menú lateral"
-          pTooltip="Minimizar: elegir otra opción del menú"
+          class="mis-window-light mis-window-light--volver"
+          data-glifo="‹"
+          (click)="onVolver()"
+          [attr.aria-label]="etiquetaVolver()"
+          [pTooltip]="etiquetaVolver()"
           tooltipPosition="bottom"
         ></button>
         <button
@@ -33,19 +33,6 @@
           [pTooltip]="etiquetaZoom()"
           tooltipPosition="bottom"
         ></button>
-      }
-
-      @if (conVolver()) {
-        <button
-          type="button"
-          class="mis-window-btn mis-window-volver"
-          (click)="onVolver()"
-          [attr.aria-label]="etiquetaVolver()"
-          [pTooltip]="etiquetaVolver()"
-          tooltipPosition="bottom"
-        >
-          <i class="pi pi-arrow-left text-[14px]"></i>
-        </button>
       }
 
       <ng-content select="[ventana-navegacion]" />

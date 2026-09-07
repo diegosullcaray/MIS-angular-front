@@ -7,7 +7,7 @@
   --mis-window-bar-h: 40px;
 
   /* Fuente principal: Anek Latin con fallback macOS/Inter */
-  --mis-font-family: 'Anek Latin', 'Anek Devanagari', -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  --mis-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Anek Latin', sans-serif;
 
   /* Paleta del Ranking (extraída de la imagen de referencia STG/legado) */
   --mis-ranking-header-bg: #0B4F8C;
@@ -175,8 +175,12 @@
   --mis-sidebar-bg: rgba(9, 16, 29, 0.72);
   --mis-nav-panel-bg: rgba(22, 34, 56, 0.70);
   --mis-panel-bg: #1A2740;
-  --mis-border: rgba(0,162,255,0.14);
-  --mis-border-strong: rgba(0,162,255,0.28);
+  /* Divisores de tabla en oscuro. Sobre `--mis-surface` (#162034) los valores
+     anteriores (0.14 / 0.28) daban 1.24:1 y 1.61:1: la retícula existía pero
+     no se leía. Estos dan 1.55:1 y 2.12:1 — visibles sin volverse un marco
+     duro, que es lo que se pedía evitar. */
+  --mis-border: rgba(0,162,255,0.26);
+  --mis-border-strong: rgba(0,162,255,0.42);
   --mis-border-control: #0075B8;
 
   --mis-window-bar-bg: linear-gradient(180deg, rgba(38,52,79,0.92) 0%, rgba(26,37,58,0.88) 100%);

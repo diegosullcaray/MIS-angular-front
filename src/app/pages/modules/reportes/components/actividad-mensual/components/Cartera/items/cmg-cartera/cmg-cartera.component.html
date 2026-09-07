@@ -47,7 +47,7 @@
                 <!-- Valor Principal -->
                 <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight truncate">
                   @if (isNumeroFinito(tarjeta.valor)) {
-                    {{ +tarjeta.valor | number: '1.0-2' }}
+                    {{ +tarjeta.valor | number: '1.0-0' }}
                   } @else {
                     {{ tarjeta.valor }}
                   }

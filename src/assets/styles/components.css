@@ -145,7 +145,8 @@
 }
 
 .mis-window-light--cerrar { background: #ff5f57; }
-.mis-window-light--minimizar { background: #febc2e; }
+/* El amarillo navega hacia atrás (antes minimizaba al explorador). */
+.mis-window-light--volver { background: #febc2e; }
 .mis-window-light--zoom { background: #28c840; }
 
 /* ── Título ───────────────────────────────────────────────── */
@@ -442,10 +443,22 @@
   outline-offset: 2px;
 }
 
-/* Los glifos aparecen al pasar por la barra, no por cada luz (macOS). */
+/* Los glifos aparecen al pasar por la barra, no por cada luz (macOS).
+   Van posicionados: el SVG de PrimeNG mide 14 px de ancho intrínseco y, como
+   ítem flex, seguía reservándolos aunque se pinte a 8 — la luz de 12 px
+   quedaba desbordada (lo detecta `e2e/comunicados.spec.ts`). Fuera del flujo
+   no cuenta para el ancho y se centra igual. */
+.p-dialog .p-dialog-header-actions button {
+  position: relative;
+}
+
 .p-dialog .p-dialog-header-actions svg,
 .p-dialog .p-dialog-header-actions .p-icon,
 .p-dialog .p-dialog-header-actions .pi {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 8px;
   height: 8px;
   font-size: 8px;

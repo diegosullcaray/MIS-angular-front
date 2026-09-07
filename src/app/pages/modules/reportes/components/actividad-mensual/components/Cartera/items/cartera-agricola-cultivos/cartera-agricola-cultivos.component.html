@@ -48,7 +48,7 @@
                     [class.trend-badge-positive]="t.senal > 0"
                     [class.trend-badge-negative]="t.senal < 0"
                   >
-                    {{ t.actual - t.anterior | number: (t.formato === 'moneda' ? '1.0-2' : '1.0-0') }}
+                    {{ t.actual - t.anterior | number: '1.0-0' }}
                     <i class="pi text-[10px]" [class.pi-arrow-up]="t.senal > 0" [class.pi-arrow-down]="t.senal < 0"></i>
                   </span>
                 }
@@ -56,14 +56,14 @@
 
               <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight">
                 @if (t.formato === 'moneda') {
-                  S/ {{ t.actual | number: '1.0-2' }}
+                  S/ {{ t.actual | number: '1.0-0' }}
                 } @else {
                   {{ t.actual | number: '1.0-0' }}
                 }
               </span>
 
               <span class="text-[11px] sm:text-[12px] font-medium text-[var(--mis-text-secondary)]">
-                Mes anterior: {{ t.anterior | number: (t.formato === 'moneda' ? '1.0-2' : '1.0-0') }}
+                Mes anterior: {{ t.anterior | number: '1.0-0' }}
               </span>
             </div>
           }

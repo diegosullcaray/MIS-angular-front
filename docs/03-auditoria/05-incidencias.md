@@ -9,7 +9,10 @@ El criterio para separar unos de otros: si el test falla y **la corrección va e
 `src/`**, es un defecto del producto. Si la corrección va en el test, era el
 test el que estaba mal.
 
-Estado final: **1783 pruebas unitarias en verde** y **491 de Playwright en
+La sección **D** se agregó después: recoge lo que apareció al implementar los
+pendientes de `docs/04-tasks/pendientesv2.md`, con el mismo criterio.
+
+Estado final: **1800 pruebas unitarias en verde** y **519 de Playwright en
 verde** (1 omitida), sin ninguna falla.
 
 ---
@@ -212,6 +215,18 @@ hallazgo **C-1** de la auditoría de seguridad (suplantación de identidad en el
 build de producción): sin él, esa protección estaba caída sin que nadie lo
 notara.
 
+**Reincidencia (2ª vez).** El commit `7a29e84` de `main` volvió a borrar
+`scripts/verificar-bundle.mjs`, y esta vez se llevó también
+`scripts/generar-tokens-paleta.mjs` — el que mantiene `tokens.paleta.ts` en
+sincronía con `tokens.css` y sin el cual no se puede cerrar ninguna tarea de
+color. `npm run build:prod` quedó roto otra vez. Se restauraron ambos desde
+`21db84d^`.
+
+Que haya pasado dos veces dice que el problema no es el borrado sino que
+**nada avisa**: `verify:bundle` solo se ejecuta en `build:prod`, que no corre en
+cada cambio. Mientras no haya un paso de CI que lo dispare, conviene revisar
+`scripts/` después de cada merge de `main`.
+
 ---
 
 ## C · Defectos en las propias pruebas (6)
@@ -281,6 +296,69 @@ lo que el test mira es el HTML que sale, no de dónde salen sus datos.
 
 ---
 
+## D · Defectos encontrados al implementar los pendientes v2 (3)
+
+### D-01 · Las tablas en oscuro no leían los tokens del sistema
+
+La tarea 3 pedía ajustar `--mis-surface`, `--mis-border` y `--mis-border-strong`
+del bloque `.dark` para que se vieran las divisiones de las tablas. Medido en el
+navegador, **cambiar esos tokens no movía nada**: las filas se pintaban con
+`#020617` (el `surface.950` de Aura, un gris casi negro ajeno al navy del shell)
+y sus divisores daban 1.30:1 contra ese fondo.
+
+La causa son dos cosas encadenadas:
+
+1. El preset solo mapeaba `datatable.root.borderColor`; el fondo de fila, el del
+   encabezado y el de las filas alternas seguían saliendo de la escala `surface`
+   de Aura.
+2. Aura declara `root.borderColor`, `row.stripedBackground` y
+   `bodyCell.selectedBorderColor` **solo dentro de `colorScheme`**, y lo que se
+   declara por esquema le gana a lo declarado en el nivel de arriba. Un primer
+   intento que los puso arriba no tuvo efecto: `--p-datatable-border-color`
+   seguía en `{surface.800}`.
+
+**Corrección** — en `mis-theme.ts` el bloque `datatable` mapea ahora fila,
+encabezado, pie y divisiones a `--mis-surface`, `--mis-panel-bg` y
+`--mis-border*`, y repite los tres tokens conflictivos dentro de `colorScheme`
+(el mismo valor en claro y en oscuro: son las variables CSS las que cambian).
+Recién entonces subir los divisores en `tokens.css` (0.14 → 0.26 y 0.28 → 0.42)
+tuvo efecto: 1.24:1 → 1.55:1 entre filas y 1.61:1 → 2.12:1 en el contorno.
+
+**Lección** — antes de tocar un token hay que comprobar que la pantalla lo lee.
+Bastó un `getComputedStyle` sobre una fila real para descubrir que no.
+
+### D-02 · La luz del semáforo de los diálogos desbordaba 2 px
+
+`e2e/comunicados.spec.ts` fallaba en los dos navegadores: dentro de `.p-dialog`
+había un elemento con `scrollWidth` 14 y `clientWidth` 12 — el botón de cerrar,
+la luz roja de 12 px del cromo macOS.
+
+El ícono es un SVG de PrimeNG con ancho intrínseco de 14 px que el CSS pinta a
+8. Como **ítem flex** seguía reservando sus 14 px de contribución mínima, aunque
+su caja midiera 8. Sacarlo del flujo es lo único que lo corrige (`overflow`,
+`contain` y bajar los atributos del SVG no cambian nada; está medido).
+
+**Corrección** — los glifos del semáforo de diálogo van `position: absolute`
+centrados sobre el botón, que pasa a `position: relative`. Se ve exactamente
+igual, incluida la aparición del glifo al pasar por la barra.
+
+**No es una regresión de este lote.** La aserción existe desde `24b5153`
+(01-09) y el estilo de las luces entró en `ccde35e` (02-09): el spec venía en
+rojo desde entonces.
+
+### D-03 · El E2E se borraba a sí mismo el historial que acababa de anotar
+
+La prueba «anota el reporte visitado y lo deja en el Home» navegaba al reporte,
+volvía al Home y no encontraba nada. No era el producto: `inyectarPreferencias`
+usa `addInitScript`, que corre en **cada carga de página**, así que el segundo
+`page.goto` volvía a escribir las preferencias sembradas y pisaba lo anotado.
+
+**Corrección** — la captura por router se prueba en un bloque aparte que no
+siembra preferencias, y se verifica leyendo `localStorage`. El render del Home
+se prueba sembrando el historial, que es el otro lado del contrato.
+
+---
+
 ## Lo que este historial deja como lección
 
 1. **Corregir el token no siempre corrige la pantalla.** A-03 es el caso: había
@@ -296,3 +374,8 @@ lo que el test mira es el HTML que sale, no de dónde salen sus datos.
    mismo error: medir sin modelar la intención. Una tabla con scroll propio y una
    etiqueta truncada no son desbordes, y un test que los reporta se vuelve ruido
    que la gente aprende a ignorar.
+5. **Un token no sirve si la pantalla no lo lee.** D-01: se pueden ajustar
+   colores durante horas sobre una variable que ningún píxel consume. Medir en el
+   navegador antes de decidir el valor cuesta un minuto y evita esa tarde.
+6. **Lo que borra `main` no siempre se nota.** B-07 pasó dos veces porque el
+   único que ejecuta el script es un build que no corre en cada cambio.

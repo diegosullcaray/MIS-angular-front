@@ -26,6 +26,7 @@ import { ANUNCIOS_DEL_SISTEMA } from './core/preferencias/infraestructura/anunci
 import { FUENTE_BUSQUEDA } from './shared/ui/buscador/fuente-busqueda';
 import { FuenteNavegacionService } from './pages/full-pages/layout/services/fuente-navegacion.service';
 import { FuenteDashboardsService } from './pages/modules/dashboard/services/fuente-dashboards.service';
+import { RecientesService } from './core/recientes/recientes.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -53,6 +54,10 @@ export const appConfig: ApplicationConfig = {
     // Aplica tema, fondo, acento y modo de menú antes del primer render
     // (evita el parpadeo del aspecto por defecto).
     provideAppInitializer(() => void inject(PreferenciasService)),
+
+    // Anota en preferencias cada reporte visitado, para los accesos rápidos del
+    // Home. Escucha al router, así que hay que arrancarlo una vez al inicio.
+    provideAppInitializer(() => inject(RecientesService).iniciar()),
 
     // PrimeNG con tema personalizado macOS
     providePrimeNG({

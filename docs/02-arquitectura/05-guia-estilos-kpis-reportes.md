@@ -217,7 +217,26 @@ favorable (la mora baja) y en *Monitor Salidas* es desfavorable. Al aplicar
 `trend-badge-*`, mirá qué significa el movimiento en esa pantalla antes de asumir que
 negativo es rojo.
 
-## 7. Checklist de Validación
+**La tipografía es Inter**, auto-alojada en `src/assets/fonts/` y declarada en
+`src/assets/styles/fonts.css` (variable, woff2, partida en `latin` y `latin-ext`
+por `unicode-range`). Encabeza `--mis-font-family`; Anek Latin queda al final de
+la cadena como respaldo. **No se toca la escala tipográfica**: el `rem` del
+proyecto está escalado —`w-11` rinde 41 px, no 44— y moverla rompería los
+objetivos táctiles que fija la batería responsive.
+
+## 7. Cuántos decimales
+
+El valor de una tarjeta se formatea con `| number: '…'` y la regla es la
+magnitud, no el gusto:
+
+| Qué mide la tarjeta | Formato | Por qué |
+|---|---|---|
+| Montos e importes (`S/`) | `'1.0-0'` | Los céntimos son ruido en una cifra gerencial |
+| Conteos (clientes, operaciones) | `'1.0-0'` | No existen medias operaciones |
+| Porcentajes y tasas | `'1.1-2'` o `'1.0-2'` | El decimal **es** la métrica: 12,4 % y 12 % no dicen lo mismo |
+| Valores ya escalados (÷1000, ÷1M) | conservan decimales | Ahí el decimal carga la magnitud — es el caso de *Gestión Comercial* |
+
+## 8. Checklist de Validación
 
 Al implementar o migrar un nuevo reporte con KPIs, verificar:
 - [x] **Tokens Dark Mode:** La tarjeta usa `var(--mis-surface)` y no blancos fijos.
@@ -225,3 +244,4 @@ Al implementar o migrar un nuevo reporte con KPIs, verificar:
 - [x] **Deltas y Puntos Básicos:** Si la métrica compara tasas porcentuales, el delta se expresa en puntos básicos (`pbs`) y con signo explícito (`+534 pbs` / `-534 pbs`).
 - [x] **Knob Circular:** El color del texto es legible en Dark Mode (`textColor="var(--mis-text-primary)"`) y el aro de fondo usa `rangeColor="var(--mis-border)"`.
 - [x] **Responsividad:** El grid y el contenido se adaptan a resoluciones móviles (desde 360px de ancho) sin romper la estructura.
+- [x] **Decimales:** Montos y conteos van enteros (`'1.0-0'`); los porcentajes y las tasas conservan su decimal (ver sección 7).

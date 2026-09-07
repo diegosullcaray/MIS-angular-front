@@ -203,10 +203,27 @@ export interface PreferenciasAnuncios {
   readonly silenciar: boolean;
 }
 
+/**
+ * Un reporte abierto por el usuario. Se guarda la **ruta** y no el `cod_rep`:
+ * es lo que hace falta para volver, y hay pantallas que no tienen un código
+ * único.
+ */
+export interface ReporteReciente {
+  readonly ruta: string;
+  readonly titulo: string;
+  /** Epoch en ms; ordena la lista y alimenta el "hace un rato". */
+  readonly fechaVisita: number;
+  readonly categoria?: string;
+}
+
+/** Cuántos accesos rápidos conserva el Home. */
+export const MAX_RECIENTES = 6;
+
 export interface Preferencias {
   readonly apariencia: PreferenciasApariencia;
   readonly estructura: PreferenciasEstructura;
   readonly anuncios: PreferenciasAnuncios;
+  readonly recientes: readonly ReporteReciente[];
 }
 
 /** Estado de fábrica: es el aspecto actual del Host, sin ninguna elección hecha. */
@@ -226,6 +243,7 @@ export const PREFERENCIAS_POR_DEFECTO: Preferencias = {
     vistos: [],
     silenciar: false,
   },
+  recientes: [],
 };
 
 // ─── Saneamiento ────────────────────────────────────────────────────────────
@@ -244,6 +262,22 @@ function hex(valor: unknown, porDefecto: string): string {
 
 function objeto(valor: unknown): Record<string, unknown> {
   return typeof valor === 'object' && valor !== null ? (valor as Record<string, unknown>) : {};
+}
+
+/** Descarta cualquier entrada a la que le falte lo mínimo para poder abrirla. */
+function recientes(valor: unknown): readonly ReporteReciente[] {
+  if (!Array.isArray(valor)) return [];
+
+  return valor
+    .map((c) => objeto(c))
+    .filter((c) => typeof c['ruta'] === 'string' && typeof c['titulo'] === 'string')
+    .map((c) => ({
+      ruta: c['ruta'] as string,
+      titulo: c['titulo'] as string,
+      fechaVisita: typeof c['fechaVisita'] === 'number' ? c['fechaVisita'] : 0,
+      ...(typeof c['categoria'] === 'string' ? { categoria: c['categoria'] } : {}),
+    }))
+    .slice(0, MAX_RECIENTES);
 }
 
 /**
@@ -279,6 +313,7 @@ export function sanearPreferencias(crudo: unknown): Preferencias {
         : base.anuncios.vistos,
       silenciar: booleano(anuncios['silenciar'], base.anuncios.silenciar),
     },
+    recientes: recientes(raiz['recientes']),
   };
 }
 

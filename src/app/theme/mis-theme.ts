@@ -187,14 +187,74 @@ export const MisTheme = definePreset(Aura, {
     }
   },
   components: {
-    // El borderColor de Aura es casi invisible sobre fondo translúcido: separadores con el tinte navy de --mis-border-strong.
+    /**
+     * Las tablas siguen los tokens del Host: `--mis-surface` en las filas,
+     * `--mis-panel-bg` en encabezado y pie, y `--mis-border*` en las
+     * divisiones. Un solo bloque sirve para los dos temas porque son las
+     * propias variables CSS las que cambian con `.dark` en <html>.
+     *
+     * Antes las filas se pintaban con el gris casi negro de Aura (#020617),
+     * ajeno al navy del resto del shell, y sus divisores quedaban en 1.3:1
+     * contra ese fondo — la retícula se perdía en oscuro.
+     */
     datatable: {
+      header: {
+        background: 'var(--mis-panel-bg)',
+        borderColor: 'var(--mis-border-strong)',
+        color: 'var(--mis-text-primary)'
+      },
+      headerCell: {
+        background: 'var(--mis-panel-bg)',
+        hoverBackground: 'var(--mis-hover-bg)',
+        selectedBackground: 'var(--mis-primary-light)',
+        borderColor: 'var(--mis-border-strong)',
+        color: 'var(--mis-text-primary)',
+        hoverColor: 'var(--mis-text-primary)',
+        selectedColor: 'var(--mis-text-primary)'
+      },
+      row: {
+        background: 'var(--mis-surface)',
+        hoverBackground: 'var(--mis-hover-bg)',
+        selectedBackground: 'var(--mis-primary-light)',
+        color: 'var(--mis-text-primary)',
+        hoverColor: 'var(--mis-text-primary)',
+        selectedColor: 'var(--mis-text-primary)'
+      },
+      // El divisor entre filas es el normal, no el fuerte: el fuerte encuadra
+      // la tabla y separa encabezado de cuerpo, y usarlo en cada fila
+      // devolvería la retícula dura que se quiere evitar.
+      bodyCell: { borderColor: 'var(--mis-border)' },
+      footer: {
+        background: 'var(--mis-panel-bg)',
+        borderColor: 'var(--mis-border-strong)',
+        color: 'var(--mis-text-primary)'
+      },
+      footerCell: {
+        background: 'var(--mis-panel-bg)',
+        borderColor: 'var(--mis-border-strong)',
+        color: 'var(--mis-text-primary)'
+      },
+      sortIcon: {
+        color: 'var(--mis-text-tertiary)',
+        hoverColor: 'var(--mis-text-primary)'
+      },
+      /**
+       * Aura declara estos tres SOLO por esquema de color, y lo que declara por
+       * esquema le gana a lo de arriba: si no se repiten acá, el contorno de la
+       * tabla vuelve al `{surface.800}` de Aura y las filas pares al
+       * `{surface.950}` (#020617, el gris casi negro). Los dos bloques son
+       * iguales a propósito — son las variables `--mis-*` las que cambian.
+       */
       colorScheme: {
         light: {
-          root: { borderColor: 'rgba(29,57,110,0.18)' }
+          root: { borderColor: 'var(--mis-border-strong)' },
+          row: { stripedBackground: 'var(--mis-panel-bg)' },
+          bodyCell: { selectedBorderColor: 'var(--mis-primary)' }
         },
         dark: {
-          root: { borderColor: 'rgba(0,162,255,0.20)' }
+          root: { borderColor: 'var(--mis-border-strong)' },
+          row: { stripedBackground: 'var(--mis-panel-bg)' },
+          bodyCell: { selectedBorderColor: 'var(--mis-primary)' }
         }
       }
     },

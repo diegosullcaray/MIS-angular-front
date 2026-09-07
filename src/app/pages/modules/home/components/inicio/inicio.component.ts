@@ -1,45 +1,38 @@
-import { Component, computed, inject } from '@angular/core';
-import {provideIcons } from '@ng-icons/core';
-import { lucideTrophy } from '@ng-icons/lucide';
-import { ShellStateService } from '../../../../../core/services/shell-state.service';
-
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
+import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [],
-  viewProviders: [provideIcons({ lucideTrophy })],
+  imports: [RouterLink, EmptyStateComponent, WindowPanelComponent],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.css',
 })
 export class InicioComponent {
-  protected readonly shell = inject(ShellStateService);
+  private readonly preferencias = inject(PreferenciasService);
 
-  constructor() {
+  /** Los últimos reportes abiertos, del más reciente al más antiguo. */
+  protected readonly recientes = this.preferencias.recientes;
+
+  /**
+   * Antigüedad en palabras: en un acceso rápido importa "qué tan reciente",
+   * no la hora exacta. Pasada una semana ya conviene la fecha.
+   */
+  protected desde(fechaVisita: number): string {
+    const minutos = Math.floor((Date.now() - fechaVisita) / 60_000);
+    if (minutos < 1) return 'Hace un momento';
+    if (minutos < 60) return `Hace ${minutos} min`;
+
+    const horas = Math.floor(minutos / 60);
+    if (horas < 24) return `Hace ${horas} h`;
+
+    const dias = Math.floor(horas / 24);
+    if (dias === 1) return 'Ayer';
+    if (dias < 7) return `Hace ${dias} días`;
+
+    return new Date(fechaVisita).toLocaleDateString('es-PE', { day: '2-digit', month: 'short' });
   }
-
-protected readonly nombreCorto = computed(() => {
-  const dataCruda = this.shell.usuarioActivo()?.nombre ?? '';
-
-  // 1. Limpiamos "¡Hola, " y el "!" del string original
-  const nombreLimpio = dataCruda.replace(/¡Hola,\s*|!/g, '').trim();
-
-  // Si está vacío, retornamos vacío
-  if (!nombreLimpio) return '';
-
-  // 2. Separamos las palabras por espacios
-  // Ejemplo: ['SANCHEZ', 'QUISPE', 'OSCAR', 'ANDRE']
-  const partes = nombreLimpio.split(/\s+/);
-
-  // Verificamos que tenga al menos 3 partes (2 apellidos y 1 nombre) para evitar errores
-  if (partes.length >= 3) {
-    const segundoApellido = partes[1]; // Índice 1: QUISPE
-    const primerNombre = partes[2];    // Índice 2: OSCAR
-    
-    return `${primerNombre} ${segundoApellido}`;
-  }
-
-  // Fallback: si no tiene el formato esperado, devolvemos el texto limpio
-  return nombreLimpio;
-});
 }

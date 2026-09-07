@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Location } from '@angular/common';
 import { provideRouter, Router } from '@angular/router';
 import { WindowPanelComponent } from './window-panel.component';
 import { ShellStateService } from '../../../core/services/shell-state.service';
@@ -84,17 +85,27 @@ describe('WindowPanelComponent', () => {
     expect(navegar).toHaveBeenCalledWith('/app/dashboard');
   });
 
-  it('la luz amarilla deja a la vista el explorador del sistema, sin navegar', () => {
-    const fixture = crear();
+  it('la luz amarilla navega al destino que fija la pantalla', () => {
+    const fixture = crear({ volverA: '/app/analista/listas' });
     const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
     const emitido = vi.fn();
-    fixture.componentInstance.minimizar.subscribe(emitido);
+    fixture.componentInstance.volver.subscribe(emitido);
 
-    elemento(fixture, '.mis-window-light--minimizar')!.click();
+    elemento(fixture, '.mis-window-light--volver')!.click();
 
     expect(emitido).toHaveBeenCalled();
-    expect(shell.contenidoPendienteSeleccion()).toBe(true);
-    // La ruta no cambia: el contenido sigue montado y vuelve al elegir opción.
+    expect(navegar).toHaveBeenCalledWith('/app/analista/listas');
+  });
+
+  /** Sin `volverA` la navegación es un paso atrás en el historial. */
+  it('sin destino fijo, la luz amarilla retrocede en el historial', () => {
+    const fixture = crear();
+    const atras = vi.spyOn(TestBed.inject(Location), 'back');
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
+
+    elemento(fixture, '.mis-window-light--volver')!.click();
+
+    expect(atras).toHaveBeenCalled();
     expect(navegar).not.toHaveBeenCalled();
   });
 

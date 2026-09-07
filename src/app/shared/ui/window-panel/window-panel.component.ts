@@ -4,7 +4,6 @@ import { Location } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
 import { TooltipModule } from 'primeng/tooltip';
-import { ShellStateService } from '../../../core/services/shell-state.service';
 
 /** Destino de la luz roja: el inicio del shell. */
 const RUTA_HOME = '/app/dashboard';
@@ -22,18 +21,15 @@ export class WindowPanelComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
-  private readonly shell = inject(ShellStateService);
 
   /** Título de la ventana (centrado en la barra, como en Finder). */
   readonly titulo = input<string>('');
   /** Texto secundario junto al título (ej. "Consultas y referencias"). */
   readonly subtitulo = input<string>('');
 
-  /** Flecha de volver, a la derecha del semáforo. */
-  readonly conVolver = input<boolean>(true);
-  /** Destino explícito de la flecha. Vacío = volver en el historial. */
+  /** Destino explícito del botón amarillo. Vacío = volver en el historial. */
   readonly volverA = input<string>('');
-  /** Tooltip/aria-label de la flecha. */
+  /** Tooltip/aria-label del botón amarillo. */
   readonly etiquetaVolver = input<string>('Volver');
 
   /** Muestra el botón de actualizar en la esquina. */
@@ -58,9 +54,7 @@ export class WindowPanelComponent {
   readonly actualizar = output<void>();
   /** Se emite al pulsar la luz roja, antes de navegar al inicio. */
   readonly cerrar = output<void>();
-  /** Se emite al pulsar la luz amarilla, antes de volver al panel neutro. */
-  readonly minimizar = output<void>();
-  /** Se emite al pulsar la flecha, antes de navegar. */
+  /** Se emite al pulsar la luz amarilla, antes de navegar. */
   readonly volver = output<void>();
 
   protected readonly pantallaCompleta = signal(false);
@@ -91,8 +85,8 @@ export class WindowPanelComponent {
   }
 
   /**
-   * Flecha: vuelve al destino que fije la pantalla o, si no fijó ninguno, al
-   * paso anterior del historial.
+   * Luz amarilla: vuelve al destino que fije la pantalla o, si no fijó ninguno,
+   * al paso anterior del historial.
    */
   protected onVolver(): void {
     this.volver.emit();
@@ -108,12 +102,6 @@ export class WindowPanelComponent {
   protected onCerrar(): void {
     this.cerrar.emit();
     void this.router.navigateByUrl(RUTA_HOME);
-  }
-
-  /** Luz amarilla: deja el shell en espera mostrando el explorador del sistema; la ruta no cambia, así que el contenido vuelve intacto. */
-  protected onMinimizar(): void {
-    this.minimizar.emit();
-    this.shell.setContenidoPendienteSeleccion(true);
   }
 
   /** Luz verde: pide pantalla completa e ignora el rechazo — el estado real lo confirma `fullscreenchange`. */

@@ -1,18 +1,11 @@
-.dashboard-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--mis-space-6);
+/* La tarjeta es el enlace entero: el color lo ponen los tokens de texto, no el
+   azul del navegador. */
+.reciente-card {
+  color: inherit;
+  text-decoration: none;
 }
 
-.welcome-title {
-    font-size: var(--mis-text-2xl);
-    font-weight: var(--mis-font-bold);
-    color: var(--mis-primary-text);
-    margin: 0 0 var(--mis-space-1);
-}
-
-.welcome-subtitle {
-    font-size: var(--mis-text-base);
-    color: var(--mis-text-secondary);
-    margin: 0;
+.reciente-card:focus-visible {
+  outline: 2px solid var(--mis-primary);
+  outline-offset: 2px;
 }

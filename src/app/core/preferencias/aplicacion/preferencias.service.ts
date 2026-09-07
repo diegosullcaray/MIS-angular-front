@@ -2,13 +2,14 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { ThemeService } from '../../../shared/services/theme.service';
 import { AparienciaDomAdaptador } from '../infraestructura/apariencia-dom.adaptador';
 import { REPOSITORIO_PREFERENCIAS } from '../dominio/repositorio-preferencias.puerto';
-import { PREFERENCIAS_POR_DEFECTO } from '../dominio/preferencias.model';
+import { MAX_RECIENTES, PREFERENCIAS_POR_DEFECTO } from '../dominio/preferencias.model';
 import type {
   ModoSidebar,
   ModoTema,
   Preferencias,
   PreferenciasApariencia,
   PreferenciasEstructura,
+  ReporteReciente,
   VistaExplorador,
 } from '../dominio/preferencias.model';
 
@@ -25,6 +26,7 @@ export class PreferenciasService {
   readonly apariencia = computed(() => this._preferencias().apariencia);
   readonly estructura = computed(() => this._preferencias().estructura);
   readonly anuncios = computed(() => this._preferencias().anuncios);
+  readonly recientes = computed(() => this._preferencias().recientes);
 
   /** `true` cuando el usuario no cambió nada: habilita el botón de restablecer. */
   readonly esPorDefecto = computed(
@@ -95,6 +97,36 @@ export class PreferenciasService {
   /** Vuelve a habilitar los anuncios ya cerrados — la contraparte de "no mostrar más". */
   reiniciarAnuncios(): void {
     this.actualizar((p) => ({ ...p, anuncios: { vistos: [], silenciar: false } }));
+  }
+
+  // ─── Reportes recientes ───────────────────────────────────────────────────
+
+  /**
+   * Deja el reporte al frente del historial de accesos rápidos del Home.
+   *
+   * Si ya estaba, no se duplica: se quita de donde estuviera y vuelve arriba
+   * con la fecha nueva, que es lo que hace que la lista sea "los últimos" y no
+   * "los primeros".
+   */
+  registrarReporteReciente(ruta: string, titulo: string, categoria?: string): void {
+    if (!ruta || !titulo) return;
+
+    const entrada: ReporteReciente = {
+      ruta,
+      titulo,
+      fechaVisita: Date.now(),
+      ...(categoria ? { categoria } : {}),
+    };
+
+    this.actualizar((p) => ({
+      ...p,
+      recientes: [entrada, ...p.recientes.filter((r) => r.ruta !== ruta)].slice(0, MAX_RECIENTES),
+    }));
+  }
+
+  /** Vacía el historial sin tocar el resto de las preferencias. */
+  limpiarRecientes(): void {
+    this.actualizar((p) => ({ ...p, recientes: [] }));
   }
 
   // ─── Ciclo de vida ────────────────────────────────────────────────────────

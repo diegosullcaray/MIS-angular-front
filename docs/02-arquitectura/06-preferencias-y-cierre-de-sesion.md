@@ -37,7 +37,8 @@ Todo el árbol va en **una sola clave** de `localStorage`, `mis.preferencias`:
 {
   "apariencia": { "tema": "oscuro", "fondo": "institucional", "colorFondo": "#1d396e", "acento": "#00a2ff" },
   "estructura": { "modoSidebar": "estatico", "etiquetasSidebar": true, "vistaExplorador": "cuadricula" },
-  "anuncios":   { "vistos": [], "silenciar": false }
+  "anuncios":   { "vistos": [], "silenciar": false },
+  "recientes":  [{ "ruta": "/app/actividades/dest-credito", "titulo": "Destino de Crédito", "categoria": "Actividades", "fechaVisita": 1757270400000 }]
 }
 ```
 
@@ -49,6 +50,31 @@ no llega nunca a escribirse como variable CSS.
 `localStorage` es hoy el único adaptador del puerto `RepositorioPreferencias`.
 Cambiarlo por uno contra el backend es cambiar un `provide` en `app.config.ts`:
 ni el dominio ni los casos de uso se enteran.
+
+## Reportes recientes
+
+`recientes` es el historial que el Home muestra como accesos rápidos: los
+últimos **6** reportes abiertos, del más nuevo al más viejo. Se guarda la
+**ruta**, no el `cod_rep`: es lo que hace falta para volver a la pantalla, y el
+`cod_rep` no identifica una URL del Host.
+
+Quien lo anota es `RecientesService` (`core/recientes/`), que escucha
+`NavigationEnd` del router y se arranca una vez desde `app.config.ts`. Escuchar
+al router y no a los componentes es lo que hace que cubra las 91 pantallas sin
+que ninguna colabore: no hay nada que agregar al crear un reporte nuevo.
+
+- Descarta lo que no es un reporte: cualquier cosa fuera de `/app`, las rutas de
+  un solo segmento (índices de módulo) y `dashboard`, `login` y `error`.
+- Descarta la query string: `?fec=…` no cambia la identidad del reporte, así que
+  visitarlo con otra fecha no crea una entrada nueva.
+- El título sale de la misma fuente que el breadcrumb del header:
+  `MenuStgService.buscarPorRuta()` si el árbol del STG ya cargó, y si no las
+  etiquetas del Host (`SEGMENTO_LABELS`). La categoría es el nodo padre.
+- `registrarReporteReciente()` desduplica por ruta: revisitar un reporte lo
+  devuelve al frente con la fecha nueva, no agrega una segunda tarjeta.
+
+Como todo lo demás, se borra al cerrar sesión — `olvidar()` repone las
+preferencias de fábrica, y las de fábrica traen el historial vacío.
 
 ## Cómo se aplica
 
@@ -180,10 +206,14 @@ se acaba de cerrar.
 
 - Unitarios: `anuncio.model.spec.ts` (la regla anti-spam), `anuncios.service.spec.ts`,
   `preferencias.service.spec.ts` (persistencia y variables CSS aplicadas),
+  `recientes.service.spec.ts` (qué rutas se anotan y cuáles no),
+  `inicio.component.spec.ts` (el grid del Home y el tiempo relativo),
   `limpieza-sesion.service.spec.ts` y `almacenamiento-navegador.spec.ts` (borrado total).
-- E2E: `e2e/comunicados.spec.ts` (se abre en el primer ingreso y no vuelve) y
-  `e2e/configuracion.spec.ts` (el fondo se aplica y persiste, el selector de
-  color recibe el puntero, ninguna pantalla genera scroll horizontal).
+- E2E: `e2e/comunicados.spec.ts` (se abre en el primer ingreso y no vuelve),
+  `e2e/home-recientes.spec.ts` (el Home sin saludo, el estado vacío, el grid y la
+  captura por router) y `e2e/configuracion.spec.ts` (el fondo se aplica y
+  persiste, el selector de color recibe el puntero, ninguna pantalla genera
+  scroll horizontal).
 - `inyectarSesionVigente` siembra los comunicados silenciados: sin eso su
   máscara modal taparía lo que prueban los demás specs. `comunicados.spec.ts`
   usa `inyectarSesionSinPreferencias` para verlos, como un usuario nuevo.
