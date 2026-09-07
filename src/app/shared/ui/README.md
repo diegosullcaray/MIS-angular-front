@@ -15,12 +15,10 @@ Cada carpeta tiene su propio README con la API y ejemplos.
 | [`graficos/`](./graficos/README.md) | Todas las gráficas, sobre Highcharts |
 | [`hier-selector/`](./hier-selector/README.md) | Selector de jerarquía organizativa en cascada |
 | [`inline-error/`](./inline-error/README.md) | Error de API dentro de la vista, con reintento |
-| [`kpi-tile/`](./kpi-tile/README.md) | Tarjeta de indicador: valor compacto y variación con periodo |
 | [`list-skeleton/`](./list-skeleton/README.md) | Skeleton de tabla mientras cargan datos |
 | [`loading-overlay/`](./loading-overlay/README.md) | Spinner global (vía `LoadingService`) |
 | [`mapas/`](./mapas/README.md) | Mapas sobre MapLibre (`<app-mapa-ubicacion>`) |
 | [`redirect-overlay/`](./redirect-overlay/README.md) | Transición al salir a una plataforma externa |
-| [`reporte-simple/`](./reporte-simple/README.md) | Contenedor reutilizable para reportes con jerarquía, tablas y bloques |
 | [`tablas/`](./tablas/README.md) | Multi-encabezado, columnas anidadas y celdas editables |
 | [`window-panel/`](./window-panel/README.md) | Panel de módulo con cromo de ventana macOS |
 
@@ -37,6 +35,10 @@ Un componente compartido necesita tipos, y no todos son de UI. El criterio:
 
 Por eso `reportes/models/tabla-reporte.model.ts` existe todavía: importa de acá el contrato de
 render y le suma el sobre que devuelve su motor de reportes.
+
+`ReporteSimpleComponent` y sus bases no viven en esta libreria: estan en
+`src/app/pages/modules/reportes/ui/reporte-simple/` porque conocen la jerarquia y los contratos de
+reportes. La guia de componentes compartidos esta en `docs/components/component-catalog.md`.
 
 También se aceptan contenedores de composición como `reporte-simple`: si la pieza solo define la
 estructura visual y la integración con `app-hier-selector` / `app-tabla-reporte`, entonces es un
