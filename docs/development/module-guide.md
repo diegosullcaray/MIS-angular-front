@@ -12,4 +12,4 @@ pages/modules/<modulo>/
   items/       pantallas
 ```
 
-Para agregar un reporte: documentar el contrato, registrar `cod_rep`, definir modelos y mapeos, implementar el servicio, crear la pantalla y añadir pruebas unitarias y E2E.
+Para agregar un reporte: documentar el contrato, registrar `cod_rep`, definir modelos y mapeos, implementar el servicio, crear la pantalla y añadir pruebas unitarias y E2E. La secuencia detallada esta en [report creation guide](../architecture/report-creation-guide.md).

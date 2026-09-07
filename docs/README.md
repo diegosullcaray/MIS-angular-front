@@ -31,7 +31,6 @@ canónicas siguientes.
 - [Decisiones arquitectónicas](./architecture/decision-records.md)
 - [Seguridad](./security/README.md)
 - [Modelo de amenazas](./security/threat-model.md)
-- [Modelo SQL de accesos](./architecture/api-contracts/access-model.md)
 
 ## Por dónde empezar
 
@@ -43,19 +42,10 @@ canónicas siguientes.
 | Consultar las rutas vigentes | [`architecture/module-inventory.md`](./architecture/module-inventory.md) |
 | Agregar o tocar un módulo | [`development/module-guide.md`](./development/module-guide.md) |
 | Crear la tabla de un reporte | [`architecture/reporting-contracts.md`](./architecture/reporting-contracts.md) |
+| Crear un reporte paso a paso | [`architecture/report-creation-guide.md`](./architecture/report-creation-guide.md) |
 | Entender un término del payload o del negocio | [`business/glossary.md`](./business/glossary.md) |
 | Saber por qué algo carga lento o no carga | [`reports/performance/legacy-comparison.md`](./reports/performance/legacy-comparison.md) |
 | Saber qué pruebas existen | [`development/test-inventory.md`](./development/test-inventory.md) |
-
-## Índice
-
-### Archivo histórico
-
-| Documento | Contenido |
-|---|---|
-Los documentos numerados antiguos no deben usarse para nuevas referencias. Las
-auditorías, decisiones y contratos fueron absorbidos por `security/`,
-`architecture/` y `reports/`.
 
 ## Cómo se mantiene esta documentación
 
@@ -65,3 +55,5 @@ auditorías, decisiones y contratos fueron absorbidos por `security/`,
   métricas— no va en un `.md`: se lee del código.
 - Lo que sí va: el **porqué** de una decisión, los contratos con el backend que
   no se deducen del código, y las trampas que ya nos costaron un bug.
+- Cada carpeta canónica debe tener un `README.md` cuando necesite navegación
+  propia. No crear índices vacíos ni duplicar el estado global en otra carpeta.

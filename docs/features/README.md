@@ -6,3 +6,4 @@ La implementacion actual de los modulos se describe en [module guide](../develop
 
 - [Flujos principales](./user-flows.md)
 - [Plantilla de feature](./feature-template.md)
+- [Ficha de reporte](./report-spec-template.md)

@@ -14,4 +14,4 @@ La fuente de verdad visual del frontend son los tokens `--mis-*` en `src/app/the
 - [Component catalog](./component-catalog.md)
 - [Accessibility and UI states](./accessibility.md)
 - [Storybook](./storybook/README.md)
-- [Estados compartidos](./states/README.md)
+- [Global state](../states/README.md)
