@@ -4,4 +4,7 @@ Esta carpeta separa evidencia automatica de la documentacion normativa. Los arch
 
 - [Coverage](./coverage/README.md)
 - [Performance](./performance/README.md)
+- [Quality](./quality/README.md)
+- [Evidence policy](./evidence-policy.md)
+- [Report template](./report-template.md)
 - Auditorias funcionales e historicas: [Quality](./quality/) y [Performance](./performance/)

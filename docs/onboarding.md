@@ -8,6 +8,7 @@
 4. Leer [como funciona el sistema](./architecture/system-overview.md).
 5. Consultar el [glosario de negocio](./business/glossary.md) y los [contratos de datos](./architecture/api-contracts/README.md).
 6. Ejecutar las pruebas unitarias y E2E antes de modificar un flujo.
+7. Revisar [las convenciones de desarrollo](./development/conventions.md) y el [modelo de estados](./states/state-model.md).
 
 ## Regla de datos
 
@@ -22,3 +23,4 @@ El frontend presenta datos; no es la autoridad de autorizacion. La autorizacion 
 | Desarrollo local y pruebas | [Development](./development/) |
 | Arquitectura y contratos | [Architecture](./architecture/) |
 | Seguridad | [Security](./security/) |
+| Evidencia de pruebas | [Reports](./reports/) |
