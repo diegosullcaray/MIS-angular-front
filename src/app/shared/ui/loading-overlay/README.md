@@ -1,13 +1,17 @@
 # `<app-loading-overlay>`
 
-Pantalla de carga completa, con el Puma institucional latiendo (`animate-pulse`). Cubre todo,
+Pantalla de carga completa: un anillo girando con el Puma de espera en el centro. Cubre todo,
 incluidos los diálogos, mientras haya peticiones en vuelo.
 
-La imagen es `assets/images/fc/puma-carga.png` — 110×180 px y 26 KB, recortada del original de
-Kaypacha (770×1288, 736 KB), que es demasiado pesado para algo que aparece en cada carga. Se le
-quitó además la sombra de piso que el original trae pintada: sobre el velo oscuro del overlay se
-veía como un parche blanco. Se pinta a 85×139 para que quede nítida en pantallas densas. Va con `alt=""` y `aria-hidden`: quien usa
-lector de pantalla escucha el texto de estado, no una descripción del dibujo.
+El anillo es un `<p-progress-spinner>` y la imagen es `assets/images/fc/avatars/mis_wait.png`, el
+Puma institucional de espera. **Es la misma composición —y el mismo archivo— que usan
+[`<app-redirect-overlay>`](../redirect-overlay/) y el spinner del login**, que ya lo descargan
+antes de que aparezca esta pantalla: reusarlo no suma peso, es la misma entrada de caché.
+
+El anillo es lo que comunica que algo está en curso, así que con `prefers-reduced-motion` no se
+apaga: gira más lento (2.4 s), igual que el botón de actualizar de los paneles. La imagen va con
+`alt=""` y `aria-hidden`: quien usa lector de pantalla escucha el texto de estado, no una
+descripción del dibujo.
 
 **No se instancia por pantalla.** Ya está montado una sola vez en el shell
 (`shell-layout.component.html`); desde cualquier módulo se controla con `LoadingService`. El

@@ -32,7 +32,7 @@ test.describe('Home · reportes recientes', () => {
     await page.goto('/app/dashboard');
 
     await expect(page.getByText('Todavía no abriste ningún reporte')).toBeVisible();
-    await expect(page.locator('a.reciente-card')).toHaveCount(0);
+    await expect(page.locator('a.reciente-fila')).toHaveCount(0);
   });
 
   test('lista los recientes sembrados y navega al hacer clic', async ({ page }) => {
@@ -50,7 +50,7 @@ test.describe('Home · reportes recientes', () => {
 
     await page.goto('/app/dashboard');
 
-    const tarjeta = page.locator('a.reciente-card');
+    const tarjeta = page.locator('a.reciente-fila');
     await expect(tarjeta).toHaveCount(1);
     await expect(tarjeta).toContainText('Destino de Crédito');
     await expect(tarjeta).toContainText('Hace 2 h');
@@ -59,7 +59,7 @@ test.describe('Home · reportes recientes', () => {
     await expect(page).toHaveURL(/\/app\/actividades\/dest-credito$/);
   });
 
-  test('el grid de recientes no desborda a lo ancho', async ({ page }) => {
+  test('la lista de recientes no desborda a lo ancho', async ({ page }) => {
     await inyectarPreferencias(page, {
       anuncios: { vistos: [], silenciar: true },
       recientes: Array.from({ length: 6 }, (_, i) => ({
@@ -71,7 +71,7 @@ test.describe('Home · reportes recientes', () => {
     });
 
     await page.goto('/app/dashboard');
-    await expect(page.locator('a.reciente-card')).toHaveCount(6);
+    await expect(page.locator('a.reciente-fila')).toHaveCount(6);
 
     const desborde = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth

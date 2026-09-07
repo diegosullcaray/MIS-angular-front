@@ -1,10 +1,12 @@
 import { Component, inject } from '@angular/core';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LoadingService } from '../../services/loading.service';
 
 /** Pantalla de carga a pantalla completa — cubre cualquier contenido (incluidos diálogos) mientras `LoadingService.isLoading` es `true`. */
 @Component({
   selector: 'app-loading-overlay',
   standalone: true,
+  imports: [ProgressSpinnerModule],
   templateUrl: './loading-overlay.component.html',
   styleUrl: './loading-overlay.component.css',
 })

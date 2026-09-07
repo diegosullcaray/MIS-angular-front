@@ -8,14 +8,11 @@
   animation: loadingOverlayFadeIn 0.15s ease-out;
 }
 
-/* El PNG (110×180, 26 KB) se pinta más chico de lo que mide, así que queda
-   nítido en pantallas densas sin pasar de los 30 KB que puede permitirse algo
-   que aparece en cada carga. */
-.loading-puma {
-  width: 85px;
-  height: 139px;
-  object-fit: contain;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45));
+/* Misma proporción que el overlay de redirección (130 sobre 180): el avatar
+   entra holgado dentro del anillo sin tocarlo. */
+.loading-avatar {
+  width: 68px;
+  height: 68px;
 }
 
 @keyframes loadingOverlayFadeIn {
@@ -23,10 +20,15 @@
   to { opacity: 1; }
 }
 
-/* Quien pide menos movimiento ve el Puma quieto; el texto sigue anunciando el
-   estado, así que no se pierde información. */
+:host ::ng-deep .mis-spinner .p-progressspinner-circle {
+  stroke: var(--mis-secondary, #00A2FF);
+  animation-duration: 1.6s;
+}
+
+/* El anillo no se apaga con menos movimiento: es lo único que dice que algo
+   está en curso. Se enlentece, igual que `.mis-window-girando`. */
 @media (prefers-reduced-motion: reduce) {
-  .loading-puma {
-    animation: none;
+  :host ::ng-deep .mis-spinner .p-progressspinner-circle {
+    animation-duration: 2.4s;
   }
 }

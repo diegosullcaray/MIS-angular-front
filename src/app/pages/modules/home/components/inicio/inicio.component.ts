@@ -1,13 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [RouterLink, EmptyStateComponent, WindowPanelComponent],
+  imports: [RouterLink],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.css',
 })

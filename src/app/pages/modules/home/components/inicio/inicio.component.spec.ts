@@ -50,14 +50,15 @@ describe('InicioComponent', () => {
     const fixture = crear();
 
     expect(texto(fixture)).toContain('Todavía no abriste ningún reporte');
+    expect(texto(fixture)).toContain('menú lateral');
     expect((fixture.nativeElement as HTMLElement).querySelector('a')).toBeNull();
   });
 
-  it('pinta una tarjeta por reporte reciente, con su categoría y su enlace', () => {
+  it('pinta una fila por reporte reciente, con su categoría y su enlace', () => {
     preferencias.registrarReporteReciente('/app/reportes/actividad-diaria/cartera', 'Cartera', 'Actividad diaria');
 
     const fixture = crear();
-    const enlaces = (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLAnchorElement>('a.reciente-card');
+    const enlaces = (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLAnchorElement>('a.reciente-fila');
 
     expect(enlaces.length).toBe(1);
     expect(enlaces[0].getAttribute('href')).toBe('/app/reportes/actividad-diaria/cartera');
@@ -65,11 +66,21 @@ describe('InicioComponent', () => {
     expect(enlaces[0].textContent).toContain('Actividad diaria');
   });
 
-  /** Sin categoría la tarjeta no puede quedar con un hueco arriba. */
-  it('rotula "Reporte" cuando el reciente no trae categoría', () => {
+  /** La categoría es contexto: sin ella la fila muestra solo el título. */
+  it('omite la categoría cuando el reciente no la trae', () => {
     preferencias.registrarReporteReciente('/app/incentivos/detalle', 'Detalle');
 
-    expect(texto(crear())).toContain('Reporte');
+    const fila = (crear().nativeElement as HTMLElement).querySelector('a.reciente-fila')!;
+
+    expect(fila.textContent).toContain('Detalle');
+    expect(fila.querySelector('.reciente-categoria')).toBeNull();
+  });
+
+  // Es un historial, no un tablero: la tarjeta de KPI quedó fuera a propósito.
+  it('no usa la tarjeta de los indicadores', () => {
+    preferencias.registrarReporteReciente('/app/uno', 'Uno');
+
+    expect((crear().nativeElement as HTMLElement).querySelector('.kpi-card')).toBeNull();
   });
 
   it('los muestra del más reciente al más antiguo', () => {
@@ -77,7 +88,7 @@ describe('InicioComponent', () => {
     preferencias.registrarReporteReciente('/app/dos', 'Dos');
 
     const titulos = [
-      ...(crear().nativeElement as HTMLElement).querySelectorAll<HTMLAnchorElement>('a.reciente-card'),
+      ...(crear().nativeElement as HTMLElement).querySelectorAll<HTMLAnchorElement>('a.reciente-fila'),
     ].map((a) => a.getAttribute('href'));
 
     expect(titulos).toEqual(['/app/dos', '/app/uno']);

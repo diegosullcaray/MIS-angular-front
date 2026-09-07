@@ -27,7 +27,8 @@ describe('LoadingOverlayComponent', () => {
     expect(overlay).toBeNull();
   });
 
-  it('muestra el overlay con el Puma cuando isLoading es true', () => {
+  // El anillo es lo que comunica que algo está en curso; el Puma solo acompaña.
+  it('muestra el anillo y el Puma de espera cuando isLoading es true', () => {
     mockEstado.set({ isLoading: true, requestCount: 1 });
     const fixture = TestBed.createComponent(LoadingOverlayComponent);
     fixture.detectChanges();
@@ -35,7 +36,8 @@ describe('LoadingOverlayComponent', () => {
     const overlay = fixture.nativeElement.querySelector('.loading-overlay-wrapper');
     expect(overlay).toBeTruthy();
     expect(overlay.getAttribute('aria-busy')).toBe('true');
-    expect(overlay.querySelector('img.loading-puma')?.getAttribute('src')).toContain('puma-carga.png');
+    expect(overlay.querySelector('p-progress-spinner')).not.toBeNull();
+    expect(overlay.querySelector('img.loading-avatar')?.getAttribute('src')).toContain('mis_wait.png');
   });
 
   // La mascota es decorativa: quien usa lector de pantalla necesita el texto,

@@ -1,11 +1,123 @@
-/* La tarjeta es el enlace entero: el color lo ponen los tokens de texto, no el
-   azul del navegador. */
-.reciente-card {
-  color: inherit;
-  text-decoration: none;
+/* Historial de reportes, no tarjetas de indicador: una línea por reporte, en
+   segmentos sueltos que dejan ver el fondo de escritorio entre uno y otro. */
+.recientes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-2);
+  width: 100%;
+  /* Ancho de lectura: a lo ancho de un monitor, la fecha se iría al otro
+     extremo de la pantalla y el resto sería un hueco. Además deja ver el
+     fondo de escritorio a la derecha. */
+  max-width: 720px;
 }
 
-.reciente-card:focus-visible {
+/* ── El segmento ──────────────────────────────────────────────
+   Vidrio, los mismos tokens que los paneles del shell: el wallpaper se ve a
+   través pero no queda justo detrás de las letras, que es lo que las volvía
+   ilegibles cuando probé el fondo transparente. */
+.recientes-rotulo,
+.reciente-fila,
+.recientes-vacio {
+  background: var(--mis-glass-bg);
+  backdrop-filter: saturate(180%) blur(12px);
+  border: 1px solid var(--mis-glass-border);
+  border-radius: var(--mis-radius-md);
+}
+
+/* El rótulo va algo más sólido que las filas: es texto chico y suele caer
+   sobre el logo del wallpaper, donde el vidrio de las filas lo dejaría
+   compitiendo con la marca de fondo. */
+.recientes-rotulo {
+  background: var(--mis-surface-translucido);
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  margin: 0;
+  padding: var(--mis-space-2) var(--mis-space-3);
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-secondary);
+}
+
+.recientes-rotulo .pi {
+  font-size: 12px;
+  color: var(--mis-text-tertiary);
+}
+
+.recientes-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-2);
+}
+
+/* ── La fila ──────────────────────────────────────────────────
+   Sin sombra ni elevación al hover: ese gesto es el de la tarjeta KPI y acá
+   confundiría un historial con un indicador. */
+.reciente-fila {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-3);
+  padding: var(--mis-space-2) var(--mis-space-3);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--mis-transition-fast),
+    border-color var(--mis-transition-fast);
+}
+
+/* Solo tinte y borde: la elevación al pasar el cursor es el gesto de la
+   tarjeta KPI, y acá haría leer el historial como un tablero. */
+.reciente-fila:hover {
+  background: var(--mis-surface-translucido);
+  border-color: var(--mis-border-strong);
+}
+
+.reciente-fila:focus-visible {
   outline: 2px solid var(--mis-primary);
   outline-offset: 2px;
+}
+
+.reciente-nombre {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-medium);
+  color: var(--mis-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* En pantallas angostas el nombre se queda con todo el ancho: la categoría es
+   contexto, no identidad. */
+.reciente-categoria {
+  display: none;
+  font-weight: var(--mis-font-normal);
+  color: var(--mis-text-tertiary);
+}
+
+.reciente-fecha {
+  flex-shrink: 0;
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* El estado vacío es un segmento más, del mismo alto que una fila: un recuadro
+   grande en una pantalla que se quiso minimalista pesaría más que el historial
+   que va a reemplazar. */
+.recientes-vacio {
+  margin: 0;
+  padding: var(--mis-space-2) var(--mis-space-3);
+  font-size: var(--mis-text-sm);
+  color: var(--mis-text-secondary);
+}
+
+@media (min-width: 640px) {
+  .reciente-categoria {
+    display: inline;
+  }
 }

@@ -71,7 +71,13 @@ que ninguna colabore: no hay nada que agregar al crear un reporte nuevo.
   `MenuStgService.buscarPorRuta()` si el árbol del STG ya cargó, y si no las
   etiquetas del Host (`SEGMENTO_LABELS`). La categoría es el nodo padre.
 - `registrarReporteReciente()` desduplica por ruta: revisitar un reporte lo
-  devuelve al frente con la fecha nueva, no agrega una segunda tarjeta.
+  devuelve al frente con la fecha nueva, no agrega una segunda entrada.
+
+En pantalla es una **lista de segmentos sueltos**, no un tablero: una línea por
+reporte (`título · categoría` a la izquierda, antigüedad a la derecha), cada una
+en su propio bloque de vidrio, separadas por aire para que se vea el fondo de
+escritorio. Deliberadamente no usa `.kpi-card`: un historial no es un indicador,
+y la elevación al hover de esa tarjeta lo haría leer como uno.
 
 Como todo lo demás, se borra al cerrar sesión — `olvidar()` repone las
 preferencias de fábrica, y las de fábrica traen el historial vacío.
@@ -207,11 +213,11 @@ se acaba de cerrar.
 - Unitarios: `anuncio.model.spec.ts` (la regla anti-spam), `anuncios.service.spec.ts`,
   `preferencias.service.spec.ts` (persistencia y variables CSS aplicadas),
   `recientes.service.spec.ts` (qué rutas se anotan y cuáles no),
-  `inicio.component.spec.ts` (el grid del Home y el tiempo relativo),
+  `inicio.component.spec.ts` (las filas del Home y el tiempo relativo),
   `limpieza-sesion.service.spec.ts` y `almacenamiento-navegador.spec.ts` (borrado total).
 - E2E: `e2e/comunicados.spec.ts` (se abre en el primer ingreso y no vuelve),
-  `e2e/home-recientes.spec.ts` (el Home sin saludo, el estado vacío, el grid y la
-  captura por router) y `e2e/configuracion.spec.ts` (el fondo se aplica y
+  `e2e/home-recientes.spec.ts` (el Home sin saludo, el estado vacío, la lista y
+  la captura por router) y `e2e/configuracion.spec.ts` (el fondo se aplica y
   persiste, el selector de color recibe el puntero, ninguna pantalla genera
   scroll horizontal).
 - `inyectarSesionVigente` siembra los comunicados silenciados: sin eso su

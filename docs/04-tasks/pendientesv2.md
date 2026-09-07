@@ -11,7 +11,7 @@ Este documento centraliza y detalla todas las modificaciones de diseño de inter
 | **1** | Tipografía más Gerencial | UI | ✅ Implementado | `src/assets/fonts/Inter-Variable-*.woff2`, `src/assets/styles/fonts.css`, `src/app/theme/tokens.css` |
 | **2** | Redondear Decimales en KPIs | UI/UX | ✅ Implementado | Plantillas de los 5 reportes con montos en decimales |
 | **3** | Mantenimiento de Modo Oscuro en Tablas | UI | ✅ Implementado | `src/app/theme/mis-theme.ts`, `tokens.css` (`.dark`), `tokens.paleta.spec.ts` |
-| **4** | El Puma en Pantalla de Carga (Loading) | UI/UX | ✅ Implementado | `loading-overlay.component.*`, `src/assets/images/fc/puma-carga.png` |
+| **4** | El Puma en Pantalla de Carga (Loading) | UI/UX | ✅ Implementado | `loading-overlay.component.*` + `assets/images/fc/avatars/mis_wait.png` |
 | **5** | Retirar Saludo de Bienvenida en Home | UX | ✅ Implementado | `src/app/pages/modules/home/components/inicio/` |
 | **6** | Historial de Últimos Reportes (Home) | UX/Funcional | ✅ Implementado | `core/preferencias/`, `core/recientes/`, `home/components/inicio/` |
 | **7** | Salvaguardar Funcionalidad de Drilldown | Funcional | ✅ Verificado | `hier-selector/` y `tablas/` sin cambios respecto de `main` |
@@ -126,11 +126,20 @@ este documento, el motivo:
 
 `/app/dashboard` carga `HOME_ROUTES` → `src/app/pages/modules/home/components/inicio/`.
 Ese componente era **solo** el saludo, así que las tareas 5 y 6 se hicieron
-juntas: se retiró el saludo y en su lugar quedó el grid de recientes, dentro de
-un `<app-window-panel>` sin semáforo. El panel no es decoración: el contenido del
-shell se apoya sobre el wallpaper, que no garantiza contraste — el título sobre
-el logo de la marca era ilegible en oscuro. Es el mismo patrón que ya usa el
-explorador de sistemas.
+juntas: se retiró el saludo y en su lugar quedó el historial.
+
+**El historial es una lista, no un tablero.** Una primera versión lo pintó con
+`.kpi-card` dentro de un `<app-window-panel>` y se leía como indicadores, no como
+un registro de lo último visitado — y el panel tapaba el fondo de escritorio. La
+versión final son **segmentos sueltos**: una línea por reporte, cada una su
+propio bloque de vidrio (`--mis-glass-bg`), separadas por aire para que el
+wallpaper se vea entre ellas. Sin sombra ni elevación al hover: ese gesto es el
+de la tarjeta KPI. El ancho se limita a 720 px para que la fecha no se vaya al
+otro extremo del monitor.
+
+El vidrio, y no el fondo transparente, es lo que resuelve la tensión entre «que
+se vea el fondo» y «que se lea el texto»: probado transparente, el rótulo quedaba
+ilegible en oscuro encima del logo de la marca.
 
 ### Tarea 6 · Se guarda la ruta, y la captura es por router
 
@@ -143,6 +152,19 @@ explorador de sistemas.
   `cod_rep` y su título, porque las bases no los conocen. `RecientesService`
   escucha `NavigationEnd` y cubre las 91 pantallas sin tocar ningún componente
   de reporte; los reportes nuevos quedan cubiertos sin hacer nada.
+
+### Tarea 4 · El Puma ya existía, y el círculo no se toca
+
+Una primera versión recortó al Puma de Kaypacha —el que levanta una copa— y sacó
+el `<p-progress-spinner>`. Las dos cosas estaban mal: una copa dice «ganaste», no
+«esperá», y el anillo girando es lo único que comunica que hay algo en curso; una
+imagen quieta no informa nada.
+
+La versión final usa `assets/images/fc/avatars/mis_wait.png`, el Puma
+institucional de espera, dentro del anillo — **la misma composición y el mismo
+archivo** que ya usan `<app-redirect-overlay>` y el spinner del login. Como ese
+asset se descarga al iniciar sesión, reusarlo no suma peso. El recorte
+`puma-carga.png` se borró.
 
 ### Tarea 3 · El problema no estaba solo en los tokens
 
@@ -185,7 +207,7 @@ ninguna pantalla escuchaba ese output.
 
 ```
 npx tsc --noEmit -p tsconfig.json     limpio
-npx ng test --watch=false             1800 en verde (base: 1787)
+npx ng test --watch=false             1801 en verde (base: 1787)
 npx playwright test                   519 en verde, 1 omitida (base: 509)
 npm run build:prod                    bundle limpio
 ```

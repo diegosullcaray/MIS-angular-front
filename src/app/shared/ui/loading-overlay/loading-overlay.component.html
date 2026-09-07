@@ -1,18 +1,27 @@
 @if (estado().isLoading) {
   <div
-    class="loading-overlay-wrapper fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-3 p-4"
+    class="loading-overlay-wrapper fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-4 p-4"
     role="status"
     aria-live="polite"
     aria-busy="true"
   >
-    <img
-      class="loading-puma animate-pulse"
-      src="assets/images/fc/puma-carga.png"
-      width="85"
-      height="139"
-      alt=""
-      aria-hidden="true"
-    />
+    <!-- Misma composición que el overlay de redirección y el spinner del login:
+         el anillo gira y el Puma de espera queda quieto en el centro. -->
+    <div class="relative flex items-center justify-center">
+      <p-progress-spinner
+        styleClass="mis-spinner"
+        strokeWidth="4"
+        fill="transparent"
+        [style]="{ width: '96px', height: '96px' }"
+      />
+      <img
+        src="assets/images/fc/avatars/mis_wait.png"
+        class="loading-avatar absolute rounded-full object-contain"
+        alt=""
+        aria-hidden="true"
+      />
+    </div>
+
     <span class="text-sm font-medium text-white">{{ estado().message || 'Cargando…' }}</span>
   </div>
 }
