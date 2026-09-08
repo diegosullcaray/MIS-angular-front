@@ -45,4 +45,62 @@ describe('ReporteSimpleComponent', () => {
 
     expect(fixture.nativeElement.textContent).not.toContain('Elige un nivel');
   });
+
+  describe('actualizar', () => {
+    function crear(nivel: HierarquiaNodo | null) {
+      const fixture = TestBed.createComponent(ReporteSimpleComponent);
+      fixture.componentRef.setInput('titulo', 'Reporte Prueba');
+      fixture.componentRef.setInput('paramsHier', PARAMS);
+      fixture.componentRef.setInput('nivel', nivel);
+      fixture.componentRef.setInput('tabla', TABLA_VACIA);
+      fixture.detectChanges();
+      return fixture;
+    }
+
+    function boton(fixture: ReturnType<typeof crear>): HTMLElement | null {
+      return fixture.nativeElement.querySelector('.mis-window-btn--esquina');
+    }
+
+    // Sin nivel no hay nada que volver a pedir: el botón no se ofrece.
+    it('el botón no aparece mientras no haya nivel elegido', () => {
+      expect(boton(crear(null))).toBeNull();
+    });
+
+    it('con nivel elegido, actualizar reemite el nodo para reconsultar', () => {
+      const fixture = crear(RAIZ);
+      const emitido = vi.fn();
+      fixture.componentInstance.nivelSeleccionado.subscribe(emitido);
+
+      boton(fixture)!.click();
+
+      expect(emitido).toHaveBeenCalledWith(RAIZ);
+    });
+
+    /**
+     * Se emite una copia, no la misma referencia: las pantallas que consultan
+     * dentro de un `effect` sobre `nivelActual` no reaccionarían si la señal
+     * recibiera el mismo objeto.
+     */
+    it('reemite una copia del nodo, no la misma referencia', () => {
+      const fixture = crear(RAIZ);
+      const emitido = vi.fn();
+      fixture.componentInstance.nivelSeleccionado.subscribe(emitido);
+
+      boton(fixture)!.click();
+
+      expect(emitido.mock.calls[0][0]).not.toBe(RAIZ);
+    });
+
+    it('mientras carga, el botón queda bloqueado', () => {
+      const fixture = crear(RAIZ);
+      fixture.componentRef.setInput('cargando', true);
+      fixture.detectChanges();
+      const emitido = vi.fn();
+      fixture.componentInstance.nivelSeleccionado.subscribe(emitido);
+
+      boton(fixture)!.click();
+
+      expect(emitido).not.toHaveBeenCalled();
+    });
+  });
 });

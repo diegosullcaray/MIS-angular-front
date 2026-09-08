@@ -28,7 +28,6 @@ export class SelectorNivelDialogComponent {
   private readonly loading = inject(LoadingService);
 
   readonly visible = input(false);
-  readonly obligatorio = input(false);
 
   readonly visibleChange = output<boolean>();
 

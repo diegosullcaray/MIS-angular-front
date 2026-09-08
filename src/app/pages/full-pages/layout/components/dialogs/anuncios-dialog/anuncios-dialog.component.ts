@@ -21,7 +21,11 @@ import { laminaEnRango, laminasDe } from '../../../interfaces/anuncio.model';
  *
  * Se abre solo cuando `AnunciosService` dice que hay algo pendiente —esa es la
  * corrección al aviso que salía en cada inicio de sesión— y también a pedido,
- * desde el botón de comunicados del header. Cerrarlo lo da por leído.
+ * desde el botón de comunicados del header.
+ *
+ * Cerrarlo lo calla hasta la próxima sesión: con la X, con "Entendido" o
+ * haciendo clic fuera, que es lo que habilita `dismissableMask`. Para que no
+ * vuelva nunca está el otro botón del pie.
  */
 @Component({
   selector: 'app-anuncios-dialog',
@@ -105,7 +109,7 @@ export class AnunciosDialogComponent {
     this.anuncios.cerrar();
   }
 
-  protected silenciar(): void {
-    this.anuncios.silenciar();
+  protected noMostrarEste(): void {
+    this.anuncios.noMostrarEste();
   }
 }

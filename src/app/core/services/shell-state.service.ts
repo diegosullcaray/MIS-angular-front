@@ -9,6 +9,7 @@ export class ShellStateService {
   private readonly _sidebarIconActivo = signal<string>('host-inicio');
   private readonly _cerrandoSesion = signal(false);
   private readonly _contenidoPendienteSeleccion = signal(false);
+  private readonly _exploradorDisponible = signal(false);
   private readonly _railSuperpuestoAbierto = signal(false);
 
   /** Usuario autenticado actualmente. */
@@ -28,6 +29,17 @@ export class ShellStateService {
 
   /** Se cambió de sistema pero aún no se eligió sub-ítem: el shell oculta el `<router-outlet>` (que sigue mostrando el sistema anterior) y pinta un loader. */
   readonly contenidoPendienteSeleccion = this._contenidoPendienteSeleccion.asReadonly();
+
+  /**
+   * `true` si el sistema activo tiene explorador, es decir, si
+   * `contenidoPendienteSeleccion` tiene algo que mostrar.
+   *
+   * El explorador **no es una ruta**: se pinta sobre el `<router-outlet>` desde
+   * este estado. Por eso abrir un reporte desde ahí deja UNA sola entrada de
+   * historial, y el "Volver" de la pantalla necesita saber que existe ese paso
+   * intermedio en vez de dar por hecho que el historial lo tiene.
+   */
+  readonly exploradorDisponible = this._exploradorDisponible.asReadonly();
 
   /** True si el usuario puede gestionar IAM (usuarios, roles). */
   readonly esAdminSistema = computed(
@@ -74,6 +86,11 @@ export class ShellStateService {
 
   setContenidoPendienteSeleccion(valor: boolean): void {
     this._contenidoPendienteSeleccion.set(valor);
+  }
+
+  /** Lo publica el layout desde `NavegacionSistemasService.panelActivo`. */
+  setExploradorDisponible(valor: boolean): void {
+    this._exploradorDisponible.set(valor);
   }
 
   setRailSuperpuestoAbierto(valor: boolean): void {

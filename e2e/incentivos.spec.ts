@@ -31,7 +31,7 @@ test.describe('Incentivos — smoke del Cuadro de Mando', () => {
     expect(erroresConsola).toEqual([]);
   });
 
-  test('con un usuario admin, abre el selector de nivel automáticamente y sin botón de cerrar', async ({ page }) => {
+  test('con un usuario admin, abre el selector de nivel automáticamente y se puede cerrar', async ({ page }) => {
     await page.goto('/app/incentivos3');
 
     await expect(page.getByRole('dialog', { name: 'Selecciona Nivel' })).toBeVisible();
@@ -42,8 +42,10 @@ test.describe('Incentivos — smoke del Cuadro de Mando', () => {
     await expect(page.getByRole('button', { name: 'FC Individual' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'FC Grupal' })).toBeVisible();
 
-    // Diálogo obligatorio (aún no se eligió ningún nivel) — sin ícono de cerrar de PrimeNG.
-    await expect(page.locator('.p-dialog-close-button')).toHaveCount(0);
+    // Antes el diálogo no ofrecía ninguna salida en el primer ingreso de un
+    // administrador. Ahora siempre tiene X: cerrarlo lleva al Home, y desde la
+    // barra de la ventana se puede volver a abrir. Ver INC-2026-09-08-08.
+    await expect(page.locator('.p-dialog-close-button')).toHaveCount(1);
   });
 
   test('elegir "Asesores" muestra el buscador de colaboradores y un botón "Seleccionar" deshabilitado hasta elegir una fila', async ({ page }) => {
@@ -51,6 +53,7 @@ test.describe('Incentivos — smoke del Cuadro de Mando', () => {
     await page.getByRole('button', { name: 'Asesores' }).click();
 
     await expect(page.getByPlaceholder('Buscar asesor…')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Seleccionar' })).toBeDisabled();
+    // `exact` porque la barra de la ventana tiene su propio "Seleccionar nivel".
+    await expect(page.getByRole('button', { name: 'Seleccionar', exact: true })).toBeDisabled();
   });
 });

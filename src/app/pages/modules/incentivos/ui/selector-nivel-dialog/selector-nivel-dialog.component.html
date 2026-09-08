@@ -1,12 +1,15 @@
-<!-- Mientras la selección sea obligatoria el diálogo no ofrece salida: ni la X
-     ni Escape. `cerrar()` saca al usuario al dashboard, así que dejarlo
-     cerrable era darle una puerta para quedarse sin ningún nivel elegido. -->
+<!-- El diálogo SIEMPRE se puede cerrar: con la X, con Escape o haciendo clic
+     fuera. Antes, en el primer ingreso de un administrador, no ofrecía ninguna
+     salida. No hace falta cerrarle la puerta para que no se quede sin nivel:
+     `cerrar()` lo devuelve al Home, y desde la barra de la ventana puede
+     volver a abrirlo cuando quiera. -->
 <p-dialog
   [visible]="visible()"
   (visibleChange)="cerrar()"
   [modal]="true"
-  [closable]="!obligatorio()"
-  [closeOnEscape]="!obligatorio()"
+  [closable]="true"
+  [closeOnEscape]="true"
+  [dismissableMask]="true"
   [style]="{ width: '92vw', maxWidth: '620px' }"
   [draggable]="false"
   [resizable]="false"

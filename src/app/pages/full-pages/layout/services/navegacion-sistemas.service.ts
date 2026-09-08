@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { MenuStgService } from './menu-stg.service';
 import { KaypachaService } from '../../../modules/ranking-k/services/kaypacha.service';
@@ -33,6 +33,14 @@ export class NavegacionSistemasService {
 
   /** Navegación del sistema activo. Es `null` si el sistema no tiene subnavegación. */
   readonly panelActivo = computed<SidebarNavPanelConfig | null>(() => this.panelDe(this.shell.sidebarIconActivo()));
+
+  constructor() {
+    // El explorador se pinta desde el shell, no desde una ruta. Publicar acá si
+    // existe es lo que le permite al "Volver" de cualquier pantalla regresar a
+    // él: sin esto tendría que adivinarlo del historial, donde ese paso no
+    // dejó huella. Ver `ShellStateService.exploradorDisponible`.
+    effect(() => this.shell.setExploradorDisponible(this.panelActivo() !== null));
+  }
 
   /** Navegación de cualquier sistema: el buscador los necesita todos a la vez. */
   panelDe(id: string): SidebarNavPanelConfig | null {

@@ -111,16 +111,6 @@ export function totalesAgro(
   });
 }
 
-/** Los bloques de gráfico traen su `{categories, series}` serializado en `headers`. */
-export function seriesDeGrafico(headers: string | undefined): Pick<BloqueGrafico, 'categorias' | 'series'> {
-  if (!headers) return { categorias: [], series: [] };
-  const datos = JSON.parse(headers) as DatosGraficoCrudo;
-  return {
-    categorias: datos.categories ?? [],
-    series: (datos.series ?? []).map((s) => ({ nombre: s.name ?? '', datos: s.data ?? [] })),
-  };
-}
-
 /**
  * Un gráfico de Gestión Comercial.
  *

@@ -20,6 +20,7 @@ pages/full-pages/layout/
   constantes/anuncios.constantes.ts         el catalogo publicado hoy
   services/preferencias.service.ts          el caso de uso
   services/anuncios.service.ts              que comunicado toca y si ya se leyo
+  services/comunicados-sesion.service.ts    lo leido en ESTA sesion de navegacion
   services/preferencias-local-storage.service.ts   la persistencia
   services/apariencia-dom.service.ts        preferencias -> variables CSS
 
@@ -47,3 +48,25 @@ Lo que **no** bajo al layout, y por que:
 Quedan dos consumos de pantalla a pantalla, asumidos: el Home lee `recientes()`
 y `AuthService` llama `olvidar()` al cerrar sesion. Los dos son hojas usando el
 servicio del shell, que es de donde son las preferencias.
+
+## Comunicados: dos memorias distintas
+
+El diálogo del comunicado ofrece dos salidas, y no significan lo mismo:
+
+| Acción | Dónde se guarda | Cuánto dura |
+|---|---|---|
+| **Entendido**, la X, o clic fuera | `sessionStorage`, clave `mis.comunicados.sesion` (`ComunicadosSesionService`) | Esta sesión de navegación. Sobrevive a un F5; muere con la pestaña y con el cierre de sesión. |
+| **No mostrar este comunicado** | `localStorage`, dentro de `mis.preferencias` → `anuncios.vistos` | Permanente. |
+| Interruptor de Configuración → Comunicados | `localStorage`, `anuncios.silenciar` | Permanente, y apaga **todos**, incluidos los que aún no se publicaron. |
+
+Hasta el 2026-09-08 las dos primeras hacían casi lo mismo: "Entendido" persistía
+igual que "No mostrar", y el botón del pie disparaba el interruptor global. Ver
+INC-2026-09-08-05.
+
+`sessionStorage` y no una señal en memoria es deliberado: recargar la página no
+puede revivir un aviso que el usuario acaba de cerrar.
+
+**Efecto del borrado de sesión.** `LimpiezaSesionService.limpiarTodo()` vacía
+`localStorage` entero, así que en la práctica "No mostrar este comunicado" dura
+hasta el próximo cierre de sesión. Es una consecuencia conocida de la política
+de borrado total, no un defecto del diálogo.

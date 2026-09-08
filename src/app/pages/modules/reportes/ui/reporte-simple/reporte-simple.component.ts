@@ -39,7 +39,15 @@ export interface PestanaReporte {
   standalone: true,
   imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
   template: `
-    <app-window-panel [titulo]="titulo()" [subtitulo]="subtitulo()" [permitirActualizar]="false" [conFiltros]="true">
+    <app-window-panel
+      [titulo]="titulo()"
+      [subtitulo]="subtitulo()"
+      [permitirActualizar]="nivel() !== null"
+      [actualizando]="cargando()"
+      etiquetaActualizar="Actualizar datos"
+      (actualizar)="refrescar()"
+      [conFiltros]="true"
+    >
       
       <!-- ZONA DE FILTROS -->
       <div ventana-filtros class="flex flex-col gap-3">
@@ -149,4 +157,20 @@ export class ReporteSimpleComponent {
 
   readonly nivelSeleccionado = output<HierarquiaNodo>();
   readonly errorJerarquia = output<void>();
+
+  /**
+   * Botón de actualizar de la esquina: vuelve a pedir el reporte al backend Ant
+   * con el mismo nodo de jerarquía y la misma fecha de corte.
+   *
+   * No hace falta una salida nueva ni tocar las pantallas que consumen este
+   * armazón: reemitir `nivelSeleccionado` es exactamente lo que ya saben
+   * atender. Se emite una **copia** del nodo a propósito — las pantallas que
+   * consultan dentro de un `effect` sobre `nivelActual` (ver
+   * `ReporteSimpleBase`) no reaccionarían si la señal recibiera la misma
+   * referencia.
+   */
+  protected refrescar(): void {
+    const nodo = this.nivel();
+    if (nodo) this.nivelSeleccionado.emit({ ...nodo });
+  }
 }

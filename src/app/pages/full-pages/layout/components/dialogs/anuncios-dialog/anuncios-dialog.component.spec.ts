@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { AnunciosDialogComponent } from './anuncios-dialog.component';
 import { AnunciosService } from '../../../services/anuncios.service';
 import { PreferenciasService } from '../../../services/preferencias.service';
+import { ComunicadosSesionService } from '../../../services/comunicados-sesion.service';
 import { CATALOGO_ANUNCIOS } from '../../../interfaces/anuncio.model';
 import { REPOSITORIO_PREFERENCIAS } from '../../../interfaces/preferencias-almacen.model';
 import { PreferenciasLocalStorageRepositorio } from '../../../services/preferencias-local-storage.service';
@@ -211,17 +212,33 @@ describe('AnunciosDialogComponent', () => {
       fixture.detectChanges();
 
       expect(anuncios.abierto()).toBe(false);
-      expect(TestBed.inject(PreferenciasService).anuncios().vistos).toEqual(['campania-multiple']);
+      expect(TestBed.inject(ComunicadosSesionService).leidos()).toEqual(['campania-multiple']);
     });
   });
 
-  it('cerrarlo deja el comunicado marcado como leído', () => {
+  // "Entendido" es de sesión: se apunta en `ComunicadosSesionService`, no en las
+  // preferencias. Lo permanente es el otro botón del pie.
+  it('cerrarlo lo da por leído en esta sesión, sin persistirlo', () => {
     const fixture = crear();
     const anuncios = TestBed.inject(AnunciosService);
     anuncios.abrirSiCorresponde();
     fixture.detectChanges();
 
     (fixture.componentInstance as unknown as { cerrar(): void }).cerrar();
+    fixture.detectChanges();
+
+    expect(anuncios.abierto()).toBe(false);
+    expect(TestBed.inject(ComunicadosSesionService).leidos()).toEqual(['vinculacion-cartera-captaciones']);
+    expect(TestBed.inject(PreferenciasService).anuncios().vistos).toEqual([]);
+  });
+
+  it('"No mostrar este comunicado" sí lo persiste en las preferencias', () => {
+    const fixture = crear();
+    const anuncios = TestBed.inject(AnunciosService);
+    anuncios.abrirSiCorresponde();
+    fixture.detectChanges();
+
+    (fixture.componentInstance as unknown as { noMostrarEste(): void }).noMostrarEste();
     fixture.detectChanges();
 
     expect(anuncios.abierto()).toBe(false);

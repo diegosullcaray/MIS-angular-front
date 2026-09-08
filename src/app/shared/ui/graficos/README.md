@@ -17,7 +17,8 @@ graficos/
 │   └── grafico-comun.model.ts        ← interfaces (series, categorías, porciones)
 └── utils/
     ├── highcharts-factory.util.ts    ← funciones que arman el objeto Highcharts
-    └── paleta-colores.util.ts        ← colores corporativos de Financiera Confianza
+    ├── paleta-colores.util.ts        ← colores corporativos de Financiera Confianza
+    └── series-grafico.util.ts        ← el `{categories, series}` del legado, ya con color
 ```
 
 ## Cómo funciona
@@ -35,7 +36,15 @@ Cada capa tiene una única responsabilidad, para que nada se recicle "sucio":
 - **Las utilidades.** `highcharts-factory` centraliza lo repetitivo: márgenes, ejes, tooltip
   corporativo, formateo de importes y la elección de la forma del gráfico. `paleta-colores`
   tiene los colores y los tokens de tema resueltos a hexadecimal (Highcharts no resuelve
-  variables CSS dentro de su configuración).
+  variables CSS dentro de su configuración). `series-grafico` traduce el payload del legado
+  —`{categories, series}` serializado en `headers`— **asignando el color de cada serie**.
+
+  Ese último punto no es un detalle: una serie sin `color` cae en el respaldo de
+  `highcharts-factory`, que es una paleta de emergencia y no la de la Financiera. Mientras
+  Actividad Diaria y Actividad Mensual tuvieron una copia cada una de esa traducción, solo
+  una asignaba color y la otra se veía con los colores del sistema viejo
+  (INC-2026-09-08-09). **Cualquier reporte que arme series desde ese payload debe usar
+  `seriesDeGraficoConColor`**, no reescribirla.
 
 ## Flujo de datos
 

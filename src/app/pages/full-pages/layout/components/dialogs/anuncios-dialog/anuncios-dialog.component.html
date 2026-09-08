@@ -3,6 +3,7 @@
   [visible]="anuncios.abierto()"
   (visibleChange)="cerrar()"
   [modal]="true"
+  [dismissableMask]="true"
   appendTo="body"
   styleClass="mis-anuncios-dialog"
   [style]="estiloDialogo()"
@@ -86,7 +87,7 @@
   }
 
   <ng-template pTemplate="footer">
-    <p-button label="No mostrar comunicados" [text]="true" severity="secondary" (click)="silenciar()" />
+    <p-button label="No mostrar este comunicado" [text]="true" severity="secondary" (click)="noMostrarEste()" />
     <p-button label="Entendido" (click)="cerrar()" />
   </ng-template>
 </p-dialog>

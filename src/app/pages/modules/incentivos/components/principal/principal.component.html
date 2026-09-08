@@ -7,6 +7,23 @@
   etiquetaActualizar="Actualizar cuadro de mando"
   (actualizar)="actualizar()"
 >
+  <!-- Va acá, en la barra de la ventana, y no dentro de `<app-perfil-card>`:
+       esa tarjeta solo existe cuando ya hay un nivel cargado, así que un
+       administrador que cerraba el diálogo de entrada se quedaba sin ninguna
+       forma de volver a abrirlo. -->
+  @if (incentivos.puedeElegirNivel()) {
+    <button
+      ventana-acciones
+      type="button"
+      class="mis-window-btn"
+      (click)="abrirSelector()"
+      aria-label="Seleccionar nivel"
+      pTooltip="Seleccionar nivel"
+      tooltipPosition="bottom"
+    >
+      <i class="pi pi-sitemap text-[14px]"></i>
+    </button>
+  }
 
   @if (incentivos.error()) {
     <div class="mis-card p-4 text-[13px] text-[var(--mis-danger)] flex items-center gap-2">
@@ -46,7 +63,7 @@
   }
 </app-window-panel>
 
-<app-selector-nivel-dialog [visible]="mostrarSelector()" [obligatorio]="incentivos.requiereSeleccionInicial()" (visibleChange)="mostrarSelector.set($event)" />
+<app-selector-nivel-dialog [visible]="mostrarSelector()" (visibleChange)="mostrarSelector.set($event)" />
 
 <app-calculadora-dialog [visible]="mostrarCalculadora()" (visibleChange)="mostrarCalculadora.set($event)" />
 

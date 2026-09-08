@@ -113,9 +113,8 @@ describe('SelectorNivelDialogComponent', () => {
     expect(fixture.componentInstance['seleccionadoAsesor']()).toBeNull();
   });
 
-  it('confirmarAsesor() cierra el diálogo y RECIÉN DESPUÉS delega en el servicio, incluso si el diálogo es obligatorio', () => {
+  it('confirmarAsesor() cierra el diálogo y RECIÉN DESPUÉS delega en el servicio', () => {
     const fixture = crear();
-    fixture.componentRef.setInput('obligatorio', true);
     fixture.detectChanges();
     const orden: string[] = [];
     const visibleChangeSpy = vi.fn(() => orden.push('cierra'));
@@ -162,9 +161,8 @@ describe('SelectorNivelDialogComponent', () => {
     expect(incentivosFalso.seleccionarFinancieraConfianza).toHaveBeenCalledWith(2);
   });
 
-  it('cerrar() siempre emite visibleChange(false) y redirige al dashboard, incluso si el diálogo es obligatorio', () => {
+  it('cerrar() siempre emite visibleChange(false) y redirige al dashboard', () => {
     const fixture = crear();
-    fixture.componentRef.setInput('obligatorio', true);
     fixture.detectChanges();
     const visibleChangeSpy = vi.fn();
     fixture.componentInstance.visibleChange.subscribe(visibleChangeSpy);

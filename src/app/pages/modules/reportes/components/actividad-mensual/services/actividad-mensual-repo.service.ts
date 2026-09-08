@@ -5,7 +5,8 @@ import { ModReportesService } from '../../../../../../core/winder/instances/mod-
 import { filasDeResultado, resultadoCrudo, tablaDeResultado } from '../../../utils/reportes-mapeo.util';
 import { COD_MENSUAL_REPO } from '../constantes/actividad-mensual.constantes';
 import { aplicarEstilosEstructuraDesembolsos } from '../utils/estructura-desembolsos.util';
-import { seriesDeGraficoConColor, tarjetasCmgCarteraMensual } from '../utils/actividad-mensual-mapeo.util';
+import { tarjetasCmgCarteraMensual } from '../utils/actividad-mensual-mapeo.util';
+import { seriesDeGraficoConColor } from '../../../../../../shared/ui/graficos/utils/series-grafico.util';
 import {
   columnasVisibles,
   conColumnasSemaforo,

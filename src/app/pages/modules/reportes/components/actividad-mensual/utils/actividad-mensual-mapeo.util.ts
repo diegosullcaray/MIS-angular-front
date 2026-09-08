@@ -1,7 +1,5 @@
-import { colorSerieReporte } from '../../../../../../shared/ui/graficos/utils/paleta-colores.util';
 import { FILAS_TARJETAS_CMG } from '../../actividad-diaria/components/Cartera/constantes/cartera.constantes';
 import type { TarjetaCmgCartera } from '../../actividad-diaria/components/Cartera/models/cmg-cartera.model';
-import type { BloqueGrafico } from '../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
 /** Mapeo de los payloads de Actividad Mensual. Son funciones puras: el service solo pide. */
 
@@ -70,23 +68,4 @@ function comoPorcentaje(crudo: unknown, numero: number): string {
 
 function conSigno(valor: number): string {
   return `${valor >= 0 ? '+' : ''}${valor.toLocaleString('es-PE')}`;
-}
-
-/**
- * Los bloques de gráfico traen su `{categories, series}` serializado en
- * `headers`. A diferencia de la versión diaria, acá cada serie recibe su color
- * de la paleta compartida.
- */
-export function seriesDeGraficoConColor(headers: string | undefined): Pick<BloqueGrafico, 'categorias' | 'series'> {
-  if (!headers) return { categorias: [], series: [] };
-  const datos = JSON.parse(headers) as {
-    categories?: string[];
-    series?: { name: string; data: (number | null)[] }[];
-  };
-  const series = datos.series ?? [];
-  const esUnica = series.length === 1;
-  return {
-    categorias: datos.categories ?? [],
-    series: series.map((s) => ({ nombre: s.name, datos: s.data, color: colorSerieReporte(s.name, esUnica) })),
-  };
 }

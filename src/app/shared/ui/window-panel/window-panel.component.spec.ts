@@ -97,7 +97,7 @@ describe('WindowPanelComponent', () => {
     expect(navegar).toHaveBeenCalledWith('/app/analista/listas');
   });
 
-  /** Sin `volverA` la navegación es un paso atrás en el historial. */
+  /** Sin `volverA` ni explorador, la navegación es un paso atrás en el historial. */
   it('sin destino fijo, la luz amarilla retrocede en el historial', () => {
     const fixture = crear();
     const atras = vi.spyOn(TestBed.inject(Location), 'back');
@@ -107,6 +107,44 @@ describe('WindowPanelComponent', () => {
 
     expect(atras).toHaveBeenCalled();
     expect(navegar).not.toHaveBeenCalled();
+  });
+
+  /**
+   * Regresión de la incidencia: el explorador del sistema no es una ruta, así
+   * que abrir un reporte desde ahí deja UNA entrada de historial. Retroceder
+   * sacaba al usuario del sistema entero y lo dejaba en el Home.
+   */
+  it('con explorador disponible, la luz amarilla vuelve a él y no al historial', () => {
+    shell.setExploradorDisponible(true);
+    const fixture = crear();
+    const atras = vi.spyOn(TestBed.inject(Location), 'back');
+
+    elemento(fixture, '.mis-window-light--volver')!.click();
+
+    expect(shell.contenidoPendienteSeleccion()).toBe(true);
+    expect(atras).not.toHaveBeenCalled();
+  });
+
+  it('con el explorador ya a la vista, la luz amarilla sí retrocede', () => {
+    shell.setExploradorDisponible(true);
+    shell.setContenidoPendienteSeleccion(true);
+    const fixture = crear();
+    const atras = vi.spyOn(TestBed.inject(Location), 'back');
+
+    elemento(fixture, '.mis-window-light--volver')!.click();
+
+    expect(atras).toHaveBeenCalled();
+  });
+
+  it('`volverA` manda sobre el explorador', () => {
+    shell.setExploradorDisponible(true);
+    const fixture = crear({ volverA: '/app/analista/listas' });
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+    elemento(fixture, '.mis-window-light--volver')!.click();
+
+    expect(navegar).toHaveBeenCalledWith('/app/analista/listas');
+    expect(shell.contenidoPendienteSeleccion()).toBe(false);
   });
 
   it('puede ocultar el semáforo en paneles anidados', () => {

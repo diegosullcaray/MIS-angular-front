@@ -101,6 +101,33 @@ describe('PrincipalComponent', () => {
     expect(fixture.componentInstance['mostrarCalculadora']()).toBe(true);
   });
 
+  /**
+   * Regresión de la incidencia: un administrador entra sin perfil cargado, así
+   * que el bloque que contiene `<app-perfil-card>` —la única puerta al
+   * selector— no se pinta. Al cerrar el diálogo de entrada se quedaba sin
+   * forma de volver a elegir nivel.
+   */
+  describe('acceso al selector de nivel desde la barra de la ventana', () => {
+    function boton(fixture: ReturnType<typeof crear>): HTMLElement | null {
+      return fixture.nativeElement.querySelector('[aria-label="Seleccionar nivel"]');
+    }
+
+    it('con puedeElegirNivel, el botón está aunque no haya perfil cargado', () => {
+      incentivosFalso.puedeElegirNivel.set(true);
+      incentivosFalso.perfil.set(null);
+      const fixture = crear();
+
+      expect(boton(fixture)).not.toBeNull();
+
+      boton(fixture)!.click();
+      expect(fixture.componentInstance['mostrarSelector']()).toBe(true);
+    });
+
+    it('sin puedeElegirNivel el botón no se ofrece', () => {
+      expect(boton(crear())).toBeNull();
+    });
+  });
+
   it('actualizar() delega en el servicio', () => {
     const fixture = crear();
     fixture.componentInstance['actualizar']();

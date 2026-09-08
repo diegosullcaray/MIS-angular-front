@@ -3,33 +3,29 @@
    el número alineado a la derecha. La versión anterior aplicaba esos colores
    como color de TEXTO, así que las cifras quedaban del color del fondo de la
    página (invisibles). Acá vuelven a ser fondos, con un texto de contraste
-   propio para cada uno. */
-:host {
-  --chip-neutro-bg: #E2E8F0;
-  --chip-neutro-fg: #304156;
-  --chip-real-bg: #A0D2FA;
-  --chip-real-fg: #14314F;
-  --chip-meta-ok-bg: #86EFAC;
-  --chip-meta-ok-fg: #14532D;
-  --chip-meta-baja-bg: #F3A9AF;
-  --chip-meta-baja-fg: #5B1A20;
-  --chip-mon-bg: #125386;
-  --chip-mon-fg: #FFFFFF;
-  --chip-borde: rgba(18, 83, 134, 0.35);
-}
+   propio para cada uno.
 
-:host-context(.dark) {
-  --chip-neutro-bg: #33415A;
-  --chip-neutro-fg: #DDE5F2;
-  --chip-real-bg: #1E4C74;
-  --chip-real-fg: #CDE7FF;
-  --chip-meta-ok-bg: #1B5133;
-  --chip-meta-ok-fg: #B7F0CC;
-  --chip-meta-baja-bg: #5D2328;
-  --chip-meta-baja-fg: #FFC9CE;
-  --chip-mon-bg: #0E3D63;
-  --chip-mon-fg: #FFFFFF;
-  --chip-borde: rgba(0, 162, 255, 0.28);
+   Los cinco chips salen de los tokens `--mis-*` y NO de hexes propios: antes
+   había dos paletas paralelas —una para claro y otra para oscuro— que había
+   que mantener a mano y que no seguían al acento que elige el usuario. Cada
+   par `-light` de `tokens.css` ya está pensado como fondo + texto y cambia
+   solo con el tema, así que acá no hace falta un bloque `.dark`. */
+:host {
+  /* Sin señal: el mismo par azul apagado que usa el resto de la interfaz. */
+  --chip-neutro-bg: var(--mis-primary-light);
+  --chip-neutro-fg: var(--mis-text-primary);
+  /* Valor real: celeste de marca. */
+  --chip-real-bg: var(--mis-secondary-light);
+  --chip-real-fg: var(--mis-primary-text);
+  /* Meta cumplida / no cumplida: los semánticos de estado. */
+  --chip-meta-ok-bg: var(--mis-success-light);
+  --chip-meta-ok-fg: var(--mis-success);
+  --chip-meta-baja-bg: var(--mis-danger-light);
+  --chip-meta-baja-fg: var(--mis-danger);
+  /* Monetizado: el único chip sólido, como en el legado. */
+  --chip-mon-bg: var(--mis-primary);
+  --chip-mon-fg: var(--mis-text-on-primary);
+  --chip-borde: var(--mis-border);
 }
 
 .chip {

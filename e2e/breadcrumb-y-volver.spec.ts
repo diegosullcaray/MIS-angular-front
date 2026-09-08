@@ -81,7 +81,15 @@ test.describe('Breadcrumb en escritorio', () => {
 });
 
 test.describe('Flecha de volver del panel de ventana', () => {
-  test('está presente y regresa al paso anterior', async ({ page }) => {
+  /**
+   * Regresión de INC-2026-09-08-06. Antes esta prueba esperaba terminar en
+   * `/app/dashboard`, que era justo el defecto: el explorador del sistema no es
+   * una ruta —se pinta sobre el `<router-outlet>` desde el estado del shell—,
+   * así que retroceder en el historial se lo saltaba entero y sacaba al usuario
+   * del sistema. Ahora sube UN nivel: al explorador, y **sin cambiar la URL**,
+   * para que el contenido vuelva intacto.
+   */
+  test('está presente y sube al explorador del sistema, no al inicio', async ({ page }) => {
     await inyectarSesionVigente(page);
     await mockearBackendAnt(page);
 
@@ -98,6 +106,7 @@ test.describe('Flecha de volver del panel de ventana', () => {
     await volver.click();
     await page.waitForTimeout(600);
 
-    expect(page.url()).toContain('/app/dashboard');
+    await expect(page.locator('.mis-explorador')).toBeVisible();
+    expect(page.url()).toContain(RUTA_PROFUNDA);
   });
 });

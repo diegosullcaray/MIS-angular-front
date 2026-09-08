@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
 import { TooltipModule } from 'primeng/tooltip';
+import { ShellStateService } from '../../../core/services/shell-state.service';
 
 /** Destino de la luz roja: el inicio del shell. */
 const RUTA_HOME = '/app/dashboard';
@@ -21,13 +22,14 @@ export class WindowPanelComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
+  private readonly shell = inject(ShellStateService);
 
   /** Título de la ventana (centrado en la barra, como en Finder). */
   readonly titulo = input<string>('');
   /** Texto secundario junto al título (ej. "Consultas y referencias"). */
   readonly subtitulo = input<string>('');
 
-  /** Destino explícito del botón amarillo. Vacío = volver en el historial. */
+  /** Destino explícito del botón amarillo. Vacío = resolverlo solo (ver `onVolver`). */
   readonly volverA = input<string>('');
   /** Tooltip/aria-label del botón amarillo. */
   readonly etiquetaVolver = input<string>('Volver');
@@ -85,16 +87,33 @@ export class WindowPanelComponent {
   }
 
   /**
-   * Luz amarilla: vuelve al destino que fije la pantalla o, si no fijó ninguno,
-   * al paso anterior del historial.
+   * Luz amarilla: vuelve al nivel inmediato anterior.
+   *
+   * El orden importa, y el paso del medio es la corrección de la incidencia:
+   *
+   * 1. El destino explícito, si la pantalla fijó `volverA`.
+   * 2. **El explorador del sistema.** No es una ruta: se pinta sobre el
+   *    `<router-outlet>` desde `ShellStateService`, así que abrir un reporte
+   *    desde ahí no deja entrada de historial y `location.back()` se saltaba
+   *    ese paso entero — devolvía al usuario al Home, que era el destino
+   *    anterior de verdad. Cuando el explorador ya está a la vista no se hace:
+   *    ahí el paso atrás sí es del historial.
+   * 3. El historial, para todo lo demás.
    */
   protected onVolver(): void {
     this.volver.emit();
+
     const destino = this.volverA();
     if (destino) {
       void this.router.navigateByUrl(destino);
       return;
     }
+
+    if (this.shell.exploradorDisponible() && !this.shell.contenidoPendienteSeleccion()) {
+      this.shell.setContenidoPendienteSeleccion(true);
+      return;
+    }
+
     this.location.back();
   }
 

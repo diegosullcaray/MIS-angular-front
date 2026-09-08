@@ -15,7 +15,7 @@ Los campos obligatorios salen de la [política de evidencia](../evidence-policy.
 | **Fecha** | 2026-09-08 |
 | **Entorno** | Windows, ruta del proyecto con espacios (`D:\FINANCIERA CONFIANZA\…`); Vitest + jsdom 29.1.1 |
 | **Estado** | **Corregido** |
-| **Evidencia** | `governance/incidencias/incidencias-test.md` (log completo de la corrida) |
+| **Evidencia** | Log completo de la corrida, transcrito abajo. El archivo crudo se retiró del repositorio en `a3b4fb6`. |
 
 ### Resultado observado
 
@@ -167,7 +167,7 @@ en claro y oscuro.
 | **Fecha** | 2026-09-08 |
 | **Entorno reportado** | Windows, `D:\FINANCIERA CONFIANZA\…` |
 | **Estado** | **No reproducido** — sin cambio de código |
-| **Evidencia** | `governance/incidencias/playwrithe/` (9 carpetas con `error-context.md` y captura) |
+| **Evidencia** | 9 carpetas de Playwright con `error-context.md` y captura, resumidas abajo. Se retiraron del repositorio en `a3b4fb6`. |
 
 ### Resultado observado en la máquina que reportó
 
@@ -197,3 +197,218 @@ vuelve a aparecer conviene decidir entre subir los timeouts del proyecto o
 cambiar `waitForLoadState('networkidle')` por una espera sobre un elemento
 concreto, que es la práctica recomendada de Playwright y no depende de la
 velocidad del equipo.
+
+---
+
+## INC-2026-09-08-05 · El comunicado no cerraba al hacer clic fuera, y sus dos botones hacían lo mismo
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `<app-anuncios-dialog>` y `AnunciosService` (layout) |
+| **Commit evaluado** | `8a4d56d` |
+| **Fecha** | 2026-09-08 |
+| **Estado** | **Corregido** |
+| **Origen** | Tarea 1 de `incidencias.md` |
+
+### Resultado observado
+
+El diálogo solo se cerraba con la X. Y los dos botones del pie, que prometen
+cosas distintas, terminaban en el mismo lugar: "Entendido" escribía el id en
+`localStorage` —o sea, no volvía nunca más—, y "No mostrar comunicados" apagaba
+**todos** los comunicados con un interruptor global, incluidos los que todavía
+no se publicaron.
+
+### Resultado esperado
+
+- Clic fuera cierra, igual que la X.
+- **Entendido**: se calla en esta sesión de navegación.
+- **No mostrar este comunicado**: se calla para siempre, solo ese.
+
+### Corrección
+
+`[dismissableMask]="true"` en el diálogo, y dos caminos separados en el
+servicio: `cerrar()` apunta el id en el nuevo `ComunicadosSesionService`
+(`sessionStorage`, clave `mis.comunicados.sesion`) y `noMostrarEste()` lo
+persiste con `PreferenciasService.marcarAnunciosVistos`. El interruptor global
+sigue existiendo, pero solo donde corresponde: Configuración → Comunicados.
+
+`sessionStorage` y no una señal en memoria porque recargar la página no puede
+revivir un aviso que el usuario acaba de cerrar.
+
+### Regresión
+
+`anuncios.service.spec.ts` (los dos caminos y la vuelta en la siguiente
+sesión), `comunicados-sesion.service.spec.ts` y `anuncios-dialog.component.spec.ts`.
+
+### Desvíos declarados
+
+Dos cosas que pide la tarea y **no** se implementaron, por decisión explícita:
+
+1. **Clave por usuario.** La tarea pide guardar los comunicados leídos "bajo una
+   clave saneada del usuario activo". Se dejó el documento único
+   `mis.preferencias`: el cierre de sesión vacía `localStorage` entero, así que
+   dos usuarios nunca comparten estado y particionar el documento no cambiaría
+   ninguna conducta observable.
+2. **Conservar preferencias al cerrar sesión.** La tarea pide que el logout
+   preserve `localStorage`. Se mantiene el borrado total. **Consecuencia
+   asumida y conocida**: "No mostrar este comunicado" dura hasta el próximo
+   cierre de sesión, no más. Esto ya era así antes de este cambio —
+   `LimpiezaSesionService.limpiarTodo()` llama a `localStorage.clear()`— y no
+   se introdujo acá.
+
+---
+
+## INC-2026-09-08-06 · "Volver" sacaba al usuario del sistema y lo dejaba en el Home
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `<app-window-panel>` (luz amarilla) |
+| **Commit evaluado** | `8a4d56d` |
+| **Fecha** | 2026-09-08 |
+| **Estado** | **Corregido** |
+| **Origen** | Tarea 2 de `incidencias.md` |
+
+### Causa
+
+La luz amarilla ya hacía `location.back()` desde la tarea T8, así que a primera
+vista cumplía. El problema estaba un nivel más abajo: **el explorador del
+sistema no es una ruta**. Se pinta sobre el `<router-outlet>` desde
+`ShellStateService.contenidoPendienteSeleccion` (ver
+`shell-layout.component.html`), y por eso abrir un reporte desde ahí deja **una
+sola** entrada de historial. El paso atrás se saltaba el explorador entero y
+devolvía al usuario al Home, que era literalmente el destino anterior.
+
+Se descartó la otra opción que ofrecía la tarea —calcular el segmento padre con
+`ActivatedRoute`—: las rutas de reportes son planas, con el path completo en un
+solo `Route` (`'leg/com/rda/adm/res-mov'`), así que recortar un segmento apunta
+a una URL que no existe y, con el comodín `**` de `app.routes.ts`, aterriza en
+la pantalla de 404 sin que la navegación falle.
+
+### Corrección
+
+`onVolver()` resuelve en tres pasos: `volverA` explícito → **el explorador del
+sistema, si lo hay y no está ya a la vista** → historial. El layout publica si
+existe explorador en `ShellStateService.exploradorDisponible`, desde
+`NavegacionSistemasService.panelActivo`.
+
+### Regresión
+
+Cuatro casos en `window-panel.component.spec.ts`.
+
+---
+
+## INC-2026-09-08-07 · Las pantallas de reporte no tenían forma de recargar datos
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `<app-reporte-simple>` |
+| **Commit evaluado** | `8a4d56d` |
+| **Fecha** | 2026-09-08 |
+| **Estado** | **Corregido** |
+| **Origen** | Tarea 3 de `incidencias.md` |
+
+### Corrección
+
+`ReporteSimpleComponent` apagaba con `[permitirActualizar]="false"` el botón de
+actualizar que `WindowPanelComponent` ya tiene en la esquina. Se enciende
+—solo cuando hay nivel elegido— y se conecta a `refrescar()`, que **reemite
+`nivelSeleccionado`** con el nodo actual.
+
+Reemitir en vez de agregar una salida nueva es lo que evita tocar las 84
+pantallas que consumen este armazón: todas ya escuchan ese evento. Se emite una
+**copia** del nodo (`{ ...nodo }`) a propósito: las pantallas que consultan
+dentro de un `effect` sobre `nivelActual` —ver `ReporteSimpleBase`— no
+reaccionarían si la señal recibiera la misma referencia.
+
+### Desvío declarado
+
+La tarea pedía un `<p-button icon="pi pi-refresh">` nuevo al lado del botón de
+filtros. Se reusó el de la esquina: agregar otro dejaba dos refrescos en la
+misma ventana y rompía la consistencia con Incentivos y el resto de los paneles.
+
+### Regresión
+
+Cuatro casos en `reporte-simple.component.spec.ts`.
+
+---
+
+## INC-2026-09-08-08 · Incentivos: un administrador se quedaba sin acceso a los niveles
+
+| Campo | Valor |
+|---|---|
+| **Componente** | Módulo `incentivos` (`/app/incentivos3`) |
+| **Commit evaluado** | `8a4d56d` |
+| **Fecha** | 2026-09-08 |
+| **Estado** | **Corregido** |
+| **Origen** | Tarea 4 de `incidencias.md` |
+
+### Causa
+
+No era el rol. `auth.service.ts` mapea `tip_use === 0` a `admin-sistema` y
+`ShellStateService.esAdmin()` lo reconoce, así que `iniciar()` sí levantaba el
+diálogo. El problema es que un administrador entra **sin perfil cargado**, y
+todo el cuerpo de `principal.component.html` cuelga de `@else if
+(incentivos.perfil())` — incluida `<app-perfil-card>`, que era la única puerta
+al selector. Cerrado el diálogo de entrada, no quedaba forma de reabrirlo.
+
+Encima, ese diálogo no se podía cerrar: `[closable]="!obligatorio()"` le quitaba
+la X y el Escape justo en el primer ingreso de un administrador.
+
+### Corrección
+
+1. Acción **«Seleccionar nivel»** en la barra de la ventana, proyectada en
+   `[ventana-acciones]` y visible siempre que `incentivos.puedeElegirNivel()`.
+   No depende de que haya perfil.
+2. El diálogo pasa a ser siempre cerrable (`closable`, `closeOnEscape`,
+   `dismissableMask`); `cerrar()` ya llevaba al Home, que es lo pedido. El input
+   `obligatorio`, que solo servía para cerrarle la puerta, se retiró.
+3. Colorimetría: los 20 hexes de `tabla-variables.component.css` —dos paletas
+   paralelas mantenidas a mano, una por tema— pasan a los pares `--mis-*`, y
+   con eso desaparece el bloque `.dark` duplicado. El `style="color: #ea580c"`
+   de `monetizado-card` pasa a `--mis-warning`.
+
+Los cinco chips se midieron con `contraste.util.ts`: los diez pares
+(claro y oscuro) superan el umbral `textoAA` de 4.5:1.
+
+### Regresión
+
+Dos casos en `principal.component.spec.ts` para el acceso al selector sin perfil.
+
+---
+
+## INC-2026-09-08-09 · Los gráficos de Agro diario usaban la paleta del sistema viejo
+
+| Campo | Valor |
+|---|---|
+| **Componente** | Actividad Diaria → Cartera → Agro (`RS_AGROMIX_*`) |
+| **Commit evaluado** | `8a4d56d` |
+| **Fecha** | 2026-09-08 |
+| **Estado** | **Corregido** |
+| **Origen** | Tarea 5 de `incidencias.md` |
+
+### Causa
+
+Había dos copias de la misma función. La de Actividad Mensual
+(`seriesDeGraficoConColor`) asignaba `colorSerieReporte` a cada serie; la de
+Actividad Diaria (`seriesDeGrafico`) devolvía las series **sin color**. Sin
+color, `highcharts-factory.util.ts` cae a su paleta de respaldo —hexes
+literales `#0284C7`, `#003f5c`, `#bc5090`…—, que es la que se veía como «la del
+legado».
+
+### Corrección
+
+Una sola función, en `shared/ui/graficos/utils/series-grafico.util.ts`, que usan
+los dos reportes. Mientras existieron dos copias nada impedía que volvieran a
+separarse; ahora no pueden.
+
+De paso deja de reventar con un payload roto: un JSON inválido devuelve un
+bloque vacío en vez de tumbar la pantalla.
+
+### Revisado y no tocado
+
+`seguros-mapeo.util.ts` también arma series, pero el color se lo manda el
+backend en el propio payload. No es el mismo caso y la incidencia no lo reporta.
+
+### Regresión
+
+`series-grafico.util.spec.ts`, siete casos.

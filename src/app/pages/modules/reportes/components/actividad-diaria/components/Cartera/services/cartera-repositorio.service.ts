@@ -10,10 +10,10 @@ import {
   conColumnasSemaforo,
   conSemaforos,
   graficoGestionComercial,
-  seriesDeGrafico,
   tarjetasCmgCartera,
   totalesAgro,
 } from '../utils/cartera-mapeo.util';
+import { seriesDeGraficoConColor } from '../../../../../../../../shared/ui/graficos/utils/series-grafico.util';
 import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas';
 import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
 import { GRAFICOS_GESTION_COMERCIAL, kpisDeFilaTotal } from '../models/gestion-comercial.model';
@@ -71,7 +71,7 @@ export class CarteraRepositorioService {
           const { titulo, id } = GRAFICOS_AGRICOLA[i];
           const resultado = resultadoCrudo(r);
           if (id) filasPorGrafico[id] = filasDeResultado(resultado);
-          return { titulo, ...seriesDeGrafico(resultado?.headers) };
+          return { titulo, ...seriesDeGraficoConColor(resultado?.headers) };
         });
         return { graficos, filasPorGrafico };
       }),
