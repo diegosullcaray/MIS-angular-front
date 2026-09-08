@@ -190,7 +190,6 @@
 }
 
 .header-breadcrumb ::ng-deep .p-breadcrumb-list > li:last-child .p-breadcrumb-item-link {
-  display: block;
   min-width: 0;
   overflow: hidden;
 }

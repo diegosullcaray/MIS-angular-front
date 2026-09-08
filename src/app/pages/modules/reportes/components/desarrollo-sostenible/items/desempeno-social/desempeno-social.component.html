@@ -7,11 +7,12 @@
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
   </div>
 
-  <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">
-    Los datos de Bancarización se comparan con el último RCC disponible a la fecha.
-  </p>
+ 
 
   <div class="mis-card p-3 overflow-x-auto">
     <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" [cargando]="false" />
   </div>
+   <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">
+    Los datos de Bancarización se comparan con el último RCC disponible a la fecha.
+  </p>
 </app-window-panel>
