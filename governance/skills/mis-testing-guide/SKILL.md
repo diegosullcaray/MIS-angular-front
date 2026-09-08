@@ -16,7 +16,7 @@ Doble pirámide: **Vitest** vía `@angular/build:unit-test` sobre jsdom, y **Pla
 | **Globales de Vitest** | `tsconfig.spec.json` declara `types: ["vitest/globals"]`. **Ningún spec importa de `'vitest'`** — 0 de 349. No agregues `import { describe, it, expect, vi } from 'vitest'`. |
 | **`TestBed` para servicios** | Un servicio con `inject()` en un campo necesita contexto de inyección: no se instancia con `new`. |
 | **Nada de `TestBed` para `utils/`** | Los mapeos puros se prueban directo. Son las pruebas más rápidas y las que más protegen. |
-| **`src/test-setup.ts`** | Limpia `sessionStorage` antes de cada test: el caché de jerarquía se comparte entre specs del mismo worker. No dependas de ese estado. |
+| **`src/test-setup.ts`** | Garantiza que `localStorage` y `sessionStorage` existan —jsdom no los da si el documento tiene origen opaco— y limpia `sessionStorage` antes de cada test: el caché de jerarquía se comparte entre specs del mismo worker. No dependas de ese estado. |
 | **E2E sin backend real** | Sesión inyectada en `sessionStorage` (`e2e/fixtures/session.ts`) y backend mockeado con `page.route()`. Nunca Google ni Ant reales. |
 | **Dos proyectos E2E** | `desktop-chromium` y `mobile-chromium` (Pixel 7, 412 px). Todo cambio de layout se prueba en ambos. |
 

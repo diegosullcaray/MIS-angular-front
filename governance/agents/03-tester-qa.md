@@ -24,7 +24,7 @@ Probar que el cambio hace lo que la especificación dice, **y que falla bien cua
 | Vitest con **globales activados** (`types: ["vitest/globals"]`) | **Ningún spec importa de `'vitest'`** — 0 de 349. No agregues `import { describe, it } from 'vitest'`. |
 | Servicios que usan `inject()` en campos | Necesitan `TestBed`; no se instancian con `new`. |
 | Mapeos puros en `utils/` | No necesitan `TestBed`: son la prueba más rápida y la más valiosa. |
-| `src/test-setup.ts` limpia `sessionStorage` antes de cada test | El caché de jerarquía se comparte entre specs del mismo worker; no dependas de ese estado. |
+| `src/test-setup.ts` garantiza el almacenamiento web y limpia `sessionStorage` antes de cada test | El caché de jerarquía se comparte entre specs del mismo worker; no dependas de ese estado. Si `localStorage` llega `undefined`, es el entorno (jsdom con origen opaco), no el spec — ver INC-2026-09-08-01. |
 | E2E sin backend real | Cada spec inyecta sesión en `sessionStorage` (`e2e/fixtures/session.ts`) y mockea con `page.route()`. Nunca dependas de Google ni de Ant reales. |
 | Dos proyectos E2E | `desktop-chromium` y `mobile-chromium` (Pixel 7). Un cambio de layout se prueba en ambos. |
 

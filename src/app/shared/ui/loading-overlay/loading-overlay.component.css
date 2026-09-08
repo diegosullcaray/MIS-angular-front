@@ -9,12 +9,12 @@
 }
 
 /* Misma proporción que el overlay de redirección (130 sobre 180): el avatar
-   entra holgado dentro del anillo sin tocarlo. Al agrandar el logo se agranda
-   el anillo con él (112px en la plantilla): dejarlo en 96 habría puesto la
-   imagen a 4px del trazo, y la holgura es lo que hace legible la marca. */
+   entra holgado dentro del anillo sin tocarlo. El anillo lo acompaña (144px en
+   la plantilla) — la holgura es lo que deja legible la marca del Puma, y a
+   112/80 la insignia seguía leyéndose como un ícono y no como la mascota. */
 .loading-avatar {
-  width: 80px;
-  height: 80px;
+  width: 104px;
+  height: 104px;
 }
 
 @keyframes loadingOverlayFadeIn {
@@ -22,9 +22,12 @@
   to { opacity: 1; }
 }
 
+/* Solo la animación del trazo. Aura le suma `p-progressspinner-color`, que
+   cicla por cuatro colores y pisa el `stroke` de marca: el anillo terminaba
+   parpadeando en verde y amarillo en vez del celeste institucional. */
 :host ::ng-deep .mis-spinner .p-progressspinner-circle {
   stroke: var(--mis-secondary, #00A2FF);
-  animation-duration: 1.6s;
+  animation: p-progressspinner-dash 1.6s ease-in-out infinite;
 }
 
 /* El anillo no se apaga con menos movimiento: es lo único que dice que algo

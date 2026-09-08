@@ -17,7 +17,7 @@ Derivadas del código. **No editar a mano**: `npm run inventario` regenera, `npm
 - Los specs unitarios usan **globales de Vitest** (`types: ["vitest/globals"]`): ninguno importa de `'vitest'`.
 - Los servicios con `inject()` se prueban con `TestBed` doblando el `Mod*Service` correspondiente; los mapeos de `utils/` se prueban directo, sin `TestBed`.
 - Las suites E2E mockean el backend con `page.route()` e inyectan la sesión en `sessionStorage` (`e2e/fixtures/session.ts`): no dependen de Google ni de Ant reales.
-- `src/test-setup.ts` limpia `sessionStorage` antes de cada spec, porque el caché de jerarquía se comparte entre specs del mismo worker.
+- `src/test-setup.ts` garantiza que `localStorage` y `sessionStorage` existan (jsdom no los expone con un documento de origen opaco) y limpia `sessionStorage` antes de cada spec, porque el caché de jerarquía se comparte entre specs del mismo worker. Lo cubre `src/test-setup.spec.ts`.
 
 Metodología completa: [`skills/mis-testing-guide`](../../skills/mis-testing-guide/SKILL.md).
 

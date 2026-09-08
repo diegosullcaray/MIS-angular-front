@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { ModSysLoginService } from '../../../../core/winder/instances/mod-sys-login.service';
 import { environment } from '../../../../../environments/environment';
+import { DURACION_SESION_MS } from '../../../../app.global';
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
 
 const RESPUESTA_LOGIN: IWinderResponse = {
@@ -151,12 +152,15 @@ describe('AuthService', () => {
     expect(service.token()).toBe('winder-sid-1');
     expect(sessionStorage.getItem('mis.sesion')).toContain('winder-sid-1');
 
+    // La ventana sale de `DURACION_SESION_MS`, no de un número escrito acá: la
+    // duración de la sesión es una decisión de producto y ya cambió una vez
+    // (30 → 50 min) dejando este spec en rojo.
     const persistida = JSON.parse(sessionStorage.getItem('mis.sesion')!);
-    expect(persistida.expiraEn).toBeGreaterThan(Date.now() + 29 * 60 * 1000);
-    expect(persistida.expiraEn).toBeLessThanOrEqual(Date.now() + 30 * 60 * 1000);
+    expect(persistida.expiraEn).toBeGreaterThan(Date.now() + DURACION_SESION_MS - 60_000);
+    expect(persistida.expiraEn).toBeLessThanOrEqual(Date.now() + DURACION_SESION_MS);
   });
 
-  it('borra las credenciales de sessionStorage y redirige a "Sesión expirada" (401) automáticamente a los 30 min de login, sin necesidad de recargar', async () => {
+  it('borra las credenciales de sessionStorage y redirige a "Sesión expirada" (401) al vencer la sesión, sin necesidad de recargar', async () => {
     vi.useFakeTimers();
     configurar({
       hasValidIdToken: vi.fn().mockReturnValue(true),
@@ -167,7 +171,7 @@ describe('AuthService', () => {
     await service.completarLoginGoogle();
     expect(shell.usuarioActivo()).not.toBeNull();
 
-    await vi.advanceTimersByTimeAsync(30 * 60 * 1000);
+    await vi.advanceTimersByTimeAsync(DURACION_SESION_MS);
     await agotarMicrotareas();
 
     expect(shell.usuarioActivo()).toBeNull();
@@ -209,7 +213,7 @@ describe('AuthService', () => {
     expect(shell.usuarioActivo()?.id).toBe('u-1');
   });
 
-  it('restaurarSesion() descarta y redirige a "Sesión expirada" (401) si la sesión ya venció (pasaron los 30 min)', async () => {
+  it('restaurarSesion() descarta y redirige a "Sesión expirada" (401) si la sesión ya venció', async () => {
     configurar();
     const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     sessionStorage.setItem(
@@ -288,7 +292,7 @@ describe('AuthService', () => {
     await service.completarLoginGoogle();
 
     service.cerrarSesion('');
-    vi.advanceTimersByTime(30 * 60 * 1000);
+    vi.advanceTimersByTime(DURACION_SESION_MS);
 
     expect(navSpy).not.toHaveBeenCalledWith('/error/401');
   });
