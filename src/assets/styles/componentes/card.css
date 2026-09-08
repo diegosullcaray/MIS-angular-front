@@ -1,0 +1,17 @@
+/* Cards de gestión (`p-card` con header/body)
+   Extraído de `components.css`, que había crecido a 1095 líneas y 21
+   secciones inconexas: una sola clase de una ventana obligaba a abrir el
+   archivo entero. */
+
+/* ── Cards de gestión (p-card con header/body) ────────────── */
+.mis-card {
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  box-shadow: var(--mis-shadow-sm);
+  overflow: hidden;
+  width: 100%;
+}
+
+.mis-card .p-card-body {
+  padding: var(--mis-space-4) var(--mis-space-6);
+}

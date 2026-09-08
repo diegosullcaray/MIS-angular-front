@@ -102,7 +102,7 @@
     <app-data-table
       [columns]="columnasClientes"
       [data]="clientes()"
-      [loading]="cargandoDetalle()"
+      [attr.aria-busy]="cargandoDetalle()"
       [searchFields]="busquedaClientes"
       searchPlaceholder="Buscar por nombre, unidad o asesor..."
       emptyMessage="No se encontraron clientes."

@@ -179,6 +179,21 @@ function bloquePruebas(p) {
 
 /* ── Inyección en los .md ─────────────────────────────────── */
 
+/**
+ * Compara solo los DATOS, nunca el sello.
+ *
+ * El sello lleva fecha y commit, así que compararlo entero hacía que
+ * `--check` fallara en cada commit aunque el inventario fuera idéntico. Un
+ * gate que grita en falso se termina ignorando, y entonces deja de proteger
+ * el caso real. También se normaliza el fin de línea, porque un checkout de
+ * Windows con `core.autocrlf` guarda CRLF y este script escribe LF.
+ */
+const soloDatos = (bloque) =>
+  bloque
+    .replace(/<!-- Generado por [^>]*-->/g, '')
+    .replace(/\r\n/g, '\n')
+    .trim();
+
 function inyectar(rutaDoc, clave, cuerpo, sello) {
   const absoluta = resolve(RAIZ, rutaDoc);
   if (!existsSync(absoluta)) return { rutaDoc, estado: 'ausente' };
@@ -188,13 +203,13 @@ function inyectar(rutaDoc, clave, cuerpo, sello) {
   const fin = '<!-- generado:fin -->';
   const patron = new RegExp(`${inicio}[\\s\\S]*?${fin}`);
 
-  if (!patron.test(original)) return { rutaDoc, estado: 'sin-marcador' };
+  const actual = original.match(patron);
+  if (!actual) return { rutaDoc, estado: 'sin-marcador' };
 
   const reemplazo = `${inicio}\n<!-- Generado por governance/scripts/generar-inventario.mjs — ${sello}. No editar a mano. -->\n\n${cuerpo}\n${fin}`;
-  const nuevo = original.replace(patron, reemplazo);
 
-  if (nuevo === original) return { rutaDoc, estado: 'al-dia' };
-  if (!flags['check']) writeFileSync(absoluta, nuevo);
+  if (soloDatos(actual[0]) === soloDatos(reemplazo)) return { rutaDoc, estado: 'al-dia' };
+  if (!flags['check']) writeFileSync(absoluta, original.replace(patron, reemplazo));
   return { rutaDoc, estado: 'desactualizado' };
 }
 

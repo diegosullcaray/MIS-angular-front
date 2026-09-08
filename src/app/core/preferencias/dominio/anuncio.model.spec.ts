@@ -1,5 +1,5 @@
-import { comunicadoVigente, estaPendiente } from './anuncio.model';
-import type { Anuncio } from './anuncio.model';
+import { comunicadoVigente, estaPendiente, laminaEnRango, laminasDe } from './anuncio.model';
+import type { Anuncio, LaminaAnuncio } from './anuncio.model';
 
 const HOY = '2026-09-01';
 
@@ -58,5 +58,65 @@ describe('estaPendiente', () => {
 
   it('los ids de otros comunicados no lo dan por visto', () => {
     expect(estaPendiente(anuncio({ id: 'actual' }), ['otro', 'viejo'])).toBe(true);
+  });
+});
+
+/**
+ * Un comunicado puede traer una lámina o varias. `laminasDe` normaliza las dos
+ * formas para que el diálogo tenga un solo camino: sin esto, la vista tendría
+ * que preguntar por la forma del dato.
+ */
+describe('laminasDe', () => {
+  const lamina = (imagen: string): LaminaAnuncio => ({ imagen, alt: 'Pieza ' + imagen, ancho: 780, alto: 815 });
+
+  it('un comunicado de una sola pieza devuelve esa pieza, como lista de una', () => {
+    const laminas = laminasDe(anuncio({ id: 'simple' }));
+
+    expect(laminas).toHaveLength(1);
+    expect(laminas[0].imagen).toBe('assets/images/fc/ads/Comunicado.png');
+    expect(laminas[0].alt).toBe('Comunicado de prueba');
+  });
+
+  it('un comunicado con varias láminas las devuelve en el orden publicado', () => {
+    const laminas = laminasDe({
+      id: 'carrusel',
+      laminas: [lamina('uno.png'), lamina('dos.png'), lamina('tres.png')],
+    });
+
+    expect(laminas.map((l) => l.imagen)).toEqual(['uno.png', 'dos.png', 'tres.png']);
+  });
+
+  it('las dos formas producen el mismo tipo de lista: el diálogo no las distingue', () => {
+    const simple = laminasDe(anuncio({ id: 'simple' }));
+    const carrusel = laminasDe({ id: 'carrusel', laminas: [lamina('uno.png')] });
+
+    expect(Object.keys(simple[0])).toEqual(expect.arrayContaining(['imagen', 'alt', 'ancho', 'alto']));
+    expect(Object.keys(carrusel[0])).toEqual(expect.arrayContaining(['imagen', 'alt', 'ancho', 'alto']));
+  });
+});
+
+/**
+ * El recorrido es circular. Vive en el modelo y no en el componente porque el
+ * módulo de un negativo en JavaScript es negativo (`-1 % 3 === -1`), que es
+ * exactamente lo que rompe "anterior" en la primera lámina.
+ */
+describe('laminaEnRango', () => {
+  it('deja pasar un índice que ya está dentro', () => {
+    expect(laminaEnRango(0, 3)).toBe(0);
+    expect(laminaEnRango(2, 3)).toBe(2);
+  });
+
+  it('desde la última, siguiente vuelve a la primera', () => {
+    expect(laminaEnRango(3, 3)).toBe(0);
+  });
+
+  it('desde la primera, anterior va a la última — el caso del módulo negativo', () => {
+    expect(laminaEnRango(-1, 3)).toBe(2);
+    expect(laminaEnRango(-4, 3)).toBe(2);
+  });
+
+  it('sin láminas no hay índice que calcular, y no divide por cero', () => {
+    expect(laminaEnRango(5, 0)).toBe(0);
+    expect(laminaEnRango(-1, 0)).toBe(0);
   });
 });

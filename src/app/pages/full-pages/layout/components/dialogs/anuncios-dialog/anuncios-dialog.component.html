@@ -5,24 +5,82 @@
   [modal]="true"
   appendTo="body"
   styleClass="mis-anuncios-dialog"
-  [style]="{ width: 'auto', maxWidth: 'min(880px, 96vw)' }"
+  [style]="estiloDialogo()"
   [contentStyle]="{ padding: '0', overflow: 'hidden' }"
   [draggable]="false"
   [resizable]="false"
 >
-  @if (comunicado(); as pieza) {
-    <figure class="mis-anuncio-figura">
-      <!-- `width`/`height` son las medidas reales del archivo: el navegador
-           reserva el espacio con ellas y el diálogo no salta al cargar. -->
-      <img
-        class="mis-anuncio-imagen"
-        [src]="pieza.imagen"
-        [alt]="pieza.alt"
-        [width]="pieza.ancho"
-        [height]="pieza.alto"
-        decoding="async"
-      />
-    </figure>
+  @if (laminaActual(); as lamina) {
+    <!-- `tabindex="0"` y el rol de grupo hacen del visor un destino de foco:
+         es lo que permite recorrer las láminas con las flechas del teclado. -->
+    <div
+      class="mis-anuncio-visor"
+      [attr.role]="esCarrusel() ? 'group' : null"
+      [attr.aria-roledescription]="esCarrusel() ? 'carrusel' : null"
+      [attr.aria-label]="esCarrusel() ? 'Láminas del comunicado' : null"
+      [attr.tabindex]="esCarrusel() ? 0 : null"
+      (keydown)="onTecla($event)"
+    >
+      <figure class="mis-anuncio-figura">
+        <!-- `width`/`height` son las medidas reales del archivo: el navegador
+             reserva el espacio con ellas y el diálogo no salta al cargar. -->
+        <img
+          class="mis-anuncio-imagen"
+          [class.mis-anuncio-imagen--carrusel]="esCarrusel()"
+          [src]="lamina.imagen"
+          [alt]="lamina.alt"
+          [width]="lamina.ancho"
+          [height]="lamina.alto"
+          decoding="async"
+        />
+      </figure>
+
+      @if (esCarrusel()) {
+        <p-button
+          class="mis-anuncio-flecha mis-anuncio-flecha--anterior"
+          icon="pi pi-chevron-left"
+          [rounded]="true"
+          [text]="true"
+          severity="secondary"
+          ariaLabel="Lámina anterior"
+          (onClick)="anterior()"
+        />
+        <p-button
+          class="mis-anuncio-flecha mis-anuncio-flecha--siguiente"
+          icon="pi pi-chevron-right"
+          [rounded]="true"
+          [text]="true"
+          severity="secondary"
+          ariaLabel="Lámina siguiente"
+          (onClick)="siguiente()"
+        />
+      }
+    </div>
+
+    @if (esCarrusel()) {
+      <!-- Los indicadores son botones reales, no puntos decorativos: se puede
+           saltar a una lámina con el mouse y alcanzarlos con Tab. -->
+      <nav class="mis-anuncio-indicadores" aria-label="Ir a una lámina del comunicado">
+        <!-- `track $index` y no la imagen: dos láminas pueden reutilizar el
+             mismo archivo (una pieza repetida, un fondo común), y con la ruta
+             como clave Angular avisa NG0955 por claves duplicadas. La lista es
+             fija y ordenada, así que el índice es identidad estable. -->
+        @for (l of laminas(); track $index; let i = $index) {
+          <button
+            type="button"
+            class="mis-anuncio-punto"
+            [class.mis-anuncio-punto--activo]="i === indice()"
+            [attr.aria-current]="i === indice() ? 'true' : null"
+            [attr.aria-label]="'Lámina ' + (i + 1) + ' de ' + total()"
+            (click)="irA(i)"
+          ></button>
+        }
+      </nav>
+
+      <!-- Sin esto, quien usa lector de pantalla cambia de lámina y no recibe
+           ninguna señal de que algo cambió. -->
+      <p class="mis-anuncio-posicion" aria-live="polite">Lámina {{ indice() + 1 }} de {{ total() }}</p>
+    }
   } @else {
     <p class="mis-anuncios-nota">No hay comunicados publicados.</p>
   }

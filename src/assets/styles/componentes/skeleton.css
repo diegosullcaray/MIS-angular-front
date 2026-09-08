@@ -1,0 +1,17 @@
+/* Skeleton de carga
+   Extraído de `components.css`, que había crecido a 1095 líneas y 21
+   secciones inconexas: una sola clase de una ventana obligaba a abrir el
+   archivo entero. */
+
+/* ── Skeleton Component ───────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--mis-border) 25%,
+    rgba(29, 57, 110, 0.04) 50%,
+    var(--mis-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+  border-radius: var(--mis-radius-sm);
+}

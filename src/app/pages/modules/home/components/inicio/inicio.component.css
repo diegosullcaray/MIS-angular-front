@@ -5,6 +5,11 @@
   flex-direction: column;
   gap: var(--mis-space-2);
   width: 100%;
+  /* El shell ya deja su propio relleno alrededor del router-outlet (`p-3
+     sm:p-4`), pero con el rótulo arrancando ahí mismo la lista quedaba pegada
+     al header. Este margen es del Home y no del shell: el resto de los módulos
+     abren con su propia ventana `.mis-window`, que ya trae su cromo. */
+  margin-top: var(--mis-space-5);
   /* Ancho de lectura: a lo ancho de un monitor, la fecha se iría al otro
      extremo de la pantalla y el resto sería un hueco. Además deja ver el
      fondo de escritorio a la derecha. */

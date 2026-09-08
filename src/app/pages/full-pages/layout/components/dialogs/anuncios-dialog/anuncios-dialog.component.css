@@ -1,3 +1,17 @@
+/* El visor contiene la lámina y, si hay carrusel, las flechas superpuestas. */
+.mis-anuncio-visor {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mis-panel-bg);
+}
+
+.mis-anuncio-visor:focus-visible {
+  outline: none;
+  box-shadow: var(--mis-shadow-focus);
+}
+
 /* La pieza va a sangre: sin marco ni relleno, el comunicado ocupa todo el
    cuerpo del diálogo. El fondo solo se ve cuando la imagen es más angosta que
    la ventana. */
@@ -7,7 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--mis-panel-bg);
+  width: 100%;
 }
 
 /* La pieza manda su proporción; el diálogo solo le pone un techo. `contain`
@@ -20,6 +34,90 @@
   max-height: min(80vh, 860px);
   object-fit: contain;
   background: #ffffff;
+}
+
+/* Con varias láminas, todas ocupan el MISMO alto: si cada una mandara el suyo,
+   el diálogo cambiaría de tamaño en cada paso. El ancho lo fija el diálogo
+   (ver `estiloDialogo`), no una caja interna: una caja de alto fijo quedaba
+   recortada por el `overflow: hidden` del contenido y dejaba los indicadores
+   fuera de alcance del mouse.
+
+   El techo es más bajo que el de una pieza sola porque debajo van los
+   indicadores y el contador, y todo eso tiene que entrar en el diálogo. */
+.mis-anuncio-imagen--carrusel {
+  width: 100%;
+  height: min(64vh, 680px);
+  max-height: none;
+}
+
+/* Flechas superpuestas sobre la pieza, centradas verticalmente. */
+.mis-anuncio-flecha {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.mis-anuncio-flecha--anterior {
+  left: var(--mis-space-2);
+}
+
+.mis-anuncio-flecha--siguiente {
+  right: var(--mis-space-2);
+}
+
+/* Fondo translúcido detrás de la flecha: sin él, un ícono claro sobre una
+   lámina clara desaparece. */
+.mis-anuncio-flecha ::ng-deep .p-button {
+  background: var(--mis-glass-bg);
+  backdrop-filter: var(--mis-sidebar-blur);
+  border: 1px solid var(--mis-glass-border);
+  color: var(--mis-text-primary);
+}
+
+.mis-anuncio-indicadores {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mis-space-2);
+  padding: var(--mis-space-3) var(--mis-space-4) var(--mis-space-1);
+  background: var(--mis-panel-bg);
+}
+
+.mis-anuncio-punto {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-border-strong);
+  cursor: pointer;
+  transition: background var(--mis-transition-fast), transform var(--mis-transition-fast);
+}
+
+.mis-anuncio-punto:hover {
+  background: var(--mis-text-tertiary);
+}
+
+.mis-anuncio-punto:focus-visible {
+  outline: none;
+  box-shadow: var(--mis-shadow-focus);
+}
+
+/* El activo no se distingue solo por color: también crece. La accesibilidad
+   del sistema pide que el estado no dependa únicamente del color. */
+.mis-anuncio-punto--activo {
+  background: var(--mis-primary);
+  transform: scale(1.5);
+}
+
+.mis-anuncio-posicion {
+  margin: 0;
+  padding: 0 var(--mis-space-4) var(--mis-space-3);
+  text-align: center;
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-tertiary);
+  background: var(--mis-panel-bg);
 }
 
 /* El diálogo se ajusta a la pieza (`width: auto`), así que sin imagen el

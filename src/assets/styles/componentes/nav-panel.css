@@ -1,0 +1,21 @@
+/* Panel de navegación (Col 2 del sidebar)
+   Extraído de `components.css`, que había crecido a 1095 líneas y 21
+   secciones inconexas: una sola clase de una ventana obligaba a abrir el
+   archivo entero. */
+
+/* ── Panel de navegación (Col 2 del sidebar) ──────────────────
+   Estilo de superficie para el panel secundario de navegación. */
+.mis-nav-panel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--mis-nav-panel-bg);
+  backdrop-filter: blur(24px);
+  border-right: 1px solid var(--mis-border);
+}
+
+/* Pantallas sin la franja de filtros del shell (115px en vez de 130px). */
+.mis-page--alta {
+  min-height: calc(100vh - 115px);
+}

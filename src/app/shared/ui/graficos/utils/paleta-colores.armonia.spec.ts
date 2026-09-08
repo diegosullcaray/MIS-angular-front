@@ -4,7 +4,7 @@ import {
   distanciaPerceptual,
   separacionMinima,
   aOklch,
-} from '../../../../theme/contraste.util';
+} from '../../../../core/preferencias/dominio/contraste.util';
 import { PALETA_SERIES, PALETA_TRAMOS, tokensTema, AZUL, MAGENTA, NARANJA, NAVY } from './paleta-colores.util';
 
 /**

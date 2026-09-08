@@ -1,7 +1,12 @@
+<!-- Sin `[loading]` de PrimeNG a propósito: pintaba una máscara con spinner
+     SOBRE la tabla, que se sumaba al overlay global de `app-loading-overlay`
+     y dejaba dos indicadores para una sola espera. El único spinner visible
+     es el global; acá el estado se conserva como `aria-busy` para que un
+     lector de pantalla siga sabiendo que la tabla está cargando. -->
 <div class="rounded-xl overflow-hidden border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs flex-1">
   <p-table
     [value]="filasFiltradas()"
-    [loading]="loading()"
+    [attr.aria-busy]="loading()"
     [paginator]="true"
     [rows]="rows()"
     [rowsPerPageOptions]="rowsPerPageOptions()"

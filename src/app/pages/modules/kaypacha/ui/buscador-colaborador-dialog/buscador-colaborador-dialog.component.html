@@ -32,7 +32,7 @@
         [paginator]="true"
         [rows]="8"
         [rowsPerPageOptions]="[8, 15, 25]"
-        [loading]="service.cargandoColaboradores()"
+        [attr.aria-busy]="service.cargandoColaboradores()"
         selectionMode="single"
         [selection]="itemSeleccionado()"
         (onRowSelect)="onRowSelect($event.data)"

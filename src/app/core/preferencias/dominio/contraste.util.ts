@@ -1,4 +1,4 @@
-import { hexARgb, luminancia, rgbAHex, type Rgb } from '../core/preferencias/dominio/color.util';
+import { hexARgb, luminancia, rgbAHex, type Rgb } from './color.util';
 
 /**
  * Aritmética de contraste y de percepción de color, para verificar que la

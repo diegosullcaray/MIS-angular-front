@@ -1,6 +1,31 @@
-/* ── Main Assets Styles Bundle ────────────────────────────── */
-@import "./fonts.css";
-@import "./base.css";
-@import "./animations.css";
-@import "./components.css";
-@import "./driver-theme.css";
+/* ── CSS de la interfaz ───────────────────────────────────────
+   Punto de entrada de los estilos, agrupados por responsabilidad.
+
+   Los tokens `--mis-*` NO viven acá: son la fuente de verdad del sistema y
+   están en `src/app/theme/tokens.css`, junto al preset de PrimeNG que los
+   consume. `src/styles.css` los importa primero, así que cuando este archivo
+   se evalúa las variables ya existen.
+
+   `componentes/` salió de un único `components.css` de 1095 líneas con 21
+   secciones inconexas: cambiar una clase de la ventana obligaba a abrir el
+   archivo entero y a buscar entre el buscador, los diálogos y los KPI. */
+
+/* Base: tipografías, reset y animaciones compartidas. */
+@import "./base/fonts.css";
+@import "./base/reset.css";
+@import "./base/animations.css";
+
+/* Componentes: superficies del shell cuyas clases se comparten entre
+   pantallas, y que por eso no viven en el CSS de un componente Angular. */
+@import "./componentes/skeleton.css";
+@import "./componentes/panel-pagina.css";
+@import "./componentes/ventana.css";
+@import "./componentes/nav-panel.css";
+@import "./componentes/card.css";
+@import "./componentes/dialogo.css";
+@import "./componentes/explorador.css";
+@import "./componentes/buscador.css";
+@import "./componentes/kpi.css";
+
+/* Vendor: ajustes sobre CSS de terceros. Al final, para poder pisarlo. */
+@import "./vendor/driver.css";

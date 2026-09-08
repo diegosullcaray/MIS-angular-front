@@ -25,13 +25,28 @@ function imagen(page: Page) {
   return page.locator('img.mis-anuncio-imagen');
 }
 
+function puntos(page: Page) {
+  return page.locator('button.mis-anuncio-punto');
+}
+
 test('en el primer ingreso se abre solo y muestra la imagen del comunicado', async ({ page }) => {
   await page.goto('/app/dashboard');
 
   await expect(visor(page)).toBeVisible();
-  // Una sola imagen: no hay recorrido ni paginación.
+  // Se ve una lámina a la vez, sea el comunicado de una pieza o de varias.
   await expect(imagen(page)).toHaveCount(1);
   await expect(imagen(page)).toHaveAttribute('src', 'assets/images/fc/ads/Comunicado.png');
+});
+
+test('el comunicado publicado tiene una sola lámina: no aparecen controles de recorrido', async ({ page }) => {
+  await page.goto('/app/dashboard');
+  await expect(visor(page)).toBeVisible();
+
+  // El carrusel solo existe cuando hay más de una lámina. Con una, el diálogo
+  // se ve exactamente como antes de que existiera el recorrido.
+  await expect(puntos(page)).toHaveCount(0);
+  await expect(visor(page).getByRole('button', { name: 'Lámina siguiente' })).toBeHidden();
+  await expect(visor(page).getByRole('button', { name: 'Lámina anterior' })).toBeHidden();
 });
 
 test('cerrarlo lo da por leído y NO vuelve a abrirse en el ingreso siguiente', async ({ page }) => {
@@ -68,7 +83,7 @@ test('"No mostrar comunicados" los apaga para los siguientes ingresos', async ({
   await expect(visor(page)).toBeHidden();
 });
 
-test('la imagen entra en el diálogo sin scroll horizontal', async ({ page }) => {
+test('la lámina entra en el diálogo sin scroll horizontal', async ({ page }) => {
   await page.goto('/app/dashboard');
   await expect(imagen(page)).toBeVisible();
 

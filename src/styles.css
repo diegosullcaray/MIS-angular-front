@@ -4,10 +4,11 @@
 @import "driver.js/dist/driver.css";
 @import "maplibre-gl/dist/maplibre-gl.css";
 
-/* MIS Design System Tokens */
+/* Tokens del sistema: la fuente de verdad de --mis-*. Van primero porque todo
+   lo que sigue los consume. */
 @import "./app/theme/tokens.css";
 
-/* Modular Assets Styles */
+/* CSS de la interfaz: base, componentes y vendor. */
 @import "./assets/styles/index.css";
 
 @source "./app/**/*.html";

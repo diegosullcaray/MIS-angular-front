@@ -1,4 +1,4 @@
-import { CONTRASTE, componerSobre, contraste } from './contraste.util';
+import { CONTRASTE, componerSobre, contraste } from '../core/preferencias/dominio/contraste.util';
 import { TEMAS, type TokenColor } from './tokens.paleta';
 
 /**

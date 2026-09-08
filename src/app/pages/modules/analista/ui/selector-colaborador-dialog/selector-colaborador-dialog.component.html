@@ -23,7 +23,7 @@
 
     <p-table
       [value]="filtrados()"
-      [loading]="cargando()"
+      [attr.aria-busy]="cargando()"
       [paginator]="true"
       [rows]="8"
       selectionMode="single"

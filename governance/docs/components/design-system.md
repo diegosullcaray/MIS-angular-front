@@ -2,6 +2,18 @@
 
 La fuente de verdad visual son los tokens `--mis-*` de `src/app/theme/tokens.css` y el preset de PrimeNG en `src/app/theme/mis-theme.ts`.
 
+## Dónde vive cada cosa
+
+| Qué | Dónde | Por qué ahí |
+|---|---|---|
+| Tokens `--mis-*` y preset de PrimeNG | `src/app/theme/` | son la configuración del sistema, y el preset los consume desde TypeScript |
+| CSS de la interfaz | `src/assets/styles/` | reglas de presentación, agrupadas en `base/`, `componentes/` y `vendor/` |
+| Estilos de un componente Angular | junto al componente (`*.component.css`) | si una clase la usa una sola pantalla, no sube a `assets/` |
+
+`src/styles.css` importa primero los tokens y después `assets/styles/index.css`: el orden importa porque todo lo que sigue consume las variables.
+
+En `componentes/` hay un archivo por superficie del shell —ventana, diálogo, explorador, buscador, KPI…—. Antes era un único `components.css` de 1095 líneas con 21 secciones inconexas, donde tocar una clase de la ventana obligaba a abrir el archivo entero.
+
 ## Cómo se aplica el color
 
 Tailwind v4 está configurado **sin bloque `@theme`**, así que los tokens `--mis-*` no se convierten en clases utilitarias. No existen `bg-surface-card`, `text-text-primary`, `border-border` ni ninguna clase semántica de ese estilo: escribirlas deja el elemento sin estilo.

@@ -504,4 +504,35 @@ describe('TablaReporteComponent', () => {
       expect(fixture.componentInstance['anchoEncabezado'](columna)).toBeNull();
     });
   });
+
+  /**
+   * El indicador de carga es el overlay global (`app-loading-overlay`), no la
+   * tabla: cuando ambos se pintaban, una sola espera encendía dos spinners
+   * superpuestos.
+   */
+  describe('estado de carga', () => {
+    it('cargando NO pinta la máscara con spinner de PrimeNG sobre la tabla', () => {
+      const fixture = crear(ENCABEZADOS, FILAS, true);
+
+      expect(fixture.nativeElement.querySelector('.p-datatable-loading-overlay')).toBeNull();
+      expect(fixture.nativeElement.querySelector('.p-datatable-mask')).toBeNull();
+    });
+
+    // Dos tests y no uno: `crear()` configura el TestBed, y no se puede
+    // reconfigurar después de haber creado un componente.
+    it('pero sí lo anuncia con aria-busy mientras carga, para lector de pantalla', () => {
+      const tabla = crear(ENCABEZADOS, FILAS, true).nativeElement.querySelector('p-table');
+      expect(tabla?.getAttribute('aria-busy')).toBe('true');
+    });
+
+    it('y lo apaga cuando terminó', () => {
+      const tabla = crear(ENCABEZADOS, FILAS, false).nativeElement.querySelector('p-table');
+      expect(tabla?.getAttribute('aria-busy')).toBe('false');
+    });
+
+    it('las filas se siguen viendo mientras carga: refrescar no borra lo que ya había', () => {
+      const fixture = crear(ENCABEZADOS, FILAS, true);
+      expect(fixture.nativeElement.querySelectorAll('tbody tr').length).toBeGreaterThan(0);
+    });
+  });
 });

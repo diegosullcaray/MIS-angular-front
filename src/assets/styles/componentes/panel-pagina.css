@@ -1,0 +1,42 @@
+/* Panel de página: el contenedor raíz de cada pantalla de módulo
+   Extraído de `components.css`, que había crecido a 1095 líneas y 21
+   secciones inconexas: una sola clase de una ventana obligaba a abrir el
+   archivo entero. */
+
+/* ── Panel de página ──────────────────────────────────────────
+   Contenedor raíz de cada pantalla de módulo: panel de vidrio sobre el
+   wallpaper del shell. Reemplaza la repetición de utilidades
+   (`bg-white/70 backdrop-blur-[15px] border border-white/60 …`) que estaba
+   copiada en cada plantilla. Los outliers ajustan encima con utilidades
+   sueltas (`justify-between`, otro `min-h-*`). */
+.mis-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--mis-space-4);
+  width: 100%;
+  min-height: calc(100vh - 130px);
+  padding: var(--mis-space-3);
+  background: var(--mis-glass-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--mis-glass-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: var(--mis-shadow-lg);
+}
+
+@media (min-width: 640px) {
+  .mis-page {
+    gap: var(--mis-space-5);
+    padding: var(--mis-space-5);
+  }
+}
+
+/* Alto natural del contenido, sin llenar el viewport. `flex-grow:0` (y no
+   solo `min-height:0`) es necesario desde que el host de la ruta también
+   creció a `flex:1` (ver `.shell-content-inner > router-outlet + *` más
+   abajo): sin él, este panel se estiraba igual que el resto pese al
+   modificador. */
+.mis-page--auto {
+  flex: 0 1 auto;
+  min-height: 0;
+}
