@@ -7,8 +7,8 @@
  * que se desincronicen. Este script los extrae, y con `--check` falla si el
  * archivo generado quedó viejo — así el desfase se ve en CI y no en producción.
  *
- *   node scripts/generar-tokens-paleta.mjs           regenera el archivo
- *   node scripts/generar-tokens-paleta.mjs --check   solo verifica
+ *   node governance/scripts/generar-tokens-paleta.mjs           regenera el archivo
+ *   node governance/scripts/generar-tokens-paleta.mjs --check   solo verifica
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 
@@ -61,9 +61,9 @@ const claro = tokensDe(bloque(css, ':root'));
 // con esas sobrescrituras encima, igual que en la cascada del navegador.
 const oscuro = { ...claro, ...tokensDe(bloque(css, '\n.dark')) };
 
-const contenido = `// GENERADO por scripts/generar-tokens-paleta.mjs — no editar a mano.
+const contenido = `// GENERADO por governance/scripts/generar-tokens-paleta.mjs — no editar a mano.
 // La fuente de verdad es src/app/theme/tokens.css. Para regenerar:
-//   node scripts/generar-tokens-paleta.mjs
+//   node governance/scripts/generar-tokens-paleta.mjs
 
 /** Nombre de un token de color del sistema. */
 export type TokenColor = keyof typeof TOKENS_CLARO;
@@ -85,6 +85,14 @@ export const TEMAS = [
 ] as const;
 `;
 
+/**
+ * Compara ignorando el fin de línea: en un checkout de Windows con
+ * `core.autocrlf=true` el archivo en disco tiene CRLF y este script escribe LF,
+ * así que un `!==` crudo declaraba "desactualizado" un archivo idéntico y
+ * rompía la verificación en toda máquina Windows.
+ */
+const normalizar = (texto) => texto.replace(/\r\n/g, '\n');
+
 if (process.argv.includes('--check')) {
   let actual = '';
   try {
@@ -92,9 +100,9 @@ if (process.argv.includes('--check')) {
   } catch {
     actual = '';
   }
-  if (actual !== contenido) {
+  if (normalizar(actual) !== normalizar(contenido)) {
     console.error(`✘ ${DESTINO} está desactualizado respecto de ${ORIGEN}.`);
-    console.error('  Corré: node scripts/generar-tokens-paleta.mjs');
+    console.error('  Corré: node governance/scripts/generar-tokens-paleta.mjs');
     process.exit(1);
   }
   console.log(`✔ ${DESTINO} coincide con ${ORIGEN} (${Object.keys(claro).length} tokens).`);

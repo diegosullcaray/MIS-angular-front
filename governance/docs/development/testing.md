@@ -7,4 +7,4 @@ La estrategia combina pruebas unitarias del frontend y pruebas E2E con Playwrigh
 - Datos: validar fecha de corte, nodo organizativo, `cod_rep` y motor de reporte.
 - Seguridad: comprobar que ocultar un item no sustituye la autorizacion del backend.
 
-Ver [reports](../reports/README.md) para separar evidencia generada de documentacion normativa.
+Ver [reports](../evidence/README.md) para separar evidencia generada de documentacion normativa.

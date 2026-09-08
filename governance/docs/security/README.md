@@ -1,19 +1,22 @@
-# Seguridad y gobierno de datos
+# Seguridad
 
-Este indice organiza los controles que afectan datos y autorizacion.
+Controles que afectan a la identidad, la sesión y el acceso al dato.
+
+- [Modelo de amenazas](./threat-model.md) — activos, fronteras de confianza y abusos prioritarios
+- [Hallazgos](./findings.md) — riesgos identificados y su estado real
+- [Plan de remediación](./remediation-plan.md)
+- [Pentest](./pentest.md) — alcance y criterio de cierre
 
 ## Controles prioritarios
 
-- El backend debe autenticar y autorizar cada operacion; guards y menu no son controles suficientes.
-- Las claves y secretos no deben vivir en el bundle publico.
-- Las sesiones, permisos y eventos de seguridad deben tener trazabilidad y vigencia.
-- Los contratos deben declarar campos sensibles, errores y reglas de retencion cuando el backend los confirme.
-- Los datos de prueba deben ser ficticios y no copiar informacion financiera real.
+- El backend debe autenticar y autorizar **cada operación**: guards y menú no son controles suficientes.
+- Las claves y secretos no deben vivir en el bundle público.
+- Sesiones, permisos y eventos de seguridad necesitan trazabilidad y vigencia.
+- Los contratos declaran campos sensibles, errores y reglas de retención cuando el backend los confirma.
+- Los datos de prueba son ficticios y no copian información financiera real.
 
-## Evidencia
+## Relación con el gobierno del dato
 
-- [Hallazgos y riesgos](./findings.md)
-- [Plan de remediacion](./remediation-plan.md)
-- [Pentest](./pentest.md)
-- [Modelo de amenazas](./threat-model.md)
-- [Modelo de acceso](../architecture/api-contracts/access-model.md)
+La clasificación de los datos y el inventario de campos sensibles viven en [`data/classification.md`](../data/classification.md); el modelo de acceso y navegación, en [`data/contracts/access-model.md`](../data/contracts/access-model.md). Esta área define los controles; el área de datos define **qué** hay que proteger.
+
+Un hallazgo se cierra solo con corrección implementada, prueba reproducible y evidencia de que no reaparece en build o E2E. Ocultarlo en el frontend no cuenta.

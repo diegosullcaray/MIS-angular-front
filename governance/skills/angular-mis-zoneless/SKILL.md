@@ -1,170 +1,174 @@
 ---
 name: angular-mis-zoneless
-description: Guía y directrices de desarrollo en Angular 22 Zoneless y reactividad con Signals para MIS Host (Financiera Confianza). Usar al diseñar, crear o modificar componentes, servicios o directivas para garantizar el uso de signal, computed, effect, input, output, inject y ChangeDetectionStrategy.OnPush sin zone.js.
+description: Arquitectura Angular 22 zoneless y reactividad con señales en MIS Host. Usar al crear o modificar componentes, servicios y directivas, para aplicar signal, computed, effect, input, output e inject() sin zone.js. Explica por qué este proyecto NO usa ChangeDetectionStrategy.OnPush.
 ---
 
-# Desarrollo Angular 22 Zoneless & Signals — MIS Host
+# Angular 22 zoneless y señales — MIS Host
 
-Este repositorio implementa **Angular 22** configurado en modo **Zoneless** (`provideExperimentalZonelessChangeDetection` o zoneless nativo en Angular 22). En este entorno no existe `zone.js` interceptando eventos asíncronos; las actualizaciones de la interfaz están impulsadas estrictamente por la reactividad de **Signals** y la estrategia **`ChangeDetectionStrategy.OnPush`**.
-
----
-
-## 1. Reglas Fundamentales de Arquitectura
-
-1. **`ChangeDetectionStrategy.OnPush` obligatorio**:
-   Todo componente debe declarar explícitamente `changeDetection: ChangeDetectionStrategy.OnPush` en su decorador `@Component`.
-2. **Uso exclusivo de Signals para estado**:
-   No usar propiedades mutables simples si afectan la vista. El estado local o compartido debe residir en `signal()`, `computed()` o `linkedSignal()`.
-3. **Inyección con `inject()`**:
-   No usar inyección en constructor (`constructor(private svc: MyService)`). Usar la función `inject()` a nivel de campo:
-   ```typescript
-   private readonly service = inject(MiServicio);
-   ```
-4. **Imports Standalone**:
-   Todos los componentes son `standalone: true` (por defecto en Angular 22). Declarar únicamente los módulos o componentes requeridos en el array `imports`.
-5. **Prohibido `@Input()` y `@Output()` legacy**:
-   Utilizar las funciones `input()`, `input.required()` y `output()`.
+El proyecto corre con `provideZonelessChangeDetection()` en `src/app/app.config.ts`. Sin `zone.js` no hay nada interceptando `setTimeout`, promesas ni eventos del DOM para disparar una detección global: **la vista se actualiza porque una señal que la plantilla leyó cambió de valor**.
 
 ---
 
-## 2. Reactividad con Signals
+## 1. Reglas de arquitectura
 
-### Estado mutable (`signal`) y derivados (`computed`)
+### Estado en señales
+
+Cualquier valor que la plantilla muestre vive en `signal()`, `computed()` o `linkedSignal()`. Una propiedad de clase mutada a mano no notifica a nadie y la vista queda vieja.
+
+### Inyección con `inject()`
+
 ```typescript
-import { Component, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+private readonly service = inject(MiServicio);   // así
+constructor(private service: MiServicio) {}      // no
+```
+
+### `input()` y `output()`, no decoradores
+
+```typescript
+readonly id = input.required<string>();
+readonly saldo = input<number>(0);
+readonly seleccionar = output<string>();
+```
+
+Un decorador no es una señal: no se puede componer con `computed()` ni leer desde un `effect()`. Quedan dos `@Input()` heredados en diálogos del repo; no sumar más. Lo mismo con `viewChild()` y `contentChild()` en lugar de `@ViewChild()` / `@ContentChild()`.
+
+### `standalone: true` explícito
+
+Es el default en Angular 22, pero 235 de los 236 componentes lo escriben. Seguí la convención local.
+
+### Sobre `ChangeDetectionStrategy.OnPush`
+
+**Este proyecto no lo usa: 0 de 236 componentes lo declaran, y es deliberado.**
+
+`OnPush` sirve para acotar el barrido global que dispara `zone.js`. En una aplicación zoneless no hay barrido global que acotar: Angular refresca únicamente las vistas marcadas como sucias por una señal o un binding de evento, que es justamente lo que `OnPush` buscaba conseguir. Agregarlo no cambia el comportamiento y sí introduce inconsistencia con el resto del código.
+
+Si venís de una guía genérica de Angular que lo declara obligatorio: acá no aplica.
+
+---
+
+## 2. Señales en la práctica
+
+```typescript
+import { Component, computed, signal } from '@angular/core';
 
 @Component({
   selector: 'app-contador-morosidad',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div>Total clientes: {{ total() }}</div>
-    <div>Clientes en riesgo: {{ enRiesgo() }}</div>
+    <p>Total clientes: {{ total() }}</p>
+    <p>Clientes en riesgo: {{ porcentajeRiesgo() }}%</p>
   `,
 })
 export class ContadorMorosidadComponent {
-  // Señal de estado
-  readonly total = signal<number>(0);
-  readonly morosos = signal<number>(0);
+  readonly total = signal(0);
+  readonly morosos = signal(0);
 
-  // Señal calculada automáticamente en base a dependencias
-  readonly enRiesgo = computed(() => {
+  readonly porcentajeRiesgo = computed(() => {
     const t = this.total();
     return t > 0 ? (this.morosos() / t) * 100 : 0;
   });
 
-  actualizar(nuevosTotal: number, nuevosMorosos: number): void {
-    this.total.set(nuevosTotal);
-    this.morosos.set(nuevosMorosos);
+  actualizar(total: number, morosos: number): void {
+    this.total.set(total);
+    this.morosos.set(morosos);
   }
 }
 ```
 
-### Entradas y Salidas Modernas (`input`, `output`)
+Regla de inmutabilidad: `update()` genera una referencia nueva. Mutar el objeto que la señal ya contiene no dispara nada.
+
 ```typescript
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
-
-@Component({
-  selector: 'app-tarjeta-saldo',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div class="p-4 border rounded">
-      <h3>{{ titulo() }}</h3>
-      <p>Monto: S/ {{ saldo() }}</p>
-      <button (click)="alSeleccionar.emit(id())">Ver detalle</button>
-    </div>
-  `,
-})
-export class TarjetaSaldoComponent {
-  // Entradas requeridas y opcionales
-  readonly id = input.required<string>();
-  readonly titulo = input.required<string>();
-  readonly saldo = input<number>(0);
-
-  // Salida tipada
-  readonly alSeleccionar = output<string>();
-}
+this.items.update((items) => [...items, nuevo]);   // así
+this.items().push(nuevo);                          // no notifica: la vista no se entera
 ```
+
+`effect()` es para sincronizar con el mundo exterior (DOM imperativo, librerías, almacenamiento). Derivar un valor es trabajo de `computed()`, no de un `effect()` que escribe en otra señal.
 
 ---
 
-## 3. Manejo de Peticiones Asíncronas en Servicios
-
-Los servicios deben encapsular la llamada HTTP y exponer señales de solo lectura para la vista:
+## 3. Servicios: señales privadas, lectura pública
 
 ```typescript
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, of, tap } from 'rxjs';
-
 @Injectable({ providedIn: 'root' })
 export class CarteraService {
-  private readonly http = inject(HttpClient);
+  private readonly ant = inject(ModReportesService);
 
-  // Estado privado
-  private readonly _items = signal<CarteraItem[]>([]);
-  private readonly _cargando = signal<boolean>(false);
+  private readonly _filas = signal<CarteraFila[]>([]);
+  private readonly _cargando = signal(false);
   private readonly _error = signal<string | null>(null);
 
-  // Exposición pública de solo lectura
-  readonly items = this._items.asReadonly();
+  readonly filas = this._filas.asReadonly();
   readonly cargando = this._cargando.asReadonly();
   readonly error = this._error.asReadonly();
 
-  // Señal computada derivada
-  readonly totalRegistros = computed(() => this._items().length);
+  /** Vacío verdadero: respondió bien y no hay filas. Distinto de un error. */
+  readonly vacio = computed(() => !this._cargando() && !this._error() && this._filas().length === 0);
 
-  consultar(filtro: FiltroCartera): Observable<CarteraItem[]> {
+  consultar(params: Record<string, unknown> = {}): void {
     this._cargando.set(true);
     this._error.set(null);
 
-    return this.http.get<CarteraDto[]>('/api/cartera', { params: { ...filtro } }).pipe(
-      map(dtos => dtos.map(mapCarteraDtoToItem)),
-      tap(items => {
-        this._items.set(items);
+    this.ant.getRegularTableResult(COD_CARTERA, params).subscribe({
+      next: (r) => {
+        this._filas.set(mapCarteraFilas((r.body as CarteraBody)?.resultado?.data));
         this._cargando.set(false);
-      }),
-      catchError(err => {
-        this._error.set('Error al consultar cartera. Reintente.');
+      },
+      error: () => {
+        this._filas.set([]);
+        this._error.set('No se pudo consultar la cartera. Reintentá en unos segundos.');
         this._cargando.set(false);
-        return of([]);
-      })
-    );
+      },
+    });
   }
 }
 ```
 
+Tres detalles que no son opcionales:
+
+1. **El transporte es Winder/Ant**, vía los `Mod*Service` de `src/app/core/winder/instances/`. Este sistema no expone REST: ver [`mis-winder-ant`](../mis-winder-ant/SKILL.md).
+2. **El error nunca se convierte en lista vacía.** `catchError(() => of([]))` disfraza un 500 de "sin datos".
+3. **`vacio` es derivado**, no una cuarta señal que alguien tenga que acordarse de sincronizar.
+
 ---
 
-## 4. Control de Flujo en Plantillas (Templates)
+## 4. Control de flujo en plantillas
 
-No usar `*ngIf`, `*ngFor` ni `*ngSwitch`. Usar la sintaxis integrada de Angular:
+Bloques nativos, no directivas estructurales. El repo tiene cero `*ngIf`, y no hace falta importar `CommonModule` para esto.
 
 ```html
-<!-- Condicional -->
-@if (cargando()) {
-  <p-progressSpinner />
-} @else if (error()) {
-  <div class="error-banner">{{ error() }}</div>
-} @else if (items().length === 0) {
-  <p>No se encontraron resultados.</p>
+@if (error()) {
+  <app-inline-error [detalle]="error()!" (reintentar)="consultar()" />
+} @else if (cargando()) {
+  <app-list-skeleton />
+} @else if (vacio()) {
+  <app-empty-state titulo="Sin resultados" />
 } @else {
-  <!-- Bucle con track obligatorio -->
-  @for (item of items(); track item.id) {
-    <div class="fila">
-      <span>{{ item.codigo }}</span>
-      <span>{{ item.monto }}</span>
+  @for (fila of filas(); track fila.codigo) {
+    <div class="flex justify-between">
+      <span>{{ fila.codigo }}</span>
+      <span class="tabular-nums">{{ fila.montoFormateado }}</span>
     </div>
+  } @empty {
+    <p>Nada que mostrar.</p>
   }
 }
 ```
 
+`track` es obligatorio en `@for` y debe ser una identidad estable: `track $index` sobre datos que se reordenan reconstruye el DOM entero.
+
 ---
 
-## 5. Anti-Patrones a Evitar
+## 5. Antipatrones
 
-- ❌ **Evitar suscripciones manuales innecesarias en componentes**: Preferir enlazar las señales del servicio directamente a la plantilla.
-- ❌ **No mutar señales con referencias de objetos**: Usar `signal.update(items => [...items, nuevo])` para generar una nueva referencia inmutable.
-- ❌ **No usar decoradores antiguos**: Nada de `@Input()`, `@Output()`, `@ViewChild()`. Usar `input()`, `output()`, `viewChild()`.
-- ❌ **No llamar `ChangeDetectorRef.detectChanges()` manualmente** a menos que interactúes con una librería externa desprovista de ciclo Angular.
+| Antipatrón | Por qué falla acá |
+|---|---|
+| `ChangeDetectionStrategy.OnPush` | no aporta en zoneless e introduce inconsistencia |
+| Suscribirse en el componente para copiar a una propiedad | enlazá la señal del servicio directo en la plantilla |
+| `this.items().push(x)` | misma referencia: la vista no se entera |
+| `effect()` que escribe otra señal | eso es un `computed()` |
+| `detectChanges()` manual | solo justificable al integrar una librería externa fuera del ciclo |
+| `@Input()` / `@Output()` / `@ViewChild()` | usá `input()`, `output()`, `viewChild()` |
+| `*ngIf` / `*ngFor` | el auditor lo marca como error |
+| `catchError(() => of([]))` en un service de pantalla | convierte una caída en tabla vacía |
+
+Verificación: `node governance/scripts/validar-gobernanza.mjs --regla=entrada-salida-señal,control-flujo-moderno,error-no-silenciado`

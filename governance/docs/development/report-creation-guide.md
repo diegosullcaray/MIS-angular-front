@@ -25,6 +25,9 @@ Busca primero el nivel que el reporte necesita. No elijas por intuicion: copia e
 | `PARAMS_HIER_MACRO` | Consulta por macro |
 | `PARAMS_HIER_UNIDAD` | Consulta por unidad, zona o agencia segun contrato |
 | `PARAMS_HIER_OFICINA` | Consulta por oficina |
+| `PARAMS_HIER_SEGUROS_PASIVOS` | Consulta de seguros pasivos |
+
+Las constantes viven en `src/app/pages/modules/reportes/models/jerarquia.model.ts` (y su equivalente en `presupuesto/models/`). No elijas por intuicion: copia la constante de un reporte del mismo dominio.
 
 El selector entrega un `NodoConsulta` con `tip_cod` y `cod_rel`. Si el backend requiere el nodo completo, usa `regularPaginado` y conserva `lvl`, `lbl_hier` y demas campos.
 
@@ -46,7 +49,13 @@ El selector entrega un `NodoConsulta` con `tip_cod` y `cod_rel`. Si el backend r
 - `regularTolerante()`: un 500 del backend significa bloque vacio conocido.
 - `regulares()`: varios bloques independientes en paralelo.
 - `tablaRegularCon()`: tabla dinamica con parametros propios.
+- `regularLento()`: bloque que excede los tiempos normales.
+- `tablaRegular()`: tabla dinamica sobre el nodo.
 - `graficos()`: bloques Highcharts ya mapeados.
+- `periodos()`: opciones de filtro de periodo.
+- `deprecado()`: solo compatibilidad legada.
+
+La fecha de corte sale de `profile.curr_fec`; `BloqueReporteService` la expone como `fec()` (`YYYYMMDD`, la que se envia por defecto) y `fecha()` (formato largo).
 
 No uses `catchError(() => tablaVacia)` en un service de pantalla: solo se debe absorber el error que `esBloqueVacio()` reconoce.
 
@@ -64,9 +73,13 @@ pages/modules/reportes/<submodulo>/
   <submodulo>.routes.ts
 ```
 
+En `reportes` las pantallas hoja van en `items/`. Fuera de ese modulo van en `components/` — ver [convenciones de nombres](../development/naming-conventions.md).
+
+Para el caso habitual (selector de jerarquia arriba, tablas abajo) usa `app-reporte-simple` de `reportes/ui/reporte-simple/`: ya resuelve carga, vacio, error y el selector, asi que no envuelvas la pantalla en tu propio estado vacio.
+
 ## 6. Orden de implementacion
 
-1. Completar la ficha en [report-spec-template](../features/report-spec-template.md).
+1. Completar la ficha en [report-spec-template](../templates/report-spec-template.md).
 2. Registrar ruta legado, `cod_rep`, motor, host y parametros.
 3. Elegir `PARAMS_HIER_*` y documentar fecha/formato.
 4. Crear modelo de respuesta y estado vacio.
@@ -77,5 +90,7 @@ pages/modules/reportes/<submodulo>/
 9. Actualizar inventario de modulos y contrato si cambia el borde backend.
 
 ## Criterio de terminado
+
+La guia operativa completa, con ejemplos, esta en [`skills/mis-reportes-bloques`](../../skills/mis-reportes-bloques/SKILL.md).
 
 El reporte no esta terminado porque renderiza una tabla. Debe tener contrato trazable, jerarquia correcta, estados completos, pruebas, accesibilidad, ruta navegable y evidencia de que un error real no se confunde con una respuesta vacia.

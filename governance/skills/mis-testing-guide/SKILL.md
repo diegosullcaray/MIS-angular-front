@@ -1,116 +1,208 @@
 ---
 name: mis-testing-guide
-description: Metodología y estándares de pruebas unitarias con Vitest y pruebas E2E con Playwright en MIS Host. Usar para escribir tests de mappers, servicios, componentes OnPush y flujos de usuario completos según governance/docs/development/testing.md.
+description: Metodología de pruebas de MIS Host con Vitest y Playwright. Usar al escribir specs de mapeos, servicios con transporte Winder, componentes con señales y flujos E2E. Documenta las convenciones reales del repo (globales de Vitest, TestBed para servicios con inject, mocks de backend con page.route).
 ---
 
-# Guía de Pruebas Unitarias y E2E — MIS Host
+# Pruebas — MIS Host
 
-En **MIS Host (Financiera Confianza)**, la calidad del software se valida mediante una doble pirámide:
-1. **Pruebas Unitarias de Alta Velocidad (Vitest)**: Vía `@angular/build:unit-test` y `jsdom`.
-2. **Pruebas de Extremo a Extremo (Playwright)**: Validando navegación real, autenticación, guards y tablas de reportes.
+Doble pirámide: **Vitest** vía `@angular/build:unit-test` sobre jsdom, y **Playwright** para los flujos completos. Hoy hay 349 specs unitarias y 29 suites E2E en dos viewports.
 
 ---
 
-## 1. Pruebas Unitarias con Vitest
+## 1. Convenciones que hay que respetar
 
-### Testing de Mappers Puros (`utils/*.mappers.spec.ts`)
-Los mappers puros no necesitan `TestBed`. Son pruebas sincrónicas ultra-rápidas:
+| Convención | Detalle |
+|---|---|
+| **Globales de Vitest** | `tsconfig.spec.json` declara `types: ["vitest/globals"]`. **Ningún spec importa de `'vitest'`** — 0 de 349. No agregues `import { describe, it, expect, vi } from 'vitest'`. |
+| **`TestBed` para servicios** | Un servicio con `inject()` en un campo necesita contexto de inyección: no se instancia con `new`. |
+| **Nada de `TestBed` para `utils/`** | Los mapeos puros se prueban directo. Son las pruebas más rápidas y las que más protegen. |
+| **`src/test-setup.ts`** | Limpia `sessionStorage` antes de cada test: el caché de jerarquía se comparte entre specs del mismo worker. No dependas de ese estado. |
+| **E2E sin backend real** | Sesión inyectada en `sessionStorage` (`e2e/fixtures/session.ts`) y backend mockeado con `page.route()`. Nunca Google ni Ant reales. |
+| **Dos proyectos E2E** | `desktop-chromium` y `mobile-chromium` (Pixel 7, 412 px). Todo cambio de layout se prueba en ambos. |
+
+---
+
+## 2. Mapeos puros (`utils/*.util.spec.ts`)
+
+Sin `TestBed`, sincrónicas, en milisegundos. Los cuatro casos que importan:
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import { mapCarteraDtoToItem } from './cartera.mappers';
+import { mapCarteraFila, mapCarteraFilas, totalCartera } from './cartera.util';
+import type { CarteraFilaDto } from '../models/cartera.model';
 
-describe('Cartera Mappers', () => {
-  it('debe transformar y formatear moneda adecuadamente', () => {
-    const dto = { id: '1', monto: 1250.5, estado: 'ACTIVO' };
-    const res = mapCarteraDtoToItem(dto);
+describe('cartera.util', () => {
+  const dto: CarteraFilaDto = { cod: 'C-01', des: 'Crédito', mto: 1500.5, est: 'ACTIVO' };
 
-    expect(res.montoFormateado).toContain('1.250');
-    expect(res.esActivo).toBe(true);
+  it('normaliza una fila del backend', () => {
+    const fila = mapCarteraFila(dto);
+    expect(fila.monto).toBe(1500.5);
+    expect(fila.activo).toBe(true);
+  });
+
+  it('acepta montos en cadena, que es como los manda parte del backend', () => {
+    expect(mapCarteraFila({ ...dto, mto: 'S/ 1,250.75' }).monto).toBe(1250.75);
+  });
+
+  it('trata null, undefined y campos faltantes como vacío, no como excepción', () => {
+    expect(mapCarteraFilas(null)).toEqual([]);
+    expect(mapCarteraFila({} as CarteraFilaDto).monto).toBe(0);
+  });
+
+  it('suma los montos', () => {
+    expect(totalCartera(mapCarteraFilas([dto, { ...dto, mto: 500 }]))).toBe(2000.5);
   });
 });
 ```
 
-### Testing de Servicios con Signals (`services/*.service.spec.ts`)
-Evitar la complejidad de `TestBed` cuando sea posible; instanciar la clase directamente inyectando el mock del cliente HTTP:
+El caso del monto en cadena no es hipotético: el backend Ant devuelve números como texto formateado en varios strands. Un mapper que asume `number` produce `NaN` y la pantalla muestra un guion donde iba una cifra.
+
+---
+
+## 3. Servicios con transporte Winder (`services/*.service.spec.ts`)
+
+Se dobla el `Mod*Service`, que es el borde real del sistema:
 
 ```typescript
-import { describe, it, expect, beforeEach } from 'vitest';
-import { CarteraService } from './cartera.service';
+import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { CarteraService } from './cartera.service';
+import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
+import { COD_CARTERA } from '../constantes/cartera.constantes';
+
+function crear(respuesta: unknown, falla = false) {
+  const getRegularTableResult = vi.fn(() =>
+    falla ? throwError(() => new Error('backend caído')) : of(respuesta)
+  );
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({
+    providers: [{ provide: ModReportesService, useValue: { getRegularTableResult } }],
+  });
+  return { service: TestBed.inject(CarteraService), getRegularTableResult };
+}
 
 describe('CarteraService', () => {
-  let service: CarteraService;
-  let httpMock: any;
-
-  beforeEach(() => {
-    httpMock = { get: () => of([]) };
-    service = new (CarteraService as any)();
-    (service as any).http = httpMock;
+  it('pide el cod_rep declarado en constantes', () => {
+    const { service, getRegularTableResult } = crear({ body: { resultado: { data: [] } } });
+    service.consultar({ nom: 'x' });
+    expect(getRegularTableResult).toHaveBeenCalledWith(COD_CARTERA, { nom: 'x' });
   });
 
-  it('debe actualizar las señales reactivas al recibir datos', () => {
-    httpMock.get = () => of([{ id: '1', monto: 500, estado: 'ACTIVO' }]);
+  it('publica las filas y apaga la carga', () => { /* … */ });
 
-    service.consultar({}).subscribe(() => {
-      expect(service.items().length).toBe(1);
-      expect(service.cargando()).toBe(false);
-      expect(service.error()).toBeNull();
-    });
+  // Los dos que no pueden faltar nunca:
+  it('una respuesta sin filas es vacío, no error', () => {
+    const { service } = crear({ body: { resultado: { data: [] } } });
+    service.consultar();
+    expect(service.vacio()).toBe(true);
+    expect(service.error()).toBeNull();
   });
 
-  it('debe registrar el error en la señal si la API responde error', () => {
-    httpMock.get = () => throwError(() => new Error('Server down'));
-
-    service.consultar({}).subscribe(() => {
-      expect(service.cargando()).toBe(false);
-      expect(service.error()).toContain('Error al consultar');
-    });
+  it('un fallo del backend es error, no tabla vacía', () => {
+    const { service } = crear(null, true);
+    service.consultar();
+    expect(service.error()).toBeTruthy();
+    expect(service.vacio()).toBe(false);
   });
 });
 ```
 
+**Esos dos últimos tests son el corazón de la suite.** Confundir vacío con error es el defecto que degradó al sistema legado; si un spec no lo distingue explícitamente, la regresión vuelve sin que nadie se entere.
+
 ---
 
-## 2. Pruebas End-to-End con Playwright (`e2e/`)
+## 4. Componentes
 
-Las pruebas E2E verifican los flujos críticos del negocio y las garantías de seguridad:
-- Que las rutas protegidas no sean accesibles sin autenticación.
-- Que las tablas de reportes rendericen filas con datos de prueba o mock.
-- Que los estados de error muestren el botón de reintento.
+Se dobla el servicio del módulo con un objeto de funciones que devuelven valores (las señales se leen llamándolas):
 
-### Estructura de un Test E2E:
+```typescript
+import { TestBed } from '@angular/core/testing';
+import { PrincipalComponent } from './principal.component';
+import { CarteraService } from '../../services/cartera.service';
+
+function montar(estado: { cargando?: boolean; error?: string | null; vacio?: boolean } = {}) {
+  const consultar = vi.fn();
+  TestBed.configureTestingModule({
+    imports: [PrincipalComponent],
+    providers: [{
+      provide: CarteraService,
+      useValue: {
+        consultar,
+        limpiar: vi.fn(),
+        filas: () => [],
+        cargando: () => estado.cargando ?? false,
+        error: () => estado.error ?? null,
+        vacio: () => estado.vacio ?? true,
+        totalRegistros: () => 0,
+        totalMonto: () => 0,
+      },
+    }],
+  });
+  const fixture = TestBed.createComponent(PrincipalComponent);
+  fixture.detectChanges();
+  return { fixture, consultar };
+}
+
+it('muestra el error con reintento y no el estado vacío', () => {
+  const { fixture } = montar({ error: 'Backend caído', vacio: false });
+  const texto = fixture.nativeElement.textContent as string;
+  expect(texto).toContain('Backend caído');
+  expect(texto).not.toContain('Sin resultados');
+});
+```
+
+En zoneless, `fixture.detectChanges()` sigue siendo la forma de forzar el render en la prueba.
+
+---
+
+## 5. E2E con Playwright
+
 ```typescript
 import { test, expect } from '@playwright/test';
 
-test.describe('Módulo de Cartera', () => {
-  test('debe cargar la vista y permitir recarga', async ({ page }) => {
-    await page.goto('/cartera');
-    await expect(page.locator('h1')).toContainText('Cartera');
+test.describe('Cartera', () => {
+  test.beforeEach(async ({ page }) => {
+    // Backend mockeado: la suite no depende de Ant ni de Google.
+    await page.route('**/v1/g**', (route) =>
+      route.fulfill({ json: { resultado: { data: [{ cod: 'C-01', des: 'Crédito', mto: 100, est: 'ACTIVO' }] } } })
+    );
+  });
 
-    // Comprobar presencia de tabla o estado vacío
-    const table = page.locator('p-table');
-    await expect(table).toBeVisible();
+  test('carga la ruta y muestra la tabla', async ({ page }) => {
+    await page.goto('/app/reportes/cartera');
+    await expect(page.getByRole('heading', { name: /cartera/i })).toBeVisible();
+    await expect(page.locator('p-table')).toBeVisible();
+  });
+
+  test('un fallo del backend muestra el error con reintento', async ({ page }) => {
+    await page.route('**/v1/g**', (route) => route.fulfill({ status: 500 }));
+    await page.goto('/app/reportes/cartera');
+    await expect(page.getByRole('button', { name: /reintentar/i })).toBeVisible();
   });
 });
 ```
 
+E2E es **obligatorio** cuando el cambio toca una ruta, el shell, permisos, el flujo de datos o el layout responsive.
+
 ---
 
-## 3. Comandos de Ejecución
-
-Usar siempre el lanzador unificado del proyecto:
+## 6. Comandos
 
 ```bash
-# Pruebas unitarias
 node governance/scripts/ejecutar-pruebas.mjs unit
-
-# Modo observador interactivo
+node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/analista
 node governance/scripts/ejecutar-pruebas.mjs watch
-
-# Reporte de cobertura
 node governance/scripts/ejecutar-pruebas.mjs coverage
-
-# Pruebas E2E
 node governance/scripts/ejecutar-pruebas.mjs e2e
+node governance/scripts/ejecutar-pruebas.mjs e2e:ui
+node governance/scripts/ejecutar-pruebas.mjs verificar      # estático, sin compilar
+node governance/scripts/ejecutar-pruebas.mjs ci --con-e2e   # la cadena del pipeline
 ```
+
+---
+
+## 7. Dos falsos verdes
+
+- **Contar specs no es cobertura.** 349 archivos no dicen qué reglas de negocio están cubiertas; varias pruebas comparten los mismos mocks.
+- **El E2E no valida el backend real**, por diseño. No sirve como evidencia de autorización: eso se prueba contra el backend, no contra el frontend que lo mockea.
+
+Falta cobertura automatizada de rutas contra menú, de `cod_rep` contra servicios y de autorización real. Está registrado como brecha en [`test-inventory`](../../docs/development/test-inventory.md); no lo afirmes como resuelto.

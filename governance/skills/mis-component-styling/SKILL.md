@@ -1,98 +1,144 @@
 ---
 name: mis-component-styling
-description: Estándar de diseño y componentes UI con PrimeNG 21 y Tailwind CSS v4 para Financiera Confianza MIS Host. Usar al construir interfaces, tablas con paginación, modales, formularios, tarjetas métricas y manejo de estados (cargando, vacío, error con reintento).
+description: Estándar visual de MIS Host con tokens --mis-*, PrimeNG 21 y Tailwind v4. Usar al construir pantallas, tablas, diálogos, tarjetas métricas y al modelar los estados de carga, vacío y error. Explica cómo se aplica color en este proyecto (valor arbitrario sobre tokens CSS), que no es la forma habitual de Tailwind.
 ---
 
-# Guía de Estilos y Componentes: PrimeNG 21 + Tailwind CSS v4 — MIS Host
+# Estilos y componentes — MIS Host
 
-El sistema de diseño de **Financiera Confianza (MIS Host)** combina **PrimeNG 21** para componentes complejos accesibles y **Tailwind CSS v4** para diagramación, espaciado y tipografía responsiva.
-
----
-
-## 1. Paleta Corporativa y Clases Semánticas
-
-El proyecto define tokens de color y superficies en `src/app/theme/tokens.css` y `src/styles.css`:
-
-| Token Semántico | Clase Tailwind | Propósito |
-|---|---|---|
-| Superficie Principal | `bg-surface-ground` | Fondo de la aplicación |
-| Tarjeta / Card | `bg-surface-card` | Contenedores de contenido y paneles |
-| Borde General | `border-border` | Bordes sutiles y separadores |
-| Texto Principal | `text-text-primary` | Títulos y valores destacados |
-| Texto Secundario | `text-text-muted` | Etiquetas, placeholders y metadatos |
-| Primario Corporativo | `bg-primary-600`, `text-primary-600` | Botones de acción principal, acentos |
-| Peligro / Riesgo | `text-red-600`, `bg-red-50` | Alertas de error, mora crítica |
-| Éxito | `text-green-600`, `bg-green-50` | Estados aprobados, al día |
+Sistema visual de **Financiera Confianza (MIS Host)**: PrimeNG 21 para componentes complejos accesibles, Tailwind v4 para diagramación y espaciado, y tokens CSS propios para todo el color.
 
 ---
 
-## 2. Los 4 Estados de UI Mandatorios
+## 1. El color se aplica por token, y Tailwind no los conoce
 
-Toda vista o reporte que consuma datos del backend debe implementar explícitamente los 4 estados:
+Esto es lo primero que hay que entender, porque es lo que distingue a este proyecto de un Tailwind típico.
 
-1. **Estado de Carga (`cargando`)**:
-   - Muestra un spinner centrado o skeletons de carga.
-   - Deshabilita botones de consulta para prevenir clicks duplicados.
-2. **Estado Vacío (`empty`)**:
-   - Si la consulta retorna 0 registros y no hubo error, mostrar mensaje claro e instructivo con ícono amigable.
-3. **Estado de Error (`error`)**:
-   - Notificación de alerta visual con botón de **Reintentar**.
-   - No exponer mensajes técnicos crudos de excepciones SQL o HTTP 500 al usuario.
-4. **Estado de Éxito / Contenido (`ready`)**:
-   - Renderiza las métricas y la tabla PrimeNG con paginación.
+La fuente de verdad es `src/app/theme/tokens.css`, que declara ~47 tokens de color `--mis-*` en `:root` y sus sobrescrituras en `.dark`. **Tailwind v4 está configurado sin bloque `@theme`**, así que esos tokens no se convierten en clases utilitarias.
 
-### Ejemplo canónico en template:
+Consecuencia práctica: **no existen `bg-surface-card`, `text-text-primary`, `border-border`, `bg-primary-600` ni ninguna clase semántica de ese estilo.** Escribirlas produce una pantalla sin estilos, porque Tailwind no genera nada para ellas y nadie las define.
+
+Las dos formas correctas, ambas presentes en el repo:
+
 ```html
-<div class="p-6 space-y-6">
-  <!-- Estado de Error -->
-  @if (error()) {
-    <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <i class="pi pi-exclamation-circle text-xl"></i>
-        <span>{{ error() }}</span>
-      </div>
-      <p-button label="Reintentar" icon="pi pi-replay" size="small" severity="danger" (onClick)="recargar()" />
-    </div>
-  }
+<!-- Valor arbitrario de Tailwind: la forma más usada -->
+<p class="text-[13px] text-[var(--mis-text-secondary)]">Fecha de corte</p>
+<div class="border-b" style="border-color: var(--mis-border)"></div>
 
-  <!-- Estado de Carga -->
-  @if (cargando()) {
-    <div class="flex justify-center items-center py-20">
-      <p-progressSpinner strokeWidth="4" />
-    </div>
-  } @else if (items().length === 0 && !error()) {
-    <!-- Estado Vacío -->
-    <div class="rounded-xl border border-dashed border-border bg-surface-ground p-12 text-center">
-      <i class="pi pi-folder-open text-4xl text-text-muted mb-3"></i>
-      <h3 class="text-base font-semibold text-text-primary">No se encontraron datos</h3>
-      <p class="text-sm text-text-muted mt-1">Ajuste los filtros de búsqueda o verifique la fecha de corte.</p>
-    </div>
-  } @else {
-    <!-- Estado Contenido / Tabla -->
-    <div class="rounded-xl border border-border bg-surface-card overflow-hidden shadow-sm">
-      <p-table [value]="items()" [paginator]="true" [rows]="10" styleClass="p-datatable-sm">
-        <!-- columnas -->
-      </p-table>
-    </div>
-  }
-</div>
+<!-- style inline: cuando son varias propiedades de color juntas -->
+<div class="rounded-xl border p-4"
+     style="background: var(--mis-surface); border-color: var(--mis-border)">
 ```
 
+Tailwind se sigue usando normalmente para **todo lo que no es color**: `flex`, `grid`, `gap-4`, `p-6`, `rounded-xl`, `text-[13px]`, `sm:flex-row`.
+
+### Tokens de uso frecuente
+
+| Token | Uso |
+|---|---|
+| `--mis-text-primary` | títulos y valores destacados |
+| `--mis-text-secondary` | texto de apoyo, etiquetas |
+| `--mis-text-tertiary` | metadatos, notas al pie |
+| `--mis-surface` | fondo de tarjetas y contenedores |
+| `--mis-panel-bg` | fondo de panel de módulo |
+| `--mis-bg` | fondo de aplicación |
+| `--mis-border` | divisores y bordes decorativos |
+| `--mis-border-control` | borde de input o select (necesita 3:1 por WCAG 1.4.11) |
+| `--mis-primary`, `--mis-primary-light`, `--mis-text-on-primary` | acción principal |
+| `--mis-danger`, `--mis-success`, `--mis-warning` (+ `-light`) | estados semánticos |
+| `--mis-radius-sm/md/lg/xl`, `--mis-space-1…12`, `--mis-shadow-sm/md/lg` | forma y ritmo |
+
+Listado completo: `src/app/theme/tokens.css`. Un hex fijo en un componente lo marca el auditor (`--regla=tokens-de-color`), porque no responde al tema oscuro ni al acento que elige el usuario.
+
+### Por qué no se saltea el token
+
+`PreferenciasService` reescribe estos tokens en tiempo de ejecución: tema claro/oscuro, color de acento y fondo son preferencias del usuario aplicadas como variables CSS sobre `<html>`. Un color fijo se queda quieto mientras el resto de la interfaz cambia.
+
 ---
 
-## 3. Uso Estándar de Componentes PrimeNG
+## 2. Los estados de datos
 
-### Tablas de Reporte (`p-table`)
-- Utilizar `styleClass="p-datatable-sm"` para maximizar la densidad de información en pantallas financieras.
-- Alinear montos financieros a la derecha (`class="text-right font-medium font-mono"`).
-- Centrar tags y estados (`class="text-center"`).
+Toda vista que consuma backend modela cuatro estados, **excluyentes y en este orden**:
 
-### Botones (`p-button`)
-- Botón principal: `<p-button label="Guardar" icon="pi pi-check" severity="primary" />`
-- Botón secundario: `<p-button label="Cancelar" severity="secondary" />`
-- Botón de exportación: `<p-button label="Descargar Excel" icon="pi pi-file-excel" severity="success" />`
-- Botón de acción en tabla: `<p-button icon="pi pi-eye" [rounded]="true" [text]="true" size="small" />`
+```html
+@if (error()) {
+  <app-inline-error [detalle]="error()!" (reintentar)="consultar()" />
+} @else if (cargando()) {
+  <app-list-skeleton />
+} @else if (vacio()) {
+  <app-empty-state
+    titulo="Sin resultados"
+    descripcion="Ajustá los filtros o la fecha de corte." />
+} @else {
+  <!-- contenido -->
+}
+```
 
-### Modales y Diálogos (`p-dialog`)
-- Configurar siempre `[modal]="true"` y `[dismissableMask]="true"`.
-- Los formularios dentro del modal deben emitir eventos limpios y cerrar el modal únicamente al completar la acción con éxito.
+El orden importa: **el error va primero**. Si el vacío se evalúa antes, una consulta que falló se muestra como "no hay datos" y el usuario reintenta un filtro en vez de avisar de una caída. Ese fue exactamente el defecto que degradó al sistema legado.
+
+### Componentes de estado, ya construidos
+
+No escribas versiones caseras. Están en `src/app/shared/ui/`, cada uno con su `README.md`:
+
+| Componente | Contrato |
+|---|---|
+| `app-inline-error` | `titulo`, `detalle`, `accionLabel` (default "Reintentar"), salida `reintentar` |
+| `app-empty-state` | `icono`, `titulo`, `descripcion`, `accionLabel`, salida `accion` |
+| `app-list-skeleton` | `rows`, `cols` — skeleton pulsante de tabla |
+| `app-loading-overlay` | superposición de carga a nivel de pantalla |
+
+Si la pantalla delega en `app-reporte-simple`, `app-tabla-reporte`, `app-tabla-dinamica` o `app-data-table`, **esos componentes ya resuelven vacío y error por contrato**: no dupliques la lógica alrededor.
+
+---
+
+## 3. PrimeNG 21
+
+El tema es un preset propio (`src/app/theme/mis-theme.ts`) construido sobre los mismos tokens `--mis-*`, con `cssLayer` ordenado como `theme, base, primeng, utilities` y sin ripple (estilo macOS). Por eso un `p-button` ya sale con la paleta corporativa: no hay que pintarlo por encima.
+
+```html
+<!-- Tablas financieras: densidad alta, montos a la derecha con cifras tabulares -->
+<p-table [value]="filas()" [paginator]="true" [rows]="20" styleClass="p-datatable-sm">
+  <ng-template pTemplate="body" let-fila>
+    <tr>
+      <td class="font-mono text-xs">{{ fila.codigo }}</td>
+      <td class="text-right tabular-nums">{{ fila.montoFormateado }}</td>
+      <td class="text-center"><p-tag [value]="fila.estado" [severity]="fila.activo ? 'success' : 'secondary'" /></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<!-- Botones -->
+<p-button label="Consultar" icon="pi pi-search" />
+<p-button label="Actualizar" icon="pi pi-refresh" severity="secondary" [loading]="cargando()" />
+<p-button icon="pi pi-eye" [rounded]="true" [text]="true" size="small" ariaLabel="Ver detalle" />
+
+<!-- Diálogos: siempre modales y descartables -->
+<p-dialog [modal]="true" [dismissableMask]="true" [(visible)]="abierto">
+```
+
+Un diálogo se cierra al completar la acción con éxito, no antes.
+
+---
+
+## 4. Accesibilidad, que es contrato
+
+- Botón icónico sin texto → `ariaLabel`.
+- El error anuncia una acción de reintento comprensible; nada de volcar el mensaje crudo de un 500.
+- Foco visible con `--mis-shadow-focus`, nunca solo por cambio de color.
+- Tablas con encabezados reales y alineación semántica: montos a la derecha, estados centrados.
+- Montos y conteos sin decimales; porcentajes y tasas conservan su precisión.
+- En móvil el contenido se reduce sin cortar la etiqueta ni ocultar el valor.
+
+---
+
+## 5. Errores frecuentes
+
+| Error | Consecuencia |
+|---|---|
+| `class="bg-surface-card text-text-primary"` | no existen: elemento sin estilo |
+| `style="color: #6b7280"` | no acompaña al tema oscuro |
+| Estado vacío evaluado antes que el error | una caída del backend se muestra como "sin datos" |
+| Spinner propio en vez de `app-list-skeleton` | inconsistencia visual y una implementación más que mantener |
+| Envolver `app-tabla-reporte` en tu propio `@if (vacio())` | doble estado vacío, uno de ellos siempre mal |
+| `p-dialog` sin `[modal]` ni `[dismissableMask]` | se rompe el patrón de foco del resto del sistema |
+
+Verificación: `node governance/scripts/validar-gobernanza.mjs --regla=tokens-de-color,estados-de-datos`

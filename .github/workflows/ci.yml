@@ -1,0 +1,93 @@
+# Pipeline de verificación — MIS Host (Financiera Confianza).
+#
+# Refleja exactamente lo que corre `npm run verify:ci` en local: si el pipeline
+# se pone rojo, el mismo comando lo reproduce en la máquina del desarrollador
+# sin adivinar qué hace el runner distinto.
+#
+# La documentación de gobernanza describía "pipelines de CI/CD" desde el inicio,
+# pero el repositorio no tenía ninguno. Este es el primero.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  # Análisis estático: segundos, sin compilar. Falla rápido y con el mensaje
+  # exacto de qué norma de governance/docs se rompió.
+  gobernanza:
+    name: Gobernanza y documentación
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Arquitectura y seguridad
+        run: node governance/scripts/validar-gobernanza.mjs --check --linea-base
+      - name: Enlaces y referencias de la documentación
+        run: node governance/scripts/validar-documentacion.mjs --check
+      - name: Tokens de diseño sincronizados
+        run: npm run tokens:check
+      - name: Inventarios derivados del código
+        run: npm run inventario:check
+
+  pruebas:
+    name: Pruebas unitarias
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  build:
+    name: Build de producción y control del bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npx ng build --configuration production
+      # Verifica que no se colaran identidades de prueba, hosts locales,
+      # source maps ni tokens al artefacto público.
+      - run: npm run verify:bundle
+
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    # Levanta `ng serve` y dos proyectos de navegador: es la etapa cara, así que
+    # corre después de que lo barato ya pasó.
+    needs: [gobernanza, pruebas]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

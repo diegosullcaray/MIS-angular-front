@@ -1,106 +1,157 @@
-# Scripts de Gobernanza — MIS Host
+# Scripts de gobernanza — MIS Host
 
-Colección de scripts utilitarios de Node.js diseñados para estandarizar el ciclo de vida de desarrollo, la arquitectura y el control de calidad en el proyecto **MIS Host** (Financiera Confianza).
+Automatización del ciclo de desarrollo. Todos corren en Windows, Linux, macOS y CI, sin dependencias fuera de las del proyecto.
 
-Todos los scripts son compatibles tanto en Windows (PowerShell/CMD) como en entornos Linux/macOS y pipelines de CI/CD.
+Comparten [`lib/proyecto.mjs`](./lib/proyecto.mjs): el árbol de `src/app` se recorre **una vez** y se cachea, con las mismas exclusiones y el mismo formato de salida para todos.
 
----
+## Índice
 
-## Índice de Scripts
-
-| Script | Propósito | Comando directo |
+| Script | Propósito | npm |
 |---|---|---|
-| [`crear-modulo.mjs`](./crear-modulo.mjs) | Genera un módulo de negocio con arquitectura canónica Angular 22 zoneless | `node governance/scripts/crear-modulo.mjs <nombre>` |
-| [`ejecutar-pruebas.mjs`](./ejecutar-pruebas.mjs) | Lanzador unificado de pruebas unitarias (Vitest), E2E (Playwright) y gobernanza | `node governance/scripts/ejecutar-pruebas.mjs [comando]` |
-| [`validar-gobernanza.mjs`](./validar-gobernanza.mjs) | Auditoría estática de reglas arquitectónicas, aislamiento y convenciones | `node governance/scripts/validar-gobernanza.mjs` |
-| [`verificar-bundle.mjs`](./verificar-bundle.mjs) | Verifica que no existan URLs de desarrollo ni correos institucionales en el bundle de producción | `node governance/scripts/verificar-bundle.mjs` |
-| [`generar-tokens-paleta.mjs`](./generar-tokens-paleta.mjs) | Genera tokens TypeScript de la paleta corporativa a partir de variables CSS | `node governance/scripts/generar-tokens-paleta.mjs` |
+| [`ejecutar-pruebas.mjs`](./ejecutar-pruebas.mjs) | lanzador único de pruebas, auditorías y cadenas | `npm run test:runner` |
+| [`validar-gobernanza.mjs`](./validar-gobernanza.mjs) | motor de reglas de arquitectura y seguridad | `npm run audit:governance` |
+| [`validar-documentacion.mjs`](./validar-documentacion.mjs) | referencias rotas en `governance/` | `npm run audit:docs` |
+| [`generar-inventario.mjs`](./generar-inventario.mjs) | inventarios derivados del código | `npm run inventario` |
+| [`crear-modulo.mjs`](./crear-modulo.mjs) | scaffolding de módulos | `npm run module:create` |
+| [`verificar-bundle.mjs`](./verificar-bundle.mjs) | control del artefacto de producción | `npm run verify:bundle` |
+| [`generar-tokens-paleta.mjs`](./generar-tokens-paleta.mjs) | tokens CSS → TypeScript | `npm run tokens` |
 
 ---
 
-## 1. Generador de Módulos (`crear-modulo.mjs`)
+## 1. Lanzador de verificación
 
-Crea automáticamente la estructura completa para un nuevo módulo de negocio en `src/app/pages/modules/<modulo>/` cumpliendo la especificación canónica de `governance/docs/development/module-guide.md`:
-
-```text
-src/app/pages/modules/<nombre>/
-  ├── <nombre>.routes.ts                  # Rutas lazy load
-  ├── constantes/<nombre>.constants.ts    # COD_REP, endpoints, configuración
-  ├── models/<nombre>.models.ts           # DTOs backend y contratos frontend
-  ├── utils/<nombre>.mappers.ts           # Transformadores puros de datos
-  ├── utils/<nombre>.mappers.spec.ts      # Pruebas unitarias de mappers
-  ├── services/<nombre>.service.ts        # Servicio reactivo con Signals e inject(HttpClient)
-  ├── services/<nombre>.service.spec.ts   # Pruebas unitarias del servicio
-  ├── ui/<nombre>-resumen-card.component.ts # Componente reutilizable OnPush
-  └── components/principal/
-      ├── principal.component.ts         # Contenedor principal OnPush
-      └── principal.component.html       # Plantilla con PrimeNG, Tailwind y @if/@for
+```bash
+node governance/scripts/ejecutar-pruebas.mjs help
 ```
 
-### Ejemplos de uso:
-```bash
-# Crear un módulo llamado 'auditoria-riesgos'
-node governance/scripts/crear-modulo.mjs auditoria-riesgos --title "Auditoría de Riesgos"
+**Pruebas**: `unit [ruta]`, `watch`, `coverage`, `e2e [ruta]`, `e2e:ui`, `e2e:report`.
+**Gobernanza**: `gobernanza`, `documentacion`, `tokens`, `inventario`.
+**Artefacto**: `compilar`, `bundle`.
+**Cadenas**: `verificar` (estático, pre-commit) y `ci` (la del pipeline; `--con-e2e` suma Playwright).
 
-# Previsualizar archivos sin crearlos en disco
+Las cadenas informan la duración de cada fase, se detienen en la primera que falla e indican **qué comando reproduce ese fallo por separado**.
+
+```bash
+node governance/scripts/ejecutar-pruebas.mjs verificar
+node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/analista
+node governance/scripts/ejecutar-pruebas.mjs ci --con-e2e
+```
+
+---
+
+## 2. Auditor de gobernanza
+
+Motor de 14 reglas sobre `src/app`. Cada una declara id, nivel, qué verifica, **por qué** y a qué documento de `governance/docs/` responde.
+
+```bash
+node governance/scripts/validar-gobernanza.mjs                  # informe
+node governance/scripts/validar-gobernanza.mjs --listar         # catálogo con su porqué
+node governance/scripts/validar-gobernanza.mjs --check          # falla ante errores (CI)
+node governance/scripts/validar-gobernanza.mjs --estricto       # falla también con avisos
+node governance/scripts/validar-gobernanza.mjs --json           # salida para herramientas
+node governance/scripts/validar-gobernanza.mjs --regla=core-aislado,sin-secretos
+```
+
+**Errores** (rompen una invariante): `core-aislado`, `shared-aislado`, `modulos-desacoplados`, `sin-secretos`, `control-flujo-moderno`.
+
+**Avisos** (deuda o convención): `entrada-salida-señal`, `nombres-canonicos`, `tokens-de-color`, `entorno-fuera-de-core`, `prueba-vecina`, `estados-de-datos`, `error-no-silenciado`, `sin-console`, `rutas-lazy`.
+
+### Línea base
+
+```bash
+node governance/scripts/validar-gobernanza.mjs --guardar-linea-base   # congelar (deliberado)
+node governance/scripts/validar-gobernanza.mjs --linea-base --check   # exigir cero NUEVOS
+node governance/scripts/validar-gobernanza.mjs --sin-linea-base       # ver el pasivo completo
+```
+
+Congela la deuda anterior a estas reglas para poder exigir "cero hallazgos nuevos" desde el primer día. **Regenerarla para destrabar un pipeline rojo es esconder deuda**: ver [ADR-0003](../docs/architecture/adr/ADR-0003-linea-base-de-gobernanza.md).
+
+---
+
+## 3. Validador de documentación
+
+```bash
+node governance/scripts/validar-documentacion.mjs [--check] [--json]
+```
+
+Verifica enlaces internos, rutas de código citadas entre backticks, símbolos y tokens de diseño nombrados en las guías que no existen en `src/`, reglas del auditor que citan una norma inexistente, y documentos huérfanos. Una cita señalada explícitamente como incorrecta no se reporta: las guías tienen que poder nombrar un antipatrón.
+
+---
+
+## 4. Inventarios derivados
+
+```bash
+node governance/scripts/generar-inventario.mjs           # reescribe los .md
+node governance/scripts/generar-inventario.mjs --check    # falla si quedaron viejos
+node governance/scripts/generar-inventario.mjs --json     # datos crudos
+```
+
+Deriva del código y reinyecta entre marcadores `<!-- generado:inicio … -->` / `<!-- generado:fin -->`, dejando intacta la prosa alrededor:
+
+| Bloque | Destino |
+|---|---|
+| módulos y rutas | `docs/architecture/module-inventory.md` |
+| cifras de pruebas | `docs/development/test-inventory.md` |
+| catálogo de `cod_rep` | `docs/data/catalog.md` |
+
+El catálogo de `cod_rep` extrae los códigos de reporte de los `constantes/*.constantes.ts`: es el inventario de qué datos consume el frontend, y estaba repartido en 20 archivos sin que nadie pudiera enumerarlo.
+
+---
+
+## 5. Generador de módulos
+
+```bash
+node governance/scripts/crear-modulo.mjs <nombre> [opciones]
+```
+
+| Opción | Efecto |
+|---|---|
+| `--title "<título>"` | título legible de la pantalla |
+| `--cod-rep <código>` | código de reporte del backend Ant |
+| `--transporte=ant\|http` | fachada de datos (por defecto `ant`) |
+| `--registrar-ruta` | enlaza el módulo en `src/app/app.routes.ts` |
+| `--dry-run` | simula sin escribir |
+| `--force` | sobrescribe un módulo existente |
+
+Genera:
+
+```text
+src/app/pages/modules/<modulo>/
+  <modulo>.routes.ts
+  constantes/<modulo>.constantes.ts
+  models/<modulo>.model.ts
+  utils/<modulo>.util.ts + .spec.ts
+  services/<modulo>.service.ts + .spec.ts
+  ui/<modulo>-resumen-card/…
+  components/principal/… + .spec.ts
+```
+
+El servicio habla con un `Mod*Service` de `core/winder/instances/` — **el sistema no expone REST**, y un servicio contra `/api/<modulo>` compila y nunca trae datos. La pantalla usa los componentes de estado de `shared/ui` y los tokens `--mis-*`. Los specs generados ya cubren datos, vacío legítimo, fallo de backend y payload malformado.
+
+```bash
+node governance/scripts/crear-modulo.mjs auditoria-riesgos --title "Auditoría de Riesgos" --cod-rep RS_AUD_01 --registrar-ruta
 node governance/scripts/crear-modulo.mjs auditoria-riesgos --dry-run
 ```
 
 ---
 
-## 2. Lanzador de Pruebas (`ejecutar-pruebas.mjs`)
+## 6. Control del bundle
 
-Unifica la ejecución de todas las pruebas del repositorio, facilitando los comandos para los desarrolladores y agentes de IA:
-
-### Comandos disponibles:
 ```bash
-# Ejecutar todas las pruebas unitarias (Vitest)
-node governance/scripts/ejecutar-pruebas.mjs unit
-
-# Ejecutar una prueba unitaria específica
-node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/analista/services/analista.service.spec.ts
-
-# Pruebas unitarias en modo observador (watch)
-node governance/scripts/ejecutar-pruebas.mjs watch
-
-# Generar reporte de cobertura
-node governance/scripts/ejecutar-pruebas.mjs coverage
-
-# Ejecutar pruebas E2E con Playwright
-node governance/scripts/ejecutar-pruebas.mjs e2e
-
-# Abrir UI interactiva de Playwright
-node governance/scripts/ejecutar-pruebas.mjs e2e:ui
-
-# Ejecutar auditoría de gobernanza arquitectónica
-node governance/scripts/ejecutar-pruebas.mjs governance
-
-# Ejecutar suite completa (gobernanza + unitarias)
-node governance/scripts/ejecutar-pruebas.mjs all
+node governance/scripts/verificar-bundle.mjs [--dir=dist/mis-host/browser] [--json]
 ```
+
+Falla si el artefacto de producción contiene identidades de prueba, hosts locales, source maps enlazados o cadenas con forma de JWT. Además registra el peso inicial contra el presupuesto de `angular.json`, para que una regresión de tamaño se vea en el log del build.
+
+No puede proteger los secretos Winder: están compilados en `src/environments/` y viajan en el bundle. Solo detecta filtraciones **nuevas** — ver [hallazgos de seguridad](../docs/security/findings.md).
 
 ---
 
-## 3. Auditor de Gobernanza (`validar-gobernanza.mjs`)
+## 7. Tokens de paleta
 
-Analiza estáticamente el código fuente de `src/app/` comprobando:
-
-1. **Aislamiento de capas**:
-   - `core` no debe importar páginas ni módulos (`src/app/pages/*`).
-   - `shared` no debe importar módulos específicos (`src/app/pages/modules/*`).
-2. **Modernización de Signals**:
-   - Detección de decoradores legacy `@Input()` y `@Output()` en componentes nuevos (se exige `input()` y `output()`).
-3. **Seguridad**:
-   - Alerta sobre correos o URLs de desarrollo hardcodeadas en código productivo.
-
-### Ejemplos de uso:
 ```bash
-# Modo auditoría informativa (no rompe el build local)
-node governance/scripts/validar-gobernanza.mjs
-
-# Modo CI (falla con código 1 si existen infracciones críticas)
-node governance/scripts/validar-gobernanza.mjs --check
-
-# Modo estricto (falla si hay cualquier advertencia o infracción)
-node governance/scripts/validar-gobernanza.mjs --strict
+node governance/scripts/generar-tokens-paleta.mjs           # regenera
+node governance/scripts/generar-tokens-paleta.mjs --check   # verifica
 ```
+
+Extrae los tokens de color de `src/app/theme/tokens.css` (fuente de verdad) hacia `tokens.paleta.ts`, que consumen los tests de contraste y daltonismo. La comparación normaliza fin de línea: sin eso, un checkout de Windows con `core.autocrlf` daba desactualizado un archivo idéntico.

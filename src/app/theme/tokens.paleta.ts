@@ -1,6 +1,6 @@
-// GENERADO por scripts/generar-tokens-paleta.mjs — no editar a mano.
+// GENERADO por governance/scripts/generar-tokens-paleta.mjs — no editar a mano.
 // La fuente de verdad es src/app/theme/tokens.css. Para regenerar:
-//   node scripts/generar-tokens-paleta.mjs
+//   node governance/scripts/generar-tokens-paleta.mjs
 
 /** Nombre de un token de color del sistema. */
 export type TokenColor = keyof typeof TOKENS_CLARO;

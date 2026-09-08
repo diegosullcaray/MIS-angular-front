@@ -1,81 +1,84 @@
-# Marco de Gobernanza y Desarrollo — MIS Host
+# Marco de Gobernanza — MIS Host
 
-Bienvenido al centro de gobernanza, automatización y estándares técnicos de **Financiera Confianza (MIS Host)**.
-
-Esta carpeta contiene las herramientas, directrices y agentes que aseguran la consistencia arquitectónica, calidad de código y velocidad de entrega para el portal administrador basado en **Angular 22 Zoneless**, **PrimeNG 21** y **Tailwind CSS v4**.
-
----
-
-## Estructura del Directorio de Gobernanza
+Centro de gobernanza, automatización y estándares técnicos de **Financiera Confianza (MIS Host)**: portal administrador en **Angular 22 zoneless**, **PrimeNG 21** y **Tailwind CSS v4**, sobre el backend **Ant** mediante el transporte **Winder**.
 
 ```text
 governance/
-  ├── scripts/      # Herramientas y scripts de automatización (scaffolding, testing, auditoría)
-  ├── skills/       # Guías técnicas especializadas y directrices de desarrollo (Skills)
-  ├── agents/       # Definición y orquestación del equipo de agentes IA (Investigador, Desarrollador, Tester)
-  ├── docs/         # Documentación canónica (arquitectura, contratos API, negocio, seguridad)
-  └── readme.md     # Este índice general
+  ├── scripts/                      automatización: scaffolding, verificación, inventarios
+  ├── skills/                       guías operativas para desarrolladores y agentes
+  ├── agents/                       pipeline de 5 agentes especializados
+  ├── docs/                         documentación canónica
+  ├── gobernanza.linea-base.json    deuda congelada (ver ADR-0003)
+  └── readme.md
 ```
 
----
-
-## 1. 🛠️ Scripts Utilitarios (`governance/scripts/`)
-
-Scripts Node.js multiplataforma para agilizar tareas repetitivas y garantizar la adhesión a los estándares:
-
-- **[`crear-modulo.mjs`](./scripts/crear-modulo.mjs)**: Genera automáticamente módulos de negocio canónicos en `src/app/pages/modules/` (con rutas lazy, constantes, modelos, mappers puros, servicios con Signals, tarjetas métricas y vistas principales).
-  ```bash
-  node governance/scripts/crear-modulo.mjs <nombre-modulo> [--title "Título"]
-  ```
-- **[`ejecutar-pruebas.mjs`](./scripts/ejecutar-pruebas.mjs)**: Lanzador unificado de pruebas unitarias (Vitest), cobertura, modo observador, pruebas E2E (Playwright) y auditorías.
-  ```bash
-  node governance/scripts/ejecutar-pruebas.mjs [unit|watch|coverage|e2e|all]
-  ```
-- **[`validar-gobernanza.mjs`](./scripts/validar-gobernanza.mjs)**: Auditor estático de código para verificar aislamiento de capas (`core` y `shared`), adopción de Signals y buenas prácticas de seguridad.
-  ```bash
-  node governance/scripts/validar-gobernanza.mjs [--check|--strict]
-  ```
-- **[`verificar-bundle.mjs`](./scripts/verificar-bundle.mjs)**: Asegura que el build de producción no contenga URLs de desarrollo ni correos institucionales.
-- **[`generar-tokens-paleta.mjs`](./scripts/generar-tokens-paleta.mjs)**: Sincroniza tokens de CSS con TypeScript para tests de contraste y daltonismo.
-
-👉 Consulta el manual completo en [governance/scripts/README.md](./scripts/README.md).
+**Regla que gobierna todo lo demás: cuando la documentación y el código discrepan, gana el código.** El documento se corrige. La [auditoría de septiembre 2026](./docs/evidence/quality/auditoria-gobernanza-2026-09.md) encontró cinco reglas que estas guías exigían y el repositorio nunca cumplió; corregirlas fue el punto de partida de la versión actual.
 
 ---
 
-## 2. 🧠 Habilidades y Directrices (`governance/skills/`)
+## 1. Verificación
 
-Skills de conocimiento aplicables a desarrolladores humanos y asistentes de IA (Antigravity):
+Un solo comando antes de cada commit:
 
-- **[`angular-mis-zoneless`](./skills/angular-mis-zoneless/SKILL.md)**: Arquitectura sin Zone.js, reactividad con Signals (`signal`, `computed`, `input`, `output`), inyección con `inject()` y detección de cambios `OnPush`.
-- **[`mis-component-styling`](./skills/mis-component-styling/SKILL.md)**: Estándares visuales con PrimeNG 21 y Tailwind v4, paleta corporativa y los 4 estados de pantalla obligatorios (Carga, Vacío, Error con reintento y Contenido).
-- **[`mis-module-architecture`](./skills/mis-module-architecture/SKILL.md)**: Estructura de capas por módulo (`constantes`, `models`, `utils`, `services`, `ui`, `components`) y ciclo de vida para agregar nuevos reportes (`cod_rep`).
-- **[`mis-testing-guide`](./skills/mis-testing-guide/SKILL.md)**: Metodología para pruebas unitarias con Vitest (mappers y servicios) y pruebas E2E con Playwright.
+```bash
+npm run verify        # gobernanza + documentación + tokens + inventarios (segundos, sin compilar)
+npm run verify:ci     # además unitarias, build y control de bundle
+```
 
----
+Qué verifica cada compuerta, qué bloquea y cómo se maneja la deuda heredada: [compuertas de calidad](./docs/development/quality-gates.md).
 
-## 3. 🤖 Pipeline de 3 Agentes de Desarrollo (`governance/agents/`)
+## 2. Scripts (`governance/scripts/`)
 
-Flujo secuencial para atender cualquier requerimiento de manera confiable:
+| Script | Para qué |
+|---|---|
+| [`crear-modulo.mjs`](./scripts/crear-modulo.mjs) | genera un módulo completo: estructura canónica, servicio contra Winder/Ant, los cuatro estados y specs que ya pasan |
+| [`ejecutar-pruebas.mjs`](./scripts/ejecutar-pruebas.mjs) | lanzador único de pruebas, auditorías y cadenas de verificación |
+| [`validar-gobernanza.mjs`](./scripts/validar-gobernanza.mjs) | motor de 14 reglas de arquitectura y seguridad, con niveles y línea base |
+| [`validar-documentacion.mjs`](./scripts/validar-documentacion.mjs) | enlaces, rutas y símbolos citados en `governance/` que ya no existen |
+| [`generar-inventario.mjs`](./scripts/generar-inventario.mjs) | deriva del código el inventario de módulos y de pruebas |
+| [`verificar-bundle.mjs`](./scripts/verificar-bundle.mjs) | controla el artefacto de producción: identidades, source maps, tokens, peso |
+| [`generar-tokens-paleta.mjs`](./scripts/generar-tokens-paleta.mjs) | sincroniza `tokens.paleta.ts` con `tokens.css` |
 
-1. **[`01-investigador-requerimientos.md`](./agents/01-investigador-requerimientos.md)** (`investigador_requerimientos`):
-   - Investiga la base de código y contratos.
-   - Pregunta al usuario para aclarar dudas, columnas o filtros ambiguos antes de escribir código.
-   - Emite el plan y la especificación técnica.
-2. **[`02-desarrollador-angular.md`](./agents/02-desarrollador-angular.md)** (`desarrollador_angular`):
-   - Realiza el scaffolding canónico.
-   - Codifica en Angular 22 zoneless con Signals, PrimeNG y Tailwind.
-   - Implementa los 4 estados y verifica la compilación.
-3. **[`03-tester-qa.md`](./agents/03-tester-qa.md)** (`tester_qa`):
-   - Diseña y ejecuta pruebas unitarias con Vitest y pruebas E2E con Playwright.
-   - Ejecuta la auditoría de gobernanza arquitectónica y emite el dictamen final.
+Manual completo: [`scripts/README.md`](./scripts/README.md).
 
-👉 Consulta la descripción detallada del flujo en [governance/agents/README.md](./agents/README.md).
+## 3. Skills (`governance/skills/`)
 
----
+Guías aplicadas, para usar mientras se escribe código. Registradas en `.agents/skills.json`.
 
-## 4. 📚 Documentación Canónica (`governance/docs/`)
+| Skill | Qué resuelve |
+|---|---|
+| [`angular-mis-zoneless`](./skills/angular-mis-zoneless/SKILL.md) | señales, zoneless y por qué acá **no** se usa `OnPush` |
+| [`mis-module-architecture`](./skills/mis-module-architecture/SKILL.md) | dónde va cada archivo y qué sufijo lleva |
+| [`mis-component-styling`](./skills/mis-component-styling/SKILL.md) | tokens `--mis-*`, PrimeNG y los cuatro estados |
+| [`mis-winder-ant`](./skills/mis-winder-ant/SKILL.md) | el transporte real por donde entran los datos — **no hay REST** |
+| [`mis-reportes-bloques`](./skills/mis-reportes-bloques/SKILL.md) | motores de reporte, jerarquía y fecha de corte |
+| [`mis-testing-guide`](./skills/mis-testing-guide/SKILL.md) | Vitest y Playwright con las convenciones del repo |
 
-- [Visión del Sistema y Producto](./docs/README.md)
-- [Guía de Creación de Módulos](./docs/development/module-guide.md)
-- [Convenciones de Desarrollo](./docs/development/conventions.md)
-- [Inventario y Estrategia de Pruebas](./docs/development/testing.md)
+## 4. Agentes (`governance/agents/`)
+
+Pipeline de cinco fases, cada una con criterio de rechazo explícito:
+
+1. [Investigador de requerimientos](./agents/01-investigador-requerimientos.md) — emite la especificación técnica
+2. [Desarrollador Angular](./agents/02-desarrollador-angular.md) — implementa
+3. [QA y pruebas](./agents/03-tester-qa.md) — dictamina con evidencia
+4. [Auditor de contratos y datos](./agents/04-auditor-contratos-datos.md) — verifica que el dato signifique lo documentado
+5. [Seguridad y rendimiento](./agents/05-revisor-seguridad-rendimiento.md) — última compuerta antes del PR
+
+Detalle del flujo: [`agents/README.md`](./agents/README.md).
+
+## 5. Documentación (`governance/docs/`)
+
+Organizada por responsabilidad, con **el gobierno del dato como eje**:
+
+| Área | Qué contiene |
+|---|---|
+| [`data/`](./docs/data/README.md) | glosario, catálogo, contratos, linaje, calidad, clasificación y responsabilidades |
+| [`architecture/`](./docs/architecture/README.md) | capas, arranque, inventario de módulos, ADR |
+| [`business/`](./docs/business/README.md) | producto, dominios, flujos y roadmap |
+| [`development/`](./docs/development/README.md) | setup, convenciones, guías, pruebas y compuertas |
+| [`components/`](./docs/components/README.md) | design system y catálogo de UI |
+| [`security/`](./docs/security/README.md) | amenazas, hallazgos y remediación |
+| [`templates/`](./docs/templates/README.md) | ficha de reporte, feature, PR, bug, ADR, evidencia |
+| [`evidence/`](./docs/evidence/README.md) | cobertura, rendimiento, auditorías e incidentes |
+
+Entradas frecuentes: [índice general](./docs/README.md) · [onboarding](./docs/onboarding.md) · [transporte Winder](./docs/data/contracts/winder-transport.md) · [linaje del dato](./docs/data/lineage.md) · [compuertas de calidad](./docs/development/quality-gates.md)

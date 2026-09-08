@@ -30,6 +30,18 @@
 - Paginacion:
 - Bloques y orden:
 
+## Gobierno del dato
+
+Esta seccion es la que alimenta el [catalogo](../data/catalog.md) y la
+[clasificacion](../data/classification.md) de forma incremental: un reporte por vez.
+
+- Propietario funcional (quien puede corregir la cifra):
+- Que mide y en que unidad:
+- Nivel de clasificacion: Restringido | Confidencial | Interno | Operativo:
+- Campos sensibles del contrato (nombre y por que):
+- Que significa una respuesta vacia en ESTE codigo:
+- Riesgo si la cifra sale mal (decision que se toma con ella):
+
 ## Estructura de presentacion
 
 - Componente: `app-tabla-reporte` | `app-tabla-dinamica` | grafico | mixto:
@@ -62,4 +74,5 @@
 - [ ] Spec de service/componente
 - [ ] E2E
 - [ ] Responsive y accesibilidad
-- [ ] Inventario y documentación actualizados
+- [ ] `npm run inventario` (el `cod_rep` aparece en el catalogo)
+- [ ] Catalogo y clasificacion actualizados con la seccion de gobierno del dato

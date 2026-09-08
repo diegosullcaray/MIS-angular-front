@@ -1,21 +1,28 @@
-# Contratos API y gobierno de datos
+# Contratos de datos
 
-Este directorio es la entrada canonica para contratos entre MIS Host y backend. El transporte actual usa Winder/Ant; no es REST convencional.
+Entrada canónica para los contratos entre MIS Host y el backend. **El transporte no es REST convencional**: usa Winder/Ant, con strands en vez de recursos.
 
 ## Contratos vigentes
 
-| Contrato | Responsabilidad | Documento |
+| Contrato | Qué define | Documento |
 |---|---|---|
-| Winder | Transporte cifrado, `Strand`, `IWinderResponse` y rutas `v1/g`, `v1/p`, `v1/pf` | [System overview](../system-overview.md) |
-| Reportes | `regularData`, `table.regular`, `graphicData`, `reportData` | [Reporting contracts](../reporting-contracts.md) |
-| Jerarquia | `cod_jer`, `tip_cod`, `cod_rel`, niveles y fecha de corte | [Organizational hierarchy](../organizational-hierarchy.md) |
-| Navegacion y permisos | Arbol, roles, herencia, ALLOW/DENY y sesiones | [Modelo de accesos](./access-model.md) |
+| Transporte | `Strand`, `Winder-Params`, parámetro `w` cifrado, `IWinderResponse`, rutas `v1/g`, `v1/p`, `v1/pf` | [Winder / Ant](./winder-transport.md) |
+| Reportes | los cuatro motores: `regularData`, `table.regular`, `graphicData`, `reportData` | [Motores de reporte](./reporting-contracts.md) |
+| Jerarquía | `cod_jer`, `tip_cod`, `cod_rel`, niveles y fecha de corte | [Jerarquía organizativa](./organizational-hierarchy.md) |
+| Navegación y permisos | árbol, roles, herencia, ALLOW/DENY y sesiones | [Modelo de acceso](./access-model.md) |
 
-El recorrido tecnico completo esta en [data flow](../data-flow.md). Los endpoints Winder no deben documentarse como REST generico: cada servicio fija `appId`, puerto logico, strand, nombre de respuesta y forma de payload.
+Los endpoints Winder no se documentan como REST genérico: cada servicio fija `appId`, puerto lógico, strand, nombre de respuesta y forma de payload. El recorrido técnico completo está en [flujo de datos](../../architecture/data-flow.md) y en [linaje](../lineage.md).
 
 ## Reglas de gobierno
 
-1. Cada contrato identifica propietario, consumidor, version, campos obligatorios y errores conocidos.
-2. Los nombres del backend se conservan en el borde; el dominio puede mapearlos a tipos explicitos.
-3. Un cambio incompatible requiere ADR, prueba de contrato y plan de migracion.
-4. Ningun contrato del frontend sustituye la autorizacion del backend.
+1. Cada contrato identifica **propietario, consumidor, versión, campos obligatorios y errores conocidos**.
+2. Los nombres del backend se conservan en el borde; el dominio puede mapearlos a tipos explícitos, y ese mapeo queda documentado.
+3. Un cambio incompatible requiere ADR, prueba de contrato y plan de migración.
+4. Ningún contrato del frontend sustituye la autorización del backend.
+5. Un contrato retirado se elimina del código **y del [catálogo](../catalog.md)**: documentar algo que ya no existe es peor que no documentarlo.
+
+## Al agregar un contrato
+
+Completar la [ficha de reporte](../../templates/report-spec-template.md), que obliga a resolver antes de escribir código: `cod_rep`, motor, servicio `Mod*`, parámetros fijos y de filtro, nivel de jerarquía, formato de fecha, forma de la respuesta, significado del vacío y campos sensibles.
+
+Después: `npm run inventario` para que el código nuevo aparezca en el catálogo, y `npm run audit:docs` para verificar que la documentación sigue resolviendo.

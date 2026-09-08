@@ -1,12 +1,31 @@
-# Decision records
+# Registro de decisiones
 
-Este es el indice de decisiones tecnicas. Las decisiones nuevas deben usar [la plantilla ADR](../templates/adr-template.md).
+Índice de decisiones técnicas. Las nuevas usan [la plantilla ADR](../templates/adr-template.md) y viven en [`adr/`](./adr/).
 
-## Decisiones vigentes
+## ADR registrados
 
-| Decision | Estado | Evidencia |
+| ADR | Decisión | Estado |
 |---|---|---|
-| Angular standalone, zoneless y signals | Vigente | [System overview](./system-overview.md) |
-| Winder como adaptador de transporte hacia Ant | Vigente por compatibilidad | [Contratos API](./api-contracts/README.md) |
-| Autorizacion en backend; frontend como presentacion | Requerida | [Seguridad](../security/README.md) y [Access model](./api-contracts/access-model.md) |
-| Adyacencia mas materialized path para navegacion | Propuesta de backend | [Modelo de accesos](./api-contracts/access-model.md) |
+| [ADR-0001](./adr/ADR-0001-zoneless-sin-onpush.md) | Zoneless con señales, sin `ChangeDetectionStrategy.OnPush` | Vigente |
+| [ADR-0002](./adr/ADR-0002-color-por-token-css.md) | El color se aplica por token CSS, no por clase utilitaria | Vigente |
+| [ADR-0003](./adr/ADR-0003-linea-base-de-gobernanza.md) | Línea base de gobernanza en lugar de "cero hallazgos" | Vigente |
+
+## Decisiones vigentes sin ADR propio
+
+Heredadas del diseño original; se documentan acá hasta que un cambio obligue a escribirles un ADR.
+
+| Decisión | Estado | Evidencia |
+|---|---|---|
+| Angular standalone, zoneless y con señales | Vigente | [System overview](./system-overview.md) |
+| Winder como adaptador de transporte hacia Ant | Vigente por compatibilidad | [Transporte Winder](../data/contracts/winder-transport.md) |
+| Autorización en backend; el frontend solo presenta | Requerida | [Seguridad](../security/README.md), [Access model](../data/contracts/access-model.md) |
+| Adyacencia más materialized path para navegación | Propuesta de backend | [Modelo de accesos](../data/contracts/access-model.md) |
+| Frontend modular monolítico, sin federation activa | Vigente | [System overview](./system-overview.md) |
+| Sin caché de respuestas de API en el service worker | Vigente | [Runtime configuration](./runtime-configuration.md) |
+
+## Decisiones pendientes de tomar
+
+Registradas en la [auditoría de septiembre 2026](../evidence/quality/auditoria-gobernanza-2026-09.md):
+
+- Adoptar o descartar ESLint. Hoy el proyecto no tiene linter, y el auditor de gobernanza cubre arquitectura, no estilo de código.
+- Activar o no `strict: true` en `tsconfig.json`, y con qué plan de migración.

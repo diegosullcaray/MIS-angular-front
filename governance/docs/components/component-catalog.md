@@ -24,6 +24,12 @@ La libreria compartida debe permanecer agnostica del dominio. Los componentes re
 - El mapa elimina `ResizeObserver`, marcador y mapa MapLibre al destruirse.
 - La accesibilidad de botones de mapa, teclado del buscador y foco visible forma parte del contrato, no es decoracion.
 
+## Documentacion junto al codigo
+
+Cada familia de `src/app/shared/ui/` tiene su propio `README.md` al lado del componente, con el contrato detallado. Ese README es la fuente de verdad del componente; esta tabla es el mapa.
+
+El directorio `src/app/shared/ui/kpi-tile/` esta vacio: no hay componente `app-kpi-tile`. Las reglas de KPI viven en [KPI guidelines](./kpi-guidelines.md) y se aplican en los componentes del modulo dueno del dato.
+
 ## Limite de ubicacion
 
 `ReporteSimpleComponent` y sus bases son reutilizables dentro del dominio de reportes, pero viven en `src/app/pages/modules/reportes/ui/`, no en `src/app/shared/ui/`, porque integran jerarquia y contratos de reportes.

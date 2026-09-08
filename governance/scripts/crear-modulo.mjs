@@ -1,514 +1,560 @@
 #!/usr/bin/env node
 /**
- * Generador de módulos de negocio para MIS Host (Financiera Confianza).
+ * Generador de módulos de negocio — MIS Host (Financiera Confianza).
  *
- * Crea la estructura canónica exigida por `governance/docs/development/module-guide.md`:
+ * Genera la estructura de `governance/docs/development/module-guide.md` con la
+ * forma que realmente tiene el repo, no con una idealizada:
  *
  *   src/app/pages/modules/<modulo>/
  *     ├── <modulo>.routes.ts
- *     ├── constantes/<modulo>.constants.ts
- *     ├── models/<modulo>.models.ts
- *     ├── utils/<modulo>.mappers.ts
- *     ├── utils/<modulo>.mappers.spec.ts
+ *     ├── constantes/<modulo>.constantes.ts     ← sufijo canónico (no .constants.ts)
+ *     ├── models/<modulo>.model.ts              ← singular (no .models.ts)
+ *     ├── utils/<modulo>.util.ts                ← .util.ts (no .mappers.ts)
+ *     ├── utils/<modulo>.util.spec.ts
  *     ├── services/<modulo>.service.ts
  *     ├── services/<modulo>.service.spec.ts
- *     ├── ui/<modulo>-resumen-card.component.ts
- *     └── components/
- *         └── principal/
- *             ├── principal.component.ts
- *             └── principal.component.html
+ *     ├── ui/<modulo>-resumen-card/…            ← presentacional, con su plantilla
+ *     └── components/principal/…                ← contenedor, con su plantilla y spec
+ *
+ * Transporte (`--transporte`):
+ *   ant   (por defecto) el módulo consume el backend Ant vía un servicio
+ *         `Mod*Service` de `core/winder/instances/`, que es como habla el 100%
+ *         de los módulos existentes. La versión anterior de este script
+ *         generaba `http.get('/api/<modulo>')`, un endpoint REST que no existe
+ *         en este sistema: el módulo compilaba y nunca traía un dato.
+ *   http  HttpClient directo, solo para APIs Host que no pasan por Winder.
  *
  * Uso:
- *   node governance/scripts/crear-modulo.mjs <nombre-del-modulo> [--title "Título Legible"]
- *   Ejemplo:
- *   node governance/scripts/crear-modulo.mjs cartera-morosa --title "Cartera Morosa"
+ *   node governance/scripts/crear-modulo.mjs <nombre> [opciones]
+ *
+ * Opciones:
+ *   --title "<título>"    título legible de la pantalla
+ *   --cod-rep <código>    código de reporte del backend (ej. RS_BASE_NEG_01)
+ *   --transporte=ant|http fachada de datos a generar (por defecto: ant)
+ *   --registrar-ruta      además, enlaza el módulo en src/app/app.routes.ts
+ *   --dry-run             muestra qué se generaría, sin escribir
+ *   --force               sobrescribe un módulo existente
+ *   --help, -h
  */
 
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { opciones, titulo, verde, rojo, amarillo, gris, negrita } from './lib/proyecto.mjs';
 
-const args = process.argv.slice(2);
+const { flags, posicionales } = opciones(process.argv.slice(2), ['title', 'cod-rep', 'transporte']);
 
-if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
+if (flags['help'] || flags['h'] || posicionales.length === 0) {
   console.log(`
-Uso:
+${negrita('Generador de módulos — MIS Host')}
+
   node governance/scripts/crear-modulo.mjs <nombre-modulo> [opciones]
 
-Argumentos:
-  <nombre-modulo>      Nombre del módulo en kebab-case (ej. 'auditoria-riesgos')
+${negrita('Argumentos')}
+  <nombre-modulo>        kebab-case, ej. 'auditoria-riesgos'
 
-Opciones:
-  --title "<titulo>"   Título legible para la vista (ej. "Auditoría de Riesgos")
-  --dry-run            Simula la creación sin escribir archivos en disco
-  --help, -h           Muestra esta ayuda
+${negrita('Opciones')}
+  --title "<título>"     título legible de la pantalla
+  --cod-rep <código>     código de reporte del backend Ant (ej. RS_BASE_NEG_01)
+  --transporte=ant|http  fachada de datos (por defecto: ant, como el resto del repo)
+  --registrar-ruta       enlaza el módulo en src/app/app.routes.ts
+  --dry-run              simula sin escribir
+  --force                sobrescribe si el módulo ya existe
+
+${negrita('Ejemplos')}
+  node governance/scripts/crear-modulo.mjs auditoria-riesgos --title "Auditoría de Riesgos" --cod-rep RS_AUD_01
+  node governance/scripts/crear-modulo.mjs auditoria-riesgos --dry-run
 `);
-  process.exit(0);
+  process.exit(flags['help'] || flags['h'] ? 0 : 1);
 }
 
-const rawName = args[0].replace(/^--.*$/, '');
-if (!rawName) {
-  console.error('Error: Debes proporcionar un nombre para el módulo.');
+/* ── Nombres ──────────────────────────────────────────────── */
+
+const kebab = posicionales[0]
+  .trim()
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-+|-+$/g, '');
+
+if (!kebab) {
+  console.error(rojo('El nombre del módulo no puede quedar vacío tras normalizarlo a kebab-case.'));
   process.exit(1);
 }
 
-// Transformaciones de nombres
-function toKebabCase(str) {
-  return str
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+const pascal = kebab.replace(/(?:^|-)(\w)/g, (_, c) => c.toUpperCase()).replace(/-/g, '');
+const constante = kebab.replace(/-/g, '_').toUpperCase();
+const titulo_ =
+  typeof flags['title'] === 'string'
+    ? flags['title']
+    : kebab
+        .split('-')
+        .map((w) => w[0].toUpperCase() + w.slice(1))
+        .join(' ');
+const codRep = typeof flags['cod-rep'] === 'string' ? flags['cod-rep'] : `RS_${constante}_01`;
+const transporte = flags['transporte'] === 'http' ? 'http' : 'ant';
 
-function toPascalCase(str) {
-  return str
-    .replace(/(?:^|[-_])(\w)/g, (_, c) => c.toUpperCase())
-    .replace(/[-_]/g, '');
-}
+const BASE = resolve(process.cwd(), 'src/app/pages/modules', kebab);
+const seco = Boolean(flags['dry-run']);
 
-function toCamelCase(str) {
-  const pascal = toPascalCase(str);
-  return pascal.charAt(0).toLowerCase() + pascal.slice(1);
-}
-
-function toConstantCase(str) {
-  return str.replace(/[-]/g, '_').toUpperCase();
-}
-
-function toTitleCase(str) {
-  return str
-    .split(/[-_]/)
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
-}
-
-const kebabName = toKebabCase(rawName);
-const pascalName = toPascalCase(kebabName);
-const camelName = toCamelCase(kebabName);
-const upperSnakeName = toConstantCase(kebabName);
-
-let title = toTitleCase(kebabName);
-const titleIdx = args.indexOf('--title');
-if (titleIdx !== -1 && args[titleIdx + 1]) {
-  title = args[titleIdx + 1];
-}
-
-const dryRun = args.includes('--dry-run');
-
-const BASE_PATH = resolve(process.cwd(), 'src/app/pages/modules', kebabName);
-
-if (existsSync(BASE_PATH)) {
-  console.error(`\n✗ Error: El módulo '${kebabName}' ya existe en: \n  ${BASE_PATH}\n`);
+if (existsSync(BASE) && !flags['force'] && !seco) {
+  console.error(rojo(`\n✗ El módulo '${kebab}' ya existe: ${BASE}`));
+  console.error(gris('  Usá --force para sobrescribirlo o --dry-run para inspeccionar qué se generaría.\n'));
   process.exit(1);
 }
 
-// Plantillas de archivos
+/* ── Plantillas ───────────────────────────────────────────── */
 
-const routesFile = `import { Routes } from '@angular/router';
+const rutas = `import { Routes } from '@angular/router';
 
-export const ${upperSnakeName}_ROUTES: Routes = [
+export const ${constante}_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./components/principal/principal.component').then(
-        (m) => m.PrincipalComponent
-      ),
+      import('./components/principal/principal.component').then((m) => m.PrincipalComponent),
   },
 ];
 `;
 
-const constantsFile = `/**
- * Constantes y configuración de endpoints para el módulo ${title}.
- */
-export const ${upperSnakeName}_CONSTANTS = {
-  ENDPOINT_BASE: '/api/${kebabName}',
-  COD_REP: 'REP_${upperSnakeName}',
-  DEFAULT_PAGE_SIZE: 20,
-} as const;
-`;
-
-const modelsFile = `/**
- * Contratos y modelos de dominio para el módulo ${title}.
- */
-
-/** DTO que entrega el backend */
-export interface ${pascalName}ItemDto {
-  id: string;
-  codigo: string;
-  descripcion: string;
-  monto: number;
-  estado: string;
-  fechaCorte: string;
-}
-
-/** Entidad de dominio utilizada en el frontend */
-export interface ${pascalName}Item {
-  id: string;
-  codigo: string;
-  descripcion: string;
-  monto: number;
-  montoFormateado: string;
-  estado: string;
-  fechaCorte: string;
-  esActivo: boolean;
-}
-
-/** Filtros disponibles en la interfaz */
-export interface ${pascalName}Filtros {
-  busqueda: string;
-  estado?: string;
-  fechaCorte?: string;
-}
-
-/** Estado de la vista */
-export interface ${pascalName}ViewState {
-  items: ${pascalName}Item[];
-  cargando: boolean;
-  error: string | null;
-  totalRegistros: number;
-}
-`;
-
-const mappersFile = `import { ${pascalName}ItemDto, ${pascalName}Item } from '../models/${kebabName}.models';
+const constantes = `/** Constantes del módulo ${titulo_}. */
 
 /**
- * Convierte un DTO de backend en una entidad pura de dominio.
- * Función pura: sin efectos secundarios, altamente testeable.
+ * Código de reporte del backend Ant. Debe coincidir con el registrado por
+ * backend: es la clave del contrato, no un identificador libre del frontend.
  */
-export function map${pascalName}DtoToItem(dto: ${pascalName}ItemDto): ${pascalName}Item {
+export const COD_${constante} = '${codRep}';
+
+/** Filas por página en la tabla principal. */
+export const ${constante}_FILAS_POR_PAGINA = 20;
+`;
+
+const modelo = `/**
+ * Contratos del módulo ${titulo_}.
+ *
+ * Se mantienen separados el payload crudo del backend y el modelo que consume
+ * la pantalla: renombrar una columna en Ant no debe obligar a tocar la vista.
+ */
+
+/** Fila tal como la devuelve el backend Ant. Nombres del contrato, sin traducir. */
+export interface ${pascal}FilaDto {
+  readonly cod: string;
+  readonly des: string;
+  readonly mto: number | string | null;
+  readonly est: string | null;
+}
+
+/** Cuerpo de la respuesta del strand. */
+export interface ${pascal}ResponseBody {
+  readonly resultado?: {
+    readonly data?: ${pascal}FilaDto[];
+  };
+}
+
+/** Fila ya normalizada para la vista. */
+export interface ${pascal}Fila {
+  readonly codigo: string;
+  readonly descripcion: string;
+  readonly monto: number;
+  readonly montoFormateado: string;
+  readonly estado: string;
+  readonly activo: boolean;
+}
+`;
+
+const util = `import type { ${pascal}Fila, ${pascal}FilaDto } from '../models/${kebab}.model';
+
+/**
+ * Mapeos puros del módulo ${titulo_}: sin HttpClient, sin inject(), sin señales.
+ * Todo lo que decida qué ve el usuario a partir del payload vive acá, porque es
+ * lo único que se puede probar sin levantar Angular.
+ */
+
+/** El backend manda montos como número o como cadena; y a veces como null. */
+function aNumero(valor: number | string | null | undefined): number {
+  if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0;
+  if (typeof valor !== 'string') return 0;
+  const limpio = Number(valor.replace(/[^0-9.-]/g, ''));
+  return Number.isFinite(limpio) ? limpio : 0;
+}
+
+const SOLES = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' });
+
+export function map${pascal}Fila(dto: ${pascal}FilaDto): ${pascal}Fila {
+  const monto = aNumero(dto?.mto);
+  const estado = (dto?.est ?? '').trim();
+
   return {
-    id: dto.id,
-    codigo: dto.codigo,
-    descripcion: dto.descripcion,
-    monto: dto.monto,
-    montoFormateado: new Intl.NumberFormat('es-PE', {
-      style: 'currency',
-      currency: 'PEN',
-    }).format(dto.monto),
-    estado: dto.estado,
-    fechaCorte: dto.fechaCorte,
-    esActivo: dto.estado.toUpperCase() === 'ACTIVO',
+    codigo: dto?.cod ?? '',
+    descripcion: dto?.des ?? '',
+    monto,
+    montoFormateado: SOLES.format(monto),
+    estado,
+    activo: estado.toUpperCase() === 'ACTIVO',
   };
 }
 
-/**
- * Convierte una lista de DTOs en entidades de dominio.
- */
-export function map${pascalName}DtoList(dtos: ${pascalName}ItemDto[]): ${pascalName}Item[] {
-  if (!dtos || !Array.isArray(dtos)) return [];
-  return dtos.map(map${pascalName}DtoToItem);
+/** Una respuesta sin filas es una respuesta válida vacía, no un error. */
+export function map${pascal}Filas(dtos: readonly ${pascal}FilaDto[] | null | undefined): ${pascal}Fila[] {
+  if (!Array.isArray(dtos)) return [];
+  return dtos.map(map${pascal}Fila);
+}
+
+export function total${pascal}(filas: readonly ${pascal}Fila[]): number {
+  return filas.reduce((suma, fila) => suma + fila.monto, 0);
 }
 `;
 
-const mappersSpecFile = `import { describe, it, expect } from 'vitest';
-import { map${pascalName}DtoToItem, map${pascalName}DtoList } from './${kebabName}.mappers';
-import { ${pascalName}ItemDto } from '../models/${kebabName}.models';
+// Sin `import … from 'vitest'`: el proyecto corre con globales
+// (`types: ["vitest/globals"]` en tsconfig.spec.json) y ningún spec del repo
+// los importa. Un scaffold que sí lo hiciera introduciría dos estilos.
+const utilSpec = `import { map${pascal}Fila, map${pascal}Filas, total${pascal} } from './${kebab}.util';
+import type { ${pascal}FilaDto } from '../models/${kebab}.model';
 
-describe('${pascalName} Mappers', () => {
-  const mockDto: ${pascalName}ItemDto = {
-    id: '123',
-    codigo: 'COD-01',
-    descripcion: 'Operación de prueba',
-    monto: 1500.5,
-    estado: 'ACTIVO',
-    fechaCorte: '2026-03-31',
-  };
+describe('${kebab}.util', () => {
+  const dto: ${pascal}FilaDto = { cod: 'C-01', des: 'Operación de prueba', mto: 1500.5, est: 'ACTIVO' };
 
-  it('debe mapear correctamente un DTO a entidad de dominio', () => {
-    const item = map${pascalName}DtoToItem(mockDto);
+  it('normaliza una fila del backend', () => {
+    const fila = map${pascal}Fila(dto);
 
-    expect(item.id).toBe('123');
-    expect(item.codigo).toBe('COD-01');
-    expect(item.monto).toBe(1500.5);
-    expect(item.esActivo).toBe(true);
-    expect(item.montoFormateado).toContain('1.500');
+    expect(fila.codigo).toBe('C-01');
+    expect(fila.monto).toBe(1500.5);
+    expect(fila.activo).toBe(true);
+    expect(fila.montoFormateado).toContain('1');
   });
 
-  it('debe manejar listas vacías de forma segura', () => {
-    expect(map${pascalName}DtoList([])).toEqual([]);
-    expect(map${pascalName}DtoList(null as unknown as ${pascalName}ItemDto[])).toEqual([]);
+  it('acepta montos en cadena, que es como los manda parte del backend', () => {
+    expect(map${pascal}Fila({ ...dto, mto: '2 300,00' as unknown as string }).monto).toBeGreaterThan(0);
+    expect(map${pascal}Fila({ ...dto, mto: 'S/ 1,250.75' }).monto).toBe(1250.75);
+  });
+
+  it('trata null, undefined y campos faltantes como vacío y no como excepción', () => {
+    expect(map${pascal}Filas(null)).toEqual([]);
+    expect(map${pascal}Filas(undefined)).toEqual([]);
+    expect(map${pascal}Filas([])).toEqual([]);
+
+    const vacia = map${pascal}Fila({} as ${pascal}FilaDto);
+    expect(vacia.monto).toBe(0);
+    expect(vacia.activo).toBe(false);
+  });
+
+  it('suma los montos de las filas', () => {
+    expect(total${pascal}(map${pascal}Filas([dto, { ...dto, mto: 500 }]))).toBe(2000.5);
   });
 });
 `;
 
-const serviceFile = `import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, of, tap } from 'rxjs';
-import { ${pascalName}Item, ${pascalName}ItemDto, ${pascalName}Filtros } from '../models/${kebabName}.models';
-import { ${upperSnakeName}_CONSTANTS } from '../constantes/${kebabName}.constants';
-import { map${pascalName}DtoList } from '../utils/${kebabName}.mappers';
+const servicioAnt = `import { Injectable, computed, inject, signal } from '@angular/core';
+import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
+import { COD_${constante} } from '../constantes/${kebab}.constantes';
+import type { ${pascal}Fila, ${pascal}ResponseBody } from '../models/${kebab}.model';
+import { map${pascal}Filas, total${pascal} } from '../utils/${kebab}.util';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class ${pascalName}Service {
-  private readonly http = inject(HttpClient);
+/**
+ * Fachada de datos de ${titulo_}.
+ *
+ * Habla con el backend Ant a través de \`ModReportesService\` (transporte
+ * Winder), no con un endpoint REST: es el borde que el resto del sistema usa.
+ * Si este módulo consumiera una API Host directa, habría que inyectar
+ * HttpClient — y documentar a qué frontera pertenece, según
+ * governance/docs/architecture/data-flow.md.
+ */
+@Injectable({ providedIn: 'root' })
+export class ${pascal}Service {
+  private readonly ant = inject(ModReportesService);
 
-  // Estado reactivo con Signals (Angular 22 Zoneless)
-  private readonly _items = signal<${pascalName}Item[]>([]);
-  private readonly _cargando = signal<boolean>(false);
+  private readonly _filas = signal<${pascal}Fila[]>([]);
+  private readonly _cargando = signal(false);
   private readonly _error = signal<string | null>(null);
 
-  // Señales públicas de solo lectura
-  readonly items = this._items.asReadonly();
+  readonly filas = this._filas.asReadonly();
   readonly cargando = this._cargando.asReadonly();
   readonly error = this._error.asReadonly();
 
-  // Señales computadas
-  readonly totalRegistros = computed(() => this._items().length);
-  readonly totalMonto = computed(() =>
-    this._items().reduce((acc, item) => acc + item.monto, 0)
-  );
+  readonly totalRegistros = computed(() => this._filas().length);
+  readonly totalMonto = computed(() => total${pascal}(this._filas()));
+  /** Vacío verdadero: respondió bien y no hay filas. Distinto de un error. */
+  readonly vacio = computed(() => !this._cargando() && !this._error() && this._filas().length === 0);
 
-  /**
-   * Consulta los registros desde el backend y actualiza las señales de estado.
-   */
-  cargarDatos(filtros?: ${pascalName}Filtros): Observable<${pascalName}Item[]> {
+  consultar(parametros: Record<string, unknown> = {}): void {
     this._cargando.set(true);
     this._error.set(null);
 
-    return this.http
-      .get<${pascalName}ItemDto[]>(${upperSnakeName}_CONSTANTS.ENDPOINT_BASE, {
-        params: { ...filtros } as Record<string, string>,
-      })
-      .pipe(
-        map(dtos => map${pascalName}DtoList(dtos)),
-        tap(items => {
-          this._items.set(items);
-          this._cargando.set(false);
-        }),
-        catchError(err => {
-          this._error.set('No se pudieron obtener los datos. Por favor, intente nuevamente.');
-          this._cargando.set(false);
-          return of([]);
-        })
-      );
+    this.ant.getRegularTableResult(COD_${constante}, parametros).subscribe({
+      next: (respuesta) => {
+        const cuerpo = respuesta.body as ${pascal}ResponseBody | null;
+        this._filas.set(map${pascal}Filas(cuerpo?.resultado?.data));
+        this._cargando.set(false);
+      },
+      // El error NO se convierte en tabla vacía: confundirlos es el bug que
+      // degradó al sistema legado (ver reports/performance/legacy-comparison).
+      error: () => {
+        this._filas.set([]);
+        this._error.set('No se pudo obtener la información. Reintentá en unos segundos.');
+        this._cargando.set(false);
+      },
+    });
   }
 
-  /**
-   * Limpia el estado del servicio.
-   */
   limpiar(): void {
-    this._items.set([]);
-    this._error.set(null);
+    this._filas.set([]);
     this._cargando.set(false);
+    this._error.set(null);
   }
 }
 `;
 
-const serviceSpecFile = `import { describe, it, expect, beforeEach } from 'vitest';
-import { ${pascalName}Service } from './${kebabName}.service';
-import { of, throwError } from 'rxjs';
+const servicioHttp = `import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import type { ${pascal}Fila, ${pascal}FilaDto } from '../models/${kebab}.model';
+import { map${pascal}Filas, total${pascal} } from '../utils/${kebab}.util';
 
-describe('${pascalName}Service', () => {
-  let service: ${pascalName}Service;
-  let httpClientMock: any;
+/**
+ * Fachada de datos de ${titulo_} contra una API Host (no Winder).
+ *
+ * Las peticiones Host reciben \`Authorization\` y \`X-User-Role\` del
+ * interceptor. Documentá el endpoint como contrato antes de usarlo en
+ * producción: governance/docs/architecture/api-contracts/README.md.
+ */
+@Injectable({ providedIn: 'root' })
+export class ${pascal}Service {
+  private readonly http = inject(HttpClient);
 
-  beforeEach(() => {
-    httpClientMock = {
-      get: () => of([]),
-    };
+  private readonly _filas = signal<${pascal}Fila[]>([]);
+  private readonly _cargando = signal(false);
+  private readonly _error = signal<string | null>(null);
 
-    // Instanciación directa para pruebas unitarias limpias sin sobrecarga de TestBed
-    service = new (${pascalName}Service as any)();
-    (service as any).http = httpClientMock;
+  readonly filas = this._filas.asReadonly();
+  readonly cargando = this._cargando.asReadonly();
+  readonly error = this._error.asReadonly();
+
+  readonly totalRegistros = computed(() => this._filas().length);
+  readonly totalMonto = computed(() => total${pascal}(this._filas()));
+  readonly vacio = computed(() => !this._cargando() && !this._error() && this._filas().length === 0);
+
+  consultar(parametros: Record<string, string> = {}): void {
+    this._cargando.set(true);
+    this._error.set(null);
+
+    this.http.get<${pascal}FilaDto[]>('/api/${kebab}', { params: parametros }).subscribe({
+      next: (dtos) => {
+        this._filas.set(map${pascal}Filas(dtos));
+        this._cargando.set(false);
+      },
+      error: () => {
+        this._filas.set([]);
+        this._error.set('No se pudo obtener la información. Reintentá en unos segundos.');
+        this._cargando.set(false);
+      },
+    });
+  }
+
+  limpiar(): void {
+    this._filas.set([]);
+    this._cargando.set(false);
+    this._error.set(null);
+  }
+}
+`;
+
+const servicioSpecAnt = `import { TestBed } from '@angular/core/testing';
+import { of, throwError } from 'rxjs';
+import { ${pascal}Service } from './${kebab}.service';
+import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
+import { COD_${constante} } from '../constantes/${kebab}.constantes';
+
+/**
+ * El servicio usa \`inject()\` en un campo, así que necesita contexto de
+ * inyección: se arma con TestBed y se dobla el borde Ant. Es el mismo patrón
+ * que el resto de los specs de servicio del repo.
+ */
+function crear(respuesta: unknown, falla = false) {
+  const getRegularTableResult = vi.fn(() =>
+    falla ? throwError(() => new Error('backend caído')) : of(respuesta)
+  );
+
+  TestBed.configureTestingModule({
+    providers: [{ provide: ModReportesService, useValue: { getRegularTableResult } }],
   });
 
-  it('debe inicializarse con estado vacío y sin errores', () => {
-    expect(service.items()).toEqual([]);
+  return { service: TestBed.inject(${pascal}Service), getRegularTableResult };
+}
+
+describe('${pascal}Service', () => {
+  beforeEach(() => TestBed.resetTestingModule());
+
+  const filaOk = { cod: 'C-01', des: 'Prueba', mto: 100, est: 'ACTIVO' };
+
+  it('arranca sin datos, sin carga y sin error', () => {
+    const { service } = crear({ body: null });
+
+    expect(service.filas()).toEqual([]);
     expect(service.cargando()).toBe(false);
     expect(service.error()).toBeNull();
-    expect(service.totalRegistros()).toBe(0);
   });
 
-  it('debe actualizar el estado cuando la llamada HTTP tiene éxito', () => {
-    const mockData = [
-      { id: '1', codigo: 'C1', descripcion: 'D1', monto: 100, estado: 'ACTIVO', fechaCorte: '2026-03-31' },
-    ];
-    httpClientMock.get = () => of(mockData);
+  it('publica las filas y apaga la carga cuando el backend responde', () => {
+    const { service } = crear({ body: { resultado: { data: [filaOk] } } });
 
-    service.cargarDatos().subscribe(items => {
-      expect(items.length).toBe(1);
-      expect(service.items().length).toBe(1);
-      expect(service.cargando()).toBe(false);
-      expect(service.totalMonto()).toBe(100);
-    });
+    service.consultar();
+
+    expect(service.filas()).toHaveLength(1);
+    expect(service.totalMonto()).toBe(100);
+    expect(service.cargando()).toBe(false);
+    expect(service.error()).toBeNull();
   });
 
-  it('debe capturar errores HTTP y reflejarlos en la señal de error', () => {
-    httpClientMock.get = () => throwError(() => new Error('Error de red'));
+  it('distingue respuesta vacía de error', () => {
+    const { service } = crear({ body: { resultado: { data: [] } } });
 
-    service.cargarDatos().subscribe(() => {
-      expect(service.cargando()).toBe(false);
-      expect(service.error()).toBeTruthy();
-      expect(service.items()).toEqual([]);
-    });
+    service.consultar();
+
+    expect(service.vacio()).toBe(true);
+    expect(service.error()).toBeNull();
+  });
+
+  it('publica el error sin disfrazarlo de tabla vacía', () => {
+    const { service } = crear(null, true);
+
+    service.consultar();
+
+    expect(service.error()).toBeTruthy();
+    expect(service.vacio()).toBe(false);
+    expect(service.cargando()).toBe(false);
+  });
+
+  it('consulta el cod_rep declarado en constantes', () => {
+    const { service, getRegularTableResult } = crear({ body: { resultado: { data: [] } } });
+
+    service.consultar({ nom: 'x' });
+
+    expect(getRegularTableResult).toHaveBeenCalledWith(COD_${constante}, { nom: 'x' });
   });
 });
 `;
 
-const uiComponentFile = `import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
+const cardTs = `import { Component, input } from '@angular/core';
 
+/** Tarjeta métrica del módulo ${titulo_}. Presentacional: no inyecta servicios. */
 @Component({
-  selector: 'app-${kebabName}-resumen-card',
+  selector: 'app-${kebab}-resumen-card',
   standalone: true,
-  imports: [CommonModule, CardModule],
-  template: \`
-    <div class="rounded-xl border border-border bg-surface-card p-4 shadow-sm">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-text-muted">{{ titulo() }}</p>
-          <p class="mt-1 text-2xl font-bold text-text-primary">{{ valor() }}</p>
-        </div>
-        @if (icono()) {
-          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
-            <i [class]="icono()" class="text-xl"></i>
-          </div>
-        }
-      </div>
-    </div>
-  \`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './${kebab}-resumen-card.component.html',
 })
-export class ${pascalName}ResumenCardComponent {
+export class ${pascal}ResumenCardComponent {
   readonly titulo = input.required<string>();
   readonly valor = input.required<string | number>();
-  readonly icono = input<string>();
+  readonly detalle = input<string>();
 }
 `;
 
-const principalComponentTsFile = `import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+const cardHtml = `<div
+  class="rounded-xl border p-4"
+  style="background: var(--mis-surface); border-color: var(--mis-border)"
+>
+  <p class="m-0 text-[13px]" style="color: var(--mis-text-secondary)">{{ titulo() }}</p>
+  <p class="m-0 mt-1 text-[22px] font-semibold" style="color: var(--mis-text-primary)">{{ valor() }}</p>
+  @if (detalle()) {
+    <p class="m-0 mt-1 text-[12px]" style="color: var(--mis-text-tertiary)">{{ detalle() }}</p>
+  }
+</div>
+`;
+
+const principalTs = `import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ${pascalName}Service } from '../../services/${kebabName}.service';
-import { ${pascalName}ResumenCardComponent } from '../../ui/${kebabName}-resumen-card.component';
+import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
+import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
+import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
+import { ${pascal}ResumenCardComponent } from '../../ui/${kebab}-resumen-card/${kebab}-resumen-card.component';
+import { ${pascal}Service } from '../../services/${kebab}.service';
+import { ${constante}_FILAS_POR_PAGINA } from '../../constantes/${kebab}.constantes';
 
+/** Pantalla principal de ${titulo_}. Contenedor: orquesta el servicio y los estados. */
 @Component({
-  selector: 'app-${kebabName}-principal',
+  selector: 'app-${kebab}-principal',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
     TableModule,
     ButtonModule,
-    InputTextModule,
     TagModule,
-    ProgressSpinnerModule,
-    ${pascalName}ResumenCardComponent,
+    EmptyStateComponent,
+    InlineErrorComponent,
+    ListSkeletonComponent,
+    ${pascal}ResumenCardComponent,
   ],
   templateUrl: './principal.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PrincipalComponent implements OnInit {
-  protected readonly service = inject(${pascalName}Service);
+export class PrincipalComponent implements OnInit, OnDestroy {
+  private readonly service = inject(${pascal}Service);
 
-  // Señales expuestas a la plantilla
-  protected readonly items = this.service.items;
+  protected readonly filas = this.service.filas;
   protected readonly cargando = this.service.cargando;
   protected readonly error = this.service.error;
+  protected readonly vacio = this.service.vacio;
   protected readonly totalRegistros = this.service.totalRegistros;
   protected readonly totalMonto = this.service.totalMonto;
+  protected readonly filasPorPagina = ${constante}_FILAS_POR_PAGINA;
 
   ngOnInit(): void {
-    this.cargar();
+    this.consultar();
   }
 
-  cargar(): void {
-    this.service.cargarDatos().subscribe();
+  ngOnDestroy(): void {
+    this.service.limpiar();
+  }
+
+  protected consultar(): void {
+    this.service.consultar();
   }
 }
 `;
 
-const principalComponentHtmlFile = `<div class="p-6 space-y-6">
-  <!-- Encabezado -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+const principalHtml = `<div class="flex flex-col gap-6 p-6">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-text-primary tracking-tight">${title}</h1>
-      <p class="text-sm text-text-muted mt-1">Gestión y reportes del módulo de ${title}.</p>
+      <h1 class="m-0 text-[22px] font-semibold" style="color: var(--mis-text-primary)">${titulo_}</h1>
+      <p class="m-0 mt-1 text-[13px]" style="color: var(--mis-text-secondary)">
+        Consulta del módulo ${titulo_}.
+      </p>
     </div>
-    <div class="flex items-center gap-2">
-      <p-button
-        label="Recargar"
-        icon="pi pi-refresh"
-        [loading]="cargando()"
-        (onClick)="cargar()"
-        severity="secondary"
-      />
-    </div>
-  </div>
+    <p-button label="Actualizar" icon="pi pi-refresh" severity="secondary" [loading]="cargando()" (onClick)="consultar()" />
+  </header>
 
-  <!-- Métricas / Tarjetas Resumen -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    <app-${kebabName}-resumen-card
-      titulo="Total Registros"
-      [valor]="totalRegistros()"
-      icono="pi pi-list"
-    />
-    <app-${kebabName}-resumen-card
-      titulo="Monto Acumulado"
-      [valor]="'S/ ' + (totalMonto() | number:'1.2-2')"
-      icono="pi pi-wallet"
-    />
-  </div>
+  <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <app-${kebab}-resumen-card titulo="Registros" [valor]="totalRegistros()" />
+    <app-${kebab}-resumen-card titulo="Monto acumulado" [valor]="totalMonto()" detalle="Suma de las filas visibles" />
+  </section>
 
-  <!-- Manejo de Estados: Error, Carga, Vacío y Tabla -->
+  <!--
+    Los cuatro estados, excluyentes entre sí y en este orden: el error gana
+    sobre el vacío, porque una consulta fallida no es "no hay datos".
+  -->
   @if (error()) {
-    <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <i class="pi pi-exclamation-triangle text-xl"></i>
-        <span>{{ error() }}</span>
-      </div>
-      <p-button label="Reintentar" icon="pi pi-replay" size="small" severity="danger" (onClick)="cargar()" />
-    </div>
-  }
-
-  @if (cargando()) {
-    <div class="flex justify-center items-center py-16">
-      <p-progressSpinner strokeWidth="4" />
-    </div>
-  } @else if (items().length === 0 && !error()) {
-    <div class="rounded-xl border border-dashed border-border bg-surface-ground p-12 text-center">
-      <i class="pi pi-inbox text-4xl text-text-muted mb-3"></i>
-      <h3 class="text-base font-semibold text-text-primary">No se encontraron registros</h3>
-      <p class="text-sm text-text-muted mt-1">No hay información disponible para mostrar con los filtros actuales.</p>
-    </div>
+    <app-inline-error [detalle]="error()!" (reintentar)="consultar()" />
+  } @else if (cargando()) {
+    <app-list-skeleton />
+  } @else if (vacio()) {
+    <app-empty-state
+      titulo="Sin resultados"
+      descripcion="No hay información para la fecha de corte y los filtros actuales."
+    />
   } @else {
-    <div class="rounded-xl border border-border bg-surface-card overflow-hidden shadow-sm">
-      <p-table
-        [value]="items()"
-        [paginator]="true"
-        [rows]="10"
-        [rowsPerPageOptions]="[10, 25, 50]"
-        styleClass="p-datatable-sm"
-      >
+    <div class="overflow-hidden rounded-xl border" style="border-color: var(--mis-border)">
+      <p-table [value]="filas()" [paginator]="true" [rows]="filasPorPagina" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
             <th>Código</th>
             <th>Descripción</th>
             <th class="text-right">Monto</th>
-            <th>Fecha Corte</th>
             <th class="text-center">Estado</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-item>
+        <ng-template pTemplate="body" let-fila>
           <tr>
-            <td class="font-mono text-xs font-semibold">{{ item.codigo }}</td>
-            <td>{{ item.descripcion }}</td>
-            <td class="text-right font-medium">{{ item.montoFormateado }}</td>
-            <td>{{ item.fechaCorte }}</td>
+            <td class="font-mono text-xs">{{ fila.codigo }}</td>
+            <td>{{ fila.descripcion }}</td>
+            <td class="text-right tabular-nums">{{ fila.montoFormateado }}</td>
             <td class="text-center">
-              <p-tag
-                [value]="item.estado"
-                [severity]="item.esActivo ? 'success' : 'secondary'"
-              />
+              <p-tag [value]="fila.estado" [severity]="fila.activo ? 'success' : 'secondary'" />
             </td>
           </tr>
         </ng-template>
@@ -518,49 +564,129 @@ const principalComponentHtmlFile = `<div class="p-6 space-y-6">
 </div>
 `;
 
-// Lista de archivos a crear
-const filesToCreate = [
-  { path: join(BASE_PATH, `${kebabName}.routes.ts`), content: routesFile },
-  { path: join(BASE_PATH, 'constantes', `${kebabName}.constants.ts`), content: constantsFile },
-  { path: join(BASE_PATH, 'models', `${kebabName}.models.ts`), content: modelsFile },
-  { path: join(BASE_PATH, 'utils', `${kebabName}.mappers.ts`), content: mappersFile },
-  { path: join(BASE_PATH, 'utils', `${kebabName}.mappers.spec.ts`), content: mappersSpecFile },
-  { path: join(BASE_PATH, 'services', `${kebabName}.service.ts`), content: serviceFile },
-  { path: join(BASE_PATH, 'services', `${kebabName}.service.spec.ts`), content: serviceSpecFile },
-  { path: join(BASE_PATH, 'ui', `${kebabName}-resumen-card.component.ts`), content: uiComponentFile },
-  { path: join(BASE_PATH, 'components', 'principal', 'principal.component.ts'), content: principalComponentTsFile },
-  { path: join(BASE_PATH, 'components', 'principal', 'principal.component.html'), content: principalComponentHtmlFile },
+const principalSpec = `import { TestBed } from '@angular/core/testing';
+import { PrincipalComponent } from './principal.component';
+import { ${pascal}Service } from '../../services/${kebab}.service';
+
+describe('PrincipalComponent (${titulo_})', () => {
+  function montar(estado: Partial<Record<'cargando' | 'error' | 'vacio', unknown>> = {}) {
+    const consultar = vi.fn();
+    const limpiar = vi.fn();
+    const doble = {
+      consultar,
+      limpiar,
+      filas: () => [],
+      cargando: () => estado.cargando ?? false,
+      error: () => estado.error ?? null,
+      vacio: () => estado.vacio ?? true,
+      totalRegistros: () => 0,
+      totalMonto: () => 0,
+    };
+
+    TestBed.configureTestingModule({
+      imports: [PrincipalComponent],
+      providers: [{ provide: ${pascal}Service, useValue: doble }],
+    });
+
+    const fixture = TestBed.createComponent(PrincipalComponent);
+    fixture.detectChanges();
+    return { fixture, consultar, limpiar };
+  }
+
+  it('consulta al iniciar', () => {
+    const { consultar } = montar();
+    expect(consultar).toHaveBeenCalledOnce();
+  });
+
+  it('muestra el error con acción de reintento y no el estado vacío', () => {
+    const { fixture } = montar({ error: 'Backend caído', vacio: false });
+    const html = fixture.nativeElement.textContent as string;
+
+    expect(html).toContain('Backend caído');
+    expect(html).not.toContain('Sin resultados');
+  });
+
+  it('limpia el estado del servicio al destruirse', () => {
+    const { fixture, limpiar } = montar();
+    fixture.destroy();
+    expect(limpiar).toHaveBeenCalledOnce();
+  });
+});
+`;
+
+/* ── Escritura ────────────────────────────────────────────── */
+
+const archivos = [
+  [`${kebab}.routes.ts`, rutas],
+  [`constantes/${kebab}.constantes.ts`, constantes],
+  [`models/${kebab}.model.ts`, modelo],
+  [`utils/${kebab}.util.ts`, util],
+  [`utils/${kebab}.util.spec.ts`, utilSpec],
+  [`services/${kebab}.service.ts`, transporte === 'ant' ? servicioAnt : servicioHttp],
+  [`services/${kebab}.service.spec.ts`, servicioSpecAnt],
+  [`ui/${kebab}-resumen-card/${kebab}-resumen-card.component.ts`, cardTs],
+  [`ui/${kebab}-resumen-card/${kebab}-resumen-card.component.html`, cardHtml],
+  ['components/principal/principal.component.ts', principalTs],
+  ['components/principal/principal.component.html', principalHtml],
+  ['components/principal/principal.component.spec.ts', principalSpec],
 ];
 
-console.log(`\n======================================================`);
-console.log(` Scaffold de Módulo: ${title} (${kebabName})`);
-console.log(` Arquitectura Canónica: Angular 22 Zoneless (MIS Host)`);
-console.log(`======================================================\n`);
+titulo(`Módulo ${titulo_} (${kebab})`, `transporte: ${transporte} · cod_rep: ${codRep}${seco ? ' · DRY-RUN' : ''}`);
 
-if (dryRun) {
-  console.log('[MODO DRY-RUN] Se generarían los siguientes archivos:\n');
-  filesToCreate.forEach(f => console.log(`  + ${f.path}`));
-  console.log('\nOperación completada sin cambios.');
+for (const [relativa] of archivos) {
+  console.log(`  ${seco ? gris('+') : verde('✓')} src/app/pages/modules/${kebab}/${relativa}`);
+  if (seco) continue;
+  const destino = join(BASE, relativa);
+  mkdirSync(dirname(destino), { recursive: true });
+  writeFileSync(destino, archivos.find(([r]) => r === relativa)[1], 'utf8');
+}
+
+/* Registro de la ruta en app.routes.ts. */
+const rutaApp = resolve(process.cwd(), 'src/app/app.routes.ts');
+const bloqueRuta = `      {
+        path: '${kebab}',
+        loadChildren: () =>
+          import('./pages/modules/${kebab}/${kebab}.routes').then((m) => m.${constante}_ROUTES)
+      },`;
+
+if (flags['registrar-ruta'] && !seco) {
+  const fuente = readFileSync(rutaApp, 'utf8');
+  if (fuente.includes(`modules/${kebab}/${kebab}.routes`)) {
+    console.log(amarillo(`\n  ! La ruta '${kebab}' ya estaba registrada en app.routes.ts — no se tocó.`));
+  } else {
+    // Se inserta antes del comodín de ruta desconocida, para no quedar detrás de él.
+    const marca = fuente.match(/^\s*\{\s*\n\s*path: '\*\*'/m);
+    if (marca) {
+      const corte = fuente.indexOf(marca[0]);
+      writeFileSync(rutaApp, `${fuente.slice(0, corte)}${bloqueRuta}\n${fuente.slice(corte)}`, 'utf8');
+      console.log(verde(`\n  ✓ Ruta '/app/${kebab}' registrada en src/app/app.routes.ts`));
+    } else {
+      console.log(amarillo('\n  ! No se encontró la ruta comodín en app.routes.ts; registrala a mano.'));
+    }
+  }
+}
+
+/* ── Siguientes pasos ─────────────────────────────────────── */
+
+console.log('');
+if (seco) {
+  console.log(gris('Dry-run: no se escribió nada.\n'));
   process.exit(0);
 }
 
-// Crear directorios y escribir archivos
-filesToCreate.forEach(({ path, content }) => {
-  const dir = path.substring(0, Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\')));
-  if (!existsSync(dir)) {
-    mkdirSync(dir, { recursive: true });
-  }
-  writeFileSync(path, content, 'utf8');
-  console.log(`  ✓ Creado: ${path.replace(process.cwd(), '')}`);
-});
+console.log(negrita('Siguientes pasos'));
+if (!flags['registrar-ruta']) {
+  console.log(`
+  1. Registrá la ruta en src/app/app.routes.ts (o volvé a correr con --registrar-ruta):
 
-console.log(`\n✓ ¡Módulo '${kebabName}' creado exitosamente!\n`);
-console.log(`Pasos siguientes:`);
-console.log(`1. Registra las rutas del módulo en 'src/app/app.routes.ts':`);
-console.log(`   {`);
-console.log(`     path: '${kebabName}',`);
-console.log(`     loadChildren: () => import('./pages/modules/${kebabName}/${kebabName}.routes').then(m => m.${upperSnakeName}_ROUTES),`);
-console.log(`   }`);
-console.log(`2. Ejecuta las pruebas del nuevo módulo:`);
-console.log(`   node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/${kebabName}/utils/${kebabName}.mappers.spec.ts`);
-console.log(``);
+${gris(bloqueRuta)}
+`);
+}
+console.log(`  ${flags['registrar-ruta'] ? '1' : '2'}. Confirmá el contrato del backend: COD_${constante} = '${codRep}'`);
+console.log(`     y ajustá ${pascal}FilaDto a las columnas reales del strand.`);
+console.log(`  ${flags['registrar-ruta'] ? '2' : '3'}. Probá el módulo:`);
+console.log(gris(`     npm run test:runner unit src/app/pages/modules/${kebab}`));
+console.log(`  ${flags['registrar-ruta'] ? '3' : '4'}. Auditá arquitectura y documentación:`);
+console.log(gris('     npm run verify'));
+console.log(`  ${flags['registrar-ruta'] ? '4' : '5'}. Completá la ficha de reporte si aplica:`);
+console.log(gris('     governance/docs/features/report-spec-template.md\n'));
