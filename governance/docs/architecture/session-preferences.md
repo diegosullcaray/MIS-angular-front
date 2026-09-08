@@ -6,3 +6,44 @@ Las preferencias de interfaz y el cierre de sesion son responsabilidades separad
 - El cierre debe limpiar almacenamiento, cookies visibles, caches y service workers cuando sea posible.
 - Las preferencias no deben transportar autorizacion.
 - El usuario alterno debe invalidar el contexto de jerarquia y reportes cacheado.
+
+## Donde vive cada pieza
+
+Las preferencias son del **shell**, no infraestructura: quien las lee y las
+pinta es el layout. Por eso viven con el, y no en `core/`.
+
+```text
+pages/full-pages/layout/
+  interfaces/preferencias.model.ts          forma, valores de fabrica y saneamiento
+  interfaces/preferencias-almacen.model.ts  el contrato de persistencia y su token
+  interfaces/anuncio.model.ts               el comunicado y el token de su catalogo
+  constantes/anuncios.constantes.ts         el catalogo publicado hoy
+  services/preferencias.service.ts          el caso de uso
+  services/anuncios.service.ts              que comunicado toca y si ya se leyo
+  services/preferencias-local-storage.service.ts   la persistencia
+  services/apariencia-dom.service.ts        preferencias -> variables CSS
+
+pages/modules/home/services/recientes.service.ts   historial de reportes del Home
+pages/full-pages/auth/service/limpieza-sesion.service.ts   el borrado al cerrar sesion
+core/services/almacenamiento-navegador.service.ts  envoltorio de storage, cookies y caches
+theme/color.util.ts · theme/contraste.util.ts      aritmetica de color
+```
+
+Hasta el 2026-09-08 todo esto estaba en `core/preferencias/`, partido en
+`dominio/`, `aplicacion/` e `infraestructura/`. Se disolvieron esas tres capas:
+eran vocabulario DDD que ningun otro rincon del repositorio usa, y obligaban a
+`core/` a conocer pantallas — dos de los cinco hallazgos `core-aislado` eran de
+`recientes`, que importaba `MenuStgService` y `SEGMENTO_LABELS` del layout.
+
+Lo que **no** bajo al layout, y por que:
+
+| Pieza | Vive en | Motivo |
+|---|---|---|
+| `almacenamiento-navegador` | `core/services/` | Envuelve `localStorage`, cookies y caches. No conoce ninguna pantalla. |
+| `limpieza-sesion` | `auth/service/` | Su unico consumidor es `AuthService`. |
+| `color.util`, `contraste.util` | `theme/` | Los consumen tambien las pruebas de contraste de la paleta y las de armonia de graficos. Dejarlos en el layout obligaria a `theme/` y `shared/` a importar de una pantalla. |
+| `ModoTema` | `shared/services/theme.service.ts` | El dueno del tema es `ThemeService`; las preferencias solo lo persisten. |
+
+Quedan dos consumos de pantalla a pantalla, asumidos: el Home lee `recientes()`
+y `AuthService` llama `olvidar()` al cerrar sesion. Los dos son hojas usando el
+servicio del shell, que es de donde son las preferencias.

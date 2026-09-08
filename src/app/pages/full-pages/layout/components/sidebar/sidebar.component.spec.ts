@@ -7,7 +7,7 @@ import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
-import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
+import { PreferenciasService } from '../../services/preferencias.service';
 import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sidebar.model';
 import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
 

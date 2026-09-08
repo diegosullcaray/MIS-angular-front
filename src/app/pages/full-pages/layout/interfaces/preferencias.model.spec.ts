@@ -6,7 +6,7 @@ import {
   fondoEfectivo,
   sanearPreferencias,
 } from './preferencias.model';
-import { aclarar, esColorClaro, hexARgb, hexARgba, mezclar, normalizarHex, textoSobre } from './color.util';
+import { aclarar, esColorClaro, hexARgb, hexARgba, mezclar, normalizarHex, textoSobre } from '../../../../theme/color.util';
 
 describe('sanearPreferencias', () => {
   /**

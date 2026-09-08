@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { PanelEstructuraComponent } from './panel-estructura.component';
-import { PreferenciasService } from '../../../../../../../core/preferencias/aplicacion/preferencias.service';
-import { REPOSITORIO_PREFERENCIAS } from '../../../../../../../core/preferencias/dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio } from '../../../../../../../core/preferencias/infraestructura/preferencias-local-storage.repositorio';
-import { CATALOGO_MODOS_SIDEBAR } from '../../../../../../../core/preferencias/dominio/preferencias.model';
+import { PreferenciasService } from '../../../../services/preferencias.service';
+import { REPOSITORIO_PREFERENCIAS } from '../../../../interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio } from '../../../../services/preferencias-local-storage.service';
+import { CATALOGO_MODOS_SIDEBAR } from '../../../../interfaces/preferencias.model';
 
 /**
  * Estructura del menú: los cuatro modos son los mismos que ofrece el layout de

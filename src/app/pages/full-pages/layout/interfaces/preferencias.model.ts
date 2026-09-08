@@ -1,17 +1,15 @@
-import { normalizarHex } from './color.util';
+import { normalizarHex } from '../../../../theme/color.util';
+import { MODOS_TEMA, type ModoTema } from '../../../../shared/services/theme.service';
 
 /**
- * Preferencias de la interfaz del Host: qué se ve y cómo se ordena. Es el
- * modelo de dominio — no sabe dónde se guarda (eso lo resuelve el puerto
- * `RepositorioPreferencias`) ni cómo se pinta (eso lo hace el adaptador de
- * apariencia). Todo lo de este archivo son datos y reglas puras.
+ * Preferencias de la interfaz del Host: qué se ve y cómo se ordena. Son datos y
+ * reglas puras: no saben dónde se guardan —eso lo resuelve
+ * `REPOSITORIO_PREFERENCIAS`— ni cómo se pintan, que es trabajo de
+ * `AparienciaDomAdaptador`.
  */
 
-// ─── Tema ───────────────────────────────────────────────────────────────────
-
-export type ModoTema = 'claro' | 'oscuro' | 'sistema';
-
-export const MODOS_TEMA: readonly ModoTema[] = ['claro', 'oscuro', 'sistema'] as const;
+export { MODOS_TEMA };
+export type { ModoTema };
 
 // ─── Fondo del escritorio ───────────────────────────────────────────────────
 

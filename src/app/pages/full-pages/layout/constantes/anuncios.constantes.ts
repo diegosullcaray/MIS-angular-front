@@ -1,4 +1,4 @@
-import type { Anuncio } from '../dominio/anuncio.model';
+import type { Anuncio } from '../interfaces/anuncio.model';
 
 /**
  * El comunicado vigente. Implementa `CATALOGO_ANUNCIOS` mientras no haya

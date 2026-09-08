@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { RecientesService } from './recientes.service';
-import { PreferenciasService } from '../preferencias/aplicacion/preferencias.service';
-import { REPOSITORIO_PREFERENCIAS } from '../preferencias/dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio } from '../preferencias/infraestructura/preferencias-local-storage.repositorio';
-import { MenuStgService } from '../../pages/full-pages/layout/services/menu-stg.service';
-import type { SidebarNavRuta } from '../../pages/full-pages/layout/interfaces/sidebar.model';
+import { PreferenciasService } from '../../../full-pages/layout/services/preferencias.service';
+import { REPOSITORIO_PREFERENCIAS } from '../../../full-pages/layout/interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio } from '../../../full-pages/layout/services/preferencias-local-storage.service';
+import { MenuStgService } from '../../../full-pages/layout/services/menu-stg.service';
+import type { SidebarNavRuta } from '../../../full-pages/layout/interfaces/sidebar.model';
 
 @Component({ template: '', standalone: true })
 class BlancoComponent {}

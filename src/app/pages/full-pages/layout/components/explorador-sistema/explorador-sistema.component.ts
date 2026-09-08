@@ -6,9 +6,9 @@ import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/wind
 import { BuscadorComponent } from '../../../../../shared/ui/buscador/buscador.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
-import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
+import { PreferenciasService } from '../../services/preferencias.service';
 import type { SidebarNavRuta } from '../../interfaces/sidebar.model';
-import type { VistaExplorador } from '../../../../../core/preferencias/dominio/preferencias.model';
+import type { VistaExplorador } from '../../interfaces/preferencias.model';
 
 /** Explorador de archivos del sistema activo — reemplaza al panel de links de la Col 2. */
 @Component({

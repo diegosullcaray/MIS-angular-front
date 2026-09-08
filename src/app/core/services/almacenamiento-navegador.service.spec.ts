@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { AlmacenamientoNavegador } from './almacenamiento-navegador';
+import { AlmacenamientoNavegador } from './almacenamiento-navegador.service';
 
 describe('AlmacenamientoNavegador', () => {
   let almacenamiento: AlmacenamientoNavegador;

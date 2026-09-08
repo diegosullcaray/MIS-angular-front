@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { PreferenciasService } from './preferencias.service';
-import { CATALOGO_ANUNCIOS } from '../dominio/anuncios.puerto';
-import { comunicadoVigente, estaPendiente } from '../dominio/anuncio.model';
+import { CATALOGO_ANUNCIOS } from '../interfaces/anuncio.model';
+import { comunicadoVigente, estaPendiente } from '../interfaces/anuncio.model';
 
 /** Caso de uso del comunicado del sistema. */
 @Injectable({ providedIn: 'root' })

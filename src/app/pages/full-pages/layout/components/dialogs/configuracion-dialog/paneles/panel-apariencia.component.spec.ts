@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { PanelAparienciaComponent } from './panel-apariencia.component';
-import { PreferenciasService } from '../../../../../../../core/preferencias/aplicacion/preferencias.service';
-import { REPOSITORIO_PREFERENCIAS } from '../../../../../../../core/preferencias/dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio } from '../../../../../../../core/preferencias/infraestructura/preferencias-local-storage.repositorio';
-import { CATALOGO_FONDOS, FONDO_PERSONALIZADO } from '../../../../../../../core/preferencias/dominio/preferencias.model';
+import { PreferenciasService } from '../../../../services/preferencias.service';
+import { REPOSITORIO_PREFERENCIAS } from '../../../../interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio } from '../../../../services/preferencias-local-storage.service';
+import { CATALOGO_FONDOS, FONDO_PERSONALIZADO } from '../../../../interfaces/preferencias.model';
 
 /** La pantalla de Apariencia es el pedido central: elegir el fondo (y su color). */
 describe('PanelAparienciaComponent', () => {

@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { AnunciosService } from './anuncios.service';
 import { PreferenciasService } from './preferencias.service';
-import { CATALOGO_ANUNCIOS } from '../dominio/anuncios.puerto';
-import { REPOSITORIO_PREFERENCIAS } from '../dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio } from '../infraestructura/preferencias-local-storage.repositorio';
-import type { Anuncio } from '../dominio/anuncio.model';
+import { CATALOGO_ANUNCIOS } from '../interfaces/anuncio.model';
+import { REPOSITORIO_PREFERENCIAS } from '../interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio } from './preferencias-local-storage.service';
+import type { Anuncio } from '../interfaces/anuncio.model';
 
 function pieza(id: string, extra: Partial<Anuncio> = {}): Anuncio {
   return { id, imagen: `assets/images/fc/ads/${id}.png`, alt: id, ancho: 780, alto: 815, ...extra };

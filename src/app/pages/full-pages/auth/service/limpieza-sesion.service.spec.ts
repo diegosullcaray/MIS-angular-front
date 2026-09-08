@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { LimpiezaSesionService } from './limpieza-sesion.service';
-import { PreferenciasService } from './preferencias.service';
-import { AlmacenamientoNavegador } from '../infraestructura/almacenamiento-navegador';
-import { REPOSITORIO_PREFERENCIAS } from '../dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio, CLAVE_PREFERENCIAS } from '../infraestructura/preferencias-local-storage.repositorio';
-import { PREFERENCIAS_POR_DEFECTO } from '../dominio/preferencias.model';
+import { PreferenciasService } from '../../layout/services/preferencias.service';
+import { AlmacenamientoNavegador } from '../../../../core/services/almacenamiento-navegador.service';
+import { REPOSITORIO_PREFERENCIAS } from '../../layout/interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio, CLAVE_PREFERENCIAS } from '../../layout/services/preferencias-local-storage.service';
+import { PREFERENCIAS_POR_DEFECTO } from '../../layout/interfaces/preferencias.model';
 
 /**
  * El requisito era "limpio y exacto": al cerrar sesión no puede quedar nada del

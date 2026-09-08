@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { InicioComponent } from './inicio.component';
-import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
-import { REPOSITORIO_PREFERENCIAS } from '../../../../../core/preferencias/dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio } from '../../../../../core/preferencias/infraestructura/preferencias-local-storage.repositorio';
+import { PreferenciasService } from '../../../../full-pages/layout/services/preferencias.service';
+import { REPOSITORIO_PREFERENCIAS } from '../../../../full-pages/layout/interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio } from '../../../../full-pages/layout/services/preferencias-local-storage.service';
 
 const MINUTO = 60_000;
 const HORA = 60 * MINUTO;

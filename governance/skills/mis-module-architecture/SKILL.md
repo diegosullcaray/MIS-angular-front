@@ -74,7 +74,9 @@ Tres invariantes que el auditor trata como **error**, no como sugerencia:
 | `shared-aislado` | `src/app/shared/` no importa de `src/app/pages/modules/` |
 | `modulos-desacoplados` | un módulo no importa las tripas de otro |
 
-Lo que dos módulos necesiten compartir sube a `shared/` (si es UI o utilidad genérica) o a `core/` (si es transporte, sesión o preferencias). Nunca se importa de vecino a vecino.
+Lo que dos módulos necesiten compartir sube a `shared/` (si es UI o utilidad genérica) o a `core/` (si es transporte, sesión o un envoltorio del navegador). Nunca se importa de vecino a vecino.
+
+Las **preferencias de interfaz** son la excepción que confirma la regla: no las comparten dos módulos, las manda el shell. Por eso viven en `pages/full-pages/layout/`, no en `core/`.
 
 > Hay violaciones heredadas registradas en `governance/gobernanza.linea-base.json` (interceptores de `core` que importan servicios de `pages`, y el caché de jerarquía de `shared` que importa un modelo de `reportes`). Están congeladas para no bloquear el pipeline, pero **no son precedente**: el criterio es cero hallazgos nuevos.
 
@@ -113,7 +115,9 @@ Sin `--registrar-ruta`, enlazar a mano en `src/app/app.routes.ts`. **Los segment
 | un cálculo puro que usan varios módulos | `src/app/shared/utils/` |
 | un componente visual sin dominio | `src/app/shared/ui/` |
 | un componente que conoce `cod_rep` o jerarquía | `pages/modules/reportes/ui/` |
-| transporte, sesión, preferencias, guards | `src/app/core/` |
+| transporte, sesión, guards, envoltorios del navegador | `src/app/core/` |
+| preferencias de interfaz, anuncios, navegación del shell | `src/app/pages/full-pages/layout/` |
+| aritmética de color y tokens | `src/app/theme/` |
 | un token de color o de forma | `src/app/theme/tokens.css` |
 
 Verificación: `node governance/scripts/validar-gobernanza.mjs --regla=core-aislado,shared-aislado,modulos-desacoplados,nombres-canonicos,rutas-lazy`

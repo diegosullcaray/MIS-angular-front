@@ -1,4 +1,5 @@
-/** Modelo del comunicado del sistema. */
+/** Modelo del comunicado del sistema y el token de su catálogo. */
+import { InjectionToken } from '@angular/core';
 
 /**
  * Una lámina del comunicado: la pieza gráfica que publica Comunicación Interna.
@@ -78,3 +79,14 @@ export function laminaEnRango(indice: number, total: number): number {
   if (total <= 0) return 0;
   return ((indice % total) + total) % total;
 }
+
+/**
+ * Fuente del catálogo de comunicados. Se inyecta como token para que sea
+ * sustituible: hoy es la constante `ANUNCIOS_DEL_SISTEMA` y mañana puede ser un
+ * servicio que los traiga del backend, sin que el servicio ni el diálogo se
+ * enteren.
+ */
+export const CATALOGO_ANUNCIOS = new InjectionToken<readonly Anuncio[]>('CATALOGO_ANUNCIOS', {
+  providedIn: 'root',
+  factory: () => [],
+});

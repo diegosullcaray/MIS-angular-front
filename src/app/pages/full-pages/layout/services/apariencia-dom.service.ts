@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { aclarar, hexARgba, mezclar, oscurecer, textoSobre } from '../dominio/color.util';
-import { fondoEfectivo } from '../dominio/preferencias.model';
-import type { PreferenciasApariencia, PreferenciasEstructura } from '../dominio/preferencias.model';
+import { aclarar, hexARgba, mezclar, oscurecer, textoSobre } from '../../../../theme/color.util';
+import { fondoEfectivo } from '../interfaces/preferencias.model';
+import type { PreferenciasApariencia, PreferenciasEstructura } from '../interfaces/preferencias.model';
 
 /** Adaptador de apariencia: convierte preferencias en variables CSS. */
 @Injectable({ providedIn: 'root' })

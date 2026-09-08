@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { PreferenciasService } from './preferencias.service';
-import { ThemeService } from '../../../shared/services/theme.service';
-import { REPOSITORIO_PREFERENCIAS } from '../dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio, CLAVE_PREFERENCIAS } from '../infraestructura/preferencias-local-storage.repositorio';
-import { PREFERENCIAS_POR_DEFECTO, FONDO_PERSONALIZADO } from '../dominio/preferencias.model';
+import { ThemeService } from '../../../../shared/services/theme.service';
+import { REPOSITORIO_PREFERENCIAS } from '../interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio, CLAVE_PREFERENCIAS } from './preferencias-local-storage.service';
+import { PREFERENCIAS_POR_DEFECTO, FONDO_PERSONALIZADO } from '../interfaces/preferencias.model';
 
 /**
  * `PreferenciasService` es el caso de uso: persiste (por el puerto) y aplica

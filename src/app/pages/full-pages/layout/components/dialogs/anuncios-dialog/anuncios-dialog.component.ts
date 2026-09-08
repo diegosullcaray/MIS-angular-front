@@ -1,8 +1,8 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
-import { AnunciosService } from '../../../../../../core/preferencias/aplicacion/anuncios.service';
-import { laminaEnRango, laminasDe } from '../../../../../../core/preferencias/dominio/anuncio.model';
+import { AnunciosService } from '../../../services/anuncios.service';
+import { laminaEnRango, laminasDe } from '../../../interfaces/anuncio.model';
 
 /**
  * Diálogo del comunicado. Muestra las piezas tal como las publica Comunicación

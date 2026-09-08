@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { PreferenciasService } from '../preferencias/aplicacion/preferencias.service';
-import { MenuStgService } from '../../pages/full-pages/layout/services/menu-stg.service';
-import { SEGMENTO_LABELS } from '../../pages/full-pages/layout/interfaces/navigation.constants';
+import { PreferenciasService } from '../../../full-pages/layout/services/preferencias.service';
+import { MenuStgService } from '../../../full-pages/layout/services/menu-stg.service';
+import { SEGMENTO_LABELS } from '../../../full-pages/layout/interfaces/navigation.constants';
 
 /** Rutas que no son un reporte y no tienen por qué figurar en los accesos rápidos. */
 const NO_SON_REPORTE = ['dashboard', 'login', 'error'];

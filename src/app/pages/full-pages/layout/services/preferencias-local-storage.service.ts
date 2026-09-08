@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { sanearPreferencias } from '../dominio/preferencias.model';
-import type { Preferencias } from '../dominio/preferencias.model';
-import type { RepositorioPreferencias } from '../dominio/repositorio-preferencias.puerto';
+import { sanearPreferencias } from '../interfaces/preferencias.model';
+import type { Preferencias } from '../interfaces/preferencias.model';
+import type { RepositorioPreferencias } from '../interfaces/preferencias-almacen.model';
 
 /** Única clave de `localStorage` con preferencias: todo va en un solo documento JSON. */
 export const CLAVE_PREFERENCIAS = 'mis.preferencias';
 
 /**
- * Adaptador de `localStorage` del puerto `RepositorioPreferencias`.
+ * Implementación de `RepositorioPreferencias` sobre `localStorage`.
  *
  * Guarda el árbol completo bajo una sola clave en vez de una por ajuste: así
  * el borrado de sesión tiene un único objetivo, y lo leído pasa siempre por

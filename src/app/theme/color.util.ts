@@ -1,7 +1,8 @@
 /**
- * Aritmética de color del dominio de apariencia. Son funciones puras: no tocan
- * el DOM ni Angular, y por eso viven en la capa de dominio — el adaptador que
- * escribe las variables CSS solo consume lo que sale de acá.
+ * Aritmética de color. Funciones puras: no tocan el DOM ni Angular. Viven en
+ * `theme/` junto a los tokens porque las consumen tanto el servicio que escribe
+ * las variables CSS de la apariencia como las pruebas de contraste de la
+ * paleta.
  */
 
 /** Componentes 0–255 de un color. */

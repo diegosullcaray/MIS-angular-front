@@ -18,15 +18,15 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
-import { PreferenciasService } from './core/preferencias/aplicacion/preferencias.service';
-import { REPOSITORIO_PREFERENCIAS } from './core/preferencias/dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio } from './core/preferencias/infraestructura/preferencias-local-storage.repositorio';
-import { CATALOGO_ANUNCIOS } from './core/preferencias/dominio/anuncios.puerto';
-import { ANUNCIOS_DEL_SISTEMA } from './core/preferencias/infraestructura/anuncios-del-sistema';
+import { PreferenciasService } from './pages/full-pages/layout/services/preferencias.service';
+import { REPOSITORIO_PREFERENCIAS } from './pages/full-pages/layout/interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio } from './pages/full-pages/layout/services/preferencias-local-storage.service';
+import { CATALOGO_ANUNCIOS } from './pages/full-pages/layout/interfaces/anuncio.model';
+import { ANUNCIOS_DEL_SISTEMA } from './pages/full-pages/layout/constantes/anuncios.constantes';
 import { FUENTE_BUSQUEDA } from './shared/ui/buscador/fuente-busqueda';
 import { FuenteNavegacionService } from './pages/full-pages/layout/services/fuente-navegacion.service';
 import { FuenteDashboardsService } from './pages/modules/dashboard/services/fuente-dashboards.service';
-import { RecientesService } from './core/recientes/recientes.service';
+import { RecientesService } from './pages/modules/home/services/recientes.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

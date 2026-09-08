@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { PanelAnunciosComponent } from './panel-anuncios.component';
-import { PreferenciasService } from '../../../../../../../core/preferencias/aplicacion/preferencias.service';
+import { PreferenciasService } from '../../../../services/preferencias.service';
 
 describe('PanelAnunciosComponent', () => {
   let mockAnuncios: ReturnType<typeof signal<{ silenciar: boolean }>>;

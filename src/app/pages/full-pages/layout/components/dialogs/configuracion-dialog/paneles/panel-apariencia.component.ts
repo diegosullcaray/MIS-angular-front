@@ -3,13 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { PreferenciasService } from '../../../../../../../core/preferencias/aplicacion/preferencias.service';
+import { PreferenciasService } from '../../../../services/preferencias.service';
 import {
   ACENTOS_SUGERIDOS,
   CATALOGO_FONDOS,
   FONDO_PERSONALIZADO,
-} from '../../../../../../../core/preferencias/dominio/preferencias.model';
-import type { ModoTema, OpcionFondo } from '../../../../../../../core/preferencias/dominio/preferencias.model';
+} from '../../../../interfaces/preferencias.model';
+import type { ModoTema, OpcionFondo } from '../../../../interfaces/preferencias.model';
 
 interface OpcionTema {
   readonly label: string;

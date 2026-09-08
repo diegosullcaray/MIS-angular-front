@@ -1,8 +1,8 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
-import { ThemeService } from '../../../shared/services/theme.service';
-import { AparienciaDomAdaptador } from '../infraestructura/apariencia-dom.adaptador';
-import { REPOSITORIO_PREFERENCIAS } from '../dominio/repositorio-preferencias.puerto';
-import { MAX_RECIENTES, PREFERENCIAS_POR_DEFECTO } from '../dominio/preferencias.model';
+import { ThemeService } from '../../../../shared/services/theme.service';
+import { AparienciaDomAdaptador } from './apariencia-dom.service';
+import { REPOSITORIO_PREFERENCIAS } from '../interfaces/preferencias-almacen.model';
+import { MAX_RECIENTES, PREFERENCIAS_POR_DEFECTO } from '../interfaces/preferencias.model';
 import type {
   ModoSidebar,
   ModoTema,
@@ -11,7 +11,7 @@ import type {
   PreferenciasEstructura,
   ReporteReciente,
   VistaExplorador,
-} from '../dominio/preferencias.model';
+} from '../interfaces/preferencias.model';
 
 /** Caso de uso de las preferencias del Host. */
 @Injectable({ providedIn: 'root' })

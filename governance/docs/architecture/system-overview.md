@@ -8,10 +8,15 @@ Componente -> servicio del modulo -> fachada de reportes -> Winder/Ant -> HttpCl
 
 ## Capas
 
-- `core/`: sesion, guards, interceptores, preferencias y transporte.
+- `core/`: sesion, guards, interceptores, transporte y envoltorios del navegador.
+- `pages/full-pages/`: shell, autenticacion y error. El layout es dueno de las preferencias de interfaz.
 - `pages/modules/`: dominios de negocio y pantallas.
 - `shared/`: UI y utilidades reutilizables.
-- `theme/`: tokens y preset visual.
+- `theme/`: tokens, preset visual y aritmetica de color.
+
+`core/` no contiene ninguna carpeta con nombre de pantalla: lo que solo usa una
+vive con ella. Preferencias y recientes estuvieron en `core/` hasta 2026-09-08 y
+bajaron al layout y al modulo Home respectivamente.
 
 ## Shell y navegacion
 

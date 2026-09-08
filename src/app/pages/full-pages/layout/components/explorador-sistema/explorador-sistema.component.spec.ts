@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { ExploradorSistemaComponent } from './explorador-sistema.component';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
-import { REPOSITORIO_PREFERENCIAS } from '../../../../../core/preferencias/dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio } from '../../../../../core/preferencias/infraestructura/preferencias-local-storage.repositorio';
+import { PreferenciasService } from '../../services/preferencias.service';
+import { REPOSITORIO_PREFERENCIAS } from '../../interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio } from '../../services/preferencias-local-storage.service';
 
 /**
  * La vista del explorador dejó de guardarse en una clave propia

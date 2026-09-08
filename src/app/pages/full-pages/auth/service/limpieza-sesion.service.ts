@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { AlmacenamientoNavegador } from '../infraestructura/almacenamiento-navegador';
-import type { ResultadoBorrado } from '../infraestructura/almacenamiento-navegador';
-import { PreferenciasService } from './preferencias.service';
-import { JerarquiaCacheService } from '../../../shared/ui/hier-selector/jerarquia-cache.service';
+import { AlmacenamientoNavegador } from '../../../../core/services/almacenamiento-navegador.service';
+import type { ResultadoBorrado } from '../../../../core/services/almacenamiento-navegador.service';
+import { PreferenciasService } from '../../layout/services/preferencias.service';
+import { JerarquiaCacheService } from '../../../../shared/ui/hier-selector/jerarquia-cache.service';
 
 /** Caso de uso de limpieza de sesión. */
 @Injectable({ providedIn: 'root' })

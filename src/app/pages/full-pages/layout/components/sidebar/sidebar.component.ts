@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
+import { PreferenciasService } from '../../services/preferencias.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';

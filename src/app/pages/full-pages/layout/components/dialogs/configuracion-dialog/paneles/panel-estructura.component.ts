@@ -2,9 +2,9 @@ import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { PreferenciasService } from '../../../../../../../core/preferencias/aplicacion/preferencias.service';
-import { CATALOGO_MODOS_SIDEBAR } from '../../../../../../../core/preferencias/dominio/preferencias.model';
-import type { ModoSidebar, VistaExplorador } from '../../../../../../../core/preferencias/dominio/preferencias.model';
+import { PreferenciasService } from '../../../../services/preferencias.service';
+import { CATALOGO_MODOS_SIDEBAR } from '../../../../interfaces/preferencias.model';
+import type { ModoSidebar, VistaExplorador } from '../../../../interfaces/preferencias.model';
 
 interface OpcionVista {
   readonly label: string;

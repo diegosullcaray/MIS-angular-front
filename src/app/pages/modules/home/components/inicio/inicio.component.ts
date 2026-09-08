@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PreferenciasService } from '../../../../../core/preferencias/aplicacion/preferencias.service';
+import { PreferenciasService } from '../../../../full-pages/layout/services/preferencias.service';
 
 @Component({
   selector: 'app-inicio',

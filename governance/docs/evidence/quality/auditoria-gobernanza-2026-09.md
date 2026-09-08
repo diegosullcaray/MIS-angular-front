@@ -32,7 +32,7 @@ Registrados, **no corregidos** en esta auditoría por estar fuera de su alcance.
 
 | # | Hallazgo | Ubicación | Severidad |
 |---|---|---|---|
-| C1 | `core` importa de `pages` (5 casos) | `core/interceptors/auth.interceptor.ts`, `core/interceptors/http-error.interceptor.ts`, `core/recientes/recientes.service.ts` | Alta |
+| C1 | `core` importa de `pages` (5 casos → **3**) | `core/interceptors/auth.interceptor.ts`, `core/interceptors/http-error.interceptor.ts`, ~~`core/recientes/recientes.service.ts`~~ | Alta |
 | C2 | `shared` importa un modelo de `pages/modules/reportes` | `shared/ui/hier-selector/jerarquia-cache.service.ts:3` | Alta |
 | C3 | Correo institucional real en un ejemplo de JSDoc | `core/winder/instances/mod-sys-login.service.ts:22` | Media |
 | C4 | 41 servicios y utilidades sin `.spec.ts` hermano | varios, sobre todo en `reportes/**/services/` | Media |
@@ -101,3 +101,13 @@ Las cifras de este informe corresponden al commit evaluado. Para regenerarlas, c
 | Eliminar el directorio vacío de C9 | Cualquiera | Baja |
 | **Asignar propietario funcional por dominio** en el catálogo de datos | Negocio | Alta |
 | Completar el inventario de campos sensibles por contrato | Seguridad + negocio | Media |
+
+---
+
+## Seguimiento
+
+**2026-09-08 — C1 baja de 5 a 3 casos.** `core/recientes/` se movió al módulo
+Home y `core/preferencias/` al layout: los dos imports de `recientes` a
+`MenuStgService` y `SEGMENTO_LABELS` dejaron de ser una violación, porque ya no
+es `core` quien conoce la pantalla. Los 3 restantes son de los interceptores y
+siguen abiertos. Detalle en [preferencias y sesión](../../architecture/session-preferences.md).

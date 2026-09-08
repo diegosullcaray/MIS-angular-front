@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
-import { LimpiezaSesionService } from '../../../../core/preferencias/aplicacion/limpieza-sesion.service';
+import { LimpiezaSesionService } from './limpieza-sesion.service';
 import { JerarquiaCacheService } from '../../../../shared/ui/hier-selector/jerarquia-cache.service';
 import { ModSysLoginService } from '../../../../core/winder/instances/mod-sys-login.service';
 import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';

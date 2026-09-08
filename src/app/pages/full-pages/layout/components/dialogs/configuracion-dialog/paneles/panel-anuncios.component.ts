@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { PreferenciasService } from '../../../../../../../core/preferencias/aplicacion/preferencias.service';
+import { PreferenciasService } from '../../../../services/preferencias.service';
 
 /**
  * Pantalla "Anuncios": el único control del usuario sobre los comunicados es

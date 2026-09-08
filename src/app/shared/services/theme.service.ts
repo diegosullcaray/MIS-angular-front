@@ -1,7 +1,14 @@
 import { Injectable, computed, signal } from '@angular/core';
-import type { ModoTema } from '../../core/preferencias/dominio/preferencias.model';
 
-export type { ModoTema };
+/**
+ * Modo de tema. Vive acá y no en las preferencias porque el dueño del tema es
+ * este servicio: las preferencias lo persisten, pero quien lo resuelve contra
+ * `prefers-color-scheme` y lo refleja en `<html>` es `ThemeService`. Tenerlo al
+ * revés obligaba a `shared/` a importar de una pantalla.
+ */
+export type ModoTema = 'claro' | 'oscuro' | 'sistema';
+
+export const MODOS_TEMA: readonly ModoTema[] = ['claro', 'oscuro', 'sistema'] as const;
 
 /** Tema con el que arranca el sistema mientras el usuario no elija otro. */
 const MODO_POR_DEFECTO: ModoTema = 'oscuro';

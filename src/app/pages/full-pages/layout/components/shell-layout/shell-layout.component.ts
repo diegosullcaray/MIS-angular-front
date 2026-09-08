@@ -9,7 +9,7 @@ import { ShellStateService } from '../../../../../core/services/shell-state.serv
 
 import { ExploradorSistemaComponent } from '../explorador-sistema/explorador-sistema.component';
 import { AnunciosDialogComponent } from '../dialogs/anuncios-dialog/anuncios-dialog.component';
-import { AnunciosService } from '../../../../../core/preferencias/aplicacion/anuncios.service';
+import { AnunciosService } from '../../services/anuncios.service';
 
 @Component({
   selector: 'app-shell-layout',

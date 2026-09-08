@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { AnunciosDialogComponent } from './anuncios-dialog.component';
-import { AnunciosService } from '../../../../../../core/preferencias/aplicacion/anuncios.service';
-import { PreferenciasService } from '../../../../../../core/preferencias/aplicacion/preferencias.service';
-import { CATALOGO_ANUNCIOS } from '../../../../../../core/preferencias/dominio/anuncios.puerto';
-import { REPOSITORIO_PREFERENCIAS } from '../../../../../../core/preferencias/dominio/repositorio-preferencias.puerto';
-import { PreferenciasLocalStorageRepositorio } from '../../../../../../core/preferencias/infraestructura/preferencias-local-storage.repositorio';
-import type { Anuncio } from '../../../../../../core/preferencias/dominio/anuncio.model';
+import { AnunciosService } from '../../../services/anuncios.service';
+import { PreferenciasService } from '../../../services/preferencias.service';
+import { CATALOGO_ANUNCIOS } from '../../../interfaces/anuncio.model';
+import { REPOSITORIO_PREFERENCIAS } from '../../../interfaces/preferencias-almacen.model';
+import { PreferenciasLocalStorageRepositorio } from '../../../services/preferencias-local-storage.service';
+import type { Anuncio } from '../../../interfaces/anuncio.model';
 
 /** Comunicado de una sola pieza: la forma histórica, sin recorrido. */
 const CATALOGO_SIMPLE: readonly Anuncio[] = [
