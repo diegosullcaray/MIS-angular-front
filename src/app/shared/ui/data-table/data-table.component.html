@@ -142,7 +142,16 @@
     </ng-template>
 
     <ng-template pTemplate="body" let-row>
-      <tr class="hover:bg-[var(--mis-panel-bg)] transition-colors">
+      <tr
+        class="hover:bg-[var(--mis-panel-bg)] transition-colors"
+        [class.cursor-pointer]="selectableRows()"
+        [class.mis-fila-elegida]="selectableRows() && row === selectedRow()"
+        [attr.tabindex]="selectableRows() ? 0 : null"
+        [attr.aria-selected]="selectableRows() ? row === selectedRow() : null"
+        (click)="elegirFila(row)"
+        (keydown.enter)="elegirFila(row)"
+        (keydown.space)="$event.preventDefault(); elegirFila(row)"
+      >
         @for (col of columns(); track col.field) {
           <td
             [class.text-center]="col.align === 'center'"

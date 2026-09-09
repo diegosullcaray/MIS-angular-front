@@ -33,24 +33,57 @@
     </div>
 
     @if (mostrarTarjetas()) {
-      <div class="grid grid-cols-3 gap-3">
-        <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-3 flex flex-col gap-1 shadow-xs">
-          <span class="text-[11px] font-semibold uppercase text-[var(--mis-text-secondary)] tracking-wider">{{ etiquetas()?.tarjetas?.[0] ?? 'Cierre' }}</span>
-          <span class="text-[16px] font-bold text-[var(--mis-primary-text)]">{{ formatearValorTarjeta(frame.resultado.card.cie_real) }}</span>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-fadein animate-duration-500">
+        <!-- Tarjeta Cierre -->
+        <div class="group relative overflow-hidden rounded-xl rounded-tr-[2rem] bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] p-4 pb-5 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[12px] font-bold text-white/90 uppercase tracking-wider">{{ etiquetas()?.tarjetas?.[0] ?? 'Cierre' }}</span>
+            <i class="pi pi-chart-line text-white/50 text-[14px] group-hover:text-white/90 transition-colors duration-300"></i>
+          </div>
+          <hr class="border-white/20 my-1.5 w-full">
+          <span class="text-[24px] font-extrabold text-white leading-none block mt-1">{{ formatearValorTarjeta(frame.resultado.card.cie_real) }}</span>
+          
+          <!-- Efectos decorativos (fondo y franja) -->
+          <div class="absolute -top-6 -right-6 w-24 h-24 bg-white opacity-5 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+          <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-white/30 to-white/70 opacity-70 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
 
-        <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-3 flex flex-col gap-1 shadow-xs">
-          <span class="text-[11px] font-semibold uppercase text-[var(--mis-text-secondary)] tracking-wider">{{ etiquetas()?.tarjetas?.[1] ?? 'Variación' }}</span>
-          <span class="text-[16px] font-bold text-[var(--mis-primary-text)]">{{ formatearValorTarjeta(frame.resultado.card.var_real) }}</span>
+        <!-- Tarjeta Variación -->
+        <div class="group relative overflow-hidden rounded-xl rounded-tr-[2rem] bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] p-4 pb-5 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[12px] font-bold text-white/90 uppercase tracking-wider">{{ etiquetas()?.tarjetas?.[1] ?? 'Variación' }}</span>
+            <i class="pi pi-bolt text-white/50 text-[14px] group-hover:text-white/90 transition-colors duration-300"></i>
+          </div>
+          <hr class="border-white/20 my-1.5 w-full">
+          <span class="text-[24px] font-extrabold text-white leading-none block mt-1">{{ formatearValorTarjeta(frame.resultado.card.var_real) }}</span>
+          
+          <!-- Efectos decorativos (fondo y franja) -->
+          <div class="absolute -top-6 -right-6 w-24 h-24 bg-white opacity-5 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+          <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-white/30 to-white/70 opacity-70 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
 
-        <div class="rounded-xl border p-3 flex flex-col gap-1 shadow-xs" [class]="frame.resultado.card.avan >= 1 ? 'border-[var(--mis-success)] bg-[var(--mis-success-light)]/40' : 'border-[var(--mis-border)] bg-[var(--mis-panel-bg)]'">
-          <span class="text-[11px] font-semibold uppercase text-[var(--mis-text-secondary)] tracking-wider">{{ etiquetas()?.tarjetas?.[2] ?? 'Meta' }}</span>
-          <div class="flex items-baseline gap-1.5 flex-wrap">
-            <span class="text-[16px] font-bold text-[var(--mis-text-primary)]">{{ formatearMeta() }}</span>
-            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full" [class]="frame.resultado.card.avan >= 1 ? 'bg-[var(--mis-success-light)] text-[var(--mis-success)] border border-[var(--mis-success)]/30' : 'bg-[var(--mis-warning-light)] text-[var(--mis-warning)] border border-[var(--mis-warning)]/30'">
-              ({{ formatearAvance(frame.resultado.card.avan) }})
+        <!-- Tarjeta Meta & Avance -->
+        <div class="group relative overflow-hidden rounded-xl rounded-tr-[2rem] bg-[var(--mis-surface)] p-4 pb-6 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-[var(--mis-border)]"
+             [class]="frame.resultado.card.avan >= 1 ? 'hover:border-[var(--mis-success)]/40' : 'hover:border-[var(--mis-warning)]/40'">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[12px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">{{ etiquetas()?.tarjetas?.[2] ?? 'Meta' }}</span>
+            <i class="pi" [class]="frame.resultado.card.avan >= 1 ? 'pi-check-circle text-[var(--mis-success)]/60 group-hover:text-[var(--mis-success)]' : 'pi-exclamation-circle text-[var(--mis-warning)]/60 group-hover:text-[var(--mis-warning)]'" style="font-size: 14px; transition: color 300ms;"></i>
+          </div>
+          <hr class="border-[var(--mis-border)] my-1.5 w-full">
+          
+          <div class="flex items-end justify-between flex-wrap gap-2 mt-1 relative z-10">
+            <span class="text-[24px] font-extrabold text-[var(--mis-text-primary)] leading-none">{{ formatearMeta() }}</span>
+            <span class="text-[12px] font-extrabold leading-none px-2.5 py-1 rounded-md shadow-sm transition-transform duration-300 group-hover:scale-105"
+                  [class]="frame.resultado.card.avan >= 1 ? 'bg-[var(--mis-success)] text-[var(--mis-text-on-primary)]' : 'bg-[var(--mis-warning)] text-[var(--mis-text-on-primary)]'">
+              {{ formatearAvance(frame.resultado.card.avan) }}
             </span>
+          </div>
+          
+          <!-- Barra de progreso inferior mejorada -->
+          <div class="absolute bottom-0 left-0 right-0 h-2 flex w-full"
+               [class]="frame.resultado.card.avan >= 1 ? 'bg-[var(--mis-success-light)]/80' : 'bg-[var(--mis-warning)]'">
+            <div class="h-full bg-[var(--mis-primary)] transition-all duration-1000 ease-out shadow-[0_0_4px_rgba(0,0,0,0.3)]" 
+                 [style.width]="(frame.resultado.card.avan > 1 ? 100 : (frame.resultado.card.avan * 100)) + '%'"></div>
           </div>
         </div>
       </div>

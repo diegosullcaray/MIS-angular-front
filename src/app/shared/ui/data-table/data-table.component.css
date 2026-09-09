@@ -89,3 +89,12 @@
   }
 }
 
+
+/* ── Fila elegida ─────────────────────────────────────────────
+   Solo aplica con `selectableRows`. Va con una barra a la izquierda además
+   del fondo: el fondo solo no alcanza para distinguirla del hover. */
+.mis-fila-elegida,
+.mis-fila-elegida:hover {
+  background: var(--mis-primary-light);
+  box-shadow: inset 3px 0 0 var(--mis-primary);
+}

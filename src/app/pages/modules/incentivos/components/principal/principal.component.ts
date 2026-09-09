@@ -10,6 +10,7 @@ import { TablaVariablesComponent } from '../../ui/tabla-variables/tabla-variable
 import { SelectorNivelDialogComponent } from '../../ui/selector-nivel-dialog/selector-nivel-dialog.component';
 import { CalculadoraDialogComponent } from '../../ui/calculadora-dialog/calculadora-dialog.component';
 import { DetalleVariableDialogComponent } from '../../ui/detalle-variable-dialog/detalle-variable-dialog.component';
+import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { DetalleBancarizacionDialogComponent } from '../../ui/detalle-bancarizacion-dialog/detalle-bancarizacion-dialog.component';
 import type { DetalleVariableActivo, ReqDetalleVariable } from '../../models/incentivos-detalle.model';
 import type { DetalleAvanceEvent, DetalleSuperPlusEvent, DetalleTablaVariableEvent } from '../../models/incentivos-eventos.model';
@@ -21,6 +22,7 @@ import type { DetalleAvanceEvent, DetalleSuperPlusEvent, DetalleTablaVariableEve
   imports: [
     SkeletonModule,
     TooltipModule,
+    AnimateOnScrollModule,
     PerfilCardComponent,
     AvancesGridComponent,
     SuperPlusGridComponent,

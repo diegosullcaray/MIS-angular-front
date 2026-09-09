@@ -5,6 +5,9 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { IncentivosService } from '../../services/incentivos.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { redondear } from '../../utils/incentivos-calculo.util';
@@ -20,10 +23,11 @@ const OPCIONES_SISTEMATICA = [
 @Component({
   selector: 'app-calculadora-dialog',
   standalone: true,
-  imports: [DialogModule, ButtonModule, InputNumberModule, SelectModule, FormsModule, DecimalPipe],
+  imports: [DialogModule, ButtonModule, InputNumberModule, SelectModule, InputGroupModule, InputGroupAddonModule, AnimateOnScrollModule, FormsModule, DecimalPipe],
   templateUrl: './calculadora-dialog.component.html',
 })
 export class CalculadoraDialogComponent {
+  focusedItem = signal<string | null>(null);
   protected readonly incentivos = inject(IncentivosService);
   private readonly toast = inject(ToastService);
 

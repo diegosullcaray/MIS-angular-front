@@ -9,7 +9,6 @@ import { RankingFiltrosComponent } from '../../ui/ranking-filtros/ranking-filtro
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { RankingInfoDialogComponent } from '../../ui/ranking-info-dialog/ranking-info-dialog.component';
 import { KaypachaService } from '../../services/kaypacha.service';
-import { RankingTourService } from '../../services/ranking-tour.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
 import type { FilaDetalleRanking } from '../../models/categoria-ranking.model';
 import type { GrupoRanking, RankingTableFila } from '../../models/ranking-table.model';
@@ -37,7 +36,6 @@ const DURACION_TRANSICION_FILTROS_MS = 350;
 })
 export class CategoriaDetalleComponent {
   private readonly kaypacha = inject(KaypachaService);
-  protected readonly tour = inject(RankingTourService);
   protected readonly redirect = inject(RedirectOverlayService);
 
   readonly id = input.required<string>();

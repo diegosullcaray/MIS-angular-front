@@ -27,7 +27,15 @@ function filas(): Fila[] {
   standalone: true,
   imports: [DataTableComponent, DataTableCellDirective],
   template: `
-    <app-data-table [columns]="columnas" [data]="data()" [searchFields]="searchFields()" emptyMessage="Sin registros">
+    <app-data-table
+      [columns]="columnas"
+      [data]="data()"
+      [searchFields]="searchFields()"
+      [selectableRows]="selectable()"
+      [selectedRow]="elegida()"
+      (filaSeleccionada)="elegida.set($any($event))"
+      emptyMessage="Sin registros"
+    >
       <ng-template appDataTableCell="nombre" let-row>
         <span class="celda-nombre">{{ row.nombre }}</span>
       </ng-template>
@@ -42,6 +50,8 @@ class HostComponent {
   // mitad de camino necesitan un `.set(...)` real.
   data = signal(filas());
   searchFields = signal<string[]>([]);
+  selectable = signal(false);
+  elegida = signal<Fila | null>(null);
 }
 
 const COLUMNAS_CON_FILTRO: DataTableColumn[] = [
@@ -117,6 +127,49 @@ describe('DataTableComponent', () => {
 
     expect(el.querySelectorAll('tbody tr').length).toBe(1);
     expect(el.querySelector('.celda-nombre')?.textContent?.trim()).toBe('Beto Ruiz');
+  });
+
+  it('sin selectableRows, la fila no es elegible: ni clic ni foco ni estado', () => {
+    const fixture = crear();
+    const fila = (fixture.nativeElement as HTMLElement).querySelector('tbody tr')!;
+
+    (fila as HTMLElement).click();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.elegida()).toBeNull();
+    expect(fila.getAttribute('tabindex')).toBeNull();
+    expect(fila.getAttribute('aria-selected')).toBeNull();
+  });
+
+  it('con selectableRows, un clic en la fila la emite y queda resaltada', () => {
+    const fixture = crear();
+    fixture.componentInstance.selectable.set(true);
+    fixture.detectChanges();
+
+    const filaEl = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr')[1] as HTMLElement;
+    filaEl.click();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.elegida()?.nombre).toBe('Beto Ruiz');
+    expect(filaEl.classList).toContain('mis-fila-elegida');
+    expect(filaEl.getAttribute('aria-selected')).toBe('true');
+    // La otra sigue sin marcar: la selección es de a una.
+    const otra = (fixture.nativeElement as HTMLElement).querySelector('tbody tr') as HTMLElement;
+    expect(otra.getAttribute('aria-selected')).toBe('false');
+  });
+
+  it('con selectableRows, Enter sobre la fila la elige igual que el clic', () => {
+    const fixture = crear();
+    fixture.componentInstance.selectable.set(true);
+    fixture.detectChanges();
+
+    const filaEl = (fixture.nativeElement as HTMLElement).querySelector('tbody tr') as HTMLElement;
+    expect(filaEl.getAttribute('tabindex')).toBe('0');
+
+    filaEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.elegida()?.nombre).toBe('Ana Torres');
   });
 
   it('muestra emptyMessage cuando no hay filas', () => {

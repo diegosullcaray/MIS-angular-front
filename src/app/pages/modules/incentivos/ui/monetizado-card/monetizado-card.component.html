@@ -1,63 +1,67 @@
 @if (!incentivos.cargando()) {
-  <div class="flex flex-col gap-2 text-[13px]">
-    <div class="grid grid-cols-2 gap-2">
+  <div class="flex flex-col gap-2 text-[11px] sm:text-[13px]">
+    <div class="grid grid-cols-2 gap-2 sm:gap-3">
       <div class="flex flex-col">
-        <span class="text-[11px] text-[var(--mis-text-secondary)]">Bono Base:</span>
-        <span class="font-semibold">S/. {{ incentivos.monetizado().bonoBase | number: '.0-2' }}</span>
+        <span class="text-[9px] sm:text-[11px] text-[var(--mis-text-secondary)] uppercase font-bold tracking-wide">Bono Base</span>
+        <span class="font-semibold text-[12px] sm:text-[14px] text-[var(--mis-text-primary)]">S/. {{ incentivos.monetizado().bonoBase | number: '.0-2' }}</span>
       </div>
       <div class="flex flex-col">
-        <span class="text-[11px] text-[var(--mis-text-secondary)]">Bono Plus:</span>
-        <span class="font-semibold">S/. {{ incentivos.monetizado().bonoPlus | number: '.0-2' }}</span>
+        <span class="text-[9px] sm:text-[11px] text-[var(--mis-text-secondary)] uppercase font-bold tracking-wide">Bono Plus</span>
+        <span class="font-semibold text-[12px] sm:text-[14px] text-[var(--mis-text-primary)]">S/. {{ incentivos.monetizado().bonoPlus | number: '.0-2' }}</span>
       </div>
       <div class="flex flex-col">
-        <span class="text-[11px] text-[var(--mis-text-secondary)]">Bono Super Plus:</span>
-        <span class="font-semibold" [class]="claseBonoSuperPlus()">S/. {{ incentivos.monetizado().bonoSuperPlus | number: '.0-2' }}</span>
+        <span class="text-[9px] sm:text-[11px] text-[var(--mis-text-secondary)] uppercase font-bold tracking-wide">Bono Super Plus</span>
+        <span class="font-semibold text-[12px] sm:text-[14px]" [class]="claseBonoSuperPlus()">S/. {{ incentivos.monetizado().bonoSuperPlus | number: '.0-2' }}</span>
       </div>
       <div class="flex flex-col">
-        <span class="text-[11px] text-[var(--mis-text-secondary)]">Total Monetizado:</span>
+        <span class="text-[9px] sm:text-[11px] text-[var(--mis-text-secondary)] uppercase font-bold tracking-wide">Total Monetizado</span>
         @if (incentivos.monetizado().codigoSituacion === 1) {
-          <span class="font-bold">S/. {{ incentivos.monetizado().bonoTotal | number: '.0-2' }}</span>
+          <span class="font-extrabold text-[13px] sm:text-[15px] text-[var(--mis-primary)]">S/. {{ incentivos.monetizado().bonoTotal | number: '.0-2' }}</span>
         } @else {
-          <span class="font-bold">S/. 0</span>
-          <span class="text-[10px] text-[var(--mis-text-tertiary)]">(S/. {{ incentivos.monetizado().bonoTotal | number: '.0-2' }})</span>
+          <div class="flex items-center gap-1">
+            <span class="font-bold text-[12px] sm:text-[14px] text-[var(--mis-text-primary)]">S/. 0</span>
+            <span class="text-[9px] sm:text-[10px] text-[var(--mis-text-tertiary)]">(S/. {{ incentivos.monetizado().bonoTotal | number: '.0-2' }})</span>
+          </div>
         }
       </div>
     </div>
 
-    <div class="flex items-center gap-1.5">
-      <span>Comisión:</span>
-      <span class="font-semibold" [class]="claseSituacion()">{{ incentivos.monetizado().descripcionSituacion }}</span>
+    <div class="flex items-center gap-1.5 mt-1 sm:mt-0">
+      <span class="font-bold text-[10px] sm:text-[11px] uppercase tracking-wide">Comisión:</span>
+      <span class="font-semibold text-[11px] sm:text-[13px]" [class]="claseSituacion()">{{ incentivos.monetizado().descripcionSituacion }}</span>
     </div>
 
-    <div class="flex items-center justify-end gap-2 flex-wrap">
+    <div class="flex items-center justify-between sm:justify-end gap-2 flex-wrap border-t border-[var(--mis-border)] pt-2 mt-1">
       @if (incentivos.monetizado().mostrarModelo) {
-        <div class="text-[13px] font-bold text-[var(--mis-warning)]">
-          <span>Modelo:</span>
+        <div class="text-[11px] sm:text-[13px] font-extrabold text-[var(--mis-warning)] mr-auto">
+          <span>Mod: </span>
           <span>{{ incentivos.monetizado().modeloDescripcion }}</span>
         </div>
       }
-      @if (incentivos.monetizado().puedeSimular) {
-        <button
-          type="button"
-          class="pi pi-calculator text-[16px] w-8 h-8 rounded-full flex items-center justify-center bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)] hover:opacity-80"
-          title="Calculadora"
-          (click)="abrirCalculadora.emit()"
-        ></button>
-      }
-      @if (fechaSeleccionada(); as fecha) {
-        <p-datepicker
-          [ngModel]="fecha"
-          (ngModelChange)="onCambioFecha($event)"
-          dateFormat="yy-mm-dd"
-          [showIcon]="true"
-          appendTo="body"
-          [minDate]="minDate()"
-          [maxDate]="maxDate()"
-          [disabledDates]="disabledDates()"
-          inputStyleClass="text-[11px]"
-          [style]="{ width: '9.5rem' }"
-        />
-      }
+      <div class="flex items-center gap-2 ml-auto">
+        @if (incentivos.monetizado().puedeSimular) {
+          <button
+            type="button"
+            class="pi pi-calculator text-[14px] sm:text-[16px] w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-[var(--mis-primary-light)]/20 text-[var(--mis-primary-text)] hover:bg-[var(--mis-primary-light)]/40 transition-colors"
+            title="Calculadora"
+            (click)="abrirCalculadora.emit()"
+          ></button>
+        }
+        @if (fechaSeleccionada(); as fecha) {
+          <p-datepicker
+            [ngModel]="fecha"
+            (ngModelChange)="onCambioFecha($event)"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            appendTo="body"
+            [minDate]="minDate()"
+            [maxDate]="maxDate()"
+            [disabledDates]="disabledDates()"
+            inputStyleClass="text-[10px] sm:text-[11px] py-1 sm:py-2"
+            [style]="{ width: '8.5rem' }"
+          />
+        }
+      </div>
     </div>
   </div>
 }

@@ -1,31 +1,17 @@
 <app-window-panel
-  id="tour-ranking-panel"
   [titulo]="categoria()?.name ?? id()"
   [subtitulo]="fechaActualizacion() ? 'Data al ' + fechaActualizacion() : ''"
   [actualizando]="cargando()"
   etiquetaActualizar="Actualizar ranking"
   (actualizar)="cargarDetalle()"
 >
-  <!-- Acciones de la pantalla en la barra; conservan los ids del tour guiado. -->
-  <span ventana-acciones id="tour-info-btn" class="inline-flex items-center">
+  <!-- Acciones de la pantalla en la barra. -->
+  <span ventana-acciones class="inline-flex items-center">
     <app-ranking-info-dialog />
   </span>
 
   <button
     ventana-acciones
-    type="button"
-    class="mis-window-btn"
-    (click)="tour.iniciarTourGuiado()"
-    aria-label="Ver guía interactiva"
-    pTooltip="Ver guía interactiva"
-    tooltipPosition="bottom"
-  >
-    <i class="pi pi-question-circle text-[14px]"></i>
-  </button>
-
-  <button
-    ventana-acciones
-    id="tour-filtros-btn"
     type="button"
     class="mis-window-btn"
     (click)="mostrarFiltros.set(!mostrarFiltros())"
@@ -90,7 +76,7 @@
       </div>
 
       <!-- Contenedor central de la tabla de premiación con aura dorada -->
-      <div id="tour-ranking-tabla" class="relative w-full max-w-lg min-w-0">
+      <div class="relative w-full max-w-lg min-w-0">
         <!-- Aura dorada de iluminación -->
         <div class="absolute -inset-3 bg-gradient-to-r from-amber-400/30 via-yellow-300/40 to-amber-500/30 rounded-2xl blur-xl opacity-90 animate-pulse pointer-events-none"></div>
 
@@ -126,7 +112,7 @@
     </div>
   } @else {
     <!-- Múltiples tablas por cada grupo: muestran las primeras 10 filas visibles en 280px de alto y scrollbar para el resto -->
-    <div id="tour-ranking-tabla" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
       @for (grupo of grupos(); track grupo.hdester) {
         <app-ranking-table
           [titulo]="grupo.hdester"

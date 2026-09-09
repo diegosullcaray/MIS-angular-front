@@ -36,6 +36,12 @@ export class DataTableComponent<T extends Record<string, unknown> = Record<strin
   readonly showRefreshButton = input(false);
   readonly refrescar = output<void>();
 
+  /** Hace elegible la fila: un clic (o Enter) la resalta y emite `filaSeleccionada`. Apagado, la tabla es de solo lectura. */
+  readonly selectableRows = input(false);
+  /** Fila resaltada. Se compara por identidad, así que tiene que ser el mismo objeto que llegó en `data`. */
+  readonly selectedRow = input<T | null>(null);
+  readonly filaSeleccionada = output<T>();
+
   private readonly celdas = contentChildren(DataTableCellDirective);
 
   protected readonly mostrarBuscador = computed(() => this.searchFields().length > 0);
@@ -67,6 +73,11 @@ export class DataTableComponent<T extends Record<string, unknown> = Record<strin
 
     return filas;
   });
+
+  /** El estado de la selección lo lleva el consumidor (`selectedRow`); acá solo se avisa el clic. */
+  protected elegirFila(row: T): void {
+    if (this.selectableRows()) this.filaSeleccionada.emit(row);
+  }
 
   protected buscar(valor: string): void {
     this.busqueda.set(valor);

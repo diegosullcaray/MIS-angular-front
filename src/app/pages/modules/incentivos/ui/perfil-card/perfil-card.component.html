@@ -2,26 +2,26 @@
   <div class="flex flex-col gap-3 h-full">
     <div class="flex flex-col sm:flex-row gap-4">
       <!-- Sección izquierda: Perfil y Semáforo -->
-      <div class="flex flex-col justify-start gap-1.5 flex-1 min-w-0">
+      <div class="flex flex-col justify-start gap-2 sm:gap-1.5 flex-1 min-w-0">
         <!-- Ficha de usuario (Avatar + Nombre + Cargo + Buscador) -->
         <div class="flex items-center gap-3">
-          <div class="w-14 h-14 shrink-0 rounded-full overflow-hidden bg-[var(--mis-primary-light)] flex items-center justify-center">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full overflow-hidden bg-[var(--mis-primary-light)]/20 flex items-center justify-center border border-[var(--mis-border)]">
             @if (perfil.imagenUrl) {
               <img [src]="perfil.imagenUrl" alt="" class="w-full h-full object-cover" referrerpolicy="no-referrer" />
             } @else {
-              <i class="pi pi-user text-[var(--mis-primary-text)] text-2xl"></i>
+              <i class="pi pi-user text-[var(--mis-primary-text)] text-xl sm:text-2xl"></i>
             }
           </div>
 
-          <div class="flex items-center gap-2 flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-1 min-w-0 justify-between">
             <div class="flex flex-col min-w-0">
-              <span class="font-semibold text-[15px] text-[var(--mis-text-primary)] truncate">{{ perfil.nombre }}</span>
-              <span class="text-[12px] text-[var(--mis-text-secondary)]">{{ perfil.nivel }}: {{ perfil.descripcionNivel }}</span>
+              <span class="font-extrabold text-[13px] sm:text-[15px] text-[var(--mis-text-primary)] truncate" [title]="perfil.nombre">{{ perfil.nombre }}</span>
+              <span class="text-[10px] sm:text-[12px] text-[var(--mis-text-secondary)] truncate" [title]="perfil.nivel + ': ' + perfil.descripcionNivel">{{ perfil.nivel }}: {{ perfil.descripcionNivel }}</span>
             </div>
             @if (incentivos.puedeElegirNivel()) {
               <button
                 type="button"
-                class="pi pi-search text-[14px] w-8 h-8 rounded-full flex items-center justify-center bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)] hover:opacity-80 shrink-0 ml-auto sm:ml-0"
+                class="pi pi-search text-[12px] sm:text-[14px] w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-[var(--mis-primary-light)]/20 text-[var(--mis-primary-text)] hover:bg-[var(--mis-primary-light)]/40 transition-colors shrink-0"
                 title="Cambiar de nivel"
                 (click)="abrirSelector.emit()"
               ></button>
@@ -30,11 +30,11 @@
         </div>
 
         <!-- Semáforo de variables (Abajo de la ficha de usuario, íconos grandes) -->
-        <div class="flex flex-wrap items-center gap-4 pt-1.5 border-t border-[var(--mis-border)]/50 mt-0.5">
+        <div class="grid grid-cols-3 sm:flex sm:flex-wrap items-start sm:items-center gap-2 sm:gap-4 pt-2 sm:pt-1.5 border-t border-[var(--mis-border)] mt-1 sm:mt-0.5">
           @for (item of semaforoVisible(); track item.id) {
-            <div class="flex flex-col items-center gap-1 min-w-[80px]">
-              <i [class]="item.icono + ' text-[30px] ' + claseIcono(item.val)"></i>
-              <span class="text-[13px] font-medium text-[var(--mis-text-secondary)] text-center leading-tight">{{ item.des }}</span>
+            <div class="flex flex-col items-center justify-start gap-1 p-1">
+              <i [class]="item.icono + ' text-[22px] sm:text-[30px] ' + claseIcono(item.val)"></i>
+              <span class="text-[9px] sm:text-[13px] font-medium text-[var(--mis-text-secondary)] text-center leading-tight line-clamp-2">{{ item.des }}</span>
             </div>
           }
         </div>

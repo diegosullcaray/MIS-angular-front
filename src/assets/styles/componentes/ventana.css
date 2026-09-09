@@ -99,6 +99,11 @@
 }
 
 .mis-window-light--cerrar { background: #ff5f57; }
+/* Luz que esta ventana no ofrece: se ve, no responde. */
+.mis-window-light--apagada {
+  background: var(--mis-window-light-apagada);
+  cursor: default;
+}
 /* El amarillo navega hacia atrás (antes minimizaba al explorador). */
 .mis-window-light--volver { background: #febc2e; }
 .mis-window-light--zoom { background: #28c840; }

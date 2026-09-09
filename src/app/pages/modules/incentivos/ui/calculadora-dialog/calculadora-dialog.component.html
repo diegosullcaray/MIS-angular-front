@@ -8,164 +8,273 @@
   header="Calculadora"
   appendTo="body"
 >
-  <div class="flex flex-col gap-4 py-1">
-    <div class="rounded-lg border border-[var(--mis-border)] p-3 flex flex-col gap-2">
-      <div class="flex items-center justify-between flex-wrap gap-2">
-        <span class="font-semibold text-[13px]">Comisión Total:</span>
-        <span class="text-[13px] font-semibold" [class]="comisionClase()">{{ comisionTexto() }}</span>
-        <span class="text-[14px] font-bold rounded px-2 py-1 bg-[var(--mis-primary-light)]">
-          S/. {{ incentivos.calculadora().bonoTotal | number: '.0-2' }}
+  <div class="flex flex-col gap-3 py-1">
+    
+    <!-- Header Hero (Comisión Total) -->
+    <div class="rounded-xl bg-gradient-to-r from-[var(--mis-primary)] to-[var(--mis-secondary)] p-3 sm:p-4 flex flex-col gap-3 shadow-sm text-[var(--mis-text-on-primary)] relative overflow-hidden">
+      <!-- Brillo sutil de fondo -->
+      <div class="absolute -top-10 -right-10 w-48 h-48 bg-white opacity-5 rounded-full blur-2xl"></div>
+
+      <div class="flex items-start sm:items-center justify-between flex-row sm:flex-row gap-2 relative z-10 w-full">
+        <div class="flex flex-col">
+          <span class="font-semibold text-[10px] sm:text-[11px] text-white/80 uppercase tracking-wider">Comisión Total Estimada</span>
+          <span class="text-[22px] sm:text-[28px] font-extrabold leading-none tracking-tight text-white mt-1">S/. {{ incentivos.calculadora().bonoTotal | number: '.0-2' }}</span>
+        </div>
+        <span class="text-[10px] sm:text-[11px] font-bold px-2.5 sm:px-3 py-1 rounded-full shadow-sm bg-white/10 border border-white/20 text-white text-center" 
+              [class]="incentivos.calculadora().activo === 0 ? 'bg-red-500/80 text-white border-red-400' : ''">
+          {{ comisionTexto() }}
         </span>
       </div>
-      <div class="grid grid-cols-3 gap-2 text-[12px]">
-        <div class="flex flex-col gap-1">
-          <span class="text-[var(--mis-text-secondary)]">Base:</span>
-          <span class="rounded px-2 py-1 bg-[var(--mis-primary-light)] font-semibold">S/. {{ incentivos.calculadora().bonoBase | number: '.0-2' }}</span>
+
+      <div class="grid grid-cols-3 gap-2 text-[12px] relative z-10 mt-1">
+        <div class="flex flex-col gap-0.5 bg-black/20 rounded-md p-1.5 sm:p-2 border border-white/10 transition-colors hover:bg-black/30 items-center sm:items-start text-center sm:text-left">
+          <span class="text-white/80 text-[8px] sm:text-[9px] uppercase font-bold tracking-wide">Base</span>
+          <span class="font-extrabold text-[12px] sm:text-[14px] text-white">S/. {{ incentivos.calculadora().bonoBase | number: '.0-2' }}</span>
         </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-[var(--mis-text-secondary)]">Plus:</span>
-          <span class="rounded px-2 py-1 bg-[var(--mis-primary-light)] font-semibold">S/. {{ incentivos.calculadora().bonoPlus | number: '.0-2' }}</span>
+        <div class="flex flex-col gap-0.5 bg-black/20 rounded-md p-1.5 sm:p-2 border border-white/10 transition-colors hover:bg-black/30 items-center sm:items-start text-center sm:text-left">
+          <span class="text-white/80 text-[8px] sm:text-[9px] uppercase font-bold tracking-wide">Plus</span>
+          <span class="font-extrabold text-[12px] sm:text-[14px] text-white">S/. {{ incentivos.calculadora().bonoPlus | number: '.0-2' }}</span>
         </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-[var(--mis-text-secondary)]">Super Plus:</span>
-          <span class="rounded px-2 py-1 bg-[var(--mis-primary-light)] font-semibold">S/. {{ incentivos.calculadora().bonoSuperPlus | number: '.0-2' }}</span>
+        <div class="flex flex-col gap-0.5 bg-black/20 rounded-md p-1.5 sm:p-2 border border-white/10 transition-colors hover:bg-black/30 items-center sm:items-start text-center sm:text-left">
+          <span class="text-white/80 text-[8px] sm:text-[9px] uppercase font-bold tracking-wide">S. Plus</span>
+          <span class="font-extrabold text-[12px] sm:text-[14px] text-white">S/. {{ incentivos.calculadora().bonoSuperPlus | number: '.0-2' }}</span>
         </div>
       </div>
     </div>
 
+    <!-- Banner de Error -->
     @if (errorComposicion()) {
-      <div class="text-[12px] text-[var(--mis-danger)]">La composición de "Pago Puntual" debe sumar 100% entre los 3 tramos.</div>
+      <div class="rounded-xl bg-red-50 border border-red-200 p-2.5 flex items-center gap-2 shadow-sm animate-fadein">
+        <div class="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+          <i class="pi pi-exclamation-triangle text-[14px] text-red-600"></i>
+        </div>
+        <span class="text-[12px] font-medium text-red-700">La composición de <strong>Pago Puntual</strong> debe sumar 100%.</span>
+      </div>
     }
 
-    <div class="max-h-[50vh] overflow-y-auto flex flex-col gap-3">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        @for (item of variablesVisibles(); track item.id) {
-          <div class="rounded-lg border border-[var(--mis-border)] p-2.5 flex flex-col gap-2" [class.sm:col-span-2]="item.id === 'efec1'">
-            <div class="flex items-center gap-2">
-              <i [class]="item.icono + ' text-[20px] text-[var(--mis-primary-text)]'"></i>
-              <span class="text-[14px] font-semibold">{{ item.des }}</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div class="flex flex-col gap-1">
-                <span class="text-[10px] text-[var(--mis-text-secondary)]">Cierre:</span>
-                <p-inputnumber
-                  [ngModel]="valorMostrado(item.key, item.formato)"
-                  (ngModelChange)="actualizarDesdeInput(item.key, item.formato, $event)"
-                  [minFractionDigits]="2"
-                  [maxFractionDigits]="2"
-                  [suffix]="item.formato === 'percent' ? '%' : ''"
-                  inputStyleClass="w-full text-[12px]"
-                />
+    <!-- Contenedor Scrollable -->
+    <div class="max-h-[52vh] overflow-y-auto flex flex-col gap-4 p-1 custom-scrollbar">
+      
+      <!-- Sección Variables Principales -->
+      <div class="flex flex-col gap-2">
+        <h3 class="text-[14px] font-extrabold text-[var(--mis-text-primary)] flex items-center gap-1.5 ml-1">
+          <i class="pi pi-list text-[var(--mis-primary)]"></i> Indicadores Principales
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          @for (item of variablesVisibles(); track item.id) {
+            <div class="rounded-xl border bg-[var(--mis-surface)] p-3 flex flex-col gap-3 transition-all duration-300 relative" 
+                 [class]="focusedItem() === item.id ? 'border-[var(--mis-primary)] shadow-md shadow-[var(--mis-primary)]/20 ring-1 ring-[var(--mis-primary)] z-10' : 'border-[var(--mis-border)] shadow-sm hover:shadow-md'"
+                 [class.sm:col-span-2]="item.id === 'efec1'">
+              
+              <!-- Header de Tarjeta -->
+              <div class="flex items-center gap-2 border-b border-[var(--mis-border)] pb-2">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300"
+                     [class]="focusedItem() === item.id ? 'bg-[var(--mis-primary)]' : 'bg-[var(--mis-primary-light)]/20'">
+                  <i [class]="item.icono + ' text-[13px] transition-colors duration-300'" [class.text-white]="focusedItem() === item.id" [class.text-[var(--mis-primary)]]="focusedItem() !== item.id"></i>
+                </div>
+                <span class="text-[13px] font-bold text-[var(--mis-text-primary)] transition-colors duration-300" [class.text-[var(--mis-primary)]]="focusedItem() === item.id">{{ item.des }}</span>
               </div>
-              <div class="flex flex-col gap-1">
-                <span class="text-[10px] text-[var(--mis-text-secondary)]">Meta:</span>
-                <span class="text-[12px] py-1.5">{{ formatear(item.met, item.formato) }}</span>
-              </div>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-bold uppercase text-[var(--mis-text-primary)] tracking-wider">Cierre (Edit)</span>
+                  <p-inputgroup>
+                    <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-2 py-0 transition-colors duration-300" [class.border-[var(--mis-primary)]]="focusedItem() === item.id">
+                      <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-[var(--mis-primary)]]="focusedItem() === item.id" [class.text-[var(--mis-text-secondary)]]="focusedItem() !== item.id"></i>
+                    </p-inputgroup-addon>
+                    <p-inputnumber
+                      [ngModel]="valorMostrado(item.key, item.formato)"
+                      (ngModelChange)="actualizarDesdeInput(item.key, item.formato, $event)"
+                      (onFocus)="focusedItem.set(item.id)"
+                      (onBlur)="focusedItem.set(null)"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="2"
+                      [suffix]="item.formato === 'percent' ? '%' : ''"
+                      inputStyleClass="w-full text-[12px] font-bold py-1 bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-[var(--mis-primary)] focus:border-[var(--mis-primary)] text-[var(--mis-text-primary)]"
+                    />
+                  </p-inputgroup>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-bold uppercase text-[var(--mis-text-secondary)] tracking-wider">Meta Asig.</span>
+                  <div class="bg-[#E2E8F0] shadow-inner dark:bg-white/10 dark:shadow-none rounded-md px-2 py-1 border border-[var(--mis-border)] h-[32px] flex items-center transition-colors duration-300" [class.border-[var(--mis-primary)]]="focusedItem() === item.id">
+                    <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ formatear(item.met, item.formato) }}</span>
+                  </div>
+                </div>
 
-              @if (item.id === 'efec1') {
-                <div class="flex flex-col gap-1">
-                  <span class="text-[10px] text-[var(--mis-text-secondary)]">Pago Puntual:</span>
-                  <p-inputnumber
-                    [ngModel]="valorMostrado('tp1', 'percent')"
-                    (ngModelChange)="actualizarDesdeInput('tp1', 'percent', $event)"
-                    suffix="%"
-                    inputStyleClass="w-full text-[12px]"
-                    [class.p-invalid]="errorComposicion()"
-                  />
-                </div>
-                <div class="flex flex-col gap-1">
-                  <span class="text-[10px] text-[var(--mis-text-secondary)]">1 a 8 días:</span>
-                  <p-inputnumber
-                    [ngModel]="valorMostrado('tp2', 'percent')"
-                    (ngModelChange)="actualizarDesdeInput('tp2', 'percent', $event)"
-                    suffix="%"
-                    inputStyleClass="w-full text-[12px]"
-                    [class.p-invalid]="errorComposicion()"
-                  />
-                </div>
-                <div class="flex flex-col gap-1">
-                  <span class="text-[10px] text-[var(--mis-text-secondary)]">9 a más días:</span>
-                  <p-inputnumber
-                    [ngModel]="valorMostrado('tp3', 'percent')"
-                    (ngModelChange)="actualizarDesdeInput('tp3', 'percent', $event)"
-                    suffix="%"
-                    inputStyleClass="w-full text-[12px]"
-                    [class.p-invalid]="errorComposicion()"
-                  />
-                </div>
-              }
+                @if (item.id === 'efec1') {
+                  <!-- Tramo de Días Especial -->
+                  <div class="col-span-2 grid grid-cols-3 gap-2 bg-[var(--mis-panel-bg)] p-2 rounded-md border border-[var(--mis-border)] transition-colors duration-300" [class.border-[var(--mis-primary)]]="focusedItem() === item.id">
+                    <div class="flex flex-col gap-1">
+                      <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">Pago Puntual</span>
+                      <p-inputgroup>
+                        <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-1 py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-text-secondary)]"></i></p-inputgroup-addon>
+                        <p-inputnumber
+                          [ngModel]="valorMostrado('tp1', 'percent')"
+                          (ngModelChange)="actualizarDesdeInput('tp1', 'percent', $event)"
+                          (onFocus)="focusedItem.set(item.id)"
+                          (onBlur)="focusedItem.set(null)"
+                          suffix="%"
+                          inputStyleClass="w-full text-[11px] text-center font-bold bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-[var(--mis-primary)] focus:border-[var(--mis-primary)] text-[var(--mis-text-primary)] py-1 px-1"
+                          [class.p-invalid]="errorComposicion()"
+                        />
+                      </p-inputgroup>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">1 a 8 días</span>
+                      <p-inputgroup>
+                        <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-1 py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-text-secondary)]"></i></p-inputgroup-addon>
+                        <p-inputnumber
+                          [ngModel]="valorMostrado('tp2', 'percent')"
+                          (ngModelChange)="actualizarDesdeInput('tp2', 'percent', $event)"
+                          (onFocus)="focusedItem.set(item.id)"
+                          (onBlur)="focusedItem.set(null)"
+                          suffix="%"
+                          inputStyleClass="w-full text-[11px] text-center font-bold bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-[var(--mis-primary)] focus:border-[var(--mis-primary)] text-[var(--mis-text-primary)] py-1 px-1"
+                          [class.p-invalid]="errorComposicion()"
+                        />
+                      </p-inputgroup>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">9 a más días</span>
+                      <p-inputgroup>
+                        <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-1 py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-text-secondary)]"></i></p-inputgroup-addon>
+                        <p-inputnumber
+                          [ngModel]="valorMostrado('tp3', 'percent')"
+                          (ngModelChange)="actualizarDesdeInput('tp3', 'percent', $event)"
+                          (onFocus)="focusedItem.set(item.id)"
+                          (onBlur)="focusedItem.set(null)"
+                          suffix="%"
+                          inputStyleClass="w-full text-[11px] text-center font-bold bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-[var(--mis-primary)] focus:border-[var(--mis-primary)] text-[var(--mis-text-primary)] py-1 px-1"
+                          [class.p-invalid]="errorComposicion()"
+                        />
+                      </p-inputgroup>
+                    </div>
+                  </div>
+                }
 
-              <div class="flex flex-col gap-1">
-                <span class="text-[10px] text-[var(--mis-text-secondary)]">Bono Base:</span>
-                <span class="text-[12px] font-semibold">S/. {{ item.bob | number: '.0-2' }}</span>
-              </div>
-              <div class="flex flex-col gap-1">
-                <span class="text-[10px] text-[var(--mis-text-secondary)]">Bono Plus:</span>
-                <span class="text-[12px] font-semibold">S/. {{ item.bop | number: '.0-2' }}</span>
+                <!-- Sub-Totales de la variable -->
+                <div class="col-span-2 grid grid-cols-2 gap-3 mt-0.5 border-t border-[var(--mis-border)] pt-2 transition-colors duration-300" [class.border-[var(--mis-primary)]]="focusedItem() === item.id">
+                  <div class="flex flex-col">
+                    <span class="text-[9px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-[var(--mis-primary)]]="focusedItem() === item.id">Bono Base Est.</span>
+                    <span class="text-[13px] font-extrabold text-[var(--mis-primary)]">S/. {{ item.bob | number: '.0-2' }}</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-[9px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-[var(--mis-secondary)]]="focusedItem() === item.id">Bono Plus Est.</span>
+                    <span class="text-[13px] font-extrabold text-[var(--mis-secondary)]">S/. {{ item.bop | number: '.0-2' }}</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        }
+          }
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        @for (item of plusVisibles(); track item.id) {
-          <div class="rounded-lg border border-[var(--mis-border)] p-2.5 flex flex-col gap-2 bg-[var(--mis-primary-light)]/30">
-            <div class="flex items-center gap-2">
-              <i [class]="item.icono + ' text-[var(--mis-primary-text)]'"></i>
-              <span class="text-[12px] font-medium">{{ item.des }}</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div class="flex flex-col gap-1">
-                <span class="text-[10px] text-[var(--mis-text-secondary)]">{{ etiquetaValor(item) }}</span>
-                @if (item.id === 'clib' || !item.enab) {
-                  <span class="text-[12px] py-1.5">{{ formatear(item.val, item.formato) }}</span>
-                } @else if (item.id === 'sis') {
-                  <p-select
-                    [options]="opcionesSistematica"
-                    optionLabel="label"
-                    optionValue="value"
-                    [ngModel]="valor(item.key)"
-                    (ngModelChange)="actualizar(item.key, $event)"
-                    styleClass="text-[12px]"
-                  />
-                } @else {
-                  <p-inputnumber
-                    [ngModel]="valorMostrado(item.key, item.formato)"
-                    (ngModelChange)="actualizarDesdeInput(item.key, item.formato, $event)"
-                    [minFractionDigits]="2"
-                    [maxFractionDigits]="2"
-                    [suffix]="item.formato === 'percent' ? '%' : ''"
-                    inputStyleClass="w-full text-[12px]"
-                  />
-                }
-              </div>
-              <div class="flex flex-col gap-1">
-                <span class="text-[10px] text-[var(--mis-text-secondary)]">{{ etiquetaMeta(item) }}</span>
-                @if (item.id === 'prod') {
-                  <span class="text-[12px] py-1.5">{{ formatear(item.met, 'number') }}</span>
-                } @else if (item.id === 'tas') {
-                  <p-inputnumber
-                    [ngModel]="valorMostrado('p_tas2', 'percent')"
-                    (ngModelChange)="actualizarDesdeInput('p_tas2', 'percent', $event)"
-                    suffix="%"
-                    inputStyleClass="w-full text-[12px]"
-                  />
-                }
-              </div>
-              <div class="flex flex-col gap-1">
-                <span class="text-[10px] text-[var(--mis-text-secondary)]" [class.opacity-50]="!item.suma">Bono Super Plus:</span>
-                <span class="text-[12px] font-semibold" [class.opacity-50]="!item.suma">S/. {{ item.bos | number: '.0-2' }}</span>
-              </div>
-              @if (item.id === 'tas') {
-                <div class="flex flex-col gap-1">
-                  <span class="text-[10px] text-[var(--mis-text-secondary)]">Dif. Tasa:</span>
-                  <span class="text-[12px] font-semibold">{{ diffTasaPbs() }} pbs</span>
+      <!-- Sección Super Plus -->
+      <div class="flex flex-col gap-2 mt-1">
+        <h3 class="text-[14px] font-extrabold text-[var(--mis-text-primary)] flex items-center gap-1.5 ml-1">
+          <i class="pi pi-star-fill text-amber-500 text-[13px]"></i> Bonos Super Plus
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          @for (item of plusVisibles(); track item.id) {
+            <div class="rounded-xl border bg-[var(--mis-surface)] p-3 flex flex-col gap-3 transition-all duration-300 relative"
+                 [class]="focusedItem() === item.id ? 'border-amber-500 shadow-md shadow-amber-500/20 ring-1 ring-amber-500 z-10' : 'border-[var(--mis-border)] shadow-sm hover:shadow-md'">
+              
+              <div class="flex items-center gap-2 border-b border-[var(--mis-border)] pb-2 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300"
+                     [class]="focusedItem() === item.id ? 'bg-amber-500' : 'bg-amber-500/10'">
+                  <i [class]="item.icono + ' text-[13px] transition-colors duration-300'" [class.text-white]="focusedItem() === item.id" [class.text-amber-600]="focusedItem() !== item.id"></i>
                 </div>
-              }
+                <span class="text-[13px] font-bold transition-colors duration-300" [class]="focusedItem() === item.id ? 'text-amber-600' : 'text-[var(--mis-text-primary)]'">{{ item.des }}</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-bold uppercase" [class]="(item.id === 'clib' || !item.enab) ? 'text-[var(--mis-text-secondary)] tracking-wider' : 'text-[var(--mis-text-primary)] tracking-wider'">{{ etiquetaValor(item) }} {{(item.id === 'clib' || !item.enab) ? '' : '(Edit)'}}</span>
+                  @if (item.id === 'clib' || !item.enab) {
+                    <div class="bg-[#E2E8F0] shadow-inner dark:bg-white/10 dark:shadow-none rounded-md px-2 py-1 border border-[var(--mis-border)] h-[32px] flex items-center">
+                      <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ formatear(item.val, item.formato) }}</span>
+                    </div>
+                  } @else if (item.id === 'sis') {
+                    <p-inputgroup>
+                      <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-2 py-0 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
+                        <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-text-secondary)]]="focusedItem() !== item.id"></i>
+                      </p-inputgroup-addon>
+                      <p-select
+                        [options]="opcionesSistematica"
+                        optionLabel="label"
+                        optionValue="value"
+                        [ngModel]="valor(item.key)"
+                        (ngModelChange)="actualizar(item.key, $event)"
+                        (onFocus)="focusedItem.set(item.id)"
+                        (onBlur)="focusedItem.set(null)"
+                        styleClass="w-full text-[12px] font-bold bg-[var(--mis-surface)] border-[var(--mis-border)] text-[var(--mis-text-primary)] h-[32px] flex items-center transition-colors"
+                      />
+                    </p-inputgroup>
+                  } @else {
+                    <p-inputgroup>
+                      <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-2 py-0 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
+                        <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-text-secondary)]]="focusedItem() !== item.id"></i>
+                      </p-inputgroup-addon>
+                      <p-inputnumber
+                        [ngModel]="valorMostrado(item.key, item.formato)"
+                        (ngModelChange)="actualizarDesdeInput(item.key, item.formato, $event)"
+                        (onFocus)="focusedItem.set(item.id)"
+                        (onBlur)="focusedItem.set(null)"
+                        [minFractionDigits]="2"
+                        [maxFractionDigits]="2"
+                        [suffix]="item.formato === 'percent' ? '%' : ''"
+                        inputStyleClass="w-full text-[12px] font-bold py-1 bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-amber-500 focus:border-amber-500 text-[var(--mis-text-primary)] transition-colors"
+                      />
+                    </p-inputgroup>
+                  }
+                </div>
+                
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-bold uppercase" [class]="item.id === 'tas' ? 'text-[var(--mis-text-primary)] tracking-wider' : 'text-[var(--mis-text-secondary)] tracking-wider'">{{ etiquetaMeta(item) || 'Meta' }} {{item.id === 'tas' ? '(Edit)' : ''}}</span>
+                  @if (item.id === 'prod') {
+                    <div class="bg-[#E2E8F0] shadow-inner dark:bg-white/10 dark:shadow-none rounded-md px-2 py-1 border border-[var(--mis-border)] h-[32px] flex items-center">
+                      <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ formatear(item.met, 'number') }}</span>
+                    </div>
+                  } @else if (item.id === 'tas') {
+                    <p-inputgroup>
+                      <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-2 py-0 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
+                        <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-text-secondary)]]="focusedItem() !== item.id"></i>
+                      </p-inputgroup-addon>
+                      <p-inputnumber
+                        [ngModel]="valorMostrado('p_tas2', 'percent')"
+                        (ngModelChange)="actualizarDesdeInput('p_tas2', 'percent', $event)"
+                        (onFocus)="focusedItem.set(item.id)"
+                        (onBlur)="focusedItem.set(null)"
+                        suffix="%"
+                        inputStyleClass="w-full text-[12px] font-bold py-1 bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-amber-500 focus:border-amber-500 text-[var(--mis-text-primary)] transition-colors"
+                      />
+                    </p-inputgroup>
+                  } @else {
+                    <div class="bg-[#E2E8F0] shadow-inner dark:bg-white/10 dark:shadow-none rounded-md px-2 py-1 border border-[var(--mis-border)] h-[32px] flex items-center">
+                      <span class="text-[13px] font-extrabold text-[var(--mis-text-tertiary)]">--</span>
+                    </div>
+                  }
+                </div>
+                
+                <!-- Sub-Total Super Plus -->
+                <div class="col-span-2 grid grid-cols-2 gap-3 mt-0.5 border-t border-[var(--mis-border)] pt-2 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
+                  <div class="flex flex-col">
+                    <span class="text-[9px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-amber-600]="focusedItem() === item.id" [class.opacity-50]="!item.suma">Bono Est.</span>
+                    <span class="text-[13px] font-extrabold text-amber-600" [class.opacity-50]="!item.suma">S/. {{ item.bos | number: '.0-2' }}</span>
+                  </div>
+                  @if (item.id === 'tas') {
+                    <div class="flex flex-col">
+                      <span class="text-[9px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-amber-600]="focusedItem() === item.id">Dif. Tasa</span>
+                      <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ diffTasaPbs() }} pbs</span>
+                    </div>
+                  }
+                </div>
+              </div>
             </div>
-          </div>
-        }
+          }
+        </div>
       </div>
     </div>
   </div>

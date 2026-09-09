@@ -82,10 +82,28 @@ Sirve también para columnas que no son un dato: definí la columna con un `fiel
 | `searchFields` | `string[]` | `[]` | Campos donde busca; **vacío oculta el buscador** |
 | `searchPlaceholder` | `string` | `'Buscar...'` | Placeholder del buscador |
 | `showRefreshButton` | `boolean` | `false` | Botón "Actualizar" en el caption |
+| `selectableRows` | `boolean` | `false` | Hace elegible la fila: clic o Enter la resaltan |
+| `selectedRow` | `T \| null` | `null` | Fila resaltada — se compara por identidad |
 
 | Output | Cuándo |
 |---|---|
 | `refrescar` | Clic en "Actualizar" — el componente no recarga nada por su cuenta |
+| `filaSeleccionada` | Clic (o Enter) sobre una fila, solo con `selectableRows` |
+
+### Elegir una fila
+
+La tabla no guarda la selección: avisa el clic y pinta la fila que le pasen. El estado vive en el
+consumidor, que decide qué hacer con ella (habilitar un botón, cerrar un diálogo, etc.).
+
+```html
+<app-data-table
+  [columns]="columnas"
+  [data]="filas()"
+  [selectableRows]="true"
+  [selectedRow]="elegida()"
+  (filaSeleccionada)="elegida.set($event)"
+/>
+```
 
 ## `DataTableColumn`
 

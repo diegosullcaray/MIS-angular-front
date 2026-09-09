@@ -99,6 +99,33 @@
 .p-dialog .p-dialog-header-actions::before { order: 2; }
 .p-dialog .p-dialog-header-actions::after { order: 4; }
 
+/* ── Semáforo propio del diálogo ──────────────────────────────
+   Un diálogo con pasos internos (volver de una lista a su menú) necesita una
+   luz que haga algo, y PrimeNG no deja inyectar nada en su grupo de acciones.
+   La salida es que el diálogo proyecte su propio semáforo en el header con
+   `.mis-window-lights.mis-dialog-lights`: cuando ese grupo existe se apaga el
+   automático —el botón de cerrar de PrimeNG y las dos luces inertes— y las
+   luces reales las pone la plantilla. El botón se oculta, no se desactiva:
+   `closable` sigue en true, que es lo que PrimeNG mira para que Escape siga
+   cerrando el diálogo. */
+.p-dialog .p-dialog-header:has(.mis-dialog-lights) .p-dialog-header-actions {
+  display: none;
+}
+
+.p-dialog .p-dialog-header > .mis-dialog-lights {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+}
+
+/* Diálogo cuyo pie depende del paso que se esté mostrando: la plantilla del
+   pie tiene que existir desde el arranque —PrimeNG resuelve los `pTemplate`
+   una sola vez, en `onAfterContentInit`—, así que el paso que no lo necesita
+   lo esconde con esta clase en vez de no declararlo. */
+.p-dialog.mis-dialog--sin-pie .p-dialog-footer {
+  display: none;
+}
+
 .p-dialog .p-dialog-header-actions:has(.p-dialog-maximize-button)::after {
   display: none;
 }
