@@ -55,9 +55,11 @@ export class DetalleVariableContentComponent {
   });
 
   protected readonly puedeVolver = computed(() => this.pila().length > 1);
-  /** Los botones Indicadores/Ranking solo aplican por encima del nivel individual — `showButtons()` del legado. */
-  protected readonly muestraBotonesToggle = computed(() => (this.frameActual()?.tipCod ?? 1) !== 1);
-
+  /** Los botones Indicadores/Ranking solo aplican por encima del nivel individual — `showButtons()` del legado. Para Cartera Vigente (1) se oculta para mantener la vista única de indicadores como en legacy. */
+  protected readonly muestraBotonesToggle = computed(() => {
+    if (this.tipoDetalle() === 'cv' && this.codVarNormalizado() === 1) return false;
+    return (this.frameActual()?.tipCod ?? 1) !== 1;
+  });
   /** Filas de primer nivel de la tabla de indicadores: las del bloque 1. */
   protected readonly varsMostradas = computed(
     () => this.frameActual()?.resultado.vars.filter((v) => v.cod_block === 1) ?? []

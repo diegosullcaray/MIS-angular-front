@@ -1,0 +1,72 @@
+<!-- Pestaña para volver a abrirlo. Vive fuera del `aside` para que siga
+     alcanzable cuando el panel está cerrado (y fuera de pantalla). -->
+@if (!abierto()) {
+  <button
+    type="button"
+    class="novedades-pestania"
+    (click)="alternar()"
+    aria-expanded="false"
+    aria-controls="novedades-panel"
+    aria-label="Mostrar el panel de novedades"
+    pTooltip="Novedades"
+    tooltipPosition="left"
+  >
+    <i class="pi pi-sparkles" aria-hidden="true"></i>
+    <span class="novedades-pestania-texto">Novedades</span>
+    @if (hayNuevas()) {
+      <span class="novedades-punto" aria-hidden="true"></span>
+    }
+  </button>
+}
+
+<aside
+  id="novedades-panel"
+  class="novedades"
+  [class.novedades--cerrado]="!abierto()"
+  [attr.aria-hidden]="!abierto()"
+  [attr.inert]="abierto() ? null : ''"
+  aria-labelledby="novedades-titulo"
+>
+  <header class="novedades-cabecera">
+    <img class="novedades-mascota" src="/assets/images/fc/tours/mascota-celebra.png" alt="" aria-hidden="true" />
+    <div class="novedades-cabecera-texto">
+      <h2 id="novedades-titulo" class="novedades-titulo">Novedades</h2>
+      <p class="novedades-bajada">Elegí una y te la muestro en pantalla.</p>
+    </div>
+    <button
+      type="button"
+      class="novedades-cerrar"
+      (click)="alternar()"
+      aria-expanded="true"
+      aria-controls="novedades-panel"
+      aria-label="Ocultar el panel de novedades"
+      pTooltip="Ocultar"
+      tooltipPosition="bottom"
+    >
+      <i class="pi pi-angle-right" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <ul class="novedades-lista">
+    @for (novedad of novedades; track novedad.id) {
+      <li>
+        <button type="button" class="novedad" (click)="verGuia(novedad.id)">
+          <span class="novedad-icono" aria-hidden="true"><i [class]="novedad.icono"></i></span>
+          <span class="novedad-texto">
+            <span class="novedad-titulo">
+              {{ novedad.titulo }}
+              @if (esNueva(novedad)) {
+                <span class="novedad-etiqueta">Nuevo</span>
+              }
+            </span>
+            <span class="novedad-resumen">{{ novedad.resumen }}</span>
+            <span class="novedad-accion">
+              <i class="pi pi-play-circle" aria-hidden="true"></i>
+              Ver guía
+            </span>
+          </span>
+        </button>
+      </li>
+    }
+  </ul>
+</aside>

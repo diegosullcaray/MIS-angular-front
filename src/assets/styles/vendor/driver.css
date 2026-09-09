@@ -201,3 +201,43 @@
 :root.dark .driver-popover-arrow-side-right.driver-popover-arrow {
   border-right-color: var(--mis-surface, #1e293b) !important;
 }
+
+/* ── El personaje que da la guía ──────────────────────────────
+   Los pasos de los recorridos (ver `NovedadesTourService`) traen el marcado de
+   la mascota dentro de `description`, que driver.js pinta con `innerHTML`. La
+   imagen es decorativa: lo que se lee es el texto de al lado. */
+.mis-tour-fila {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+}
+
+.mis-tour-mascota {
+  width: 56px;
+  height: auto;
+  flex-shrink: 0;
+  /* Apenas levantada, para que se apoye en el texto sin subirse al título. */
+  margin-top: -6px;
+  filter: drop-shadow(0 4px 8px rgba(11, 79, 140, 0.25));
+  pointer-events: none;
+}
+
+/* En el paso final el personaje aparece de cuerpo con la copa: ocupa más alto,
+   así que se alinea con la base del texto en vez de con su primera línea. */
+.mis-tour-mascota--celebra {
+  width: 68px;
+  margin-top: -2px;
+}
+
+.mis-tour-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .mis-tour-mascota,
+  .mis-tour-mascota--celebra {
+    width: 44px;
+    margin-top: 0;
+  }
+}

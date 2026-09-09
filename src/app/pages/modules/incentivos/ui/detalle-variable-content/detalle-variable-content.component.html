@@ -101,7 +101,10 @@
         <p-table [value]="varsMostradas()" styleClass="p-datatable-sm" scrollHeight="360px" [scrollable]="true" [stripedRows]="true">
           <ng-template pTemplate="header">
             <tr class="bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)]">
-              <th class="whitespace-nowrap text-[12px] uppercase bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Variable</th>
+              <th rowspan="2" class="whitespace-nowrap text-[12px] uppercase bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Variable</th>
+              <th colspan="3" class="text-center whitespace-nowrap text-[12px] uppercase bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Avance</th>
+            </tr>
+            <tr class="bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)]">
               <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">{{ frame.resultado.card.f1 }}</th>
               <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">{{ frame.resultado.card.f2 }}</th>
               <th class="whitespace-nowrap text-[12px] uppercase text-right bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] py-2.5 px-3">Variación</th>

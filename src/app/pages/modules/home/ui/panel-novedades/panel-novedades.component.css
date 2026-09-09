@@ -1,0 +1,235 @@
+/* ── Panel de novedades ───────────────────────────────────────
+   Barra fija contra el borde derecho, por debajo del header del shell. Va
+   `fixed` y no en el flujo del Home a propósito: el Home es una columna de
+   ancho de lectura y el panel tiene que quedar pegado al borde de la pantalla
+   por más ancho que sea el monitor. */
+:host {
+  display: contents;
+}
+
+.novedades {
+  position: fixed;
+  top: var(--mis-header-h);
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  width: 300px;
+  max-width: 88vw;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-3);
+  padding: var(--mis-space-3);
+  background: var(--mis-glass-bg);
+  backdrop-filter: saturate(180%) blur(18px);
+  border-left: 1px solid var(--mis-glass-border);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
+  overflow-y: auto;
+  transition: transform var(--mis-transition-base);
+}
+
+.novedades--cerrado {
+  /* Se aparta del todo: el 1px extra esconde también el borde izquierdo. */
+  transform: translateX(calc(100% + 1px));
+}
+
+/* ── Pestaña de reapertura ──────────────────────────────────── */
+.novedades-pestania {
+  position: fixed;
+  top: calc(var(--mis-header-h) + var(--mis-space-4));
+  right: 0;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  padding: var(--mis-space-2) var(--mis-space-3);
+  border: 1px solid var(--mis-glass-border);
+  border-right: 0;
+  border-radius: var(--mis-radius-md) 0 0 var(--mis-radius-md);
+  background: var(--mis-surface-translucido);
+  backdrop-filter: saturate(180%) blur(12px);
+  box-shadow: var(--mis-shadow-md);
+  color: var(--mis-primary-text);
+  font-family: inherit;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  cursor: pointer;
+  transition: padding var(--mis-transition-fast), color var(--mis-transition-fast);
+}
+
+.novedades-pestania:hover {
+  padding-right: var(--mis-space-4);
+  color: var(--mis-secondary-hover);
+}
+
+.novedades-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-secondary);
+}
+
+/* En pantallas angostas la pestaña se reduce al ícono: el texto se comía el
+   ancho justo donde menos sobra. */
+@media (max-width: 640px) {
+  .novedades-pestania-texto {
+    display: none;
+  }
+}
+
+/* ── Cabecera ───────────────────────────────────────────────── */
+.novedades-cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  padding-bottom: var(--mis-space-3);
+  border-bottom: 1px solid var(--mis-border);
+}
+
+/* El personaje es el mismo que guía los recorridos: acá anticipa quién va a
+   aparecer al elegir una novedad. */
+.novedades-mascota {
+  width: 52px;
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
+}
+
+.novedades-cabecera-texto {
+  min-width: 0;
+  flex: 1;
+}
+
+.novedades-titulo {
+  margin: 0;
+  font-size: var(--mis-text-lg);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+}
+
+.novedades-bajada {
+  margin: 0;
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-secondary);
+}
+
+.novedades-cerrar {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--mis-radius-sm);
+  background: transparent;
+  color: var(--mis-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast), color var(--mis-transition-fast);
+}
+
+.novedades-cerrar:hover {
+  background: var(--mis-hover-bg);
+  color: var(--mis-text-primary);
+}
+
+/* ── Lista ──────────────────────────────────────────────────── */
+.novedades-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-2);
+}
+
+.novedad {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mis-space-3);
+  width: 100%;
+  padding: var(--mis-space-3);
+  text-align: left;
+  background: var(--mis-surface-translucido);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color var(--mis-transition-fast), box-shadow var(--mis-transition-fast),
+    transform var(--mis-transition-fast);
+}
+
+.novedad:hover,
+.novedad:focus-visible {
+  border-color: var(--mis-secondary);
+  box-shadow: var(--mis-shadow-md);
+  transform: translateX(-2px);
+}
+
+.novedad-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: var(--mis-radius-sm);
+  background: var(--mis-primary-light);
+  color: var(--mis-primary-text);
+  font-size: 14px;
+}
+
+.novedad-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.novedad-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  flex-wrap: wrap;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+}
+
+.novedad-etiqueta {
+  padding: 0 6px;
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-secondary-light);
+  color: var(--mis-primary-text);
+  font-size: 10px;
+  font-weight: var(--mis-font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.novedad-resumen {
+  font-size: var(--mis-text-xs);
+  line-height: var(--mis-leading-normal);
+  color: var(--mis-text-secondary);
+}
+
+.novedad-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--mis-space-1);
+  font-size: var(--mis-text-xs);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-secondary-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .novedades {
+    transition: none;
+  }
+
+  .novedad:hover,
+  .novedad:focus-visible {
+    transform: none;
+  }
+}
