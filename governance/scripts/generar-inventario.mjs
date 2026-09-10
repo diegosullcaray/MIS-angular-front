@@ -123,6 +123,116 @@ function inventarioCodRep() {
   return { entradas: entradas.sort((a, b) => a.constante.localeCompare(b.constante)), totalCodigos: codigos.size };
 }
 
+/**
+ * Inventario de rutas de acción del backend Ant (los `strand`) que el frontend
+ * consume, con sus parámetros y la clave de respuesta que espera.
+ *
+ * El catálogo de `cod_rep` responde "qué reportes se piden"; esto responde la
+ * otra mitad: **qué le pide el frontend al backend y con qué parámetros**. Vive
+ * repartido en los servicios de `core/winder/instances/`, uno por módulo de
+ * Ant, y no había forma de enumerarlo sin abrirlos todos.
+ */
+function inventarioStrands() {
+  const archivos = listarArchivos(resolve(SRC_APP, 'core/winder/instances'), ['.ts']).filter(
+    (a) => !a.endsWith('.spec.ts')
+  );
+  const servicios = [];
+
+  for (const archivo of archivos) {
+    const ruta = relative(RAIZ, archivo).split(sep).join('/');
+    const contenido = readFileSync(archivo, 'utf8');
+
+    const clase = contenido.match(/export class (\w+)/)?.[1] ?? ruta;
+    const puerto = contenido.match(/port:\s*(\d+)/)?.[1] ?? '—';
+    const appId = contenido.match(/appId:\s*'([^']+)'/)?.[1] ?? '—';
+
+    const llamadas = [];
+
+    // Forma corta: getSimpleResponseString('ruta', { p1, p2 }, 'respuesta')
+    const corta = /(getSimpleResponseString|getSimpleResponseStringNP|getSimpleResponseResource|postSimpleResponseString)\(\s*'([^']+)'\s*(?:,\s*(\{[\s\S]*?\})\s*)?(?:,\s*'([^']+)')?/g;
+    for (const m of contenido.matchAll(corta)) {
+      llamadas.push({
+        ruta: m[2],
+        verbo: m[1].startsWith('post') ? 'POST' : 'GET',
+        parametros: m[3] ? clavesDePayload(m[3]) : [],
+        respuesta: m[4] ?? 'response',
+        indice: m.index ?? 0,
+      });
+    }
+
+    // Forma larga: new Strand('ruta', 'respuesta') + pushToPayload('param', …)
+    for (const m of contenido.matchAll(/new Strand\(\s*'([^']+)'\s*(?:,\s*'([^']+)')?\s*\)/g)) {
+      const desde = m.index ?? 0;
+      const hasta = contenido.indexOf('return', desde);
+      const cuerpo = contenido.slice(desde, hasta === -1 ? desde + 600 : hasta);
+      llamadas.push({
+        ruta: m[1],
+        verbo: /this\.post/.test(contenido.slice(desde, desde + 900)) ? 'POST' : 'GET',
+        parametros: [...cuerpo.matchAll(/pushToPayload\(\s*'([^']+)'/g)].map((p) => p[1]),
+        respuesta: m[2] ?? 'response',
+        indice: desde,
+      });
+    }
+
+    if (llamadas.length === 0) continue;
+
+    // Cada llamada se atribuye al método público que la contiene.
+    const metodos = [...contenido.matchAll(/public (\w+)\(/g)].map((m) => ({ nombre: m[1], indice: m.index ?? 0 }));
+    for (const llamada of llamadas) {
+      const previos = metodos.filter((m) => m.indice < llamada.indice);
+      llamada.metodo = previos.length ? previos[previos.length - 1].nombre : '—';
+    }
+
+    servicios.push({
+      clase,
+      ruta,
+      appId,
+      puerto,
+      llamadas: llamadas.sort((a, b) => a.ruta.localeCompare(b.ruta)),
+    });
+  }
+
+  const rutas = new Set(servicios.flatMap((s) => s.llamadas.map((l) => l.ruta)));
+  return { servicios: servicios.sort((a, b) => a.clase.localeCompare(b.clase)), totalRutas: rutas.size };
+}
+
+/**
+ * Claves declaradas en un objeto de payload literal, en orden.
+ *
+ * Contempla las dos formas del repo: explícita (`cod_rel: codRel`) y abreviada
+ * (`{ tip_cod, cod_rel, fec }`). Mirar solo `nombre:` perdía silenciosamente
+ * los parámetros abreviados — y `fec`, la fecha de corte, casi siempre se
+ * escribe así.
+ */
+function clavesDePayload(texto) {
+  const cuerpo = texto.trim().replace(/^\{/, '').replace(/\}$/, '');
+  const claves = [];
+  let nivel = 0;
+  let actual = '';
+
+  const cerrar = () => {
+    const pieza = actual.trim();
+    if (pieza) {
+      const clave = pieza.split(':')[0].trim();
+      if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(clave)) claves.push(clave);
+    }
+    actual = '';
+  };
+
+  for (const caracter of cuerpo) {
+    if ('{[('.includes(caracter)) nivel++;
+    if ('}])'.includes(caracter)) nivel--;
+    if (caracter === ',' && nivel === 0) {
+      cerrar();
+      continue;
+    }
+    actual += caracter;
+  }
+  cerrar();
+
+  return claves;
+}
+
 /** Dominio funcional legible a partir de la ruta del archivo de constantes. */
 function dominioDe(ruta) {
   const modulo = ruta.match(/pages\/modules\/([^/]+)\//)?.[1] ?? 'core';
@@ -166,6 +276,26 @@ function tablaCodRep(cat) {
     filas,
     '',
     `_${cat.totalCodigos} códigos únicos en ${cat.entradas.length} constantes._`,
+  ].join('\n');
+}
+
+function tablaStrands(inv) {
+  const filas = inv.servicios
+    .flatMap((s) =>
+      s.llamadas.map(
+        (l) =>
+          `| \`${s.appId}\` (${s.puerto}) | \`${s.clase}\` | \`${l.metodo}\` | \`${l.ruta}\` | ${l.verbo} | ${
+            l.parametros.length ? l.parametros.map((p) => `\`${p}\``).join(', ') : '—'
+          } | \`${l.respuesta}\` |`
+      )
+    )
+    .join('\n');
+  return [
+    '| Módulo Ant | Servicio | Método | Ruta de acción | Verbo | Parámetros de payload | Clave de respuesta |',
+    '|---|---|---|---|---|---|---|',
+    filas,
+    '',
+    `_${inv.totalRutas} rutas de acción únicas en ${inv.servicios.length} servicios de \`core/winder/instances/\`._`,
   ].join('\n');
 }
 
@@ -218,10 +348,11 @@ function inyectar(rutaDoc, clave, cuerpo, sello) {
 const modulos = inventarioModulos();
 const pruebas = inventarioPruebas();
 const codRep = inventarioCodRep();
+const strands = inventarioStrands();
 const sello = `${new Date().toISOString().slice(0, 10)} · commit ${commitActual()}`;
 
 if (flags['json']) {
-  console.log(JSON.stringify({ sello, modulos, pruebas, codRep }, null, 2));
+  console.log(JSON.stringify({ sello, modulos, pruebas, codRep, strands }, null, 2));
   process.exit(0);
 }
 
@@ -229,11 +360,13 @@ const resultados = [
   inyectar('governance/docs/architecture/module-inventory.md', 'modulos', tablaModulos(modulos), sello),
   inyectar('governance/docs/development/test-inventory.md', 'pruebas', bloquePruebas(pruebas), sello),
   inyectar('governance/docs/data/catalog.md', 'cod-rep', tablaCodRep(codRep), sello),
+  inyectar('governance/docs/data/contracts/action-routes.md', 'rutas-de-accion', tablaStrands(strands), sello),
 ];
 
 titulo('Inventario derivado del código', sello);
 console.log(`Módulos enlazados: ${modulos.length}`);
 console.log(`Specs unitarias:   ${pruebas.specsUnit}`);
+console.log(`Rutas de acción:   ${strands.totalRutas}`);
 console.log(`Suites E2E:        ${pruebas.suitesE2e}\n`);
 
 let desfase = false;

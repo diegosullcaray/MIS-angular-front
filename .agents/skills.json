@@ -1,0 +1,45 @@
+{
+  "nota": "Índice de las skills de governance/skills/. Cada entrada refleja el frontmatter de su SKILL.md: al agregar o renombrar una skill, actualizá también este archivo.",
+  "skills": [
+    {
+      "name": "angular-mis-zoneless",
+      "path": "governance/skills/angular-mis-zoneless/SKILL.md",
+      "description": "Arquitectura Angular 22 zoneless y reactividad con señales en MIS Host. Usar al crear o modificar componentes, servicios y directivas, para aplicar signal, computed, effect, input, output e inject() sin zone.js. Explica por qué este proyecto NO usa ChangeDetectionStrategy.OnPush."
+    },
+    {
+      "name": "mis-component-styling",
+      "path": "governance/skills/mis-component-styling/SKILL.md",
+      "description": "Estándar visual de MIS Host con tokens --mis-*, PrimeNG 21 y Tailwind v4. Usar al construir pantallas, tablas, diálogos, tarjetas métricas y al modelar los estados de carga, vacío y error. Explica cómo se aplica color en este proyecto (valor arbitrario sobre tokens CSS), que no es la forma habitual de Tailwind."
+    },
+    {
+      "name": "mis-module-architecture",
+      "path": "governance/skills/mis-module-architecture/SKILL.md",
+      "description": "Estructura canónica de los módulos de negocio de MIS Host y sus reglas de aislamiento. Usar al crear un módulo, agregar una pantalla o ubicar un archivo, para respetar los sufijos canónicos (constantes/models/utils), la separación de capas y el enrutamiento lazy."
+    },
+    {
+      "name": "mis-reportes-bloques",
+      "path": "governance/skills/mis-reportes-bloques/SKILL.md",
+      "description": "Cómo se construye un reporte en MIS Host — motores de reporte, BloqueReporteService, jerarquía organizativa y fecha de corte. Usar al agregar o modificar cualquier reporte del módulo reportes, elegir estrategia de consulta o diagnosticar una cifra incorrecta por nivel o fecha."
+    },
+    {
+      "name": "mis-testing-guide",
+      "path": "governance/skills/mis-testing-guide/SKILL.md",
+      "description": "Metodología de pruebas de MIS Host con Vitest y Playwright. Usar al escribir specs de mapeos, servicios con transporte Winder, componentes con señales y flujos E2E. Documenta las convenciones reales del repo (globales de Vitest, TestBed para servicios con inject, mocks de backend con page.route)."
+    },
+    {
+      "name": "mis-tours-guiados",
+      "path": "governance/skills/mis-tours-guiados/SKILL.md",
+      "description": "Recorridos guiados de MIS Host sobre driver.js — cómo declarar los pasos, a qué anclarlos (selector estable, nunca un id de tour), cómo se muestra el personaje de la marca y qué compuerta verifica que el recorrido no se rompa en silencio. Usar al crear o modificar un tour, o al publicar una novedad en el Home."
+    },
+    {
+      "name": "mis-ventanas-dialogos",
+      "path": "governance/skills/mis-ventanas-dialogos/SKILL.md",
+      "description": "Cromo de ventanas y diálogos de MIS Host — barra de título con semáforo estilo macOS, tema global de p-dialog y las trampas de PrimeNG que rompen un diálogo en silencio. Usar al crear o modificar cualquier diálogo, panel de módulo o superficie que se abre encima del contenido."
+    },
+    {
+      "name": "mis-winder-ant",
+      "path": "governance/skills/mis-winder-ant/SKILL.md",
+      "description": "Transporte Winder/Ant de MIS Host — el borde real por donde entran todos los datos. Usar al crear un servicio de módulo, agregar una consulta al backend, doblar el backend en una prueba o diagnosticar por qué una pantalla no trae datos. Este sistema NO expone una API REST convencional."
+    }
+  ]
+}

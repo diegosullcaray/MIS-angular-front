@@ -15,6 +15,8 @@ Comparten [`lib/proyecto.mjs`](./lib/proyecto.mjs): el árbol de `src/app` se re
 | [`crear-modulo.mjs`](./crear-modulo.mjs) | scaffolding de módulos | `npm run module:create` |
 | [`verificar-bundle.mjs`](./verificar-bundle.mjs) | control del artefacto de producción | `npm run verify:bundle` |
 | [`generar-tokens-paleta.mjs`](./generar-tokens-paleta.mjs) | tokens CSS → TypeScript | `npm run tokens` |
+| [`verificar-anclas-tour.mjs`](./verificar-anclas-tour.mjs) | anclas de los recorridos guiados | `npm run audit:anclas` |
+| [`verificar-activos.mjs`](./verificar-activos.mjs) | activos de `src/assets` | `npm run audit:activos` |
 
 ---
 
@@ -25,7 +27,7 @@ node governance/scripts/ejecutar-pruebas.mjs help
 ```
 
 **Pruebas**: `unit [ruta]`, `watch`, `coverage`, `e2e [ruta]`, `e2e:ui`, `e2e:report`.
-**Gobernanza**: `gobernanza`, `documentacion`, `tokens`, `inventario`.
+**Gobernanza**: `gobernanza`, `documentacion`, `tokens`, `inventario`, `anclas`, `activos`.
 **Artefacto**: `compilar`, `bundle`.
 **Cadenas**: `verificar` (estático, pre-commit) y `ci` (la del pipeline; `--con-e2e` suma Playwright).
 
@@ -147,7 +149,45 @@ No puede proteger los secretos Winder: están compilados en `src/environments/` 
 
 ---
 
-## 7. Tokens de paleta
+## 7. Anclas de los recorridos guiados
+
+```bash
+node governance/scripts/verificar-anclas-tour.mjs            # informe
+node governance/scripts/verificar-anclas-tour.mjs --check    # falla ante anclas rotas
+node governance/scripts/verificar-anclas-tour.mjs --json
+```
+
+Un paso de tour localiza su elemento con un selector CSS **en tiempo de ejecución**, y driver.js corre con `skipMissingElement`: si el selector deja de resolver, el paso se saltea sin un error, sin un test en rojo y sin nada que compile mal. El script resuelve cada selector —`id`, clase y atributo, incluidos los compuestos con espacios como `header button[aria-label="Comunicados del sistema"]`— contra las plantillas y estilos reales.
+
+| Hallazgo | Nivel | Qué significa |
+|---|---|---|
+| rota | error | el `id`, la clase o el atributo no existe en `src/` |
+| huérfana | aviso | un `id="tour-*"` que quedó en una plantilla y ningún paso usa |
+| externa | informativo | apunta a marcado de PrimeNG o driver.js: no se puede verificar |
+
+Entiende las dos formas del repo: el literal (`element: '#tour-x'`) y la constante compartida (`element: ANCLA.rail`). Ver [ADR-0004](../docs/architecture/adr/ADR-0004-anclas-de-tour-por-selector-estable.md).
+
+---
+
+## 8. Activos
+
+```bash
+node governance/scripts/verificar-activos.mjs                 # informe (5 filas por bloque)
+node governance/scripts/verificar-activos.mjs --detalle        # la lista completa
+node governance/scripts/verificar-activos.mjs --check          # falla si falta un referenciado
+node governance/scripts/verificar-activos.mjs --estricto       # falla también con avisos
+node governance/scripts/verificar-activos.mjs --limite-kb=400
+```
+
+Una imagen que falta devuelve 404 y deja el hueco en pantalla; una que sobra se copia al artefacto y engorda el despliegue. Ninguna de las dos la ve la suite.
+
+**Falta** (error) es un activo que el código referencia y no está en disco. **Sin uso** y **pesado** son avisos: el primero cuenta también su peso acumulado, el segundo marca todo lo que pase de 500 kB. Los specs quedan fuera del rastreo a propósito — sus rutas son fixtures inventados.
+
+Un activo cuenta como referenciado aunque la ruta se arme concatenando (`'/assets/images/fc/avatars/' + nombre`): si el código nombra la carpeta, lo de adentro no se da por muerto.
+
+---
+
+## 9. Tokens de paleta
 
 ```bash
 node governance/scripts/generar-tokens-paleta.mjs           # regenera

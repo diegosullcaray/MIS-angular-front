@@ -9,6 +9,7 @@
 | [ADR-0001](./adr/ADR-0001-zoneless-sin-onpush.md) | Zoneless con señales, sin `ChangeDetectionStrategy.OnPush` | Vigente |
 | [ADR-0002](./adr/ADR-0002-color-por-token-css.md) | El color se aplica por token CSS, no por clase utilitaria | Vigente |
 | [ADR-0003](./adr/ADR-0003-linea-base-de-gobernanza.md) | Línea base de gobernanza en lugar de "cero hallazgos" | Vigente |
+| [ADR-0004](./adr/ADR-0004-anclas-de-tour-por-selector-estable.md) | Los recorridos guiados se anclan a selectores estables | Vigente |
 
 ## Decisiones vigentes sin ADR propio
 

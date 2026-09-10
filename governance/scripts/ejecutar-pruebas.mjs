@@ -19,6 +19,8 @@
  *   documentacion   enlaces y referencias de governance/docs
  *   tokens          verifica que tokens.paleta.ts siga sincronizado con tokens.css
  *   inventario      verifica que los inventarios reflejen el código
+ *   anclas          verifica que los pasos de los tours apunten a algo que existe
+ *   activos         controla src/assets: faltantes, huérfanos y peso
  *   bundle          controla el artefacto de producción ya construido
  *   compilar        build de producción
  *   verificar       gobernanza + documentación + tokens + inventario (sin compilar, rápido)
@@ -118,6 +120,18 @@ const FASES = {
     args: [script('generar-inventario.mjs'), '--check'],
     reproducir: 'npm run inventario:check',
   },
+  anclas: {
+    nombre: 'Anclas de recorridos guiados',
+    cmd: NODE,
+    args: [script('verificar-anclas-tour.mjs'), '--check'],
+    reproducir: 'npm run audit:anclas',
+  },
+  activos: {
+    nombre: 'Activos de src/assets',
+    cmd: NODE,
+    args: [script('verificar-activos.mjs'), '--check'],
+    reproducir: 'npm run audit:activos',
+  },
   unit: {
     nombre: 'Pruebas unitarias',
     cmd: NPX,
@@ -178,6 +192,12 @@ async function main() {
     case 'inventario':
       process.exit((await correr(NODE, [script('generar-inventario.mjs'), ...extra], 'Inventarios')) ? 0 : 1);
 
+    case 'anclas':
+      process.exit((await correr(NODE, [script('verificar-anclas-tour.mjs'), ...extra], 'Anclas de recorridos guiados')) ? 0 : 1);
+
+    case 'activos':
+      process.exit((await correr(NODE, [script('verificar-activos.mjs'), ...extra], 'Activos de src/assets')) ? 0 : 1);
+
     case 'bundle':
       process.exit((await correr(NODE, [script('verificar-bundle.mjs'), ...extra], 'Control del bundle')) ? 0 : 1);
 
@@ -187,7 +207,14 @@ async function main() {
     /* Rápida: solo análisis estático, sin compilar ni levantar navegadores.
        Es la que conviene correr antes de cada commit. */
     case 'verificar':
-      return cadena('Verificación estática', [FASES.gobernanza, FASES.documentacion, FASES.tokens, FASES.inventario]);
+      return cadena('Verificación estática', [
+        FASES.gobernanza,
+        FASES.documentacion,
+        FASES.tokens,
+        FASES.inventario,
+        FASES.anclas,
+        FASES.activos,
+      ]);
 
     /* Completa: lo mismo que ejecuta el pipeline. El E2E queda fuera por
        defecto porque levanta `ng serve` y tarda; se suma con --con-e2e. */
@@ -198,6 +225,8 @@ async function main() {
         FASES.documentacion,
         FASES.tokens,
         FASES.inventario,
+        FASES.anclas,
+        FASES.activos,
         FASES.unit,
         FASES.compilar,
         FASES.bundle,
@@ -228,6 +257,8 @@ ${negrita('Gobernanza')}
   documentacion   enlaces y referencias de governance/docs
   tokens          tokens.paleta.ts sincronizado con tokens.css
   inventario      inventarios de módulos y pruebas al día
+  anclas          los pasos de los tours apuntan a algo que existe
+  activos         src/assets: referenciados, huérfanos y peso
 
 ${negrita('Artefacto')}
   compilar        build de producción

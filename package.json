@@ -12,6 +12,8 @@
     "module:create": "node governance/scripts/crear-modulo.mjs",
     "audit:governance": "node governance/scripts/validar-gobernanza.mjs",
     "audit:docs": "node governance/scripts/validar-documentacion.mjs",
+    "audit:anclas": "node governance/scripts/verificar-anclas-tour.mjs",
+    "audit:activos": "node governance/scripts/verificar-activos.mjs",
     "tokens": "node governance/scripts/generar-tokens-paleta.mjs",
     "tokens:check": "node governance/scripts/generar-tokens-paleta.mjs --check",
     "inventario": "node governance/scripts/generar-inventario.mjs",

@@ -30,6 +30,13 @@ graph TD
 
 Las fases 4 y 5 son nuevas: antes el pipeline terminaba con las pruebas verdes, lo que garantizaba que el código funcionara pero no que **el dato significara lo que dice** ni que el cambio no ampliara la superficie de riesgo.
 
+## Los dos transversales
+
+| Agente | Cuándo se invoca | Rechaza cuando… |
+|---|---|---|
+| [Curador de gobernanza](./06-curador-de-gobernanza.md) | periódicamente, o cuando `npm run verify` falla por algo ajeno al cambio en curso | se regenera una línea base o un inventario solo para destrabar el pipeline |
+| [Migrador del legado STG](./07-migrador-legado-stg.md) | antes de la fase 1, al portar una pantalla del sistema viejo | el contrato se dedujo del nombre de un campo, sin fuente legada que lo respalde |
+
 ---
 
 ## Cómo se usan
@@ -40,7 +47,7 @@ Cada archivo trae frontmatter YAML (`name`, `description`, `tools`) y una secci�
 2. **Como prompt directo**: pegar el bloque *Prompt de sistema* en cualquier asistente.
 3. **Como checklist humano**: el cuerpo del documento es la guía de revisión, sin IA de por medio.
 
-Las skills de `governance/skills/` están registradas en `.agents/skills.json` y las consumen tanto los agentes como las personas.
+Las skills de `governance/skills/` están registradas en [`.agents/skills.json`](../../.agents/skills.json) y las consumen tanto los agentes como las personas. Ese archivo refleja el frontmatter de cada `SKILL.md`: al agregar o renombrar una skill hay que actualizarlo.
 
 ---
 
@@ -51,7 +58,7 @@ Las skills de `governance/skills/` están registradas en `.agents/skills.json` y
 Comandos que todo agente puede correr:
 
 ```bash
-npm run verify                                          # gobernanza + docs + tokens + inventarios
+npm run verify                                          # gobernanza + docs + tokens + inventarios + anclas + activos
 node governance/scripts/validar-gobernanza.mjs --listar  # catálogo de reglas con su porqué
 node governance/scripts/ejecutar-pruebas.mjs help        # todos los comandos de verificación
 ```

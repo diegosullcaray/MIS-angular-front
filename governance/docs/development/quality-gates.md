@@ -6,18 +6,33 @@ Qué se verifica, con qué comando, y qué bloquea.
 
 | Comando | Qué hace | Bloquea |
 |---|---|---|
-| `npm run verify` | gobernanza + documentación + tokens + inventarios. Segundos, sin compilar. | sí, ante hallazgo nuevo |
+| `npm run verify` | gobernanza + documentación + tokens + inventarios + anclas de tour + activos. Segundos, sin compilar. | sí, ante hallazgo nuevo |
 | `npm run verify:ci` | lo anterior + unitarias + build + control de bundle | sí |
 | `npm run verify:ci -- --con-e2e` | además Playwright en los dos viewports | sí |
 | `npm run audit:governance` | solo el auditor de arquitectura | informativo si no lleva `--check` |
 | `npm run audit:docs` | enlaces y referencias de `governance/` | informativo sin `--check` |
 | `npm run tokens:check` | `tokens.paleta.ts` sincronizado con `tokens.css` | sí |
 | `npm run inventario:check` | inventarios derivados al día | sí |
+| `npm run audit:anclas` | los pasos de los recorridos guiados apuntan a algo que existe | sí con `--check` |
+| `npm run audit:activos` | `src/assets`: referenciados que faltan, huérfanos y peso | sí con `--check` |
 | `npm test` | unitarias (Vitest) | sí |
 | `npm run e2e` | end-to-end (Playwright) | sí |
 | `npm run build:prod` | build de producción + `verify:bundle` | sí |
 
 `npm run verify` es la que conviene correr antes de cada commit.
+
+## Las seis fases de la cadena estática
+
+| Fase | Qué protege | Modo de falla que evita |
+|---|---|---|
+| Gobernanza | invariantes de arquitectura y seguridad | un import que rompe el aislamiento de capas |
+| Documentación | que `governance/` describa el código | una guía que enseña una ruta o una clase que ya no existe |
+| Tokens | `tokens.paleta.ts` sincronizado con `tokens.css` | editar un token y dejar los tests de contraste midiendo el valor viejo |
+| Inventarios | módulos, pruebas y `cod_rep` derivados del código | un inventario que cuenta un módulo retirado |
+| Anclas de tour | los recorridos guiados apuntan a algo real | driver.js saltea el paso en silencio y nadie se entera |
+| Activos | `src/assets` referenciado y acotado | una imagen que devuelve 404, o megabytes que nadie usa |
+
+Las dos últimas cubren modos de falla **silenciosos**: no rompen la compilación ni ninguna prueba, así que sin compuerta llegan a producción.
 
 ## El auditor de gobernanza
 

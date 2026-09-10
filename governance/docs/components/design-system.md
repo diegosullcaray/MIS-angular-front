@@ -39,9 +39,15 @@ Tailwind se sigue usando normalmente para todo lo que no es color: layout, espac
 - Todo componente interactivo conserva accesibilidad y los estados de carga, vacío y error.
 - El error se evalúa antes que el vacío: una consulta fallida no es "sin datos".
 
+## Superficies con cromo propio
+
+La ventana de módulo y los diálogos comparten barra de título y semáforo, definidos en `componentes/ventana.css` y `componentes/dialogo.css`. El contrato completo —incluidas tres trampas de PrimeNG que ya costaron tiempo— está en [ventanas y diálogos](./ventanas-y-dialogos.md).
+
 ## Catálogo
 
 - [Component catalog](./component-catalog.md)
+- [Ventanas y diálogos](./ventanas-y-dialogos.md)
+- [Recorridos guiados](./tours-guiados.md)
 - [Accessibility and UI states](./accessibility.md)
 - [KPI guidelines](./kpi-guidelines.md)
 - [Storybook](./README.md)

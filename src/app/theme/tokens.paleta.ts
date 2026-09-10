@@ -78,7 +78,7 @@ export const TOKENS_OSCURO: Record<TokenColor, string> = {
   'mis-glass-bg': 'rgba(22,32,52,0.72)',
   'mis-glass-border': 'rgba(255,255,255,0.08)',
   'mis-wallpaper-color': 'transparent',
-  'mis-wallpaper-velo': 'rgba(8,14,26,0.90)',
+  'mis-wallpaper-velo': 'transparent',
   'mis-overlay-bg': 'rgba(8,14,26,0.78)',
   'mis-dialog-mask': 'rgba(3, 8, 18, 0.55)',
   'mis-hover-bg': 'rgba(0,162,255,0.08)',

@@ -4,7 +4,7 @@ La libreria compartida debe permanecer agnostica del dominio. Los componentes re
 
 | Familia | Componente | Contrato principal | Estados o riesgos |
 |---|---|---|---|
-| Datos | `app-data-table` | `columns`, `data`, `loading`, busqueda y filtros | fecha, numero, dropdown, vacio y refresh |
+| Datos | `app-data-table` | `columns`, `data`, `loading`, busqueda, filtros y seleccion de fila | fecha, numero, dropdown, vacio y refresh |
 | Reportes | `app-tabla-reporte` | headers multi-fila y filas | hidden, colspan, semaforo, estilos backend |
 | Reportes | `app-tabla-dinamica` | columnas anidadas y filas | formato numerico, variaciones, semaforo, celdas clicables |
 | Formularios | `app-select-filtro`, `app-input-filtro` | opciones/valor/eventos | filtros dependientes del modulo |
@@ -14,10 +14,13 @@ La libreria compartida debe permanecer agnostica del dominio. Los componentes re
 | Estados | `app-empty-state`, `app-inline-error`, `app-list-skeleton`, `app-loading-overlay` | mensajes y acciones | no mezclar vacio con error |
 | Navegacion | `app-buscador` | fuentes multi-provider | teclado, facetas, limite de resultados |
 | Layout | `app-window-panel`, `app-redirect-overlay` | titulo, navegacion, transicion | responsive y foco |
+| Guias | `DriverTourService` (servicio, no componente) | pasos con selector y globo | ancla inexistente = paso saltado en silencio |
 
 ## Contratos importantes
 
 - Un estado vacio significa respuesta valida sin filas.
+- `app-data-table` no guarda la seleccion: con `selectableRows` avisa el clic por `filaSeleccionada` y resalta la fila que le pasen en `selectedRow`. El estado vive en el consumidor.
+- `app-window-panel` y el tema de `p-dialog` comparten el semaforo: una luz que no hace nada va apagada, nunca de color — ver [ventanas y dialogos](./ventanas-y-dialogos.md).
 - Un error inline debe ofrecer reintento cuando la operacion sea repetible.
 - `loading` no debe borrar los datos existentes si el componente puede mostrar refresco no destructivo.
 - Los graficos destruyen la instancia Highcharts al destruirse el componente.

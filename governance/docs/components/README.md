@@ -2,6 +2,8 @@
 
 - [Design system](./design-system.md) — tokens y cómo se aplica el color en este proyecto
 - [Catálogo de componentes](./component-catalog.md) — contratos de `shared/ui`
+- [Ventanas y diálogos](./ventanas-y-dialogos.md) — el cromo compartido y su semáforo
+- [Recorridos guiados](./tours-guiados.md) — tours sobre la interfaz real
 - [Accesibilidad y estados de UI](./accessibility.md)
 - [Guía de KPI](./kpi-guidelines.md)
 - [Modelo de estados](../development/state-model.md) — ownership del estado de datos

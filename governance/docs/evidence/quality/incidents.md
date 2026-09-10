@@ -412,3 +412,58 @@ backend en el propio payload. No es el mismo caso y la incidencia no lo reporta.
 ### Regresión
 
 `series-grafico.util.spec.ts`, siete casos.
+
+---
+
+## INC-2026-09-09-01 · La luz de "volver" del diálogo salía gris y sin ícono
+
+| Campo | Valor |
+|---|---|
+| **Componente** | Cromo de diálogos (`src/app/pages/modules/incentivos/ui/selector-nivel-dialog/`) |
+| **Commit evaluado** | trabajo previo a `c3f5393` |
+| **Fecha** | 2026-09-09 |
+| **Entorno** | Chrome, tema claro y oscuro |
+| **Estado** | **Corregido** |
+| **Evidencia** | Color computado del botón: `rgb(240, 240, 240)` — el `buttonface` del sistema, no el ámbar del semáforo. |
+
+### Resultado observado
+
+El diálogo "Selecciona Nivel" muestra su semáforo propio: roja para cerrar y
+amarilla para volver al menú. La amarilla se veía como un círculo gris claro y
+sin glifo, indistinguible de una luz apagada.
+
+### Resultado esperado
+
+Ámbar `#febc2e` con el chevron `‹` al pasar el mouse por el grupo, igual que la
+misma luz en la barra de una ventana de módulo.
+
+### Causa raíz
+
+La clase se había renombrado en el repositorio: `mis-window-light--minimizar`
+pasó a llamarse `mis-window-light--volver` cuando esa luz dejó de minimizar y
+pasó a navegar hacia atrás. `app-window-panel` se actualizó; el diálogo, escrito
+contra el nombre viejo, no.
+
+**Un nombre de clase que no existe no es un error de nada.** El elemento se
+pinta igual, sin las reglas de esa clase, y cae al estilo por defecto del
+navegador. No hay compilación que falle, no hay spec que lo note —el DOM tiene
+el botón, con el `class` que le pusieron— y el build queda verde.
+
+### Corrección
+
+Renombrar el uso en la plantilla del diálogo y en su spec. Además, la clase
+`.mis-window-light--apagada` pasó a `componentes/ventana.css` para que una luz
+inerte tenga nombre propio en vez de heredar el estilo del botón.
+
+### Prevención
+
+`governance/scripts/verificar-anclas-tour.mjs` resuelve contra `src/` los
+selectores de los recorridos guiados —donde el mismo modo de falla es aún más
+silencioso, porque driver.js saltea el paso sin avisar—. Reproducido de forma
+controlada: apuntar un paso a `.mis-window-light--minimizar` hace que el script
+falle con código 1 y el motivo exacto.
+
+### Regresión
+
+`selector-nivel-dialog.component.spec.ts` verifica que la luz de volver exista
+dentro de un listado, devuelva al menú y no esté en el menú inicial.
