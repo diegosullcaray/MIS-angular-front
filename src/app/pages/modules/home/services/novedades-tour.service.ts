@@ -11,7 +11,7 @@ const MASCOTA = '/assets/images/fc/tours/mascota-';
  * `driver.js.mjs`), así que acepta este marcado; el texto es nuestro, no entra
  * nada del usuario. La imagen va como decorativa: lo que se lee es el texto.
  */
-function conMascota(texto: string, pose: 'guia' | 'celebra' = 'guia'): string {
+function conMascota(texto: string, pose: 'guia' | 'celebra' | 'saluda' | 'piensa' | 'sorpresa' | 'alerta' | 'feliz' | 'camina' | 'buscar' | 'escribe' | 'trabaja' | 'duda' | 'idea' = 'guia'): string {
   return `<span class="mis-tour-fila"><img class="mis-tour-mascota mis-tour-mascota--${pose}" src="${MASCOTA}${pose}.png" alt="" aria-hidden="true"><span class="mis-tour-texto">${texto}</span></span>`;
 }
 
@@ -44,7 +44,8 @@ const NOVEDADES: Novedad[] = [
         popover: {
           title: '✨ Acá viven las novedades',
           description: conMascota(
-            '¡Hola! Soy tu guía. En este panel voy dejando cada mejora que entra al sistema, la más nueva arriba.'
+            '¡Hola! Soy tu guía. En este panel voy dejando cada mejora que entra al sistema, la más nueva arriba.',
+            'saluda'
           ),
           side: 'left',
           align: 'start',
@@ -56,7 +57,7 @@ const NOVEDADES: Novedad[] = [
           title: '🖱️ Un clic y te la muestro',
           description: conMascota(
             'Elegí cualquier novedad y te llevo por la pantalla señalando dónde está. Podés cerrar el recorrido cuando quieras con Esc.',
-            'celebra'
+            'guia'
           ),
           side: 'left',
           align: 'center',
@@ -76,7 +77,8 @@ const NOVEDADES: Novedad[] = [
         popover: {
           title: '👤 Tu menú de perfil',
           description: conMascota(
-            'Abrí este menú y vas a ver tu tarjeta arriba, con tu nombre y tu correo, igual que el selector de perfiles de Chrome.'
+            'Abrí este menú y vas a ver tu tarjeta arriba, con tu nombre y tu correo, igual que el selector de perfiles de Chrome.',
+            'piensa'
           ),
           side: 'bottom',
           align: 'end',
@@ -88,7 +90,7 @@ const NOVEDADES: Novedad[] = [
           title: '🔄 Cambiar de perfil',
           description: conMascota(
             'Si tenés cuentas asignadas, aparecen abajo en <b>Otros perfiles</b>: un clic cambia de cuenta, sin ventanas de confirmación. Desde ahí mismo volvés a la tuya.',
-            'celebra'
+            'feliz'
           ),
           side: 'bottom',
           align: 'end',
@@ -108,7 +110,8 @@ const NOVEDADES: Novedad[] = [
         popover: {
           title: '🗂️ Elegí un sistema',
           description: conMascota(
-            'Desde esta barra entrás a cada sistema. Lo que abras se muestra dentro de una ventana con su propia barra de título.'
+            'Desde esta barra entrás a cada sistema. Lo que abras se muestra dentro de una ventana con su propia barra de título.',
+            'camina'
           ),
           side: 'right',
           align: 'start',
@@ -120,7 +123,7 @@ const NOVEDADES: Novedad[] = [
           title: '🚦 El semáforo de la ventana',
           description: conMascota(
             'En esa barra vas a encontrar las tres luces: la <b>roja</b> cierra y vuelve al inicio, la <b>amarilla</b> va hacia atrás y la <b>verde</b> abre a pantalla completa. Los diálogos ahora usan el mismo semáforo.',
-            'celebra'
+            'alerta'
           ),
           side: 'right',
           align: 'center',
@@ -140,7 +143,8 @@ const NOVEDADES: Novedad[] = [
         popover: {
           title: '📣 Los comunicados',
           description: conMascota(
-            'Ya no aparecen en cada ingreso: el aviso salta solo cuando hay uno sin leer, y el puntito celeste te avisa. Desde este botón lo volvés a abrir cuando quieras.'
+            'Ya no aparecen en cada ingreso: el aviso salta solo cuando hay uno sin leer, y el puntito celeste te avisa. Desde este botón lo volvés a abrir cuando quieras.',
+            'sorpresa'
           ),
           side: 'bottom',
           align: 'center',
@@ -152,7 +156,7 @@ const NOVEDADES: Novedad[] = [
           title: '🔕 Si preferís no verlos',
           description: conMascota(
             'En <b>Configuración → Anuncios</b> podés apagarlos del todo. Entrás desde este menú.',
-            'celebra'
+            'trabaja'
           ),
           side: 'bottom',
           align: 'end',
@@ -172,7 +176,8 @@ const NOVEDADES: Novedad[] = [
         popover: {
           title: '🌗 Claro u oscuro',
           description: conMascota(
-            'Con este botón cambiás el tema de todo el sistema. Queda guardado para la próxima vez que entres.'
+            'Con este botón cambiás el tema de todo el sistema. Queda guardado para la próxima vez que entres.',
+            'idea'
           ),
           side: 'bottom',
           align: 'center',
@@ -184,7 +189,7 @@ const NOVEDADES: Novedad[] = [
           title: '🕘 Tus reportes recientes',
           description: conMascota(
             'Acá se van apilando los reportes que abriste, del más nuevo al más viejo, para que vuelvas a ellos sin recorrer el menú.',
-            'celebra'
+            'buscar'
           ),
           side: 'top',
           align: 'start',

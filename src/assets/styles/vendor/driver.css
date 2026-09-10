@@ -15,11 +15,11 @@
   background: #FFFFFF !important;
   color: var(--mis-text-primary, #304156) !important;
   border-radius: 16px !important;
-  padding: 20px 22px !important;
+  padding: 20px 22px 20px 55px !important;
   box-shadow: 0 16px 36px rgba(11, 79, 140, 0.20), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
   border: 1.5px solid rgba(11, 79, 140, 0.15) !important;
   font-family: var(--mis-font-family) !important;
-  max-width: 350px !important;
+  max-width: 370px !important;
   z-index: 1000000003 !important;
   pointer-events: auto !important;
 }
@@ -121,7 +121,7 @@
     max-width: calc(100vw - 24px) !important;
     width: calc(100vw - 24px) !important;
     box-sizing: border-box !important;
-    padding: 14px 16px !important;
+    padding: 14px 16px 14px 45px !important;
     border-radius: 12px !important;
     margin: 0 !important;
   }
@@ -155,12 +155,24 @@
 }
 
 /* ── Dark Theme Support ────────────────────────────────────────── */
+/* En lugar de oscurecer la pantalla, la aclaramos sutilmente en modo oscuro */
+:root[data-theme="dark"] .driver-overlay,
+:root.dark .driver-overlay {
+  background-color: transparent !important; /* Para no rellenar el agujero del elemento activo */
+}
+
+:root[data-theme="dark"] .driver-overlay path,
+:root.dark .driver-overlay path {
+  fill: #ffffff !important;
+  opacity: 0.12 !important;
+}
+
 :root[data-theme="dark"] .driver-popover,
 :root.dark .driver-popover {
-  background: var(--mis-surface, #1e293b) !important;
-  color: var(--mis-text-primary, #f8fafc) !important;
-  border-color: var(--mis-border-strong, rgba(255, 255, 255, 0.15)) !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  background: #283548 !important; /* Color mucho más claro para que resalte del fondo oscuro */
+  color: #f8fafc !important;
+  border: 1.5px solid #3b82f6 !important; /* Borde azul sólido y brillante */
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), 0 24px 60px rgba(0, 0, 0, 0.9) !important; /* Anillo de luz azul + sombra súper profunda */
 }
 
 :root[data-theme="dark"] .driver-popover-title,
@@ -187,19 +199,19 @@
 
 :root[data-theme="dark"] .driver-popover-arrow-side-top.driver-popover-arrow,
 :root.dark .driver-popover-arrow-side-top.driver-popover-arrow {
-  border-top-color: var(--mis-surface, #1e293b) !important;
+  border-top-color: #283548 !important;
 }
 :root[data-theme="dark"] .driver-popover-arrow-side-bottom.driver-popover-arrow,
 :root.dark .driver-popover-arrow-side-bottom.driver-popover-arrow {
-  border-bottom-color: var(--mis-surface, #1e293b) !important;
+  border-bottom-color: #283548 !important;
 }
 :root[data-theme="dark"] .driver-popover-arrow-side-left.driver-popover-arrow,
 :root.dark .driver-popover-arrow-side-left.driver-popover-arrow {
-  border-left-color: var(--mis-surface, #1e293b) !important;
+  border-left-color: #283548 !important;
 }
 :root[data-theme="dark"] .driver-popover-arrow-side-right.driver-popover-arrow,
 :root.dark .driver-popover-arrow-side-right.driver-popover-arrow {
-  border-right-color: var(--mis-surface, #1e293b) !important;
+  border-right-color: #283548 !important;
 }
 
 /* ── El personaje que da la guía ──────────────────────────────
@@ -207,37 +219,52 @@
    la mascota dentro de `description`, que driver.js pinta con `innerHTML`. La
    imagen es decorativa: lo que se lee es el texto de al lado. */
 .mis-tour-fila {
-  display: flex !important;
-  align-items: flex-start !important;
-  gap: 12px !important;
+  display: block !important;
 }
 
 .mis-tour-mascota {
-  width: 56px;
-  height: auto;
-  flex-shrink: 0;
-  /* Apenas levantada, para que se apoye en el texto sin subirse al título. */
-  margin-top: -6px;
-  filter: drop-shadow(0 4px 8px rgba(11, 79, 140, 0.25));
-  pointer-events: none;
+  position: absolute !important;
+  top: 50% !important;
+  left: -75px !important;
+  transform: translateY(-50%) !important;
+  width: 160px !important;
+  height: auto !important;
+  margin: 0 !important;
+  z-index: 1000000004 !important;
+  filter: drop-shadow(0 12px 24px rgba(11, 79, 140, 0.4)) !important;
+  pointer-events: none !important;
+  /* Animación de entrada */
+  animation: mis-tour-mascota-enter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* En el paso final el personaje aparece de cuerpo con la copa: ocupa más alto,
-   así que se alinea con la base del texto en vez de con su primera línea. */
+/* En el paso final el personaje aparece de cuerpo con la copa o pose grande */
 .mis-tour-mascota--celebra {
-  width: 68px;
-  margin-top: -2px;
+  width: 175px !important;
+  left: -85px !important;
 }
 
 .mis-tour-texto {
-  flex: 1;
-  min-width: 0;
+  display: block !important;
+}
+
+@keyframes mis-tour-mascota-enter {
+  0% {
+    opacity: 0;
+    transform: translate(-10px, -50%) scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, -50%) scale(1);
+  }
 }
 
 @media (max-width: 640px) {
-  .mis-tour-mascota,
+  .mis-tour-mascota {
+    width: 110px !important;
+    left: -45px !important;
+  }
   .mis-tour-mascota--celebra {
-    width: 44px;
-    margin-top: 0;
+    width: 120px !important;
+    left: -50px !important;
   }
 }
