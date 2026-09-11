@@ -1,0 +1,937 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archimate:model xmlns:archimate="http://www.archimatetool.com/archimate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="MIS Host · idea del proyecto y arquitectura de negocio" id="id-modelo-mis" version="4.9.0">
+  <purpose>Modelo de arquitectura empresarial del proyecto de reingeniería del Sistema de Información Gerencial (MIS) de una entidad microfinanciera. El alcance de este modelo es la idea del proyecto y el negocio al que sirve: por qué se hace, para quién, con qué objetivos y restricciones, y con qué hoja de ruta.</purpose>
+  <folder name="Strategy" id="id-folder-strategy" type="strategy" />
+  <folder name="Business" id="id-folder-business" type="business">
+    <element xsi:type="archimate:BusinessActor" name="Asesor de negocios" id="act-asesor">
+      <documentation>Consulta su propia cartera y coloca productos en campo.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessActor" name="Supervisor de unidad" id="act-supervisor">
+      <documentation>Consulta su unidad y las agencias a su cargo.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessActor" name="Administrador del sistema" id="act-admin">
+      <documentation>Recorre la jerarquía completa y administra accesos.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessRole" name="Consumidor de información gerencial" id="rol-consumidor">
+      <documentation>Rol común: quien necesita una cifra para decidir.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessService" name="Consulta de información gerencial" id="srv-consulta">
+      <documentation>Entrega el indicador pedido para un nodo de la jerarquía y una fecha de corte.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" name="Gestión comercial basada en información" id="prc-gestion">
+      <documentation>Proceso raíz que agrupa los cuatro pasos de una consulta.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" name="Autenticar e identificar el alcance" id="prc-autenticar">
+      <documentation>Del perfil salen el código de negocio, el nodo y la fecha de corte.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" name="Delimitar el alcance de la consulta" id="prc-delimitar">
+      <documentation>Elegir nodo de jerarquía y período.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" name="Consultar el indicador" id="prc-consultar">
+      <documentation>Reporte, tablero o tarjeta según el caso.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" name="Decidir y gestionar" id="prc-decidir">
+      <documentation>Colocación, seguimiento de mora, evaluación de incentivos.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessEvent" name="Cierre de la fecha de corte" id="evt-corte">
+      <documentation>El backend habilita la información del período; antes, la consulta no tiene sentido.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessFunction" name="Monitoreo de cartera" id="fun-cartera">
+      <documentation>Saldos vigentes, desembolsos y composición por segmento.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessFunction" name="Gestión de mora" id="fun-mora">
+      <documentation>Tramos, recuperación y acciones preventivas.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessFunction" name="Evaluación de incentivos" id="fun-incentivos">
+      <documentation>Avance de variables, bonos y simulación.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessObject" name="Jerarquía organizativa" id="obn-jerarquia">
+      <documentation>Territorio, corredor, unidad, agencia y asesor.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessObject" name="Indicador de gestión" id="obn-indicador">
+      <documentation>La cifra sobre la que se decide.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessObject" name="Fecha de corte" id="obn-fecha">
+      <documentation>Momento al que corresponde la información.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessObject" name="Identidad y alcance autorizado" id="obn-identidad">
+      <documentation>Quién consulta y hasta dónde llega su alcance.</documentation>
+    </element>
+  </folder>
+  <folder name="Application" id="id-folder-application" type="application">
+    <element xsi:type="archimate:ApplicationComponent" name="MIS Host" id="app-mis">
+      <documentation>Portal de información gerencial reconstruido por este proyecto.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationService" name="Servicio de información gerencial" id="app-srv">
+      <documentation>Lo que el MIS ofrece al proceso de negocio.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Núcleo · core" id="app-nucleo">
+      <documentation>Sesión, guardas de ruta, interceptores HTTP y cifrado de la carga útil.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Winder · transporte Ant" id="app-winder">
+      <documentation>Diez servicios de instancia sobre seis puertos; traduce la llamada de dominio a ruta de acción.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Doce módulos de negocio" id="app-modulos">
+      <documentation>Cada uno con carga diferida: su código se descarga al navegar a él.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Biblioteca compartida · shared/ui" id="app-shared">
+      <documentation>Tabla de datos, selector de jerarquía, diálogos y ventana: lo común a todos los módulos.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Sesión del usuario" id="dat-sesion">
+      <documentation>Identidad, código de negocio, rol y vencimiento. Clave `mis.sesion`.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Árbol de jerarquía" id="dat-jerarquia">
+      <documentation>Nodos ya resueltos del organigrama. Claves con prefijo `mis.jerarquia.`.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Respuesta de reporte" id="dat-respuesta">
+      <documentation>La cifra devuelta por Ant con su nodo y su fecha de corte. Nunca se persiste.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Preferencias de interfaz" id="dat-preferencias">
+      <documentation>Tema, fondo, acento, menú y reportes recientes. Clave `mis.preferencias`.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Comunicados ya vistos" id="dat-comunicados">
+      <documentation>Identificadores acusados en esta sesión. Clave `mis.comunicados.sesion`.</documentation>
+    </element>
+  </folder>
+  <folder name="Technology &amp; Physical" id="id-folder-technology" type="technology">
+    <element xsi:type="archimate:Artifact" name="sessionStorage del navegador" id="art-session">
+      <documentation>Vive hasta que se cierra la pestaña. Aloja sesión, jerarquía y comunicados.</documentation>
+    </element>
+    <element xsi:type="archimate:Artifact" name="Estado en memoria · señales" id="art-memoria">
+      <documentation>Se pierde al recargar, y esa es la intención: obliga a volver a preguntarle a Ant.</documentation>
+    </element>
+    <element xsi:type="archimate:Artifact" name="localStorage del navegador" id="art-local">
+      <documentation>Lo único permanente del cliente: la preferencia de interfaz.</documentation>
+    </element>
+    <element xsi:type="archimate:Artifact" name="Paquete inicial · 249,08 kB" id="art-bundle">
+      <documentation>Lo que el navegador descarga antes de pintar la primera pantalla útil.</documentation>
+    </element>
+    <element xsi:type="archimate:Artifact" name="253 paquetes diferidos" id="art-chunks">
+      <documentation>No viajan en el arranque: se piden al navegar al módulo.</documentation>
+    </element>
+    <element xsi:type="archimate:Artifact" name="Caché del service worker" id="art-ngsw">
+      <documentation>Solo el esqueleto de la aplicación: `ngsw-config.json` no declara ningún dataGroup.</documentation>
+    </element>
+    <element xsi:type="archimate:Device" name="Equipo del usuario" id="tec-equipo">
+      <documentation>Estación de trabajo de agencia o equipo móvil en campo.</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="Navegador web" id="tec-navegador">
+      <documentation>Motor de JavaScript, almacenamiento local y service worker.</documentation>
+    </element>
+    <element xsi:type="archimate:CommunicationNetwork" name="Red corporativa" id="tec-red">
+      <documentation>Enlace entre la agencia y el centro de datos. Fuera del alcance del proyecto.</documentation>
+    </element>
+    <element xsi:type="archimate:Node" name="Servidor de contenido estático" id="tec-web">
+      <documentation>Entrega el paquete inicial y los paquetes diferidos.</documentation>
+    </element>
+    <element xsi:type="archimate:Node" name="Backend Ant · cores2" id="tec-ant">
+      <documentation>Aloja las diez instancias de aplicación y resuelve 62 rutas de acción.</documentation>
+    </element>
+    <element xsi:type="archimate:Node" name="Base de datos corporativa" id="tec-bd">
+      <documentation>Almacén real del dato. El frontend no la alcanza nunca de forma directa.</documentation>
+    </element>
+    <element xsi:type="archimate:TechnologyService" name="Transporte HTTPS" id="tsrv-https">
+      <documentation>Canal cifrado entre el navegador y el centro de datos.</documentation>
+    </element>
+    <element xsi:type="archimate:TechnologyService" name="Almacenamiento del navegador" id="tsrv-almacen">
+      <documentation>Las dos vigencias que ofrece el cliente: sesión y permanente.</documentation>
+    </element>
+    <element xsi:type="archimate:TechnologyService" name="Servicios Ant · 10 instancias / 6 puertos" id="tsrv-ant">
+      <documentation>Puertos 6300, 6301, 6302, 5301, 5304 y 6304 bajo `cores2/ant`.</documentation>
+    </element>
+  </folder>
+  <folder name="Motivation" id="id-folder-motivation" type="motivation">
+    <element xsi:type="archimate:Stakeholder" name="Jefatura de Tecnología" id="int-jefatura">
+      <documentation>Aprueba los entregables y los hitos del proyecto.</documentation>
+    </element>
+    <element xsi:type="archimate:Stakeholder" name="Gerencia Comercial" id="int-comercial">
+      <documentation>Consume la información para dirigir la fuerza de ventas.</documentation>
+    </element>
+    <element xsi:type="archimate:Stakeholder" name="Fuerza de ventas" id="int-usuario">
+      <documentation>Asesores y supervisores que usan el MIS en jornada operativa.</documentation>
+    </element>
+    <element xsi:type="archimate:Stakeholder" name="Seguridad de la Información" id="int-seguridad">
+      <documentation>Vela por el tratamiento del dato y el cumplimiento normativo.</documentation>
+    </element>
+    <element xsi:type="archimate:Driver" name="Rendimiento del MIS" id="drv-rendimiento">
+      <documentation>El sistema tarda en mostrar la información que sostiene la decisión comercial.</documentation>
+    </element>
+    <element xsi:type="archimate:Driver" name="Oportunidad de la información" id="drv-oportunidad">
+      <documentation>La cifra sirve si llega en el momento en que se decide, no después.</documentation>
+    </element>
+    <element xsi:type="archimate:Driver" name="Costo de evolución del sistema" id="drv-mantenimiento">
+      <documentation>Cada funcionalidad nueva es más cara sobre una base monolítica y acoplada.</documentation>
+    </element>
+    <element xsi:type="archimate:Assessment" name="Tiempos de carga y renderizado elevados" id="dia-tiempos">
+      <documentation>Bloqueos perceptibles de la interfaz al consultar grandes volúmenes.</documentation>
+    </element>
+    <element xsi:type="archimate:Assessment" name="Arquitectura monolítica: 312 módulos declarados" id="dia-monolito">
+      <documentation>Angular 14 con alto acoplamiento entre módulos y componentes.</documentation>
+    </element>
+    <element xsi:type="archimate:Assessment" name="Detección de cambios con Zone.js" id="dia-zonejs">
+      <documentation>Cada evento asíncrono dispara verificación del árbol completo.</documentation>
+    </element>
+    <element xsi:type="archimate:Assessment" name="Sin suite de pruebas versionada" id="dia-pruebas">
+      <documentation>No hay red que detecte una regresión antes del despliegue.</documentation>
+    </element>
+    <element xsi:type="archimate:Goal" name="Reducir los tiempos de respuesta y renderizado" id="obj-tiempos">
+      <documentation>Objetivo general del proyecto, medido con ISO/IEC 25010 · eficiencia de desempeño.</documentation>
+    </element>
+    <element xsi:type="archimate:Goal" name="Sostener el rendimiento en el tiempo" id="obj-sostener">
+      <documentation>Que la mejora no se degrade con las funcionalidades siguientes.</documentation>
+    </element>
+    <element xsi:type="archimate:Goal" name="Mantener la continuidad operativa" id="obj-continuidad">
+      <documentation>El sistema heredado sigue disponible durante toda la migración.</documentation>
+    </element>
+    <element xsi:type="archimate:Requirement" name="Componentes standalone" id="req-standalone">
+      <documentation>Sin módulos declarados: el componente declara sus propias dependencias.</documentation>
+    </element>
+    <element xsi:type="archimate:Requirement" name="Carga diferida de rutas y recursos" id="req-lazy">
+      <documentation>El código de un módulo se descarga al navegar a él por primera vez.</documentation>
+    </element>
+    <element xsi:type="archimate:Requirement" name="Reactividad con señales y ejecución zoneless" id="req-zoneless">
+      <documentation>Actualización granular: solo los consumidores de la señal que cambió.</documentation>
+    </element>
+    <element xsi:type="archimate:Requirement" name="Verificación automatizada en cada integración" id="req-verificacion">
+      <documentation>Compuertas de arquitectura, documentación, tokens, inventarios y activos.</documentation>
+    </element>
+    <element xsi:type="archimate:Constraint" name="No se modifican los contratos del backend" id="res-contratos">
+      <documentation>El alcance es la capa de presentación: Ant y Winder quedan intactos.</documentation>
+    </element>
+    <element xsi:type="archimate:Constraint" name="No se interviene la infraestructura de red" id="res-red">
+      <documentation>La latencia física del enlace está fuera del alcance del proyecto.</documentation>
+    </element>
+    <element xsi:type="archimate:Principle" name="El frontend no es fuente de verdad" id="pri-verdad">
+      <documentation>No crea ni corrige datos de negocio: los transforma para presentarlos.</documentation>
+    </element>
+    <element xsi:type="archimate:Principle" name="Vacío y error son estados distintos" id="pri-vacio">
+      <documentation>Una consulta fallida no es "sin datos".</documentation>
+    </element>
+    <element xsi:type="archimate:Principle" name="Toda cifra debe poder trazarse hasta su origen" id="pri-trazable">
+      <documentation>cod_rep, nodo de jerarquía y fecha de corte, siempre identificables.</documentation>
+    </element>
+    <element xsi:type="archimate:Outcome" name="Paquete inicial de 249,08 kB" id="out-paquete">
+      <documentation>Lo que el navegador descarga antes de pintar la primera pantalla útil.</documentation>
+    </element>
+    <element xsi:type="archimate:Outcome" name="12 módulos con carga diferida" id="out-modulos">
+      <documentation>253 paquetes diferidos; ninguno viaja en el arranque.</documentation>
+    </element>
+    <element xsi:type="archimate:Outcome" name="0 módulos declarados" id="out-ngmodules">
+      <documentation>Frente a 312 en el sistema heredado.</documentation>
+    </element>
+    <element xsi:type="archimate:Outcome" name="356 pruebas y 6 compuertas" id="out-pruebas">
+      <documentation>Suite unitaria, 30 suites E2E y verificación automatizada.</documentation>
+    </element>
+  </folder>
+  <folder name="Implementation &amp; Migration" id="id-folder-implementation_migration" type="implementation_migration">
+    <element xsi:type="archimate:Plateau" name="Situación actual · MIS heredado" id="pla-asis">
+      <documentation>Angular 14, monolítico, con Zone.js y sin pruebas versionadas.</documentation>
+    </element>
+    <element xsi:type="archimate:Gap" name="Brecha de rendimiento y evolución" id="gap-rendimiento">
+      <documentation>Distancia entre lo que el negocio necesita y lo que el sistema entrega.</documentation>
+    </element>
+    <element xsi:type="archimate:Plateau" name="Situación objetivo · MIS modular" id="pla-tobe">
+      <documentation>Angular 22, standalone, zoneless, con carga diferida y verificación automatizada.</documentation>
+    </element>
+    <element xsi:type="archimate:WorkPackage" name="1 · Inicio" id="wp-inicio">
+      <documentation>Acta de constitución, interesados y alcance. 16 días.</documentation>
+    </element>
+    <element xsi:type="archimate:WorkPackage" name="2 · Planificación" id="wp-planificacion">
+      <documentation>Modelo de seguridad, arquitectura objetivo y backlog. 35 días.</documentation>
+    </element>
+    <element xsi:type="archimate:WorkPackage" name="3 · Ejecución" id="wp-ejecucion">
+      <documentation>Núcleo y migración de los doce módulos. 168 días.</documentation>
+    </element>
+    <element xsi:type="archimate:WorkPackage" name="4 · Monitoreo y control" id="wp-control">
+      <documentation>Integración continua, regresiones y deuda técnica. 161 días.</documentation>
+    </element>
+    <element xsi:type="archimate:WorkPackage" name="5 · Cierre" id="wp-cierre">
+      <documentation>Informe, evaluación de calidad y transferencia. 24 días.</documentation>
+    </element>
+    <element xsi:type="archimate:Deliverable" name="IE1 · Diagnóstico y línea base" id="ent-diagnostico">
+      <documentation>Indicadores de rendimiento del sistema heredado, aprobados por la jefatura.</documentation>
+    </element>
+    <element xsi:type="archimate:Deliverable" name="IE2 · Documento de arquitectura" id="ent-arquitectura">
+      <documentation>Validado por especialistas, con 90 % de aceptación mínima.</documentation>
+    </element>
+    <element xsi:type="archimate:Deliverable" name="IE3 · Sistema en certificación" id="ent-sistema">
+      <documentation>Módulos standalone con carga diferida, desplegados.</documentation>
+    </element>
+    <element xsi:type="archimate:Deliverable" name="IE4 · Informe comparativo" id="ent-informe">
+      <documentation>Contraste de indicadores contra la línea base.</documentation>
+    </element>
+  </folder>
+  <folder name="Other" id="id-folder-other" type="other" />
+  <folder name="Relations" id="id-folder-relations" type="relations">
+    <element xsi:type="archimate:AssociationRelationship" id="r-int1" source="int-jefatura" target="drv-rendimiento" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-int2" source="int-comercial" target="drv-oportunidad" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-int3" source="int-usuario" target="drv-rendimiento" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-int4" source="int-seguridad" target="drv-mantenimiento" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-dia1" source="dia-tiempos" target="drv-rendimiento" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-dia2" source="dia-monolito" target="drv-mantenimiento" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-dia3" source="dia-zonejs" target="drv-rendimiento" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-dia4" source="dia-pruebas" target="drv-mantenimiento" />
+    <element xsi:type="archimate:InfluenceRelationship" id="r-drv1" source="drv-rendimiento" target="obj-tiempos" />
+    <element xsi:type="archimate:InfluenceRelationship" id="r-drv2" source="drv-oportunidad" target="obj-tiempos" />
+    <element xsi:type="archimate:InfluenceRelationship" id="r-drv3" source="drv-mantenimiento" target="obj-sostener" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-req1" source="req-standalone" target="obj-tiempos" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-req2" source="req-lazy" target="obj-tiempos" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-req3" source="req-zoneless" target="obj-tiempos" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-req4" source="req-verificacion" target="obj-sostener" />
+    <element xsi:type="archimate:InfluenceRelationship" id="r-res1" source="res-contratos" target="obj-continuidad" />
+    <element xsi:type="archimate:InfluenceRelationship" id="r-res2" source="res-red" target="obj-tiempos" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-res3" source="res-contratos" target="app-mis" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-pri1" source="res-contratos" target="pri-verdad" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-pri2" source="req-verificacion" target="pri-vacio" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-pri3" source="req-verificacion" target="pri-trazable" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-out1" source="out-paquete" target="obj-tiempos" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-out2" source="out-modulos" target="obj-tiempos" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-out3" source="out-ngmodules" target="obj-tiempos" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-out4" source="out-pruebas" target="obj-sostener" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-act1" source="act-asesor" target="rol-consumidor" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-act2" source="act-supervisor" target="rol-consumidor" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-act3" source="act-admin" target="rol-consumidor" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-rol1" source="rol-consumidor" target="prc-gestion" />
+    <element xsi:type="archimate:ServingRelationship" id="r-srv1" source="srv-consulta" target="rol-consumidor" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-prc0" source="prc-gestion" target="srv-consulta" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-cmp1" source="prc-gestion" target="prc-autenticar" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-cmp2" source="prc-gestion" target="prc-delimitar" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-cmp3" source="prc-gestion" target="prc-consultar" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-cmp4" source="prc-gestion" target="prc-decidir" />
+    <element xsi:type="archimate:TriggeringRelationship" id="r-trg1" source="prc-autenticar" target="prc-delimitar" />
+    <element xsi:type="archimate:TriggeringRelationship" id="r-trg2" source="prc-delimitar" target="prc-consultar" />
+    <element xsi:type="archimate:TriggeringRelationship" id="r-trg3" source="prc-consultar" target="prc-decidir" />
+    <element xsi:type="archimate:TriggeringRelationship" id="r-evt1" source="evt-corte" target="prc-consultar" />
+    <element xsi:type="archimate:AccessRelationship" id="r-acc1" source="prc-autenticar" target="obn-identidad" accessType="1" />
+    <element xsi:type="archimate:AccessRelationship" id="r-acc2" source="prc-delimitar" target="obn-jerarquia" accessType="1" />
+    <element xsi:type="archimate:AccessRelationship" id="r-acc3" source="prc-consultar" target="obn-indicador" accessType="1" />
+    <element xsi:type="archimate:AccessRelationship" id="r-acc4" source="prc-consultar" target="obn-fecha" accessType="1" />
+    <element xsi:type="archimate:ServingRelationship" id="r-fun1" source="srv-consulta" target="fun-cartera" />
+    <element xsi:type="archimate:ServingRelationship" id="r-fun2" source="srv-consulta" target="fun-mora" />
+    <element xsi:type="archimate:ServingRelationship" id="r-fun3" source="srv-consulta" target="fun-incentivos" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-app1" source="app-mis" target="app-srv" />
+    <element xsi:type="archimate:ServingRelationship" id="r-app2" source="app-srv" target="prc-gestion" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-app3" source="app-mis" target="req-standalone" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-app4" source="app-mis" target="req-lazy" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-app5" source="app-mis" target="req-zoneless" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-app6" source="app-mis" target="req-verificacion" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-cmp5" source="app-mis" target="app-nucleo" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-cmp6" source="app-mis" target="app-winder" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-cmp7" source="app-mis" target="app-modulos" />
+    <element xsi:type="archimate:CompositionRelationship" id="r-cmp8" source="app-mis" target="app-shared" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-dat1" source="dat-sesion" target="obn-identidad" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-dat2" source="dat-jerarquia" target="obn-jerarquia" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-dat3" source="dat-respuesta" target="obn-indicador" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-dat4" source="dat-respuesta" target="obn-fecha" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-art1" source="art-session" target="dat-sesion" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-art2" source="art-session" target="dat-jerarquia" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-art3" source="art-session" target="dat-comunicados" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-art4" source="art-memoria" target="dat-respuesta" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-art5" source="art-local" target="dat-preferencias" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-tec1" source="tec-equipo" target="tec-navegador" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-tec2" source="tec-navegador" target="art-ngsw" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-tec3" source="tec-navegador" target="tsrv-almacen" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-tec4" source="tec-web" target="art-bundle" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-tec5" source="tec-web" target="art-chunks" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-tec6" source="tec-red" target="tsrv-https" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-tec7" source="tec-ant" target="tsrv-ant" />
+    <element xsi:type="archimate:ServingRelationship" id="r-tec8" source="tec-bd" target="tec-ant" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-tec9" source="art-bundle" target="app-mis" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-tec10" source="art-chunks" target="app-modulos" />
+    <element xsi:type="archimate:ServingRelationship" id="r-tec11" source="tsrv-https" target="app-winder" />
+    <element xsi:type="archimate:ServingRelationship" id="r-tec12" source="tsrv-almacen" target="app-nucleo" />
+    <element xsi:type="archimate:ServingRelationship" id="r-tec13" source="tsrv-ant" target="app-winder" />
+    <element xsi:type="archimate:AssignmentRelationship" id="r-tec14" source="tec-navegador" target="art-bundle" />
+    <element xsi:type="archimate:TriggeringRelationship" id="r-wp1" source="wp-inicio" target="wp-planificacion" />
+    <element xsi:type="archimate:TriggeringRelationship" id="r-wp2" source="wp-planificacion" target="wp-ejecucion" />
+    <element xsi:type="archimate:TriggeringRelationship" id="r-wp3" source="wp-ejecucion" target="wp-cierre" />
+    <element xsi:type="archimate:TriggeringRelationship" id="r-wp4" source="wp-planificacion" target="wp-control" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-ent1" source="wp-inicio" target="ent-diagnostico" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-ent2" source="wp-planificacion" target="ent-arquitectura" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-ent3" source="wp-ejecucion" target="ent-sistema" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-ent4" source="wp-cierre" target="ent-informe" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-pla1" source="ent-sistema" target="pla-tobe" />
+    <element xsi:type="archimate:RealizationRelationship" id="r-pla2" source="ent-informe" target="pla-tobe" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-gap1" source="pla-asis" target="gap-rendimiento" />
+    <element xsi:type="archimate:AssociationRelationship" id="r-gap2" source="gap-rendimiento" target="pla-tobe" />
+    <element xsi:type="archimate:AggregationRelationship" id="r-mis1" source="pla-tobe" target="app-mis" />
+  </folder>
+  <folder name="Views" id="id-folder-diagrams" type="diagrams">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="01 · La idea del proyecto (motivación)" id="vw-motivacion">
+      <documentation>Por qué existe el proyecto: quién lo pide, qué encontró el diagnóstico, qué objetivos persigue, con qué requisitos y restricciones, y qué resultados se obtuvieron.</documentation>
+      <child xsi:type="archimate:Group" id="vw-motivacion-g-int" name="Interesados" fillColor="#dfe6f2">
+        <bounds x="20" y="50" width="230" height="320" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-motivacion-g-drv" name="Motivadores" fillColor="#dfe6f2">
+        <bounds x="270" y="50" width="230" height="320" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-motivacion-g-dia" name="Diagnóstico del sistema actual" fillColor="#dfe6f2">
+        <bounds x="520" y="50" width="250" height="330" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-motivacion-g-obj" name="Objetivos" fillColor="#dfe6f2">
+        <bounds x="790" y="50" width="250" height="330" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-motivacion-g-req" name="Requisitos de la solución" fillColor="#dfe6f2">
+        <bounds x="1060" y="50" width="260" height="330" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-motivacion-g-pri" name="Restricciones y principios" fillColor="#dfe6f2">
+        <bounds x="1340" y="50" width="260" height="410" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-motivacion-g-out" name="Resultados obtenidos" fillColor="#e3efe0">
+        <bounds x="50" y="440" width="1030" height="125" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-int-jefatura" archimateElement="int-jefatura">
+        <bounds x="30" y="90" width="210" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-int1" source="vw-motivacion-o-int-jefatura" target="vw-motivacion-o-drv-rendimiento" archimateRelationship="r-int1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-int-comercial" archimateElement="int-comercial">
+        <bounds x="30" y="160" width="210" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-int2" source="vw-motivacion-o-int-comercial" target="vw-motivacion-o-drv-oportunidad" archimateRelationship="r-int2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-int-usuario" archimateElement="int-usuario">
+        <bounds x="30" y="230" width="210" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-int3" source="vw-motivacion-o-int-usuario" target="vw-motivacion-o-drv-rendimiento" archimateRelationship="r-int3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-int-seguridad" archimateElement="int-seguridad">
+        <bounds x="30" y="300" width="210" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-int4" source="vw-motivacion-o-int-seguridad" target="vw-motivacion-o-drv-mantenimiento" archimateRelationship="r-int4" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-drv-rendimiento" archimateElement="drv-rendimiento" targetConnections="vw-motivacion-c-r-int1 vw-motivacion-c-r-int3 vw-motivacion-c-r-dia1 vw-motivacion-c-r-dia3">
+        <bounds x="280" y="110" width="210" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-drv1" source="vw-motivacion-o-drv-rendimiento" target="vw-motivacion-o-obj-tiempos" archimateRelationship="r-drv1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-drv-oportunidad" archimateElement="drv-oportunidad" targetConnections="vw-motivacion-c-r-int2">
+        <bounds x="280" y="190" width="210" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-drv2" source="vw-motivacion-o-drv-oportunidad" target="vw-motivacion-o-obj-tiempos" archimateRelationship="r-drv2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-drv-mantenimiento" archimateElement="drv-mantenimiento" targetConnections="vw-motivacion-c-r-int4 vw-motivacion-c-r-dia2 vw-motivacion-c-r-dia4">
+        <bounds x="280" y="270" width="210" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-drv3" source="vw-motivacion-o-drv-mantenimiento" target="vw-motivacion-o-obj-sostener" archimateRelationship="r-drv3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-dia-tiempos" archimateElement="dia-tiempos">
+        <bounds x="530" y="80" width="230" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-dia1" source="vw-motivacion-o-dia-tiempos" target="vw-motivacion-o-drv-rendimiento" archimateRelationship="r-dia1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-dia-monolito" archimateElement="dia-monolito">
+        <bounds x="530" y="155" width="230" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-dia2" source="vw-motivacion-o-dia-monolito" target="vw-motivacion-o-drv-mantenimiento" archimateRelationship="r-dia2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-dia-zonejs" archimateElement="dia-zonejs">
+        <bounds x="530" y="230" width="230" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-dia3" source="vw-motivacion-o-dia-zonejs" target="vw-motivacion-o-drv-rendimiento" archimateRelationship="r-dia3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-dia-pruebas" archimateElement="dia-pruebas">
+        <bounds x="530" y="305" width="230" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-dia4" source="vw-motivacion-o-dia-pruebas" target="vw-motivacion-o-drv-mantenimiento" archimateRelationship="r-dia4" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-obj-tiempos" archimateElement="obj-tiempos" targetConnections="vw-motivacion-c-r-drv1 vw-motivacion-c-r-drv2 vw-motivacion-c-r-req1 vw-motivacion-c-r-req2 vw-motivacion-c-r-req3 vw-motivacion-c-r-res2 vw-motivacion-c-r-out1 vw-motivacion-c-r-out2 vw-motivacion-c-r-out3">
+        <bounds x="800" y="110" width="230" height="70" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-obj-sostener" archimateElement="obj-sostener" targetConnections="vw-motivacion-c-r-drv3 vw-motivacion-c-r-req4 vw-motivacion-c-r-out4">
+        <bounds x="800" y="200" width="230" height="62" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-obj-continuidad" archimateElement="obj-continuidad" targetConnections="vw-motivacion-c-r-res1">
+        <bounds x="800" y="280" width="230" height="62" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-req-standalone" archimateElement="req-standalone">
+        <bounds x="1070" y="80" width="240" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-req1" source="vw-motivacion-o-req-standalone" target="vw-motivacion-o-obj-tiempos" archimateRelationship="r-req1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-req-lazy" archimateElement="req-lazy">
+        <bounds x="1070" y="150" width="240" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-req2" source="vw-motivacion-o-req-lazy" target="vw-motivacion-o-obj-tiempos" archimateRelationship="r-req2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-req-zoneless" archimateElement="req-zoneless">
+        <bounds x="1070" y="220" width="240" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-req3" source="vw-motivacion-o-req-zoneless" target="vw-motivacion-o-obj-tiempos" archimateRelationship="r-req3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-req-verificacion" archimateElement="req-verificacion">
+        <bounds x="1070" y="290" width="240" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-req4" source="vw-motivacion-o-req-verificacion" target="vw-motivacion-o-obj-sostener" archimateRelationship="r-req4" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-pri2" source="vw-motivacion-o-req-verificacion" target="vw-motivacion-o-pri-vacio" archimateRelationship="r-pri2" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-pri3" source="vw-motivacion-o-req-verificacion" target="vw-motivacion-o-pri-trazable" archimateRelationship="r-pri3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-res-contratos" archimateElement="res-contratos">
+        <bounds x="1350" y="90" width="240" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-res1" source="vw-motivacion-o-res-contratos" target="vw-motivacion-o-obj-continuidad" archimateRelationship="r-res1" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-pri1" source="vw-motivacion-o-res-contratos" target="vw-motivacion-o-pri-verdad" archimateRelationship="r-pri1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-res-red" archimateElement="res-red">
+        <bounds x="1350" y="165" width="240" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-res2" source="vw-motivacion-o-res-red" target="vw-motivacion-o-obj-tiempos" archimateRelationship="r-res2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-pri-verdad" archimateElement="pri-verdad" targetConnections="vw-motivacion-c-r-pri1">
+        <bounds x="1350" y="250" width="240" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-pri-vacio" archimateElement="pri-vacio" targetConnections="vw-motivacion-c-r-pri2">
+        <bounds x="1350" y="320" width="240" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-pri-trazable" archimateElement="pri-trazable" targetConnections="vw-motivacion-c-r-pri3">
+        <bounds x="1350" y="390" width="240" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-out-paquete" archimateElement="out-paquete">
+        <bounds x="60" y="480" width="230" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-out1" source="vw-motivacion-o-out-paquete" target="vw-motivacion-o-obj-tiempos" archimateRelationship="r-out1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-out-modulos" archimateElement="out-modulos">
+        <bounds x="320" y="480" width="230" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-out2" source="vw-motivacion-o-out-modulos" target="vw-motivacion-o-obj-tiempos" archimateRelationship="r-out2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-out-ngmodules" archimateElement="out-ngmodules">
+        <bounds x="580" y="480" width="230" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-out3" source="vw-motivacion-o-out-ngmodules" target="vw-motivacion-o-obj-tiempos" archimateRelationship="r-out3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-motivacion-o-out-pruebas" archimateElement="out-pruebas">
+        <bounds x="840" y="480" width="230" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-motivacion-c-r-out4" source="vw-motivacion-o-out-pruebas" target="vw-motivacion-o-obj-sostener" archimateRelationship="r-out4" />
+      </child>
+      <child xsi:type="archimate:Note" id="vw-motivacion-n-mot" textAlignment="1" fillColor="#ffffff">
+        <bounds x="30" y="600" width="1050" height="70" />
+        <content>El proyecto no interviene la red ni el backend. Optimiza el tiempo que la aplicación añade a la espera del servidor: descarga, análisis y ejecución de JavaScript, detección de cambios y renderizado.</content>
+      </child>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="02 · Capa de negocio" id="vw-negocio">
+      <documentation>Quién consulta la información, con qué proceso, apoyado en qué servicio y sobre qué objetos de negocio.</documentation>
+      <child xsi:type="archimate:Group" id="vw-negocio-g-fun" name="Funciones de negocio que el MIS sostiene" fillColor="#fdf3d4">
+        <bounds x="1060" y="220" width="250" height="250" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-act-asesor" archimateElement="act-asesor">
+        <bounds x="40" y="60" width="210" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-act1" source="vw-negocio-o-act-asesor" target="vw-negocio-o-rol-consumidor" archimateRelationship="r-act1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-act-supervisor" archimateElement="act-supervisor">
+        <bounds x="270" y="60" width="210" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-act2" source="vw-negocio-o-act-supervisor" target="vw-negocio-o-rol-consumidor" archimateRelationship="r-act2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-act-admin" archimateElement="act-admin">
+        <bounds x="500" y="60" width="210" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-act3" source="vw-negocio-o-act-admin" target="vw-negocio-o-rol-consumidor" archimateRelationship="r-act3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-rol-consumidor" archimateElement="rol-consumidor" targetConnections="vw-negocio-c-r-act1 vw-negocio-c-r-act2 vw-negocio-c-r-act3 vw-negocio-c-r-srv1">
+        <bounds x="270" y="160" width="210" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-rol1" source="vw-negocio-o-rol-consumidor" target="vw-negocio-o-prc-gestion" archimateRelationship="r-rol1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-srv-consulta" archimateElement="srv-consulta" targetConnections="vw-negocio-c-r-prc0">
+        <bounds x="170" y="260" width="410" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-srv1" source="vw-negocio-o-srv-consulta" target="vw-negocio-o-rol-consumidor" archimateRelationship="r-srv1" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-fun1" source="vw-negocio-o-srv-consulta" target="vw-negocio-o-fun-cartera" archimateRelationship="r-fun1" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-fun2" source="vw-negocio-o-srv-consulta" target="vw-negocio-o-fun-mora" archimateRelationship="r-fun2" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-fun3" source="vw-negocio-o-srv-consulta" target="vw-negocio-o-fun-incentivos" archimateRelationship="r-fun3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-prc-gestion" archimateElement="prc-gestion" targetConnections="vw-negocio-c-r-rol1">
+        <bounds x="40" y="360" width="670" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-prc0" source="vw-negocio-o-prc-gestion" target="vw-negocio-o-srv-consulta" archimateRelationship="r-prc0" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-cmp1" source="vw-negocio-o-prc-gestion" target="vw-negocio-o-prc-autenticar" archimateRelationship="r-cmp1" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-cmp2" source="vw-negocio-o-prc-gestion" target="vw-negocio-o-prc-delimitar" archimateRelationship="r-cmp2" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-cmp3" source="vw-negocio-o-prc-gestion" target="vw-negocio-o-prc-consultar" archimateRelationship="r-cmp3" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-cmp4" source="vw-negocio-o-prc-gestion" target="vw-negocio-o-prc-decidir" archimateRelationship="r-cmp4" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-prc-autenticar" archimateElement="prc-autenticar" targetConnections="vw-negocio-c-r-cmp1">
+        <bounds x="40" y="450" width="230" height="66" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-trg1" source="vw-negocio-o-prc-autenticar" target="vw-negocio-o-prc-delimitar" archimateRelationship="r-trg1" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-acc1" source="vw-negocio-o-prc-autenticar" target="vw-negocio-o-obn-identidad" archimateRelationship="r-acc1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-prc-delimitar" archimateElement="prc-delimitar" targetConnections="vw-negocio-c-r-cmp2 vw-negocio-c-r-trg1">
+        <bounds x="290" y="450" width="230" height="66" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-trg2" source="vw-negocio-o-prc-delimitar" target="vw-negocio-o-prc-consultar" archimateRelationship="r-trg2" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-acc2" source="vw-negocio-o-prc-delimitar" target="vw-negocio-o-obn-jerarquia" archimateRelationship="r-acc2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-prc-consultar" archimateElement="prc-consultar" targetConnections="vw-negocio-c-r-cmp3 vw-negocio-c-r-trg2 vw-negocio-c-r-evt1">
+        <bounds x="540" y="450" width="230" height="66" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-trg3" source="vw-negocio-o-prc-consultar" target="vw-negocio-o-prc-decidir" archimateRelationship="r-trg3" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-acc3" source="vw-negocio-o-prc-consultar" target="vw-negocio-o-obn-indicador" archimateRelationship="r-acc3" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-acc4" source="vw-negocio-o-prc-consultar" target="vw-negocio-o-obn-fecha" archimateRelationship="r-acc4" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-prc-decidir" archimateElement="prc-decidir" targetConnections="vw-negocio-c-r-cmp4 vw-negocio-c-r-trg3">
+        <bounds x="790" y="450" width="230" height="66" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-evt-corte" archimateElement="evt-corte">
+        <bounds x="790" y="360" width="230" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-negocio-c-r-evt1" source="vw-negocio-o-evt-corte" target="vw-negocio-o-prc-consultar" archimateRelationship="r-evt1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-obn-identidad" archimateElement="obn-identidad" targetConnections="vw-negocio-c-r-acc1">
+        <bounds x="40" y="570" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-obn-jerarquia" archimateElement="obn-jerarquia" targetConnections="vw-negocio-c-r-acc2">
+        <bounds x="290" y="570" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-obn-indicador" archimateElement="obn-indicador" targetConnections="vw-negocio-c-r-acc3">
+        <bounds x="540" y="570" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-obn-fecha" archimateElement="obn-fecha" targetConnections="vw-negocio-c-r-acc4">
+        <bounds x="790" y="570" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-fun-cartera" archimateElement="fun-cartera" targetConnections="vw-negocio-c-r-fun1">
+        <bounds x="1070" y="260" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-fun-mora" archimateElement="fun-mora" targetConnections="vw-negocio-c-r-fun2">
+        <bounds x="1070" y="330" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-negocio-o-fun-incentivos" archimateElement="fun-incentivos" targetConnections="vw-negocio-c-r-fun3">
+        <bounds x="1070" y="400" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:Note" id="vw-negocio-n-neg" textAlignment="1" fillColor="#ffffff">
+        <bounds x="40" y="660" width="980" height="60" />
+        <content>Las tres coordenadas de una cifra —qué reporte, de qué nodo de la jerarquía y de qué fecha de corte— quedan fijadas en los dos primeros pasos del proceso. Sin las tres, la cifra es plausible y equivocada.</content>
+      </child>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="03 · Capa de datos · realización del dato" id="vw-datos">
+      <documentation>ArchiMate no tiene una capa de datos: el dato se modela como objeto de datos en la capa de aplicación y como artefacto en la de tecnología. Esta vista muestra esa cadena de realización de abajo hacia arriba, y con ella dónde reside realmente cada cosa y cuánto dura.</documentation>
+      <child xsi:type="archimate:Group" id="vw-datos-g-obn" name="Objetos de negocio · lo que el negocio reconoce" fillColor="#fdf3d4">
+        <bounds x="30" y="50" width="1010" height="90" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-datos-g-dat" name="Objetos de datos · capa de aplicación" fillColor="#d6f2f2">
+        <bounds x="30" y="210" width="1290" height="160" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-datos-g-art" name="Artefactos · capa de tecnología" fillColor="#dcefd0">
+        <bounds x="30" y="380" width="1290" height="100" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-obn-identidad" archimateElement="obn-identidad" targetConnections="vw-datos-c-r-dat1">
+        <bounds x="40" y="70" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-obn-jerarquia" archimateElement="obn-jerarquia" targetConnections="vw-datos-c-r-dat2">
+        <bounds x="290" y="70" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-obn-indicador" archimateElement="obn-indicador" targetConnections="vw-datos-c-r-dat3">
+        <bounds x="540" y="70" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-obn-fecha" archimateElement="obn-fecha" targetConnections="vw-datos-c-r-dat4">
+        <bounds x="790" y="70" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-dat-sesion" archimateElement="dat-sesion" targetConnections="vw-datos-c-r-art1">
+        <bounds x="40" y="230" width="230" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-datos-c-r-dat1" source="vw-datos-o-dat-sesion" target="vw-datos-o-obn-identidad" archimateRelationship="r-dat1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-dat-jerarquia" archimateElement="dat-jerarquia" targetConnections="vw-datos-c-r-art2">
+        <bounds x="290" y="230" width="230" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-datos-c-r-dat2" source="vw-datos-o-dat-jerarquia" target="vw-datos-o-obn-jerarquia" archimateRelationship="r-dat2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-dat-respuesta" archimateElement="dat-respuesta" targetConnections="vw-datos-c-r-art4">
+        <bounds x="540" y="230" width="480" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-datos-c-r-dat3" source="vw-datos-o-dat-respuesta" target="vw-datos-o-obn-indicador" archimateRelationship="r-dat3" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-datos-c-r-dat4" source="vw-datos-o-dat-respuesta" target="vw-datos-o-obn-fecha" archimateRelationship="r-dat4" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-dat-preferencias" archimateElement="dat-preferencias" targetConnections="vw-datos-c-r-art5">
+        <bounds x="1070" y="230" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-dat-comunicados" archimateElement="dat-comunicados" targetConnections="vw-datos-c-r-art3">
+        <bounds x="1070" y="310" width="230" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-art-session" archimateElement="art-session">
+        <bounds x="40" y="400" width="480" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-datos-c-r-art1" source="vw-datos-o-art-session" target="vw-datos-o-dat-sesion" archimateRelationship="r-art1" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-datos-c-r-art2" source="vw-datos-o-art-session" target="vw-datos-o-dat-jerarquia" archimateRelationship="r-art2" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-datos-c-r-art3" source="vw-datos-o-art-session" target="vw-datos-o-dat-comunicados" archimateRelationship="r-art3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-art-memoria" archimateElement="art-memoria">
+        <bounds x="540" y="400" width="480" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-datos-c-r-art4" source="vw-datos-o-art-memoria" target="vw-datos-o-dat-respuesta" archimateRelationship="r-art4" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-datos-o-art-local" archimateElement="art-local">
+        <bounds x="1070" y="400" width="230" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-datos-c-r-art5" source="vw-datos-o-art-local" target="vw-datos-o-dat-preferencias" archimateRelationship="r-art5" />
+      </child>
+      <child xsi:type="archimate:Note" id="vw-datos-n-dat" textAlignment="1" fillColor="#ffffff">
+        <bounds x="30" y="510" width="1290" height="78" />
+        <content>Ninguna cifra de negocio se persiste en el cliente: la respuesta de reporte vive en memoria y se pierde al recargar, lo que obliga a volver a pedirla con su fecha de corte. Lo único permanente es la preferencia de interfaz, que no tiene valor de negocio. El service worker cachea el esqueleto de la aplicación y ninguna respuesta: ngsw-config.json no declara dataGroups.</content>
+      </child>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="04 · Capa de aplicación · cómo el MIS sostiene al negocio" id="vw-soporte">
+      <documentation>El puente entre el proceso de negocio y la aplicación: qué servicio lo sirve, qué componente lo realiza y qué requisitos del proyecto materializa ese componente.</documentation>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-prc-gestion" archimateElement="prc-gestion" targetConnections="vw-soporte-c-r-rol1 vw-soporte-c-r-app2">
+        <bounds x="300" y="60" width="420" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-prc0" source="vw-soporte-o-prc-gestion" target="vw-soporte-o-srv-consulta" archimateRelationship="r-prc0" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-srv-consulta" archimateElement="srv-consulta" targetConnections="vw-soporte-c-r-prc0">
+        <bounds x="300" y="160" width="420" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-srv1" source="vw-soporte-o-srv-consulta" target="vw-soporte-o-rol-consumidor" archimateRelationship="r-srv1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-app-srv" archimateElement="app-srv" targetConnections="vw-soporte-c-r-app1">
+        <bounds x="300" y="260" width="420" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-app2" source="vw-soporte-o-app-srv" target="vw-soporte-o-prc-gestion" archimateRelationship="r-app2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-app-mis" archimateElement="app-mis" targetConnections="vw-soporte-c-r-res3">
+        <bounds x="300" y="370" width="420" height="70" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-app1" source="vw-soporte-o-app-mis" target="vw-soporte-o-app-srv" archimateRelationship="r-app1" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-app3" source="vw-soporte-o-app-mis" target="vw-soporte-o-req-standalone" archimateRelationship="r-app3" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-app4" source="vw-soporte-o-app-mis" target="vw-soporte-o-req-lazy" archimateRelationship="r-app4" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-app5" source="vw-soporte-o-app-mis" target="vw-soporte-o-req-zoneless" archimateRelationship="r-app5" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-app6" source="vw-soporte-o-app-mis" target="vw-soporte-o-req-verificacion" archimateRelationship="r-app6" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-req-standalone" archimateElement="req-standalone" targetConnections="vw-soporte-c-r-app3">
+        <bounds x="810" y="350" width="240" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-req-lazy" archimateElement="req-lazy" targetConnections="vw-soporte-c-r-app4">
+        <bounds x="810" y="420" width="240" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-req-zoneless" archimateElement="req-zoneless" targetConnections="vw-soporte-c-r-app5">
+        <bounds x="810" y="490" width="240" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-req-verificacion" archimateElement="req-verificacion" targetConnections="vw-soporte-c-r-app6">
+        <bounds x="810" y="560" width="240" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-res-contratos" archimateElement="res-contratos">
+        <bounds x="30" y="260" width="240" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-res3" source="vw-soporte-o-res-contratos" target="vw-soporte-o-app-mis" archimateRelationship="r-res3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-soporte-o-rol-consumidor" archimateElement="rol-consumidor" targetConnections="vw-soporte-c-r-srv1">
+        <bounds x="30" y="60" width="240" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-soporte-c-r-rol1" source="vw-soporte-o-rol-consumidor" target="vw-soporte-o-prc-gestion" archimateRelationship="r-rol1" />
+      </child>
+      <child xsi:type="archimate:Note" id="vw-soporte-n-sop" textAlignment="1" fillColor="#ffffff">
+        <bounds x="30" y="660" width="1020" height="60" />
+        <content>La reingeniería alcanza únicamente a la capa de presentación: el backend, sus contratos y el cálculo de los indicadores permanecen sin modificación durante todo el proyecto.</content>
+      </child>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="05 · Capa de tecnología" id="vw-tecnologia">
+      <documentation>Sobre qué se ejecuta el MIS: el equipo del usuario y su navegador, la red corporativa y el centro de datos con el servidor de contenido y el backend Ant. A la derecha, los componentes de aplicación que esa infraestructura sostiene.</documentation>
+      <child xsi:type="archimate:Group" id="vw-tecnologia-g-cli" name="Cliente" fillColor="#dcefd0">
+        <bounds x="30" y="50" width="280" height="340" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-tecnologia-g-red" name="Red corporativa" fillColor="#dcefd0">
+        <bounds x="360" y="50" width="260" height="340" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-tecnologia-g-srv" name="Centro de datos" fillColor="#dcefd0">
+        <bounds x="670" y="50" width="280" height="500" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-tecnologia-g-apl" name="Componentes de aplicación sostenidos" fillColor="#d6f2f2">
+        <bounds x="1000" y="50" width="270" height="420" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-tec-equipo" archimateElement="tec-equipo">
+        <bounds x="40" y="80" width="260" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec1" source="vw-tecnologia-o-tec-equipo" target="vw-tecnologia-o-tec-navegador" archimateRelationship="r-tec1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-tec-navegador" archimateElement="tec-navegador" targetConnections="vw-tecnologia-c-r-tec1">
+        <bounds x="40" y="160" width="260" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec2" source="vw-tecnologia-o-tec-navegador" target="vw-tecnologia-o-art-ngsw" archimateRelationship="r-tec2" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec3" source="vw-tecnologia-o-tec-navegador" target="vw-tecnologia-o-tsrv-almacen" archimateRelationship="r-tec3" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec14" source="vw-tecnologia-o-tec-navegador" target="vw-tecnologia-o-art-bundle" archimateRelationship="r-tec14" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-art-ngsw" archimateElement="art-ngsw" targetConnections="vw-tecnologia-c-r-tec2">
+        <bounds x="40" y="250" width="260" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-tsrv-almacen" archimateElement="tsrv-almacen" targetConnections="vw-tecnologia-c-r-tec3">
+        <bounds x="40" y="330" width="260" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec12" source="vw-tecnologia-o-tsrv-almacen" target="vw-tecnologia-o-app-nucleo" archimateRelationship="r-tec12" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-tec-red" archimateElement="tec-red">
+        <bounds x="370" y="160" width="240" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec6" source="vw-tecnologia-o-tec-red" target="vw-tecnologia-o-tsrv-https" archimateRelationship="r-tec6" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-tsrv-https" archimateElement="tsrv-https" targetConnections="vw-tecnologia-c-r-tec6">
+        <bounds x="370" y="250" width="240" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec11" source="vw-tecnologia-o-tsrv-https" target="vw-tecnologia-o-app-winder" archimateRelationship="r-tec11" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-tec-web" archimateElement="tec-web">
+        <bounds x="680" y="80" width="260" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec4" source="vw-tecnologia-o-tec-web" target="vw-tecnologia-o-art-bundle" archimateRelationship="r-tec4" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec5" source="vw-tecnologia-o-tec-web" target="vw-tecnologia-o-art-chunks" archimateRelationship="r-tec5" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-art-bundle" archimateElement="art-bundle" targetConnections="vw-tecnologia-c-r-tec4 vw-tecnologia-c-r-tec14">
+        <bounds x="680" y="160" width="260" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec9" source="vw-tecnologia-o-art-bundle" target="vw-tecnologia-o-app-mis" archimateRelationship="r-tec9" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-art-chunks" archimateElement="art-chunks" targetConnections="vw-tecnologia-c-r-tec5">
+        <bounds x="680" y="230" width="260" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec10" source="vw-tecnologia-o-art-chunks" target="vw-tecnologia-o-app-modulos" archimateRelationship="r-tec10" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-tec-ant" archimateElement="tec-ant" targetConnections="vw-tecnologia-c-r-tec8">
+        <bounds x="680" y="330" width="260" height="62" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec7" source="vw-tecnologia-o-tec-ant" target="vw-tecnologia-o-tsrv-ant" archimateRelationship="r-tec7" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-tsrv-ant" archimateElement="tsrv-ant" targetConnections="vw-tecnologia-c-r-tec7">
+        <bounds x="680" y="410" width="260" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec13" source="vw-tecnologia-o-tsrv-ant" target="vw-tecnologia-o-app-winder" archimateRelationship="r-tec13" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-tec-bd" archimateElement="tec-bd">
+        <bounds x="680" y="490" width="260" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-tec8" source="vw-tecnologia-o-tec-bd" target="vw-tecnologia-o-tec-ant" archimateRelationship="r-tec8" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-app-mis" archimateElement="app-mis" targetConnections="vw-tecnologia-c-r-tec9">
+        <bounds x="1010" y="80" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-cmp5" source="vw-tecnologia-o-app-mis" target="vw-tecnologia-o-app-nucleo" archimateRelationship="r-cmp5" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-cmp6" source="vw-tecnologia-o-app-mis" target="vw-tecnologia-o-app-winder" archimateRelationship="r-cmp6" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-cmp7" source="vw-tecnologia-o-app-mis" target="vw-tecnologia-o-app-modulos" archimateRelationship="r-cmp7" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-tecnologia-c-r-cmp8" source="vw-tecnologia-o-app-mis" target="vw-tecnologia-o-app-shared" archimateRelationship="r-cmp8" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-app-nucleo" archimateElement="app-nucleo" targetConnections="vw-tecnologia-c-r-cmp5 vw-tecnologia-c-r-tec12">
+        <bounds x="1010" y="160" width="250" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-app-modulos" archimateElement="app-modulos" targetConnections="vw-tecnologia-c-r-cmp7 vw-tecnologia-c-r-tec10">
+        <bounds x="1010" y="240" width="250" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-app-winder" archimateElement="app-winder" targetConnections="vw-tecnologia-c-r-cmp6 vw-tecnologia-c-r-tec11 vw-tecnologia-c-r-tec13">
+        <bounds x="1010" y="330" width="250" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-tecnologia-o-app-shared" archimateElement="app-shared" targetConnections="vw-tecnologia-c-r-cmp8">
+        <bounds x="1010" y="410" width="250" height="58" />
+      </child>
+      <child xsi:type="archimate:Note" id="vw-tecnologia-n-tec" textAlignment="1" fillColor="#ffffff">
+        <bounds x="30" y="580" width="1240" height="78" />
+        <content>El proyecto no interviene ninguno de estos nodos: ni la red, ni el backend Ant, ni la base de datos. Actúa solo sobre lo que se ejecuta dentro del navegador —cuánto código se descarga, cuándo y cuánto trabajo cuesta renderizarlo—, y por eso la restricción "no se interviene la infraestructura de red" delimita desde el inicio qué parte de la espera es optimizable.</content>
+      </child>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="06 · Vista integrada en capas" id="vw-integrada">
+      <documentation>Las cinco capas apiladas y una traza completa que las cruza: el paquete inicial realiza el componente, el componente realiza el servicio de aplicación, el servicio sirve al proceso de negocio y el proceso realiza el servicio que consume el rol. En paralelo, la carga diferida realiza el objetivo de reducir tiempos.</documentation>
+      <child xsi:type="archimate:Group" id="vw-integrada-g-b1" name="Motivación" fillColor="#dfe6f2">
+        <bounds x="30" y="50" width="1240" height="100" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-integrada-g-b2" name="Negocio" fillColor="#fdf3d4">
+        <bounds x="30" y="170" width="1240" height="110" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-integrada-g-b3" name="Aplicación" fillColor="#d6f2f2">
+        <bounds x="30" y="300" width="1240" height="110" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-integrada-g-b4" name="Tecnología" fillColor="#dcefd0">
+        <bounds x="30" y="430" width="1240" height="110" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-integrada-g-b5" name="Implementación y migración" fillColor="#f6e0e0">
+        <bounds x="30" y="560" width="1240" height="100" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-drv-rendimiento" archimateElement="drv-rendimiento">
+        <bounds x="60" y="75" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-drv1" source="vw-integrada-o-drv-rendimiento" target="vw-integrada-o-obj-tiempos" archimateRelationship="r-drv1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-obj-tiempos" archimateElement="obj-tiempos" targetConnections="vw-integrada-c-r-drv1 vw-integrada-c-r-req2">
+        <bounds x="340" y="75" width="250" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-req-lazy" archimateElement="req-lazy" targetConnections="vw-integrada-c-r-app4">
+        <bounds x="620" y="75" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-req2" source="vw-integrada-o-req-lazy" target="vw-integrada-o-obj-tiempos" archimateRelationship="r-req2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-rol-consumidor" archimateElement="rol-consumidor" targetConnections="vw-integrada-c-r-srv1">
+        <bounds x="60" y="195" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-rol1" source="vw-integrada-o-rol-consumidor" target="vw-integrada-o-prc-gestion" archimateRelationship="r-rol1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-srv-consulta" archimateElement="srv-consulta" targetConnections="vw-integrada-c-r-prc0">
+        <bounds x="340" y="195" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-srv1" source="vw-integrada-o-srv-consulta" target="vw-integrada-o-rol-consumidor" archimateRelationship="r-srv1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-prc-gestion" archimateElement="prc-gestion" targetConnections="vw-integrada-c-r-rol1 vw-integrada-c-r-app2">
+        <bounds x="620" y="195" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-prc0" source="vw-integrada-o-prc-gestion" target="vw-integrada-o-srv-consulta" archimateRelationship="r-prc0" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-obn-indicador" archimateElement="obn-indicador" targetConnections="vw-integrada-c-r-dat3">
+        <bounds x="900" y="195" width="250" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-app-srv" archimateElement="app-srv" targetConnections="vw-integrada-c-r-app1">
+        <bounds x="60" y="325" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-app2" source="vw-integrada-o-app-srv" target="vw-integrada-o-prc-gestion" archimateRelationship="r-app2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-app-mis" archimateElement="app-mis" targetConnections="vw-integrada-c-r-tec9 vw-integrada-c-r-mis1">
+        <bounds x="340" y="325" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-app1" source="vw-integrada-o-app-mis" target="vw-integrada-o-app-srv" archimateRelationship="r-app1" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-app4" source="vw-integrada-o-app-mis" target="vw-integrada-o-req-lazy" archimateRelationship="r-app4" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-cmp5" source="vw-integrada-o-app-mis" target="vw-integrada-o-app-nucleo" archimateRelationship="r-cmp5" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-cmp6" source="vw-integrada-o-app-mis" target="vw-integrada-o-app-winder" archimateRelationship="r-cmp6" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-app-nucleo" archimateElement="app-nucleo" targetConnections="vw-integrada-c-r-cmp5">
+        <bounds x="620" y="325" width="190" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-app-winder" archimateElement="app-winder" targetConnections="vw-integrada-c-r-cmp6 vw-integrada-c-r-tec11 vw-integrada-c-r-tec13">
+        <bounds x="830" y="325" width="190" height="58" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-dat-respuesta" archimateElement="dat-respuesta">
+        <bounds x="1040" y="325" width="190" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-dat3" source="vw-integrada-o-dat-respuesta" target="vw-integrada-o-obn-indicador" archimateRelationship="r-dat3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-art-bundle" archimateElement="art-bundle" targetConnections="vw-integrada-c-r-tec14">
+        <bounds x="60" y="455" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-tec9" source="vw-integrada-o-art-bundle" target="vw-integrada-o-app-mis" archimateRelationship="r-tec9" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-tec-navegador" archimateElement="tec-navegador">
+        <bounds x="340" y="455" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-tec14" source="vw-integrada-o-tec-navegador" target="vw-integrada-o-art-bundle" archimateRelationship="r-tec14" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-tsrv-https" archimateElement="tsrv-https">
+        <bounds x="620" y="455" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-tec11" source="vw-integrada-o-tsrv-https" target="vw-integrada-o-app-winder" archimateRelationship="r-tec11" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-tsrv-ant" archimateElement="tsrv-ant">
+        <bounds x="900" y="455" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-tec13" source="vw-integrada-o-tsrv-ant" target="vw-integrada-o-app-winder" archimateRelationship="r-tec13" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-pla-asis" archimateElement="pla-asis">
+        <bounds x="60" y="580" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-gap1" source="vw-integrada-o-pla-asis" target="vw-integrada-o-gap-rendimiento" archimateRelationship="r-gap1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-gap-rendimiento" archimateElement="gap-rendimiento" targetConnections="vw-integrada-c-r-gap1">
+        <bounds x="340" y="580" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-gap2" source="vw-integrada-o-gap-rendimiento" target="vw-integrada-o-pla-tobe" archimateRelationship="r-gap2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-integrada-o-pla-tobe" archimateElement="pla-tobe" targetConnections="vw-integrada-c-r-gap2">
+        <bounds x="620" y="580" width="250" height="58" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-integrada-c-r-mis1" source="vw-integrada-o-pla-tobe" target="vw-integrada-o-app-mis" archimateRelationship="r-mis1" />
+      </child>
+      <child xsi:type="archimate:Note" id="vw-integrada-n-int" textAlignment="1" fillColor="#ffffff">
+        <bounds x="30" y="690" width="1240" height="60" />
+        <content>Se lee de abajo hacia arriba: cada capa realiza o sirve a la de encima. Una decisión técnica solo se justifica si esa cadena llega hasta un objetivo de la capa de motivación.</content>
+      </child>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="07 · Hoja de ruta del proyecto" id="vw-proyecto">
+      <documentation>De la situación actual a la situación objetivo: paquetes de trabajo, entregables e indicadores de éxito.</documentation>
+      <child xsi:type="archimate:Group" id="vw-proyecto-g-wp" name="Paquetes de trabajo · 243 días" fillColor="#f6e0e0">
+        <bounds x="30" y="190" width="890" height="230" />
+      </child>
+      <child xsi:type="archimate:Group" id="vw-proyecto-g-ent" name="Entregables · indicadores de éxito" fillColor="#f6e0e0">
+        <bounds x="30" y="430" width="890" height="110" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-pla-asis" archimateElement="pla-asis">
+        <bounds x="40" y="70" width="260" height="70" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-gap1" source="vw-proyecto-o-pla-asis" target="vw-proyecto-o-gap-rendimiento" archimateRelationship="r-gap1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-gap-rendimiento" archimateElement="gap-rendimiento" targetConnections="vw-proyecto-c-r-gap1">
+        <bounds x="400" y="70" width="260" height="70" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-gap2" source="vw-proyecto-o-gap-rendimiento" target="vw-proyecto-o-pla-tobe" archimateRelationship="r-gap2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-pla-tobe" archimateElement="pla-tobe" targetConnections="vw-proyecto-c-r-pla1 vw-proyecto-c-r-pla2 vw-proyecto-c-r-gap2">
+        <bounds x="760" y="70" width="260" height="70" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-mis1" source="vw-proyecto-o-pla-tobe" target="vw-proyecto-o-app-mis" archimateRelationship="r-mis1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-wp-inicio" archimateElement="wp-inicio">
+        <bounds x="40" y="230" width="200" height="66" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-wp1" source="vw-proyecto-o-wp-inicio" target="vw-proyecto-o-wp-planificacion" archimateRelationship="r-wp1" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-ent1" source="vw-proyecto-o-wp-inicio" target="vw-proyecto-o-ent-diagnostico" archimateRelationship="r-ent1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-wp-planificacion" archimateElement="wp-planificacion" targetConnections="vw-proyecto-c-r-wp1">
+        <bounds x="260" y="230" width="200" height="66" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-wp2" source="vw-proyecto-o-wp-planificacion" target="vw-proyecto-o-wp-ejecucion" archimateRelationship="r-wp2" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-wp4" source="vw-proyecto-o-wp-planificacion" target="vw-proyecto-o-wp-control" archimateRelationship="r-wp4" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-ent2" source="vw-proyecto-o-wp-planificacion" target="vw-proyecto-o-ent-arquitectura" archimateRelationship="r-ent2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-wp-ejecucion" archimateElement="wp-ejecucion" targetConnections="vw-proyecto-c-r-wp2">
+        <bounds x="480" y="230" width="200" height="66" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-wp3" source="vw-proyecto-o-wp-ejecucion" target="vw-proyecto-o-wp-cierre" archimateRelationship="r-wp3" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-ent3" source="vw-proyecto-o-wp-ejecucion" target="vw-proyecto-o-ent-sistema" archimateRelationship="r-ent3" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-wp-control" archimateElement="wp-control" targetConnections="vw-proyecto-c-r-wp4">
+        <bounds x="260" y="330" width="200" height="66" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-wp-cierre" archimateElement="wp-cierre" targetConnections="vw-proyecto-c-r-wp3">
+        <bounds x="700" y="230" width="200" height="66" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-ent4" source="vw-proyecto-o-wp-cierre" target="vw-proyecto-o-ent-informe" archimateRelationship="r-ent4" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-ent-diagnostico" archimateElement="ent-diagnostico" targetConnections="vw-proyecto-c-r-ent1">
+        <bounds x="40" y="450" width="200" height="66" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-ent-arquitectura" archimateElement="ent-arquitectura" targetConnections="vw-proyecto-c-r-ent2">
+        <bounds x="260" y="450" width="200" height="66" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-ent-sistema" archimateElement="ent-sistema" targetConnections="vw-proyecto-c-r-ent3">
+        <bounds x="480" y="450" width="200" height="66" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-pla1" source="vw-proyecto-o-ent-sistema" target="vw-proyecto-o-pla-tobe" archimateRelationship="r-pla1" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-ent-informe" archimateElement="ent-informe" targetConnections="vw-proyecto-c-r-ent4">
+        <bounds x="700" y="450" width="200" height="66" />
+        <sourceConnection xsi:type="archimate:Connection" id="vw-proyecto-c-r-pla2" source="vw-proyecto-o-ent-informe" target="vw-proyecto-o-pla-tobe" archimateRelationship="r-pla2" />
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="vw-proyecto-o-app-mis" archimateElement="app-mis" targetConnections="vw-proyecto-c-r-mis1">
+        <bounds x="960" y="230" width="220" height="66" />
+      </child>
+      <child xsi:type="archimate:Note" id="vw-proyecto-n-pro" textAlignment="1" fillColor="#ffffff">
+        <bounds x="30" y="570" width="1150" height="60" />
+        <content>Presupuesto total S/ 213 884,44 con 10 % de reserva de contingencia. El monitoreo y control corre en paralelo con la ejecución, no como fase posterior: solo tiene sentido mientras hay código entrando.</content>
+      </child>
+    </element>
+  </folder>
+</archimate:model>
