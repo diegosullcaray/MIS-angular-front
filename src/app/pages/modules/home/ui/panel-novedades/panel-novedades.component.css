@@ -12,7 +12,12 @@
   top: var(--mis-header-h);
   right: 0;
   bottom: 0;
-  z-index: 30;
+  /* Por DEBAJO del header (`z-30`), no a la par. Empatados, ganaba el panel por
+     venir después en el DOM, y su caja tapaba el desplegable del menú de perfil:
+     "Configuración" y "Cerrar sesión" quedaban fuera de alcance en escritorio,
+     donde el panel arranca abierto. El `z-index: 1000` del desplegable no
+     alcanzaba, porque vive dentro del contexto de apilado del header. */
+  z-index: 20;
   width: 300px;
   max-width: 88vw;
   display: flex;
@@ -37,7 +42,7 @@
   position: fixed;
   top: calc(var(--mis-header-h) + var(--mis-space-4));
   right: 0;
-  z-index: 30;
+  z-index: 20;
   display: inline-flex;
   align-items: center;
   gap: var(--mis-space-2);
@@ -68,11 +73,42 @@
   background: var(--mis-secondary);
 }
 
-/* En pantallas angostas la pestaña se reduce al ícono: el texto se comía el
-   ancho justo donde menos sobra. */
+/* ── Pantallas angostas ─────────────────────────────────────
+   Una barra de 300 px contra el borde derecho no tiene sentido en un teléfono:
+   deja al Home en una franja inservible y encima tapa lo que los recorridos
+   quieren señalar. Abierto, el panel pasa a ser una hoja a pantalla completa;
+   cerrado, no ocupa nada. */
 @media (max-width: 640px) {
   .novedades-pestania-texto {
     display: none;
+  }
+
+  .novedades {
+    top: var(--mis-header-h);
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    /* El rail inferior de sistemas (`z-40`) queda por encima a propósito: es la
+       forma de salir de acá sin cerrar la hoja primero. */
+    padding: var(--mis-space-4) var(--mis-space-3);
+    padding-bottom: calc(4rem + var(--mis-space-4));
+    border-left: 0;
+    background: var(--mis-surface);
+    backdrop-filter: none;
+  }
+
+  .novedades-lista {
+    gap: var(--mis-space-3);
+  }
+
+  /* Objetivo táctil cómodo: en la hoja hay ancho de sobra para respirar. */
+  .novedad {
+    padding: var(--mis-space-4) var(--mis-space-3);
+  }
+
+  .novedad:hover,
+  .novedad:focus-visible {
+    transform: none;
   }
 }
 

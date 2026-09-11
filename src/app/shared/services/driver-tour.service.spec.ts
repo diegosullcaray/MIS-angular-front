@@ -4,11 +4,20 @@ import type { DriverTourService } from './driver-tour.service';
 // vi.mock() se hoistea sobre los imports, así que la factory no puede cerrar
 // sobre consts normales del módulo (todavía no existirían en ese punto) —
 // vi.hoisted() sube también la creación de los mocks para que estén listas.
-const { driveMock, destroyMock, driverFactoryMock } = vi.hoisted(() => {
+const { driveMock, destroyMock, setStepsMock, moveToMock, driverFactoryMock } = vi.hoisted(() => {
   const driveMock = vi.fn();
   const destroyMock = vi.fn();
-  const driverFactoryMock = vi.fn((_config: unknown) => ({ drive: driveMock, destroy: destroyMock }));
-  return { driveMock, destroyMock, driverFactoryMock };
+  const setStepsMock = vi.fn();
+  const moveToMock = vi.fn();
+  const driverFactoryMock = vi.fn((_config: unknown) => ({
+    drive: driveMock,
+    destroy: destroyMock,
+    setSteps: setStepsMock,
+    moveTo: moveToMock,
+    isActive: () => true,
+    getActiveIndex: () => 1,
+  }));
+  return { driveMock, destroyMock, setStepsMock, moveToMock, driverFactoryMock };
 });
 
 vi.mock('driver.js', () => ({
@@ -21,6 +30,8 @@ describe('DriverTourService', () => {
   beforeEach(async () => {
     driveMock.mockClear();
     destroyMock.mockClear();
+    setStepsMock.mockClear();
+    moveToMock.mockClear();
     driverFactoryMock.mockClear();
 
     // Esta suite corre con --isolate=false (un solo realm de JS para todos
@@ -35,6 +46,11 @@ describe('DriverTourService', () => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(DriverTourServiceCtor);
   });
+
+  // Cada test arma un servicio nuevo (`vi.resetModules()`). Si el recorrido del
+  // test anterior queda abierto, sus escuchas de `resize` siguen vivas y
+  // responden al evento de este.
+  afterEach(() => service.destroyCurrentTour());
 
   it('no tiene un tour activo al inicio', () => {
     expect(service.isActive()).toBe(false);
@@ -60,27 +76,100 @@ describe('DriverTourService', () => {
     expect(configUsada['showProgress']).toBe(false);
   });
 
-  it('startTour() sanitiza los pasos en resoluciones mobile (<640px) para evitar desbordes', () => {
-    const anchoOriginal = window.innerWidth;
-    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 375 });
+  /**
+   * El reacomodo en pantalla angosta. Antes había una tabla con un caso
+   * especial para `#tour-sidebar-icons`; ahora el lado se mide contra el
+   * viewport, así que cubre cualquier elemento del borde inferior y este
+   * servicio compartido deja de saber dónde vive el rail del layout.
+   */
+  describe('reacomodo en pantalla angosta', () => {
+    const ALTO = 800;
+    let anchoOriginal: number;
+    let altoOriginal: number;
 
-    service.startTour({
-      steps: [
-        { element: '#tour-sidebar-icons', popover: { title: 'Barra', side: 'right' } },
-        { element: '#tour-algo', popover: { title: 'Elemento', side: 'left' } },
-        { element: '#tour-centro', popover: { title: 'Centro', side: 'bottom' } },
-      ],
+    /** jsdom no hace layout: la caja de cada ancla se declara acá. */
+    function anclar(id: string, top: number, height = 40): void {
+      const elemento = document.createElement('div');
+      elemento.id = id;
+      elemento.getBoundingClientRect = () =>
+        ({ top, height, width: 100, bottom: top + height, left: 0, right: 100, x: 0, y: top, toJSON: () => ({}) }) as DOMRect;
+      document.body.append(elemento);
+    }
+
+    function fijar(propiedad: 'innerWidth' | 'innerHeight', valor: number): void {
+      Object.defineProperty(window, propiedad, { writable: true, configurable: true, value: valor });
+    }
+
+    beforeEach(() => {
+      anchoOriginal = window.innerWidth;
+      altoOriginal = window.innerHeight;
+      document.body.innerHTML = '';
+      fijar('innerWidth', 375);
+      fijar('innerHeight', ALTO);
     });
 
-    const configUsada = driverFactoryMock.mock.calls[0][0] as Record<string, unknown>;
-    const pasosSanitizados = configUsada['steps'] as Array<{ element: string; popover: { side: string } }>;
+    afterEach(() => {
+      fijar('innerWidth', anchoOriginal);
+      fijar('innerHeight', altoOriginal);
+      document.body.innerHTML = '';
+    });
 
-    expect(pasosSanitizados[0].popover.side).toBe('top');
-    expect(pasosSanitizados[1].popover.side).toBe('bottom');
-    expect(pasosSanitizados[2].popover.side).toBe('bottom');
-    expect(configUsada['stagePadding']).toBe(4);
+    function pasosUsados(): Array<{ element?: string; popover?: { side?: string; align?: string } }> {
+      const configUsada = driverFactoryMock.mock.calls[0][0] as Record<string, unknown>;
+      return configUsada['steps'] as Array<{ element?: string; popover?: { side?: string; align?: string } }>;
+    }
 
-    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: anchoOriginal });
+    it('un ancla en la mitad de abajo manda el globo arriba', () => {
+      anclar('rail', ALTO - 60);
+
+      service.startTour({ steps: [{ element: '#rail', popover: { title: 'Barra', side: 'right' } }] });
+
+      expect(pasosUsados()[0].popover?.side).toBe('top');
+      expect(pasosUsados()[0].popover?.align).toBe('center');
+    });
+
+    it('un ancla en la mitad de arriba manda el globo abajo', () => {
+      anclar('cabecera', 10);
+
+      service.startTour({ steps: [{ element: '#cabecera', popover: { title: 'Header', side: 'left' } }] });
+
+      expect(pasosUsados()[0].popover?.side).toBe('bottom');
+    });
+
+    // Sin caja que medir sigue valiendo lo evidente: al costado no entra.
+    it('un ancla que no resuelve cae a `bottom` si pedía un costado', () => {
+      service.startTour({ steps: [{ element: '#no-existe', popover: { title: 'X', side: 'right' } }] });
+
+      expect(pasosUsados()[0].popover?.side).toBe('bottom');
+    });
+
+    // driver.js pinta centrado un paso sin ancla: es la tarjeta que explica
+    // algo que no está en esta pantalla.
+    it('un paso sin ancla se deja como está', () => {
+      service.startTour({ steps: [{ popover: { title: 'Tarjeta' } }] });
+
+      expect(pasosUsados()[0].popover?.side).toBeUndefined();
+      expect(pasosUsados()[0].element).toBeUndefined();
+    });
+
+    it('el relleno del recuadro se achica', () => {
+      service.startTour({ steps: [] });
+
+      expect((driverFactoryMock.mock.calls[0][0] as Record<string, unknown>)['stagePadding']).toBe(4);
+    });
+
+    // Girar el teléfono a mitad del recorrido dejaba el globo contra el borde
+    // equivocado: el ancho se leía una sola vez, al arrancar.
+    it('girar el teléfono recalcula los lados y vuelve al paso activo', async () => {
+      anclar('rail', ALTO - 60);
+      service.startTour({ steps: [{ element: '#rail', popover: { title: 'Barra', side: 'right' } }] });
+
+      window.dispatchEvent(new Event('orientationchange'));
+      await new Promise((listo) => setTimeout(listo, 200));
+
+      expect(setStepsMock).toHaveBeenCalledTimes(1);
+      expect(moveToMock).toHaveBeenCalledWith(1);
+    });
   });
 
   it('destroyCurrentTour() destruye el tour activo y limpia la referencia', () => {

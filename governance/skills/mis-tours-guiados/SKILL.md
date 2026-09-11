@@ -1,11 +1,11 @@
 ---
 name: mis-tours-guiados
-description: Recorridos guiados de MIS Host sobre driver.js — cómo declarar los pasos, a qué anclarlos (selector estable, nunca un id de tour), cómo se muestra el personaje de la marca y qué compuerta verifica que el recorrido no se rompa en silencio. Usar al crear o modificar un tour, o al publicar una novedad en el Home.
+description: Recorridos guiados de MIS Host sobre driver.js — cómo declarar los pasos, a qué anclarlos (selector estable, nunca un id de tour), cómo se reacomodan en pantalla angosta, cómo se muestra a Pachi y qué compuerta verifica que el recorrido no se rompa en silencio. Usar al crear o modificar un tour, al publicar una novedad en el Home o al tocar la bienvenida.
 ---
 
 # Recorridos guiados — MIS Host
 
-El sistema se explica a sí mismo: oscurece la pantalla, resalta un elemento y un globo cuenta qué es, con el personaje de la marca al lado.
+El sistema se explica a sí mismo: oscurece la pantalla, resalta un elemento y un globo cuenta qué es, con **Pachi** al lado.
 
 ---
 
@@ -24,7 +24,7 @@ export class MiTourService {
 }
 ```
 
-Importar `driver.js` directo se saltea el cierre limpio (`forceClose()` barre popovers residuales) y el reacomodo de globos en móvil.
+Importar `driver.js` directo se saltea el cierre limpio (`forceClose()` barre popovers residuales) y el reacomodo de globos en pantalla angosta.
 
 ---
 
@@ -64,17 +64,19 @@ Los selectores van juntos en una constante `ANCLA` al principio del catálogo. R
 }
 ```
 
-- `side` y `align` se eligen contra el borde donde vive el elemento: un control del header va `bottom`; el rail izquierdo, `right`; algo al pie, `top`. En pantallas de menos de 640 px, `DriverTourService` reacomoda solo los que quedarían fuera.
+- `side` y `align` se eligen contra el borde donde vive el elemento: un control del header va `bottom`; el rail izquierdo, `right`; algo al pie, `top`.
+- **En menos de 640 px no decide el catálogo.** `DriverTourService` mide el ancla con `getBoundingClientRect()` y pone el globo arriba o abajo según en qué mitad del viewport caiga, y vuelve a medir al girar el teléfono. No hay tabla de casos especiales que mantener.
+- **Un paso puede no tener `element`.** driver.js lo pinta centrado: es lo que corresponde cuando la novedad habla de algo que no está en esa pantalla. Ahí no se declara `side`, y la compuerta no lo cuenta (cuenta apariciones de `element:`).
 - El texto habla de lo que el usuario ve, no de la implementación. "La luz amarilla vuelve atrás", no "`volverAlMenu()` resetea la vista".
 
 ---
 
-## 4. El personaje
+## 4. Pachi
 
-El globo lleva al personaje de la marca. Se arma dentro de `description`, que driver.js pinta con `innerHTML`:
+El globo lleva a **Pachi**, que se presenta por su nombre en el primer paso de cada recorrido. Se arma dentro de `description`, que driver.js pinta con `innerHTML`:
 
 ```typescript
-function conMascota(texto: string, pose: 'guia' | 'celebra' = 'guia'): string {
+function conPachi(texto: string, pose: PosePachi = 'guia'): string {
   return `<span class="mis-tour-fila"><img class="mis-tour-mascota mis-tour-mascota--${pose}" src="/assets/images/fc/tours/mascota-${pose}.png" alt="" aria-hidden="true"><span class="mis-tour-texto">${texto}</span></span>`;
 }
 ```
@@ -84,7 +86,12 @@ Dos condiciones:
 - **El texto es literal nuestro.** Se inyecta como HTML: nada del usuario ni del backend entra ahí.
 - **La imagen es decorativa** (`alt=""`, `aria-hidden="true"`). El mensaje lo lleva el texto; un lector de pantalla no debe oír "imagen de puma" en cada paso.
 
-Las piezas de `src/assets/images/fc/tours/` son recortes del render oficial, no dibujos nuevos. Si agregás una pose, mirá el peso: `npm run audit:activos` marca todo lo que pase de 500 kB.
+Las piezas de `src/assets/images/fc/tours/` son recortes del render oficial, no dibujos nuevos.
+
+Dos cosas sobre los archivos: **pesan de más** —doce PNG de 1024×1024, 7,3 MB en
+total, para pintarse a 64-132 px; está anotado en INC-2026-09-11-04— y el
+control de activos **no los ve**, porque `conPachi()` arma la ruta en tiempo de
+ejecución. Aparecen como "sin uso" y no lo están.
 
 ---
 
@@ -104,6 +111,14 @@ El panel lateral del Home (`app-panel-novedades`) lista lo que entrega `Novedade
 ```
 
 El panel ordena por `fecha` y muestra la etiqueta "Nuevo" durante 30 días. El `id` es único: `iniciar(id)` lo busca ahí.
+
+Agregá `requierePanel: true` **solo** si el recorrido habla del panel. El resto
+se cierra el panel antes de arrancar: está encima de la pantalla y en angosto
+ocupa todo el ancho, así que taparía justo lo que la novedad quiere mostrar.
+
+Las cuatro novedades más recientes salen además en la **bienvenida** de Pachi
+(`app-bienvenida-dialog`), que lee el mismo catálogo. No hay lista duplicada que
+mantener.
 
 ---
 
@@ -128,6 +143,9 @@ npm run audit:anclas -- --check
 npm test
 ```
 
-Y probá el recorrido completo en pantalla: que cada paso resalte lo que dice, y que Esc lo cierre en cualquier punto.
+Y probá el recorrido completo en pantalla, **también a 375 px**: que cada paso
+resalte lo que dice, que Pachi y el globo entren enteros en el viewport, que
+girar el teléfono reacomode en vez de dejar el globo contra el borde, y que Esc
+lo cierre en cualquier punto.
 
 Contrato completo: [`docs/components/tours-guiados.md`](../../docs/components/tours-guiados.md).

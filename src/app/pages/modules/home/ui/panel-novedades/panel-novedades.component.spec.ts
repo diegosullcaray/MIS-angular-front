@@ -111,4 +111,46 @@ describe('PanelNovedadesComponent', () => {
     expect(el(fixture).querySelector('.novedades--cerrado')).not.toBeNull();
     expect(el(fixture).querySelector('.novedades-pestania')).not.toBeNull();
   });
+
+  /**
+   * El panel está encima de la pantalla y en angosto ocupa todo el ancho: si
+   * queda abierto, el recorrido resalta algo que el propio panel está tapando.
+   */
+  describe('el panel se aparta del recorrido', () => {
+    function novedadPorId(id: string): number {
+      return TestBed.inject(NovedadesTourService).novedades.findIndex((n) => n.id === id);
+    }
+
+    it('al elegir una novedad que señala la pantalla, el panel se cierra', () => {
+      const fixture = crear();
+      const indice = novedadPorId('escritorio');
+
+      (el(fixture).querySelectorAll('.novedad')[indice] as HTMLButtonElement).click();
+      fixture.detectChanges();
+
+      expect(el(fixture).querySelector('.novedades--cerrado')).not.toBeNull();
+      expect(tourFalso.createQuickTour).toHaveBeenCalledTimes(1);
+    });
+
+    it('la novedad que habla del panel lo deja abierto', () => {
+      const fixture = crear();
+      const indice = novedadPorId('panel-novedades');
+
+      (el(fixture).querySelectorAll('.novedad')[indice] as HTMLButtonElement).click();
+      fixture.detectChanges();
+
+      expect(el(fixture).querySelector('.novedades--cerrado')).toBeNull();
+    });
+
+    it('abrir() lo levanta desde afuera — es la puerta de la bienvenida', () => {
+      vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(390);
+      const fixture = crear();
+      expect(el(fixture).querySelector('.novedades--cerrado')).not.toBeNull();
+
+      fixture.componentInstance.abrir();
+      fixture.detectChanges();
+
+      expect(el(fixture).querySelector('.novedades--cerrado')).toBeNull();
+    });
+  });
 });

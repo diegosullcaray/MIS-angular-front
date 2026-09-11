@@ -1,6 +1,10 @@
 <!-- El panel de novedades va pegado al borde derecho de la pantalla (`fixed`),
      así que no compite por el ancho con la columna de recientes. -->
-<app-panel-novedades />
+<app-panel-novedades #panelNovedades />
+
+<!-- La bienvenida de Pachi: se abre sola la primera vez y su botón principal
+     levanta el panel de al lado. -->
+<app-bienvenida-dialog (verNovedades)="panelNovedades.abrir()" />
 
 <section class="recientes" aria-labelledby="recientes-rotulo">
   <h2 id="recientes-rotulo" class="recientes-rotulo">

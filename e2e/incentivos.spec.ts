@@ -52,7 +52,8 @@ test.describe('Incentivos — smoke del Cuadro de Mando', () => {
     await page.goto('/app/incentivos3');
     await page.getByRole('button', { name: 'Asesores' }).click();
 
-    await expect(page.getByPlaceholder('Buscar asesor…')).toBeVisible();
+    // El buscador es ahora el de `app-data-table`, con su propio texto guía.
+    await expect(page.getByPlaceholder('Buscar por asesor, unidad, corredor o territorio...')).toBeVisible();
     // `exact` porque la barra de la ventana tiene su propio "Seleccionar nivel".
     await expect(page.getByRole('button', { name: 'Seleccionar', exact: true })).toBeDisabled();
   });

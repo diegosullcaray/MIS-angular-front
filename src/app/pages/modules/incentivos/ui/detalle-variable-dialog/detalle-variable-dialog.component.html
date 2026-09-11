@@ -7,10 +7,10 @@
   [resizable]="false"
   appendTo="body"
 >
-  <ng-template pTemplate="header">
+  <ng-template pTemplate="header" let-ariaLabelledBy="ariaLabelledBy">
     <div class="flex items-center gap-2 min-w-0">
       <i [class]="icono() + ' text-[13px] text-[var(--mis-text-secondary)]'"></i>
-      <span class="text-[13px] font-semibold text-[var(--mis-text-primary)] truncate">{{ titulo() }}</span>
+      <span [id]="ariaLabelledBy" class="text-[13px] font-semibold text-[var(--mis-text-primary)] truncate">{{ titulo() }}</span>
     </div>
   </ng-template>
 

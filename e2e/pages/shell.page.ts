@@ -23,7 +23,11 @@ export class ShellPage {
       (m) =>
         localStorage.setItem(
           'mis.preferencias',
-          JSON.stringify({ apariencia: { tema: m }, anuncios: { vistos: [], silenciar: true } })
+          JSON.stringify({
+            apariencia: { tema: m },
+            anuncios: { vistos: [], silenciar: true },
+            bienvenida: { vista: true },
+          })
         ),
       modo
     );

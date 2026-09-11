@@ -85,10 +85,14 @@ export async function inyectarSesionSinPreferencias(page: Page): Promise<void> {
  *
  * El spec que sí prueba los comunicados (`comunicados.spec.ts`) no llama a esto
  * y por eso los ve, igual que un usuario que entra por primera vez.
+ *
+ * Lo mismo vale para la **bienvenida de Pachi**: se abre sola la primera vez y
+ * su máscara tapa el Home entero, así que por defecto se la da por vista. El
+ * spec que la prueba (`bienvenida.spec.ts`) entra sin preferencias.
  */
 export async function inyectarPreferencias(
   page: Page,
-  preferencias: Record<string, unknown> = { anuncios: { vistos: [], silenciar: true } }
+  preferencias: Record<string, unknown> = { anuncios: { vistos: [], silenciar: true }, bienvenida: { vista: true } }
 ): Promise<void> {
   await page.addInitScript(
     ({ key, preferencias }) => {

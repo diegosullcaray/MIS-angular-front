@@ -7,13 +7,15 @@ import { inyectarSesionSinPreferencias, inyectarPreferencias, mockearBackendAnt 
  *
  * Es el único spec que NO usa `inyectarSesionVigente`: esa fixture silencia los
  * comunicados justamente para que su máscara modal no tape lo que prueban los
- * demás specs. Acá se entra con `localStorage` limpio, que es exactamente lo
- * que ve un usuario la primera vez.
+ * demás specs. Acá se entra casi limpio, que es lo que ve un usuario la primera
+ * vez — con una sola excepción: la bienvenida de Pachi se da por vista, porque
+ * el comunicado espera a que se cierre y acá lo que se prueba es el comunicado.
  */
 test.use({ viewport: { width: 1280, height: 800 } });
 
 test.beforeEach(async ({ page }) => {
   await inyectarSesionSinPreferencias(page);
+  await inyectarPreferencias(page, { anuncios: { vistos: [], silenciar: false }, bienvenida: { vista: true } });
   await mockearBackendAnt(page);
 });
 
@@ -99,7 +101,7 @@ test('la lámina entra en el diálogo sin scroll horizontal', async ({ page }) =
 });
 
 test('con los comunicados silenciados por preferencia, no se abre', async ({ page }) => {
-  await inyectarPreferencias(page, { anuncios: { vistos: [], silenciar: true } });
+  await inyectarPreferencias(page, { anuncios: { vistos: [], silenciar: true }, bienvenida: { vista: true } });
   await page.goto('/app/dashboard');
 
   await expect(page.locator('#tour-sidebar-icons')).toBeVisible();

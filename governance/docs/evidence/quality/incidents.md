@@ -467,3 +467,290 @@ falle con código 1 y el motivo exacto.
 
 `selector-nivel-dialog.component.spec.ts` verifica que la luz de volver exista
 dentro de un listado, devuelva al menú y no esté en el menú inicial.
+
+---
+
+## INC-2026-09-11-01 · Pachi quedaba fuera de la pantalla en el recorrido guiado
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `driver.css` (tema del globo) y `DriverTourService` |
+| **Commit evaluado** | `3eae138` |
+| **Fecha** | 2026-09-11 |
+| **Estado** | **Corregido** |
+
+### Causa
+
+`.mis-tour-mascota` era `position: absolute; left: -75px; width: 160px`: colgaba
+**por fuera** del globo, y el globo en móvil era `width: calc(100vw - 24px)`. A
+375 px driver.js lo coloca en `left ≈ 12px`, así que el personaje arrancaba en
+**x ≈ −33 px**. No se veía.
+
+Tampoco era solo de móvil: con el rail resaltado (`side: 'right'`) el globo
+queda en x ≈ 70 y Pachi en x ≈ −5.
+
+### Corrección
+
+Se invierte la regla: **por defecto Pachi va dentro del globo**, como un
+elemento más de la fila. Asomarse por el borde pasa a ser la excepción, desde
+900 px y con menos vuelo (120 px a −56, antes 160 a −75), más un refuerzo con
+`:has(.driver-popover-arrow-side-left)` para cuando el globo queda pegado al
+borde izquierdo.
+
+El globo pierde el `width: calc(100vw - 24px)` y el `margin: 0` de móvil, que
+peleaban con el `left` en línea que escribe driver.js; queda
+`max-width: min(370px, calc(100vw - 24px))`.
+
+### Regresión
+
+`e2e/bienvenida-y-tour.spec.ts`, en `mobile-chromium`: recorre los pasos y mide
+que la caja de Pachi —y la del globo— quede dentro del viewport de 375 px.
+
+---
+
+## INC-2026-09-11-02 · El lado del globo se decidía una sola vez y con una tabla
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `DriverTourService` |
+| **Commit evaluado** | `3eae138` |
+| **Fecha** | 2026-09-11 |
+| **Estado** | **Corregido** |
+
+### Causa
+
+Dos problemas en el mismo bloque:
+
+1. `window.innerWidth < 640` se leía como foto **al arrancar** el recorrido.
+   Girar el teléfono a mitad de camino dejaba los globos contra el borde
+   equivocado: driver.js reposiciona, pero nunca volvía a pasar por el
+   reacomodo.
+2. El reacomodo era una tabla con un caso especial —`step.element ===
+   '#tour-sidebar-icons'`—, o sea un servicio de `shared/` sabiendo dónde vive
+   el rail del layout. Y no cubría ningún otro elemento del borde inferior.
+
+### Corrección
+
+El lado se **mide**: `getBoundingClientRect()` del ancla contra la mitad del
+viewport decide `top` o `bottom`. Cubre el rail, el header, los recientes y lo
+que venga, sin nombrar ninguno. Y se recalcula en `resize`/`orientationchange`
+con rebote, reponiendo el paso activo (`setSteps()` + `moveTo()`).
+
+De paso se corrigió el orden de los ciclos de vida: estaban **antes** de la
+configuración de quien llama, así que un recorrido con su propio
+`onDestroyStarted` se quedaba sin cierre limpio.
+
+### Regresión
+
+Seis casos en `driver-tour.service.spec.ts`, con las cajas de las anclas
+declaradas a mano (jsdom no hace layout).
+
+---
+
+## INC-2026-09-11-03 · El panel de novedades tapaba lo que el recorrido señalaba
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `app-panel-novedades` |
+| **Commit evaluado** | `3eae138` |
+| **Fecha** | 2026-09-11 |
+| **Estado** | **Corregido** |
+
+### Causa
+
+El panel es `position: fixed` encima del contenido y no se cerraba al lanzar un
+recorrido. En un teléfono, donde ahora ocupa todo el ancho, el paso resaltaba
+justo detrás del panel.
+
+### Corrección
+
+`verGuia()` cierra el panel antes de arrancar, salvo que la novedad declare
+`requierePanel: true` — solo la que habla del propio panel. Y en menos de 640 px
+el panel deja de ser una barra de 300 px contra el borde para abrirse como hoja
+a pantalla completa: una franja de 300 px en un teléfono no dejaba Home ni
+panel usables.
+
+### Regresión
+
+Tres casos en `panel-novedades.component.spec.ts` y uno en
+`e2e/bienvenida-y-tour.spec.ts`.
+
+---
+
+## INC-2026-09-11-04 · Las poses de Pachi pesan 7,3 MB
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `src/assets/images/fc/tours/` |
+| **Commit evaluado** | `3eae138` |
+| **Fecha** | 2026-09-11 |
+| **Estado** | **Abierto** — medido, no corregido |
+
+### Resultado observado
+
+Las doce poses son PNG de **1024 × 1024** y suman **7,3 MB**. Cada una supera el
+umbral de 500 kB que marca `npm run audit:activos`:
+
+```
+647 kB  mascota-trabaja.png      593 kB  mascota-celebra.png
+637 kB  mascota-buscar.png       592 kB  mascota-alerta.png
+610 kB  mascota-escribe.png      582 kB  mascota-camina.png
+…y siete más, ninguna por debajo de 500 kB
+```
+
+En pantalla se pintan entre **64 y 132 px**: unas ocho veces más chicas de lo
+que pesan. El recorrido descarga una por paso, y esto es justamente sobre la
+conexión de un teléfono.
+
+### Por qué queda abierto
+
+Redimensionar requiere una herramienta de imagen que este entorno no tiene
+—sin `sharp`, `pngquant`, `optipng` ni ImageMagick—, y sumar una dependencia
+para una tarea de activos es una decisión del equipo, no de este cambio.
+
+**Recomendación**: reescalar a ~256 px (el doble del mayor tamaño de render) y
+volver a codificar. Debería dejar el conjunto por debajo de 500 kB **en total**,
+contra los 7,3 MB actuales.
+
+### Mitigación aplicada
+
+El `<img>` de cada paso declara `width`/`height` reales y `decoding="async"`:
+el navegador conoce la proporción antes de decodificar, así que el globo no
+salta mientras el PNG carga. No reduce el peso.
+
+### Nota sobre la compuerta
+
+`npm run audit:activos` lista estas imágenes como **sin uso**, y no lo están:
+`conPachi()` arma la ruta en tiempo de ejecución (`${MASCOTA}${pose}.png`) y el
+escáner es estático. Borrarlas rompe el recorrido.
+
+---
+
+## INC-2026-09-11-05 · La acción «Seleccionar nivel» de Incentivos se perdió en una reescritura
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `incentivos/components/principal` |
+| **Commit evaluado** | `28e5097` |
+| **Fecha** | 2026-09-11 |
+| **Estado** | **Corregido** |
+
+### Resultado observado
+
+La reescritura de `principal.component.html` se llevó puesto el botón
+«Seleccionar nivel» de la barra de la ventana, que era la corrección de
+[INC-2026-09-08-08](#): sin él, un administrador que cierra el diálogo de
+entrada se queda otra vez sin forma de elegir nivel.
+
+**Lo detectó el spec de regresión**, no una persona. Es exactamente para lo que
+se escribió.
+
+### Además
+
+El mismo commit dejó dos archivos de prueba en rojo, y no por su contenido:
+
+- `principal.component.spec.ts` — la plantilla nueva usa `pAnimateOnScroll`, que
+  mira `IntersectionObserver`; jsdom no lo implementa y el archivo entero caía
+  con `ReferenceError`. Se agrega el doble, al lado del de `ResizeObserver` que
+  ya estaba.
+- `selector-nivel-dialog.component.spec.ts` — `cerrar()` pasó a consultar
+  `incentivos.perfil()` y el doble del servicio no lo ofrecía. El cambio de
+  conducta es **mejor** que el anterior (solo sale al Home si todavía no hay
+  nivel cargado, en vez de salir siempre), así que se ajusta el doble y se
+  cubren las dos ramas.
+
+---
+
+## INC-2026-09-11-06 · El panel de novedades bloqueaba el menú de perfil en escritorio
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `app-panel-novedades` |
+| **Commit evaluado** | `3eae138` |
+| **Fecha** | 2026-09-11 |
+| **Estado** | **Corregido** |
+
+### Resultado observado
+
+Con el panel abierto —que es como arranca por encima de 1280 px—, **Configuración
+y Cerrar sesión no se podían pulsar**. Playwright lo dice con todas las letras:
+
+```
+<span class="novedad-titulo"> from <main …> subtree intercepts pointer events
+```
+
+Seis casos de `configuracion.spec.ts` en rojo, en los dos proyectos.
+
+### Causa
+
+El panel declaraba `z-index: 30`, **el mismo** que el `<header>`. Empatados,
+gana el que viene después en el DOM, y `<main>` va después del header. El
+`z-index: 1000` del desplegable no ayudaba: vive dentro del contexto de apilado
+que crea el propio header, así que no puede escaparse de su 30.
+
+### Corrección
+
+El panel y su pestaña bajan a `z-index: 20`: por debajo del header, por encima
+del contenido, que es donde corresponde. En móvil, además, la hoja deja pasar
+al rail inferior de sistemas (`z-40`) y se reserva su alto con `padding-bottom`
+— es la forma de salir de la hoja sin cerrarla primero.
+
+---
+
+## INC-2026-09-11-07 · Los diálogos con cabecera propia se quedaron sin nombre accesible
+
+| Campo | Valor |
+|---|---|
+| **Componente** | Diálogos con `pTemplate="header"` |
+| **Commit evaluado** | `28e5097` |
+| **Fecha** | 2026-09-11 |
+| **Estado** | **Corregido en dos de seis** — los otros cuatro necesitan una decisión |
+
+### Resultado observado
+
+`getByRole('dialog', { name: 'Selecciona Nivel' })` dejó de resolver. Medido en
+el navegador:
+
+```json
+{ "role": "dialog", "ariaLabel": null,
+  "labelledby": "pn_id_8_header", "objetivoExiste": false }
+```
+
+El `aria-labelledby` apunta a un id que **no existe**: al reemplazar la cabecera
+de PrimeNG por el cromo estilo Mac, el `<span>` que llevaba ese id desapareció.
+El diálogo queda sin nombre: un lector de pantalla anuncia "diálogo" y nada más.
+
+### Corrección
+
+PrimeNG pasa ese id al contexto de la plantilla
+(`context: { ariaLabelledBy }`). Basta tomarlo y ponérselo al título propio:
+
+```html
+<ng-template pTemplate="header" let-ariaLabelledBy="ariaLabelledBy">
+  <span [id]="ariaLabelledBy" class="p-dialog-title">Selecciona Nivel</span>
+```
+
+Aplicado en `selector-nivel-dialog` y `detalle-variable-dialog`, los dos que
+tienen un título en su cabecera.
+
+### Lo que queda abierto
+
+Otros cuatro diálogos con cabecera propia **no tienen título ninguno**, ni
+visible ni accesible: solo el semáforo.
+
+```
+analista/ui/selector-colaborador-dialog
+categorizacion/ui/selector-sectorista-dialog
+kaypacha/ui/buscador-colaborador-dialog
+incentivos/ui/detalle-bancarizacion-dialog
+```
+
+Ponerles nombre es una decisión de diseño —¿título visible, o solo
+`aria-label`?— y no se toma desde este cambio. Mientras tanto son cuatro
+`role="dialog"` anónimos.
+
+### Nota
+
+Lo detectó un spec E2E, no una persona. Es el mismo modo de falla que motivó
+ADR-0004: el marcado cambia, nada deja de compilar, y lo que se rompe es algo
+que solo nota quien usa lector de pantalla.

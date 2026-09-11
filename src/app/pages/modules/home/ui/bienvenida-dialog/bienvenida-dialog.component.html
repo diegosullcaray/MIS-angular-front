@@ -1,0 +1,43 @@
+<p-dialog
+  [visible]="abierto()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [dismissableMask]="true"
+  [draggable]="false"
+  [resizable]="false"
+  appendTo="body"
+  styleClass="mis-bienvenida-dialog"
+  [style]="{ width: 'min(560px, 96vw)' }"
+  header="Te damos la bienvenida"
+>
+  <div class="bienvenida">
+    <!-- Decorativa: el saludo lo lleva el texto, no el dibujo. -->
+    <img class="bienvenida-pachi" src="/assets/images/fc/tours/mascota-saluda.png" alt="" aria-hidden="true" />
+
+    <div class="bienvenida-texto">
+      <p class="bienvenida-saludo">
+        ¡Hola! Soy <b>Pachi</b> y te acompaño en el sistema nuevo.
+      </p>
+      <p class="bienvenida-bajada">
+        Esto es lo que cambió. Elige cualquiera y te la muestro en pantalla, paso a paso.
+      </p>
+    </div>
+  </div>
+
+  <ul class="bienvenida-lista">
+    @for (novedad of destacadas(); track novedad.id) {
+      <li class="bienvenida-item">
+        <span class="bienvenida-icono" aria-hidden="true"><i [class]="novedad.icono"></i></span>
+        <span class="bienvenida-item-texto">
+          <span class="bienvenida-item-titulo">{{ novedad.titulo }}</span>
+          <span class="bienvenida-item-resumen">{{ novedad.resumen }}</span>
+        </span>
+      </li>
+    }
+  </ul>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Entrar directo" [text]="true" severity="secondary" (onClick)="cerrar()" />
+    <p-button label="Ver las novedades" icon="pi pi-sparkles" (onClick)="irANovedades()" />
+  </ng-template>
+</p-dialog>

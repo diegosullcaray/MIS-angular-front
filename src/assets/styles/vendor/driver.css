@@ -1,4 +1,13 @@
-/* ── Driver.js Custom Popover Theme (Paleta de Sistema) ───── */
+/* ── Tema del globo de los recorridos guiados ──────────────────────────────
+   Todo el color sale de los tokens `--mis-*` (ADR-0002). Antes había ~25 hexes
+   fijos acá y un bloque aparte para el tema oscuro: el globo no seguía al
+   acento que elige el usuario en Configuración, y había que mantener dos
+   paletas a mano. Los tokens ya cambian solos con el tema, así que no hace
+   falta ningún bloque `.dark` en este archivo.
+
+   Los `!important` son contra la hoja de la librería, que declara lo mismo con
+   la misma especificidad. */
+
 .driver-overlay {
   z-index: 1000000000 !important;
 }
@@ -12,14 +21,17 @@
 }
 
 .driver-popover {
-  background: #FFFFFF !important;
-  color: var(--mis-text-primary, #304156) !important;
-  border-radius: 16px !important;
-  padding: 20px 22px 20px 55px !important;
-  box-shadow: 0 16px 36px rgba(11, 79, 140, 0.20), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-  border: 1.5px solid rgba(11, 79, 140, 0.15) !important;
+  background: var(--mis-surface-elevado) !important;
+  backdrop-filter: saturate(180%) blur(8px) !important;
+  color: var(--mis-text-primary) !important;
+  border: 1.5px solid var(--mis-border-strong) !important;
+  border-radius: var(--mis-radius-lg) !important;
+  box-shadow: var(--mis-shadow-lg) !important;
   font-family: var(--mis-font-family) !important;
-  max-width: 370px !important;
+  /* Sin `width` fijo: driver.js escribe el `left` en línea y un ancho forzado
+     lo empujaba fuera de la pantalla en un teléfono. */
+  max-width: min(370px, calc(100vw - 24px)) !important;
+  padding: 18px 20px !important;
   z-index: 1000000003 !important;
   pointer-events: auto !important;
 }
@@ -29,9 +41,9 @@
 }
 
 .driver-popover-title {
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  color: #0B4F8C !important;
+  font-size: var(--mis-text-sm) !important;
+  font-weight: var(--mis-font-bold) !important;
+  color: var(--mis-primary-text) !important;
   margin-bottom: 6px !important;
   display: flex !important;
   align-items: center !important;
@@ -39,9 +51,9 @@
 }
 
 .driver-popover-description {
-  font-size: 13px !important;
-  line-height: 1.55 !important;
-  color: #5A6A85 !important;
+  font-size: var(--mis-text-xs) !important;
+  line-height: var(--mis-leading-normal) !important;
+  color: var(--mis-text-secondary) !important;
 }
 
 .driver-popover-footer {
@@ -50,12 +62,13 @@
   align-items: center !important;
   justify-content: space-between !important;
   gap: 8px !important;
+  flex-wrap: wrap !important;
 }
 
 .driver-popover-progress-text {
   font-size: 11px !important;
-  font-weight: 600 !important;
-  color: #94A3B8 !important;
+  font-weight: var(--mis-font-semibold) !important;
+  color: var(--mis-text-tertiary) !important;
 }
 
 .driver-popover-next-btn,
@@ -63,208 +76,155 @@
 .driver-popover-close-btn {
   font-family: var(--mis-font-family) !important;
   font-size: 12px !important;
-  font-weight: 600 !important;
-  border-radius: 10px !important;
-  padding: 6px 14px !important;
-  transition: all 0.15s ease-in-out !important;
+  font-weight: var(--mis-font-semibold) !important;
+  border-radius: var(--mis-radius-md) !important;
+  /* 32px de alto: el mínimo cómodo de toque sin desbalancear el pie. */
+  padding: 7px 14px !important;
+  transition: background-color var(--mis-transition-fast), color var(--mis-transition-fast) !important;
   text-shadow: none !important;
   cursor: pointer !important;
 }
 
 .driver-popover-next-btn {
-  background: #0B4F8C !important;
-  color: #FFFFFF !important;
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(11, 79, 140, 0.25) !important;
+  background: var(--mis-primary) !important;
+  color: var(--mis-text-on-primary) !important;
+  border: 1px solid transparent !important;
+  box-shadow: var(--mis-shadow-sm) !important;
 }
 
 .driver-popover-next-btn:hover {
-  background: #083B68 !important;
-  transform: translateY(-1px) !important;
+  background: var(--mis-primary-hover) !important;
 }
 
 .driver-popover-prev-btn {
-  background: #F1F5F9 !important;
-  color: #475569 !important;
-  border: 1px solid #CBD5E1 !important;
+  background: var(--mis-panel-bg) !important;
+  color: var(--mis-text-primary) !important;
+  border: 1px solid var(--mis-border) !important;
 }
 
 .driver-popover-prev-btn:hover {
-  background: #E2E8F0 !important;
-  color: #1E293B !important;
+  background: var(--mis-hover-bg) !important;
+  border-color: var(--mis-border-strong) !important;
 }
 
 .driver-popover-close-btn {
-  color: #94A3B8 !important;
+  color: var(--mis-text-tertiary) !important;
 }
 
 .driver-popover-close-btn:hover {
-  color: #0B4F8C !important;
+  color: var(--mis-primary-text) !important;
 }
 
 .driver-popover-arrow-side-top.driver-popover-arrow {
-  border-top-color: #FFFFFF !important;
+  border-top-color: var(--mis-surface-elevado) !important;
 }
 .driver-popover-arrow-side-bottom.driver-popover-arrow {
-  border-bottom-color: #FFFFFF !important;
+  border-bottom-color: var(--mis-surface-elevado) !important;
 }
 .driver-popover-arrow-side-left.driver-popover-arrow {
-  border-left-color: #FFFFFF !important;
+  border-left-color: var(--mis-surface-elevado) !important;
 }
 .driver-popover-arrow-side-right.driver-popover-arrow {
-  border-right-color: #FFFFFF !important;
+  border-right-color: var(--mis-surface-elevado) !important;
 }
 
-/* ── Mobile Responsive Popover (≤ 640px) ─────────────────────── */
-@media (max-width: 640px) {
-  .driver-popover {
-    max-width: calc(100vw - 24px) !important;
-    width: calc(100vw - 24px) !important;
-    box-sizing: border-box !important;
-    padding: 14px 16px 14px 45px !important;
-    border-radius: 12px !important;
-    margin: 0 !important;
-  }
+/* ── Pachi, el personaje que da la guía ────────────────────────────────────
+   El marcado lo arma `NovedadesTourService` dentro de `description`, que
+   driver.js pinta con `innerHTML`. La imagen es decorativa: lo que se lee es el
+   texto de al lado.
 
-  .driver-popover-title {
-    font-size: 14px !important;
-    margin-bottom: 4px !important;
-  }
-
-  .driver-popover-description {
-    font-size: 12px !important;
-    line-height: 1.45 !important;
-  }
-
-  .driver-popover-footer {
-    margin-top: 12px !important;
-    gap: 6px !important;
-    flex-wrap: wrap !important;
-  }
-
-  .driver-popover-progress-text {
-    font-size: 10.5px !important;
-  }
-
-  .driver-popover-next-btn,
-  .driver-popover-prev-btn,
-  .driver-popover-close-btn {
-    padding: 5px 11px !important;
-    font-size: 11px !important;
-  }
-}
-
-/* ── Dark Theme Support ────────────────────────────────────────── */
-/* En lugar de oscurecer la pantalla, la aclaramos sutilmente en modo oscuro */
-:root[data-theme="dark"] .driver-overlay,
-:root.dark .driver-overlay {
-  background-color: transparent !important; /* Para no rellenar el agujero del elemento activo */
-}
-
-:root[data-theme="dark"] .driver-overlay path,
-:root.dark .driver-overlay path {
-  fill: #ffffff !important;
-  opacity: 0.12 !important;
-}
-
-:root[data-theme="dark"] .driver-popover,
-:root.dark .driver-popover {
-  background: #283548 !important; /* Color mucho más claro para que resalte del fondo oscuro */
-  color: #f8fafc !important;
-  border: 1.5px solid #3b82f6 !important; /* Borde azul sólido y brillante */
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), 0 24px 60px rgba(0, 0, 0, 0.9) !important; /* Anillo de luz azul + sombra súper profunda */
-}
-
-:root[data-theme="dark"] .driver-popover-title,
-:root.dark .driver-popover-title {
-  color: var(--mis-primary-light, #60a5fa) !important;
-}
-
-:root[data-theme="dark"] .driver-popover-description,
-:root.dark .driver-popover-description {
-  color: var(--mis-text-secondary, #cbd5e1) !important;
-}
-
-:root[data-theme="dark"] .driver-popover-prev-btn,
-:root.dark .driver-popover-prev-btn {
-  background: var(--mis-panel-bg, #334155) !important;
-  color: var(--mis-text-primary, #f8fafc) !important;
-  border-color: var(--mis-border, #475569) !important;
-}
-
-:root[data-theme="dark"] .driver-popover-prev-btn:hover,
-:root.dark .driver-popover-prev-btn:hover {
-  background: var(--mis-surface-hover, #475569) !important;
-}
-
-:root[data-theme="dark"] .driver-popover-arrow-side-top.driver-popover-arrow,
-:root.dark .driver-popover-arrow-side-top.driver-popover-arrow {
-  border-top-color: #283548 !important;
-}
-:root[data-theme="dark"] .driver-popover-arrow-side-bottom.driver-popover-arrow,
-:root.dark .driver-popover-arrow-side-bottom.driver-popover-arrow {
-  border-bottom-color: #283548 !important;
-}
-:root[data-theme="dark"] .driver-popover-arrow-side-left.driver-popover-arrow,
-:root.dark .driver-popover-arrow-side-left.driver-popover-arrow {
-  border-left-color: #283548 !important;
-}
-:root[data-theme="dark"] .driver-popover-arrow-side-right.driver-popover-arrow,
-:root.dark .driver-popover-arrow-side-right.driver-popover-arrow {
-  border-right-color: #283548 !important;
-}
-
-/* ── El personaje que da la guía ──────────────────────────────
-   Los pasos de los recorridos (ver `NovedadesTourService`) traen el marcado de
-   la mascota dentro de `description`, que driver.js pinta con `innerHTML`. La
-   imagen es decorativa: lo que se lee es el texto de al lado. */
+   **Por defecto Pachi va DENTRO del globo.** Antes iba siempre colgando por
+   fuera (`position: absolute; left: -75px`), y en un teléfono —donde el globo
+   ocupa casi todo el ancho— eso lo dejaba en x ≈ −33 px: fuera de la pantalla.
+   Asomarse es un lujo de escritorio, así que es la excepción y no la regla. */
 .mis-tour-fila {
-  display: block !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
 }
 
 .mis-tour-mascota {
-  position: absolute !important;
-  top: 50% !important;
-  left: -75px !important;
-  transform: translateY(-50%) !important;
-  width: 160px !important;
+  position: static !important;
+  width: 64px !important;
   height: auto !important;
+  flex-shrink: 0 !important;
   margin: 0 !important;
-  z-index: 1000000004 !important;
-  filter: drop-shadow(0 12px 24px rgba(11, 79, 140, 0.4)) !important;
+  transform: none !important;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.28)) !important;
   pointer-events: none !important;
-  /* Animación de entrada */
-  animation: mis-tour-mascota-enter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* En el paso final el personaje aparece de cuerpo con la copa o pose grande */
-.mis-tour-mascota--celebra {
-  width: 175px !important;
-  left: -85px !important;
+  animation: mis-tour-pachi-entra 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .mis-tour-texto {
   display: block !important;
+  min-width: 0 !important;
 }
 
-@keyframes mis-tour-mascota-enter {
-  0% {
+@keyframes mis-tour-pachi-entra {
+  from {
+    opacity: 0;
+    transform: translateX(-8px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Desde 900 px hay margen de sobra al costado: Pachi se asoma por el borde,
+   que es el efecto buscado. Con menos vuelo que antes (era 160 px a −75) para
+   que entre completo aun con el globo pegado al rail de sistemas. */
+@media (min-width: 900px) {
+  .driver-popover {
+    padding-left: 44px !important;
+  }
+
+  .mis-tour-mascota {
+    position: absolute !important;
+    top: 50% !important;
+    left: -56px !important;
+    width: 120px !important;
+    transform: translateY(-50%) !important;
+    z-index: 1000000004 !important;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35)) !important;
+    animation: mis-tour-pachi-asoma 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  .mis-tour-mascota--celebra {
+    width: 132px !important;
+    left: -62px !important;
+  }
+
+  /* La flecha apunta a la izquierda ⇒ el globo está a la DERECHA del elemento,
+     o sea pegado al borde izquierdo de la pantalla. Ahí asomarse vuelve a
+     cortar a Pachi, así que entra al globo. Es un refuerzo: la regla de arriba
+     ya deja el peor caso dentro sin depender de `:has()`. */
+  .driver-popover:has(.driver-popover-arrow-side-left) {
+    padding-left: 20px !important;
+  }
+
+  .driver-popover:has(.driver-popover-arrow-side-left) .mis-tour-mascota {
+    position: static !important;
+    width: 64px !important;
+    transform: none !important;
+    animation: mis-tour-pachi-entra 0.35s ease-out forwards;
+  }
+}
+
+@keyframes mis-tour-pachi-asoma {
+  from {
     opacity: 0;
     transform: translate(-10px, -50%) scale(0.85);
   }
-  100% {
+  to {
     opacity: 1;
     transform: translate(0, -50%) scale(1);
   }
 }
 
-@media (max-width: 640px) {
+@media (prefers-reduced-motion: reduce) {
   .mis-tour-mascota {
-    width: 110px !important;
-    left: -45px !important;
-  }
-  .mis-tour-mascota--celebra {
-    width: 120px !important;
-    left: -50px !important;
+    animation: none !important;
+    opacity: 1;
   }
 }

@@ -41,6 +41,9 @@ export class AnunciosService {
 
   /** Abre el diálogo si hay algo nuevo y no está silenciado. */
   abrirSiCorresponde(): void {
+    // La bienvenida de Pachi va primero: dos modales apilados en el primer
+    // ingreso es peor que ninguno. El comunicado espera al siguiente arranque.
+    if (!this.preferencias.bienvenida().vista) return;
     if (this.preferencias.anuncios().silenciar) return;
     if (!this.hayPendientes()) return;
     this._abierto.set(true);

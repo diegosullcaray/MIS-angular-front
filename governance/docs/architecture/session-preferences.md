@@ -70,3 +70,17 @@ puede revivir un aviso que el usuario acaba de cerrar.
 `localStorage` entero, así que en la práctica "No mostrar este comunicado" dura
 hasta el próximo cierre de sesión. Es una consecuencia conocida de la política
 de borrado total, no un defecto del diálogo.
+
+## La bienvenida de Pachi
+
+`bienvenida.vista`, dentro del mismo documento `mis.preferencias`. Arranca en
+`false`: el diálogo se abre solo la primera vez y al cerrarlo queda marcado.
+
+**Va antes que el comunicado.** Mientras `vista` sea `false`,
+`AnunciosService.abrirSiCorresponde()` no levanta nada: dos modales apilados en
+el primer ingreso es peor que ninguno. El comunicado aparece en el arranque
+siguiente.
+
+Le cabe la misma advertencia que arriba: con el borrado total al cerrar sesión,
+"una sola vez" dura hasta el próximo logout. Ver INC-2026-09-11-04 y la
+[bienvenida](../components/tours-guiados.md#la-bienvenida).
