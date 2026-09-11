@@ -31,6 +31,9 @@ describe('AnunciosService', () => {
         { provide: CATALOGO_ANUNCIOS, useValue: catalogo },
       ],
     });
+    // La bienvenida de Pachi va antes que el comunicado. Estos casos son sobre
+    // el comunicado, así que se la da por vista; el orden tiene su propio test.
+    TestBed.inject(PreferenciasService).marcarBienvenidaVista();
     return TestBed.inject(AnunciosService);
   }
 
@@ -150,6 +153,26 @@ describe('AnunciosService', () => {
     anuncios.cerrar();
 
     anuncios.abrir();
+
+    expect(anuncios.abierto()).toBe(true);
+  });
+
+  // Dos modales apilados en el primer ingreso es peor que ninguno.
+  it('mientras la bienvenida no se haya cerrado, el comunicado espera', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: REPOSITORIO_PREFERENCIAS, useExisting: PreferenciasLocalStorageRepositorio },
+        { provide: CATALOGO_ANUNCIOS, useValue: [pieza('comunicado-01')] },
+      ],
+    });
+    const anuncios = TestBed.inject(AnunciosService);
+
+    anuncios.abrirSiCorresponde();
+    expect(anuncios.abierto()).toBe(false);
+
+    // Cerrada la bienvenida, el siguiente arranque sí lo levanta.
+    TestBed.inject(PreferenciasService).marcarBienvenidaVista();
+    anuncios.abrirSiCorresponde();
 
     expect(anuncios.abierto()).toBe(true);
   });

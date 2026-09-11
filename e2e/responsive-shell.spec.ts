@@ -55,6 +55,11 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
 
   test('usa el wallpaper de mobile (wallpaper_cell.jpg)', async ({ page }) => {
     const shell = new ShellPage(page);
+    // El tema se fija, como en los dos casos de escritorio de más abajo: lo que
+    // se prueba es móvil contra escritorio, no claro contra oscuro. Sin fijarlo
+    // manda el valor de fábrica —que es oscuro— y la foto es la del tema, no la
+    // del ancho.
+    await shell.fijarTema('claro');
     await shell.ir();
 
     expect(await shell.wallpaperAplicado()).toContain('wallpaper_cell.jpg');

@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PreferenciasService } from '../../../../full-pages/layout/services/preferencias.service';
 import { PanelNovedadesComponent } from '../../ui/panel-novedades/panel-novedades.component';
+import { BienvenidaDialogComponent } from '../../ui/bienvenida-dialog/bienvenida-dialog.component';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [RouterLink, PanelNovedadesComponent],
+  imports: [RouterLink, PanelNovedadesComponent, BienvenidaDialogComponent],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.css',
 })

@@ -214,6 +214,19 @@ export interface ReporteReciente {
   readonly categoria?: string;
 }
 
+/**
+ * La bienvenida de Pachi, que se da una sola vez.
+ *
+ * Vive en `localStorage` como el resto de las preferencias. **Ojo con el
+ * alcance real**: `LimpiezaSesionService` vacía `localStorage` al cerrar
+ * sesión, así que "una sola vez" dura hasta el próximo logout. Es una
+ * consecuencia conocida de la política de borrado total, no un descuido de este
+ * campo.
+ */
+export interface PreferenciasBienvenida {
+  readonly vista: boolean;
+}
+
 /** Cuántos accesos rápidos conserva el Home. */
 export const MAX_RECIENTES = 6;
 
@@ -221,6 +234,7 @@ export interface Preferencias {
   readonly apariencia: PreferenciasApariencia;
   readonly estructura: PreferenciasEstructura;
   readonly anuncios: PreferenciasAnuncios;
+  readonly bienvenida: PreferenciasBienvenida;
   readonly recientes: readonly ReporteReciente[];
 }
 
@@ -240,6 +254,9 @@ export const PREFERENCIAS_POR_DEFECTO: Preferencias = {
   anuncios: {
     vistos: [],
     silenciar: false,
+  },
+  bienvenida: {
+    vista: false,
   },
   recientes: [],
 };
@@ -289,6 +306,7 @@ export function sanearPreferencias(crudo: unknown): Preferencias {
   const apariencia = objeto(raiz['apariencia']);
   const estructura = objeto(raiz['estructura']);
   const anuncios = objeto(raiz['anuncios']);
+  const bienvenida = objeto(raiz['bienvenida']);
   const base = PREFERENCIAS_POR_DEFECTO;
 
   const fondo = typeof apariencia['fondo'] === 'string' ? apariencia['fondo'] : '';
@@ -310,6 +328,9 @@ export function sanearPreferencias(crudo: unknown): Preferencias {
         ? anuncios['vistos'].filter((id): id is string => typeof id === 'string')
         : base.anuncios.vistos,
       silenciar: booleano(anuncios['silenciar'], base.anuncios.silenciar),
+    },
+    bienvenida: {
+      vista: booleano(bienvenida['vista'], base.bienvenida.vista),
     },
     recientes: recientes(raiz['recientes']),
   };

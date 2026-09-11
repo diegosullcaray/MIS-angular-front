@@ -40,6 +40,9 @@ describe('AnunciosDialogComponent', () => {
         { provide: CATALOGO_ANUNCIOS, useValue: catalogo },
       ],
     });
+    // El comunicado espera a que la bienvenida de Pachi esté cerrada; acá se
+    // prueba el comunicado, así que se la da por vista.
+    TestBed.inject(PreferenciasService).marcarBienvenidaVista();
     return TestBed.createComponent(AnunciosDialogComponent);
   }
 

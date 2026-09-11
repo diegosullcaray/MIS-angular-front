@@ -32,16 +32,42 @@ describe('NovedadesTourService', () => {
     }
   });
 
-  it('todo paso apunta a un ancla y la explica con la mascota', () => {
+  it('todo paso tiene título y lo explica Pachi', () => {
     for (const novedad of servicio.novedades) {
       for (const paso of novedad.pasos) {
-        expect(paso.element).toBeTruthy();
         expect(paso.popover?.title).toBeTruthy();
         expect(paso.popover?.description).toContain('/assets/images/fc/tours/mascota-');
         // Decorativa: el mensaje lo lleva el texto, no la imagen.
         expect(paso.popover?.description).toContain('alt=""');
       }
     }
+  });
+
+  /**
+   * Un paso sin `element` es deliberado: driver.js lo pinta centrado, que es
+   * lo que corresponde cuando la novedad habla de algo que no está en esta
+   * pantalla —los filtros viven en los reportes, no en el Home—.
+   */
+  it('un paso, o apunta a un ancla, o es una tarjeta centrada a propósito', () => {
+    const sinAncla = servicio.novedades.flatMap((n) => n.pasos).filter((p) => !p.element);
+
+    expect(sinAncla.length).toBeGreaterThan(0);
+    for (const paso of sinAncla) {
+      // Sin ancla no hay lado que elegir: driver.js la centra.
+      expect(paso.popover?.side).toBeUndefined();
+    }
+  });
+
+  it('Pachi se presenta por su nombre en el catálogo', () => {
+    const textos = servicio.novedades.flatMap((n) => n.pasos).map((p) => String(p.popover?.description ?? ''));
+
+    expect(textos.some((t) => t.includes('Pachi'))).toBe(true);
+  });
+
+  it('solo el recorrido del propio panel pide tenerlo a la vista', () => {
+    const conPanel = servicio.novedades.filter((n) => n.requierePanel).map((n) => n.id);
+
+    expect(conPanel).toEqual(['panel-novedades']);
   });
 
   it('iniciar() delega los pasos de esa novedad en el motor de tours', () => {

@@ -28,10 +28,10 @@
   aria-labelledby="novedades-titulo"
 >
   <header class="novedades-cabecera">
-    <img class="novedades-mascota" src="/assets/images/fc/tours/mascota-celebra.png" alt="" aria-hidden="true" />
+    <img class="novedades-mascota" src="/assets/images/fc/tours/mascota-saluda.png" alt="" aria-hidden="true" />
     <div class="novedades-cabecera-texto">
       <h2 id="novedades-titulo" class="novedades-titulo">Novedades</h2>
-      <p class="novedades-bajada">Elegí una y te la muestro en pantalla.</p>
+      <p class="novedades-bajada">Pachi te las muestra en pantalla: elige una.</p>
     </div>
     <button
       type="button"
@@ -50,7 +50,7 @@
   <ul class="novedades-lista">
     @for (novedad of novedades; track novedad.id) {
       <li>
-        <button type="button" class="novedad" (click)="verGuia(novedad.id)">
+        <button type="button" class="novedad" (click)="verGuia(novedad)">
           <span class="novedad-icono" aria-hidden="true"><i [class]="novedad.icono"></i></span>
           <span class="novedad-texto">
             <span class="novedad-titulo">

@@ -26,6 +26,7 @@ export class PreferenciasService {
   readonly apariencia = computed(() => this._preferencias().apariencia);
   readonly estructura = computed(() => this._preferencias().estructura);
   readonly anuncios = computed(() => this._preferencias().anuncios);
+  readonly bienvenida = computed(() => this._preferencias().bienvenida);
   readonly recientes = computed(() => this._preferencias().recientes);
 
   /** `true` cuando el usuario no cambió nada: habilita el botón de restablecer. */
@@ -97,6 +98,14 @@ export class PreferenciasService {
   /** Vuelve a habilitar los anuncios ya cerrados — la contraparte de "no mostrar más". */
   reiniciarAnuncios(): void {
     this.actualizar((p) => ({ ...p, anuncios: { vistos: [], silenciar: false } }));
+  }
+
+  // ─── Bienvenida ───────────────────────────────────────────────────────────
+
+  /** Da por vista la bienvenida de Pachi: no vuelve a abrirse sola. */
+  marcarBienvenidaVista(): void {
+    if (this._preferencias().bienvenida.vista) return;
+    this.actualizar((p) => ({ ...p, bienvenida: { vista: true } }));
   }
 
   // ─── Reportes recientes ───────────────────────────────────────────────────

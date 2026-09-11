@@ -1,0 +1,98 @@
+/* ── Bienvenida de Pachi ──────────────────────────────────────
+   El diálogo es de ancho de lectura en escritorio; en un teléfono ocupa la
+   pantalla entera, porque una tarjeta flotante con seis bloques de texto a
+   375 px queda apretada contra los dos bordes. */
+
+.bienvenida {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-3);
+  padding-bottom: var(--mis-space-3);
+}
+
+.bienvenida-pachi {
+  width: 96px;
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
+}
+
+.bienvenida-texto {
+  min-width: 0;
+}
+
+.bienvenida-saludo {
+  margin: 0;
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+}
+
+.bienvenida-bajada {
+  margin: var(--mis-space-1) 0 0;
+  font-size: var(--mis-text-xs);
+  line-height: var(--mis-leading-normal);
+  color: var(--mis-text-secondary);
+}
+
+.bienvenida-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-2);
+  border-top: 1px solid var(--mis-border);
+  padding-top: var(--mis-space-3);
+}
+
+.bienvenida-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mis-space-3);
+}
+
+.bienvenida-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: var(--mis-radius-sm);
+  background: var(--mis-primary-light);
+  color: var(--mis-primary-text);
+  font-size: 14px;
+}
+
+.bienvenida-item-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bienvenida-item-titulo {
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+}
+
+.bienvenida-item-resumen {
+  font-size: var(--mis-text-xs);
+  line-height: var(--mis-leading-normal);
+  color: var(--mis-text-secondary);
+}
+
+/* ── Teléfono: hoja a pantalla completa ─────────────────────── */
+@media (max-width: 640px) {
+  .bienvenida {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--mis-space-2);
+  }
+
+  .bienvenida-pachi {
+    width: 120px;
+  }
+}

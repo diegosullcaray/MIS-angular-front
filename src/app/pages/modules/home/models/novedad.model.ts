@@ -16,4 +16,12 @@ export interface Novedad {
   fecha: string;
   /** Los pasos del recorrido guiado. */
   pasos: DriveStep[];
+  /**
+   * `true` si el recorrido habla del panel de novedades y necesita verlo.
+   *
+   * El resto **se cierra el panel antes de arrancar**: los pasos señalan cosas
+   * de la pantalla y el panel, que en angosto ocupa todo el ancho, taparía
+   * justo lo que quiere mostrar.
+   */
+  requierePanel?: boolean;
 }

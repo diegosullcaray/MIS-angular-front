@@ -1,6 +1,7 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { SelectorNivelDialogComponent } from './selector-nivel-dialog.component';
 import { IncentivosService } from '../../services/incentivos.service';
@@ -18,6 +19,7 @@ const ASESOR: AsesorPickItem = {
 describe('SelectorNivelDialogComponent', () => {
   let incentivosFalso: {
     nivelesSelector: NivelSelectorJerarquia[];
+    perfil: ReturnType<typeof signal<unknown>>;
     obtenerAsesores: ReturnType<typeof vi.fn>;
     obtenerNivelesJerarquia: ReturnType<typeof vi.fn>;
     seleccionarAsesor: ReturnType<typeof vi.fn>;
@@ -37,6 +39,7 @@ describe('SelectorNivelDialogComponent', () => {
       seleccionarAsesor: vi.fn(),
       seleccionarNodoJerarquia: vi.fn(),
       seleccionarFinancieraConfianza: vi.fn(),
+      perfil: signal<unknown>(null),
     };
     TestBed.configureTestingModule({
       imports: [SelectorNivelDialogComponent],
@@ -255,15 +258,36 @@ describe('SelectorNivelDialogComponent', () => {
     expect(incentivosFalso.seleccionarFinancieraConfianza).toHaveBeenCalledWith(2);
   });
 
-  it('cerrar() siempre emite visibleChange(false) y redirige al dashboard', () => {
+  /**
+   * Cerrar siempre cierra; a dónde va después depende de si ya hay un nivel
+   * cargado. Sin perfil —el primer ingreso de un administrador— quedarse sería
+   * quedarse mirando una pantalla vacía.
+   */
+  it('cerrar() sin perfil cargado emite visibleChange(false) y sale al dashboard', () => {
     const fixture = crear();
     fixture.detectChanges();
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     const visibleChangeSpy = vi.fn();
     fixture.componentInstance.visibleChange.subscribe(visibleChangeSpy);
 
     fixture.componentInstance['cerrar']();
 
     expect(visibleChangeSpy).toHaveBeenCalledWith(false);
+    expect(navegar).toHaveBeenCalledWith(['/app/dashboard']);
+  });
+
+  it('cerrar() con un perfil ya cargado no saca al usuario de la pantalla', () => {
+    incentivosFalso.perfil.set({ nombre: 'Juan Pérez' });
+    const fixture = crear();
+    fixture.detectChanges();
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const visibleChangeSpy = vi.fn();
+    fixture.componentInstance.visibleChange.subscribe(visibleChangeSpy);
+
+    fixture.componentInstance['cerrar']();
+
+    expect(visibleChangeSpy).toHaveBeenCalledWith(false);
+    expect(navegar).not.toHaveBeenCalled();
   });
 
   it('volverAlMenu() regresa a la vista de menú y suelta la fila resaltada', () => {

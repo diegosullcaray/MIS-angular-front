@@ -38,6 +38,7 @@ test.describe('Home · reportes recientes', () => {
   test('lista los recientes sembrados y navega al hacer clic', async ({ page }) => {
     await inyectarPreferencias(page, {
       anuncios: { vistos: [], silenciar: true },
+      bienvenida: { vista: true },
       recientes: [
         {
           ruta: '/app/actividades/dest-credito',
@@ -62,6 +63,7 @@ test.describe('Home · reportes recientes', () => {
   test('la lista de recientes no desborda a lo ancho', async ({ page }) => {
     await inyectarPreferencias(page, {
       anuncios: { vistos: [], silenciar: true },
+      bienvenida: { vista: true },
       recientes: Array.from({ length: 6 }, (_, i) => ({
         ruta: `/app/actividades/reporte-${i}`,
         titulo: `Reporte de nombre bastante largo número ${i}`,

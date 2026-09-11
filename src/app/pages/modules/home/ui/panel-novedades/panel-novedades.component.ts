@@ -35,8 +35,18 @@ export class PanelNovedadesComponent {
     this.abierto.update((v) => !v);
   }
 
-  protected verGuia(id: string): void {
-    this.tours.iniciar(id);
+  protected verGuia(novedad: Novedad): void {
+    // El recorrido señala elementos de la pantalla, y el panel está encima de
+    // ellos: en angosto ocupa todo el ancho, así que taparía justo lo que la
+    // novedad quiere mostrar. La excepción es el recorrido que habla del panel.
+    if (!novedad.requierePanel) this.abierto.set(false);
+
+    this.tours.iniciar(novedad.id);
+  }
+
+  /** Abre el panel desde afuera — lo usa la bienvenida de Pachi. */
+  abrir(): void {
+    this.abierto.set(true);
   }
 
   protected esNueva(novedad: Novedad): boolean {

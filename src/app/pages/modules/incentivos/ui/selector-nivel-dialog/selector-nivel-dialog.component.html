@@ -11,7 +11,10 @@
   [resizable]="false"
   appendTo="body"
 >
-  <ng-template pTemplate="header">
+  <!-- `ariaLabelledBy` sale del contexto que da PrimeNG: es el id al que apunta
+       el `aria-labelledby` del diálogo. Al poner cabecera propia hay que
+       ponérselo al título, o el diálogo queda sin nombre accesible. -->
+  <ng-template pTemplate="header" let-ariaLabelledBy="ariaLabelledBy">
     <div class="mis-window-lights mis-dialog-lights" role="group" aria-label="Controles del diálogo">
       <button
         type="button"
@@ -40,7 +43,7 @@
       <span class="mis-window-light mis-window-light--apagada" aria-hidden="true"></span>
     </div>
 
-    <span id="selector-nivel-title" class="p-dialog-title">Selecciona Nivel</span>
+    <span [id]="ariaLabelledBy" class="p-dialog-title">Selecciona Nivel</span>
   </ng-template>
 
   @if (vista() === 'menu') {

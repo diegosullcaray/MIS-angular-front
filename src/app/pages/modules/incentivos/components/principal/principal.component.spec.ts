@@ -13,6 +13,18 @@ class ResizeObserverFalso {
   disconnect(): void {}
 }
 
+// Ni IntersectionObserver, que es lo que mira `pAnimateOnScroll` (la plantilla
+// lo usa para el fundido de entrada). Sin este doble, `ngAfterViewInit` lanza y
+// se cae el archivo entero, no un caso.
+class IntersectionObserverFalso {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+  takeRecords(): [] {
+    return [];
+  }
+}
+
 describe('PrincipalComponent', () => {
   let incentivosFalso: {
     iniciar: ReturnType<typeof vi.fn>;
@@ -37,6 +49,8 @@ describe('PrincipalComponent', () => {
 
   beforeEach(() => {
     (globalThis as unknown as { ResizeObserver: typeof ResizeObserverFalso }).ResizeObserver = ResizeObserverFalso;
+    (globalThis as unknown as { IntersectionObserver: typeof IntersectionObserverFalso }).IntersectionObserver =
+      IntersectionObserverFalso;
 
     incentivosFalso = {
       iniciar: vi.fn(),
