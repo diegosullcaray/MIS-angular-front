@@ -7,7 +7,7 @@
   [resizable]="false"
   appendTo="body"
   styleClass="mis-bienvenida-dialog"
-  [style]="{ width: 'min(560px, 96vw)' }"
+  [style]="{ width: 'min(560px, 90vw)' }"
   header="Te damos la bienvenida"
 >
   <div class="bienvenida">
@@ -19,22 +19,10 @@
         ¡Hola! Soy <b>Pachi</b> y te acompaño en el sistema nuevo.
       </p>
       <p class="bienvenida-bajada">
-        Esto es lo que cambió. Elige cualquiera y te la muestro en pantalla, paso a paso.
+        Haz clic en «Ver las novedades» y te mostraré todo lo que cambió en la plataforma, paso a paso.
       </p>
     </div>
   </div>
-
-  <ul class="bienvenida-lista">
-    @for (novedad of destacadas(); track novedad.id) {
-      <li class="bienvenida-item">
-        <span class="bienvenida-icono" aria-hidden="true"><i [class]="novedad.icono"></i></span>
-        <span class="bienvenida-item-texto">
-          <span class="bienvenida-item-titulo">{{ novedad.titulo }}</span>
-          <span class="bienvenida-item-resumen">{{ novedad.resumen }}</span>
-        </span>
-      </li>
-    }
-  </ul>
 
   <ng-template pTemplate="footer">
     <p-button label="Entrar directo" [text]="true" severity="secondary" (onClick)="cerrar()" />

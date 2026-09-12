@@ -1,20 +1,13 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { PreferenciasService } from '../../../../full-pages/layout/services/preferencias.service';
-import { NovedadesTourService } from '../../services/novedades-tour.service';
-
-/** Cuántas novedades se nombran en la bienvenida; el resto está en el panel. */
-const DESTACADAS = 4;
 
 /**
  * La bienvenida de Pachi: el saludo del sistema nuevo, con lo que cambió.
  *
  * Vive en el Home y no en el shell a propósito. `LoginComponent` navega a
- * `/app/dashboard`, así que toda sesión empieza acá, y de este modo el diálogo
- * lee el catálogo de novedades directo, sin que una pantalla del layout tenga
- * que importar de un módulo. La contrapartida, asumida: quien entre por enlace
- * directo a un reporte la verá recién al pasar por el Home.
+ * `/app/dashboard`, así que toda sesión empieza acá.
  *
  * Se da **una sola vez**: al cerrarla queda marcada en las preferencias.
  */
@@ -27,7 +20,6 @@ const DESTACADAS = 4;
 })
 export class BienvenidaDialogComponent {
   private readonly preferencias = inject(PreferenciasService);
-  private readonly tours = inject(NovedadesTourService);
 
   /** Lo pide el botón "Ver las novedades": el Home abre el panel. */
   readonly verNovedades = output<void>();
@@ -35,8 +27,6 @@ export class BienvenidaDialogComponent {
   /** Se abre sola si nunca se cerró. */
   private readonly _abierto = signal(!this.preferencias.bienvenida().vista);
   readonly abierto = this._abierto.asReadonly();
-
-  protected readonly destacadas = computed(() => this.tours.novedades.slice(0, DESTACADAS));
 
   protected cerrar(): void {
     this._abierto.set(false);

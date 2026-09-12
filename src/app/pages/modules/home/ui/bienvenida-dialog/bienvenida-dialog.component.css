@@ -1,24 +1,28 @@
 /* ── Bienvenida de Pachi ──────────────────────────────────────
    El diálogo es de ancho de lectura en escritorio; en un teléfono ocupa la
-   pantalla entera, porque una tarjeta flotante con seis bloques de texto a
-   375 px queda apretada contra los dos bordes. */
+   pantalla entera. */
 
 .bienvenida {
   display: flex;
   align-items: center;
+  position: relative;
+  /* El gap ya no aplica mucho porque Pachi es absoluto, pero se deja por si acaso */
   gap: var(--mis-space-3);
-  padding-bottom: var(--mis-space-3);
 }
 
 .bienvenida-pachi {
-  width: 96px;
-  height: auto;
-  flex-shrink: 0;
+  position: absolute;
+  top: 50%;
+  left: -16px;
+  width: 120px;
+  transform: translateY(-50%);
+  z-index: 10;
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
 }
 
 .bienvenida-texto {
   min-width: 0;
+  padding-left: 85px;
 }
 
 .bienvenida-saludo {
@@ -35,64 +39,15 @@
   color: var(--mis-text-secondary);
 }
 
-.bienvenida-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--mis-space-2);
-  border-top: 1px solid var(--mis-border);
-  padding-top: var(--mis-space-3);
-}
-
-.bienvenida-item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--mis-space-3);
-}
-
-.bienvenida-icono {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
-  border-radius: var(--mis-radius-sm);
-  background: var(--mis-primary-light);
-  color: var(--mis-primary-text);
-  font-size: 14px;
-}
-
-.bienvenida-item-texto {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.bienvenida-item-titulo {
-  font-size: var(--mis-text-sm);
-  font-weight: var(--mis-font-semibold);
-  color: var(--mis-text-primary);
-}
-
-.bienvenida-item-resumen {
-  font-size: var(--mis-text-xs);
-  line-height: var(--mis-leading-normal);
-  color: var(--mis-text-secondary);
-}
-
-/* ── Teléfono: hoja a pantalla completa ─────────────────────── */
-@media (max-width: 640px) {
-  .bienvenida {
-    flex-direction: column;
-    text-align: center;
-    gap: var(--mis-space-2);
+/* En escritorio Pachi se asoma más grande y desde abajo */
+@media (min-width: 641px) {
+  .bienvenida-pachi {
+    top: 100%;
+    left: -50px;
+    width: 160px;
   }
 
-  .bienvenida-pachi {
-    width: 120px;
+  .bienvenida-texto {
+    padding-left: 72px;
   }
 }
