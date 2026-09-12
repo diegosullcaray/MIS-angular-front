@@ -33,7 +33,9 @@
         <td class="text-[13px]" [class]="alineacion(columna) + ' ' + claseCelda()" [style.background]="fondoCelda(fila, columna)">
           @if (esSemaforo(columna)) {
             @if (mostrarSemaforo(fila, columna)) {
-              <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(valor(fila, columna))"></i>
+              <div class="flex justify-start w-full">
+                <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(valor(fila, columna))"></i>
+              </div>
             }
           } @else {
             <span [class]="claseTextoCelda(fila, columna)" [style.color]="colorCelda(fila, columna)">

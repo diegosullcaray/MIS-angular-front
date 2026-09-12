@@ -42,8 +42,9 @@ export class CarteraRepositorioService {
   }
 
   /** Cartera Agrícola · Cultivos. Las tarjetas del mes anterior salen de `meta1[0]`. */
-  carteraAgricola(nodo: NodoConsulta): Observable<CarteraAgricolaResultado> {
-    return this.reportes.getRegularTableResult(COD_CARTERA_REPO.carteraAgricola, this.paramsConFecha(nodo)).pipe(
+  carteraAgricola(nodo: NodoConsulta, periodo?: string): Observable<CarteraAgricolaResultado> {
+    const fec = periodo || this.bloques.fecha();
+    return this.reportes.getRegularTableResult(COD_CARTERA_REPO.carteraAgricola, { ...this.paramsNodo(nodo), fec }).pipe(
       map((r) => {
         const resultado = resultadoCrudo(r);
         const filas = filasDeResultado(resultado);
@@ -60,8 +61,9 @@ export class CarteraRepositorioService {
    * Los cuatro gráficos del detalle por cultivo. Solo dos de ellos usan sus
    * filas: son los que abren el modal de detalle (el `detailDataMap` del legado).
    */
-  detalleGraficosAgricola(nodo: NodoConsulta): Observable<DetalleAgricolaResultado> {
-    const params = this.paramsConFecha(nodo);
+  detalleGraficosAgricola(nodo: NodoConsulta, periodo?: string): Observable<DetalleAgricolaResultado> {
+    const fec = periodo || this.bloques.fecha();
+    const params = { ...this.paramsNodo(nodo), fec };
     const bloques = GRAFICOS_AGRICOLA.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
 
     return forkJoin(bloques).pipe(
@@ -81,6 +83,11 @@ export class CarteraRepositorioService {
   /** Opciones del selector de periodo de Gestión Comercial. */
   periodosGestionComercial(): Observable<OpcionFiltro[]> {
     return this.bloques.periodos(COD_CARTERA_REPO.periodosGestionComercial);
+  }
+
+  /** Opciones del selector de periodo para Cartera Agrícola. */
+  periodosAgricola(): Observable<OpcionFiltro[]> {
+    return this.bloques.periodos('RS_FECH');
   }
 
   /**

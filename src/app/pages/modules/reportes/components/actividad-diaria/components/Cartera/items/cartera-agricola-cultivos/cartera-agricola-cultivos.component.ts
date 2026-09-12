@@ -1,8 +1,9 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { DataTableComponent } from '../../../../../../../../../shared/ui/data-table/data-table.component';
@@ -26,6 +27,7 @@ import {
   type DetalleCultivo,
   type UbicacionCliente,
 } from '../../models/cartera-agricola.model';
+import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
 
 /** "Cartera Agrícola - Cultivos" (`repositorio/actividad-diaria/cartera/agro-mix`). */
@@ -37,6 +39,7 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
     DialogModule,
     ButtonModule,
     TooltipModule,
+    SelectFiltroComponent,
     HierSelectorComponent,
     TablaDinamicaComponent,
     DataTableComponent,
@@ -62,6 +65,9 @@ export class CarteraAgricolaCultivosComponent {
   protected readonly reporte = signal<CarteraAgricolaResultado>(CARTERA_AGRICOLA_VACIA);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
+  protected readonly periodos = signal<OpcionFiltro[]>([]);
+  protected readonly periodo = signal('');
+
   protected readonly totales = computed(() => this.reporte().totales);
   protected readonly tabla = computed(() => this.reporte().tabla);
 
@@ -78,21 +84,22 @@ export class CarteraAgricolaCultivosComponent {
 
   private filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
 
+  constructor() {
+    this.servicio.periodosAgricola().subscribe((opciones) => {
+      this.periodos.set(opciones);
+      if (opciones.length > 0) this.periodo.set(String(opciones[0].id));
+    });
+
+    effect(() => {
+      const nodo = this.nivelActual();
+      const periodo = this.periodo();
+      if (nodo) this.cargar(nodo, periodo);
+    });
+  }
+
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
-    this.cargando.set(true);
     this.volverAlListado();
-
-    this.servicio.carteraAgricola({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
-      next: (reporte) => {
-        this.reporte.set(reporte);
-        this.cargando.set(false);
-      },
-      error: () => {
-        this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
-        this.cargando.set(false);
-      },
-    });
   }
 
   /** El legado baja al detalle con el `htipcod`/`cod_rel` de la propia fila, no con el nodo elegido. */
@@ -104,7 +111,7 @@ export class CarteraAgricolaCultivosComponent {
     this.filaSeleccionada.set(fila);
     this.cargandoGraficos.set(true);
 
-    this.servicio.detalleGraficosAgricola({ tip_cod, cod_rel }).subscribe({
+    this.servicio.detalleGraficosAgricola({ tip_cod, cod_rel }, this.periodo() || undefined).subscribe({
       next: ({ graficos, filasPorGrafico }) => {
         this.graficos.set(graficos);
         this.filasPorGrafico = filasPorGrafico;
@@ -164,6 +171,21 @@ export class CarteraAgricolaCultivosComponent {
   /** Vuelve del mapa al listado de clientes, sin cerrar el modal. */
   protected volverAlListadoDeClientes(): void {
     this.ubicacion.set(null);
+  }
+
+  private cargar(nodo: HierarquiaNodo, periodo: string): void {
+    this.cargando.set(true);
+    this.volverAlListado();
+    this.servicio.carteraAgricola({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
+      next: (reporte) => {
+        this.reporte.set(reporte);
+        this.cargando.set(false);
+      },
+      error: () => {
+        this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+        this.cargando.set(false);
+      },
+    });
   }
 }
 

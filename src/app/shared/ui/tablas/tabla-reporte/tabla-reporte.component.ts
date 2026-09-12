@@ -76,7 +76,30 @@ export class TablaReporteComponent {
   /** Columnas hoja con datos. */
   protected readonly columnasDato = computed(() => {
     const todas = this.encabezados().flatMap((fila) => this.columnasDe(fila));
-    return todas.filter((c) => c.isdata != null).sort((a, b) => (a.isdata ?? 0) - (b.isdata ?? 0));
+    const ordenadas = todas.filter((c) => c.isdata != null).sort((a, b) => (a.isdata ?? 0) - (b.isdata ?? 0));
+    
+    // Solo intercambiamos el semáforo con el dato anterior si estamos seguros de que le pertenece
+    // (tienen nombres similares) o si el semáforo quedó atrapado al final de la tabla.
+    for (let i = 1; i < ordenadas.length; i++) {
+      if (ordenadas[i].format?.['type'] === 'traffic-light') {
+        const colAnt = ordenadas[i - 1];
+        if (colAnt.format?.['type'] !== 'traffic-light') {
+          const nameSem = (ordenadas[i].columnDef || '').toLowerCase().replace(/^(sem_|dist_|meta_)/, '').replace(/_v\d+$/, '');
+          const nameDat = (colAnt.columnDef || '').toLowerCase().replace(/^(sem_|dist_|meta_)/, '').replace(/_v\d+$/, '');
+          
+          const esPareja = (nameSem.length > 2 && nameDat.length > 2 && (nameSem.includes(nameDat) || nameDat.includes(nameSem)));
+          const esUltima = i === ordenadas.length - 1;
+          
+          if (esPareja || esUltima) {
+            const temp = ordenadas[i];
+            ordenadas[i] = ordenadas[i - 1];
+            ordenadas[i - 1] = temp;
+          }
+        }
+      }
+    }
+    
+    return ordenadas;
   });
 
   /** Filas de encabezado visibles. */
@@ -155,7 +178,7 @@ export class TablaReporteComponent {
 
   /** Alineación de la celda de datos. */
   protected alineacion(columna: ColumnaReporte): string {
-    if (this.esSemaforo(columna)) return 'text-center w-8 px-1';
+    if (this.esSemaforo(columna)) return 'text-left w-8 pl-1 pr-1';
     const tipo = columna.format?.['type'];
     return tipo === 'number' || tipo === 'percent' ? 'text-right' : 'text-left';
   }

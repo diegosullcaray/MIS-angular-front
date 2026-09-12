@@ -37,16 +37,17 @@
           [class.bg-slate-100]="destacada(fila)"
           [class.dark:bg-slate-800]="destacada(fila)"
           [class.font-bold]="destacada(fila) || (fondoDinamico() && signoFondoDinamico(fila, columna) !== null)"
-          [class]="alineacion(columna)"
           [class.cursor-pointer]="clicable(columna)"
           [class.underline]="clicable(columna)"
           [style]="estiloCelda(fila, columna)"
           (click)="onClickCelda(columna, fila)"
         >
-          @if (mostrarSemaforo(fila, columna)) {
-            <i class="pi pi-circle-fill text-[10px]" [class]="colorSemaforo(fila, columna)"></i>
-          }
-          {{ valor(fila, columna) }}
+          <div class="flex items-center w-full">
+            @if (mostrarSemaforo(fila, columna)) {
+              <i class="pi pi-circle-fill text-[10px] mr-2 shrink-0" [class]="colorSemaforo(fila, columna)"></i>
+            }
+            <span class="flex-1" [class]="alineacion(columna)">{{ valor(fila, columna) }}</span>
+          </div>
         </td>
       }
     </tr>

@@ -4,13 +4,27 @@
   [permitirActualizar]="false"
   [conFiltros]="true"
 >
-  <app-hier-selector
-    ventana-filtros
-    [paramsHier]="paramsHier"
-    placeholder="Elegir nivel"
-    (nodoSeleccionado)="onNivelSeleccionado($event)"
-    (error)="onErrorJerarquia()"
-  />
+  <div ventana-filtros class="flex flex-col gap-3">
+    <!-- Selector de Jerarquía -->
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
+
+    <!-- Filtro de Periodo -->
+    @if (periodos().length > 0) {
+      <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+        <app-select-filtro
+          etiqueta="Periodo / Corte"
+          [opciones]="periodos()"
+          [valor]="periodo()"
+          (valorChange)="periodo.set($event)"
+        />
+      </div>
+    }
+  </div>
 
   @if (!nivelActual()) {
     <app-empty-state titulo="Elige un nivel" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte de cartera de cultivos." />
