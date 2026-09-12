@@ -5,10 +5,11 @@
   [conFiltros]="true"
 >
   <div ventana-filtros class="flex flex-col gap-3">
-    <!-- Selector de Jerarquía -->
+    <!-- Selector de Jerarquía (independiente de la fecha, solo usa el global) -->
     <app-hier-selector
       [paramsHier]="paramsHier"
       placeholder="Elegir nivel"
+      [reintentarSinFecha]="true"
       (nodoSeleccionado)="onNivelSeleccionado($event)"
       (error)="onErrorJerarquia()"
     />

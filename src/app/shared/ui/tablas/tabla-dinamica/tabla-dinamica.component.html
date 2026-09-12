@@ -3,7 +3,8 @@
      y dejaba dos indicadores para una sola espera. El único spinner visible
      es el global; acá el estado se conserva como `aria-busy` para que un
      lector de pantalla siga sabiendo que la tabla está cargando. -->
-<p-table [value]="filas()" [attr.aria-busy]="cargando()" [scrollable]="true" scrollHeight="620px" styleClass="p-datatable-sm">
+<p-table [value]="filas()" [attr.aria-busy]="cargando()" [scrollable]="true" scrollHeight="620px" styleClass="p-datatable-sm"
+         [dataKey]="dataKey()" [expandedRowKeys]="expandedRowKeys()">
   <ng-template pTemplate="header">
     @for (fila of encabezados().filas; track $index) {
       <tr>
@@ -52,6 +53,20 @@
       }
     </tr>
   </ng-template>
+  
+  <ng-template pTemplate="rowexpansion" let-fila>
+    @if (plantillaExpansion()) {
+      <tr>
+        <td [attr.colspan]="encabezados().columnasHoja.length" class="!p-0 border-b border-[var(--mis-border)]">
+          <!-- Animation container -->
+          <div class="w-full bg-[var(--mis-panel-bg)] p-4 animate-fade-in shadow-inner">
+            <ng-container *ngTemplateOutlet="plantillaExpansion()!; context: {$implicit: fila}"></ng-container>
+          </div>
+        </td>
+      </tr>
+    }
+  </ng-template>
+
   <ng-template pTemplate="emptymessage">
     <tr>
       <td [attr.colspan]="encabezados().columnasHoja.length || 1" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">

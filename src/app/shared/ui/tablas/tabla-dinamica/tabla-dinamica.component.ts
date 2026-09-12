@@ -1,6 +1,7 @@
-import { Component, computed, inject, input, output, LOCALE_ID } from '@angular/core';
+import { Component, computed, inject, input, output, LOCALE_ID, TemplateRef } from '@angular/core';
 import { formatNumber, formatPercent } from '@angular/common';
 import { TableModule } from 'primeng/table';
+import { NgTemplateOutlet } from '@angular/common';
 import { aplanarEncabezados } from './tabla-dinamica.util';
 import type { ColumnaDinamica } from '../models/tabla-dinamica.model';
 
@@ -8,7 +9,7 @@ import type { ColumnaDinamica } from '../models/tabla-dinamica.model';
 @Component({
   selector: 'app-tabla-dinamica',
   standalone: true,
-  imports: [TableModule],
+  imports: [TableModule, NgTemplateOutlet],
   templateUrl: './tabla-dinamica.component.html',
   styleUrl: './tabla-dinamica.component.css',
 })
@@ -30,6 +31,11 @@ export class TablaDinamicaComponent {
   /** Claves de columna que son clicables. */
   readonly columnasClicables = input<readonly string[]>([]);
   readonly celdaSeleccionada = output<{ clave: string; fila: Record<string, unknown> }>();
+
+  /** Soporte para expansión de filas (Drill Down). */
+  readonly dataKey = input<string>('id');
+  readonly plantillaExpansion = input<TemplateRef<any> | null>(null);
+  readonly expandedRowKeys = input<Record<string, boolean>>({});
 
   protected readonly encabezados = computed(() => aplanarEncabezados(this.columnas()));
 

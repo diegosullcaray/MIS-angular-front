@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, inject, input, OnInit, output, signal, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { map } from 'rxjs';
 import { SelectModule } from 'primeng/select';
@@ -20,6 +20,15 @@ export class HierSelectorComponent implements OnInit {
   private readonly antAdmin = inject(ModSysAdminService);
   private readonly shell = inject(ShellStateService);
   private readonly cache = inject(JerarquiaCacheService);
+
+  constructor() {
+    effect(() => {
+      const fecha = this.fechaPersonalizada();
+      if (untracked(() => this.nodosNivel().length > 0)) {
+        this.limpiar();
+      }
+    }, { allowSignalWrites: true });
+  }
 
   readonly paramsHier = input.required<ParamsJerarquia>();
   readonly placeholder = input('Elegir jerarquía');
@@ -43,6 +52,9 @@ export class HierSelectorComponent implements OnInit {
   readonly rutaSeleccionada = output<HierarquiaNodo[]>();
   /** Solo se emite si falla o queda vacía la carga inicial (raíz o su primer nivel) — el único caso en que este componente nunca llega a emitir `nodoSeleccionado`, así el contenedor puede apagar su propio loading en vez de quedarse esperando para siempre. */
   readonly error = output<void>();
+
+  /** Fecha opcional para forzar la consulta de la jerarquía (en lugar de la fecha global del usuario). */
+  readonly fechaPersonalizada = input<string | null>(null);
 
   protected readonly nodosNivel = signal<NivelJerarquiaDropdown[]>([]);
   protected readonly valoresSeleccionados = signal<(HierarquiaNodo | null)[]>([]);
@@ -98,7 +110,10 @@ export class HierSelectorComponent implements OnInit {
 
   private cargarNivel(tip_cod: number, cod_rels: string[], lvl: number, esCargaInicial = false): void {
     this.cargando.set(true);
-    const paramsFec = { key: 'fec', val: fechaCorteJerarquia(this.shell.usuarioActivo()?.fechaCorte) };
+    const fechaGlobal = fechaCorteJerarquia(this.shell.usuarioActivo()?.fechaCorte);
+    const fechaFiltro = this.fechaPersonalizada();
+    const valFec = fechaFiltro || fechaGlobal;
+    const paramsFec = { key: 'fec', val: valFec };
 
     this.pedirNivel(tip_cod, cod_rels, lvl, paramsFec).subscribe({
       next: (lh) => {

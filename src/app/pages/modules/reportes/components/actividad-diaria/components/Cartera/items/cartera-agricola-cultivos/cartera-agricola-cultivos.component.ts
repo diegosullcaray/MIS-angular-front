@@ -84,6 +84,13 @@ export class CarteraAgricolaCultivosComponent {
 
   private filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
 
+  /** Datos de los hijos (drill-down) indexados por cod_rel */
+  protected readonly subTablas = signal<Map<string, CarteraAgricolaResultado>>(new Map());
+  /** Filas actualmente expandidas */
+  protected readonly filasExpandidas = signal<Record<string, boolean>>({});
+  /** Identificador de las filas que están cargando su sub-tabla */
+  protected readonly cargandoSubTabla = signal<Record<string, boolean>>({});
+
   constructor() {
     this.servicio.periodosAgricola().subscribe((opciones) => {
       this.periodos.set(opciones);
@@ -100,6 +107,54 @@ export class CarteraAgricolaCultivosComponent {
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
     this.volverAlListado();
+  }
+
+  /** Al hacer clic en la columna "Descripción" se hace drill-down (expande la fila). */
+  protected onCeldaSeleccionada(evento: { clave: string; fila: Record<string, unknown> }): void {
+    if (evento.clave.toLowerCase() !== 'rdesjer') return;
+    const fila = evento.fila;
+    const tip_cod = Number(fila['htipcod']);
+    const cod_rel = String(fila['cod_rel'] ?? '');
+    if (!Number.isFinite(tip_cod) || !cod_rel) return;
+
+    const expandidas = { ...this.filasExpandidas() };
+    if (expandidas[cod_rel]) {
+      // Si está abierta, la cerramos
+      delete expandidas[cod_rel];
+      this.filasExpandidas.set(expandidas);
+      return;
+    }
+
+    // Si ya tenemos los datos en caché, solo abrimos
+    if (this.subTablas().has(cod_rel)) {
+      expandidas[cod_rel] = true;
+      this.filasExpandidas.set(expandidas);
+      return;
+    }
+
+    // Cargamos los datos del siguiente nivel
+    this.cargandoSubTabla.update(v => ({ ...v, [cod_rel]: true }));
+    
+    // Abrimos la fila para mostrar el esqueleto de carga
+    expandidas[cod_rel] = true;
+    this.filasExpandidas.set(expandidas);
+
+    this.servicio.carteraAgricola({ tip_cod, cod_rel }, this.periodo() || undefined).subscribe({
+      next: (reporte) => {
+        const mapa = new Map(this.subTablas());
+        mapa.set(cod_rel, reporte);
+        this.subTablas.set(mapa);
+        this.cargandoSubTabla.update(v => ({ ...v, [cod_rel]: false }));
+      },
+      error: () => {
+        this.toast.error('Error al cargar detalle', 'No se pudieron cargar los datos del siguiente nivel.');
+        this.cargandoSubTabla.update(v => ({ ...v, [cod_rel]: false }));
+        // Cerramos la fila por error
+        const current = { ...this.filasExpandidas() };
+        delete current[cod_rel];
+        this.filasExpandidas.set(current);
+      }
+    });
   }
 
   /** El legado baja al detalle con el `htipcod`/`cod_rel` de la propia fila, no con el nodo elegido. */
