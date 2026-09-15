@@ -20,9 +20,10 @@ function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
 }
 
 const DETALLE: DetalleCategorizacion = {
+  tipoComision: 'grupal',
   perfil: { nombre: 'Ana Torres', cargo: 'Asesora', genero: 'F', categoria: 'Oro', unidad: 'U1', corredor: 'C1', territorio: 'T1' },
   requisitos: [{ etiqueta: 'Disciplina', valor: 'Cumple', cumplido: true }],
-  comisiones: [{ periodo: 'Ene', valor: '1,000', cumplido: true }],
+  comisiones: [{ periodo: 'Ene', valor: '1,000', cumplido: true, indicadores: [] }],
 };
 
 const ANCLA: NodoJerarquiaAncla = { tip_cod: 7, cod_rel: '231', desc_rel: 'Financiera Confianza' };

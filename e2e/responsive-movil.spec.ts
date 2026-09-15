@@ -21,6 +21,7 @@ const PANTALLAS = [
   { nombre: 'Explorador de reportes', ruta: '/app/reportes' },
   { nombre: 'Actividades', ruta: '/app/actividades' },
   { nombre: 'Base negativa', ruta: '/app/cons_base_negativa' },
+  { nombre: 'Consulta FEN', ruta: '/app/consulta-fen' },
 ] as const;
 
 test.describe('Sin scroll horizontal en ningún teléfono', () => {

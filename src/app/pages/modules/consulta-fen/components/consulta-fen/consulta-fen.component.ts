@@ -88,6 +88,11 @@ export class ConsultaFenComponent {
     this.seleccion.set(fila);
   }
 
+  protected reintentar(): void {
+    if (this.tipoConsulta() === 'distrito') this.buscarDistrito();
+    else this.buscarUbigeo();
+  }
+
   protected severidad(nivel: NivelRiesgoFen): 'danger' | 'warn' | 'info' | 'success' | 'secondary' {
     if (nivel === 'Muy Alto') return 'danger';
     if (nivel === 'Alto') return 'warn';

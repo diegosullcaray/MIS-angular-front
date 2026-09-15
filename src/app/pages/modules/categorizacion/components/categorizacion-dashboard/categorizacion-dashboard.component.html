@@ -10,12 +10,12 @@
   </button>
   }
 
-  @if (cargando()) {
+  @if (error()) {
+  <app-inline-error titulo="No se pudo cargar la categorización" [detalle]="error()!" (reintentar)="reintentar()" />
+  } @else if (cargando()) {
   <div class="p-2">
     <app-list-skeleton [rows]="[1, 2, 3]" [cols]="[1, 2, 3, 4]" />
   </div>
-  } @else if (error()) {
-  <app-inline-error titulo="No se pudo cargar la categorización" [detalle]="error()!" (reintentar)="reintentar()" />
   } @else if (!perfil()) {
   <app-empty-state titulo="Elige un colaborador" descripcion="Busca un colaborador para ver su categorización." />
   } @else {
@@ -69,6 +69,13 @@
         pTooltip="Clic para ampliar guía"
         tooltipPosition="top"
       />
+      <div class="pointer-events-none absolute bottom-2 left-2 flex items-end gap-1.5 sm:bottom-3 sm:left-3">
+        <img src="/assets/images/fc/tours/mascota-guia.png" alt="" aria-hidden="true"
+          class="h-16 w-16 object-contain drop-shadow-md sm:h-24 sm:w-24" width="1024" height="1024" />
+        <span class="mb-1 max-w-36 rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] px-2 py-1 text-[11px] font-medium text-[var(--mis-text-secondary)] shadow-sm sm:max-w-none sm:text-xs">
+          Pachi te acompaña en tu categorización
+        </span>
+      </div>
       <!-- Botón para ampliar guía en mobile y desktop -->
       <button
         type="button"
@@ -124,15 +131,29 @@
           meses necesarios para categorizar.
         </p>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-3">
         @for (c of comisiones(); track $index) {
         <div
           class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2.5 flex flex-col items-center justify-center gap-1 text-center shadow-xs">
           <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{ c.periodo || '—' }}</span>
-          <span class="text-[15px] font-bold" [class.text-[var(--mis-success)]]="c.cumplido"
-            [class.text-[var(--mis-danger)]]="!c.cumplido">
-            {{ c.valor || '—' }}
-          </span>
+          @if (tipoComision() === 'individual') {
+          <dl class="m-0 grid w-full gap-1 text-left text-[11px]">
+            @for (indicador of c.indicadores; track indicador.etiqueta) {
+            <div class="flex items-center justify-between gap-2">
+              <dt class="text-[var(--mis-text-secondary)]">{{ indicador.etiqueta }}</dt>
+              <dd class="m-0">
+                <span class="block h-2.5 w-2.5 rounded-full"
+                  [class.bg-[var(--mis-success)]]="indicador.cumplido"
+                  [class.bg-[var(--mis-danger)]]="!indicador.cumplido"
+                  [attr.aria-label]="indicador.cumplido ? 'Cumple' : 'No cumple'"></span>
+              </dd>
+            </div>
+            }
+          </dl>
+          } @else {
+            <span class="text-[15px] font-bold" [class.text-[var(--mis-success)]]="c.cumplido"
+              [class.text-[var(--mis-danger)]]="!c.cumplido">{{ c.valor || '—' }}</span>
+          }
         </div>
         }
       </div>

@@ -21,10 +21,18 @@ export interface ComisionTarjeta {
   periodo: string;
   valor: string;
   cumplido: boolean;
+  indicadores: IndicadorComision[];
+}
+
+/** Resultado binario de cada criterio que compone la comisión individual. */
+export interface IndicadorComision {
+  etiqueta: string;
+  cumplido: boolean;
 }
 
 /** Detalle de categorización ya transformado a las 3 piezas que consume la pantalla. */
 export interface DetalleCategorizacion {
+  tipoComision: 'individual' | 'grupal';
   perfil: PerfilColaborador;
   requisitos: RequisitoTarjeta[];
   comisiones: ComisionTarjeta[];

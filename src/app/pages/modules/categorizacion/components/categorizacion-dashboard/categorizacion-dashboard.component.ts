@@ -39,6 +39,7 @@ export class CategorizacionDashboardComponent implements OnInit {
   protected readonly perfil = signal<PerfilColaborador | null>(null);
   protected readonly requisitos = signal<RequisitoTarjeta[]>([]);
   protected readonly comisiones = signal<ComisionTarjeta[]>([]);
+  protected readonly tipoComision = signal<'individual' | 'grupal'>('grupal');
 
   protected readonly dialogAbierto = signal(false);
   protected readonly previewGuia = signal(false);
@@ -124,6 +125,7 @@ export class CategorizacionDashboardComponent implements OnInit {
           this.comisiones.set([]);
         } else {
           this.perfil.set(detalle.perfil);
+          this.tipoComision.set(detalle.tipoComision);
           this.requisitos.set(detalle.requisitos);
           this.comisiones.set(detalle.comisiones);
         }
