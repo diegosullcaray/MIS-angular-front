@@ -21,11 +21,12 @@
       <p class="bienvenida-bajada">
         Haz clic en «Ver las novedades» y te mostraré todo lo que cambió en la plataforma, paso a paso.
       </p>
+      <p class="bienvenida-bajada"><b>Novedad destacada:</b> {{ novedadDestacada.titulo }}</p>
     </div>
   </div>
 
   <ng-template pTemplate="footer">
-    <p-button label="Entrar directo" [text]="true" severity="secondary" (onClick)="cerrar()" />
+    <p-button label="Entrar directo" [text]="true" severity="secondary" (onClick)="entrar()" />
     <p-button label="Ver las novedades" icon="pi pi-sparkles" (onClick)="irANovedades()" />
   </ng-template>
 </p-dialog>

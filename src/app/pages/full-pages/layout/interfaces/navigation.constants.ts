@@ -22,4 +22,5 @@ export const SEGMENTO_LABELS: Record<string, string> = {
   'seg-ope': 'Seguros Operaciones',
   resp: 'Responsables',
   'tbl-ver': 'Tablero de Verificación',
+  'consulta-fen': 'Consulta FEN - CENEPRED',
 };
