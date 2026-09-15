@@ -9,7 +9,6 @@ import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
-import { MapaUbicacionComponent } from '../../../../../shared/ui/mapas/mapa-ubicacion/mapa-ubicacion.component';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import {
   COLUMNAS_FEN,
@@ -18,7 +17,8 @@ import {
 } from '../../constantes/consulta-fen.constantes';
 import type { FilaRiesgoFen, NivelRiesgoFen } from '../../models/consulta-fen.model';
 import { ConsultaFenService } from '../../services/consulta-fen.service';
-import { esRiesgoAlto, puntoReferencialUbigeo } from '../../utils/consulta-fen.util';
+import { MapaCalorFenComponent } from '../../ui/mapa-calor-fen/mapa-calor-fen.component';
+import { esRiesgoAlto, puntosCalorFen } from '../../utils/consulta-fen.util';
 
 @Component({
   selector: 'app-consulta-fen',
@@ -26,7 +26,7 @@ import { esRiesgoAlto, puntoReferencialUbigeo } from '../../utils/consulta-fen.u
   imports: [
     FormsModule, ButtonModule, InputTextModule, TabsModule, TagModule,
     DataTableComponent, DataTableCellDirective, EmptyStateComponent, InlineErrorComponent,
-    ListSkeletonComponent, MapaUbicacionComponent, WindowPanelComponent,
+    ListSkeletonComponent, MapaCalorFenComponent, WindowPanelComponent,
   ],
   templateUrl: './consulta-fen.component.html',
 })
@@ -41,14 +41,7 @@ export class ConsultaFenComponent {
   protected readonly mensajeRiesgoAlto = MENSAJE_RIESGO_ALTO_FEN;
   /** Conserva el comportamiento legado: una única coincidencia queda seleccionada automáticamente. */
   protected readonly resultado = computed(() => this.seleccion() ?? (this.servicio.filas().length === 1 ? this.servicio.filas()[0] : null));
-  protected readonly puntoMapa = computed(() => {
-    const fila = this.resultado();
-    return fila ? puntoReferencialUbigeo(fila.cod_ubi) : null;
-  });
-  protected readonly etiquetaMapa = computed(() => {
-    const fila = this.resultado();
-    return fila ? `${fila.des_dist} · UBIGEO ${fila.cod_ubi}` : '';
-  });
+  protected readonly puntosMapa = computed(() => puntosCalorFen(this.servicio.filas()));
   protected readonly alertaRiesgo = computed(() => {
     const fila = this.resultado();
     return !!fila && esRiesgoAlto(fila.exp_pre);

@@ -49,6 +49,11 @@ export class PanelNovedadesComponent {
     this.abierto.set(true);
   }
 
+  /** Repliega el panel desde la bienvenida sin alternar accidentalmente su estado. */
+  cerrar(): void {
+    this.abierto.set(false);
+  }
+
   protected esNueva(novedad: Novedad): boolean {
     return this.tours.esNueva(novedad);
   }

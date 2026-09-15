@@ -34,8 +34,12 @@ export class RecientesService {
     const limpia = url.split('?')[0].split('#')[0];
     const segmentos = limpia.split('/').filter(Boolean);
 
-    if (segmentos[0] !== 'app' || segmentos.length < 3) return;
+    if (segmentos[0] !== 'app' || segmentos.length < 2) return;
     if (NO_SON_REPORTE.includes(segmentos[1])) return;
+
+    // Los índices que solo agrupan pantallas no son reportes. Consulta FEN sí
+    // es una pantalla final en la raíz del módulo y debe quedar en recientes.
+    if (segmentos.length === 2 && segmentos[1] !== 'consulta-fen') return;
 
     const { titulo, categoria } = this.describir(limpia, segmentos.slice(1));
     if (titulo) this.preferencias.registrarReporteReciente(limpia, titulo, categoria);

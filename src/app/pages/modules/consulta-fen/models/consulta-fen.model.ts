@@ -25,3 +25,8 @@ export interface PuntoMapaFen {
   lng: number;
   precision: 'departamento';
 }
+
+export interface PuntoCalorFen extends PuntoMapaFen {
+  intensidad: number;
+  ubigeo: string;
+}

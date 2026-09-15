@@ -1,4 +1,4 @@
-import type { FilaRiesgoFen, NivelRiesgoFen, PuntoMapaFen } from '../models/consulta-fen.model';
+import type { FilaRiesgoFen, NivelRiesgoFen, PuntoCalorFen, PuntoMapaFen } from '../models/consulta-fen.model';
 
 const NIVELES = new Set<NivelRiesgoFen>(['Muy Alto', 'Alto', 'Medio', 'Bajo', 'Muy Bajo']);
 
@@ -34,4 +34,20 @@ export function esRiesgoAlto(nivel: NivelRiesgoFen): boolean {
 export function puntoReferencialUbigeo(ubigeo: string): PuntoMapaFen | null {
   const centro = CENTROS_DEPARTAMENTO[ubigeo.slice(0, 2)];
   return centro ? { lat: centro[0], lng: centro[1], precision: 'departamento' } : null;
+}
+
+const PESO_RIESGO: Record<NivelRiesgoFen, number> = {
+  'Muy Alto': 1,
+  Alto: 0.8,
+  Medio: 0.55,
+  Bajo: 0.3,
+  'Muy Bajo': 0.15,
+};
+
+/** Traduce las filas FEN a puntos ponderados para la capa heatmap de MapLibre. */
+export function puntosCalorFen(filas: readonly FilaRiesgoFen[]): PuntoCalorFen[] {
+  return filas.flatMap((fila) => {
+    const punto = puntoReferencialUbigeo(fila.cod_ubi);
+    return punto ? [{ ...punto, ubigeo: fila.cod_ubi, intensidad: PESO_RIESGO[fila.exp_pre] }] : [];
+  });
 }

@@ -50,15 +50,15 @@
           }
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-flow-col grid-cols-4 gap-2 overflow-x-auto pb-1">
           @for (indicador of [
             { etiqueta: 'Movimiento en masa', valor: resultado()?.exp_mas },
             { etiqueta: 'Inundación', valor: resultado()?.exp_inu },
             { etiqueta: 'Sequía', valor: resultado()?.exp_seq },
             { etiqueta: 'Riesgo predominante', valor: resultado()?.exp_pre }
           ]; track indicador.etiqueta) {
-            <article class="flex min-h-24 flex-col justify-between rounded-lg border border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-3">
-              <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">{{ indicador.etiqueta }}</span>
+            <article class="flex min-w-32 flex-col gap-2 rounded-lg border border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-2.5">
+              <span class="truncate whitespace-nowrap text-[11px] font-medium text-[var(--mis-text-secondary)]" [title]="indicador.etiqueta">{{ indicador.etiqueta }}</span>
               @if (indicador.valor; as nivel) {
                 <p-tag [value]="nivel" [severity]="severidad(nivel)" styleClass="w-fit" />
               } @else {
@@ -106,10 +106,8 @@
               <div><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">{{ fila.des_dist }}</h2><p class="m-0 text-xs text-[var(--mis-text-secondary)]">{{ fila.des_prov }} · {{ fila.des_dep }}</p></div>
               <span class="rounded-md border border-[var(--mis-border)] px-2 py-1 font-mono text-xs text-[var(--mis-text-secondary)]">{{ fila.cod_ubi }}</span>
             </div>
-            @if (puntoMapa(); as punto) {
-              <div class="h-[350px]"><app-mapa-ubicacion [lat]="punto.lat" [lng]="punto.lng" [etiqueta]="etiquetaMapa()" /></div>
-              <p class="m-0 mt-2 text-[11px] leading-relaxed text-[var(--mis-text-tertiary)]"><i class="pi pi-info-circle mr-1"></i>Marcador referencial al centro del departamento. El contrato FEN actual no entrega coordenadas distritales.</p>
-            }
+            <div class="h-[350px]"><app-mapa-calor-fen [puntos]="puntosMapa()" [seleccionado]="fila.cod_ubi" /></div>
+            <p class="m-0 mt-2 truncate whitespace-nowrap text-[11px] text-[var(--mis-text-tertiary)]" title="La precisión disponible corresponde al centro departamental"><i class="pi pi-info-circle mr-1"></i>Calor referencial por departamento; el contrato FEN no entrega coordenadas distritales.</p>
           } @else {
             <div class="flex h-full min-h-[410px] flex-col items-center justify-center rounded-lg border border-dashed border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-8 text-center">
               <i class="pi pi-map-marker mb-3 text-3xl text-[var(--mis-primary)]"></i><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Selecciona un ubigeo</h2><p class="m-0 mt-1 max-w-xs text-sm text-[var(--mis-text-secondary)]">El mapa se centrará al seleccionar una fila de la tabla.</p>
