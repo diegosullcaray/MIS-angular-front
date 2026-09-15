@@ -15,6 +15,7 @@ import type {
 
 /** Etiquetas fijas de las 4 tarjetas de "Estado Requisitos" (legado, sin traer nombre del backend). */
 const ETIQUETAS_REQUISITOS = ['Disciplina', 'Calificación', 'Permanencia', 'Formación'] as const;
+const ETIQUETAS_COMISION = ['Saldo vigente', 'Clientes prom.', 'Var. saldo vig.', 'Efec. -30-0', 'Efec. 1-30', 'Sin bajar stock'] as const;
 
 /** `cod_jer` de la jerarquía usada para ubicar el nodo ancla del admin — mismo código (9, "Admin. */
 const COD_JERARQUIA_ANCLA = 9;
@@ -43,6 +44,7 @@ export class CategorizacionService {
 
         const periodos = body?.resultado?.per ?? [];
         return {
+          tipoComision: data.codgru === 1 ? 'individual' : 'grupal',
           perfil: {
             nombre: data.nom,
             cargo: data.car,
@@ -91,18 +93,22 @@ export class CategorizacionService {
   }
 
   private aComisiones(data: DetalleCategorizacionRaw, periodos: PeriodoComisionRaw[]): ComisionTarjeta[] {
-    const valores: Array<[string, number]> = [
-      [data.c1, data.ci1],
-      [data.c2, data.ci2],
-      [data.c3, data.ci3],
-      [data.c4, data.ci4],
-      [data.c5, data.ci5],
-      [data.c6, data.ci6],
+    const valores: Array<[string, number, number[]]> = [
+      [data.c1, data.ci1, [data.c1_1, data.c1_2, data.c1_3, data.c1_4, data.c1_5, data.c1_6]],
+      [data.c2, data.ci2, [data.c2_1, data.c2_2, data.c2_3, data.c2_4, data.c2_5, data.c2_6]],
+      [data.c3, data.ci3, [data.c3_1, data.c3_2, data.c3_3, data.c3_4, data.c3_5, data.c3_6]],
+      [data.c4, data.ci4, [data.c4_1, data.c4_2, data.c4_3, data.c4_4, data.c4_5, data.c4_6]],
+      [data.c5, data.ci5, [data.c5_1, data.c5_2, data.c5_3, data.c5_4, data.c5_5, data.c5_6]],
+      [data.c6, data.ci6, [data.c6_1, data.c6_2, data.c6_3, data.c6_4, data.c6_5, data.c6_6]],
     ];
-    return valores.map(([valor, situacion], i) => ({
+    return valores.map(([valor, situacion, indicadores], i) => ({
       periodo: periodos[i]?.nom ?? '',
       valor,
       cumplido: situacion === 1,
+      indicadores: indicadores.map((estado, indice) => ({
+        etiqueta: ETIQUETAS_COMISION[indice],
+        cumplido: estado === 1,
+      })),
     }));
   }
 }

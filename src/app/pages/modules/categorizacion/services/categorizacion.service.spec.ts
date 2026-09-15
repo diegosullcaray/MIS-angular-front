@@ -25,6 +25,7 @@ function respuesta(body: unknown): IWinderResponse {
 }
 
 const DATA: DetalleCategorizacionRaw = {
+  codgru: 1,
   nom: 'Ana Torres',
   car: 'Asesor de Negocios',
   gen: 'F',
@@ -42,6 +43,12 @@ const DATA: DetalleCategorizacionRaw = {
   c4: '1,100', ci4: 1,
   c5: '800', ci5: 0,
   c6: '1,300', ci6: 1,
+  c1_1: 1, c1_2: 1, c1_3: 0, c1_4: 1, c1_5: 0, c1_6: 1,
+  c2_1: 1, c2_2: 0, c2_3: 0, c2_4: 1, c2_5: 1, c2_6: 1,
+  c3_1: 1, c3_2: 1, c3_3: 1, c3_4: 1, c3_5: 1, c3_6: 1,
+  c4_1: 0, c4_2: 1, c4_3: 1, c4_4: 1, c4_5: 0, c4_6: 1,
+  c5_1: 0, c5_2: 0, c5_3: 1, c5_4: 1, c5_5: 1, c5_6: 0,
+  c6_1: 1, c6_2: 1, c6_3: 1, c6_4: 1, c6_5: 1, c6_6: 1,
 };
 
 describe('CategorizacionService', () => {
@@ -83,6 +90,7 @@ describe('CategorizacionService', () => {
 
       expect(ant.getDetalleCategorizacion).toHaveBeenCalledWith('BT-001');
       expect(detalle).toEqual({
+        tipoComision: 'individual',
         perfil: {
           nombre: 'Ana Torres',
           cargo: 'Asesor de Negocios',
@@ -99,12 +107,16 @@ describe('CategorizacionService', () => {
           { etiqueta: 'Formación', valor: 'Cumple', cumplido: true },
         ],
         comisiones: [
-          { periodo: 'Ene', valor: '1,200', cumplido: true },
-          { periodo: 'Feb', valor: '900', cumplido: false },
-          { periodo: 'Mar', valor: '1,500', cumplido: true },
-          { periodo: 'Abr', valor: '1,100', cumplido: true },
-          { periodo: 'May', valor: '800', cumplido: false },
-          { periodo: 'Jun', valor: '1,300', cumplido: true },
+          { periodo: 'Ene', valor: '1,200', cumplido: true, indicadores: [
+            { etiqueta: 'Saldo vigente', cumplido: true }, { etiqueta: 'Clientes prom.', cumplido: true },
+            { etiqueta: 'Var. saldo vig.', cumplido: false }, { etiqueta: 'Efec. -30-0', cumplido: true },
+            { etiqueta: 'Efec. 1-30', cumplido: false }, { etiqueta: 'Sin bajar stock', cumplido: true },
+          ] },
+          expect.objectContaining({ periodo: 'Feb', valor: '900', cumplido: false }),
+          expect.objectContaining({ periodo: 'Mar', valor: '1,500', cumplido: true }),
+          expect.objectContaining({ periodo: 'Abr', valor: '1,100', cumplido: true }),
+          expect.objectContaining({ periodo: 'May', valor: '800', cumplido: false }),
+          expect.objectContaining({ periodo: 'Jun', valor: '1,300', cumplido: true }),
         ],
       });
     });
