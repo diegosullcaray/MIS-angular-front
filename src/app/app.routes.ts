@@ -101,6 +101,12 @@ export const APP_ROUTES: Routes = [
         loadChildren: () =>
           import('./pages/modules/reportes/reportes.routes').then((m) => m.REPORTES_ROUTE)
       },
+      {
+        path: 'consulta-fen',
+        loadChildren: () =>
+          import('./pages/modules/consulta-fen/consulta-fen.routes').then((m) => m.CONSULTA_FEN_ROUTES),
+        data: { title: 'Consulta FEN - CENEPRED' },
+      },
     ]
   },
   {
