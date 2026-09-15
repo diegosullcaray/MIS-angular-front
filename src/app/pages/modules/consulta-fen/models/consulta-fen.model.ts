@@ -29,4 +29,5 @@ export interface PuntoMapaFen {
 export interface PuntoCalorFen extends PuntoMapaFen {
   intensidad: number;
   ubigeo: string;
+  nivel: NivelRiesgoFen;
 }

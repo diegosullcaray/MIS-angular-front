@@ -48,6 +48,6 @@ const PESO_RIESGO: Record<NivelRiesgoFen, number> = {
 export function puntosCalorFen(filas: readonly FilaRiesgoFen[]): PuntoCalorFen[] {
   return filas.flatMap((fila) => {
     const punto = puntoReferencialUbigeo(fila.cod_ubi);
-    return punto ? [{ ...punto, ubigeo: fila.cod_ubi, intensidad: PESO_RIESGO[fila.exp_pre] }] : [];
+    return punto ? [{ ...punto, ubigeo: fila.cod_ubi, nivel: fila.exp_pre, intensidad: PESO_RIESGO[fila.exp_pre] }] : [];
   });
 }

@@ -27,7 +27,7 @@ describe('utilidades de Consulta FEN', () => {
 
   it('pondera el riesgo predominante para el mapa de calor', () => {
     expect(puntosCalorFen([FILA])).toEqual([
-      expect.objectContaining({ ubigeo: '040101', intensidad: 0.8, precision: 'departamento' }),
+      expect.objectContaining({ ubigeo: '040101', nivel: 'Alto', intensidad: 0.8, precision: 'departamento' }),
     ]);
   });
 });

@@ -8,6 +8,7 @@ export const MENSAJE_RIESGO_ALTO_FEN =
 const NIVELES_RIESGO = ['Muy Alto', 'Alto', 'Medio', 'Bajo', 'Muy Bajo'];
 
 export const COLUMNAS_FEN: DataTableColumn[] = ([
+  { field: 'seleccion', header: 'Ubicar', width: '4.5rem', align: 'center', sortable: false },
   { field: 'cod_ubi', header: 'UBIGEO', width: '7rem', filterType: 'text' },
   { field: 'des_dist', header: 'Distrito', filterType: 'text' },
   { field: 'des_prov', header: 'Provincia', filterType: 'text', mobileVisible: false },

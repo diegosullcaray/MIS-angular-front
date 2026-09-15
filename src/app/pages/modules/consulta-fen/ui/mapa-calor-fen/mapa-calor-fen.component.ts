@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, effect, inject, input, signal, viewChild } from '@angular/core';
 import { GeoJSONSource, Map as MapLibreMap } from 'maplibre-gl';
+import type { ExpressionSpecification } from 'maplibre-gl';
 import type { PuntoCalorFen } from '../../models/consulta-fen.model';
 
 const CENTRO_PERU: [number, number] = [-75.015152, -9.189967];
@@ -31,6 +32,10 @@ const ESTILO_OSM = {
       </div>
       <div class="pointer-events-none absolute bottom-7 right-3 flex items-center gap-2 rounded-full border border-[var(--mis-border)] bg-[var(--mis-surface)]/95 px-2 py-1 text-[10px] text-[var(--mis-text-secondary)]">
         <span>Bajo</span><span class="h-2 w-20 rounded-full bg-gradient-to-r from-[var(--mis-success)] via-[var(--mis-warning)] to-[var(--mis-danger)]"></span><span>Alto</span>
+      </div>
+      <div class="pointer-events-none absolute right-3 top-3 grid h-14 w-14 place-items-center rounded-full border border-[var(--mis-border)] bg-[var(--mis-surface)]/95 text-[9px] font-bold text-[var(--mis-text-secondary)] shadow-[var(--mis-shadow-sm)]" aria-hidden="true">
+        <span class="absolute top-0.5">N</span><span class="absolute right-1">E</span><span class="absolute bottom-0.5">S</span><span class="absolute left-1">O</span>
+        <i class="pi pi-compass text-lg text-[var(--mis-primary)]"></i>
       </div>
       @if (fallo()) {
         <p class="absolute inset-x-3 bottom-3 m-0 rounded-lg bg-[var(--mis-warning-light)] p-2 text-xs text-[var(--mis-warning)]">No se pudieron cargar los mosaicos base; la capa de calor sigue disponible.</p>
@@ -72,7 +77,9 @@ export class MapaCalorFenComponent implements AfterViewInit {
         'heatmap-opacity': 0.82,
         'heatmap-color': ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(34,197,94,0)', 0.25, 'rgb(34,197,94)', 0.55, 'rgb(234,179,8)', 0.8, 'rgb(249,115,22)', 1, 'rgb(220,38,38)'],
       } });
-      mapa.addLayer({ id: 'seleccion-fen', type: 'circle', source: FUENTE, filter: ['==', ['get', 'ubigeo'], this.seleccionado() ?? ''], paint: { 'circle-radius': 7, 'circle-color': 'rgb(220,38,38)', 'circle-stroke-color': 'white', 'circle-stroke-width': 3 } });
+      const colorNivel: ExpressionSpecification = ['match', ['get', 'nivel'], 'Muy Alto', 'rgb(220,38,38)', 'Alto', 'rgb(249,115,22)', 'Medio', 'rgb(234,179,8)', 'Bajo', 'rgb(34,197,94)', 'rgb(13,158,110)'];
+      mapa.addLayer({ id: 'puntos-fen', type: 'circle', source: FUENTE, paint: { 'circle-radius': 5, 'circle-color': colorNivel, 'circle-stroke-color': 'white', 'circle-stroke-width': 1.5 } });
+      mapa.addLayer({ id: 'seleccion-fen', type: 'circle', source: FUENTE, filter: ['==', ['get', 'ubigeo'], this.seleccionado() ?? ''], paint: { 'circle-radius': 24, 'circle-color': colorNivel, 'circle-opacity': 0.24, 'circle-stroke-color': colorNivel, 'circle-stroke-width': 3 } });
     });
     this.mapa = mapa;
     this.observador = new ResizeObserver(() => mapa.resize());
@@ -80,6 +87,6 @@ export class MapaCalorFenComponent implements AfterViewInit {
   }
 
   private geoJson(puntos: readonly PuntoCalorFen[]) {
-    return { type: 'FeatureCollection' as const, features: puntos.map((punto) => ({ type: 'Feature' as const, properties: { intensidad: punto.intensidad, ubigeo: punto.ubigeo }, geometry: { type: 'Point' as const, coordinates: [punto.lng, punto.lat] } })) };
+    return { type: 'FeatureCollection' as const, features: puntos.map((punto) => ({ type: 'Feature' as const, properties: { intensidad: punto.intensidad, ubigeo: punto.ubigeo, nivel: punto.nivel }, geometry: { type: 'Point' as const, coordinates: [punto.lng, punto.lat] } })) };
   }
 }
