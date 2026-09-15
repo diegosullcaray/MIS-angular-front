@@ -6,33 +6,26 @@
 >
   <div class="space-y-4">
     <section class="grid overflow-hidden rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-[var(--mis-shadow-sm)] lg:grid-cols-[minmax(280px,0.9fr)_minmax(390px,1.25fr)_180px] lg:items-stretch">
-      <div class="border-b border-[var(--mis-border)] p-3 lg:border-b-0 lg:border-r">
-        <div class="mb-2 flex items-start gap-2">
+      <div class="flex h-full flex-col border-b border-[var(--mis-border)] p-3 lg:border-b-0 lg:border-r">
+        <div class="mb-2 flex items-center gap-2">
           <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--mis-primary-soft)] text-[var(--mis-primary)]"><i class="pi pi-search"></i></span>
-          <div><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Consulta rápida</h2><p class="m-0 text-xs text-[var(--mis-text-secondary)]">Busca por ubicación o código oficial.</p></div>
+          <div><h2 class="m-0 text-sm font-semibold text-[var(--mis-text-primary)]">Consulta rápida</h2><p class="m-0 text-[11px] text-[var(--mis-text-secondary)]">Busca por ubicación o código oficial.</p></div>
         </div>
-
-        <p-tabs value="distrito">
-          <p-tablist><p-tab value="distrito">Por distrito</p-tab><p-tab value="ubigeo">Por ubigeo</p-tab></p-tablist>
-          <p-tabpanels>
-            <p-tabpanel value="distrito">
-              <form class="flex flex-col gap-2" (submit)="$event.preventDefault(); buscarDistrito()">
-                <label for="fen-distrito" class="text-xs font-semibold text-[var(--mis-text-primary)]">Distrito</label>
-                <input id="fen-distrito" pInputText class="w-full" type="text" name="distrito" minlength="2" placeholder="Ingresa un distrito" [ngModel]="distrito()" (ngModelChange)="distrito.set($event)" />
-                <p-button type="submit" label="Consultar" icon="pi pi-search" [loading]="servicio.cargando()" styleClass="w-full" />
-              </form>
-              <p class="m-0 mt-2 text-xs text-[var(--mis-text-tertiary)]">Ingresa al menos 2 caracteres del nombre.</p>
-            </p-tabpanel>
-            <p-tabpanel value="ubigeo">
-              <form class="flex flex-col gap-2" (submit)="$event.preventDefault(); buscarUbigeo()">
-                <label for="fen-ubigeo" class="text-xs font-semibold text-[var(--mis-text-primary)]">Código ubigeo</label>
-                <input id="fen-ubigeo" pInputText class="w-full" type="text" name="ubigeo" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="150101" [ngModel]="ubigeo()" (ngModelChange)="ubigeo.set($event)" />
-                <p-button type="submit" label="Consultar" icon="pi pi-search" [loading]="servicio.cargando()" styleClass="w-full" />
-              </form>
-              <p class="m-0 mt-2 text-xs text-[var(--mis-text-tertiary)]">Ingresa los 6 dígitos del código ubigeo.</p>
-            </p-tabpanel>
-          </p-tabpanels>
-        </p-tabs>
+        <div class="mb-2 grid grid-cols-2 rounded-lg bg-[var(--mis-panel-bg)] p-0.5" role="tablist" aria-label="Tipo de consulta">
+          <button type="button" role="tab" class="rounded-md px-2 py-1.5 text-xs font-medium" [style.background]="tipoConsulta() === 'distrito' ? 'var(--mis-surface)' : 'transparent'" [style.color]="tipoConsulta() === 'distrito' ? 'var(--mis-primary)' : 'var(--mis-text-secondary)'" [attr.aria-selected]="tipoConsulta() === 'distrito'" (click)="tipoConsulta.set('distrito')">Por distrito</button>
+          <button type="button" role="tab" class="rounded-md px-2 py-1.5 text-xs font-medium" [style.background]="tipoConsulta() === 'ubigeo' ? 'var(--mis-surface)' : 'transparent'" [style.color]="tipoConsulta() === 'ubigeo' ? 'var(--mis-primary)' : 'var(--mis-text-secondary)'" [attr.aria-selected]="tipoConsulta() === 'ubigeo'" (click)="tipoConsulta.set('ubigeo')">Por ubigeo</button>
+        </div>
+        @if (tipoConsulta() === 'distrito') {
+          <form class="flex items-center gap-1.5" (submit)="$event.preventDefault(); buscarDistrito()">
+            <input id="fen-distrito" pInputText class="min-w-0 flex-1" type="text" name="distrito" minlength="2" aria-label="Distrito" placeholder="Ingresa un distrito" [ngModel]="distrito()" (ngModelChange)="distrito.set($event)" />
+            <p-button type="submit" icon="pi pi-search" [loading]="servicio.cargando()" ariaLabel="Consultar distrito" />
+          </form>
+        } @else {
+          <form class="flex items-center gap-1.5" (submit)="$event.preventDefault(); buscarUbigeo()">
+            <input id="fen-ubigeo" pInputText class="min-w-0 flex-1" type="text" name="ubigeo" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" aria-label="Código ubigeo" placeholder="150101" [ngModel]="ubigeo()" (ngModelChange)="ubigeo.set($event)" />
+            <p-button type="submit" icon="pi pi-search" [loading]="servicio.cargando()" ariaLabel="Consultar ubigeo" />
+          </form>
+        }
       </div>
 
       <div class="border-b border-[var(--mis-border)] p-3 lg:border-b-0 lg:border-r">
@@ -94,9 +87,6 @@
             <span class="shrink-0 rounded-full bg-[var(--mis-primary-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--mis-primary)]">{{ servicio.filas().length }} registros</span>
           </div>
           <app-data-table [columns]="columnas" [data]="servicio.filas()" [selectableRows]="true" [selectedRow]="resultado()" [rows]="10" [searchFields]="['cod_ubi', 'des_dist', 'des_prov', 'des_dep']" searchPlaceholder="Buscar en los resultados..." (filaSeleccionada)="seleccionar($event)">
-            <ng-template appDataTableCell="seleccion" let-row>
-              <input type="radio" name="fen-ubicacion" [checked]="resultado()?.cod_ubi === row.cod_ubi" (change)="seleccionar(row)" [attr.aria-label]="'Ubicar ' + row.des_dist + ' en el mapa'" class="h-4 w-4 accent-[var(--mis-primary)]" />
-            </ng-template>
             @for (campo of ['exp_mas', 'exp_inu', 'exp_seq', 'exp_pre']; track campo) {
               <ng-template [appDataTableCell]="campo" let-row><p-tag [value]="row[campo]" [severity]="severidad(row[campo])" /></ng-template>
             }

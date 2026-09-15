@@ -2,7 +2,6 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
 import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
@@ -24,7 +23,7 @@ import { esRiesgoAlto, puntosCalorFen } from '../../utils/consulta-fen.util';
   selector: 'app-consulta-fen',
   standalone: true,
   imports: [
-    FormsModule, ButtonModule, InputTextModule, TabsModule, TagModule,
+    FormsModule, ButtonModule, InputTextModule, TagModule,
     DataTableComponent, DataTableCellDirective, EmptyStateComponent, InlineErrorComponent,
     ListSkeletonComponent, MapaCalorFenComponent, WindowPanelComponent,
   ],
@@ -35,6 +34,7 @@ export class ConsultaFenComponent {
   protected readonly distrito = signal('');
   protected readonly ubigeo = signal('');
   protected readonly seleccion = signal<FilaRiesgoFen | null>(null);
+  protected readonly tipoConsulta = signal<'distrito' | 'ubigeo'>('distrito');
 
   protected readonly columnas = COLUMNAS_FEN;
   protected readonly fechaMatriz = FECHA_MATRIZ_FEN;

@@ -59,9 +59,15 @@ export class MapaCalorFenComponent implements AfterViewInit {
       this.mapa?.remove();
     });
     effect(() => {
-      const datos = this.geoJson(this.puntos());
+      const puntos = this.puntos();
+      const seleccionado = this.seleccionado();
+      const datos = this.geoJson(puntos);
       (this.mapa?.getSource(FUENTE) as GeoJSONSource | undefined)?.setData(datos);
-      this.mapa?.setFilter('seleccion-fen', ['==', ['get', 'ubigeo'], this.seleccionado() ?? '']);
+      if (this.mapa?.getLayer('seleccion-fen')) {
+        this.mapa.setFilter('seleccion-fen', ['==', ['get', 'ubigeo'], seleccionado ?? '']);
+        this.mapa.setFilter('seleccion-centro-fen', ['==', ['get', 'ubigeo'], seleccionado ?? '']);
+      }
+      this.centrarSeleccion(puntos, seleccionado);
     });
   }
 
@@ -80,6 +86,8 @@ export class MapaCalorFenComponent implements AfterViewInit {
       const colorNivel: ExpressionSpecification = ['match', ['get', 'nivel'], 'Muy Alto', 'rgb(220,38,38)', 'Alto', 'rgb(249,115,22)', 'Medio', 'rgb(234,179,8)', 'Bajo', 'rgb(34,197,94)', 'rgb(13,158,110)'];
       mapa.addLayer({ id: 'puntos-fen', type: 'circle', source: FUENTE, paint: { 'circle-radius': 5, 'circle-color': colorNivel, 'circle-stroke-color': 'white', 'circle-stroke-width': 1.5 } });
       mapa.addLayer({ id: 'seleccion-fen', type: 'circle', source: FUENTE, filter: ['==', ['get', 'ubigeo'], this.seleccionado() ?? ''], paint: { 'circle-radius': 24, 'circle-color': colorNivel, 'circle-opacity': 0.24, 'circle-stroke-color': colorNivel, 'circle-stroke-width': 3 } });
+      mapa.addLayer({ id: 'seleccion-centro-fen', type: 'circle', source: FUENTE, filter: ['==', ['get', 'ubigeo'], this.seleccionado() ?? ''], paint: { 'circle-radius': 7, 'circle-color': colorNivel, 'circle-stroke-color': 'white', 'circle-stroke-width': 2 } });
+      this.centrarSeleccion(this.puntos(), this.seleccionado(), false);
     });
     this.mapa = mapa;
     this.observador = new ResizeObserver(() => mapa.resize());
@@ -88,5 +96,12 @@ export class MapaCalorFenComponent implements AfterViewInit {
 
   private geoJson(puntos: readonly PuntoCalorFen[]) {
     return { type: 'FeatureCollection' as const, features: puntos.map((punto) => ({ type: 'Feature' as const, properties: { intensidad: punto.intensidad, ubigeo: punto.ubigeo, nivel: punto.nivel }, geometry: { type: 'Point' as const, coordinates: [punto.lng, punto.lat] } })) };
+  }
+
+  /** Enfoca el punto del UBIGEO elegido; la capa ya usa ese mismo código como filtro. */
+  private centrarSeleccion(puntos: readonly PuntoCalorFen[], ubigeo: string | null, animar = true): void {
+    const punto = puntos.find((item) => item.ubigeo === ubigeo);
+    if (!punto || !this.mapa) return;
+    this.mapa.easeTo({ center: [punto.lng, punto.lat], zoom: 7, duration: animar ? 500 : 0 });
   }
 }
