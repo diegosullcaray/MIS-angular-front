@@ -7,13 +7,14 @@ Las rutas bajo `/app` se conservan compatibles con el `act_sec` del menú STG: n
 La tabla se deriva de `src/app/app.routes.ts` y de los `*.routes.ts` de cada módulo. **No editar a mano**: regenerar con `npm run inventario` (o verificar con `npm run inventario:check`).
 
 <!-- generado:inicio modulos -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-11 · commit 3eae138. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-15 · commit 22cf3f5. No editar a mano. -->
 
 | Módulo | Ruta base | Archivos `*.routes.ts` | Destinos de ruta | Componentes | Servicios | Specs |
 |---|---|---:|---:|---:|---:|---:|
 | `actividades` | `/app/actividades` | 1 | 4 | 6 | 1 | 7 |
 | `analista` | `/app/analista` | 1 | 4 | 6 | 1 | 7 |
 | `categorizacion` | `/app/analista/categorizacion` | 1 | 1 | 2 | 1 | 3 |
+| `consulta-fen` | `/app/consulta-fen` | 1 | 1 | 1 | 1 | 2 |
 | `dashboard` | `/app/dashboards` | 1 | 2 | 3 | 2 | 5 |
 | `framework-esg` | `/app/esg` | 1 | 1 | 4 | 2 | 6 |
 | `herramientas` | `/app/cons_base_negativa` | 1 | 1 | 3 | 1 | 4 |
@@ -24,7 +25,7 @@ La tabla se deriva de `src/app/app.routes.ts` y de los `*.routes.ts` de cada mó
 | `ranking-k` | `/app/ranking-k` | 1 | 2 | 5 | 1 | 6 |
 | `reportes` | `/app/reportes` | 30 | 151 | 154 | 61 | 206 |
 
-_Total: 12 módulos enlazados desde `app.routes.ts`._
+_Total: 13 módulos enlazados desde `app.routes.ts`._
 <!-- generado:fin -->
 
 ## Qué significa cada columna

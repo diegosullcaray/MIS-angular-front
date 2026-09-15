@@ -33,7 +33,7 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica en CI.
 
 <!-- generado:inicio cod-rep -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-08 · commit bf91deb. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-15 · commit 22cf3f5. No editar a mano. -->
 
 | Dominio | Constante | Códigos | `cod_rep` declarados |
 |---|---|---:|---|
@@ -61,12 +61,13 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 | reportes / actividad-mensual | `COD_MENSUAL_REPO` | 6 | `RS_FECH`, `RS_TAB_COM_01`, `RS_DESEMB_02`, `RS_AGROMIX_01`, `CMG_CARTERA_01`, `CMG_CARTERA_02` |
 | reportes / actividad-diaria / Portafolio Reasignado | `COD_PORTAFOLIO_REASIGNADO` | 6 | `RS_MON_EFECREASIG_03`, `RS_AGE_COM_CR_01`, `RS_AGE_COM_CR_03`, `RS_MON_EFECREASIG_01`, `RS_MON_EFECREASIG_02`, `SEL_EFEC_01` |
 | reportes / actividad-diaria / Proyecciones | `COD_PROYECCIONES` | 4 | `PROYEC_COLREC_01`, `PROYEC_COLREC_03`, `PROYEC_DIACOLREC_01`, `PROYEC_DIACOLREC_02` |
+| consulta-fen | `COD_REPORTE_FEN` | 1 | `CON_AGRO_FEN` |
 | reportes / actividad-diaria / Reportes PDM | `COD_REPORTES_PDM` | 2 | `SEG_PDM_01`, `GRBSOLI_01` |
 | reportes / actividad-diaria | `COD_RESUMEN_MOVILIDAD` | 2 | `RESNMOV_01`, `RESNMOVR_01` |
 | reportes / actividad-diaria / Seguros | `COD_SEGUROS` | 12 | `GRSCMIS_01`, `GRSCMIS_02`, `GRSCMIS_04`, `GRSCMIS_05`, `RS_SEG_PAS_03`, `RS_SEG_PAS_01`, `RS_SEG_PAS_02`, `RS_SEG_PAS_04`, `GRSCMISREP_01`, `RS_FECH`, `GRAFSEGPAS_01`, `GRAFSEGPAS_02` |
 | reportes / actividad-diaria / Tablero Digital | `COD_TABLERO_DIGITAL` | 9 | `TABDIG_01`, `TABDIG_02`, `TABDIG_VR2_01`, `GCTABDIG_VR2_OPE_02`, `RVIUWGCOR_01`, `RVIUWGCORE_02`, `RDETCORR_01`, `RS_FECH`, `RS_TAB_COM_01` |
 
-_206 códigos únicos en 28 constantes._
+_207 códigos únicos en 29 constantes._
 <!-- generado:fin -->
 
 ### Cómo leer esta tabla
