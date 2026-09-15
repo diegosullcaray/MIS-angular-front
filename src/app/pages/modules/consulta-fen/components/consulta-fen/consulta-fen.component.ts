@@ -10,6 +10,7 @@ import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { MapaUbicacionComponent } from '../../../../../shared/ui/mapas/mapa-ubicacion/mapa-ubicacion.component';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import {
   COLUMNAS_FEN,
   FECHA_MATRIZ_FEN,
@@ -25,7 +26,7 @@ import { esRiesgoAlto, puntoReferencialUbigeo } from '../../utils/consulta-fen.u
   imports: [
     FormsModule, ButtonModule, InputTextModule, TabsModule, TagModule,
     DataTableComponent, DataTableCellDirective, EmptyStateComponent, InlineErrorComponent,
-    ListSkeletonComponent, MapaUbicacionComponent,
+    ListSkeletonComponent, MapaUbicacionComponent, WindowPanelComponent,
   ],
   templateUrl: './consulta-fen.component.html',
 })
@@ -38,17 +39,34 @@ export class ConsultaFenComponent {
   protected readonly columnas = COLUMNAS_FEN;
   protected readonly fechaMatriz = FECHA_MATRIZ_FEN;
   protected readonly mensajeRiesgoAlto = MENSAJE_RIESGO_ALTO_FEN;
+  /** Conserva el comportamiento legado: una única coincidencia queda seleccionada automáticamente. */
+  protected readonly resultado = computed(() => this.seleccion() ?? (this.servicio.filas().length === 1 ? this.servicio.filas()[0] : null));
   protected readonly puntoMapa = computed(() => {
-    const fila = this.seleccion();
+    const fila = this.resultado();
     return fila ? puntoReferencialUbigeo(fila.cod_ubi) : null;
   });
   protected readonly etiquetaMapa = computed(() => {
-    const fila = this.seleccion();
+    const fila = this.resultado();
     return fila ? `${fila.des_dist} · UBIGEO ${fila.cod_ubi}` : '';
   });
   protected readonly alertaRiesgo = computed(() => {
-    const fila = this.seleccion();
+    const fila = this.resultado();
     return !!fila && esRiesgoAlto(fila.exp_pre);
+  });
+  protected readonly hayRiesgoAlto = computed(() => {
+    const fila = this.resultado();
+    return !!fila && [fila.exp_mas, fila.exp_inu, fila.exp_seq, fila.exp_pre].some(esRiesgoAlto);
+  });
+  protected readonly mascota = computed(() =>
+    this.hayRiesgoAlto()
+      ? '/assets/images/fc/tours/mascota-sorpresa.png'
+      : '/assets/images/fc/tours/mascota-feliz.png'
+  );
+  protected readonly mensajeMascota = computed(() => {
+    if (!this.resultado()) return 'Haz una consulta y selecciona un ubigeo para revisar su exposición.';
+    return this.hayRiesgoAlto()
+      ? '¡Atención! Encontré uno o más niveles altos de exposición.'
+      : 'No encontré niveles altos de exposición en este ubigeo.';
   });
 
   protected buscarDistrito(): void {

@@ -1,81 +1,122 @@
-<main class="mx-auto w-full max-w-[1600px] space-y-4 p-3 sm:p-5">
-  <header class="flex flex-wrap items-start justify-between gap-3">
-    <div>
-      <p class="m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--mis-primary)]">Gestión territorial</p>
-      <h1 class="m-0 mt-1 text-xl font-bold text-[var(--mis-text-primary)] sm:text-2xl">Consulta FEN - CENEPRED</h1>
-      <p class="m-0 mt-1 text-sm text-[var(--mis-text-secondary)]">Consulta el nivel de exposición territorial antes de completar la evaluación.</p>
-    </div>
-    <span class="inline-flex items-center gap-2 rounded-full border border-[var(--mis-border)] bg-[var(--mis-surface)] px-3 py-1.5 text-xs text-[var(--mis-text-secondary)]">
-      <span class="h-2 w-2 rounded-full bg-[var(--mis-success)]"></span>Matriz actualizada: {{ fechaMatriz }}
-    </span>
-  </header>
-
-  <section class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-4 shadow-[var(--mis-shadow-sm)]">
-    <div class="mb-3 flex items-start gap-3">
-      <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--mis-primary-soft)] text-[var(--mis-primary)]"><i class="pi pi-search"></i></span>
-      <div><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Consulta rápida</h2><p class="m-0 text-xs text-[var(--mis-text-secondary)]">Busca por ubicación o código oficial.</p></div>
-    </div>
-
-    <p-tabs value="distrito">
-      <p-tablist><p-tab value="distrito">Por distrito</p-tab><p-tab value="ubigeo">Por ubigeo</p-tab></p-tablist>
-      <p-tabpanels>
-        <p-tabpanel value="distrito">
-          <form class="flex flex-col gap-2 sm:flex-row" (submit)="$event.preventDefault(); buscarDistrito()">
-            <input pInputText class="w-full" type="text" name="distrito" minlength="2" placeholder="Ingresa un distrito" [ngModel]="distrito()" (ngModelChange)="distrito.set($event)" />
-            <p-button type="submit" label="Consultar" icon="pi pi-search" [loading]="servicio.cargando()" />
-          </form>
-          <p class="m-0 mt-2 text-xs text-[var(--mis-text-tertiary)]">Ingresa al menos 2 caracteres del nombre.</p>
-        </p-tabpanel>
-        <p-tabpanel value="ubigeo">
-          <form class="flex flex-col gap-2 sm:flex-row" (submit)="$event.preventDefault(); buscarUbigeo()">
-            <input pInputText class="w-full" type="text" name="ubigeo" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="150101" [ngModel]="ubigeo()" (ngModelChange)="ubigeo.set($event)" />
-            <p-button type="submit" label="Consultar" icon="pi pi-search" [loading]="servicio.cargando()" />
-          </form>
-          <p class="m-0 mt-2 text-xs text-[var(--mis-text-tertiary)]">Ingresa los 6 dígitos del código ubigeo.</p>
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
-  </section>
-
-  @if (servicio.error()) {
-    <app-inline-error [detalle]="servicio.error()!" accionLabel="Volver a consultar" />
-  } @else if (servicio.cargando()) {
-    <app-list-skeleton />
-  } @else if (servicio.vacio()) {
-    <app-empty-state titulo="Sin resultados" descripcion="No se encontraron distritos para la búsqueda ingresada." />
-  } @else if (servicio.filas().length > 0) {
-    <section class="grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)]">
-      <div class="min-w-0 rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 shadow-[var(--mis-shadow-sm)]">
-        <div class="mb-3 flex items-center justify-between gap-2">
-          <div><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Matriz de riesgos por distrito</h2><p class="m-0 text-xs text-[var(--mis-text-secondary)]">Selecciona una fila para marcar su ubicación en el mapa.</p></div>
-          <span class="shrink-0 rounded-full bg-[var(--mis-primary-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--mis-primary)]">{{ servicio.filas().length }} registros</span>
+<app-window-panel
+  titulo="Consulta FEN - CENEPRED"
+  subtitulo="Gestión territorial"
+  [permitirActualizar]="false"
+  [altoAuto]="true"
+>
+  <div class="space-y-4">
+    <section class="grid overflow-hidden rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-[var(--mis-shadow-sm)] lg:grid-cols-[minmax(300px,0.9fr)_minmax(390px,1.25fr)_220px]">
+      <div class="border-b border-[var(--mis-border)] p-4 lg:border-b-0 lg:border-r">
+        <div class="mb-3 flex items-start gap-3">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--mis-primary-soft)] text-[var(--mis-primary)]"><i class="pi pi-search"></i></span>
+          <div><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Consulta rápida</h2><p class="m-0 text-xs text-[var(--mis-text-secondary)]">Busca por ubicación o código oficial.</p></div>
         </div>
-        <app-data-table [columns]="columnas" [data]="servicio.filas()" [selectableRows]="true" [selectedRow]="seleccion()" [rows]="10" [searchFields]="['cod_ubi', 'des_dist', 'des_prov', 'des_dep']" searchPlaceholder="Buscar en los resultados..." (filaSeleccionada)="seleccionar($event)">
-          @for (campo of ['exp_mas', 'exp_inu', 'exp_seq', 'exp_pre']; track campo) {
-            <ng-template [appDataTableCell]="campo" let-row><p-tag [value]="row[campo]" [severity]="severidad(row[campo])" /></ng-template>
-          }
-        </app-data-table>
+
+        <p-tabs value="distrito">
+          <p-tablist><p-tab value="distrito">Por distrito</p-tab><p-tab value="ubigeo">Por ubigeo</p-tab></p-tablist>
+          <p-tabpanels>
+            <p-tabpanel value="distrito">
+              <form class="flex flex-col gap-2" (submit)="$event.preventDefault(); buscarDistrito()">
+                <label for="fen-distrito" class="text-xs font-semibold text-[var(--mis-text-primary)]">Distrito</label>
+                <input id="fen-distrito" pInputText class="w-full" type="text" name="distrito" minlength="2" placeholder="Ingresa un distrito" [ngModel]="distrito()" (ngModelChange)="distrito.set($event)" />
+                <p-button type="submit" label="Consultar" icon="pi pi-search" [loading]="servicio.cargando()" styleClass="w-full" />
+              </form>
+              <p class="m-0 mt-2 text-xs text-[var(--mis-text-tertiary)]">Ingresa al menos 2 caracteres del nombre.</p>
+            </p-tabpanel>
+            <p-tabpanel value="ubigeo">
+              <form class="flex flex-col gap-2" (submit)="$event.preventDefault(); buscarUbigeo()">
+                <label for="fen-ubigeo" class="text-xs font-semibold text-[var(--mis-text-primary)]">Código ubigeo</label>
+                <input id="fen-ubigeo" pInputText class="w-full" type="text" name="ubigeo" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="150101" [ngModel]="ubigeo()" (ngModelChange)="ubigeo.set($event)" />
+                <p-button type="submit" label="Consultar" icon="pi pi-search" [loading]="servicio.cargando()" styleClass="w-full" />
+              </form>
+              <p class="m-0 mt-2 text-xs text-[var(--mis-text-tertiary)]">Ingresa los 6 dígitos del código ubigeo.</p>
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
       </div>
 
-      <aside class="min-h-[440px] rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 shadow-[var(--mis-shadow-sm)]">
-        @if (seleccion(); as fila) {
-          <div class="mb-3 flex flex-wrap items-start justify-between gap-2">
-            <div><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">{{ fila.des_dist }}</h2><p class="m-0 text-xs text-[var(--mis-text-secondary)]">{{ fila.des_prov }} · {{ fila.des_dep }}</p></div>
-            <span class="rounded-md border border-[var(--mis-border)] px-2 py-1 font-mono text-xs text-[var(--mis-text-secondary)]">{{ fila.cod_ubi }}</span>
+      <div class="border-b border-[var(--mis-border)] p-4 lg:border-b-0 lg:border-r">
+        <div class="mb-4 flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Indicadores de exposición</h2>
+            @if (resultado(); as fila) {
+              <p class="m-0 text-xs text-[var(--mis-text-secondary)]">{{ fila.des_dist }} · {{ fila.des_prov }} · {{ fila.des_dep }}</p>
+            } @else {
+              <p class="m-0 text-xs text-[var(--mis-text-secondary)]">Selecciona un lugar para ver sus niveles.</p>
+            }
           </div>
-          @if (alertaRiesgo()) {
-            <div role="alert" class="mb-3 flex gap-2 rounded-lg border border-[var(--mis-warning)] bg-[var(--mis-warning-light)] p-2.5 text-xs text-[var(--mis-warning)]"><i class="pi pi-exclamation-triangle mt-0.5"></i><span>{{ mensajeRiesgoAlto }}</span></div>
+          @if (resultado(); as fila) {
+            <span class="rounded-md border border-[var(--mis-border)] px-2 py-1 font-mono text-xs text-[var(--mis-text-secondary)]">UBIGEO {{ fila.cod_ubi }}</span>
           }
-          @if (puntoMapa(); as punto) {
-            <div class="h-[350px]"><app-mapa-ubicacion [lat]="punto.lat" [lng]="punto.lng" [etiqueta]="etiquetaMapa()" /></div>
-            <p class="m-0 mt-2 text-[11px] leading-relaxed text-[var(--mis-text-tertiary)]"><i class="pi pi-info-circle mr-1"></i>Marcador referencial al centro del departamento. El contrato FEN actual no entrega coordenadas distritales.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          @for (indicador of [
+            { etiqueta: 'Movimiento en masa', valor: resultado()?.exp_mas },
+            { etiqueta: 'Inundación', valor: resultado()?.exp_inu },
+            { etiqueta: 'Sequía', valor: resultado()?.exp_seq },
+            { etiqueta: 'Riesgo predominante', valor: resultado()?.exp_pre }
+          ]; track indicador.etiqueta) {
+            <article class="flex min-h-24 flex-col justify-between rounded-lg border border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-3">
+              <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">{{ indicador.etiqueta }}</span>
+              @if (indicador.valor; as nivel) {
+                <p-tag [value]="nivel" [severity]="severidad(nivel)" styleClass="w-fit" />
+              } @else {
+                <span class="h-6 w-20 rounded-full bg-[var(--mis-border)]" aria-label="Sin consultar"></span>
+              }
+            </article>
           }
-        } @else {
-          <div class="flex h-full min-h-[410px] flex-col items-center justify-center rounded-lg border border-dashed border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-8 text-center">
-            <i class="pi pi-map-marker mb-3 text-3xl text-[var(--mis-primary)]"></i><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Selecciona un ubigeo</h2><p class="m-0 mt-1 max-w-xs text-sm text-[var(--mis-text-secondary)]">El mapa se centrará al seleccionar una fila de la tabla.</p>
-          </div>
+        </div>
+        @if (alertaRiesgo()) {
+          <div role="alert" class="mt-3 flex gap-2 rounded-lg border border-[var(--mis-warning)] bg-[var(--mis-warning-light)] p-2.5 text-xs text-[var(--mis-warning)]"><i class="pi pi-exclamation-triangle mt-0.5"></i><span>{{ mensajeRiesgoAlto }}</span></div>
         }
+      </div>
+
+      <aside class="flex min-h-72 flex-col items-center justify-end overflow-hidden bg-[var(--mis-panel-bg)] px-4 pt-4 text-center">
+        <div class="rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] px-3 py-2 shadow-[var(--mis-shadow-sm)]">
+          <p class="m-0 text-xs font-medium leading-relaxed text-[var(--mis-text-secondary)]">{{ mensajeMascota() }}</p>
+        </div>
+        <img class="mt-2 h-48 w-48 object-contain object-bottom" [src]="mascota()" alt="Mascota de MIS" width="1024" height="1024" />
       </aside>
     </section>
-  }
-</main>
+
+    @if (servicio.error()) {
+      <app-inline-error [detalle]="servicio.error()!" accionLabel="Volver a consultar" />
+    } @else if (servicio.cargando()) {
+      <app-list-skeleton />
+    } @else if (servicio.vacio()) {
+      <app-empty-state titulo="Sin resultados" descripcion="No se encontraron distritos para la búsqueda ingresada." />
+    } @else if (servicio.filas().length > 0) {
+      <section class="grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)]">
+        <div class="min-w-0 rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 shadow-[var(--mis-shadow-sm)]">
+          <div class="mb-3 flex items-center justify-between gap-2">
+            <div><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Matriz de riesgos por distrito</h2><p class="m-0 text-xs text-[var(--mis-text-secondary)]">Selecciona una fila para marcar su ubicación en el mapa.</p></div>
+            <span class="shrink-0 rounded-full bg-[var(--mis-primary-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--mis-primary)]">{{ servicio.filas().length }} registros</span>
+          </div>
+          <app-data-table [columns]="columnas" [data]="servicio.filas()" [selectableRows]="true" [selectedRow]="resultado()" [rows]="10" [searchFields]="['cod_ubi', 'des_dist', 'des_prov', 'des_dep']" searchPlaceholder="Buscar en los resultados..." (filaSeleccionada)="seleccionar($event)">
+            @for (campo of ['exp_mas', 'exp_inu', 'exp_seq', 'exp_pre']; track campo) {
+              <ng-template [appDataTableCell]="campo" let-row><p-tag [value]="row[campo]" [severity]="severidad(row[campo])" /></ng-template>
+            }
+          </app-data-table>
+        </div>
+
+        <aside class="min-h-[440px] rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 shadow-[var(--mis-shadow-sm)]">
+          @if (resultado(); as fila) {
+            <div class="mb-3 flex flex-wrap items-start justify-between gap-2">
+              <div><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">{{ fila.des_dist }}</h2><p class="m-0 text-xs text-[var(--mis-text-secondary)]">{{ fila.des_prov }} · {{ fila.des_dep }}</p></div>
+              <span class="rounded-md border border-[var(--mis-border)] px-2 py-1 font-mono text-xs text-[var(--mis-text-secondary)]">{{ fila.cod_ubi }}</span>
+            </div>
+            @if (puntoMapa(); as punto) {
+              <div class="h-[350px]"><app-mapa-ubicacion [lat]="punto.lat" [lng]="punto.lng" [etiqueta]="etiquetaMapa()" /></div>
+              <p class="m-0 mt-2 text-[11px] leading-relaxed text-[var(--mis-text-tertiary)]"><i class="pi pi-info-circle mr-1"></i>Marcador referencial al centro del departamento. El contrato FEN actual no entrega coordenadas distritales.</p>
+            }
+          } @else {
+            <div class="flex h-full min-h-[410px] flex-col items-center justify-center rounded-lg border border-dashed border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-8 text-center">
+              <i class="pi pi-map-marker mb-3 text-3xl text-[var(--mis-primary)]"></i><h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Selecciona un ubigeo</h2><p class="m-0 mt-1 max-w-xs text-sm text-[var(--mis-text-secondary)]">El mapa se centrará al seleccionar una fila de la tabla.</p>
+            </div>
+          }
+        </aside>
+      </section>
+    }
+  </div>
+</app-window-panel>
