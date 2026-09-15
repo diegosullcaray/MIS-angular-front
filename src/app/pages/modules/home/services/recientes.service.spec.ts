@@ -87,6 +87,14 @@ describe('RecientesService', () => {
     expect(preferencias.recientes()).toEqual([]);
   });
 
+  it('anota Consulta FEN aunque sea una pantalla final en la raíz del módulo', async () => {
+    await ir('/app/consulta-fen');
+
+    expect(preferencias.recientes()[0]).toEqual(
+      expect.objectContaining({ ruta: '/app/consulta-fen', titulo: 'Consulta FEN - CENEPRED' }),
+    );
+  });
+
   it('no duplica un reporte revisitado: lo devuelve al frente', async () => {
     await ir('/app/actividades/dest-credito');
     await ir('/app/actividades/regprosp-corr');

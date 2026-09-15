@@ -69,4 +69,15 @@ describe('BienvenidaDialogComponent', () => {
     expect(fixture.componentInstance.abierto()).toBe(false);
     expect(TestBed.inject(PreferenciasService).bienvenida().vista).toBe(true);
   });
+
+  it('"Entrar directo" cierra la bienvenida y pide replegar el panel', () => {
+    const fixture = crear();
+    const pedido = vi.fn();
+    fixture.componentInstance.entrarDirecto.subscribe(pedido);
+
+    (fixture.componentInstance as unknown as { entrar(): void }).entrar();
+
+    expect(pedido).toHaveBeenCalled();
+    expect(fixture.componentInstance.abierto()).toBe(false);
+  });
 });
