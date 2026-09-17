@@ -30,11 +30,11 @@ export const COLUMNAS_FEN: DataTableColumn[] = ([
   { field: 'des_dist', header: 'Distrito', width: '7rem', filterType: 'text' },
   { field: 'des_prov', header: 'Provincia', filterType: 'text', mobileVisible: false },
   { field: 'des_dep', header: 'Departamento', filterType: 'text', mobileVisible: false },
-  { field: 'exp_mas', header: 'Mov. en masa', width: '4rem', align: 'center', filterType: 'dropdown' },
-  { field: 'exp_inu', header: 'Inundación', width: '4rem', align: 'center', filterType: 'dropdown' },
-  { field: 'exp_seq', header: 'Sequía', width: '4rem', align: 'center', filterType: 'dropdown' },
-  { field: 'exp_pre', header: 'Predominante', width: '4.5rem', align: 'center', filterType: 'dropdown' },
-  { field: 'observacion', header: 'Observación', width: '19rem', sortable: false, mobileVisible: false },
+  { field: 'exp_mas', header: 'Huayco', width: '3.5rem', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_inu', header: 'Inund.', width: '3.5rem', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_seq', header: 'Sequía', width: '3.5rem', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_pre', header: 'Predom.', width: '3.5rem', align: 'center', filterType: 'dropdown' },
+  { field: 'observacion', header: 'Observación', width: '25rem', sortable: false, mobileVisible: false },
  ] satisfies DataTableColumn[]).map((columna): DataTableColumn =>
   columna.filterType === 'dropdown'
     ? {
