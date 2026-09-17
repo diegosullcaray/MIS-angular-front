@@ -5,10 +5,8 @@ import { ShellPage } from './pages/shell.page';
 /**
  * Dos piezas de navegación que se rompían en móvil:
  *
- * - El breadcrumb pintaba el camino entero. A partir del tercer nivel las
- *   etiquetas se comprimían hasta volverse ilegibles y el header desbordaba.
- *   Ahora en pantalla angosta queda `… › Página`, con los puntos apuntando al
- *   nivel de arriba.
+ * - En móvil el breadcrumb se oculta para que el header no compita con las
+ *   acciones globales. La ruta completa se conserva en escritorio.
  * - Los paneles tipo ventana no tenían forma de volver salvo el semáforo, que
  *   lleva al inicio y no al paso anterior.
  */
@@ -27,16 +25,10 @@ async function abrir(page: import('@playwright/test').Page, ruta: string) {
 test.describe('Breadcrumb en pantalla angosta', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  test('a partir del tercer nivel se pliega a «… › Página»', async ({ page }) => {
+  test('se oculta para dejar el header disponible a las acciones globales', async ({ page }) => {
     await abrir(page, RUTA_PROFUNDA);
 
-    const textos = await page.locator('.header-breadcrumb .p-breadcrumb-list > li').allTextContents();
-    const etiquetas = textos.map((t) => t.trim()).filter(Boolean);
-
-    // Queda el home (ícono, sin texto), los puntos y la página actual.
-    expect(etiquetas).toContain('…');
-    expect(etiquetas).toContain('Cartera de Créditos');
-    expect(etiquetas).not.toContain('Líneas');
+    await expect(page.locator('.header-breadcrumb')).toBeHidden();
   });
 
   test('el header no desborda con la ruta más profunda', async ({ page }) => {
@@ -49,19 +41,6 @@ test.describe('Breadcrumb en pantalla angosta', () => {
     expect(desborda).toBe(false);
   });
 
-  test('los puntos suben un nivel, no llevan al inicio', async ({ page }) => {
-    await abrir(page, RUTA_PROFUNDA);
-
-    const puntos = page.locator('.header-breadcrumb a', { hasText: '…' });
-    await expect(puntos).toHaveCount(1);
-
-    await puntos.click();
-    await page.waitForTimeout(400);
-
-    // Sube un nivel: sigue dentro del árbol, no en el dashboard.
-    expect(page.url()).not.toContain('/app/dashboard');
-    expect(page.url()).toContain('/app/presupuesto/lineas/activos');
-  });
 });
 
 test.describe('Breadcrumb en escritorio', () => {

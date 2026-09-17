@@ -117,6 +117,19 @@ describe('HeaderComponent — contrato responsive', () => {
     expect(breadcrumb.className).toContain('sm:flex');
   });
 
+  it('alinea las acciones al final y reduce los espacios solo en móvil', () => {
+    const el = crear();
+    const raiz = el.firstElementChild as HTMLElement;
+    const acciones = el.querySelector('div.relative.ml-auto') as HTMLElement;
+
+    expect(raiz.className).toContain('justify-end');
+    expect(raiz.className).toContain('px-2');
+    expect(raiz.className).toContain('sm:px-4');
+    expect(acciones.className).toContain('gap-1');
+    expect(acciones.className).toContain('sm:gap-2');
+    expect(acciones.className).toContain('shrink-0');
+  });
+
   it('el botón del rail superpuesto solo existe desde sm, donde el rail se ancla', () => {
     // En móvil el rail ES la barra inferior y está siempre a la vista: un botón
     // para abrirlo sobraría y se comería 44px del header.

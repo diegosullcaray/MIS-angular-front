@@ -8,7 +8,6 @@
    input aparece bajo demanda para que no le robe espacio al breadcrumb. */
 .header-buscador-global {
   width: clamp(220px, 26vw, 360px);
-  overflow: clip;
   /* Mismo ritmo de los overlays de PrimeNG: entrada corta, opacidad y barrido
      hacia la izquierda, sin desplazar de golpe el resto de acciones. */
   animation: headerSearchSweep var(--mis-transition-base) cubic-bezier(0.2, 0, 0, 1) both;
@@ -272,7 +271,7 @@
     position: absolute;
     top: calc(100% + var(--mis-space-1));
     right: 0;
-    width: min(360px, calc(100vw - var(--mis-space-4)));
+    width: min(360px, calc(100vw - 1rem));
     z-index: var(--mis-z-dropdown);
   }
 
