@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { ConsultaFenService } from './consulta-fen.service';
@@ -30,6 +30,17 @@ describe('ConsultaFenService', () => {
     expect(servicio.vacio()).toBe(false);
   });
 
+  it('conserva los cuatro filtros del legacy y obtiene sugerencias únicas', () => {
+    consultar.mockReturnValue(of({ code: '0', headers: {}, body: { resultado: { data: [FILA, { ...FILA, cod_ubi: '040102' }] } } } as IWinderResponse));
+    const sugerencias: string[][] = [];
+    servicio.sugerir(1, 'Are').subscribe((resultado) => sugerencias.push(resultado));
+    servicio.consultar(2, 'Arequipa');
+
+    expect(consultar).toHaveBeenNthCalledWith(1, 'CON_AGRO_FEN', { col: 1, val: 'Are' });
+    expect(sugerencias).toEqual([['AREQUIPA']]);
+    expect(consultar).toHaveBeenNthCalledWith(2, 'CON_AGRO_FEN', { col: 2, val: 'Arequipa' });
+  });
+
   it('distingue una respuesta vacía de un fallo de contrato', () => {
     consultar.mockReturnValue(of({ code: '0', headers: {}, body: { resultado: { data: [] } } } as IWinderResponse));
     servicio.consultar(0, '040101');
@@ -46,5 +57,18 @@ describe('ConsultaFenService', () => {
     servicio.consultar(0, '040101');
     expect(servicio.error()).toContain('No se pudo realizar');
     expect(servicio.vacio()).toBe(false);
+  });
+
+  it('cancela una consulta anterior antes de publicar la siguiente', () => {
+    const anterior = new Subject<IWinderResponse>();
+    const actual = new Subject<IWinderResponse>();
+    consultar.mockReturnValueOnce(anterior).mockReturnValueOnce(actual);
+
+    servicio.consultar(3, 'Arequipa');
+    servicio.consultar(0, '040101');
+    expect(anterior.observed).toBe(false);
+
+    actual.next({ code: '0', headers: {}, body: { resultado: { data: [FILA] } } } as IWinderResponse);
+    expect(servicio.filas()).toEqual([FILA]);
   });
 });
