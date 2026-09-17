@@ -51,18 +51,14 @@ export class AnunciosDialogComponent {
   protected readonly esCarrusel = computed(() => this.total() > 1);
 
   /**
-   * Un comunicado de una pieza deja que el diálogo se ajuste a la imagen, que
-   * es como se veía siempre. Uno de varias FIJA el ancho: si cada lámina
-   * mandara el suyo, la ventana cambiaría de tamaño en cada paso y el usuario
-   * perdería el punto de referencia. Se fija acá, en el diálogo, y no en una
-   * caja interna: una caja de alto fijo terminaba recortada por el
-   * `overflow: hidden` del contenido y dejaba los indicadores fuera de alcance.
+   * Cada lámina manda el ancho del diálogo. Un carrusel no debe reservar el
+   * ancho de otra pieza ni uno fijo: se adapta al tamaño mostrado y solo se
+   * limita al viewport en pantallas pequeñas.
    */
-  protected readonly estiloDialogo = computed(() =>
-    this.esCarrusel()
-      ? { width: 'min(880px, 96vw)', maxWidth: 'min(880px, 96vw)' }
-      : { width: 'auto', maxWidth: 'min(880px, 96vw)' },
-  );
+  protected readonly estiloDialogo = computed(() => ({
+    width: 'auto',
+    maxWidth: '96vw',
+  }));
 
   private readonly _indice = signal(0);
   protected readonly indice = this._indice.asReadonly();
