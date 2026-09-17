@@ -8,7 +8,7 @@
 - Los mapas deben mantener controles accesibles y atribucion de OpenStreetMap.
 - El foco visible debe usar tokens del sistema y no depender solo del color.
 - Las tablas deben conservar encabezados, alineacion semantica y lectura de estados.
-- En movil, el breadcrumb se pliega sin eliminar la navegacion hacia el padre.
+- En móvil, el breadcrumb se oculta para dejar espacio a las acciones globales; la navegación se mantiene en el rail y el explorador.
 
 ## Estados
 

@@ -108,6 +108,15 @@ describe('HeaderComponent — contrato responsive', () => {
     expect(pill.className).toContain('sm:min-h-0');
   });
 
+  it('oculta el breadcrumb en móvil y lo conserva desde el breakpoint de escritorio', () => {
+    const el = crear();
+    const breadcrumb = el.querySelector('.header-breadcrumb')?.parentElement as HTMLElement;
+
+    expect(breadcrumb).not.toBeNull();
+    expect(breadcrumb.className).toContain('hidden');
+    expect(breadcrumb.className).toContain('sm:flex');
+  });
+
   it('el botón del rail superpuesto solo existe desde sm, donde el rail se ancla', () => {
     // En móvil el rail ES la barra inferior y está siempre a la vista: un botón
     // para abrirlo sobraría y se comería 44px del header.

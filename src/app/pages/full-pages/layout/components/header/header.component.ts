@@ -19,7 +19,6 @@ import type { MenuItem } from 'primeng/api';
 
 // Servicios y Componentes
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import { ViewportService } from '../../../../../shared/services/viewport.service';
 import { ThemeService } from '../../../../../shared/services/theme.service';
 import { PreferenciasService } from '../../services/preferencias.service';
 import { AnunciosService } from '../../services/anuncios.service';
@@ -62,7 +61,6 @@ interface PerfilDelMenu {
 export class HeaderComponent {
   // ─── Dependencias ──────────────────────────────────────────────────────────
   protected readonly shell = inject(ShellStateService);
-  private readonly viewport = inject(ViewportService);
   protected readonly auth = inject(AuthService);
   protected readonly theme = inject(ThemeService);
   protected readonly anuncios = inject(AnunciosService);
@@ -135,13 +133,8 @@ export class HeaderComponent {
   // ─── Configuración de Breadcrumb ──────────────────────────────────────────
   protected readonly breadcrumbHome: MenuItem = { icon: 'pi pi-home', routerLink: '/app/dashboard' };
 
-  /** Breadcrumb dinámico según la ruta activa o el explorador. */
+  /** Breadcrumb completo para escritorio; en móvil se oculta desde la vista. */
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
-    const completo = this.breadcrumbCompleto();
-    return this.viewport.angosta() ? this.plegado(completo) : completo;
-  });
-
-  private readonly breadcrumbCompleto = computed<MenuItem[]>(() => {
     if (this.shell.contenidoPendienteSeleccion()) return this.breadcrumbExplorador();
 
     const url = this.urlActual().split('?')[0].split('#')[0];
@@ -155,22 +148,6 @@ export class HeaderComponent {
 
     return esRemote ? this.breadcrumbRemote(resto, url) : this.breadcrumbHost(resto);
   });
-
-  /**
-   * En pantalla angosta el camino completo no entra: a partir del tercer nivel
-   * las etiquetas se comprimen hasta volverse ilegibles. Se deja `… › Página`,
-   * donde los puntos llevan al nivel de arriba, que es para lo que se usa el
-   * breadcrumb en mobile.
-   */
-  private plegado(items: MenuItem[]): MenuItem[] {
-    if (items.length < 3) return items;
-
-    const padre = items[items.length - 2];
-    return [
-      { label: '…', routerLink: padre.routerLink, title: 'Subir un nivel' },
-      items[items.length - 1],
-    ];
-  }
 
   // ─── Acciones de la Vista ─────────────────────────────────────────────────
   protected toggleDropdown(): void {

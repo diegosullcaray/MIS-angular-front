@@ -188,9 +188,7 @@
   font-size: var(--mis-text-sm);
 }
 
-/* El plegado a "… › Página" lo hace `breadcrumbItems()`, que deja un enlace real
-   al nivel de arriba. Acá solo queda impedir que la etiqueta que sobrevive se
-   parta en varias líneas: es lo que descuadraba el header en mobile. */
+/* En escritorio las rutas no se parten en varias líneas. */
 .header-breadcrumb ::ng-deep .p-breadcrumb-item-label,
 .header-breadcrumb ::ng-deep .p-breadcrumb-item-link {
   white-space: nowrap;
@@ -215,9 +213,7 @@
   text-overflow: ellipsis;
 }
 
-/* Una ruta profunda no debe empujar el menú de usuario fuera del header. Como
-   `breadcrumbItems()` ya la pliega a dos elementos, alcanza con recortar: no
-   hace falta desplazamiento horizontal. */
+/* Una ruta profunda no debe empujar el menú de usuario fuera del header. */
 .header-breadcrumb {
   width: 100%;
   overflow: hidden;
@@ -253,14 +249,8 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
-/* Objetivo táctil de los enlaces del breadcrumb en móvil.
-   Son enlaces dentro de una línea de texto, así que su mínimo es el 24×24 de
-   WCAG 2.5.8 (AA) y no el 44×44 de los botones de acción: estirarlos a 44 de
-   ancho haría de una ruta profunda una tira interminable. El alto sí llega al
-   del header, que es lo que hace cómodo el toque. */
 @media (max-width: 639px) {
-  /* En móvil el campo se abre bajo la fila de acciones para no expulsar el
-     breadcrumb ni reducir los objetivos táctiles. */
+  /* En móvil el campo se abre bajo la fila de acciones. */
   .header-buscador-global {
     position: absolute;
     top: calc(100% + var(--mis-space-1));
@@ -273,11 +263,4 @@
     height: 40px;
   }
 
-  .header-breadcrumb ::ng-deep .p-breadcrumb-item-link {
-    min-width: 24px;
-    min-height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
 }
