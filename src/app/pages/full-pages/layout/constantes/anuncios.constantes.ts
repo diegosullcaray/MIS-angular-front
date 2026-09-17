@@ -29,10 +29,22 @@ import type { Anuncio } from '../interfaces/anuncio.model';
  */
 export const ANUNCIOS_DEL_SISTEMA: readonly Anuncio[] = [
   {
-    id: 'vinculacion-cartera-captaciones',
-    imagen: 'assets/images/fc/ads/Comunicado.png',
-    alt: 'Nuevos paneles: Vinculación de Cartera - Captaciones. Ruta: Menú Principal / Actividad Diaria / Captaciones / Vinculación de Cartera - Captaciones.',
-    ancho: 780,
-    alto: 815,
+    // El identificador nuevo hace que quienes cerraron el comunicado anterior
+    // reciban también estas dos láminas.
+    id: 'comunicados-vinculacion-cartera-y-consulta-fen',
+    laminas: [
+      {
+        imagen: 'assets/images/fc/ads/Comunicado1.png',
+        alt: 'Nuevos paneles: Vinculación de Cartera - Captaciones. Ruta: Menú Principal, Actividad Diaria, Captaciones, Vinculación de Cartera - Captaciones.',
+        ancho: 780,
+        alto: 815,
+      },
+      {
+        imagen: 'assets/images/fc/ads/Comunicado2.png',
+        alt: 'Consulta FEN - CENEPRED para toda la red. Recuerda consultar el nivel de exposición territorial antes de completar la evaluación en la matriz de riesgos por distrito.',
+        ancho: 2100,
+        alto: 2016,
+      },
+    ],
   },
 ] as const;

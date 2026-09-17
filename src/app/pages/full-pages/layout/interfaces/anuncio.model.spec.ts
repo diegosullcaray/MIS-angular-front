@@ -5,7 +5,7 @@ const HOY = '2026-09-01';
 
 function anuncio(parcial: Partial<Anuncio> & Pick<Anuncio, 'id'>): Anuncio {
   return {
-    imagen: 'assets/images/fc/ads/Comunicado.png',
+    imagen: 'assets/images/fc/ads/Comunicado1.png',
     alt: 'Comunicado de prueba',
     ancho: 780,
     alto: 815,
@@ -73,7 +73,7 @@ describe('laminasDe', () => {
     const laminas = laminasDe(anuncio({ id: 'simple' }));
 
     expect(laminas).toHaveLength(1);
-    expect(laminas[0].imagen).toBe('assets/images/fc/ads/Comunicado.png');
+    expect(laminas[0].imagen).toBe('assets/images/fc/ads/Comunicado1.png');
     expect(laminas[0].alt).toBe('Comunicado de prueba');
   });
 

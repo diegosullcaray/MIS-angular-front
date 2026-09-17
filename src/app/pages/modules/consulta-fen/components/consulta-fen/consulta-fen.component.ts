@@ -38,7 +38,9 @@ export class ConsultaFenComponent implements OnInit {
   protected readonly filtro = signal<ColumnaFiltroFen>(3);
 
   protected readonly columnas = COLUMNAS_FEN;
-  protected readonly filtros = FILTROS_FEN;
+  // PrimeNG recibe las opciones como un arreglo mutable; el catálogo permanece
+  // inmutable y esta copia evita exponerlo a cambios del componente.
+  protected readonly filtros = [...FILTROS_FEN];
   protected readonly fechaMatriz = FECHA_MATRIZ_FEN;
   protected readonly mensajeRiesgoAlto = MENSAJE_RIESGO_ALTO_FEN;
   /** Conserva el comportamiento legado: una única coincidencia queda seleccionada automáticamente. */

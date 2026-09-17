@@ -24,7 +24,7 @@
             </div>
             <div class="relative min-w-0">
               <label class="mb-1.5 block text-xs font-semibold text-[var(--mis-text-primary)]" for="fen-consulta">{{ etiquetaFiltro() }}</label>
-              <input id="fen-consulta" pInputText class="w-full" type="text" name="consulta" [inputmode]="esUbigeo() ? 'numeric' : 'text'" [attr.maxlength]="esUbigeo() ? 6 : null" [placeholder]="esUbigeo() ? 'Ingresa los 6 dígitos del ubigeo' : 'Ingresa el nombre de ' + etiquetaFiltro().toLowerCase()" [ngModel]="consulta()" (ngModelChange)="actualizarConsulta($event)" [disabled]="servicio.cargando()" autocomplete="off" aria-describedby="fen-estado" />
+              <input id="fen-consulta" pInputText class="w-full" type="text" name="consulta" [attr.inputmode]="esUbigeo() ? 'numeric' : 'text'" [attr.maxlength]="esUbigeo() ? 6 : null" [placeholder]="esUbigeo() ? 'Ingresa los 6 dígitos del ubigeo' : 'Ingresa el nombre de ' + etiquetaFiltro().toLowerCase()" [ngModel]="consulta()" (ngModelChange)="actualizarConsulta($event)" [disabled]="servicio.cargando()" autocomplete="off" aria-describedby="fen-estado" />
               @if (sugerencias().length > 0) {
                 <div class="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-1 shadow-[var(--mis-shadow-md)]" role="listbox" aria-label="Sugerencias de ubicación">
                   @for (sugerencia of sugerencias(); track sugerencia) {
