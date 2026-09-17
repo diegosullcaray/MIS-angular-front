@@ -5,7 +5,7 @@
     class="mis-buscador-caja"
     role="combobox"
     aria-haspopup="listbox"
-    aria-owns="mis-buscador-lista"
+    [attr.aria-owns]="idLista"
     [attr.aria-expanded]="desplegado()"
   >
     <i class="pi pi-search mis-buscador-lupa" aria-hidden="true"></i>
@@ -17,7 +17,7 @@
       autocomplete="off"
       [attr.aria-label]="etiquetaAria()"
       aria-autocomplete="list"
-      aria-controls="mis-buscador-lista"
+      [attr.aria-controls]="idLista"
       [attr.aria-activedescendant]="desplegado() && resultados().length ? idOpcion(indiceActivo()) : null"
       [value]="consulta()"
       (input)="onConsulta($event)"
@@ -72,7 +72,7 @@
           </p>
         }
 
-        <ul id="mis-buscador-lista" class="mis-buscador-lista" role="listbox" aria-label="Resultados">
+        <ul [id]="idLista" class="mis-buscador-lista" role="listbox" aria-label="Resultados">
           @for (resultado of resultados(); track resultado.objeto.id) {
             <li
               class="mis-buscador-opcion"

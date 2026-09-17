@@ -11,9 +11,25 @@ import { NavegacionSistemasService } from '../../services/navegacion-sistemas.se
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
 import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sidebar.model';
+import { FUENTE_BUSQUEDA } from '../../../../../shared/ui/buscador/fuente-busqueda';
+import type { FuenteBusqueda, RegistroBuscable } from '../../../../../shared/ui/buscador/buscador.model';
 
 @Component({ template: '', standalone: true })
 class BlankComponent {}
+
+const fuenteBusquedaFalsa: FuenteBusqueda = {
+  id: 'navegacion-prueba',
+  registros: (): RegistroBuscable[] => [
+    {
+      id: 'reportes/monitor-metas',
+      etiqueta: 'Monitor Metas Desembolso',
+      ubicacion: 'Reportes › Avance Comercial',
+      origen: 'Reportes',
+      tipo: 'Reporte',
+      abrir: vi.fn(),
+    },
+  ],
+};
 
 function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
   return {
@@ -74,6 +90,7 @@ describe('HeaderComponent', () => {
         { provide: MenuStgService, useValue: menuStgFalso },
         { provide: KaypachaService, useValue: kaypachaFalso },
         { provide: NavegacionSistemasService, useValue: navegacionFalso },
+        { provide: FUENTE_BUSQUEDA, useValue: fuenteBusquedaFalsa, multi: true },
         MessageService,
       ],
     });
@@ -224,6 +241,15 @@ describe('HeaderComponent', () => {
     // representa la búsqueda y el botón se convierte en cierre.
     expect(el.querySelectorAll('.mis-buscador-lupa')).toHaveLength(1);
     expect(Array.from(el.querySelectorAll('ng-icon')).some((icono) => icono.getAttribute('name') === 'lucideSearch')).toBe(false);
+
+    // El header monta el mismo componente Algolia del explorador: búsqueda
+    // instantánea, tolerancia al typo y resultado navegable.
+    input.dispatchEvent(new Event('focus'));
+    input.value = 'desenbolzo';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(el.querySelectorAll('.mis-buscador-opcion')).toHaveLength(1);
+    expect(el.querySelector('.mis-buscador-etiqueta')?.textContent).toContain('Monitor Metas Desembolso');
 
     boton.click();
     fixture.detectChanges();

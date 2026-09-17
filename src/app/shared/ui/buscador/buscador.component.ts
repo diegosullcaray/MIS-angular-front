@@ -23,6 +23,7 @@ const CONFIG: ConfiguracionIndice<RegistroBuscable> = {
 
 /** Tope de resultados renderizados; alto a propósito porque la lista scrollea — es solo una red de contención. */
 const MAXIMO_RESULTADOS = 50;
+let siguienteInstancia = 0;
 
 /** Búsqueda instantánea con la relevancia de Algolia; no conoce ningún módulo, se alimenta de las fuentes registradas en `FUENTE_BUSQUEDA` y puede acotarse a un origen. */
 @Component({
@@ -33,6 +34,8 @@ const MAXIMO_RESULTADOS = 50;
 export class BuscadorComponent {
   private readonly fuentes = inject(FUENTE_BUSQUEDA, { optional: true }) ?? [];
   private readonly entrada = viewChild<ElementRef<HTMLInputElement>>('entrada');
+  /** Header y explorador pueden coexistir; sus IDs ARIA nunca deben colisionar. */
+  protected readonly idLista = `mis-buscador-lista-${++siguienteInstancia}`;
 
   /** Sin alcance busca en todo MIS; el explorador entrega su sistema para una búsqueda local. */
   readonly origenes = input<readonly string[]>();
@@ -181,6 +184,6 @@ export class BuscadorComponent {
   }
 
   protected idOpcion(posicion: number): string {
-    return `mis-buscador-opcion-${posicion}`;
+    return `${this.idLista}-opcion-${posicion}`;
   }
 }

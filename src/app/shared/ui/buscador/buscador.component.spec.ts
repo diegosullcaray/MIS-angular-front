@@ -77,6 +77,15 @@ describe('BuscadorComponent', () => {
     expect(elemento(fixture, '.mis-buscador-panel')).toBeNull();
   });
 
+  it('asigna IDs propios para que dos buscadores no mezclen sus controles ARIA', () => {
+    const primero = crear();
+    const segundo = crear();
+    const idPrimero = (elemento(primero, '.mis-buscador-input') as HTMLInputElement).getAttribute('aria-controls');
+    const idSegundo = (elemento(segundo, '.mis-buscador-input') as HTMLInputElement).getAttribute('aria-controls');
+
+    expect(idPrimero).not.toBe(idSegundo);
+  });
+
   it('despliega los resultados al teclear y resalta la coincidencia', () => {
     const fixture = crear();
     teclear(fixture, 'metas');
