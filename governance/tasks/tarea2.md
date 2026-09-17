@@ -1,2 +1,0 @@
-D:\FINANCIERA CONFIANZA\04 SISTEMAS\01 MIS\GITHUB\MIS-angular-front\src\assets\images\fc\ads  
- tene en cuenta lso anuncio que se tiene , y no entiendo por que en dialo de anuncios no s eme genera lo que s un carrusel de inagenes admeas suboi la nuevas imagenes y nos  emesutras  corrije 
