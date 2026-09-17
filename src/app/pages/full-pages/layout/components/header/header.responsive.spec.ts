@@ -86,10 +86,10 @@ describe('HeaderComponent — contrato responsive', () => {
   it('los botones de acción declaran 44px en móvil y densidad de escritorio desde sm', () => {
     const el = crear();
     const acciones = Array.from(el.querySelectorAll('button')).filter((b) =>
-      /Comunicados|modo claro|modo oscuro/i.test(b.getAttribute('aria-label') ?? ''),
+      /Comunicados|modo claro|modo oscuro|búsqueda global/i.test(b.getAttribute('aria-label') ?? ''),
     );
 
-    expect(acciones.length).toBeGreaterThanOrEqual(2);
+    expect(acciones.length).toBeGreaterThanOrEqual(3);
     for (const boton of acciones) {
       expect(boton.className, boton.getAttribute('aria-label') ?? '').toContain('w-[44px]');
       expect(boton.className, boton.getAttribute('aria-label') ?? '').toContain('h-[44px]');

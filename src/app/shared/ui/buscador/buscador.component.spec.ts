@@ -107,6 +107,23 @@ describe('BuscadorComponent', () => {
     expect(elemento(fixture, '.mis-buscador-pie')?.textContent).toMatch(/1 resultado .* ms/);
   });
 
+  it('puede acotarse a un módulo, sin perder el componente global', () => {
+    modulo.set([
+      registro({ id: 'dashboard-1', etiqueta: 'Metas Comerciales', origen: 'Dashboards Integrados', tipo: 'Dashboard' }),
+    ]);
+    const fixture = crear();
+    fixture.componentRef.setInput('origenes', ['Reportes']);
+    fixture.componentRef.setInput('alcance', 'Reportes');
+    fixture.detectChanges();
+
+    teclear(fixture, 'metas');
+
+    expect(etiquetas(fixture)).toEqual(['Monitor Metas Desembolso']);
+    const input = elemento(fixture, '.mis-buscador-input') as HTMLInputElement;
+    expect(input.placeholder).toBe('Buscar en Reportes…');
+    expect(input.getAttribute('aria-label')).toBe('Buscar reportes y carpetas de Reportes');
+  });
+
   describe('cantidad de resultados listados', () => {
     /** Más de los 8 que se listaban antes, para que el total y lo visible coincidan. */
     function muchos(cantidad: number) {

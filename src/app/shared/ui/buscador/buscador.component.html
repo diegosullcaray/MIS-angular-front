@@ -10,11 +10,12 @@
   >
     <i class="pi pi-search mis-buscador-lupa" aria-hidden="true"></i>
     <input
+      #entrada
       type="search"
       class="mis-buscador-input"
-      placeholder="Buscar en todos los sistemas…"
+      [placeholder]="placeholder()"
       autocomplete="off"
-      aria-label="Buscar reportes y carpetas en todos los sistemas"
+      [attr.aria-label]="etiquetaAria()"
       aria-autocomplete="list"
       aria-controls="mis-buscador-lista"
       [attr.aria-activedescendant]="desplegado() && resultados().length ? idOpcion(indiceActivo()) : null"

@@ -6,8 +6,9 @@ Búsqueda instantánea del Host, con la relevancia de Algolia reimplementada en 
 **El buscador no conoce ningún módulo.** Se alimenta de las fuentes registradas en el multi-token
 `FUENTE_BUSQUEDA`, así que un módulo se hace buscable sin tocar este componente.
 
-Ya está montado en el explorador del sistema (`explorador-sistema.component.html`). Lo habitual no
-es instanciarlo, sino **registrar una fuente**.
+Está montado en el header (`header.component.html`) como búsqueda global. El
+explorador conserva otra instancia, acotada al sistema que se está viendo (por
+ejemplo, Reportes). Lo habitual no es instanciarlo, sino **registrar una fuente**.
 
 ## Registrar un módulo en el buscador
 

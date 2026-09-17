@@ -24,6 +24,11 @@ export class ExploradorSistemaComponent {
   private readonly preferencias = inject(PreferenciasService);
 
   protected readonly panel = this.navegacion.panelActivo;
+  /** El buscador del explorador es local: no mezcla resultados de otros sistemas. */
+  protected readonly origenesBusqueda = computed(() => {
+    const sistema = this.panel();
+    return sistema ? [sistema.titulo] : [];
+  });
 
   /** La vista es una preferencia más: se elige acá y también en Configuración → Estructura. */
   protected readonly vista = computed(() => this.preferencias.estructura().vistaExplorador);

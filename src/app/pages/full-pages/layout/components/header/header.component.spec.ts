@@ -206,6 +206,25 @@ describe('HeaderComponent', () => {
     expect(instancia['dropdownOpen']()).toBe(false);
   });
 
+  it('despliega el buscador global desde el botón junto al tema', async () => {
+    const fixture = await crear('/app/dashboard');
+    const el = fixture.nativeElement as HTMLElement;
+    const boton = el.querySelector('button[aria-label="Abrir o cerrar búsqueda global"]') as HTMLButtonElement;
+
+    expect(el.querySelector('app-buscador')).toBeNull();
+    boton.click();
+    fixture.detectChanges();
+
+    const input = el.querySelector('.mis-buscador-input') as HTMLInputElement;
+    expect(input).not.toBeNull();
+    expect(input.placeholder).toBe('Buscar en todos los sistemas…');
+    expect(boton.getAttribute('aria-expanded')).toBe('true');
+
+    boton.click();
+    fixture.detectChanges();
+    expect(el.querySelector('app-buscador')).toBeNull();
+  });
+
   it('pedirConfirmacionSalir() cierra el dropdown y abre el diálogo de confirmación', async () => {
     const fixture = await crear('/app/dashboard');
     const instancia = fixture.componentInstance;

@@ -1,4 +1,4 @@
-import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
 import { crearIndice, tokenizarConsulta } from './buscador.service';
 import { FUENTE_BUSQUEDA } from './fuente-busqueda';
 import type { ConfiguracionIndice, RegistroBuscable } from './buscador.model';
@@ -24,7 +24,7 @@ const CONFIG: ConfiguracionIndice<RegistroBuscable> = {
 /** Tope de resultados renderizados; alto a propósito porque la lista scrollea — es solo una red de contención. */
 const MAXIMO_RESULTADOS = 50;
 
-/** Búsqueda instantánea con la relevancia de Algolia; no conoce ningún módulo, se alimenta de las fuentes registradas en `FUENTE_BUSQUEDA`. */
+/** Búsqueda instantánea con la relevancia de Algolia; no conoce ningún módulo, se alimenta de las fuentes registradas en `FUENTE_BUSQUEDA` y puede acotarse a un origen. */
 @Component({
   selector: 'app-buscador',
   standalone: true,
@@ -32,13 +32,32 @@ const MAXIMO_RESULTADOS = 50;
 })
 export class BuscadorComponent {
   private readonly fuentes = inject(FUENTE_BUSQUEDA, { optional: true }) ?? [];
+  private readonly entrada = viewChild<ElementRef<HTMLInputElement>>('entrada');
+
+  /** Sin alcance busca en todo MIS; el explorador entrega su sistema para una búsqueda local. */
+  readonly origenes = input<readonly string[]>();
+  readonly alcance = input<string>();
 
   protected readonly consulta = signal('');
   protected readonly enfocado = signal(false);
   protected readonly filtros = signal<Record<Faceta, string[]>>({ tipo: [] });
 
-  /** Registros de todas las fuentes; al ser `computed`, la data que carga un módulo entra sola al índice. */
-  private readonly registros = computed<RegistroBuscable[]>(() => this.fuentes.flatMap((fuente) => fuente.registros()));
+  /** Registros de todas las fuentes o solo de los orígenes indicados; al ser `computed`, la data que carga un módulo entra sola al índice. */
+  private readonly registros = computed<RegistroBuscable[]>(() => {
+    const registros = this.fuentes.flatMap((fuente) => fuente.registros());
+    const origenes = this.origenes();
+    return origenes?.length ? registros.filter((registro) => origenes.includes(registro.origen)) : registros;
+  });
+
+  protected readonly placeholder = computed(() =>
+    this.alcance() ? `Buscar en ${this.alcance()}…` : 'Buscar en todos los sistemas…'
+  );
+
+  protected readonly etiquetaAria = computed(() =>
+    this.alcance()
+      ? `Buscar reportes y carpetas de ${this.alcance()}`
+      : 'Buscar reportes y carpetas en todos los sistemas'
+  );
 
   /** El índice se rearma solo cuando cambian los registros, no en cada tecla. */
   private readonly indice = computed(() => crearIndice(CONFIG, this.registros()));
@@ -93,6 +112,11 @@ export class BuscadorComponent {
 
   protected onConsulta(evento: Event): void {
     this.consulta.set((evento.target as HTMLInputElement).value);
+  }
+
+  /** Lo invoca el header al expandir el campo para empezar a escribir de inmediato. */
+  enfocar(): void {
+    this.entrada()?.nativeElement.focus();
   }
 
   protected limpiar(): void {

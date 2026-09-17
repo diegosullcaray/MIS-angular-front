@@ -31,6 +31,25 @@
 
   <!-- Acciones de cabecera minimalistas -->
   <div class="flex items-center gap-2 relative">
+    @if (buscadorAbierto()) {
+      <div class="header-buscador-global" id="buscador-global">
+        <app-buscador />
+      </div>
+    }
+
+    <!-- La búsqueda global vive junto a las acciones globales, no dentro de
+         un módulo. Al abrirse aparece el campo y busca al escribir. -->
+    <button
+      class="w-[44px] h-[44px] sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      (click)="alternarBuscador()"
+      [attr.aria-expanded]="buscadorAbierto()"
+      [attr.aria-controls]="buscadorAbierto() ? 'buscador-global' : null"
+      aria-label="Abrir o cerrar búsqueda global"
+      title="Buscar en todos los sistemas"
+    >
+      <ng-icon name="lucideSearch" size="15" />
+    </button>
+
     <!-- Alternar tema claro/oscuro -->
     <button
       class="w-[44px] h-[44px] sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"

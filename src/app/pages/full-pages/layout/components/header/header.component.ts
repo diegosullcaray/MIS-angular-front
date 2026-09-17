@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { afterNextRender, Component, computed, inject, Injector, signal, viewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
@@ -31,6 +31,7 @@ import { NavegacionSistemasService } from '../../services/navegacion-sistemas.se
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import { ConfiguracionDialogComponent } from '../dialogs/configuracion-dialog/configuracion-dialog.component';
 import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
+import { BuscadorComponent } from '../../../../../shared/ui/buscador/buscador.component';
 
 
 
@@ -47,7 +48,7 @@ interface PerfilDelMenu {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule, ConfiguracionDialogComponent],
+  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule, ConfiguracionDialogComponent, BuscadorComponent],
   viewProviders: [
     provideIcons({
       lucideChevronDown, lucideSettings,
@@ -71,11 +72,15 @@ export class HeaderComponent {
   private readonly menuStg = inject(MenuStgService);
   private readonly navegacion = inject(NavegacionSistemasService);
   private readonly kaypacha = inject(KaypachaService);
+  private readonly injector = inject(Injector);
+  private readonly buscador = viewChild(BuscadorComponent);
 
   // ─── Estado Local (Signals) ───────────────────────────────────────────────
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
   protected readonly configuracionOpen = signal(false);
+  /** El buscador global se monta solo al pedirlo para no competir con el breadcrumb. */
+  protected readonly buscadorAbierto = signal(false);
   /** Email del perfil que se está activando (null = ninguno en curso). */
   protected readonly cambiandoPerfil = signal<string | null>(null);
 
@@ -224,6 +229,15 @@ export class HeaderComponent {
   /** Alterna el tema claro/oscuro. */
   protected alternarTema(): void {
     this.preferencias.alternarTema();
+  }
+
+  /** Abre o cierra el buscador global y deja listo el cursor para escribir. */
+  protected alternarBuscador(): void {
+    const abre = !this.buscadorAbierto();
+    this.buscadorAbierto.set(abre);
+    if (abre) {
+      afterNextRender(() => this.buscador()?.enfocar(), { injector: this.injector });
+    }
   }
 
   protected volverAUsuarioOriginal(): void {
