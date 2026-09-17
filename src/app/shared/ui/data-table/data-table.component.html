@@ -3,7 +3,7 @@
      y dejaba dos indicadores para una sola espera. El único spinner visible
      es el global; acá el estado se conserva como `aria-busy` para que un
      lector de pantalla siga sabiendo que la tabla está cargando. -->
-<div class="rounded-xl overflow-hidden border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs flex-1">
+<div class="flex-1 overflow-x-auto overflow-y-hidden rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs">
   <p-table
     [value]="filasFiltradas()"
     [attr.aria-busy]="loading()"

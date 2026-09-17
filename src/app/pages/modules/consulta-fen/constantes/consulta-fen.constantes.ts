@@ -26,14 +26,14 @@ export function campoSugerenciaFen(columna: ColumnaTextoFen): 'des_dep' | 'des_p
 const NIVELES_RIESGO = ['Muy Alto', 'Alto', 'Medio', 'Bajo', 'Muy Bajo'];
 
 export const COLUMNAS_FEN: DataTableColumn[] = ([
-  { field: 'cod_ubi', header: 'UBIGEO', width: '7rem', filterType: 'text' },
-  { field: 'des_dist', header: 'Distrito', filterType: 'text' },
+  { field: 'cod_ubi', header: 'UBIGEO', width: '5.5rem', filterType: 'text' },
+  { field: 'des_dist', header: 'Distrito', width: '7rem', filterType: 'text' },
   { field: 'des_prov', header: 'Provincia', filterType: 'text', mobileVisible: false },
   { field: 'des_dep', header: 'Departamento', filterType: 'text', mobileVisible: false },
-  { field: 'exp_mas', header: 'Mov. en masa', align: 'center', filterType: 'dropdown', mobileVisible: false },
-  { field: 'exp_inu', header: 'Inundación', align: 'center', filterType: 'dropdown', mobileVisible: false },
-  { field: 'exp_seq', header: 'Sequía', align: 'center', filterType: 'dropdown', mobileVisible: false },
-  { field: 'exp_pre', header: 'Predominante', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_mas', header: 'Mov. en masa', width: '4rem', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_inu', header: 'Inundación', width: '4rem', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_seq', header: 'Sequía', width: '4rem', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_pre', header: 'Predominante', width: '4.5rem', align: 'center', filterType: 'dropdown' },
   { field: 'observacion', header: 'Observación', width: '19rem', sortable: false, mobileVisible: false },
  ] satisfies DataTableColumn[]).map((columna): DataTableColumn =>
   columna.filterType === 'dropdown'

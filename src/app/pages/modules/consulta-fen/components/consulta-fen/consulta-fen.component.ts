@@ -39,6 +39,12 @@ export class ConsultaFenComponent implements OnInit {
   protected readonly columnas = COLUMNAS_FEN;
   protected readonly filtros = [...FILTROS_FEN];
   protected readonly mensajeRiesgoAlto = MENSAJE_RIESGO_ALTO_FEN;
+  protected readonly indicadoresTabla = [
+    { campo: 'exp_mas', etiqueta: 'Mov. en masa' },
+    { campo: 'exp_inu', etiqueta: 'Inundación' },
+    { campo: 'exp_seq', etiqueta: 'Sequía' },
+    { campo: 'exp_pre', etiqueta: 'Predominante' },
+  ] as const;
   protected readonly resultado = computed(() => this.seleccion() ?? (this.servicio.filas().length === 1 ? this.servicio.filas()[0] : null));
   protected readonly alertaRiesgo = computed(() => {
     const fila = this.resultado();
