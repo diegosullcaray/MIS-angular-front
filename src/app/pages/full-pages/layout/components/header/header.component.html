@@ -39,10 +39,12 @@
       (click)="alternarBuscador()"
       [attr.aria-expanded]="buscadorAbierto()"
       [attr.aria-controls]="buscadorAbierto() ? 'buscador-global' : null"
-      aria-label="Abrir o cerrar búsqueda global"
-      title="Buscar en todos los sistemas"
+      [attr.aria-label]="buscadorAbierto() ? 'Cerrar búsqueda global' : 'Abrir búsqueda global'"
+      [title]="buscadorAbierto() ? 'Cerrar búsqueda' : 'Buscar en todos los sistemas'"
     >
-      <ng-icon name="lucideSearch" size="15" />
+      <!-- Al expandirse pasa a ser cierre: la única lupa que queda es la que
+           está dentro del input, evitando duplicarla visualmente. -->
+      <ng-icon [name]="buscadorAbierto() ? 'lucideX' : 'lucideSearch'" size="15" />
     </button>
 
     <!-- Alternar tema claro/oscuro -->

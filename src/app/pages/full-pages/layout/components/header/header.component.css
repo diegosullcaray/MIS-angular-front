@@ -8,7 +8,10 @@
    input aparece bajo demanda para que no le robe espacio al breadcrumb. */
 .header-buscador-global {
   width: clamp(220px, 26vw, 360px);
-  animation: headerSearchIn var(--mis-transition-fast) ease;
+  overflow: clip;
+  /* Mismo ritmo de los overlays de PrimeNG: entrada corta, opacidad y barrido
+     hacia la izquierda, sin desplazar de golpe el resto de acciones. */
+  animation: headerSearchSweep var(--mis-transition-base) cubic-bezier(0.2, 0, 0, 1) both;
 }
 
 .header-buscador-global ::ng-deep .mis-buscador {
@@ -244,9 +247,23 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes headerSearchIn {
-  from { opacity: 0; transform: translateX(8px); }
-  to { opacity: 1; transform: translateX(0); }
+@keyframes headerSearchSweep {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 0 100%);
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-buscador-global {
+    animation: none;
+  }
 }
 
 @media (max-width: 639px) {

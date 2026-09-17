@@ -209,7 +209,7 @@ describe('HeaderComponent', () => {
   it('despliega el buscador global desde el botón junto al tema', async () => {
     const fixture = await crear('/app/dashboard');
     const el = fixture.nativeElement as HTMLElement;
-    const boton = el.querySelector('button[aria-label="Abrir o cerrar búsqueda global"]') as HTMLButtonElement;
+    const boton = el.querySelector('button[aria-label="Abrir búsqueda global"]') as HTMLButtonElement;
 
     expect(el.querySelector('app-buscador')).toBeNull();
     boton.click();
@@ -219,6 +219,11 @@ describe('HeaderComponent', () => {
     expect(input).not.toBeNull();
     expect(input.placeholder).toBe('Buscar en todos los sistemas…');
     expect(boton.getAttribute('aria-expanded')).toBe('true');
+    expect(boton.getAttribute('aria-label')).toBe('Cerrar búsqueda global');
+    // Con el campo abierto, el botón deja de ser otra lupa: solo la del input
+    // representa la búsqueda y el botón se convierte en cierre.
+    expect(el.querySelectorAll('.mis-buscador-lupa')).toHaveLength(1);
+    expect(Array.from(el.querySelectorAll('ng-icon')).some((icono) => icono.getAttribute('name') === 'lucideSearch')).toBe(false);
 
     boton.click();
     fixture.detectChanges();
