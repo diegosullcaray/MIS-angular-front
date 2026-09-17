@@ -7,7 +7,9 @@
     (error)="onErrorJerarquia()"
   />
 
-  @if (!nivelActual()) {
+  @if (error(); as detalleError) {
+    <app-inline-error [detalle]="detalleError" (reintentar)="reintentar()" />
+  } @else if (!nivelActual()) {
     <app-empty-state
       titulo="Elige un nivel"
       descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte."

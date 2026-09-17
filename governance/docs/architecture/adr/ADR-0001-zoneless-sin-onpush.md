@@ -1,39 +1,33 @@
-# ADR-0001: Zoneless con señales, sin `ChangeDetectionStrategy.OnPush`
+# ADR-0001: Zoneless y estrategia predeterminada de Angular 22
 
-- Estado: Vigente
-- Fecha: 2026-09-07 (registro de una decisión ya implementada)
+- Estado: Vigente; fundamento corregido el 2026-09-17
+- Fecha original: 2026-09-07
 - Responsables: Arquitectura frontend
 
 ## Contexto
 
-La aplicación arranca con `provideZonelessChangeDetection()` en `src/app/app.config.ts`: no hay `zone.js` interceptando asincronía. La actualización de la vista depende de que una señal leída en la plantilla cambie, o de un binding de evento.
-
-La documentación de gobernanza exigía `ChangeDetectionStrategy.OnPush` en todo componente. El código nunca lo cumplió: **0 de 236 componentes lo declaran**. La regla escrita y la práctica llevaban tiempo divergiendo, y cada guía nueva reproducía la exigencia.
+La aplicación usa `provideZonelessChangeDetection()` y no carga `zone.js`.
+Zoneless define cómo se notifica y programa la detección de cambios; la estrategia
+del componente es un concepto distinto. La ausencia de una declaración explícita
+no permite concluir que no se usa OnPush.
 
 ## Decisión
 
-**No se usa `ChangeDetectionStrategy.OnPush`.** Los componentes se escriben con `standalone: true` explícito y sin declarar estrategia de detección.
-
-## Fundamento
-
-`OnPush` existe para acotar el barrido global que dispara `zone.js`. En una aplicación zoneless ese barrido no existe: Angular refresca solo las vistas marcadas como sucias por una señal o un binding de evento, que es exactamente el comportamiento que `OnPush` buscaba aproximar.
-
-Declararlo, entonces:
-
-- no cambia el comportamiento observable;
-- agrega una línea por componente que sugiere una optimización inexistente;
-- e introduciría inconsistencia con los 236 componentes ya escritos.
+Conservar la estrategia predeterminada de Angular 22, sin escribir una declaración
+redundante en cada componente. Mantener `standalone: true` explícito por convención.
+Angular 22 tiene OnPush como valor predeterminado. No afirmar que OnPush no aporta
+o no cambia el comportamiento por ser zoneless.
 
 ## Consecuencias
 
-- Las guías genéricas de Angular que lo declaran obligatorio **no aplican** en este repositorio.
-- Se documenta explícitamente en [`skills/angular-mis-zoneless`](../../../skills/angular-mis-zoneless/SKILL.md) y en el agente desarrollador, para que ninguna guía externa lo reintroduzca.
-- El estado debe vivir en señales. Una propiedad de clase mutada a mano no notifica a nadie, y sin `zone.js` tampoco hay barrido accidental que la rescate: eso deja de ser un detalle de rendimiento y pasa a ser un requisito de corrección.
-- Si el proyecto volviera a `zone.js`, esta decisión se revierte.
+- Estado observable en señales; derivaciones en `computed` y efectos con cleanup.
+- Cancelar tanto al destruir el consumidor como al cambiar filtros.
+- Un cambio de estrategia requiere justificación y pruebas, no una regla copiada.
+- La explicación anterior «sin barrido global OnPush no cambia nada» era incorrecta
+  como afirmación general. Se corrige el fundamento, no la convención de declaración.
 
-## Evidencia
+## Referencias
 
-```bash
-grep -rl "ChangeDetectionStrategy.OnPush" src/app --include="*.component.ts" | wc -l   # 0
-grep -n "provideZonelessChangeDetection" src/app/app.config.ts
-```
+- [Angular: ChangeDetectionStrategy](https://angular.dev/api/core/ChangeDetectionStrategy)
+- [Angular: zoneless](https://angular.dev/guide/zoneless)
+- [Convenciones del repositorio](../../development/conventions.md)

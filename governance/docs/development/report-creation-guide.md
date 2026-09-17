@@ -75,7 +75,17 @@ pages/modules/reportes/<submodulo>/
 
 En `reportes` las pantallas hoja van en `items/`. Fuera de ese modulo van en `components/` — ver [convenciones de nombres](../development/naming-conventions.md).
 
-Para el caso habitual (selector de jerarquia arriba, tablas abajo) usa `app-reporte-simple` de `reportes/ui/reporte-simple/`: ya resuelve carga, vacio, error y el selector, asi que no envuelvas la pantalla en tu propio estado vacio.
+Para selector y tablas usa `app-reporte-simple`. El contenedor conserva el estado
+de consulta y pasa `[error]` y `[cargando]`; el armazón muestra error persistente y
+reintento reemitiendo una copia del nodo. `ReporteSimpleBase` cancela al cambiar
+filtros/destruirse y limpia tabla/error antes de consultar. Las tablas por sí solas
+solo resuelven carga, vacío y formato: no reciben errores de consulta.
+
+`errorJerarquia` es un fallo del selector, no del reporte. No duplicar el vacío de
+las tablas, pero sí modelar errores y cancelación en contenedores personalizados.
+Declarar `style`/`ordenPresentacion` en el adaptador; no añadir heurísticas de negocio
+a `shared/ui`. El adaptador regularData conserva la presentación existente en
+`src/app/pages/modules/reportes/utils/presentacion-legada.util.ts`, aislada y probada.
 
 ## 6. Orden de implementacion
 
@@ -91,6 +101,11 @@ Para el caso habitual (selector de jerarquia arriba, tablas abajo) usa `app-repo
 
 ## Criterio de terminado
 
-La guia operativa completa, con ejemplos, esta en [`skills/mis-reportes-bloques`](../../skills/mis-reportes-bloques/SKILL.md).
+Esta es la referencia canónica. La [skill](../../skills/mis-reportes-bloques/SKILL.md)
+añade solo el procedimiento del agente, sin duplicar motores/jerarquías.
+
+Backend, OAuth y Winder están congelados. El scaffold requiere `--cod-rep`, pero su
+DTO y formato numérico siguen siendo ejemplos pendientes de adaptar; no son
+evidencia de un contrato verificado. Pruebas según [riesgo](./quality-gates.md).
 
 El reporte no esta terminado porque renderiza una tabla. Debe tener contrato trazable, jerarquia correcta, estados completos, pruebas, accesibilidad, ruta navegable y evidencia de que un error real no se confunde con una respuesta vacia.

@@ -1,6 +1,7 @@
-import { Component, inject, input, OnInit, output, signal, effect, untracked } from '@angular/core';
+import { Component, DestroyRef, inject, input, OnInit, output, signal, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { map } from 'rxjs';
+import { Subject, map, takeUntil } from 'rxjs';
+import { identidadConsulta } from '../../utils/identidad-consulta.util';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { ModSysAdminService } from '../../../core/winder/instances/mod-sys-admin.service';
@@ -20,13 +21,18 @@ export class HierSelectorComponent implements OnInit {
   private readonly antAdmin = inject(ModSysAdminService);
   private readonly shell = inject(ShellStateService);
   private readonly cache = inject(JerarquiaCacheService);
+  private readonly cancelarCarga = new Subject<void>();
+  private iniciado = false;
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.cancelarCarga.next();
+      this.cancelarCarga.complete();
+    });
     effect(() => {
-      const fecha = this.fechaPersonalizada();
-      if (untracked(() => this.nodosNivel().length > 0)) {
-        this.limpiar();
-      }
+      this.fechaPersonalizada();
+      identidadConsulta(this.shell.usuarioActivo());
+      if (untracked(() => this.iniciado)) this.limpiar();
     }, { allowSignalWrites: true });
   }
 
@@ -61,10 +67,12 @@ export class HierSelectorComponent implements OnInit {
   protected readonly cargando = signal(false);
 
   ngOnInit(): void {
+    this.iniciado = true;
     this.cargarRaiz();
   }
 
   public limpiar(): void {
+    this.cancelarCarga.next();
     this.nodosNivel.set([]);
     this.valoresSeleccionados.set([]);
     this.cargarRaiz();
@@ -88,6 +96,7 @@ export class HierSelectorComponent implements OnInit {
           .getBaseHierarchy(email, codJer)
           .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.base_hierarchy ?? [])),
       )
+      .pipe(takeUntil(this.cancelarCarga))
       .subscribe({
         next: (raiz) => {
           if (raiz && raiz.length > 0) {
@@ -148,12 +157,12 @@ export class HierSelectorComponent implements OnInit {
    */
   private pedirNivel(tip_cod: number, cod_rels: string[], lvl: number, paramsFec?: { key: string; val: string }) {
     const codJer = this.paramsHier().code;
-    const clave = this.cache.claveNivel(codJer, lvl, tip_cod, cod_rels, paramsFec?.val);
+    const clave = this.cache.claveNivel(codJer, lvl, tip_cod, cod_rels, paramsFec?.val, identidadConsulta(this.shell.usuarioActivo()));
     return this.cache.obtener(clave, () =>
       this.antAdmin
         .getLevelHierarchy(codJer, lvl, tip_cod, cod_rels, paramsFec)
         .pipe(map((r) => (r.body as JerarquiaResponseBody | null)?.level_hierarchy ?? [])),
-    );
+    ).pipe(takeUntil(this.cancelarCarga));
   }
 
   private fallarNivel(esCargaInicial: boolean): void {
@@ -214,6 +223,7 @@ export class HierSelectorComponent implements OnInit {
 
   protected onSeleccionarNivel(index: number, val: HierarquiaNodo | null): void {
     if (!val) return;
+    this.cancelarCarga.next();
 
     const nuevosNodos = this.nodosNivel().slice(0, index + 1);
     const nuevosValores = this.valoresSeleccionados().slice(0, index);

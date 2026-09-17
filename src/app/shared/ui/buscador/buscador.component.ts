@@ -1,5 +1,5 @@
 import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
-import { BuscadorService, tokenizarConsulta } from './buscador.service';
+import { crearIndice, tokenizarConsulta } from './buscador.service';
 import { FUENTE_BUSQUEDA } from './fuente-busqueda';
 import type { ConfiguracionIndice, RegistroBuscable } from './buscador.model';
 
@@ -31,7 +31,6 @@ const MAXIMO_RESULTADOS = 50;
   templateUrl: './buscador.component.html',
 })
 export class BuscadorComponent {
-  private readonly buscador = inject(BuscadorService);
   private readonly fuentes = inject(FUENTE_BUSQUEDA, { optional: true }) ?? [];
 
   protected readonly consulta = signal('');
@@ -42,7 +41,7 @@ export class BuscadorComponent {
   private readonly registros = computed<RegistroBuscable[]>(() => this.fuentes.flatMap((fuente) => fuente.registros()));
 
   /** El índice se rearma solo cuando cambian los registros, no en cada tecla. */
-  private readonly indice = computed(() => this.buscador.crearIndice(CONFIG, this.registros()));
+  private readonly indice = computed(() => crearIndice(CONFIG, this.registros()));
 
   protected readonly respuesta = computed(() =>
     this.indice().buscar(this.consulta(), {

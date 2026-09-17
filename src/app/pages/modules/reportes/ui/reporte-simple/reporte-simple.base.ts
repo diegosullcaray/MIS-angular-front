@@ -1,5 +1,5 @@
 import { effect, inject, signal } from '@angular/core';
-import type { Observable } from 'rxjs';
+import type { Observable, Subscription } from 'rxjs';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../utils/hier-selector-error.util';
 import type { NodoConsulta } from '../../services/bloque-reporte.service';
@@ -19,14 +19,18 @@ export abstract class ReporteSimpleBase {
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
   protected readonly tabla = signal<TablaReporteResultado>(TABLA_VACIA);
+  protected readonly error = signal<string | null>(null);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   protected abstract consultar(nodo: NodoConsulta): Observable<ReporteBloqueUnico>;
 
   constructor() {
-    effect(() => {
+    effect((onCleanup) => {
       const nodo = this.nivelActual();
-      if (nodo) this.cargar(nodo);
+      if (nodo) {
+        const consulta = this.cargar(nodo);
+        onCleanup(() => consulta.unsubscribe());
+      }
     });
   }
 
@@ -34,17 +38,20 @@ export abstract class ReporteSimpleBase {
     this.nivelActual.set(nodo);
   }
 
-  private cargar(nodo: HierarquiaNodo): void {
+  private cargar(nodo: HierarquiaNodo): Subscription {
+    this.error.set(null);
+    this.tabla.set(TABLA_VACIA);
     this.cargando.set(true);
     // Se pasa el nodo COMPLETO: los reportes paginados reenvían también
     // `lvl_hier`/`des_rel`/`lbl_hier`. Los demás no cambian, porque
     // `BloqueReporteService.regular()` recorta a `tip_cod`/`cod_rel`.
-    this.consultar(nodo).subscribe({
+    return this.consultar(nodo).subscribe({
       next: ({ tabla1 }) => {
         this.tabla.set(tabla1);
         this.cargando.set(false);
       },
       error: () => {
+        this.error.set('No se pudo cargar el reporte. Inténtalo de nuevo en unos segundos.');
         this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
         this.cargando.set(false);
       },

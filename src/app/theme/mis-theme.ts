@@ -1,5 +1,5 @@
-import { definePreset } from '@primeng/themes';
-import Aura from '@primeng/themes/aura';
+import { definePreset } from '@primeuix/themes';
+import Aura from '@primeuix/themes/aura';
 
 /** Colores de botón compartidos por `success`/`warn`/`danger` (root sólido, outlined y text) entre modo claro y oscuro: usan `var(--mis-*)`, así que el mismo bloque sirve para ambos — es la propia variable CSS la que cambia de valor con `.dark` en <html>. */
 function botonesSemaforo(colorTexto: string) {

@@ -78,7 +78,7 @@ for (const doc of docs) {
   }
 
   /* 2. Rutas de repo citadas entre backticks. */
-  for (const m of doc.contenido.matchAll(/`((?:src|e2e|governance|public)\/[A-Za-z0-9_./<>-]+)`/g)) {
+  for (const m of doc.contenido.matchAll(/`((?:src|e2e|governance|public|\.github)\/[A-Za-z0-9_./<>-]+)`/g)) {
     const citada = m[1];
     // Las plantillas con placeholder (`<modulo>`) describen una forma, no un archivo.
     if (citada.includes('<') || citada.endsWith('/')) continue;

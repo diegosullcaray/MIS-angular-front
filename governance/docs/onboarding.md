@@ -22,7 +22,7 @@ Las [skills](../skills/) son la versión aplicada de todo esto, para tener abier
 
 ## Tres cosas que sorprenden al principio
 
-1. **No se usa `ChangeDetectionStrategy.OnPush`.** El proyecto es zoneless y ninguno de sus componentes lo declara: sin `zone.js` no hay barrido global que acotar. Ver [ADR-0001](./architecture/adr/ADR-0001-zoneless-sin-onpush.md).
+1. **Angular 22 usa `ChangeDetectionStrategy.OnPush` por defecto.** El proyecto no la declara de forma redundante; zoneless y la estrategia de comprobación son conceptos distintos. Ver [ADR-0001](./architecture/adr/ADR-0001-zoneless-sin-onpush.md).
 2. **El color no se aplica con clases utilitarias.** No existen `bg-surface-card` ni similares: se usa `text-[var(--mis-text-secondary)]` o `style` sobre los tokens `--mis-*`. Ver [ADR-0002](./architecture/adr/ADR-0002-color-por-token-css.md).
 3. **Los segmentos de ruta bajo `/app` no se eligen.** Deben coincidir con el `act_sec` del menú heredado, y por eso existen rutas como `Kaypacha__` o `cons_base_negativa`.
 

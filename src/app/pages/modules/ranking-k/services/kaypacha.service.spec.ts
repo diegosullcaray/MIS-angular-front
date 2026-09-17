@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { KaypachaService } from './kaypacha.service';
 import { ModKaypachaService } from '../../../../core/winder/instances/mod-kaypacha.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
@@ -148,5 +148,30 @@ describe('KaypachaService', () => {
     const resultado = await new Promise((resolve) => service.obtenerDetalle('z1').subscribe(resolve));
 
     expect(resultado).toEqual({ filas: [], fechaActualizacion: null });
+  });
+
+  it('cambia identidad sin reutilizar categorías ni consultas pendientes', () => {
+    shell.setUsuarioActivo(usuario());
+    const pendiente = new Subject<IWinderResponse>();
+    getListRankingSpy.mockReturnValueOnce(pendiente).mockReturnValueOnce(of(respuestaCategorias([{ name: 'Nueva', rdestip: '2' }])));
+    service.cargarCategorias();
+    shell.setUsuarioActivo(usuario({ id: 'u-2', codBt: 'BT-002' }));
+    service.cargarCategorias();
+    expect(pendiente.observed).toBe(false);
+    pendiente.next(respuestaCategorias([{ name: 'Vieja', rdestip: '1' }]));
+    expect(service.categorias()).toEqual([{ name: 'Nueva', rdestip: '2' }]);
+    shell.cerrarSesion();
+    TestBed.tick();
+    expect(service.categorias()).toEqual([]);
+  });
+
+  it('JSON o estructura inválidos se muestran como error, no vacío', () => {
+    shell.setUsuarioActivo(usuario());
+    for (const JSONLIST of ['{', '{}']) {
+      getListRankingSpy.mockReturnValue(of({ code: '0', headers: {}, body: { resultado: { list: [{ JSONLIST }] } } }));
+      service.recargarCategorias();
+      expect(service.error()).toBeTruthy();
+      expect(service.cargando()).toBe(false);
+    }
   });
 });

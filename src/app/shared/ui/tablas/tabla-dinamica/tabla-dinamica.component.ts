@@ -19,6 +19,10 @@ export class TablaDinamicaComponent {
   readonly columnas = input.required<ColumnaDinamica[]>();
   readonly filas = input.required<Record<string, unknown>[]>();
   readonly cargando = input(false);
+  /** El reporte puede declarar su regla; por defecto solo se usa el metadato style. */
+  readonly destacarFila = input<(fila: Record<string, unknown>) => boolean>(
+    (fila) => Number(fila?.['style']) === 1,
+  );
   /** Pinta en verde/rojo las columnas de variación. */
   readonly colorearVariaciones = input(false);
 
@@ -111,8 +115,7 @@ export class TablaDinamicaComponent {
 
   /** Fila destacada. */
   protected destacada(fila: Record<string, unknown>): boolean {
-    if (!fila) return false;
-    return Number(fila['style']) === 1 || String(fila['RangoDesembolso'] ?? fila['DES_RANGO'] ?? '').toLowerCase().includes('total');
+    return !!fila && this.destacarFila()(fila);
   }
 
   /** Si hay que dibujar el punto de semáforo de esta celda (columna con `semaforoKey` y valor presente en la fila). */

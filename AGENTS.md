@@ -9,7 +9,10 @@ always_on: true
 Bienvenido al repositorio **MIS Host** (Financiera Confianza).
 Este proyecto sigue reglas estrictas de arquitectura y un pipeline de gobernanza que DEBES respetar en todo momento.
 
-**Regla de oro: cuando la documentación y el código discrepan, gana el código.** Si notas una discrepancia, respeta el código.
+Para describir el estado implementado, contrastar con el código. Un defecto no
+reemplaza automáticamente un contrato de negocio ni una decisión aprobada: registrar
+la discrepancia y corregir contra su fuente. Referencia canónica en
+[convenciones](governance/docs/development/conventions.md).
 
 ## 1. Pila Tecnológica (El "Idioma Local")
 El proyecto utiliza **Angular 22 (zoneless)**, **PrimeNG 21** y **Tailwind CSS v4**.
@@ -18,7 +21,7 @@ El backend es **Ant** mediante el transporte **Winder**. NO existen APIs REST.
 Cuando escribas o modifiques código Angular, aplica siempre las siguientes reglas:
 - **Zoneless**: Todo el proyecto es zoneless. No uses ni importes `zone.js`.
 - **Señales**: Usa `signal()`, `computed()`, `input()`, `output()`. No uses `@Input()`, `@Output()` ni RxJS para estado síncrono.
-- **OnPush PROHIBIDO**: NO agregues `ChangeDetectionStrategy.OnPush` en ningún lado. Ningún componente lo usa.
+- **Estrategia predeterminada**: conservar el default de Angular 22 (OnPush), sin declaración redundante. Zoneless no elimina la estrategia; ver ADR-0001.
 - **Standalone**: Usa siempre `standalone: true`.
 - **Inyección**: Usa `inject()` siempre. No inyectes dependencias por constructor.
 - **Control de Flujo**: Usa `@if`, `@for`, `@switch`. Prohibido usar `*ngIf`, `*ngFor` y no importes `CommonModule`.
@@ -39,10 +42,16 @@ Usa los componentes compartidos de `src/app/shared/ui/` (`app-inline-error`, `ap
 
 ## 4. Agentes y Skills del Repositorio
 El repositorio cuenta con su propio pipeline de agentes y sus propias skills (guías operativas).
-- **Agentes**: Documentados en [governance/agents/README.md](file:///c:/Users/24681/Videos/DD/MIS-angular-front/governance/agents/README.md). Cuando se te pida asumir un rol específico del pipeline (por ejemplo, "Agente Desarrollador Angular"), debes leer y acatar estrictamente su documento `.md` correspondiente en `governance/agents/`.
+- **Agentes**: [Roles y proceso según riesgo](governance/agents/README.md). Son checklists; no exigen ejecutar subagentes. Si se solicita un rol específico, leer su guía.
 - **Skills**: Ubicados en `governance/skills/`. Contienen el "cómo hacer" local para tareas específicas (ej. reportes por bloques, tours guiados, arquitectura de módulos). Consúltalos si no sabes cómo implementar algo que ya está resuelto en el proyecto.
 
 ## 5. Scripts y Verificación
 No subas ni apruebes código sin antes verificar. Puedes ejecutar:
 - `npm run verify` para verificar gobernanza, docs, tokens, etc. (tarda segundos, sin compilar).
-- `npx ng build --configuration production` para validar compilación estricta.
+- `npx ng build --configuration production` para validar compilación; no equivale a tener `strict`/`strictTemplates` habilitados.
+
+## Restricción vigente
+
+Backend Ant, OAuth y Winder congelados. Mantener strands, códigos, parámetros,
+formatos de fecha y excepciones de vacío caracterizadas; no aplicar roadmaps de
+seguridad como autorización para alterar esos contratos.

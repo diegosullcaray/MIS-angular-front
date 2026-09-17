@@ -1,5 +1,7 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { Observable, map, throwError } from 'rxjs';
+import { mapearResultadosIncentivos } from '../utils/incentivos-resultados.util';
+import { DestroyRef, Injectable, effect, inject, signal, untracked } from '@angular/core';
+import { Observable, Subscription, finalize, map, throwError } from 'rxjs';
+import { identidadConsulta } from '../../../../shared/utils/identidad-consulta.util';
 import { ModIncentivosService } from '../../../../core/winder/instances/mod-incentivos.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
@@ -13,7 +15,7 @@ import {
   crearSuperPlusDefault,
   resolverConfiguracionUsuario,
 } from '../utils/incentivos-config.util';
-import { asignarValores, marcarHabilitados, marcarVisibles, sumarPorIds, resolverSituacion } from '../utils/incentivos-calculo.util';
+import { aNumeroIncentivo, asignarValores, sumarPorIds } from '../utils/incentivos-calculo.util';
 import type { NivelSeleccionado, PerfilUsuarioIncentivo } from '../models/incentivos-perfil.model';
 import type { FilaTablaEfectividad, FilaTablaVariable, ItemAvance, ItemSemaforo, ItemSuperPlus, MonetizadoIncentivo } from '../models/incentivos-tablas.model';
 import type { CalculadoraConfig } from '../models/incentivos-calculadora.model';
@@ -28,9 +30,6 @@ import {
   MODELO_CAMPANIA,
 } from '../constantes/incentivos.constantes';
 
-/** Forma cruda de `incentivos4.resultados4`/`.resultados5` (`resultado`). */
-
-
 /** Fachada + estado del módulo `incentivos` (Cuadro de Mando, `/app/incentivos3`). */
 @Injectable({ providedIn: 'root' })
 export class IncentivosService {
@@ -41,30 +40,83 @@ export class IncentivosService {
 
   readonly modelo = MODELO_CAMPANIA;
 
-  readonly cargando = signal(true);
-  readonly error = signal<string | null>(null);
+  private readonly cargandoState = signal(true);
+  readonly cargando = this.cargandoState.asReadonly();
+  private readonly errorState = signal<string | null>(null);
+  readonly error = this.errorState.asReadonly();
 
-  readonly perfil = signal<PerfilUsuarioIncentivo | null>(null);
-  readonly semaforo = signal<ItemSemaforo[]>(crearPerfilSemDefault());
-  readonly monetizado = signal<MonetizadoIncentivo>(this.monetizadoInicial());
-  readonly avances = signal<ItemAvance[]>(crearAvancesDefault());
-  readonly superPlus = signal<ItemSuperPlus[]>(crearSuperPlusDefault());
-  readonly tablaVariables = signal<FilaTablaVariable[]>([]);
-  readonly tablaEfectividad = signal<FilaTablaEfectividad[]>([]);
-  readonly calculadora = signal<CalculadoraConfig>(crearCalculadoraDefault());
+  private readonly perfilState = signal<PerfilUsuarioIncentivo | null>(null);
+  readonly perfil = this.perfilState.asReadonly();
+  private readonly semaforoState = signal<ItemSemaforo[]>(crearPerfilSemDefault());
+  readonly semaforo = this.semaforoState.asReadonly();
+  private readonly monetizadoState = signal<MonetizadoIncentivo>(this.monetizadoInicial());
+  readonly monetizado = this.monetizadoState.asReadonly();
+  private readonly avancesState = signal<ItemAvance[]>(crearAvancesDefault());
+  readonly avances = this.avancesState.asReadonly();
+  private readonly superPlusState = signal<ItemSuperPlus[]>(crearSuperPlusDefault());
+  readonly superPlus = this.superPlusState.asReadonly();
+  private readonly tablaVariablesState = signal<FilaTablaVariable[]>([]);
+  readonly tablaVariables = this.tablaVariablesState.asReadonly();
+  private readonly tablaEfectividadState = signal<FilaTablaEfectividad[]>([]);
+  readonly tablaEfectividad = this.tablaEfectividadState.asReadonly();
+  private readonly calculadoraState = signal<CalculadoraConfig>(crearCalculadoraDefault());
+  readonly calculadora = this.calculadoraState.asReadonly();
 
-  readonly nivelActual = signal<NivelSeleccionado | null>(null);
-  readonly puedeElegirNivel = signal(false);
+  private readonly nivelActualState = signal<NivelSeleccionado | null>(null);
+  readonly nivelActual = this.nivelActualState.asReadonly();
+  private readonly puedeElegirNivelState = signal(false);
+  readonly puedeElegirNivel = this.puedeElegirNivelState.asReadonly();
   /** `true` si el usuario debe elegir un nivel antes de ver datos (admin/STAFF). */
-  readonly requiereSeleccionInicial = signal(false);
+  private readonly requiereSeleccionInicialState = signal(false);
+  readonly requiereSeleccionInicial = this.requiereSeleccionInicialState.asReadonly();
   readonly nivelesSelector = NIVELES_SELECTOR_JERARQUIA;
 
   /** Fecha YYYYMMDD de los datos mostrados. */
-  readonly fechaActual = signal('');
+  private readonly fechaActualState = signal('');
+  readonly fechaActual = this.fechaActualState.asReadonly();
 
   private raizJerarquia: { tipCod: number; codRel: string } | null = null;
   /** Override manual del selector de fecha (`seleccionarFecha`) — `null` usa la fecha de corte por defecto. */
   private fechaSeleccionada: string | null = null;
+  private consultaDatos?: Subscription;
+  private consultaRaiz?: Subscription;
+  private identidad = '';
+  private revisionConsulta = 0;
+
+  constructor() {
+    effect(() => {
+      const clave = identidadConsulta(this.shell.usuarioActivo());
+      untracked(() => {
+        if (clave === this.identidad) return;
+        this.identidad = clave;
+        this.limpiar();
+      });
+    });
+    inject(DestroyRef).onDestroy(() => this.limpiar());
+  }
+
+  /** La pantalla y sus diálogos comparten la fachada; al salir se libera su estado. */
+  limpiar(): void {
+    this.consultaDatos?.unsubscribe();
+    this.consultaRaiz?.unsubscribe();
+    this.revisionConsulta++;
+    this.raizJerarquia = null;
+    this.fechaSeleccionada = null;
+    this.fechaActualState.set('');
+    this.nivelActualState.set(null);
+    this.perfilState.set(null);
+    this.errorState.set(null);
+    this.cargandoState.set(false);
+    this.puedeElegirNivelState.set(false);
+    this.requiereSeleccionInicialState.set(false);
+    this.semaforoState.set(crearPerfilSemDefault());
+    this.monetizadoState.set(this.monetizadoInicial());
+    this.avancesState.set(crearAvancesDefault());
+    this.superPlusState.set(crearSuperPlusDefault());
+    this.tablaVariablesState.set([]);
+    this.tablaEfectividadState.set([]);
+    this.calculadoraState.set(crearCalculadoraDefault());
+  }
 
   private monetizadoInicial(): MonetizadoIncentivo {
     return {
@@ -97,6 +149,7 @@ export class IncentivosService {
 
   /** Recarga datos a otra fecha de corte. */
   seleccionarFecha(fecha: string): void {
+    this.sincronizarIdentidad();
     this.fechaSeleccionada = fecha;
     const nivel = this.nivelActual();
     if (nivel) this.cargarDatos(nivel);
@@ -104,28 +157,30 @@ export class IncentivosService {
 
   /** Arranca el módulo — llamar una vez al entrar a la pantalla. */
   iniciar(): void {
-    this.cargando.set(true);
-    this.error.set(null);
-    this.perfil.set(null);
-    this.nivelActual.set(null);
+    this.limpiar();
+    this.identidad = identidadConsulta(this.shell.usuarioActivo());
+    this.cargandoState.set(true);
+    this.errorState.set(null);
+    this.perfilState.set(null);
+    this.nivelActualState.set(null);
     this.fechaSeleccionada = null;
 
     const esAdmin = this.shell.esAdmin();
-    this.puedeElegirNivel.set(esAdmin);
-    this.monetizado.update((actual) => ({ ...actual, mostrarModelo: !esAdmin, fechasHabilitadas: this.calcularFechasHabilitadas() }));
+    this.puedeElegirNivelState.set(esAdmin);
+    this.monetizadoState.update((actual) => ({ ...actual, mostrarModelo: !esAdmin, fechasHabilitadas: this.calcularFechasHabilitadas() }));
 
     if (esAdmin) {
-      this.requiereSeleccionInicial.set(true);
-      this.cargando.set(false);
+      this.requiereSeleccionInicialState.set(true);
+      this.cargandoState.set(false);
       this.cargarRaizJerarquia();
       return;
     }
 
-    this.requiereSeleccionInicial.set(false);
+    this.requiereSeleccionInicialState.set(false);
     const codRel = this.codBt;
     if (!codRel) {
-      this.error.set('No se pudo determinar tu código de negocio/agencia.');
-      this.cargando.set(false);
+      this.errorState.set('No se pudo determinar tu código de negocio/agencia.');
+      this.cargandoState.set(false);
       return;
     }
     this.seleccionarNivel({ nombre: 'Mi perfil', nivel: '--', descripcionNivel: '--', imagenUrl: '' }, { tipCod: 1, codRel, claUsu: 1 });
@@ -133,8 +188,19 @@ export class IncentivosService {
 
   /** Recarga el Cuadro de Mando del nivel actualmente seleccionado (botón "Actualizar"). */
   actualizar(): void {
+    this.sincronizarIdentidad();
     const nivel = this.nivelActual();
     if (nivel) this.cargarDatos(nivel);
+  }
+
+  /** Reintenta la consulta conservando el nivel; sin nivel, reinicia el selector inicial. */
+  reintentar(): void {
+    const nivel = this.nivelActual();
+    if (nivel) {
+      this.cargarDatos(nivel);
+      return;
+    }
+    this.iniciar();
   }
 
   /** Fechas de corte re-consultables más la vigente. */
@@ -150,20 +216,24 @@ export class IncentivosService {
 
   /** Carga la raíz de jerarquía para el selector de nivel. */
   private cargarRaizJerarquia(): void {
+    this.consultaRaiz?.unsubscribe();
+    const identidad = this.identidad;
     this.loading.show('Cargando jerarquía…');
-    this.antAdmin.getBaseHierarchy(this.email, COD_JERARQUIA_ORGANIZATIVA).subscribe({
+    this.consultaRaiz = this.antAdmin.getBaseHierarchy(this.email, COD_JERARQUIA_ORGANIZATIVA).pipe(
+      finalize(() => this.loading.hide()),
+    ).subscribe({
       next: (respuesta) => {
+        if (identidad !== identidadConsulta(this.shell.usuarioActivo())) return;
         const h = (respuesta.body as { base_hierarchy?: { tip_cod: number; cod_rel: string }[] } | null)?.base_hierarchy;
         if (h?.[0]) {
           this.raizJerarquia = { tipCod: h[0].tip_cod, codRel: h[0].cod_rel };
         } else {
-          this.error.set('No se pudo determinar tu jerarquía base.');
+          this.errorState.set('No se pudo determinar tu jerarquía base.');
         }
-        this.loading.hide();
       },
       error: () => {
-        this.error.set('No se pudo determinar tu jerarquía base.');
-        this.loading.hide();
+        if (identidad !== identidadConsulta(this.shell.usuarioActivo())) return;
+        this.errorState.set('No se pudo determinar tu jerarquía base.');
       },
     });
   }
@@ -188,6 +258,7 @@ export class IncentivosService {
 
   /** Financiera Confianza consolidada. */
   seleccionarFinancieraConfianza(claUsu: 1 | 2): void {
+    this.sincronizarIdentidad();
     this.seleccionarNivel(
       CABECERA_FINANCIERA_CONFIANZA,
       { tipCod: 7, codRel: '231', claUsu }
@@ -196,8 +267,9 @@ export class IncentivosService {
 
   /** Asesor elegido en el selector. */
   seleccionarAsesor(asesor: AsesorPickItem): void {
+    this.sincronizarIdentidad();
     const claUsu = asesor.cod_gru ?? 1;
-    this.monetizado.update((actual) => ({ ...actual, mostrarModelo: claUsu === 1 }));
+    this.monetizadoState.update((actual) => ({ ...actual, mostrarModelo: claUsu === 1 }));
     this.seleccionarNivel(
       { nombre: asesor.des_sec, nivel: 'CARGO', descripcionNivel: asesor.des_car ?? '--', imagenUrl: asesor.pic_url ?? '' },
       { tipCod: 1, codRel: asesor.cod_sec, claUsu }
@@ -206,7 +278,8 @@ export class IncentivosService {
 
   /** Nodo elegido en el selector de jerarquía. */
   seleccionarNodoJerarquia(nodo: NodoJerarquiaIncentivo): void {
-    this.monetizado.update((actual) => ({ ...actual, mostrarModelo: false }));
+    this.sincronizarIdentidad();
+    this.monetizadoState.update((actual) => ({ ...actual, mostrarModelo: false }));
     this.seleccionarNivel(
       { nombre: nodo.des_rel, nivel: nodo.tip_rel ?? '--', descripcionNivel: nodo.des_rel, imagenUrl: '' },
       { tipCod: nodo.tip_cod, codRel: nodo.cod_rel, claUsu: nodo.cod_gru ?? 1 }
@@ -214,127 +287,69 @@ export class IncentivosService {
   }
 
   private seleccionarNivel(perfil: PerfilUsuarioIncentivo, nivel: NivelSeleccionado): void {
-    this.perfil.set(perfil);
-    this.requiereSeleccionInicial.set(false);
+    this.perfilState.set(perfil);
+    this.requiereSeleccionInicialState.set(false);
     this.cargarDatos(nivel);
   }
 
   private cargarDatos(nivel: NivelSeleccionado): void {
-    this.cargando.set(true);
-    this.error.set(null);
-    this.nivelActual.set(nivel);
+    this.consultaDatos?.unsubscribe();
+    const identidad = this.identidad;
+    this.revisionConsulta++;
+    this.cargandoState.set(true);
+    this.errorState.set(null);
+    this.nivelActualState.set(nivel);
 
     const puedeSimular = ![20, 7].includes(nivel.tipCod);
     const cfg = resolverConfiguracionUsuario(nivel.tipCod, nivel.claUsu);
     const fec = this.fechaCorte();
-    this.fechaActual.set(fec);
+    this.fechaActualState.set(fec);
 
     const fuente$ =
       nivel.claUsu === 2
         ? this.ant.getDataSourcesGrupal(nivel.tipCod, nivel.codRel, fec)
         : this.ant.getDataSourcesIndividual(this.modelo, nivel.tipCod, nivel.codRel, fec);
 
-    fuente$.subscribe({
-      next: (respuesta) => {
+    this.consultaDatos = fuente$.pipe(
+      map((respuesta) => {
         const ds = (respuesta.body as ResultadosBody | null)?.resultado;
-        if (ds) this.aplicarResultados(ds, cfg, nivel, puedeSimular);
-        this.cargando.set(false);
+        if (ds != null && (typeof ds !== 'object' || Array.isArray(ds))) {
+          throw new Error('Resultados de Incentivos inválidos.');
+        }
+        return mapearResultadosIncentivos(ds ?? {}, cfg, nivel, puedeSimular);
+      }),
+    ).subscribe({
+      next: (vista) => {
+        if (identidad !== identidadConsulta(this.shell.usuarioActivo())) return;
+        this.tablaVariablesState.set(vista.tablaVariables);
+        this.tablaEfectividadState.set(vista.tablaEfectividad);
+        this.semaforoState.set(vista.semaforo);
+        this.avancesState.set(vista.avances);
+        this.superPlusState.set(vista.superPlus);
+        this.monetizadoState.update(actual => ({ ...actual, ...vista.monetizado }));
+        this.calculadoraState.set(vista.calculadora);
+        this.cargandoState.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar el Cuadro de Mando.');
-        this.cargando.set(false);
+        if (identidad !== identidadConsulta(this.shell.usuarioActivo())) return;
+        this.errorState.set('No se pudo cargar el Cuadro de Mando.');
+        this.cargandoState.set(false);
       },
     });
   }
 
-  private aplicarResultados(
-    ds: NonNullable<ResultadosBody['resultado']>,
-    cfg: ReturnType<typeof resolverConfiguracionUsuario>,
-    nivel: NivelSeleccionado,
-    puedeSimular: boolean
-  ): void {
-    const ds3 = ds.ds3 ?? {};
-    const ds4 = ds.ds4 ?? {};
-
-    this.tablaVariables.set(ds.ds1 ?? []);
-    this.tablaEfectividad.set(ds.ds2 ?? []);
-
-    let sem = marcarVisibles(crearPerfilSemDefault(), cfg.prof);
-    sem = asignarValores(sem, ds4, 'val', CLAVES_INCENTIVOS.flag, '');
-    this.semaforo.set(sem);
-
-    const flagAct = Number(ds4[CLAVES_INCENTIVOS.flagActivo] ?? 0);
-    const situacion = resolverSituacion(flagAct);
-
-    let avances = marcarVisibles(crearAvancesDefault(), cfg.avanS);
-    avances = marcarHabilitados(avances, cfg.avanE);
-    avances = asignarValores(avances, ds3, 'val', '', CLAVES_INCENTIVOS.sufijoAvance);
-    avances = asignarValores(avances, ds3, 'per', '', CLAVES_INCENTIVOS.sufijoAvancePorcentaje);
-    this.avances.set(avances);
-
-    let superPlus = marcarVisibles(crearSuperPlusDefault(), cfg.supS);
-    superPlus = marcarHabilitados(superPlus, cfg.supE);
-    superPlus = asignarValores(superPlus, ds4, 'val', CLAVES_INCENTIVOS.bonoSuperPlus, '');
-    this.superPlus.set(superPlus);
-
-    const bonoBase = sumarPorIds(ds4, cfg.prof, CLAVES_INCENTIVOS.bonoBase, '');
-    const bonoPlus = sumarPorIds(ds4, cfg.prof, CLAVES_INCENTIVOS.bonoPlus, '');
-    const bonoSuperPlus = sumarPorIds(ds4, cfg.calS, CLAVES_INCENTIVOS.bonoSuperPlus, '');
-    const bonoTotal = bonoBase + bonoPlus + bonoSuperPlus;
-
-    this.monetizado.update((actual) => ({
-      ...actual,
-      bonoBase,
-      bonoPlus,
-      bonoSuperPlus,
-      bonoTotal,
-      codigoSituacion: situacion.codigo,
-      descripcionSituacion: situacion.descripcion,
-      puedeSimular,
-    }));
-
-    let vars = marcarVisibles(crearCalculadoraDefault().variables, cfg.prof);
-    vars = asignarValores(vars, ds3, 'val', '', CLAVES_INCENTIVOS.sufijoReal);
-    vars = asignarValores(vars, ds3, 'met', '', CLAVES_INCENTIVOS.sufijoMeta);
-    vars = asignarValores(vars, ds4, 'bob', CLAVES_INCENTIVOS.bonoBase, '');
-    vars = asignarValores(vars, ds4, 'bop', CLAVES_INCENTIVOS.bonoPlus, '');
-
-    let plus = marcarVisibles(crearCalculadoraDefault().plus, cfg.supS);
-    plus = marcarHabilitados(plus, cfg.calE);
-    plus = asignarValores(plus, ds3, 'val', '', CLAVES_INCENTIVOS.sufijoReal);
-    plus = asignarValores(plus, ds4, 'bos', CLAVES_INCENTIVOS.bonoSuperPlus, '');
-
-    if (nivel.claUsu === 1) {
-      const idxEfec1 = vars.findIndex((v) => v.id === 'efec1' && v.show);
-      if (idxEfec1 !== -1) {
-        vars[idxEfec1] = {
-          ...vars[idxEfec1],
-          tp1: Number(ds3['pag1'] ?? 0),
-          tp2: Number(ds3['pag2'] ?? 0),
-          tp3: Number(ds3['pag3'] ?? 0),
-        };
-      }
-      const idxTas = plus.findIndex((p) => p.id === 'tas' && p.show);
-      if (idxTas !== -1) {
-        plus[idxTas] = { ...plus[idxTas], val1: Number(ds3['tas_min'] ?? 0), met: Number(ds3['tas_met'] ?? 0) };
-      }
-    }
-
-    this.calculadora.set({
-      variables: vars,
-      plus,
-      bonoBase,
-      bonoPlus,
-      bonoSuperPlus,
-      bonoTotal,
-      activo: situacion.codigo,
-      margenRenovacion: Number(ds3['mar_ren'] ?? 0),
-      claseUsuario: nivel.claUsu,
-    });
+  /** Limpia estado antes de usar una acción que puede ejecutarse tras cambiar de usuario. */
+  private sincronizarIdentidad(): void {
+    const identidad = identidadConsulta(this.shell.usuarioActivo());
+    if (identidad === this.identidad) return;
+    this.identidad = identidad;
+    this.limpiar();
   }
 
   /** Simulación de la Calculadora. */
   simular(valores: Record<string, number>): Observable<boolean> {
+    const identidad = identidadConsulta(this.shell.usuarioActivo());
+    const revision = this.revisionConsulta;
     const nivel = this.nivelActual();
     const calc = this.calculadora();
     if (!nivel) throw new Error('No hay un nivel seleccionado para simular.');
@@ -346,6 +361,7 @@ export class IncentivosService {
 
     return fuente$.pipe(
       map((respuesta) => {
+        if (revision !== this.revisionConsulta || identidad !== identidadConsulta(this.shell.usuarioActivo())) return false;
         const ds = (respuesta.body as SimulacionBody | null)?.resultado;
         if (!ds) return false;
 
@@ -353,10 +369,10 @@ export class IncentivosService {
         const bonoPlus = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, CLAVES_INCENTIVOS.bonoPlus, '');
         const bonoSuperPlus = sumarPorIds(ds, calc.plus.filter((p) => p.suma).map((p) => p.id), CLAVES_INCENTIVOS.bonoSuperPlus, '');
 
-        const variables = asignarValores(asignarValores(calc.variables, ds, 'bob', CLAVES_INCENTIVOS.bonoBase, ''), ds, 'bop', CLAVES_INCENTIVOS.bonoPlus, '');
-        const plus = asignarValores(calc.plus, ds, 'bos', CLAVES_INCENTIVOS.bonoSuperPlus, '');
+        const variables = asignarValores(asignarValores(calc.variables, ds, 'bob', CLAVES_INCENTIVOS.bonoBase, '', aNumeroIncentivo), ds, 'bop', CLAVES_INCENTIVOS.bonoPlus, '', aNumeroIncentivo);
+        const plus = asignarValores(calc.plus, ds, 'bos', CLAVES_INCENTIVOS.bonoSuperPlus, '', aNumeroIncentivo);
 
-        this.calculadora.set({
+        this.calculadoraState.set({
           ...calc,
           variables,
           plus,

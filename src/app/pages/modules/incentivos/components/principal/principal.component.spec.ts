@@ -28,7 +28,9 @@ class IntersectionObserverFalso {
 describe('PrincipalComponent', () => {
   let incentivosFalso: {
     iniciar: ReturnType<typeof vi.fn>;
+    limpiar: ReturnType<typeof vi.fn>;
     actualizar: ReturnType<typeof vi.fn>;
+    reintentar: ReturnType<typeof vi.fn>;
     requiereSeleccionInicial: ReturnType<typeof signal<boolean>>;
     error: ReturnType<typeof signal<string | null>>;
     cargando: ReturnType<typeof signal<boolean>>;
@@ -54,7 +56,9 @@ describe('PrincipalComponent', () => {
 
     incentivosFalso = {
       iniciar: vi.fn(),
+      limpiar: vi.fn(),
       actualizar: vi.fn(),
+      reintentar: vi.fn(),
       requiereSeleccionInicial: signal(false),
       error: signal<string | null>(null),
       cargando: signal(false),

@@ -1,5 +1,5 @@
 import { Component, computed, contentChildren, input, output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -16,7 +16,7 @@ import { DataTableCellDirective } from './data-table-cell.directive';
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, IconFieldModule, InputIconModule, SelectModule, DatePickerModule, TooltipModule],
+  imports: [NgTemplateOutlet, FormsModule, TableModule, ButtonModule, InputTextModule, IconFieldModule, InputIconModule, SelectModule, DatePickerModule, TooltipModule],
   templateUrl: './data-table.component.html',
   styleUrl: './data-table.component.css',
 })

@@ -5,7 +5,7 @@ description: Metodología de pruebas de MIS Host con Vitest y Playwright. Usar a
 
 # Pruebas — MIS Host
 
-Doble pirámide: **Vitest** vía `@angular/build:unit-test` sobre jsdom, y **Playwright** para los flujos completos. Hoy hay 349 specs unitarias y 29 suites E2E en dos viewports.
+Doble pirámide: **Vitest** vía `@angular/build:unit-test` sobre jsdom, y **Playwright** para los flujos completos. Consulta `npm run inventario` para los conteos vigentes; no los copies en documentación o criterios de aceptación.
 
 ---
 
@@ -13,7 +13,7 @@ Doble pirámide: **Vitest** vía `@angular/build:unit-test` sobre jsdom, y **Pla
 
 | Convención | Detalle |
 |---|---|
-| **Globales de Vitest** | `tsconfig.spec.json` declara `types: ["vitest/globals"]`. **Ningún spec importa de `'vitest'`** — 0 de 349. No agregues `import { describe, it, expect, vi } from 'vitest'`. |
+| **Globales de Vitest** | `tsconfig.spec.json` declara `types: ["vitest/globals"]`. No agregues `import { describe, it, expect, vi } from 'vitest'`. |
 | **`TestBed` para servicios** | Un servicio con `inject()` en un campo necesita contexto de inyección: no se instancia con `new`. |
 | **Nada de `TestBed` para `utils/`** | Los mapeos puros se prueban directo. Son las pruebas más rápidas y las que más protegen. |
 | **`src/test-setup.ts`** | Garantiza que `localStorage` y `sessionStorage` existan —jsdom no los da si el documento tiene origen opaco— y limpia `sessionStorage` antes de cada test: el caché de jerarquía se comparte entre specs del mismo worker. No dependas de ese estado. |
@@ -202,7 +202,7 @@ node governance/scripts/ejecutar-pruebas.mjs ci --con-e2e   # la cadena del pipe
 
 ## 7. Dos falsos verdes
 
-- **Contar specs no es cobertura.** 349 archivos no dicen qué reglas de negocio están cubiertas; varias pruebas comparten los mismos mocks.
+- **Contar specs no es cobertura.** El número generado no dice qué reglas de negocio están cubiertas; varias pruebas pueden compartir los mismos mocks.
 - **El E2E no valida el backend real**, por diseño. No sirve como evidencia de autorización: eso se prueba contra el backend, no contra el frontend que lo mockea.
 
 Falta cobertura automatizada de rutas contra menú, de `cod_rep` contra servicios y de autorización real. Está registrado como brecha en [`test-inventory`](../../docs/development/test-inventory.md); no lo afirmes como resuelto.

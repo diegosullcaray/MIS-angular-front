@@ -2,6 +2,8 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
+import { InlineErrorComponent } from '../../../../../../../../../shared/ui/inline-error/inline-error.component';
+import type { Subscription } from 'rxjs';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { TabsModule } from 'primeng/tabs';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -22,7 +24,7 @@ import { SegurosService } from '../../services/seguros.service';
 @Component({
   selector: 'app-seguros-pasivos',
   standalone: true,
-  imports: [HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
+  imports: [HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, InlineErrorComponent, WindowPanelComponent, TabsModule],
   templateUrl: './seguros-pasivos.component.html',
 })
 export class SegurosPasivosComponent {
@@ -34,6 +36,7 @@ export class SegurosPasivosComponent {
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
   protected readonly tablas = signal<TablaDinamicaResultado[]>([]);
+  protected readonly error = signal<string | null>(null);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   /**
@@ -50,9 +53,12 @@ export class SegurosPasivosComponent {
   ];
 
   constructor() {
-    effect(() => {
+    effect((onCleanup) => {
       const nodo = this.nivelActual();
-      if (nodo) this.cargar(nodo);
+      if (nodo) {
+        const consulta = this.cargar(nodo);
+        onCleanup(() => consulta.unsubscribe());
+      }
     });
   }
 
@@ -60,14 +66,22 @@ export class SegurosPasivosComponent {
     this.nivelActual.set(nodo);
   }
 
-  private cargar(nodo: HierarquiaNodo): void {
+  protected reintentar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.nivelActual.set({ ...nodo });
+  }
+
+  private cargar(nodo: HierarquiaNodo): Subscription {
+    this.error.set(null);
+    this.tablas.set([]);
     this.cargando.set(true);
-    this.servicio.segurosPasivos({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
+    return this.servicio.segurosPasivos({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
       next: (tablas) => {
         this.tablas.set(tablas);
         this.cargando.set(false);
       },
       error: () => {
+        this.error.set('No se pudo cargar el reporte. Inténtalo de nuevo en unos segundos.');
         this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
         this.cargando.set(false);
       },

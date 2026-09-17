@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MessageService } from 'primeng/api';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import type { Observable } from 'rxjs';
 import { ReporteSimpleBase } from './reporte-simple.base';
 import { ToastService } from '../../../../../shared/services/toast.service';
@@ -20,16 +20,17 @@ class ReporteDobleComponent extends ReporteSimpleBase {
   readonly consultas: { nodo: NodoConsulta; prod: string }[] = [];
   readonly producto = signal('TODOS');
   fallar = false;
+  fuente?: Observable<ReporteBloqueUnico>;
 
   protected consultar(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     const prod = this.producto();
     this.consultas.push({ nodo, prod });
-    return this.fallar ? throwError(() => new Error('boom')) : of(bloque(prod));
+    return this.fuente ?? (this.fallar ? throwError(() => new Error('boom')) : of(bloque(prod)));
   }
 
   // Acceso para el test (en la clase base son `protected`).
   get estado() {
-    return { tabla: this.tabla, cargando: this.cargando, nivel: this.nivelActual };
+    return { tabla: this.tabla, error: this.error, cargando: this.cargando, nivel: this.nivelActual };
   }
   seleccionar(nodo: typeof NODO) {
     this.onNivelSeleccionado(nodo);
@@ -62,6 +63,36 @@ describe('ReporteSimpleBase', () => {
     expect(componente.consultas).toEqual([{ nodo: NODO, prod: 'TODOS' }]);
     expect(componente.estado.tabla().body).toEqual([{ marca: 'TODOS' }]);
     expect(componente.estado.cargando()).toBe(false);
+    expect(componente.estado.error()).toBeNull();
+  });
+
+  it('cancela la selección anterior y no publica una respuesta tardía', () => {
+    const anterior = new Subject<ReporteBloqueUnico>();
+    const actual = new Subject<ReporteBloqueUnico>();
+    componente.fuente = anterior;
+    componente.seleccionar(NODO);
+    fixture.detectChanges();
+    componente.fuente = actual;
+    componente.producto.set('CTS');
+    fixture.detectChanges();
+    expect(anterior.observed).toBe(false);
+    actual.next(bloque('CTS'));
+    anterior.next(bloque('ANTIGUO'));
+    expect(componente.estado.tabla().body).toEqual([{ marca: 'CTS' }]);
+    fixture.destroy();
+    expect(actual.observed).toBe(false);
+  });
+
+  it('un reintento limpia el error previo y vuelve a mostrar contenido', () => {
+    componente.fallar = true;
+    componente.seleccionar(NODO);
+    fixture.detectChanges();
+    expect(componente.estado.error()).toBeTruthy();
+    componente.fallar = false;
+    componente.seleccionar({ ...NODO });
+    fixture.detectChanges();
+    expect(componente.estado.error()).toBeNull();
+    expect(componente.estado.tabla().body).toEqual([{ marca: 'TODOS' }]);
   });
 
   it('vuelve a consultar cuando cambia un filtro, sin reelegir el nivel', () => {

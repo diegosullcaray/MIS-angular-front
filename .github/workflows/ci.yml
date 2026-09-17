@@ -10,7 +10,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'mejora/**']
   pull_request:
   workflow_dispatch:
 
@@ -34,6 +34,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - run: npm ci
+      - name: Regresiones del generador
+        run: npm run test:scaffold
       - name: Arquitectura y seguridad
         run: node governance/scripts/validar-gobernanza.mjs --check --linea-base
       - name: Enlaces y referencias de la documentación

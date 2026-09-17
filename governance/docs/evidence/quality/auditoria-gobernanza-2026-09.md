@@ -16,12 +16,12 @@ Se corrigió la documentación contra el código, se agregaron las piezas que fa
 
 | # | Hallazgo | Evidencia | Severidad | Acción |
 |---|---|---|---|---|
-| D1 | Se exigía `ChangeDetectionStrategy.OnPush` en todo componente | **0 de 236** componentes lo declaran | Alta | Corregido: en zoneless no aporta. Documentado el porqué |
+| D1 | Se exigía declarar `ChangeDetectionStrategy.OnPush` en todo componente | El repositorio no la declara explícitamente | Alta | Corregido: Angular 22 ya usa esa estrategia por defecto; la guía prohíbe la declaración redundante y no confunde zoneless con estrategia. |
 | D2 | La skill de estilos documentaba `bg-surface-card`, `text-text-primary`, `border-border`, `bg-primary-600` y otras | **0 usos** en `src/`; Tailwind v4 está sin bloque `@theme` | Alta | Corregido: el color se aplica con `text-[var(--mis-*)]` o `style` |
 | D3 | Scaffold y skills enseñaban `http.get('/api/<modulo>')` | El sistema usa Winder/Ant; ese endpoint no existe | Alta | Corregido: el generador produce servicios sobre `Mod*Service` |
 | D4 | Sufijos documentados `.constants.ts`, `.models.ts`, `.mappers.ts` | El repo usa `.constantes.ts` (20/20), `.model.ts` (95/98), `.util.ts` (21/21) | Media | Corregido y verificado por el auditor |
 | D5 | `module-guide.md` ubicaba las pantallas en `items/` | Los módulos usan `components/`; `items/` es solo de `reportes` | Media | Corregido |
-| D6 | Los specs de ejemplo importaban de `'vitest'` | **0 de 349** specs lo hacen: el proyecto usa globales | Media | Corregido |
+| D6 | Los specs de ejemplo importaban de `'vitest'` | El proyecto usa las globales de Vitest | Media | Corregido; los conteos se obtienen del inventario generado. |
 | D7 | El transporte Winder/Ant no tenía documento propio | Solo aparecía de refilón en `data-flow.md` | Media | Nuevo: `architecture/winder-transport.md` + skill `mis-winder-ant` |
 | D8 | `generar-tokens-paleta.mjs` documentaba su ruta como `scripts/` | Vive en `governance/scripts/` | Baja | Corregido, incluido el encabezado que genera |
 | D9 | La documentación mencionaba "pipelines de CI/CD" | No existía ningún workflow en el repositorio | Media | Nuevo: `.github/workflows/ci.yml` |
@@ -83,7 +83,7 @@ Se agregó además una quinta comprobación al validador: **las reglas del audit
 ```bash
 node governance/scripts/validar-gobernanza.mjs --json      # 7 errores, 122 avisos sobre 1224 archivos
 node governance/scripts/validar-documentacion.mjs          # 0 referencias rotas
-node governance/scripts/generar-inventario.mjs --json      # 12 módulos, 349 specs, 29 suites E2E, 206 cod_rep
+node governance/scripts/generar-inventario.mjs --json      # conteos actuales de módulos, specs, E2E y cod_rep
 npm run verify                                             # cadena estática completa
 ```
 

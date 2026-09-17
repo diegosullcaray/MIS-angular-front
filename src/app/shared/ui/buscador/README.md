@@ -71,10 +71,10 @@ es más útil que abrir otra lista.
 
 ## Usar el motor por separado
 
-`BuscadorService` no depende del componente; sirve para cualquier lista en memoria:
+La función `crearIndice` no depende del componente; sirve para cualquier lista en memoria:
 
 ```typescript
-const indice = inject(BuscadorService).crearIndice(
+const indice = crearIndice(
   {
     atributosBuscables: [{ nombre: 'nombre', valor: (c) => c.nombre }],
     atributosFacetables: [{ nombre: 'agencia', valor: (c) => c.agencia }],

@@ -1,5 +1,4 @@
-import { TestBed } from '@angular/core/testing';
-import { BuscadorService, distanciaEdicion, normalizar, tokenizarConsulta } from './buscador.service';
+import { crearIndice, distanciaEdicion, normalizar, tokenizarConsulta } from './buscador.service';
 import type { ConfiguracionIndice } from './buscador.model';
 
 interface Registro {
@@ -23,16 +22,10 @@ const CONFIG: ConfiguracionIndice<Registro> = {
   id: (r) => r.id,
 };
 
-describe('BuscadorService', () => {
-  let buscador: BuscadorService;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    buscador = TestBed.inject(BuscadorService);
-  });
+describe('crearIndice', () => {
 
   function indiceCon(registros: Registro[]) {
-    return buscador.crearIndice(CONFIG, registros);
+    return crearIndice(CONFIG, registros);
   }
 
   function nombres(registros: Registro[], consulta: string, parametros = {}) {
@@ -160,7 +153,7 @@ describe('BuscadorService', () => {
 
     it('el ranking personalizado solo desempata cuando los criterios textuales empatan', () => {
       const registros = [registro({ id: 'b', nombre: 'Cartera' }), registro({ id: 'a', nombre: 'Cartera' })];
-      const indice = buscador.crearIndice({ ...CONFIG, rankingPersonalizado: (x, y) => x.id.localeCompare(y.id) }, registros);
+      const indice = crearIndice({ ...CONFIG, rankingPersonalizado: (x, y) => x.id.localeCompare(y.id) }, registros);
 
       expect(indice.buscar('cartera').resultados.map((r) => r.objeto.id)).toEqual(['a', 'b']);
     });

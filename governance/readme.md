@@ -49,7 +49,7 @@ Guías aplicadas, para usar mientras se escribe código. Registradas en `.agents
 
 | Skill | Qué resuelve |
 |---|---|
-| [`angular-mis-zoneless`](./skills/angular-mis-zoneless/SKILL.md) | señales, zoneless y por qué acá **no** se usa `OnPush` |
+| [`angular-mis-zoneless`](./skills/angular-mis-zoneless/SKILL.md) | señales, zoneless y estrategia predeterminada de Angular 22 |
 | [`mis-module-architecture`](./skills/mis-module-architecture/SKILL.md) | dónde va cada archivo y qué sufijo lleva |
 | [`mis-component-styling`](./skills/mis-component-styling/SKILL.md) | tokens `--mis-*`, PrimeNG y los cuatro estados |
 | [`mis-winder-ant`](./skills/mis-winder-ant/SKILL.md) | el transporte real por donde entran los datos — **no hay REST** |

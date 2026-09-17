@@ -1,4 +1,3 @@
-import { Injectable } from '@angular/core';
 import type {
   ConfiguracionIndice,
   CriteriosRanking,
@@ -524,9 +523,6 @@ export class IndiceBuscador<T> {
 }
 
 /** Fábrica de índices de búsqueda en memoria. */
-@Injectable({ providedIn: 'root' })
-export class BuscadorService {
-  crearIndice<T>(config: ConfiguracionIndice<T>, objetos: readonly T[]): IndiceBuscador<T> {
-    return new IndiceBuscador(config, objetos);
-  }
+export function crearIndice<T>(config: ConfiguracionIndice<T>, objetos: readonly T[]): IndiceBuscador<T> {
+  return new IndiceBuscador(config, objetos);
 }
