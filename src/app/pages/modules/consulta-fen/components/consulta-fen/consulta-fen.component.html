@@ -12,7 +12,7 @@
           <form class="grid gap-3 md:grid-cols-[190px_minmax(0,1fr)_auto] md:items-end" (submit)="$event.preventDefault(); buscar()">
             <div class="min-w-0">
               <label class="mb-1.5 block text-xs font-semibold text-[var(--mis-text-primary)]" for="fen-filtro">Buscar por</label>
-              <p-select inputId="fen-filtro" class="w-full" [options]="filtros" optionLabel="label" optionValue="value" [ngModel]="filtro()" (ngModelChange)="cambiarFiltro($event)" [disabled]="servicio.cargando()" />
+              <p-select inputId="fen-filtro" name="filtro" class="w-full" [options]="filtros" optionLabel="label" optionValue="value" [ngModel]="filtro()" (ngModelChange)="cambiarFiltro($event)" [disabled]="servicio.cargando()" />
             </div>
             <div class="relative min-w-0">
               <label class="mb-1.5 block text-xs font-semibold text-[var(--mis-text-primary)]" for="fen-consulta">{{ etiquetaFiltro() }}</label>
