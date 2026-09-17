@@ -10,7 +10,6 @@ import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import {
   COLUMNAS_FEN,
-  FECHA_MATRIZ_FEN,
   FILTROS_FEN,
   MENSAJE_RIESGO_ALTO_FEN,
 } from '../../constantes/consulta-fen.constantes';
@@ -38,12 +37,8 @@ export class ConsultaFenComponent implements OnInit {
   protected readonly filtro = signal<ColumnaFiltroFen>(3);
 
   protected readonly columnas = COLUMNAS_FEN;
-  // PrimeNG recibe las opciones como un arreglo mutable; el catálogo permanece
-  // inmutable y esta copia evita exponerlo a cambios del componente.
   protected readonly filtros = [...FILTROS_FEN];
-  protected readonly fechaMatriz = FECHA_MATRIZ_FEN;
   protected readonly mensajeRiesgoAlto = MENSAJE_RIESGO_ALTO_FEN;
-  /** Conserva el comportamiento legado: una única coincidencia queda seleccionada automáticamente. */
   protected readonly resultado = computed(() => this.seleccion() ?? (this.servicio.filas().length === 1 ? this.servicio.filas()[0] : null));
   protected readonly alertaRiesgo = computed(() => {
     const fila = this.resultado();
@@ -87,7 +82,6 @@ export class ConsultaFenComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Igual que la pantalla STG: al entrar muestra la matriz completa por distrito.
     this.ejecutarConsulta(3, '');
   }
 
@@ -153,6 +147,10 @@ export class ConsultaFenComponent implements OnInit {
     if (nivel === 'Alto') return 'var(--mis-warning)';
     if (nivel === 'Medio') return 'var(--mis-warning)';
     return 'var(--mis-success)';
+  }
+
+  protected observacion(fila: FilaRiesgoFen): string | null {
+    return esRiesgoAlto(fila.exp_pre) ? this.mensajeRiesgoAlto : null;
   }
 
   protected etiquetaFiltro(): string {

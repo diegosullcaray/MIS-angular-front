@@ -2,7 +2,6 @@ import type { DataTableColumn } from '../../../../shared/ui/data-table/data-tabl
 import type { ColumnaFiltroFen, ColumnaTextoFen } from '../models/consulta-fen.model';
 
 export const COD_REPORTE_FEN = 'CON_AGRO_FEN';
-export const FECHA_MATRIZ_FEN = '12 set. 2026';
 export const MENSAJE_RIESGO_ALTO_FEN =
   'Zona de Alto Riesgo CENEPRED: Ofrecer Seguro Agrícola / Multirriesgo.';
 
@@ -35,6 +34,7 @@ export const COLUMNAS_FEN: DataTableColumn[] = ([
   { field: 'exp_inu', header: 'Inundación', align: 'center', filterType: 'dropdown', mobileVisible: false },
   { field: 'exp_seq', header: 'Sequía', align: 'center', filterType: 'dropdown', mobileVisible: false },
   { field: 'exp_pre', header: 'Predominante', align: 'center', filterType: 'dropdown' },
+  { field: 'observacion', header: 'Observación', width: '19rem', sortable: false, mobileVisible: false },
  ] satisfies DataTableColumn[]).map((columna): DataTableColumn =>
   columna.filterType === 'dropdown'
     ? {

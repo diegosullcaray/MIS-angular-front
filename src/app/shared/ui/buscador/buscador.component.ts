@@ -3,29 +3,23 @@ import { crearIndice, tokenizarConsulta } from './buscador.service';
 import { FUENTE_BUSQUEDA } from './fuente-busqueda';
 import type { ConfiguracionIndice, RegistroBuscable } from './buscador.model';
 
-/** Facetas que se ofrecen como chips, con la etiqueta del grupo. */
 const FACETAS = [{ nombre: 'tipo', etiqueta: 'Tipo' }] as const;
 
 type Faceta = (typeof FACETAS)[number]['nombre'];
 
-/** Configuración del índice; el orden de `atributosBuscables` importa: un match en el nombre pesa más que en la ubicación. */
 const CONFIG: ConfiguracionIndice<RegistroBuscable> = {
   atributosBuscables: [
     { nombre: 'etiqueta', valor: (r) => r.etiqueta },
     { nombre: 'ubicacion', valor: (r) => r.ubicacion },
   ],
   atributosFacetables: [{ nombre: 'tipo', valor: (r) => r.tipo }],
-  // Con los 5 criterios textuales empatados: primero lo accionable (abrir una
-  // pantalla) y después las carpetas, que solo llevan a otra lista.
   rankingPersonalizado: (a, b) => Number(a.tipo === 'Carpeta') - Number(b.tipo === 'Carpeta'),
   id: (r) => r.id,
 };
 
-/** Tope de resultados renderizados; alto a propósito porque la lista scrollea — es solo una red de contención. */
 const MAXIMO_RESULTADOS = 50;
 let siguienteInstancia = 0;
 
-/** Búsqueda instantánea con la relevancia de Algolia; no conoce ningún módulo, se alimenta de las fuentes registradas en `FUENTE_BUSQUEDA` y puede acotarse a un origen. */
 @Component({
   selector: 'app-buscador',
   standalone: true,
@@ -34,10 +28,8 @@ let siguienteInstancia = 0;
 export class BuscadorComponent {
   private readonly fuentes = inject(FUENTE_BUSQUEDA, { optional: true }) ?? [];
   private readonly entrada = viewChild<ElementRef<HTMLInputElement>>('entrada');
-  /** Header y explorador pueden coexistir; sus IDs ARIA nunca deben colisionar. */
   protected readonly idLista = `mis-buscador-lista-${++siguienteInstancia}`;
 
-  /** Sin alcance busca en todo MIS; el explorador entrega su sistema para una búsqueda local. */
   readonly origenes = input<readonly string[]>();
   readonly alcance = input<string>();
 
@@ -45,7 +37,6 @@ export class BuscadorComponent {
   protected readonly enfocado = signal(false);
   protected readonly filtros = signal<Record<Faceta, string[]>>({ tipo: [] });
 
-  /** Registros de todas las fuentes o solo de los orígenes indicados; al ser `computed`, la data que carga un módulo entra sola al índice. */
   private readonly registros = computed<RegistroBuscable[]>(() => {
     const registros = this.fuentes.flatMap((fuente) => fuente.registros());
     const origenes = this.origenes();
@@ -62,13 +53,10 @@ export class BuscadorComponent {
       : 'Buscar reportes y carpetas en todos los sistemas'
   );
 
-  /** El índice se rearma solo cuando cambian los registros, no en cada tecla. */
   private readonly indice = computed(() => crearIndice(CONFIG, this.registros()));
 
   protected readonly respuesta = computed(() =>
     this.indice().buscar(this.consulta(), {
-      // Si la consulta completa no da nada, se sueltan palabras desde el final
-      // antes que devolver una lista vacía.
       estrategiaSinResultados: 'ultimas',
       maximoResultados: MAXIMO_RESULTADOS,
       filtrosFaceta: this.filtros(),
@@ -77,16 +65,13 @@ export class BuscadorComponent {
 
   protected readonly resultados = computed(() => this.respuesta().resultados);
 
-  /** El panel solo aparece con algo tecleado: sin consulta no hay nada que sugerir. */
   protected readonly desplegado = computed(() => this.enfocado() && this.consulta().trim().length > 0);
 
-  /** Opción marcada para el teclado; vuelve a la primera al cambiar consulta o filtros, pero no al rearmarse el índice de fondo. */
   protected readonly indiceActivo = linkedSignal<string, number>({
     source: () => `${this.consulta()} ${JSON.stringify(this.filtros())}`,
     computation: () => 0,
   });
 
-  /** Chips de refinamiento por faceta. Solo se ofrece "Tipo": la faceta por módulo se confundía con ella y el módulo ya se lee en la ubicación. */
   protected readonly grupos = computed(() => {
     const facetas = this.respuesta().facetas;
     const activos = this.filtros();
@@ -100,14 +85,12 @@ export class BuscadorComponent {
     }));
   });
 
-  /** Solo vale la pena ofrecer una faceta si hay más de una opción o si ya hay una activa. */
   protected readonly gruposVisibles = computed(() =>
     this.grupos().filter((g) => g.valores.length > 1 || g.valores.some((v) => v.activo))
   );
 
   protected readonly hayFiltros = computed(() => Object.values(this.filtros()).some((v) => v.length > 0));
 
-  /** True si hubo que soltar palabras para encontrar algo: lo mostrado no matchea la consulta entera. */
   protected readonly consultaRelajada = computed(() => {
     const { palabrasUsadas, consulta } = this.respuesta();
     return palabrasUsadas > 0 && palabrasUsadas < tokenizarConsulta(consulta).length;
@@ -117,7 +100,6 @@ export class BuscadorComponent {
     this.consulta.set((evento.target as HTMLInputElement).value);
   }
 
-  /** Lo invoca el header al expandir el campo para empezar a escribir de inmediato. */
   enfocar(): void {
     this.entrada()?.nativeElement.focus();
   }
@@ -131,7 +113,6 @@ export class BuscadorComponent {
     this.enfocado.set(false);
   }
 
-  /** Un clic sobre un chip lo activa; otro lo saca (refinamiento de un solo valor por faceta). */
   protected alternarFaceta(faceta: Faceta, valor: string): void {
     this.filtros.update((actuales) => ({
       ...actuales,
@@ -176,7 +157,6 @@ export class BuscadorComponent {
     }
   }
 
-  /** Abrir es cosa de la fuente: ella sabe qué significa su propio registro. */
   protected abrir(registro: RegistroBuscable): void {
     this.consulta.set('');
     this.cerrar();

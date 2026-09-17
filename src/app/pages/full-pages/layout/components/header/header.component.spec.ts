@@ -200,18 +200,6 @@ describe('HeaderComponent', () => {
     ]);
   });
 
-  it('rolLabel traduce el rol del usuario activo a su etiqueta legible', async () => {
-    shell.setUsuarioActivo(usuario({ rol: 'supervisor-area' }));
-    const fixture = await crear('/app/dashboard');
-
-    expect(fixture.componentInstance['rolLabel']()).toBe('Supervisor');
-  });
-
-  it('rolLabel es vacío sin usuario activo', async () => {
-    const fixture = await crear('/app/dashboard');
-    expect(fixture.componentInstance['rolLabel']()).toBe('');
-  });
-
   it('toggleDropdown() alterna dropdownOpen', async () => {
     const fixture = await crear('/app/dashboard');
     const instancia = fixture.componentInstance;

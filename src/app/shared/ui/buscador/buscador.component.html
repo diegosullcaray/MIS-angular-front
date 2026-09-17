@@ -1,6 +1,4 @@
 <div class="mis-buscador">
-  <!-- Patrón ARIA combobox: el foco no se mueve de la caja de texto; la opción
-       marcada se comunica con `aria-activedescendant`. -->
   <div
     class="mis-buscador-caja"
     role="combobox"
@@ -32,7 +30,6 @@
   </div>
 
   @if (desplegado()) {
-    <!-- Capa para cerrar al hacer clic afuera, igual que el dropdown del header. -->
     <div class="mis-buscador-fondo" (click)="cerrar()" aria-hidden="true"></div>
 
     <div class="mis-buscador-panel">
@@ -91,8 +88,6 @@
               ></i>
 
               <span class="mis-buscador-textos">
-                <!-- `innerHTML` porque el motor devuelve el texto ya escapado y con
-                     las coincidencias envueltas en <mark> (ver `IndiceBuscador.resaltar`). -->
                 <span class="mis-buscador-etiqueta" [innerHTML]="resultado.resaltado['etiqueta'].valor"></span>
                 <span class="mis-buscador-ubicacion" [innerHTML]="resultado.resaltado['ubicacion'].valor"></span>
               </span>

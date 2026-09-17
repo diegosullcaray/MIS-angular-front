@@ -3,21 +3,18 @@ import { Router, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 
-// Iconos
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   lucideChevronDown, lucideSettings,
-  lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
+  lucideLogOut, lucideSearch, lucideAlertTriangle,
   lucideUsers, lucideSun, lucideMoon, lucideMenu, lucideMegaphone, lucideX
 } from '@ng-icons/lucide';
 
-// PrimeNG
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import type { MenuItem } from 'primeng/api';
 
-// Servicios y Componentes
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import { ThemeService } from '../../../../../shared/services/theme.service';
 import { PreferenciasService } from '../../services/preferencias.service';
@@ -31,15 +28,10 @@ import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha
 import { ConfiguracionDialogComponent } from '../dialogs/configuracion-dialog/configuracion-dialog.component';
 import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
 import { BuscadorComponent } from '../../../../../shared/ui/buscador/buscador.component';
-
-
-
-/** Fila de la lista "Otros perfiles": un alterno, o la identidad propia cuando ya se está viendo como otro. */
 interface PerfilDelMenu {
   clave: string;
   nombre: string;
   detalle?: string;
-  /** `true` cuando la fila devuelve a la identidad propia (no llama al backend). */
   esOriginal: boolean;
   alterno?: AlternateUsuario;
 }
@@ -51,7 +43,7 @@ interface PerfilDelMenu {
   viewProviders: [
     provideIcons({
       lucideChevronDown, lucideSettings,
-      lucideLogOut, lucideBell, lucideSearch, lucideAlertTriangle,
+      lucideLogOut, lucideSearch, lucideAlertTriangle,
       lucideUsers, lucideSun, lucideMoon, lucideMenu, lucideMegaphone, lucideX
     })
   ],
@@ -59,7 +51,6 @@ interface PerfilDelMenu {
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
-  // ─── Dependencias ──────────────────────────────────────────────────────────
   protected readonly shell = inject(ShellStateService);
   protected readonly auth = inject(AuthService);
   protected readonly theme = inject(ThemeService);
@@ -73,16 +64,12 @@ export class HeaderComponent {
   private readonly injector = inject(Injector);
   private readonly buscador = viewChild(BuscadorComponent);
 
-  // ─── Estado Local (Signals) ───────────────────────────────────────────────
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
   protected readonly configuracionOpen = signal(false);
-  /** El buscador global se monta solo al pedirlo para no competir con el breadcrumb. */
   protected readonly buscadorAbierto = signal(false);
-  /** Email del perfil que se está activando (null = ninguno en curso). */
   protected readonly cambiandoPerfil = signal<string | null>(null);
 
-  /** URL actual capturada para reaccionar a cambios de ruta. */
   private readonly urlActual = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -91,19 +78,10 @@ export class HeaderComponent {
     { initialValue: this.router.url }
   );
 
-  // ─── Estado Computado ─────────────────────────────────────────────────────
-
-  /** Determina si el sidebar está en modo superpuesto. */
   protected readonly menuSuperpuesto = computed(
     () => this.preferencias.estructura().modoSidebar === 'superpuesto',
   );
 
-  /**
-   * Los perfiles a los que se puede saltar con un clic. Viendo como un alterno
-   * la lista es la identidad propia —el camino de vuelta, en el mismo lugar
-   * que el resto de los perfiles, como hace Chrome— y si no, los alternos
-   * asignados.
-   */
   protected readonly otrosPerfiles = computed<PerfilDelMenu[]>(() => {
     const original = this.auth.usuarioOriginal();
     if (original) {
@@ -121,26 +99,14 @@ export class HeaderComponent {
     }));
   });
 
-  protected readonly rolLabel = computed(() => {
-    const roles: Record<string, string> = {
-      'admin-sistema': 'Admin Sistema',
-      'admin-general': 'Admin General',
-      'supervisor-area': 'Supervisor',
-    };
-    return roles[this.shell.usuarioActivo()?.rol ?? ''] ?? '';
-  });
-
-  // ─── Configuración de Breadcrumb ──────────────────────────────────────────
   protected readonly breadcrumbHome: MenuItem = { icon: 'pi pi-home', routerLink: '/app/dashboard' };
 
-  /** Breadcrumb completo para escritorio; en móvil se oculta desde la vista. */
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
     if (this.shell.contenidoPendienteSeleccion()) return this.breadcrumbExplorador();
 
     const url = this.urlActual().split('?')[0].split('#')[0];
     const segmentos = url.split('/').filter(Boolean);
 
-    // Ignora rutas que no sean del shell principal (/app/...)
     if (segmentos[0] !== 'app' || segmentos.length < 2) return [];
 
     const resto = segmentos.slice(1);
@@ -149,7 +115,6 @@ export class HeaderComponent {
     return esRemote ? this.breadcrumbRemote(resto, url) : this.breadcrumbHost(resto);
   });
 
-  // ─── Acciones de la Vista ─────────────────────────────────────────────────
   protected toggleDropdown(): void {
     this.dropdownOpen.update(v => !v);
   }
@@ -162,7 +127,6 @@ export class HeaderComponent {
     this.cerrarDropdownYAbrir(this.confirmarSalirOpen);
   }
 
-  /** Un clic en una fila de "Otros perfiles": volver a la identidad propia o saltar a un alterno. */
   protected async elegirPerfil(perfil: PerfilDelMenu): Promise<void> {
     if (perfil.esOriginal) {
       this.volverAUsuarioOriginal();
@@ -171,11 +135,6 @@ export class HeaderComponent {
     await this.cambiarAPerfil(perfil.alterno!);
   }
 
-  /**
-   * Cambia de perfil con un solo clic, como el selector de cuentas de Chrome:
-   * sin diálogo de por medio. El menú queda abierto mientras dura el cambio
-   * —con la fila marcada— y recién se cierra cuando la sesión ya es la otra.
-   */
   protected async cambiarAPerfil(alterno: AlternateUsuario): Promise<void> {
     if (this.cambiandoPerfil()) return;
 
@@ -190,7 +149,6 @@ export class HeaderComponent {
     }
   }
 
-  /** Iniciales del avatar de un perfil alterno (el del activo lo da el shell). */
   protected inicialesDe(nombre: string): string {
     return nombre
       .split(' ')
@@ -203,12 +161,10 @@ export class HeaderComponent {
     this.cerrarDropdownYAbrir(this.configuracionOpen);
   }
 
-  /** Alterna el tema claro/oscuro. */
   protected alternarTema(): void {
     this.preferencias.alternarTema();
   }
 
-  /** Abre o cierra el buscador global y deja listo el cursor para escribir. */
   protected alternarBuscador(): void {
     const abre = !this.buscadorAbierto();
     this.buscadorAbierto.set(abre);
@@ -224,21 +180,16 @@ export class HeaderComponent {
 
   protected async confirmarCerrarSesion(): Promise<void> {
     this.confirmarSalirOpen.set(false);
-    // El overlay de carga (spinner) se maneja a nivel raíz para evitar problemas de z-index
     this.shell.setCerrandoSesion(true);
     await new Promise((resolve) => setTimeout(resolve, 5000));
     await this.auth.cerrarSesion();
   }
 
-  // ─── Métodos Privados ─────────────────────────────────────────────────────
-
-  /** Cierra el dropdown y abre un dialog. */
   private cerrarDropdownYAbrir(modalSignal: typeof this.confirmarSalirOpen): void {
     this.dropdownOpen.set(false);
     modalSignal.set(true);
   }
 
-  /** Ubicación dentro del explorador; cada miga vuelve a su nivel. */
   private breadcrumbExplorador(): MenuItem[] {
     const panel = this.navegacion.panelActivo();
     if (!panel) return [];
@@ -252,7 +203,6 @@ export class HeaderComponent {
     ];
   }
 
-  /** Genera el breadcrumb mapeando los segmentos nativos. */
   private breadcrumbHost(resto: string[]): MenuItem[] {
     let rutaAcumulada = '/app';
 

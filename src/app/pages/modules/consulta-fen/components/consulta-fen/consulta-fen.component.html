@@ -6,16 +6,8 @@
   [conRelleno]="false"
 >
   <main class="min-h-full bg-[var(--mis-bg)] text-[var(--mis-text-primary)]">
-    <header class="flex flex-col gap-3 bg-[var(--mis-primary)] px-4 py-5 text-[var(--mis-text-on-primary)] sm:flex-row sm:items-center sm:justify-between sm:px-6">
-      <div>
-        <h2 class="m-0 text-xl font-bold sm:text-2xl">Consulta FEN - CENEPRED</h2>
-        <p class="m-0 mt-1 text-sm text-[var(--mis-text-on-primary)]/85">Consulta la exposición territorial por ubicación.</p>
-      </div>
-      <span class="inline-flex items-center gap-2 text-xs font-medium"><i class="pi pi-circle-fill text-[var(--mis-success)] text-[8px]"></i>Matriz actualizada: {{ fechaMatriz }}</span>
-    </header>
-
     <div class="flex flex-col gap-3 p-3 sm:gap-4 sm:p-5">
-      <section class="grid overflow-visible rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-[var(--mis-shadow-sm)] lg:grid-cols-[minmax(0,1fr)_160px]">
+      <section class="grid overflow-visible rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-[var(--mis-shadow-sm)] lg:grid-cols-[minmax(0,1fr)_150px]">
         <div class="min-w-0 p-4 sm:p-5">
           <form class="grid gap-3 md:grid-cols-[190px_minmax(0,1fr)_auto] md:items-end" (submit)="$event.preventDefault(); buscar()">
             <div class="min-w-0">
@@ -44,10 +36,12 @@
           </div>
         </div>
 
-        <!-- La mascota acompaña permanentemente al buscador, como pidió el flujo actual. -->
-        <aside class="flex min-h-28 items-center justify-center gap-2 border-t border-[var(--mis-border)] bg-[var(--mis-panel-bg)] px-3 py-2 text-left lg:flex-col lg:border-l lg:border-t-0 lg:text-center">
-          <img class="h-20 w-20 shrink-0 object-contain lg:h-24 lg:w-24" [src]="mascota()" alt="Mascota de MIS" width="1024" height="1024" />
-          <p class="m-0 max-w-40 text-xs font-medium leading-relaxed text-[var(--mis-text-secondary)]">{{ mensajeMascota() }}</p>
+        <aside class="flex min-h-20 items-center justify-center gap-2 border-t border-[var(--mis-border)] bg-[var(--mis-panel-bg)] px-2 py-2 text-left lg:flex-col lg:border-l lg:border-t-0 lg:text-center">
+          <img class="h-16 w-16 shrink-0 object-contain lg:h-20 lg:w-20" [src]="mascota()" alt="Mascota de MIS" width="1024" height="1024" />
+          <div class="relative max-w-32 rounded-2xl border border-[var(--mis-border)] bg-[var(--mis-surface)] px-2.5 py-1.5 text-xs font-medium leading-snug text-[var(--mis-text-secondary)] shadow-sm">
+            <span class="absolute -left-1 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border-b border-l border-[var(--mis-border)] bg-[var(--mis-surface)] lg:left-1/2 lg:top-0 lg:-translate-x-1/2 lg:-translate-y-1/2"></span>
+            <p class="relative m-0">{{ mensajeMascota() }}</p>
+          </div>
         </aside>
       </section>
 
@@ -91,6 +85,13 @@
               @for (campo of ['exp_mas', 'exp_inu', 'exp_seq', 'exp_pre']; track campo) {
                 <ng-template [appDataTableCell]="campo" let-row><p-tag [value]="row[campo]" [severity]="severidad(row[campo])" /></ng-template>
               }
+              <ng-template appDataTableCell="observacion" let-row>
+                @if (observacion(row); as texto) {
+                  <span class="inline-flex items-start gap-1.5 rounded-md bg-[var(--mis-danger-light)] px-2 py-1 text-xs font-medium leading-snug text-[var(--mis-danger)]"><i class="pi pi-exclamation-triangle mt-0.5"></i>{{ texto }}</span>
+                } @else {
+                  <span class="text-[var(--mis-text-tertiary)]">—</span>
+                }
+              </ng-template>
             </app-data-table>
           </div>
         } @else {
@@ -98,11 +99,11 @@
         }
       </section>
 
-      <section class="flex flex-col gap-2 px-1 text-xs text-[var(--mis-text-secondary)] sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2" aria-label="Leyenda de riesgos">
-        <span class="flex items-center gap-2"><i class="h-2.5 w-2.5 rounded-full bg-[var(--mis-danger)]"></i><b>Alto:</b> Nivel Alto o Muy Alto</span>
-        <span class="flex items-center gap-2"><i class="h-2.5 w-2.5 rounded-full bg-[var(--mis-warning)]"></i><b>Medio:</b> Nivel Medio</span>
-        <span class="flex items-center gap-2"><i class="h-2.5 w-2.5 rounded-full bg-[var(--mis-success)]"></i><b>Bajo:</b> Nivel Bajo o Muy Bajo</span>
-        <span class="flex items-center gap-2"><i class="pi pi-exclamation-triangle text-[var(--mis-danger)]"></i><b>Alerta:</b> {{ mensajeRiesgoAlto }}</span>
+      <section class="grid gap-2 px-1 text-xs sm:grid-cols-2 lg:grid-cols-4" aria-label="Leyenda de riesgos">
+        <span class="flex items-center gap-2 text-[var(--mis-text-primary)]"><i class="h-2.5 w-2.5 rounded-full bg-[var(--mis-danger)]"></i><b class="text-[var(--mis-danger)]">Alto:</b> Nivel Alto o Muy Alto</span>
+        <span class="flex items-center gap-2 text-[var(--mis-text-primary)]"><i class="h-2.5 w-2.5 rounded-full bg-[var(--mis-warning)]"></i><b class="text-[var(--mis-warning)]">Medio:</b> Nivel Medio</span>
+        <span class="flex items-center gap-2 text-[var(--mis-text-primary)]"><i class="h-2.5 w-2.5 rounded-full bg-[var(--mis-success)]"></i><b class="text-[var(--mis-success)]">Bajo:</b> Nivel Bajo o Muy Bajo</span>
+        <span class="flex items-center gap-2 text-[var(--mis-text-primary)]"><i class="pi pi-exclamation-triangle text-[var(--mis-danger)]"></i><b class="text-[var(--mis-danger)]">Alerta:</b> {{ mensajeRiesgoAlto }}</span>
       </section>
     </div>
   </main>
