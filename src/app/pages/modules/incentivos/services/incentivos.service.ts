@@ -128,7 +128,8 @@ export class IncentivosService {
       this.cargando.set(false);
       return;
     }
-    this.seleccionarNivel({ nombre: 'Mi perfil', nivel: '--', descripcionNivel: '--', imagenUrl: '' }, { tipCod: 1, codRel, claUsu: 1 });
+    const claUsu = (this.shell.usuarioActivo()?.claUse as 1 | 2) ?? 1;
+    this.seleccionarNivel({ nombre: 'Mi perfil', nivel: '--', descripcionNivel: '--', imagenUrl: '' }, { tipCod: 1, codRel, claUsu });
   }
 
   /** Recarga el Cuadro de Mando del nivel actualmente seleccionado (botón "Actualizar"). */

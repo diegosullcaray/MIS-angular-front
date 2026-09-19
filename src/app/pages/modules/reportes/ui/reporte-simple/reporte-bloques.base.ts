@@ -1,4 +1,5 @@
-import { effect, inject, signal } from '@angular/core';
+import { DestroyRef, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { Observable } from 'rxjs';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../utils/hier-selector-error.util';
@@ -23,6 +24,7 @@ export abstract class ReporteBloquesBase {
   protected readonly cargando = signal(false);
   protected readonly tablas = signal<TablaReporteResultado[]>([]);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
+  protected readonly destroyRef = inject(DestroyRef);
 
   /** Título de cada bloque, en el mismo orden que devuelve `consultar()`. */
   protected abstract readonly titulos: readonly string[];
@@ -53,7 +55,9 @@ export abstract class ReporteBloquesBase {
 
   private cargar(nodo: HierarquiaNodo): void {
     this.cargando.set(true);
-    this.consultar({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
+    this.consultar({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (tablas) => {
         this.tablas.set(tablas);
         this.cargando.set(false);

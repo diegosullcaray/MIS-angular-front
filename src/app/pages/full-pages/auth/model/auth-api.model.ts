@@ -23,6 +23,8 @@ export interface PerfilRaw {
     hab_fec?: string;
     /** Documento del usuario. Lo usa el host `cra-v6` del legado, que arma sus consultas con el propio usuario en vez de con la jerarquía. */
     num_doc?: string;
+    /** Clase de usuario: 1 = individual, 2 = grupal. */
+    cla_use?: number;
 }
 
 /** Un usuario alterno tal como lo devuelve el backend (`login_response.alternates`). */
