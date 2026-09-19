@@ -12,6 +12,6 @@ El roadmap de producto se mantiene como una lista de decisiones y capacidades ve
 | Media | Inventario de fuentes y dominios | Parcial — [catálogo de datos](../data/catalog.md); faltan los propietarios funcionales |
 | Alta | **Asignar propietario funcional por dominio** | Pendiente — es la brecha que bloquea el escalamiento de una cifra dudosa ([responsabilidades](../data/stewardship.md)) |
 | Media | Inventario de campos sensibles por contrato | Parcial — [clasificación](../data/classification.md); se completa por ficha de reporte |
-| Media | Evidencia automatica de calidad, cobertura y rendimiento | [Reports](../evidence/README.md) |
+| Media | Evidencia automática de calidad, cobertura y rendimiento | [Evidence](../evidence/README.md) |
 
 Cada item debe convertirse en una decision, una tarea y una prueba antes de marcarse como completo.

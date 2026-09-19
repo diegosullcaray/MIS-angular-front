@@ -1,5 +1,4 @@
-import { describe, expect, it } from 'vitest';
-import { esFilaRiesgoFen, esRiesgoAlto, mapearFilasFen, puntoReferencialUbigeo, puntosCalorFen } from './consulta-fen.util';
+import { esFilaRiesgoFen, esRiesgoAlto, mapearFilasFen } from './consulta-fen.util';
 
 const FILA = {
   cod_ubi: '040101', des_dep: 'AREQUIPA', des_prov: 'AREQUIPA', des_dist: 'AREQUIPA',
@@ -20,14 +19,4 @@ describe('utilidades de Consulta FEN', () => {
     expect(esRiesgoAlto('Medio')).toBe(false);
   });
 
-  it('ubica el departamento del UBIGEO sin inventar precisión distrital', () => {
-    expect(puntoReferencialUbigeo('040101')).toEqual({ lat: -16.3989, lng: -71.535, precision: 'departamento' });
-    expect(puntoReferencialUbigeo('990101')).toBeNull();
-  });
-
-  it('pondera el riesgo predominante para el mapa de calor', () => {
-    expect(puntosCalorFen([FILA])).toEqual([
-      expect.objectContaining({ ubigeo: '040101', nivel: 'Alto', intensidad: 0.8, precision: 'departamento' }),
-    ]);
-  });
 });

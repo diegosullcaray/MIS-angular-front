@@ -74,13 +74,28 @@ test.describe('El shell en el ancho más chico del mercado', () => {
     expect(caja.y).toBeGreaterThan(fold.alto / 2);
   });
 
-  test('el header entra completo, sin comerse el breadcrumb', async ({ page }) => {
+  test('el header entra completo y mantiene las acciones dentro del viewport', async ({ page }) => {
     await page.goto('/app/dashboard');
     const header = page.locator('header').first();
     const caja = (await header.boundingBox())!;
 
     expect(Math.round(caja.width)).toBeLessThanOrEqual(fold.ancho);
     expect(caja.x).toBeGreaterThanOrEqual(-1);
+
+    const acciones = [
+      header.getByRole('button', { name: 'Abrir búsqueda global' }),
+      header.getByRole('button', { name: /Activar modo/ }),
+      header.getByRole('button', { name: 'Comunicados del sistema' }),
+      header.locator('[role="button"][aria-haspopup="true"]'),
+    ];
+    for (const accion of acciones) {
+      const boton = accion.first();
+      const dimensiones = (await boton.boundingBox())!;
+      expect(dimensiones.x).toBeGreaterThanOrEqual(caja.x - 1);
+      expect(dimensiones.x + dimensiones.width).toBeLessThanOrEqual(caja.x + caja.width + 1);
+      expect(dimensiones.y).toBeGreaterThanOrEqual(caja.y - 1);
+      expect(dimensiones.y + dimensiones.height).toBeLessThanOrEqual(caja.y + caja.height + 1);
+    }
   });
 
   test('el contenido no queda tapado por la barra inferior fija', async ({ page }) => {
@@ -139,7 +154,7 @@ test.describe('Objetivos táctiles', () => {
 
   test('los botones de acción del header llegan a 44×44', async ({ page }) => {
     // WCAG 2.5.5 (AAA) y la guía de Apple: 44×44 para un control de acción.
-    const acciones = ['Comunicados del sistema', 'Activar modo oscuro', 'Activar modo claro'];
+    const acciones = ['Abrir búsqueda global', 'Comunicados del sistema', 'Activar modo oscuro', 'Activar modo claro'];
     for (const nombre of acciones) {
       const boton = page.locator('header').getByRole('button', { name: nombre });
       if ((await boton.count()) === 0) continue;

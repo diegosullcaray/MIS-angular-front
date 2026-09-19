@@ -1,4 +1,4 @@
-import { asignarValores, marcarHabilitados, marcarVisibles, redondear, resolverSituacion, sumarPorIds } from './incentivos-calculo.util';
+import { aNumeroIncentivo, asignarValores, marcarHabilitados, marcarVisibles, redondear, resolverSituacion, sumarPorIds } from './incentivos-calculo.util';
 
 describe('marcarVisibles()', () => {
   it('marca show=true solo en los ids indicados', () => {
@@ -37,22 +37,22 @@ describe('marcarHabilitados()', () => {
   });
 });
 
-describe('asignarValores()', () => {
+describe('asignarValores(, aNumeroIncentivo)', () => {
   it('copia el valor de origen[prefijo+id+sufijo] al campo indicado', () => {
     const items = [{ id: 'car', val: 0 }];
     const origen = { flag_car: 42 };
-    expect(asignarValores(items, origen, 'val', 'flag_', '')).toEqual([{ id: 'car', val: 42 }]);
+    expect(asignarValores(items, origen, 'val', 'flag_', '', aNumeroIncentivo)).toEqual([{ id: 'car', val: 42 }]);
   });
 
   it('deja el ítem sin cambios si la clave no existe en origen', () => {
     const items = [{ id: 'car', val: 0 }];
-    expect(asignarValores(items, {}, 'val', 'flag_', '')).toEqual(items);
+    expect(asignarValores(items, {}, 'val', 'flag_', '', aNumeroIncentivo)).toEqual(items);
   });
 
   it('funciona con sufijo (no solo prefijo)', () => {
     const items = [{ id: 'car', per: 0 }];
     const origen = { car_avan_floor: 55 };
-    expect(asignarValores(items, origen, 'per', '', '_avan_floor')).toEqual([{ id: 'car', per: 55 }]);
+    expect(asignarValores(items, origen, 'per', '', '_avan_floor', aNumeroIncentivo)).toEqual([{ id: 'car', per: 55 }]);
   });
 });
 

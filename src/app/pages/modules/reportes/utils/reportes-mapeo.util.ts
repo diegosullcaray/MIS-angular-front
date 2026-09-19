@@ -1,4 +1,5 @@
 import type { IWinderResponse } from '../../../../core/winder/winder/winder.interface';
+import { normalizarPresentacionLegada } from './presentacion-legada.util';
 import type { FilaReporte, TablaReporteResultado } from '../models/tabla-reporte.model';
 import type { ReporteResponseBody } from '../models/reportes-api.model';
 import type {
@@ -14,7 +15,7 @@ import type { OpcionFiltro } from '../../../../shared/ui/formularios/opcion-filt
 /** Mapeo compartido de la respuesta cruda del motor de reportes "mixtos" (`regularData`) a la forma que consume `app-tabla-reporte` — mismo mapeo que antes vivía centralizado en `ReportesService.obtenerBloqueReporte()`, ahora reutilizado por el service propio de cada componente para no duplicar el `.pipe(map(...))` en cada uno. */
 export function mapearBloqueReporte(r: IWinderResponse): TablaReporteResultado {
   const result = (r.body as ReporteResponseBody | null)?.result;
-  return { headers: result?.headers ?? [], body: result?.body ?? [], additional: result?.additional ?? {} };
+  return normalizarPresentacionLegada({ headers: result?.headers ?? [], body: result?.body ?? [], additional: result?.additional ?? {} });
 }
 
 /** Mismo mapeo, para el motor `table.regular` (columnas dinámicas) — ver `mapearBloqueReporte()`. */

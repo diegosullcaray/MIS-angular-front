@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { DashboardService } from './dashboard.service';
 import { ModDashboardService } from '../../../../core/winder/instances/mod-dashboard.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
@@ -150,5 +150,33 @@ describe('DashboardService', () => {
     service.guardarUsuariosPorReporte(cambios).subscribe();
 
     expect(ant.postObjectUsers).toHaveBeenCalledWith(cambios);
+  });
+
+  it('invalida selección/cache por usuario y descarta respuestas tardías', () => {
+    const anterior = new Subject<IWinderResponse>();
+    const actual = new Subject<IWinderResponse>();
+    ant.getObjectList.mockReturnValueOnce(anterior).mockReturnValueOnce(actual);
+    service.cargarReportes();
+    service.seleccionarReporte(REPORTE);
+    shell.setUsuarioActivo(usuario({ id: 'u-2', codBt: 'BT-002' }));
+    service.cargarReportes();
+    expect(anterior.observed).toBe(false);
+    expect(service.reporteSeleccionado()).toBeNull();
+    const nuevo = { ...REPORTE, id: 'rep-2' };
+    actual.next(respuesta({ resultado: { list: [nuevo] } }));
+    anterior.next(respuesta({ resultado: { list: [REPORTE] } }));
+    expect(service.reportes()).toEqual([nuevo]);
+    shell.cerrarSesion();
+    TestBed.tick();
+    expect(service.reportes()).toEqual([]);
+  });
+
+  it('recargar cancela una lista todavía pendiente', () => {
+    const pendiente = new Subject<IWinderResponse>();
+    ant.getObjectList.mockReturnValueOnce(pendiente).mockReturnValueOnce(of(respuesta({ resultado: { list: [] } })));
+    service.cargarReportes();
+    service.recargarReportes();
+    expect(pendiente.observed).toBe(false);
+    expect(service.cargando()).toBe(false);
   });
 });

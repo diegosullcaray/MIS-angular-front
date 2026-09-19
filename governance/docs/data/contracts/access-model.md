@@ -1,5 +1,9 @@
 # Modelo de acceso y navegacion
 
+**Estado: propuesta futura de backend, no contrato implementado.** El backend
+está congelado; no cambiar OAuth/Winder ni aplicar estos artefactos SQL como parte
+de una tarea de interfaz.
+
 La propuesta de gobierno de accesos separa identidad, puestos, roles, nodos, permisos, sesiones y eventos de seguridad. Los artefactos SQL de validacion permanecen como material tecnico de referencia.
 
 ## Principios

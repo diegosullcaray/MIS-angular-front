@@ -18,7 +18,14 @@ export function aplicarEstilosEstructuraDesembolsos(tabla: TablaDinamicaResultad
   const grupoOpe = claves.filter((k) => /^\d+_ope$/i.test(k)).sort();
   const grupoMon = claves.filter((k) => /^\d+_mon$/i.test(k)).sort();
 
-  return { ...tabla, columnas: conEstilos(tabla.columnas, grupoOpe, grupoMon), filas: tabla.filas ?? [] };
+  return {
+    ...tabla,
+    columnas: conEstilos(tabla.columnas, grupoOpe, grupoMon),
+    filas: (tabla.filas ?? []).map((fila) => {
+      const descripcion = String(fila['DES_RANGO'] ?? fila['RangoDesembolso'] ?? '').toLowerCase();
+      return descripcion.includes('total') ? { ...fila, style: 1 } : fila;
+    }),
+  };
 }
 
 function aplanar(columnas: ColumnaDinamica[]): ColumnaDinamica[] {

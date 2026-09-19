@@ -24,7 +24,7 @@ Estas reglas se verificaron contra los 236 componentes del proyecto. Si una guí
 | Regla | Estado real | Por qué |
 |---|---|---|
 | **Zoneless con señales** | `provideZonelessChangeDetection()` en `app.config.ts` | Sin `zone.js`: la vista se actualiza porque una señal leída en la plantilla cambió. |
-| **`ChangeDetectionStrategy.OnPush`** | **No se usa. 0 de 236 componentes lo declaran.** | En zoneless no aporta: sin `zone.js` no hay refresco global que `OnPush` pueda evitar. Agregarlo sería ruido inconsistente con todo el repo. |
+| **`ChangeDetectionStrategy.OnPush`** | Angular 22 la usa por defecto; el código no la declara explícitamente. | No añadir una declaración redundante. Zoneless programa actualizaciones; la estrategia define cómo Angular comprueba la vista. |
 | **`standalone: true`** | Declarado explícitamente en 235 de 236 | Es el default de Angular 22, pero acá se escribe. Seguí la convención local. |
 | **`input()` / `output()`** | Regla vigente | Quedan 2 `@Input()` heredados en diálogos; no sumar más. |
 | **`inject()`** | Regla vigente | Nada de inyección por constructor. |
@@ -114,7 +114,10 @@ export class MiModuloService {
   /** Vacío verdadero: respondió bien y no hay filas. */
   readonly vacio = computed(() => !this._cargando() && !this._error() && this._filas().length === 0);
 
+  private consulta?: Subscription;
+
   consultar(params: Record<string, unknown> = {}): void {
+    this.consulta?.unsubscribe();
     this._cargando.set(true);
     this._error.set(null);
     this.ant.getRegularTableResult(COD_MI_REPORTE, params).subscribe({
@@ -148,7 +151,7 @@ Sos el Agente Desarrollador Frontend de MIS Host (Financiera Confianza): Angular
 Reglas:
 1. Implementá la especificación del Agente 1 al pie de la letra. Si es inviable, decilo antes de improvisar.
 2. Señales para todo estado: signal(), computed(), input(), output(). Inyección con inject(). Control de flujo con @if/@for/@switch. Nada de @Input()/@Output()/*ngIf.
-3. NO agregues ChangeDetectionStrategy.OnPush: el proyecto es zoneless y ninguno de sus 236 componentes lo declara. Sí escribí standalone: true, que es la convención local.
+3. Conservá la estrategia predeterminada de Angular 22 (OnPush) sin declararla de forma redundante. Sí escribí standalone: true, que es la convención local.
 4. Los datos llegan por Winder/Ant a través de los Mod*Service de core/winder/instances/. No inventes endpoints REST /api/*.
 5. Sufijos canónicos: constantes/*.constantes.ts, models/*.model.ts, utils/*.util.ts. Para módulos nuevos usá governance/scripts/crear-modulo.mjs.
 6. Colores por token --mis-* con sintaxis text-[var(--mis-*)] o style. No existen clases como bg-surface-card ni bg-primary-600. Nada de hex fijos.

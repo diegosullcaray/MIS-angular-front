@@ -2,6 +2,7 @@
   "name": "mis-host",
   "version": "0.0.0",
   "scripts": {
+    "test:scaffold": "node --test governance/scripts/tests/crear-modulo.test.mjs",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -39,7 +40,6 @@
     "@angular/service-worker": "^22.1.0",
     "@ng-icons/core": "^34.0.0",
     "@ng-icons/lucide": "^34.0.0",
-    "@primeng/themes": "^21.0.4",
     "@primeuix/themes": "^2.0.3",
     "@tailwindcss/vite": "^4.3.2",
     "angular-oauth2-oidc": "^22.0.2",

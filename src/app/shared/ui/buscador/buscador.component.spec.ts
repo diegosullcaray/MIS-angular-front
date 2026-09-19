@@ -77,6 +77,15 @@ describe('BuscadorComponent', () => {
     expect(elemento(fixture, '.mis-buscador-panel')).toBeNull();
   });
 
+  it('asigna IDs propios para que dos buscadores no mezclen sus controles ARIA', () => {
+    const primero = crear();
+    const segundo = crear();
+    const idPrimero = (elemento(primero, '.mis-buscador-input') as HTMLInputElement).getAttribute('aria-controls');
+    const idSegundo = (elemento(segundo, '.mis-buscador-input') as HTMLInputElement).getAttribute('aria-controls');
+
+    expect(idPrimero).not.toBe(idSegundo);
+  });
+
   it('despliega los resultados al teclear y resalta la coincidencia', () => {
     const fixture = crear();
     teclear(fixture, 'metas');
@@ -105,6 +114,23 @@ describe('BuscadorComponent', () => {
     teclear(fixture, 'metas');
 
     expect(elemento(fixture, '.mis-buscador-pie')?.textContent).toMatch(/1 resultado .* ms/);
+  });
+
+  it('puede acotarse a un módulo, sin perder el componente global', () => {
+    modulo.set([
+      registro({ id: 'dashboard-1', etiqueta: 'Metas Comerciales', origen: 'Dashboards Integrados', tipo: 'Dashboard' }),
+    ]);
+    const fixture = crear();
+    fixture.componentRef.setInput('origenes', ['Reportes']);
+    fixture.componentRef.setInput('alcance', 'Reportes');
+    fixture.detectChanges();
+
+    teclear(fixture, 'metas');
+
+    expect(etiquetas(fixture)).toEqual(['Monitor Metas Desembolso']);
+    const input = elemento(fixture, '.mis-buscador-input') as HTMLInputElement;
+    expect(input.placeholder).toBe('Buscar en Reportes…');
+    expect(input.getAttribute('aria-label')).toBe('Buscar reportes y carpetas de Reportes');
   });
 
   describe('cantidad de resultados listados', () => {

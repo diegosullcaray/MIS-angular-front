@@ -12,7 +12,7 @@ import type { Anuncio } from '../../../interfaces/anuncio.model';
 const CATALOGO_SIMPLE: readonly Anuncio[] = [
   {
     id: 'vinculacion-cartera-captaciones',
-    imagen: 'assets/images/fc/ads/Comunicado.png',
+    imagen: 'assets/images/fc/ads/Comunicado1.png',
     alt: 'Nuevos paneles: Vinculación de Cartera - Captaciones.',
     ancho: 780,
     alto: 815,
@@ -80,7 +80,7 @@ describe('AnunciosDialogComponent', () => {
 
       const [img, ...resto] = imagenes();
       expect(resto).toHaveLength(0);
-      expect(img.getAttribute('src')).toBe('assets/images/fc/ads/Comunicado.png');
+      expect(img.getAttribute('src')).toBe('assets/images/fc/ads/Comunicado1.png');
       expect(img.getAttribute('alt')).toContain('Vinculación de Cartera');
       // Sin `width`/`height` el diálogo salta de tamaño cuando la imagen carga.
       expect(img.getAttribute('width')).toBe('780');

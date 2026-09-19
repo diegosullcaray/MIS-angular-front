@@ -86,10 +86,10 @@ describe('HeaderComponent — contrato responsive', () => {
   it('los botones de acción declaran 44px en móvil y densidad de escritorio desde sm', () => {
     const el = crear();
     const acciones = Array.from(el.querySelectorAll('button')).filter((b) =>
-      /Comunicados|modo claro|modo oscuro/i.test(b.getAttribute('aria-label') ?? ''),
+      /Comunicados|modo claro|modo oscuro|búsqueda global/i.test(b.getAttribute('aria-label') ?? ''),
     );
 
-    expect(acciones.length).toBeGreaterThanOrEqual(2);
+    expect(acciones.length).toBeGreaterThanOrEqual(3);
     for (const boton of acciones) {
       expect(boton.className, boton.getAttribute('aria-label') ?? '').toContain('w-[44px]');
       expect(boton.className, boton.getAttribute('aria-label') ?? '').toContain('h-[44px]');
@@ -106,6 +106,28 @@ describe('HeaderComponent — contrato responsive', () => {
     expect(pill).not.toBeNull();
     expect(pill.className).toContain('min-h-[44px]');
     expect(pill.className).toContain('sm:min-h-0');
+  });
+
+  it('oculta el breadcrumb en móvil y lo conserva desde el breakpoint de escritorio', () => {
+    const el = crear();
+    const breadcrumb = el.querySelector('.header-breadcrumb')?.parentElement as HTMLElement;
+
+    expect(breadcrumb).not.toBeNull();
+    expect(breadcrumb.className).toContain('hidden');
+    expect(breadcrumb.className).toContain('sm:flex');
+  });
+
+  it('alinea las acciones al final y reduce los espacios solo en móvil', () => {
+    const el = crear();
+    const raiz = el.firstElementChild as HTMLElement;
+    const acciones = el.querySelector('div.relative.ml-auto') as HTMLElement;
+
+    expect(raiz.className).toContain('justify-end');
+    expect(raiz.className).toContain('px-2');
+    expect(raiz.className).toContain('sm:px-4');
+    expect(acciones.className).toContain('gap-1');
+    expect(acciones.className).toContain('sm:gap-2');
+    expect(acciones.className).toContain('shrink-0');
   });
 
   it('el botón del rail superpuesto solo existe desde sm, donde el rail se ancla', () => {

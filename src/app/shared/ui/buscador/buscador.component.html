@@ -1,22 +1,21 @@
 <div class="mis-buscador">
-  <!-- Patrón ARIA combobox: el foco no se mueve de la caja de texto; la opción
-       marcada se comunica con `aria-activedescendant`. -->
   <div
     class="mis-buscador-caja"
     role="combobox"
     aria-haspopup="listbox"
-    aria-owns="mis-buscador-lista"
+    [attr.aria-owns]="idLista"
     [attr.aria-expanded]="desplegado()"
   >
     <i class="pi pi-search mis-buscador-lupa" aria-hidden="true"></i>
     <input
+      #entrada
       type="search"
       class="mis-buscador-input"
-      placeholder="Buscar en todos los sistemas…"
+      [placeholder]="placeholder()"
       autocomplete="off"
-      aria-label="Buscar reportes y carpetas en todos los sistemas"
+      [attr.aria-label]="etiquetaAria()"
       aria-autocomplete="list"
-      aria-controls="mis-buscador-lista"
+      [attr.aria-controls]="idLista"
       [attr.aria-activedescendant]="desplegado() && resultados().length ? idOpcion(indiceActivo()) : null"
       [value]="consulta()"
       (input)="onConsulta($event)"
@@ -31,7 +30,6 @@
   </div>
 
   @if (desplegado()) {
-    <!-- Capa para cerrar al hacer clic afuera, igual que el dropdown del header. -->
     <div class="mis-buscador-fondo" (click)="cerrar()" aria-hidden="true"></div>
 
     <div class="mis-buscador-panel">
@@ -71,7 +69,7 @@
           </p>
         }
 
-        <ul id="mis-buscador-lista" class="mis-buscador-lista" role="listbox" aria-label="Resultados">
+        <ul [id]="idLista" class="mis-buscador-lista" role="listbox" aria-label="Resultados">
           @for (resultado of resultados(); track resultado.objeto.id) {
             <li
               class="mis-buscador-opcion"
@@ -90,8 +88,6 @@
               ></i>
 
               <span class="mis-buscador-textos">
-                <!-- `innerHTML` porque el motor devuelve el texto ya escapado y con
-                     las coincidencias envueltas en <mark> (ver `IndiceBuscador.resaltar`). -->
                 <span class="mis-buscador-etiqueta" [innerHTML]="resultado.resaltado['etiqueta'].valor"></span>
                 <span class="mis-buscador-ubicacion" [innerHTML]="resultado.resaltado['ubicacion'].valor"></span>
               </span>

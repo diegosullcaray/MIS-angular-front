@@ -5,9 +5,9 @@
 Derivadas del código. **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica.
 
 <!-- generado:inicio pruebas -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-15 · commit 22cf3f5. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-17 · commit 7945bdb. No editar a mano. -->
 
-- **359** archivos `*.spec.ts` bajo `src/app`.
+- **363** archivos `*.spec.ts` bajo `src/app`.
 - **31** suites Playwright bajo `e2e/`.
 - Proyectos E2E configurados: `desktop-chromium`, `mobile-chromium`.
 <!-- generado:fin -->

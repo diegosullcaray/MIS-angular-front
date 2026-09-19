@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { IncentivosService } from './incentivos.service';
 import { ModIncentivosService } from '../../../../core/winder/instances/mod-incentivos.service';
 import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-admin.service';
@@ -83,6 +83,45 @@ describe('IncentivosService', () => {
     shell.setUsuarioActivo(usuario());
   });
 
+  it('cancelar por fecha/nivel evita publicar datos de una selección anterior', () => {
+    const anterior = new Subject<IWinderResponse>();
+    const actual = new Subject<IWinderResponse>();
+    ant.getDataSourcesIndividual.mockReturnValueOnce(anterior).mockReturnValueOnce(actual);
+    service.iniciar();
+    service.seleccionarFecha('20260916');
+    expect(anterior.observed).toBe(false);
+    actual.next(respuesta({ resultado: { ...DS_BASE, ds4: { bob_car: 200 } } }));
+    anterior.next(respuesta({ resultado: DS_BASE }));
+    expect(service.monetizado().bonoBase).toBe(200);
+    expect(service.fechaActual()).toBe('20260916');
+    service.limpiar();
+    expect(actual.observed).toBe(false);
+    expect(service.nivelActual()).toBeNull();
+    expect(service.tablaVariables()).toEqual([]);
+  });
+
+  it('invalida jerarquía, selección y resultados al cambiar usuario', () => {
+    service.iniciar();
+    shell.setUsuarioActivo(usuario({ id: 'u-2', codBt: 'BT-002' }));
+    TestBed.tick();
+    expect(service.perfil()).toBeNull();
+    expect(service.nivelActual()).toBeNull();
+    expect(service.monetizado().bonoTotal).toBe(0);
+  });
+
+  it('no aplica una simulación tardía sobre una selección nueva', () => {
+    const simulacion = new Subject<IWinderResponse>();
+    ant.calcularIndividual.mockReturnValue(simulacion);
+    service.iniciar();
+    const resultados: boolean[] = [];
+    service.simular({ v_car: 1 }).subscribe(r => resultados.push(r));
+    service.seleccionarFecha('20260916');
+    const antes = service.calculadora();
+    simulacion.next(respuesta({ resultado: { bob_car: 999 } }));
+    expect(resultados).toEqual([false]);
+    expect(service.calculadora()).toBe(antes);
+  });
+
   describe('iniciar() — usuario NO admin (aproximación a SECTORISTA individual)', () => {
     it('carga directo el perfil propio con tip_cod=1/cla_usu=1/cod_rel=codBt, sin selector', () => {
       service.iniciar();
@@ -140,7 +179,7 @@ describe('IncentivosService', () => {
     });
 
     it('seleccionarNodoJerarquia() usa el tip_cod/cod_rel del nodo y siempre apaga mostrarModelo', () => {
-      service.monetizado.update((m) => ({ ...m, mostrarModelo: true }));
+      service.seleccionarAsesor({ cod_sec: 'BT-002', des_sec: 'Juan', cod_gru: 1 });
 
       service.seleccionarNodoJerarquia({ tip_cod: 18, cod_rel: 'U-01', des_rel: 'Unidad 1' });
 

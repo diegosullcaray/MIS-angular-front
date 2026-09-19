@@ -13,17 +13,29 @@ export function marcarHabilitados<T extends { id: string; enab: boolean }>(items
 }
 
 /** Copia el valor de `origen[\`${prefijo}${item.id}${sufijo}\`]` al campo `campo` de cada ítem cuyo `id` arme una clave presente en `origen` — `updateCfg2()` del legado. */
-export function asignarValores<T extends { id: string }>(
+export function asignarValores<T extends { id: string }, K extends keyof T>(
   items: T[],
   origen: Record<string, unknown>,
-  campo: keyof T,
+  campo: K,
   prefijo: string,
-  sufijo: string
+  sufijo: string,
+  convertir: (valor: unknown) => T[K],
 ): T[] {
   return items.map((item) => {
     const clave = `${prefijo}${item.id}${sufijo}`;
-    return clave in origen ? { ...item, [campo]: origen[clave] } : item;
+    return clave in origen ? { ...item, [campo]: convertir(origen[clave]) } : item;
   });
+}
+
+/** Incentivos recibe valores numéricos o texto numérico sin separadores de miles. */
+export function aNumeroIncentivo(valor: unknown): number {
+  if (valor == null || valor === '') return 0;
+  if (typeof valor !== 'number' && typeof valor !== 'string') {
+    throw new Error('Valor numérico de Incentivos inválido.');
+  }
+  const numero = Number(valor);
+  if (!Number.isFinite(numero)) throw new Error('Valor numérico de Incentivos inválido.');
+  return numero;
 }
 
 /** Suma `origen[\`${prefijo}${id}${sufijo}\`]` para cada `id` en `ids`, ignorando claves ausentes o no numéricas — `sumFromIds()` del legado. */
@@ -31,7 +43,7 @@ export function sumarPorIds(origen: Record<string, unknown>, ids: string[], pref
   return ids.reduce((total, id) => {
     const clave = `${prefijo}${id}${sufijo}`;
     const valor = Number(origen[clave]);
-    return Number.isNaN(valor) ? total : total + valor;
+    return Number.isFinite(valor) ? total + valor : total;
   }, 0);
 }
 

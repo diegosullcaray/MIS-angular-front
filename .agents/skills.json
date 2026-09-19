@@ -4,7 +4,7 @@
     {
       "name": "angular-mis-zoneless",
       "path": "governance/skills/angular-mis-zoneless/SKILL.md",
-      "description": "Arquitectura Angular 22 zoneless y reactividad con señales en MIS Host. Usar al crear o modificar componentes, servicios y directivas, para aplicar signal, computed, effect, input, output e inject() sin zone.js. Explica por qué este proyecto NO usa ChangeDetectionStrategy.OnPush."
+      "description": "Arquitectura Angular 22 zoneless y reactividad con señales en MIS Host. Usar al crear o modificar componentes, servicios y directivas, para aplicar signal, computed, effect, input, output e inject() sin zone.js. Mantiene la estrategia predeterminada OnPush sin declaraciones redundantes."
     },
     {
       "name": "mis-component-styling",

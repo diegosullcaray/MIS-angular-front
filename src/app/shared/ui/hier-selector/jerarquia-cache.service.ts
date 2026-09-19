@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, shareReplay, tap } from 'rxjs';
-import type { HierarquiaNodo } from '../../../pages/modules/reportes/models/jerarquia.model';
+import type { HierarquiaNodo } from './jerarquia.model';
 
 /** Prefijo de las entradas en `sessionStorage`. */
 const PREFIJO = 'mis.jerarquia.';
@@ -17,11 +17,12 @@ const PREFIJO = 'mis.jerarquia.';
 @Injectable({ providedIn: 'root' })
 export class JerarquiaCacheService {
   private readonly enMemoria = new Map<string, Observable<HierarquiaNodo[]>>();
+  private generacion = 0;
 
   /**
    * Lo cacheado para esa clave, o lo que produzca `pedir()` la primera vez.
-   * `refCount: false` es deliberado: si no, el valor se descartaría al salir de
-   * la pantalla y el siguiente montaje volvería a la red.
+   * Conserva respuestas completadas. Una carga pendiente se cancela si no queda
+   * ningún consumidor; cancelar una pantalla no elimina datos ya completados.
    */
   obtener(clave: string, pedir: () => Observable<HierarquiaNodo[]>): Observable<HierarquiaNodo[]> {
     const yaEnMemoria = this.enMemoria.get(clave);
@@ -34,9 +35,12 @@ export class JerarquiaCacheService {
       return flujo;
     }
 
+    const generacion = this.generacion;
     const flujo = pedir().pipe(
-      tap((nodos) => this.guardar(clave, nodos)),
-      shareReplay({ bufferSize: 1, refCount: false }),
+      tap((nodos) => {
+        if (generacion === this.generacion) this.guardar(clave, nodos);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
     this.enMemoria.set(clave, flujo);
     return flujo;
@@ -58,8 +62,9 @@ export class JerarquiaCacheService {
     tipCod: number,
     codRels: readonly string[],
     fec?: string,
+    identidad = '',
   ): string {
-    return `nivel|${codJerarquia}|${nivel}|${tipCod}|${[...codRels].sort().join(',')}|${fec ?? ''}`;
+    return `nivel|${codJerarquia}|${nivel}|${tipCod}|${[...codRels].sort().join(',')}|${fec ?? ''}|${identidad}`;
   }
 
   /**
@@ -67,6 +72,7 @@ export class JerarquiaCacheService {
    * alterno: el árbol que ve cada persona depende de quién es.
    */
   limpiar(): void {
+    this.generacion++;
     this.enMemoria.clear();
     try {
       const claves = Object.keys(sessionStorage).filter((k) => k.startsWith(PREFIJO));

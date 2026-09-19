@@ -1,4 +1,6 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal, untracked } from '@angular/core';
+import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import { identidadConsulta } from '../../../../../shared/utils/identidad-consulta.util';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
@@ -12,6 +14,7 @@ import { CalculadoraDialogComponent } from '../../ui/calculadora-dialog/calculad
 import { DetalleVariableDialogComponent } from '../../ui/detalle-variable-dialog/detalle-variable-dialog.component';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { DetalleBancarizacionDialogComponent } from '../../ui/detalle-bancarizacion-dialog/detalle-bancarizacion-dialog.component';
+import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import type { DetalleVariableActivo, ReqDetalleVariable } from '../../models/incentivos-detalle.model';
 import type { DetalleAvanceEvent, DetalleSuperPlusEvent, DetalleTablaVariableEvent } from '../../models/incentivos-eventos.model';
 
@@ -31,6 +34,7 @@ import type { DetalleAvanceEvent, DetalleSuperPlusEvent, DetalleTablaVariableEve
     CalculadoraDialogComponent,
     DetalleVariableDialogComponent,
     DetalleBancarizacionDialogComponent,
+    InlineErrorComponent,
     WindowPanelComponent,
   ],
   templateUrl: './principal.component.html',
@@ -45,7 +49,19 @@ export class PrincipalComponent {
   protected readonly detalleActivo = signal<DetalleVariableActivo | null>(null);
 
   constructor() {
-    this.incentivos.iniciar();
+    const shell = inject(ShellStateService);
+    inject(DestroyRef).onDestroy(() => this.incentivos.limpiar());
+    effect(() => {
+      identidadConsulta(shell.usuarioActivo());
+      untracked(() => {
+        this.mostrarSelector.set(false);
+        this.mostrarCalculadora.set(false);
+        this.mostrarDetalleVariable.set(false);
+        this.mostrarDetalleBancarizacion.set(false);
+        this.detalleActivo.set(null);
+        this.incentivos.iniciar();
+      });
+    });
 
     effect(() => {
       if (this.incentivos.requiereSeleccionInicial()) this.mostrarSelector.set(true);

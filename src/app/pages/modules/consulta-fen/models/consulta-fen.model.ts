@@ -1,4 +1,7 @@
 export type NivelRiesgoFen = 'Muy Alto' | 'Alto' | 'Medio' | 'Bajo' | 'Muy Bajo';
+/** Columna confirmada por el contrato legado `CON_AGRO_FEN`. */
+export type ColumnaFiltroFen = 0 | 1 | 2 | 3;
+export type ColumnaTextoFen = Exclude<ColumnaFiltroFen, 0>;
 
 /** DTO confirmado por la pantalla legada de Consulta FEN. */
 export interface FilaRiesgoFen extends Record<string, unknown> {
@@ -18,16 +21,4 @@ export interface ResultadoTablaFen {
 
 export interface RespuestaFenBody {
   resultado?: ResultadoTablaFen;
-}
-
-export interface PuntoMapaFen {
-  lat: number;
-  lng: number;
-  precision: 'departamento';
-}
-
-export interface PuntoCalorFen extends PuntoMapaFen {
-  intensidad: number;
-  ubigeo: string;
-  nivel: NivelRiesgoFen;
 }

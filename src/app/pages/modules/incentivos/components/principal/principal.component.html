@@ -25,14 +25,9 @@
     </button>
   }
 
-  @if (incentivos.error()) {
-    <div class="mis-card p-4 text-[13px] text-[var(--mis-danger)] flex items-center gap-2">
-      <i class="pi pi-exclamation-triangle"></i>
-      <span>{{ incentivos.error() }}</span>
-    </div>
-  }
-
-  @if (incentivos.cargando() && !incentivos.perfil()) {
+  @if (incentivos.error(); as detalleError) {
+    <app-inline-error [detalle]="detalleError" (reintentar)="incentivos.reintentar()" />
+  } @else if (incentivos.cargando()) {
     <div class="flex flex-col lg:flex-row gap-5 lg:gap-6 animate-pulse">
       <div class="flex flex-col gap-5 lg:gap-6 w-full lg:w-2/3">
         <p-skeleton height="160px" styleClass="rounded-xl" />

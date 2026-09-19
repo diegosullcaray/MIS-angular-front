@@ -36,18 +36,14 @@
   background: #ffffff;
 }
 
-/* Con varias láminas, todas ocupan el MISMO alto: si cada una mandara el suyo,
-   el diálogo cambiaría de tamaño en cada paso. El ancho lo fija el diálogo
-   (ver `estiloDialogo`), no una caja interna: una caja de alto fijo quedaba
-   recortada por el `overflow: hidden` del contenido y dejaba los indicadores
-   fuera de alcance del mouse.
-
-   El techo es más bajo que el de una pieza sola porque debajo van los
-   indicadores y el contador, y todo eso tiene que entrar en el diálogo. */
+/* En el carrusel la lámina conserva sus dimensiones proporcionales y manda el
+   ancho del diálogo. El techo deja espacio para los indicadores y el contador
+   sin estirar la pieza al ancho de una caja fija. */
 .mis-anuncio-imagen--carrusel {
-  width: 100%;
-  height: min(64vh, 680px);
-  max-height: none;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(64vh, 680px);
 }
 
 /* Flechas superpuestas sobre la pieza, centradas verticalmente. */

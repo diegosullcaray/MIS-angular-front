@@ -1,4 +1,4 @@
-<div class="flex items-center gap-3 h-full w-full px-4 relative">
+<div class="flex h-full w-full items-center justify-end gap-1 px-2 relative sm:justify-start sm:gap-3 sm:px-4">
   <!-- Botón del rail: solo existe en el modo de menú "superpuesto", donde el
        rail no está anclado y este es el único camino para abrirlo. En los
        demás modos el rail se ve siempre y el botón sobra. -->
@@ -14,14 +14,9 @@
     </button>
   }
 
-  <!-- Breadcrumb minimalista. El wordmark MIS ya no vive acá (se movió al tope
-       del rail, ver `sidebar.component.html`), y ese espacio liberado es el que
-       permite mostrarlo también en mobile: es el ÚNICO lugar donde se ve la
-       ubicación y desde donde se sube de nivel en el explorador. -->
-  <!-- Toma el espacio libre (antes lo hacía un spacer aparte): así la etiqueta
-       del nivel actual dispone de todo el ancho sobrante y se recorta con
-       puntos suspensivos en vez de partirse en varias líneas. -->
-  <div class="flex flex-1 items-center gap-2.5 min-w-0 overflow-hidden">
+  <!-- El breadcrumb queda reservado para escritorio. En móvil la navegación
+       vive en el rail y la búsqueda global evita consumir la franja superior. -->
+  <div class="hidden sm:flex flex-1 items-center gap-2.5 min-w-0 overflow-hidden">
     <p-breadcrumb
       class="header-breadcrumb block min-w-0 text-xs"
       [model]="breadcrumbItems()"
@@ -30,7 +25,28 @@
   </div>
 
   <!-- Acciones de cabecera minimalistas -->
-  <div class="flex items-center gap-2 relative">
+  <div class="relative ml-auto flex shrink-0 items-center gap-1 sm:ml-0 sm:gap-2">
+    @if (buscadorAbierto()) {
+      <div class="header-buscador-global" id="buscador-global">
+        <app-buscador />
+      </div>
+    }
+
+    <!-- La búsqueda global vive junto a las acciones globales, no dentro de
+         un módulo. Al abrirse aparece el campo y busca al escribir. -->
+    <button
+      class="w-[44px] h-[44px] sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      (click)="alternarBuscador()"
+      [attr.aria-expanded]="buscadorAbierto()"
+      [attr.aria-controls]="buscadorAbierto() ? 'buscador-global' : null"
+      [attr.aria-label]="buscadorAbierto() ? 'Cerrar búsqueda global' : 'Abrir búsqueda global'"
+      [title]="buscadorAbierto() ? 'Cerrar búsqueda' : 'Buscar en todos los sistemas'"
+    >
+      <!-- Al expandirse pasa a ser cierre: la única lupa que queda es la que
+           está dentro del input, evitando duplicarla visualmente. -->
+      <ng-icon [name]="buscadorAbierto() ? 'lucideX' : 'lucideSearch'" size="15" />
+    </button>
+
     <!-- Alternar tema claro/oscuro -->
     <button
       class="w-[44px] h-[44px] sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"

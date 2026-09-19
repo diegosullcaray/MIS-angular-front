@@ -7,6 +7,8 @@ export interface FilaEncabezadoColumna {
   cols?: number;
   rows?: number;
   isdata?: number;
+  /** Orden de presentación explícito, normalizado en el adaptador del reporte. */
+  ordenPresentacion?: number;
   /** Oculta el `<th>` de esta columna (no reserva espacio en la grilla de encabezado), sin afectar su dato en el cuerpo — igual que la clase `hidden` del legado (`table-multiheader.component.html`). */
   hidden?: boolean;
   format?: Record<string, unknown>;

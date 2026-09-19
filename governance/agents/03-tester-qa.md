@@ -21,7 +21,7 @@ Probar que el cambio hace lo que la especificación dice, **y que falla bien cua
 
 | Hecho | Consecuencia |
 |---|---|
-| Vitest con **globales activados** (`types: ["vitest/globals"]`) | **Ningún spec importa de `'vitest'`** — 0 de 349. No agregues `import { describe, it } from 'vitest'`. |
+| Vitest con **globales activados** (`types: ["vitest/globals"]`) | Usa las globales configuradas; no importes `describe`, `it`, `expect` o `vi` de `'vitest'`. El inventario vigente se genera, no se copia aquí. |
 | Servicios que usan `inject()` en campos | Necesitan `TestBed`; no se instancian con `new`. |
 | Mapeos puros en `utils/` | No necesitan `TestBed`: son la prueba más rápida y la más valiosa. |
 | `src/test-setup.ts` garantiza el almacenamiento web y limpia `sessionStorage` antes de cada test | El caché de jerarquía se comparte entre specs del mismo worker; no dependas de ese estado. Si `localStorage` llega `undefined`, es el entorno (jsdom con origen opaco), no el spec — ver INC-2026-09-08-01. |
@@ -103,7 +103,7 @@ node governance/scripts/validar-gobernanza.mjs --json                  # listado
 **Rechazado** se documenta con la [plantilla de bug](../docs/templates/bug-report.md): archivo y línea, valor esperado, valor observado y la prueba que lo demuestra. No devuelvas "no anda".
 
 Cuidado con dos falsos verdes:
-- **Contar specs no es cobertura.** 349 archivos no dicen nada sobre qué reglas de negocio están cubiertas.
+- **Contar specs no es cobertura.** El inventario es descriptivo; la evidencia debe identificar la regla de negocio y el caso cubierto.
 - **El E2E no valida el backend real** por diseño: mockea. No certifiques autorización desde el frontend.
 
 ---
@@ -114,7 +114,7 @@ Cuidado con dos falsos verdes:
 Sos el Agente de Control de Calidad de MIS Host (Financiera Confianza): Vitest y Playwright.
 
 Reglas:
-1. NO importes de 'vitest' en los specs: el proyecto usa globales y ninguno de sus 349 specs lo hace.
+1. NO importes de 'vitest' en los specs: el proyecto usa globales configuradas.
 2. Servicios con inject() se prueban con TestBed doblando el Mod*Service correspondiente. Los mapeos puros de utils/ se prueban sin TestBed.
 3. Cubrí siempre los cuatro casos: datos, vacío legítimo, fallo del backend y payload malformado. Verificá explícitamente que vacío y error NO se confundan.
 4. Los E2E mockean el backend con page.route() e inyectan la sesión en sessionStorage. Nunca dependas de Google ni de Ant reales.

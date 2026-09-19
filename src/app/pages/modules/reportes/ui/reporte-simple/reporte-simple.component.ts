@@ -3,6 +3,7 @@ import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
+import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
@@ -37,7 +38,7 @@ export interface PestanaReporte {
 @Component({
   selector: 'app-reporte-simple',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, InlineErrorComponent, WindowPanelComponent, TabsModule],
   template: `
     <app-window-panel
       [titulo]="titulo()"
@@ -63,7 +64,9 @@ export interface PestanaReporte {
       </div>
 
       <!-- ZONA DE CONTENIDO PRINCIPAL (Estado Vacío, Pestañas o Bloques Apilados) -->
-      @if (!nivel()) {
+      @if (error(); as detalleError) {
+        <app-inline-error [detalle]="detalleError" (reintentar)="refrescar()" />
+      } @else if (!nivel()) {
         <app-empty-state [titulo]="tituloVacio()" [descripcion]="descripcionVacio()" />
       } @else if (pestanas(); as tabs) {
         <p-tabs [value]="tabs[0].id">
@@ -139,6 +142,8 @@ export class ReporteSimpleComponent {
   /** Reparte los bloques en pestañas, como hacen los hosts `cra-v1p2` / `cra-aut-tasa`. */
   readonly pestanas = input<PestanaReporte[]>();
   readonly cargando = input(false);
+  /** El contenedor conserva el fallo; las tablas solo gestionan carga y vacío. */
+  readonly error = input<string | null>(null);
   /**
    * Deja que las tablas hagan salto de línea para entrar en el ancho de la
    * pantalla, en vez de sacar scroll horizontal. Ver `<app-tabla-reporte>`.

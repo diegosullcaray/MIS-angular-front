@@ -2,9 +2,9 @@
   <app-window-panel [titulo]="sistema.titulo" [permitirActualizar]="false">
     <div class="mis-explorador">
       <div class="mis-explorador-barra">
-        <!-- Busca en TODOS los sistemas y a cualquier profundidad, no solo en
-             la carpeta abierta — ver `BuscadorComponent`. -->
-        <app-buscador />
+        <!-- El header resuelve la búsqueda global. Acá se conserva una búsqueda
+             local del sistema abierto (por ejemplo, solo Reportes). -->
+        <app-buscador [origenes]="origenesBusqueda()" [alcance]="sistema.titulo" />
 
         <div class="mis-explorador-vistas" role="group" aria-label="Modo de vista">
           <button

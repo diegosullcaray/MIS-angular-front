@@ -41,7 +41,7 @@ import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { opciones, titulo, verde, rojo, amarillo, gris, negrita } from './lib/proyecto.mjs';
 
-const { flags, posicionales } = opciones(process.argv.slice(2), ['title', 'cod-rep', 'transporte']);
+const { flags, posicionales } = opciones(process.argv.slice(2), ['title', 'cod-rep', 'transporte', 'endpoint']);
 
 if (flags['help'] || flags['h'] || posicionales.length === 0) {
   console.log(`
@@ -56,13 +56,14 @@ ${negrita('Opciones')}
   --title "<título>"     título legible de la pantalla
   --cod-rep <código>     código de reporte del backend Ant (ej. RS_BASE_NEG_01)
   --transporte=ant|http  fachada de datos (por defecto: ant, como el resto del repo)
+  --endpoint <ruta>     endpoint documentado, obligatorio para transporte http
   --registrar-ruta       enlaza el módulo en src/app/app.routes.ts
   --dry-run              simula sin escribir
   --force                sobrescribe si el módulo ya existe
 
 ${negrita('Ejemplos')}
   node governance/scripts/crear-modulo.mjs auditoria-riesgos --title "Auditoría de Riesgos" --cod-rep RS_AUD_01
-  node governance/scripts/crear-modulo.mjs auditoria-riesgos --dry-run
+  node governance/scripts/crear-modulo.mjs auditoria-riesgos --cod-rep RS_AUD_01 --dry-run
 `);
   process.exit(flags['help'] || flags['h'] ? 0 : 1);
 }
@@ -89,8 +90,16 @@ const titulo_ =
         .split('-')
         .map((w) => w[0].toUpperCase() + w.slice(1))
         .join(' ');
-const codRep = typeof flags['cod-rep'] === 'string' ? flags['cod-rep'] : `RS_${constante}_01`;
+const codRep = typeof flags['cod-rep'] === 'string' ? flags['cod-rep'].trim() : '';
 const transporte = flags['transporte'] === 'http' ? 'http' : 'ant';
+const endpoint = typeof flags['endpoint'] === 'string' ? flags['endpoint'].trim() : '';
+
+if ((transporte === 'ant' && !/^[A-Za-z0-9_.-]+$/.test(codRep)) ||
+    (transporte === 'http' && (!endpoint.startsWith('/') || endpoint.startsWith('//')))) {
+  console.error(rojo('Indica --cod-rep verificado para Ant o --endpoint documentado para HTTP. No se inventan contratos.'));
+  process.exit(1);
+}
+console.warn(amarillo('Esqueleto de ejemplo: adaptar DTO, campos, motor y semántica de vacío al contrato antes de usarlo.'));
 
 const BASE = resolve(process.cwd(), 'src/app/pages/modules', kebab);
 const seco = Boolean(flags['dry-run']);
@@ -133,7 +142,7 @@ const modelo = `/**
  * la pantalla: renombrar una columna en Ant no debe obligar a tocar la vista.
  */
 
-/** Fila tal como la devuelve el backend Ant. Nombres del contrato, sin traducir. */
+/** EJEMPLO pendiente de adaptar: cod/des/mto/est no son campos verificados del reporte. */
 export interface ${pascal}FilaDto {
   readonly cod: string;
   readonly des: string;
@@ -171,8 +180,21 @@ const util = `import type { ${pascal}Fila, ${pascal}FilaDto } from '../models/${
 function aNumero(valor: number | string | null | undefined): number {
   if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0;
   if (typeof valor !== 'string') return 0;
-  const limpio = Number(valor.replace(/[^0-9.-]/g, ''));
-  return Number.isFinite(limpio) ? limpio : 0;
+  let texto = valor.trim().replace(/^S\\/\\s*/, '').replace(/\\s/g, '');
+  if (!/^-?\\d[\\d.,]*$/.test(texto)) throw new Error('Monto inválido.');
+  // Ejemplos soportados: 2 300,00, 1.250,75 y S/ 1,250.75.
+  // Una única coma con tres dígitos finales se interpreta como miles.
+  // Revisar esta ambigüedad contra el contrato; no quitar puntuación a ciegas.
+  const coma = texto.lastIndexOf(',');
+  const punto = texto.lastIndexOf('.');
+  if (coma > punto && (punto >= 0 || !/^-?\\d{1,3}(,\\d{3})+$/.test(texto))) {
+    texto = texto.replace(/\\./g, '').replace(',', '.');
+  } else {
+    texto = texto.replace(/,/g, '');
+  }
+  const numero = Number(texto);
+  if (!Number.isFinite(numero)) throw new Error('Monto inválido.');
+  return numero;
 }
 
 const SOLES = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' });
@@ -193,7 +215,8 @@ export function map${pascal}Fila(dto: ${pascal}FilaDto): ${pascal}Fila {
 
 /** Una respuesta sin filas es una respuesta válida vacía, no un error. */
 export function map${pascal}Filas(dtos: readonly ${pascal}FilaDto[] | null | undefined): ${pascal}Fila[] {
-  if (!Array.isArray(dtos)) return [];
+  if (dtos == null) return [];
+  if (!Array.isArray(dtos)) throw new Error('Payload de filas inválido.');
   return dtos.map(map${pascal}Fila);
 }
 
@@ -221,7 +244,8 @@ describe('${kebab}.util', () => {
   });
 
   it('acepta montos en cadena, que es como los manda parte del backend', () => {
-    expect(map${pascal}Fila({ ...dto, mto: '2 300,00' as unknown as string }).monto).toBeGreaterThan(0);
+    expect(map${pascal}Fila({ ...dto, mto: '2 300,00' }).monto).toBe(2300);
+    expect(map${pascal}Fila({ ...dto, mto: '1.250,75' }).monto).toBe(1250.75);
     expect(map${pascal}Fila({ ...dto, mto: 'S/ 1,250.75' }).monto).toBe(1250.75);
   });
 
@@ -238,10 +262,16 @@ describe('${kebab}.util', () => {
   it('suma los montos de las filas', () => {
     expect(total${pascal}(map${pascal}Filas([dto, { ...dto, mto: 500 }]))).toBe(2000.5);
   });
+
+  it('rechaza una estructura inválida en lugar de convertirla en vacío', () => {
+    expect(() => map${pascal}Filas({} as never)).toThrow();
+    expect(() => map${pascal}Fila({ ...dto, mto: 'inválido' })).toThrow();
+  });
 });
 `;
 
-const servicioAnt = `import { Injectable, computed, inject, signal } from '@angular/core';
+const servicioAnt = `import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { Subscription, map } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { COD_${constante} } from '../constantes/${kebab}.constantes';
 import type { ${pascal}Fila, ${pascal}ResponseBody } from '../models/${kebab}.model';
@@ -259,6 +289,11 @@ import { map${pascal}Filas, total${pascal} } from '../utils/${kebab}.util';
 @Injectable({ providedIn: 'root' })
 export class ${pascal}Service {
   private readonly ant = inject(ModReportesService);
+  private consulta?: Subscription;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.consulta?.unsubscribe());
+  }
 
   private readonly _filas = signal<${pascal}Fila[]>([]);
   private readonly _cargando = signal(false);
@@ -274,17 +309,23 @@ export class ${pascal}Service {
   readonly vacio = computed(() => !this._cargando() && !this._error() && this._filas().length === 0);
 
   consultar(parametros: Record<string, unknown> = {}): void {
+    this.consulta?.unsubscribe();
+    this._filas.set([]);
     this._cargando.set(true);
     this._error.set(null);
 
-    this.ant.getRegularTableResult(COD_${constante}, parametros).subscribe({
-      next: (respuesta) => {
+    this.consulta = this.ant.getRegularTableResult(COD_${constante}, parametros).pipe(
+      map((respuesta) => {
         const cuerpo = respuesta.body as ${pascal}ResponseBody | null;
-        this._filas.set(map${pascal}Filas(cuerpo?.resultado?.data));
+        return map${pascal}Filas(cuerpo?.resultado?.data);
+      }),
+    ).subscribe({
+      next: (filas) => {
+        this._filas.set(filas);
         this._cargando.set(false);
       },
       // El error NO se convierte en tabla vacía: confundirlos es el bug que
-      // degradó al sistema legado (ver reports/performance/legacy-comparison).
+      // degradó al sistema legado (ver evidence/performance/legacy-comparison).
       error: () => {
         this._filas.set([]);
         this._error.set('No se pudo obtener la información. Reintentá en unos segundos.');
@@ -294,6 +335,7 @@ export class ${pascal}Service {
   }
 
   limpiar(): void {
+    this.consulta?.unsubscribe();
     this._filas.set([]);
     this._cargando.set(false);
     this._error.set(null);
@@ -301,7 +343,8 @@ export class ${pascal}Service {
 }
 `;
 
-const servicioHttp = `import { Injectable, computed, inject, signal } from '@angular/core';
+const servicioHttp = `import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { Subscription, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import type { ${pascal}Fila, ${pascal}FilaDto } from '../models/${kebab}.model';
 import { map${pascal}Filas, total${pascal} } from '../utils/${kebab}.util';
@@ -316,6 +359,11 @@ import { map${pascal}Filas, total${pascal} } from '../utils/${kebab}.util';
 @Injectable({ providedIn: 'root' })
 export class ${pascal}Service {
   private readonly http = inject(HttpClient);
+  private consulta?: Subscription;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.consulta?.unsubscribe());
+  }
 
   private readonly _filas = signal<${pascal}Fila[]>([]);
   private readonly _cargando = signal(false);
@@ -330,12 +378,16 @@ export class ${pascal}Service {
   readonly vacio = computed(() => !this._cargando() && !this._error() && this._filas().length === 0);
 
   consultar(parametros: Record<string, string> = {}): void {
+    this.consulta?.unsubscribe();
+    this._filas.set([]);
     this._cargando.set(true);
     this._error.set(null);
 
-    this.http.get<${pascal}FilaDto[]>('/api/${kebab}', { params: parametros }).subscribe({
-      next: (dtos) => {
-        this._filas.set(map${pascal}Filas(dtos));
+    this.consulta = this.http.get<${pascal}FilaDto[]>(${JSON.stringify(endpoint)}, { params: parametros }).pipe(
+      map(map${pascal}Filas),
+    ).subscribe({
+      next: (filas) => {
+        this._filas.set(filas);
         this._cargando.set(false);
       },
       error: () => {
@@ -347,6 +399,7 @@ export class ${pascal}Service {
   }
 
   limpiar(): void {
+    this.consulta?.unsubscribe();
     this._filas.set([]);
     this._cargando.set(false);
     this._error.set(null);
@@ -426,6 +479,50 @@ describe('${pascal}Service', () => {
     service.consultar({ nom: 'x' });
 
     expect(getRegularTableResult).toHaveBeenCalledWith(COD_${constante}, { nom: 'x' });
+  });
+});
+`;
+
+const servicioSpecHttp = `import { TestBed } from '@angular/core/testing';
+import { HttpClient } from '@angular/common/http';
+import { of, throwError } from 'rxjs';
+import { ${pascal}Service } from './${kebab}.service';
+
+/** El endpoint HTTP es explícito y se prueba como borde, sin backend real. */
+function crear(respuesta: unknown, falla = false) {
+  const get = vi.fn(() =>
+    falla ? throwError(() => new Error('API caída')) : of(respuesta)
+  );
+
+  TestBed.configureTestingModule({
+    providers: [{ provide: HttpClient, useValue: { get } }],
+  });
+  return { service: TestBed.inject(${pascal}Service), get };
+}
+
+describe('${pascal}Service', () => {
+  beforeEach(() => TestBed.resetTestingModule());
+
+  const filaOk = { cod: 'C-01', des: 'Prueba', mto: 100, est: 'ACTIVO' };
+
+  it('consulta el endpoint HTTP documentado', () => {
+    const { service, get } = crear([filaOk]);
+    service.consultar({ fecha: '20260917' });
+    expect(get).toHaveBeenCalledWith(${JSON.stringify(endpoint)}, { params: { fecha: '20260917' } });
+  });
+
+  it('publica filas y distingue vacío de error', () => {
+    const { service } = crear([]);
+    service.consultar();
+    expect(service.vacio()).toBe(true);
+    expect(service.error()).toBeNull();
+  });
+
+  it('no convierte un fallo HTTP en tabla vacía', () => {
+    const { service } = crear(null, true);
+    service.consultar();
+    expect(service.error()).toBeTruthy();
+    expect(service.vacio()).toBe(false);
   });
 });
 `;
@@ -623,7 +720,7 @@ const archivos = [
   [`utils/${kebab}.util.ts`, util],
   [`utils/${kebab}.util.spec.ts`, utilSpec],
   [`services/${kebab}.service.ts`, transporte === 'ant' ? servicioAnt : servicioHttp],
-  [`services/${kebab}.service.spec.ts`, servicioSpecAnt],
+  [`services/${kebab}.service.spec.ts`, transporte === 'ant' ? servicioSpecAnt : servicioSpecHttp],
   [`ui/${kebab}-resumen-card/${kebab}-resumen-card.component.ts`, cardTs],
   [`ui/${kebab}-resumen-card/${kebab}-resumen-card.component.html`, cardHtml],
   ['components/principal/principal.component.ts', principalTs],

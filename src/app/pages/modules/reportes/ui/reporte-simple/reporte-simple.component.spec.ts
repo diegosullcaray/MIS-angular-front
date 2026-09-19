@@ -46,6 +46,23 @@ describe('ReporteSimpleComponent', () => {
     expect(fixture.nativeElement.textContent).not.toContain('Elige un nivel');
   });
 
+  it('muestra error persistente sin tabla/vacío y permite reintentar el mismo nodo', () => {
+    const fixture = TestBed.createComponent(ReporteSimpleComponent);
+    fixture.componentRef.setInput('titulo', 'Reporte Prueba');
+    fixture.componentRef.setInput('paramsHier', PARAMS);
+    fixture.componentRef.setInput('nivel', RAIZ);
+    fixture.componentRef.setInput('tabla', TABLA_VACIA);
+    fixture.componentRef.setInput('error', 'Falló la consulta');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain('Falló la consulta');
+    expect(fixture.nativeElement.querySelector('app-tabla-reporte')).toBeNull();
+    const emitido = vi.fn();
+    fixture.componentInstance.nivelSeleccionado.subscribe(emitido);
+    fixture.nativeElement.querySelector('app-inline-error button').click();
+    expect(emitido).toHaveBeenCalledWith(RAIZ);
+    expect(emitido.mock.calls[0][0]).not.toBe(RAIZ);
+  });
+
   describe('actualizar', () => {
     function crear(nivel: HierarquiaNodo | null) {
       const fixture = TestBed.createComponent(ReporteSimpleComponent);

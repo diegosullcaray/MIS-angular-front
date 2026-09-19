@@ -1,5 +1,6 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { DestroyRef, Injectable, effect, inject, signal, untracked } from '@angular/core';
+import { Observable, Subscription, map } from 'rxjs';
+import { identidadConsulta } from '../../../../shared/utils/identidad-consulta.util';
 import { ModKaypachaService } from '../../../../core/winder/instances/mod-kaypacha.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import type { SidebarNavPanelConfig } from '../../../full-pages/layout/interfaces/sidebar.model';
@@ -12,12 +13,35 @@ export class KaypachaService {
   private readonly ant = inject(ModKaypachaService);
   private readonly shell = inject(ShellStateService);
 
-  readonly categorias = signal<CategoriaRanking[]>([]);
-  readonly cargando = signal(false);
-  readonly error = signal<string | null>(null);
+  private readonly categoriasState = signal<CategoriaRanking[]>([]);
+  readonly categorias = this.categoriasState.asReadonly();
+  private readonly cargandoState = signal(false);
+  readonly cargando = this.cargandoState.asReadonly();
+  private readonly errorState = signal<string | null>(null);
+  readonly error = this.errorState.asReadonly();
 
   private cargado = false;
+  private consulta?: Subscription;
+  private identidad = '';
   readonly ruta = '/app/ranking-k';
+
+  constructor() {
+    effect(() => {
+      const clave = identidadConsulta(this.shell.usuarioActivo());
+      untracked(() => this.sincronizarIdentidad(clave));
+    });
+    inject(DestroyRef).onDestroy(() => this.consulta?.unsubscribe());
+  }
+
+  private sincronizarIdentidad(clave = identidadConsulta(this.shell.usuarioActivo())): void {
+    if (clave === this.identidad) return;
+    this.consulta?.unsubscribe();
+    this.identidad = clave;
+    this.cargado = false;
+    this.categoriasState.set([]);
+    this.cargandoState.set(false);
+    this.errorState.set(null);
+  }
 
   /** Genera la configuración del panel de navegación para el sidebar. */
   panelPara(titulo: string, icono: string): SidebarNavPanelConfig {
@@ -39,29 +63,40 @@ export class KaypachaService {
 
   /** Carga la lista de categorías del ranking si no han sido cargadas previamente. */
   cargarCategorias(): void {
+    this.sincronizarIdentidad();
     if (this.cargado) return;
+    const identidad = this.identidad;
+    this.consulta?.unsubscribe();
     this.cargado = true;
-    this.cargando.set(true);
-    this.error.set(null);
+    this.cargandoState.set(true);
+    this.errorState.set(null);
 
     const codBt = this.shell.usuarioActivo()?.codBt;
     if (!codBt) {
-      this.error.set('No se pudo determinar tu código de negocio/agencia.');
-      this.cargando.set(false);
+      this.errorState.set('No se pudo determinar tu código de negocio/agencia.');
+      this.cargandoState.set(false);
       this.cargado = false;
       return;
     }
 
-    this.ant.getListRanking(codBt).subscribe({
-      next: (response) => {
+    this.consulta = this.ant.getListRanking(codBt).pipe(
+      map((response) => {
         const body = response.body as KaypachaResponseBody | null;
         const json = body?.resultado?.list?.[0]?.JSONLIST;
-        this.categorias.set(json ? (JSON.parse(json) as CategoriaRanking[]) : []);
-        this.cargando.set(false);
+        const categorias: unknown = json ? JSON.parse(json) : [];
+        if (!Array.isArray(categorias)) throw new Error('Lista de categorías inválida.');
+        return categorias as CategoriaRanking[];
+      }),
+    ).subscribe({
+      next: (categorias) => {
+        if (identidad !== identidadConsulta(this.shell.usuarioActivo())) return;
+        this.categoriasState.set(categorias);
+        this.cargandoState.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar la lista de categorías.');
-        this.cargando.set(false);
+        if (identidad !== identidadConsulta(this.shell.usuarioActivo())) return;
+        this.errorState.set('No se pudo cargar la lista de categorías.');
+        this.cargandoState.set(false);
         this.cargado = false;
       },
     });
