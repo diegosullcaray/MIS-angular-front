@@ -1,6 +1,5 @@
-import { DestroyRef, effect, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import type { Observable } from 'rxjs';
+import { effect, inject, signal } from '@angular/core';
+import type { Observable, Subscription } from 'rxjs';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../utils/hier-selector-error.util';
 import type { NodoConsulta } from '../../services/bloque-reporte.service';
@@ -22,7 +21,6 @@ export abstract class ReporteSimpleBase {
   protected readonly tabla = signal<TablaReporteResultado>(TABLA_VACIA);
   protected readonly error = signal<string | null>(null);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
-  protected readonly destroyRef = inject(DestroyRef);
 
   protected abstract consultar(nodo: NodoConsulta): Observable<ReporteBloqueUnico>;
 
@@ -47,8 +45,7 @@ export abstract class ReporteSimpleBase {
     // Se pasa el nodo COMPLETO: los reportes paginados reenvían también
     // `lvl_hier`/`des_rel`/`lbl_hier`. Los demás no cambian, porque
     // `BloqueReporteService.regular()` recorta a `tip_cod`/`cod_rel`.
-    this.consultar(nodo)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    return this.consultar(nodo)
       .subscribe({
       next: ({ tabla1 }) => {
         this.tabla.set(tabla1);
