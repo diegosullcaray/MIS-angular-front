@@ -27,6 +27,8 @@ export interface PerfilRaw {
     num_doc?: string;
     /** Clase de usuario: 1 = individual, 2 = grupal. */
     cla_use?: number;
+    /** Nivel organizacional usado por Incentivos3: SECTORISTA, ADMINISTRACION, CORREDOR, TERRITORIO o STAFF. */
+    niv?: string;
 }
 
 /** Un usuario alterno tal como lo devuelve el backend (`login_response.alternates`). */

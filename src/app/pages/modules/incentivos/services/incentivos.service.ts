@@ -69,13 +69,21 @@ export class IncentivosService {
   /** `true` si el usuario debe elegir un nivel antes de ver datos (admin/STAFF). */
   private readonly requiereSeleccionInicialState = signal(false);
   readonly requiereSeleccionInicial = this.requiereSeleccionInicialState.asReadonly();
-  readonly nivelesSelector = NIVELES_SELECTOR_JERARQUIA;
+  private readonly nivelesSelectorState = signal(NIVELES_SELECTOR_JERARQUIA);
+  /** Niveles que el perfil puede consultar, derivados de `profile.niv` como en Incentivos3. */
+  readonly nivelesSelector = this.nivelesSelectorState.asReadonly();
+  private readonly puedeVerFinancieraState = signal(false);
+  readonly puedeVerFinanciera = this.puedeVerFinancieraState.asReadonly();
+  private readonly puedeRestaurarPerfilPropioState = signal(false);
+  readonly puedeRestaurarPerfilPropio = this.puedeRestaurarPerfilPropioState.asReadonly();
 
   /** Fecha YYYYMMDD de los datos mostrados. */
   private readonly fechaActualState = signal('');
   readonly fechaActual = this.fechaActualState.asReadonly();
 
   private raizJerarquia: { tipCod: number; codRel: string } | null = null;
+  private nivelPropio: NivelSeleccionado | null = null;
+  private perfilPropio: PerfilUsuarioIncentivo | null = null;
   /** Override manual del selector de fecha (`seleccionarFecha`) — `null` usa la fecha de corte por defecto. */
   private fechaSeleccionada: string | null = null;
   private consultaDatos?: Subscription;
@@ -101,6 +109,8 @@ export class IncentivosService {
     this.consultaRaiz?.unsubscribe();
     this.revisionConsulta++;
     this.raizJerarquia = null;
+    this.nivelPropio = null;
+    this.perfilPropio = null;
     this.fechaSeleccionada = null;
     this.fechaActualState.set('');
     this.nivelActualState.set(null);
@@ -109,6 +119,9 @@ export class IncentivosService {
     this.cargandoState.set(false);
     this.puedeElegirNivelState.set(false);
     this.requiereSeleccionInicialState.set(false);
+    this.nivelesSelectorState.set([]);
+    this.puedeVerFinancieraState.set(false);
+    this.puedeRestaurarPerfilPropioState.set(false);
     this.semaforoState.set(crearPerfilSemDefault());
     this.monetizadoState.set(this.monetizadoInicial());
     this.avancesState.set(crearAvancesDefault());
@@ -142,6 +155,18 @@ export class IncentivosService {
     return this.shell.usuarioActivo()?.email ?? '';
   }
 
+  /** `niv` es el permiso funcional de Incentivos; el rol general no lo reemplaza. */
+  private get nivelOrganizacional(): string {
+    return (this.shell.usuarioActivo()?.nivelIncentivos ?? '').trim().toUpperCase();
+  }
+
+  private configurarSelector(nivel: string): void {
+    const profundidad = { ADMINISTRACION: 1, CORREDOR: 2, TERRITORIO: 3, STAFF: 4 }[nivel] ?? 0;
+    this.nivelesSelectorState.set(NIVELES_SELECTOR_JERARQUIA.slice(0, Math.max(0, profundidad - 1)));
+    this.puedeVerFinancieraState.set(nivel === 'STAFF');
+    this.puedeRestaurarPerfilPropioState.set(['ADMINISTRACION', 'CORREDOR', 'TERRITORIO'].includes(nivel));
+  }
+
   /** Fecha de corte de campaña (YYYYMMDD). */
   fechaCorte(): string {
     return this.fechaSeleccionada ?? this.shell.usuarioActivo()?.fechaCorte ?? new Date().toISOString().slice(0, 10).replace(/-/g, '');
@@ -165,17 +190,30 @@ export class IncentivosService {
     this.nivelActualState.set(null);
     this.fechaSeleccionada = null;
 
-    const esAdmin = this.shell.esAdmin();
-    this.puedeElegirNivelState.set(esAdmin);
-    this.monetizadoState.update((actual) => ({ ...actual, mostrarModelo: !esAdmin, fechasHabilitadas: this.calcularFechasHabilitadas() }));
+    const nivel = this.nivelOrganizacional;
+    // Sesiones antiguas sin `niv` conservan el comportamiento previo para los
+    // administradores; cuando el backend lo entrega, `niv` es la fuente de verdad.
+    const esStaff = nivel === 'STAFF' || (!nivel && this.shell.esAdmin());
+    const esCoordinador = ['ADMINISTRACION', 'CORREDOR', 'TERRITORIO'].includes(nivel);
+    this.configurarSelector(esStaff ? 'STAFF' : nivel);
+    this.monetizadoState.update((actual) => ({ ...actual, mostrarModelo: false, fechasHabilitadas: this.calcularFechasHabilitadas() }));
 
-    if (esAdmin) {
+    if (esStaff) {
+      this.puedeElegirNivelState.set(true);
       this.requiereSeleccionInicialState.set(true);
       this.cargandoState.set(false);
-      this.cargarRaizJerarquia();
+      this.cargarRaizJerarquia(false);
       return;
     }
 
+    if (esCoordinador) {
+      this.puedeElegirNivelState.set(true);
+      this.requiereSeleccionInicialState.set(false);
+      this.cargarRaizJerarquia(true);
+      return;
+    }
+
+    this.puedeElegirNivelState.set(false);
     this.requiereSeleccionInicialState.set(false);
     const codRel = this.codBt;
     if (!codRel) {
@@ -227,7 +265,7 @@ export class IncentivosService {
   }
 
   /** Carga la raíz de jerarquía para el selector de nivel. */
-  private cargarRaizJerarquia(): void {
+  private cargarRaizJerarquia(cargarPerfilPropio: boolean): void {
     this.consultaRaiz?.unsubscribe();
     const identidad = this.identidad;
     this.loading.show('Cargando jerarquía…');
@@ -236,16 +274,35 @@ export class IncentivosService {
     ).subscribe({
       next: (respuesta) => {
         if (identidad !== identidadConsulta(this.shell.usuarioActivo())) return;
-        const h = (respuesta.body as { base_hierarchy?: { tip_cod: number; cod_rel: string }[] } | null)?.base_hierarchy;
+        const h = (respuesta.body as { base_hierarchy?: { tip_cod: number; cod_rel: string; flag_cla?: number }[] } | null)?.base_hierarchy;
         if (h?.[0]) {
           this.raizJerarquia = { tipCod: h[0].tip_cod, codRel: h[0].cod_rel };
+          if (cargarPerfilPropio) {
+            const usuario = this.shell.usuarioActivo();
+            const perfil: PerfilUsuarioIncentivo = {
+              nombre: usuario?.nombre || 'Mi perfil',
+              nivel: this.nivelOrganizacional || 'CARGO',
+              descripcionNivel: usuario?.cargo || '--',
+              imagenUrl: usuario?.avatarUrl || '',
+            };
+            const nivel: NivelSeleccionado = {
+              tipCod: h[0].tip_cod,
+              codRel: h[0].cod_rel,
+              claUsu: (h[0].flag_cla as 1 | 2 | undefined) ?? (usuario?.claUse as 1 | 2 | undefined) ?? 1,
+            };
+            this.perfilPropio = perfil;
+            this.nivelPropio = nivel;
+            this.seleccionarNivel(perfil, nivel);
+          }
         } else {
           this.errorState.set('No se pudo determinar tu jerarquía base.');
+          this.cargandoState.set(false);
         }
       },
       error: () => {
         if (identidad !== identidadConsulta(this.shell.usuarioActivo())) return;
         this.errorState.set('No se pudo determinar tu jerarquía base.');
+        this.cargandoState.set(false);
       },
     });
   }
@@ -298,6 +355,12 @@ export class IncentivosService {
     );
   }
 
+  /** Restaura la jerarquía propia de un coordinador después de consultar otro nivel. */
+  restaurarPerfilPropio(): void {
+    this.sincronizarIdentidad();
+    if (this.perfilPropio && this.nivelPropio) this.seleccionarNivel(this.perfilPropio, this.nivelPropio);
+  }
+
   private seleccionarNivel(perfil: PerfilUsuarioIncentivo, nivel: NivelSeleccionado): void {
     this.perfilState.set(perfil);
     this.requiereSeleccionInicialState.set(false);
@@ -316,6 +379,10 @@ export class IncentivosService {
     const cfg = resolverConfiguracionUsuario(nivel.tipCod, nivel.claUsu);
     const fec = this.fechaCorte();
     this.fechaActualState.set(fec);
+    this.monetizadoState.update((actual) => ({
+      ...actual,
+      mostrarModelo: nivel.tipCod === 1 && nivel.claUsu === 1,
+    }));
 
     const fuente$ =
       nivel.claUsu === 2

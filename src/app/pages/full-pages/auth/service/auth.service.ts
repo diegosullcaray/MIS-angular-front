@@ -194,6 +194,7 @@ export class AuthService {
       fechasHabilitadas: profile.hab_fec,
       numDoc: profile.num_doc,
       claUse: profile.cla_use,
+      nivelIncentivos: profile.niv,
     };
   }
 

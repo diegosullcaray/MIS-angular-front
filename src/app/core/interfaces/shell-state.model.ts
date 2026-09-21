@@ -27,6 +27,8 @@ export interface UsuarioActivo {
   numDoc?: string;
   /** Clase de usuario (`profile.cla_use` del backend Ant), 1=individual, 2=grupal. Lo requiere el módulo de incentivos para determinar qué variables y matriz de comisión cargar. */
   claUse?: number;
+  /** Nivel organizacional de Incentivos (`profile.niv` de Ant). Conserva la matriz de permisos del módulo legado. */
+  nivelIncentivos?: string;
 }
 
 export interface MenuItemActivo {

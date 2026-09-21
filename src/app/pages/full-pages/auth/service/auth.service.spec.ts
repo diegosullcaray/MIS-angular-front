@@ -20,6 +20,7 @@ const RESPUESTA_LOGIN: IWinderResponse = {
         cargo: 'Asesora de Negocios',
         cod_bt: 'BT-001',
         tip_use: 0,
+        niv: 'SECTORISTA',
         curr_fec: '20260808',
       },
       sid: 'winder-sid-1',
@@ -149,6 +150,7 @@ describe('AuthService', () => {
     expect(usuario?.email).toBe(environment.devUser);
     expect(usuario?.codBt).toBe('BT-001');
     expect(usuario?.cargo).toBe('Asesora de Negocios');
+    expect(usuario?.nivelIncentivos).toBe('SECTORISTA');
     expect(usuario?.fechaCorte).toBe('20260808');
     expect(shell.usuarioActivo()?.id).toBe(environment.devUser);
     expect(service.token()).toBe('winder-sid-1');
