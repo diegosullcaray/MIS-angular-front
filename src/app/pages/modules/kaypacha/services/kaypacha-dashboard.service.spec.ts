@@ -35,6 +35,7 @@ describe('KaypachaDashboardService', () => {
     });
     service = TestBed.inject(KaypachaDashboardService);
     shell = TestBed.inject(ShellStateService);
+    shell.setUsuarioActivo(usuario());
   });
 
   it('cargarDatos() usa el cod_bt del usuario activo cuando no se pasa uno explícito', () => {
@@ -88,6 +89,29 @@ describe('KaypachaDashboardService', () => {
 
     expect(service.nombreUsuario()).toBe('Ana Torres');
     expect(service.cargo()).toBe('Asesor');
+  });
+
+  it('si el backend omite la ficha, conserva los datos del asesor de la sesión', () => {
+    shell.setUsuarioActivo(usuario({ nombre: 'María López', cargo: 'Asesora de Negocios', rol: 'supervisor-area' }));
+    getColaboradoresDataSpy.mockReturnValue(
+      of({ code: '0', headers: {}, body: { resultado: { puntos: { HACTBOTON: '0' } } } } as IWinderResponse)
+    );
+
+    service.cargarDatos();
+
+    expect(service.nombreUsuario()).toBe('María López');
+    expect(service.cargo()).toBe('Asesora de Negocios');
+    expect(service.permitirBusqueda()).toBe(false);
+  });
+
+  it('sin cod_bt de sesión no consulta colaboradores ni abre un contexto de selección', () => {
+    shell.cerrarSesion();
+
+    service.cargarDatos();
+
+    expect(getColaboradoresDataSpy).not.toHaveBeenCalled();
+    expect(service.error()).toBe('No se encontró el perfil del asesor en la sesión actual.');
+    expect(service.permitirBusqueda()).toBe(false);
   });
 
   it('con codBT explícito, sí muestra el nombre/cargo del colaborador buscado', () => {
