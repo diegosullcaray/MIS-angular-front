@@ -20,7 +20,8 @@ export class KaypachaDashboardService {
   readonly cargo = signal<string>('');
   readonly posicion = signal<string | number>('-');
   readonly puntajeFinal = signal<string | number>('0');
-  readonly permitirBusqueda = signal<boolean>(true);
+  /** El buscador nunca se muestra hasta que el backend autorice expresamente el cambio. */
+  readonly permitirBusqueda = signal<boolean>(false);
 
   readonly headers1 = signal<TableHeaderDef[]>([]);
   readonly headers1_1 = signal<TableHeaderDef[]>([]);
@@ -55,6 +56,7 @@ export class KaypachaDashboardService {
     this.cargo.set('');
     this.posicion.set('-');
     this.puntajeFinal.set('0');
+    this.permitirBusqueda.set(false);
   }
 
   /** Limpia todo el estado en memoria del módulo. */
@@ -73,7 +75,17 @@ export class KaypachaDashboardService {
     this.error.set(null);
     this.resetEstadoTablas();
 
-    const targetCodBt = codBT || this.shell.usuarioActivo()?.codBt;
+    const usuarioActivo = this.shell.usuarioActivo();
+    const targetCodBt = codBT ?? usuarioActivo?.codBt;
+
+    // Kaypacha es un tablero personal al ingresar. Sin el código de la sesión
+    // no se debe consultar al backend, porque éste puede responder con un
+    // contexto de selección de colaboradores en lugar de la ficha del asesor.
+    if (!targetCodBt) {
+      this.error.set('No se encontró el perfil del asesor en la sesión actual.');
+      this.loading.set(false);
+      return;
+    }
 
     this.ant.getColaboradoresData(targetCodBt).subscribe({
       next: (response) => {
@@ -100,8 +112,8 @@ export class KaypachaDashboardService {
         // La consulta inicial ya se hace con el cod_bt de la sesión. El legacy
         // muestra la identidad retornada tanto para el perfil propio como para
         // un colaborador elegido desde el diálogo.
-        this.nombreUsuario.set(res.datosUsurio?.HDESPER ?? '');
-        this.cargo.set(res.datosUsurio?.HDESCAR ?? '');
+        this.nombreUsuario.set(res.datosUsurio?.HDESPER || usuarioActivo?.nombre || '');
+        this.cargo.set(res.datosUsurio?.HDESCAR || usuarioActivo?.cargo || '');
 
         // `HACTBOTON` es una autorización explícita del backend. Un valor
         // ausente no habilita el buscador; los administradores conservan la
