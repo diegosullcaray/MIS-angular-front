@@ -24,6 +24,8 @@ export class HierSelectorComponent implements OnInit {
   private readonly cancelarCarga = new Subject<void>();
   private iniciado = false;
 
+  private primerRunEffect = true;
+
   constructor() {
     inject(DestroyRef).onDestroy(() => {
       this.cancelarCarga.next();
@@ -32,8 +34,14 @@ export class HierSelectorComponent implements OnInit {
     effect(() => {
       this.fechaPersonalizada();
       identidadConsulta(this.shell.usuarioActivo());
+      
+      if (this.primerRunEffect) {
+        this.primerRunEffect = false;
+        return;
+      }
+
       if (untracked(() => this.iniciado)) this.limpiar();
-    }, { allowSignalWrites: true });
+    });
   }
 
   readonly paramsHier = input.required<ParamsJerarquia>();
