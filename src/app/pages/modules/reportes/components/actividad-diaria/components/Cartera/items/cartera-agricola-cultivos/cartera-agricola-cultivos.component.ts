@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -55,6 +55,7 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
 export class CarteraAgricolaCultivosComponent {
   private readonly servicio = inject(CarteraRepositorioService);
   private readonly toast = inject(ToastService);
+  private readonly selectorJerarquia = viewChild(HierSelectorComponent);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly columnasDetalle = COLUMNAS_DETALLE_CULTIVO;
@@ -86,13 +87,6 @@ export class CarteraAgricolaCultivosComponent {
 
   private filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
 
-  /** Datos de los hijos (drill-down) indexados por cod_rel */
-  protected readonly subTablas = signal<Map<string, CarteraAgricolaResultado>>(new Map());
-  /** Filas actualmente expandidas */
-  protected readonly filasExpandidas = signal<Record<string, boolean>>({});
-  /** Identificador de las filas que están cargando su sub-tabla */
-  protected readonly cargandoSubTabla = signal<Record<string, boolean>>({});
-
   constructor() {
     this.servicio.periodosAgricola().subscribe((opciones) => {
       this.periodos.set(opciones);
@@ -113,7 +107,7 @@ export class CarteraAgricolaCultivosComponent {
 
   /**
    * Replica `ddHier()` del legado: las métricas abren los gráficos y la
-   * descripción baja un nivel de jerarquía dentro de la misma tabla.
+   * descripción cambia el nivel del selector y reemplaza la tabla principal.
    */
   protected onCeldaSeleccionada(evento: { clave: string; fila: Record<string, unknown> }): void {
     const clave = evento.clave.toUpperCase();
@@ -129,44 +123,15 @@ export class CarteraAgricolaCultivosComponent {
     // En el legado los nodos hoja (cliente/asesor) no hacen otra consulta.
     if (!Number.isFinite(tip_cod) || tip_cod === 999 || tip_cod === 2 || !cod_rel) return;
 
-    const expandidas = { ...this.filasExpandidas() };
-    if (expandidas[cod_rel]) {
-      // Si está abierta, la cerramos
-      delete expandidas[cod_rel];
-      this.filasExpandidas.set(expandidas);
-      return;
-    }
-
-    // Si ya tenemos los datos en caché, solo abrimos
-    if (this.subTablas().has(cod_rel)) {
-      expandidas[cod_rel] = true;
-      this.filasExpandidas.set(expandidas);
-      return;
-    }
-
-    // Cargamos los datos del siguiente nivel
-    this.cargandoSubTabla.update(v => ({ ...v, [cod_rel]: true }));
-    
-    // Abrimos la fila para mostrar el esqueleto de carga
-    expandidas[cod_rel] = true;
-    this.filasExpandidas.set(expandidas);
-
-    this.servicio.carteraAgricola({ tip_cod, cod_rel }, this.periodo() || undefined).subscribe({
-      next: (reporte) => {
-        const mapa = new Map(this.subTablas());
-        mapa.set(cod_rel, reporte);
-        this.subTablas.set(mapa);
-        this.cargandoSubTabla.update(v => ({ ...v, [cod_rel]: false }));
-      },
-      error: () => {
-        this.toast.error('Error al cargar detalle', 'No se pudieron cargar los datos del siguiente nivel.');
-        this.cargandoSubTabla.update(v => ({ ...v, [cod_rel]: false }));
-        // Cerramos la fila por error
-        const current = { ...this.filasExpandidas() };
-        delete current[cod_rel];
-        this.filasExpandidas.set(current);
-      }
-    });
+    const nodo: HierarquiaNodo = {
+      tip_cod,
+      cod_rel,
+      des_rel: String(fila['rdesjer'] ?? fila['DESCRIPCION'] ?? ''),
+    };
+    // Al estar disponible en el cascada, esta llamada también emite la ruta y
+    // carga sus opciones hijas. El fallback conserva la consulta si el backend
+    // no incluyó la fila en el selector.
+    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) this.onNivelSeleccionado(nodo);
   }
 
   /** El legado baja al detalle con el `htipcod`/`cod_rel` de la propia fila, no con el nodo elegido. */
@@ -240,26 +205,9 @@ export class CarteraAgricolaCultivosComponent {
     this.ubicacion.set(null);
   }
 
-  protected estaCargandoSubTabla(fila: Record<string, unknown>): boolean {
-    return !!this.cargandoSubTabla()[this.codigoRelacion(fila)];
-  }
-
-  protected subTablaDe(fila: Record<string, unknown>): CarteraAgricolaResultado | undefined {
-    return this.subTablas().get(this.codigoRelacion(fila));
-  }
-
-  private codigoRelacion(fila: Record<string, unknown>): string {
-    return String(fila['cod_rel'] ?? '');
-  }
-
   private cargar(nodo: HierarquiaNodo, periodo: string): void {
     this.cargando.set(true);
     this.volverAlListado();
-    // El drill-down depende del nodo y del periodo; no reutilizar hijos de una
-    // consulta anterior con la misma clave de relación.
-    this.subTablas.set(new Map());
-    this.filasExpandidas.set({});
-    this.cargandoSubTabla.set({});
     this.servicio.carteraAgricola({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
       next: (reporte) => {
         this.reporte.set(reporte);

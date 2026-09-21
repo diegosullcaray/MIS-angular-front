@@ -86,6 +86,26 @@ export class HierSelectorComponent implements OnInit {
     this.cargarRaiz();
   }
 
+  /**
+   * Sincroniza el cascada con un nodo elegido desde una tabla. El legacy
+   * actualizaba su `hierBuffer` antes de pedir la tabla siguiente; exponer esta
+   * operación evita que la pantalla consulte un nivel que el filtro no refleja.
+   */
+  public seleccionarNodo(nodo: HierarquiaNodo): boolean {
+    const indice = this.nodosNivel().findIndex((nivel) =>
+      nivel.data.some((opcion) => opcion.tip_cod === nodo.tip_cod && opcion.cod_rel === nodo.cod_rel),
+    );
+    if (indice < 0) return false;
+
+    const opcion = this.nodosNivel()[indice].data.find(
+      (item) => item.tip_cod === nodo.tip_cod && item.cod_rel === nodo.cod_rel,
+    );
+    if (!opcion) return false;
+
+    this.onSeleccionarNivel(indice, opcion);
+    return true;
+  }
+
   private cargarRaiz(): void {
     const raizFija = this.raizFija();
     if (raizFija && raizFija.length > 0) {

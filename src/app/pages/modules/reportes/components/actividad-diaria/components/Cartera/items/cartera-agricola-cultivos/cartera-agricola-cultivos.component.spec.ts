@@ -45,7 +45,7 @@ describe('CarteraAgricolaCultivosComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('al pulsar descripción consulta y expande el siguiente nivel jerárquico', () => {
+  it('al pulsar descripción cambia el nivel y reemplaza la tabla principal', () => {
     const fixture = TestBed.createComponent(CarteraAgricolaCultivosComponent);
     fixture.detectChanges();
 
@@ -54,8 +54,10 @@ describe('CarteraAgricolaCultivosComponent', () => {
       fila: { htipcod: 18, cod_rel: 'AG-1', rdesjer: 'Agencia Centro' },
     });
 
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance['nivelActual']()).toMatchObject({ tip_cod: 18, cod_rel: 'AG-1' });
     expect(servicioSpy['carteraAgricola']).toHaveBeenCalledWith({ tip_cod: 18, cod_rel: 'AG-1' }, '202609');
-    expect(fixture.componentInstance['filasExpandidas']()).toEqual({ 'AG-1': true });
   });
 
   it('al pulsar una métrica abre el detalle de gráficos de la misma fila', () => {
