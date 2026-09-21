@@ -79,15 +79,15 @@ describe('KaypachaDashboardService', () => {
     expect(service.loading()).toBe(false);
   });
 
-  it('sin codBT explícito, no muestra nombre/cargo del colaborador', () => {
+  it('sin codBT explícito, muestra el nombre/cargo del perfil propio retornado por el backend', () => {
     getColaboradoresDataSpy.mockReturnValue(
       of({ code: '0', headers: {}, body: { resultado: { datosUsurio: { HDESPER: 'Ana Torres', HDESCAR: 'Asesor' } } } } as IWinderResponse)
     );
 
     service.cargarDatos();
 
-    expect(service.nombreUsuario()).toBe('');
-    expect(service.cargo()).toBe('');
+    expect(service.nombreUsuario()).toBe('Ana Torres');
+    expect(service.cargo()).toBe('Asesor');
   });
 
   it('con codBT explícito, sí muestra el nombre/cargo del colaborador buscado', () => {
@@ -99,6 +99,39 @@ describe('KaypachaDashboardService', () => {
 
     expect(service.nombreUsuario()).toBe('Ana Torres');
     expect(service.cargo()).toBe('Asesor');
+  });
+
+  it('para un asesor, no habilita el buscador si el backend no autoriza el cambio', () => {
+    shell.setUsuarioActivo(usuario({ rol: 'supervisor-area' }));
+    getColaboradoresDataSpy.mockReturnValue(
+      of({ code: '0', headers: {}, body: { resultado: { puntos: { HACTBOTON: '0' } } } } as IWinderResponse)
+    );
+
+    service.cargarDatos();
+
+    expect(service.permitirBusqueda()).toBe(false);
+  });
+
+  it('para un asesor, solo habilita el buscador cuando HACTBOTON es 1', () => {
+    shell.setUsuarioActivo(usuario({ rol: 'supervisor-area' }));
+    getColaboradoresDataSpy.mockReturnValue(
+      of({ code: '0', headers: {}, body: { resultado: { puntos: { HACTBOTON: '1' } } } } as IWinderResponse)
+    );
+
+    service.cargarDatos();
+
+    expect(service.permitirBusqueda()).toBe(true);
+  });
+
+  it('para un administrador, conserva el buscador aunque HACTBOTON sea 0', () => {
+    shell.setUsuarioActivo(usuario({ rol: 'admin-sistema' }));
+    getColaboradoresDataSpy.mockReturnValue(
+      of({ code: '0', headers: {}, body: { resultado: { puntos: { HACTBOTON: '0' } } } } as IWinderResponse)
+    );
+
+    service.cargarDatos();
+
+    expect(service.permitirBusqueda()).toBe(true);
   });
 
   it('cargarDatos() muestra un mensaje de error si el backend no devuelve resultado', () => {

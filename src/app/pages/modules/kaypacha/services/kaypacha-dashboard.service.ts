@@ -97,12 +97,16 @@ export class KaypachaDashboardService {
         this.puntajeFinal.set(res.puntos?.HPUNTAFINAL ?? '0');
         this.posicion.set(res.puntos?.HDESPOS ?? '-');
 
-        if (codBT) {
-          this.nombreUsuario.set(res.datosUsurio?.HDESPER ?? '');
-          this.cargo.set(res.datosUsurio?.HDESCAR ?? '');
-        }
+        // La consulta inicial ya se hace con el cod_bt de la sesión. El legacy
+        // muestra la identidad retornada tanto para el perfil propio como para
+        // un colaborador elegido desde el diálogo.
+        this.nombreUsuario.set(res.datosUsurio?.HDESPER ?? '');
+        this.cargo.set(res.datosUsurio?.HDESCAR ?? '');
 
-        this.permitirBusqueda.set(res.puntos?.HACTBOTON !== '0');
+        // `HACTBOTON` es una autorización explícita del backend. Un valor
+        // ausente no habilita el buscador; los administradores conservan la
+        // capacidad de consultar colaboradores.
+        this.permitirBusqueda.set(res.puntos?.HACTBOTON === '1' || this.shell.esAdmin());
         this.loading.set(false);
       },
       error: () => {
