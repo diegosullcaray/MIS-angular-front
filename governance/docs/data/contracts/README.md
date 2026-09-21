@@ -10,6 +10,7 @@ Entrada canónica para los contratos entre MIS Host y el backend. **El transport
 | Reportes | los cuatro motores: `regularData`, `table.regular`, `graphicData`, `reportData` | [Motores de reporte](./reporting-contracts.md) |
 | Jerarquía | `cod_jer`, `tip_cod`, `cod_rel`, niveles y fecha de corte | [Jerarquía organizativa](./organizational-hierarchy.md) |
 | Navegación y permisos | árbol, roles, herencia, ALLOW/DENY y sesiones | [Modelo de acceso](./access-model.md) |
+| Rutas de acción | inventario derivado de rutas `Mod*Service` y strands invocados | [Rutas de acción](./action-routes.md) |
 
 Los endpoints Winder no se documentan como REST genérico: cada servicio fija `appId`, puerto lógico, strand, nombre de respuesta y forma de payload. El recorrido técnico completo está en [flujo de datos](../../architecture/data-flow.md) y en [linaje](../lineage.md).
 

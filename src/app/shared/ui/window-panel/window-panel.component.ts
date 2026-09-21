@@ -5,6 +5,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
 import { TooltipModule } from 'primeng/tooltip';
 import { ShellStateService } from '../../../core/services/shell-state.service';
+import { NavegacionSistemasService } from '../../../pages/full-pages/layout/services/navegacion-sistemas.service';
 
 /** Destino de la luz roja: el inicio del shell. */
 const RUTA_HOME = '/app/dashboard';
@@ -23,6 +24,7 @@ export class WindowPanelComponent {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   private readonly shell = inject(ShellStateService);
+  private readonly navegacion = inject(NavegacionSistemasService);
 
   /** Título de la ventana (centrado en la barra, como en Finder). */
   readonly titulo = input<string>('');
@@ -111,6 +113,7 @@ export class WindowPanelComponent {
 
     if (this.shell.exploradorDisponible() && !this.shell.contenidoPendienteSeleccion()) {
       this.shell.setContenidoPendienteSeleccion(true);
+      this.navegacion.actualizarUrlExplorador();
       return;
     }
 

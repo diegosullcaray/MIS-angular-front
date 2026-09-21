@@ -3,6 +3,8 @@ import type { RolSlug } from './rol.model';
 export interface UsuarioActivo {
   id: string;
   nombre: string;
+  /** Cargo del perfil autenticado (`profile.cargo` de Ant). */
+  cargo?: string;
   email: string;
   rol: RolSlug;
   /** Slugs de Remotes habilitados para este usuario */

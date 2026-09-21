@@ -134,33 +134,14 @@
           <span class="perfil-item-nombre">Cerrar sesión</span>
         </button>
 
-        <!-- Otros perfiles: un clic cambia de cuenta, sin confirmación. Viendo
-             como un alterno, la única fila es la identidad propia: el camino de
-             vuelta vive acá y no en una opción aparte. -->
+        <!-- El selector de cuentas vive en un diálogo, igual que en Strategos.
+             El menú solo ofrece la acción para no cambiar de perfil por error. -->
         @if (otrosPerfiles().length) {
           <div class="perfil-separador"></div>
-          <p class="perfil-seccion" id="perfil-otros">Otros perfiles</p>
-
-          @for (perfil of otrosPerfiles(); track perfil.clave) {
-            <button
-              class="perfil-item"
-              role="menuitem"
-              [disabled]="!!cambiandoPerfil()"
-              [attr.aria-busy]="cambiandoPerfil() === perfil.clave"
-              (click)="elegirPerfil(perfil)"
-            >
-              <span class="perfil-avatar-mini" aria-hidden="true">{{ inicialesDe(perfil.nombre) }}</span>
-              <span class="perfil-item-texto">
-                <span class="perfil-item-nombre">{{ perfil.nombre }}</span>
-                @if (perfil.detalle) {
-                  <span class="perfil-item-cargo">{{ perfil.detalle }}</span>
-                }
-              </span>
-              @if (cambiandoPerfil() === perfil.clave) {
-                <i class="pi pi-spin pi-spinner perfil-item-spinner" aria-hidden="true"></i>
-              }
-            </button>
-          }
+          <button class="perfil-item" role="menuitem" (click)="abrirSelectorPerfil()">
+            <ng-icon name="lucideUsers" size="15" />
+            <span class="perfil-item-nombre">Cambiar perfil</span>
+          </button>
         }
       </div>
       <!-- Overlay para cerrar el menú al click fuera -->
@@ -197,6 +178,55 @@
         label="Cerrar sesión"
         severity="danger"
         (click)="confirmarCerrarSesion()"
+      />
+    </div>
+  </p-dialog>
+
+  <!-- El legado abre un diálogo y exige confirmar el usuario elegido. Mantener
+       este paso evita cambios accidentales desde el menú de cabecera. -->
+  <p-dialog
+    header="Cambiar perfil"
+    [visible]="selectorPerfilOpen()"
+    (visibleChange)="selectorPerfilOpen.set($event)"
+    [modal]="true"
+    appendTo="body"
+    [style]="{ width: 'min(92vw, 440px)' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <p class="m-0 mb-3 text-xs text-[var(--mis-text-secondary)]">
+      Selecciona el perfil con el que deseas continuar.
+    </p>
+
+    <div class="flex flex-col gap-2" role="listbox" aria-label="Perfiles disponibles">
+      @for (perfil of otrosPerfiles(); track perfil.clave) {
+        <button
+          type="button"
+          class="w-full flex items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-[var(--mis-panel-bg)]"
+          [style.border-color]="perfilSeleccionado()?.clave === perfil.clave ? 'var(--mis-primary)' : null"
+          [style.background-color]="perfilSeleccionado()?.clave === perfil.clave ? 'var(--mis-primary-light)' : null"
+          [attr.aria-selected]="perfilSeleccionado()?.clave === perfil.clave"
+          role="option"
+          (click)="perfilSeleccionado.set(perfil)"
+        >
+          <span class="perfil-avatar-mini" aria-hidden="true">{{ inicialesDe(perfil.nombre) }}</span>
+          <span class="perfil-item-texto">
+            <span class="perfil-item-nombre">{{ perfil.nombre }}</span>
+            @if (perfil.detalle) {
+              <span class="perfil-item-cargo">{{ perfil.detalle }}</span>
+            }
+          </span>
+        </button>
+      }
+    </div>
+
+    <div class="flex justify-end gap-2 mt-4">
+      <p-button label="Cancelar" [text]="true" severity="secondary" (onClick)="selectorPerfilOpen.set(false)" />
+      <p-button
+        label="Cambiar perfil"
+        [disabled]="!perfilSeleccionado() || !!cambiandoPerfil()"
+        [loading]="!!cambiandoPerfil()"
+        (onClick)="confirmarCambioPerfil()"
       />
     </div>
   </p-dialog>

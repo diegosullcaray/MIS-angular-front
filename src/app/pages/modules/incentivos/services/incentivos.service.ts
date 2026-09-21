@@ -183,8 +183,19 @@ export class IncentivosService {
       this.cargandoState.set(false);
       return;
     }
-    const claUsu = (this.shell.usuarioActivo()?.claUse as 1 | 2) ?? 1;
-    this.seleccionarNivel({ nombre: 'Mi perfil', nivel: '--', descripcionNivel: '--', imagenUrl: '' }, { tipCod: 1, codRel, claUsu });
+    const usuario = this.shell.usuarioActivo();
+    const claUsu = (usuario?.claUse as 1 | 2) ?? 1;
+    // El legado Incentivos3 muestra la identidad de la sesión, no un texto
+    // genérico: `profile.nombre`, `profile.cargo` y `profile.pic_url`.
+    this.seleccionarNivel(
+      {
+        nombre: usuario?.nombre || 'Mi perfil',
+        nivel: 'CARGO',
+        descripcionNivel: usuario?.cargo || '--',
+        imagenUrl: usuario?.avatarUrl || '',
+      },
+      { tipCod: 1, codRel, claUsu },
+    );
   }
 
   /** Recarga el Cuadro de Mando del nivel actualmente seleccionado (botón "Actualizar"). */

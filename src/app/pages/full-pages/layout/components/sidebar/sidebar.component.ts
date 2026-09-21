@@ -134,6 +134,8 @@ export class SidebarComponent implements AfterViewInit {
     // Con subnavegación el área de contenido muestra el explorador del sistema hasta que se abra una pantalla, sin auto-redirección.
     if (icon.tienePanel) {
       this.shell.setContenidoPendienteSeleccion(true);
+      // Sincronizar URL de forma cosmética para que no se quede la de la pantalla anterior
+      this.navegacion.actualizarUrlExplorador();
     }
   }
 

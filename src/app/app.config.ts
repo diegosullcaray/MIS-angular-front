@@ -5,7 +5,7 @@ import {
   provideAppInitializer,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { providePrimeNG } from 'primeng/config';
@@ -33,8 +33,11 @@ export const appConfig: ApplicationConfig = {
     // Modo Zoneless obligatorio (sin zone.js)
     provideZonelessChangeDetection(),
 
-    // Router con binding de @Input desde parámetros de ruta
-    provideRouter(APP_ROUTES, withComponentInputBinding()),
+    // Router con binding de @Input desde parámetros de ruta.
+    // `onSameUrlNavigation: 'reload'` hace que navegar a la URL ya activa
+    // destruya y remonte el componente, evitando que volver al explorador y
+    // elegir el mismo reporte deje la pantalla congelada con datos anteriores.
+    provideRouter(APP_ROUTES, withComponentInputBinding(), withRouterConfig({ onSameUrlNavigation: 'reload' })),
 
     // HttpClient con interceptores y Fetch API nativa (compatible con Zoneless)
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, httpErrorInterceptor, loadingInterceptor])),

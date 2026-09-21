@@ -36,7 +36,8 @@ export class FuenteNavegacionService implements FuenteBusqueda {
 
     this.shell.setSidebarIconActivo(registro.sistemaId);
     this.shell.setMenuItemActivo({ ruta: registro.ruta, etiqueta: registro.etiqueta });
-    this.shell.setContenidoPendienteSeleccion(false);
+    // No apagamos `contenidoPendienteSeleccion` aquí: lo gestiona `NavigationEnd`
+    // en `SidebarComponent` cuando el nuevo componente ya está montado.
     this.router.navigateByUrl(registro.ruta).catch(() => {});
   }
 }

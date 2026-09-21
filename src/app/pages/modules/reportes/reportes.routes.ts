@@ -10,7 +10,10 @@ export const REPORTES_ROUTE: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'leg/com/rda/adm/mon-desem',
+    loadComponent: () =>
+      import('../../full-pages/layout/components/explorador-aterrizaje/explorador-aterrizaje.component').then(
+        (m) => m.ExploradorAterrizajeComponent
+      ),
   },
   ...ACTIVIDAD_DIARIA_ROUTES,
   ...ACTIVIDAD_MENSUAL_ROUTES,
@@ -25,6 +28,9 @@ export const REPORTES_ROUTE: Routes = [
   ...ANALISTA_ROUTES,
   {
     path: '**',
-    redirectTo: 'leg/com/rda/adm/mon-desem',
+    loadComponent: () =>
+      import('../../full-pages/layout/components/explorador-aterrizaje/explorador-aterrizaje.component').then(
+        (m) => m.ExploradorAterrizajeComponent
+      ),
   },
 ];

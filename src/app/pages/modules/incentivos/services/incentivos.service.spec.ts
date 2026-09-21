@@ -123,13 +123,17 @@ describe('IncentivosService', () => {
   });
 
   describe('iniciar() — usuario NO admin (aproximación a SECTORISTA individual)', () => {
-    it('carga directo el perfil propio con tip_cod=1/cla_usu=1/cod_rel=codBt, sin selector', () => {
+    it('carga directo el perfil propio con su nombre, cargo y avatar de sesión, sin selector', () => {
+      shell.setUsuarioActivo(usuario({ nombre: 'Ana María Torres', cargo: 'Asesora de Negocios', avatarUrl: 'https://foto.test/ana.jpg' }));
       service.iniciar();
 
       expect(service.puedeElegirNivel()).toBe(false);
       expect(service.requiereSeleccionInicial()).toBe(false);
       expect(ant.getDataSourcesIndividual).toHaveBeenCalledWith('2026', 1, 'BT-001', expect.any(String));
       expect(service.nivelActual()).toEqual({ tipCod: 1, codRel: 'BT-001', claUsu: 1 });
+      expect(service.perfil()).toEqual({
+        nombre: 'Ana María Torres', nivel: 'CARGO', descripcionNivel: 'Asesora de Negocios', imagenUrl: 'https://foto.test/ana.jpg',
+      });
     });
 
     it('muestra un error si el usuario activo no tiene codBt y no llama al backend', () => {

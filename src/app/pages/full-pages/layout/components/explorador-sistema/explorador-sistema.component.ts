@@ -57,7 +57,10 @@ export class ExploradorSistemaComponent {
     if (!nodo.ruta) return;
 
     this.shell.setMenuItemActivo({ ruta: nodo.ruta, etiqueta: nodo.etiqueta });
-    this.shell.setContenidoPendienteSeleccion(false);
+    // No apagamos `contenidoPendienteSeleccion` aquí: el explorador permanece
+    // visible (cubriendo el componente anterior) durante toda la navegación.
+    // `NavigationEnd` en `SidebarComponent` lo apaga cuando el nuevo componente
+    // ya está montado en el router-outlet, evitando el flash de contenido viejo.
     this.router.navigateByUrl(nodo.ruta).catch(() => {});
   }
 }

@@ -2,6 +2,7 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { MenuStgService } from './menu-stg.service';
 import { KaypachaService } from '../../../modules/ranking-k/services/kaypacha.service';
+import { Location } from '@angular/common';
 import type { RegistroNavegacion, SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../interfaces/sidebar.model';
 
 /** Árbol de navegación de cada sistema y ubicación actual; lo comparten el rail de sistemas, el explorador y el breadcrumb del header. */
@@ -10,6 +11,7 @@ export class NavegacionSistemasService {
   private readonly shell = inject(ShellStateService);
   private readonly menuStg = inject(MenuStgService);
   private readonly kaypacha = inject(KaypachaService);
+  private readonly location = inject(Location);
 
   /** Carpetas abiertas en el explorador, de la más externa a la actual. */
   readonly rutaExplorador = signal<SidebarNavRuta[]>([]);
@@ -121,17 +123,69 @@ export class NavegacionSistemasService {
 
   entrarCarpeta(nodo: SidebarNavRuta): void {
     this.rutaExplorador.update((r) => [...r, nodo]);
+    this.actualizarUrlExplorador();
   }
 
   /** Vuelve al nivel indicado dentro del sistema activo; `-1` es su raíz. */
   irANivel(indice: number): void {
     this.rutaExplorador.update((r) => r.slice(0, indice + 1));
+    this.actualizarUrlExplorador();
   }
 
   /** Reabre el explorador de `sistemaId` en `carpetas`; lo usa el breadcrumb para volver a la carpeta de la que salió la pantalla. */
   abrirEnCarpeta(sistemaId: string, carpetas: SidebarNavRuta[]): void {
     this.shell.setSidebarIconActivo(sistemaId);
     this.rutaExplorador.set(carpetas);
+    this.shell.setContenidoPendienteSeleccion(true);
+    this.actualizarUrlExplorador();
+  }
+
+  /** Refleja el estado del explorador en la barra del navegador de forma cosmética. */
+  actualizarUrlExplorador(): void {
+    const sistemaId = this.shell.sidebarIconActivo();
+    if (!sistemaId) return;
+    
+    const sistema = this.iconos().find(i => i.id === sistemaId);
+    if (!sistema) return;
+
+    // Convertir las etiquetas de las carpetas en segmentos URL (ej. "Avance Comercial" -> "avance-comercial")
+    const segmentos = this.rutaExplorador().map(n => this.normalizarParaUrl(n.etiqueta));
+    const rutaBase = sistema.ruta || `/app/${sistemaId}`;
+    
+    const path = segmentos.length > 0 ? `${rutaBase}/${segmentos.join('/')}` : rutaBase;
+    this.location.replaceState(path);
+  }
+
+  private normalizarParaUrl(texto: string): string {
+    return texto.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  }
+
+  /** Reconstruye el estado del explorador (módulo y carpetas) a partir de la URL. */
+  restaurarDesdeUrl(url: string): void {
+    const iconos = this.iconos();
+    const sistema = iconos.find((i) => i.ruta && url.startsWith(i.ruta));
+    if (!sistema) {
+      this.shell.setContenidoPendienteSeleccion(true);
+      return;
+    }
+
+    this.shell.setSidebarIconActivo(sistema.id);
+
+    const rutaBase = sistema.ruta!;
+    const resto = url.substring(rutaBase.length).replace(/^\//, '');
+    const segmentosUrl = resto.split('/').filter(Boolean);
+
+    let nodosDisponibles = this.panelDe(sistema.id)?.secciones.flatMap((s) => s.rutas) || [];
+    const rutaEncontrada: SidebarNavRuta[] = [];
+
+    for (const segmento of segmentosUrl) {
+      const nodo = nodosDisponibles.find((n) => this.normalizarParaUrl(n.etiqueta) === segmento);
+      if (!nodo) break;
+      rutaEncontrada.push(nodo);
+      nodosDisponibles = nodo.hijos || [];
+    }
+
+    this.rutaExplorador.set(rutaEncontrada);
     this.shell.setContenidoPendienteSeleccion(true);
   }
 
