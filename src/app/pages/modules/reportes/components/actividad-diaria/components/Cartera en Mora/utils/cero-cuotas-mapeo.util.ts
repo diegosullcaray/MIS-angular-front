@@ -1,5 +1,15 @@
 import type { GraficoDashboardRevision } from '../constantes/cartera-mora.constantes';
 import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
+import type { TablaRegularResultadoRaw } from '../../../../../models/tabla-dinamica.model';
+
+export interface MapaCalorCeroCuotas {
+  titulo: string;
+  categoriasX: string[];
+  categoriasY: string[];
+  valores: number[][];
+  /** El último ajuste STG invierte el eje Y también para el mapa de Oriente. */
+  ejeYInvertido: boolean;
+}
 
 /**
  * Arma un `BloqueGrafico` del Dashboard en Revisión leyendo las columnas por
@@ -25,4 +35,32 @@ export function graficoDashboardRevision(
       color: s.color,
     })),
   };
+}
+
+/**
+ * El backend entrega el mapa como JSON dentro de la primera celda de `data`
+ * (y, sin filas, dentro de `headers`). Conserva exactamente ese contrato STG.
+ */
+export function mapaCalorDashboardRevision(
+  resultado: TablaRegularResultadoRaw | undefined,
+  titulo: string,
+  ejeYInvertido: boolean,
+): MapaCalorCeroCuotas | null {
+  const primeraFila = resultado?.data?.[0] as Record<string, unknown> | undefined;
+  const crudo = primeraFila ? Object.values(primeraFila)[0] : resultado?.headers;
+  if (typeof crudo !== 'string' || !crudo.trim()) return null;
+
+  try {
+    const data = JSON.parse(crudo) as { categories?: unknown[]; series?: Array<{ name?: unknown; data?: unknown[] }> };
+    if (!Array.isArray(data.categories) || !Array.isArray(data.series)) return null;
+    return {
+      titulo,
+      categoriasX: data.categories.map((categoria) => String(categoria ?? '')),
+      categoriasY: data.series.map((serie) => String(serie.name ?? '')),
+      valores: data.series.map((serie) => (serie.data ?? []).map((valor) => Number(valor) || 0)),
+      ejeYInvertido,
+    };
+  } catch {
+    return null;
+  }
 }

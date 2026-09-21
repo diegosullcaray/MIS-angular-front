@@ -62,8 +62,8 @@
     <div
       class="relative group w-full flex-1 min-w-0 flex items-center justify-center rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 sm:p-4 shadow-xs self-stretch overflow-hidden">
       <img
-        src="/assets/images/fc/modules/categoriacion/categorizacion2.png"
-        alt="Guía de Categorización: Requisitos + Desempeño = Categoriza"
+        [src]="tipoComision() === 'individual' ? guiaIndividual : guiaGrupal"
+        [alt]="tipoComision() === 'individual' ? 'Guía de Categorización individual' : 'Guía de Categorización grupal'"
         class="w-full h-auto max-h-[360px] object-contain rounded-lg transition-transform duration-200 cursor-pointer"
         (click)="previewGuia.set(true)"
         pTooltip="Clic para ampliar guía"
@@ -171,8 +171,8 @@
   >
     <div class="flex items-center justify-center p-2 overflow-auto bg-[var(--mis-panel-bg)] rounded-lg">
       <img
-        src="/assets/images/fc/modules/categoriacion/categorizacion2.png"
-        alt="Guía de Categorización"
+        [src]="tipoComision() === 'individual' ? guiaIndividual : guiaGrupal"
+        [alt]="tipoComision() === 'individual' ? 'Guía de Categorización individual' : 'Guía de Categorización grupal'"
         class="w-full h-auto max-h-[85vh] object-contain rounded"
       />
     </div>

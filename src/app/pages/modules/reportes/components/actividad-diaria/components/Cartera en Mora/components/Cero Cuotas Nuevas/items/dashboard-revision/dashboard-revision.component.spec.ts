@@ -5,6 +5,7 @@ import { ToastService } from '../../../../../../../../../../../shared/services/t
 import { CeroCuotasDashboardRevisionComponent } from './dashboard-revision.component';
 import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas.service';
 import type { HierarquiaNodo } from '../../../../../../../../models/jerarquia.model';
+import { TABLA_DINAMICA_VACIA } from '../../../../../../../../models/tabla-dinamica.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
@@ -17,6 +18,8 @@ describe('CeroCuotasDashboardRevisionComponent', () => {
   beforeEach(() => {
     servicioSpy = {
       dashboardRevision: vi.fn().mockReturnValue(of({ headers: [], body: [], rows: [], items: [], total: 0, kpis: {}, estadoRenovacion: { categorias: [], series: [] }, antiguedadCliente: { categorias: [], series: [] }, cards: [], table: [] })),
+      topAsesoresDashboardRevision: vi.fn().mockReturnValue(of(TABLA_DINAMICA_VACIA)),
+      mapasCalorDashboardRevision: vi.fn().mockReturnValue(of([])),
     };
 
     TestBed.configureTestingModule({

@@ -33,7 +33,7 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica en CI.
 
 <!-- generado:inicio cod-rep -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-15 · commit 22cf3f5. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-21 · commit 3f86dd5. No editar a mano. -->
 
 | Dominio | Constante | Códigos | `cod_rep` declarados |
 |---|---|---:|---|
@@ -54,6 +54,7 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 | reportes / actividad-diaria / Clientes | `COD_CLIENTES` | 7 | `Clientes_nuevoRec_01`, `Clientes_Ope_01`, `CMG_CLIF_01`, `rda/administracion/clientes/cmg_cliente_01`, `MOVIMIENTO_CLIENTES_01`, `RS_RANK_MUJ_01`, `RS_RANK_MUJ_02` |
 | reportes / actividad-diaria / Comercial Ejecutivo | `COD_COMERCIAL_EJECUTIVO` | 4 | `DESEMBOLSOS_01`, `Clientes_01`, `AGRO_01`, `PDM_01` |
 | reportes / control-cargas | `COD_CONTROL_CARGAS` | 1 | `RS_MON_CAR_01` |
+| reportes / actividad-diaria / Cartera en Mora | `COD_DASHBOARD_REVISION_COMPLEMENTOS` | 3 | `RS_TOP_ZCUO_01`, `GRAF_ZCUO_03`, `GRAF_ZCUO_04` |
 | reportes / desarrollo-sostenible | `COD_DESARROLLO_SOSTENIBLE` | 3 | `Monitor_Dese_misi_02`, `Monitor_Dese_misi_01`, `DESEMP_SOC_01` |
 | reportes / actividad-mensual | `COD_MENSUAL_CRA` | 17 | `P_Datos_01`, `HCARBONO_01`, `GCMGCAP_01`, `CAP_SEGUI_BP_01`, `CARACT_CARTERA_M_01`, `CARACT_pas_M_01`, `reporte_autonomia_new_01`, `SEGUI_COMITE_01`, `cuadro_Variable_M_01`, `cmg_mora_simp_m_01`, `COSESEMAFORO_01`, `DESEMP_SOC_01`, `CMG_CLIF_01`, `resultado_unidad_negocio_rma_01`, `rankKay_01`, `rankKayOpe_01`, `rankKayrecu_01` |
 | reportes / actividad-mensual | `COD_MENSUAL_DEPRECADO` | 7 | `rma/administracion/Cartera/cartera_producto_rma_02`, `rma/administracion/Cartera/cartera_producto_rma_01`, `rma/administracion/Cartera/tasa_producto_rma_01`, `rma/administracion/Riesgos/grafico_cosechas_01`, `rma/administracion/Mora/mora_efectividad_tramos_rma_01`, `rma/administracion/mora/Dashboard_rma_01`, `rma/administracion/Clientes/cmg_clientes_rma_01` |
@@ -67,7 +68,7 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 | reportes / actividad-diaria / Seguros | `COD_SEGUROS` | 12 | `GRSCMIS_01`, `GRSCMIS_02`, `GRSCMIS_04`, `GRSCMIS_05`, `RS_SEG_PAS_03`, `RS_SEG_PAS_01`, `RS_SEG_PAS_02`, `RS_SEG_PAS_04`, `GRSCMISREP_01`, `RS_FECH`, `GRAFSEGPAS_01`, `GRAFSEGPAS_02` |
 | reportes / actividad-diaria / Tablero Digital | `COD_TABLERO_DIGITAL` | 9 | `TABDIG_01`, `TABDIG_02`, `TABDIG_VR2_01`, `GCTABDIG_VR2_OPE_02`, `RVIUWGCOR_01`, `RVIUWGCORE_02`, `RDETCORR_01`, `RS_FECH`, `RS_TAB_COM_01` |
 
-_207 códigos únicos en 29 constantes._
+_210 códigos únicos en 30 constantes._
 <!-- generado:fin -->
 
 ### Cómo leer esta tabla
