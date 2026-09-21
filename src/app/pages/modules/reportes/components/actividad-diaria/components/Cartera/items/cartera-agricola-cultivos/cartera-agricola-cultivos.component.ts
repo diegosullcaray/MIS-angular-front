@@ -63,6 +63,8 @@ export class CarteraAgricolaCultivosComponent {
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
+  /** Ruta de la tabla: reemplaza el selector jerárquico visible. */
+  protected readonly rutaJerarquica = signal<HierarquiaNodo[]>([]);
   protected readonly reporte = signal<CarteraAgricolaResultado>(CARTERA_AGRICOLA_VACIA);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
@@ -105,6 +107,10 @@ export class CarteraAgricolaCultivosComponent {
     this.volverAlListado();
   }
 
+  protected onRutaSeleccionada(ruta: HierarquiaNodo[]): void {
+    this.rutaJerarquica.set(ruta);
+  }
+
   /**
    * Replica `ddHier()` del legado: las métricas abren los gráficos y la
    * descripción cambia el nivel del selector y reemplaza la tabla principal.
@@ -131,7 +137,26 @@ export class CarteraAgricolaCultivosComponent {
     // Al estar disponible en el cascada, esta llamada también emite la ruta y
     // carga sus opciones hijas. El fallback conserva la consulta si el backend
     // no incluyó la fila en el selector.
-    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) this.onNivelSeleccionado(nodo);
+    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
+      this.rutaJerarquica.update((ruta) => [...ruta, nodo]);
+      this.onNivelSeleccionado(nodo);
+    }
+  }
+
+  /** Clic en una miga: vuelve a ese nivel y vuelve a consultar su tabla. */
+  protected volverANivel(indice: number): void {
+    const ruta = this.rutaJerarquica();
+    const nodo = ruta[indice];
+    if (!nodo || indice === ruta.length - 1) return;
+
+    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
+      this.rutaJerarquica.set(ruta.slice(0, indice + 1));
+      this.onNivelSeleccionado(nodo);
+    }
+  }
+
+  protected volverAlNivelPadre(): void {
+    this.volverANivel(this.rutaJerarquica().length - 2);
   }
 
   /** El legado baja al detalle con el `htipcod`/`cod_rel` de la propia fila, no con el nodo elegido. */

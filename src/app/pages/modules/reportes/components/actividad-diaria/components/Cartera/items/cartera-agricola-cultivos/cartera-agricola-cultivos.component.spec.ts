@@ -72,4 +72,20 @@ describe('CarteraAgricolaCultivosComponent', () => {
     expect(servicioSpy['detalleGraficosAgricola']).toHaveBeenCalledWith({ tip_cod: 18, cod_rel: 'AG-1' }, '202609');
   });
 
+  it('al elegir una miga vuelve al nivel anterior y recarga su tabla', () => {
+    const raiz: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC', des_rel: 'Financiera Confianza' };
+    const hijo: HierarquiaNodo = { tip_cod: 18, cod_rel: 'AG-1', des_rel: 'Agencia Centro' };
+    const fixture = TestBed.createComponent(CarteraAgricolaCultivosComponent);
+    fixture.detectChanges();
+    fixture.componentInstance['rutaJerarquica'].set([raiz, hijo]);
+    fixture.componentInstance['nivelActual'].set(hijo);
+
+    fixture.componentInstance['volverANivel'](0);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance['nivelActual']()).toMatchObject(raiz);
+    expect(fixture.componentInstance['rutaJerarquica']()).toEqual([raiz]);
+    expect(servicioSpy['carteraAgricola']).toHaveBeenCalledWith({ tip_cod: 9, cod_rel: 'FC' }, '202609');
+  });
+
 });
