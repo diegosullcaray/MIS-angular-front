@@ -31,6 +31,32 @@ Las constantes viven en `src/app/pages/modules/reportes/models/jerarquia.model.t
 
 El selector entrega un `NodoConsulta` con `tip_cod` y `cod_rel`. Si el backend requiere el nodo completo, usa `regularPaginado` y conserva `lvl`, `lbl_hier` y demas campos.
 
+### Patrón de navegación jerárquica por tabla
+
+Cuando el legado resuelve la jerarquía mediante *drill-down* en una tabla, el
+selector no debe quedar como filtro visible. Se conserva internamente para
+resolver el nodo autorizado, sincronizar el cascada y obtener la ruta; la
+interacción de la persona usuaria ocurre en la tabla y en el breadcrumb.
+
+El patrón está aplicado en Cartera Agrícola · Cultivos, tanto diaria como
+mensual:
+
+| Elemento | Regla |
+|---|---|
+| Filtros visibles | Solo la fecha de corte. No exponer selectores de jerarquía duplicados. |
+| Inicialización | `app-hier-selector` queda oculto, con `reintentarSinFecha`, y emite el nodo autorizado y su ruta. |
+| Tabla | La descripción cambia de nivel; las métricas pueden conservar su acción de detalle. Declarar las claves en `columnasClicables`. |
+| Breadcrumb | Va después de los KPI y antes de la tabla. Las migas anteriores vuelven a consultar ese nivel; la última se marca como nivel activo. |
+| Fila activa | Pasar una regla a `destacarFila` para resaltar toda la fila cuyo `tip_cod` y `cod_rel` coinciden con el nodo actual. |
+| Nodo hoja | No iniciar otra consulta si el legado lo trata como hoja; conservar la acción de detalle que corresponda. |
+
+Usar `HierSelectorComponent.seleccionarNodo()` para sincronizar un salto hecho
+desde la tabla antes de consultar. Si el nodo no está en la cascada devuelta por
+el backend, mantener el fallback explícito: actualizar la ruta y consultar el
+nodo sin alterar el contrato. Las referencias de implementación son
+`src/app/pages/modules/reportes/components/actividad-diaria/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component.ts` y
+`src/app/pages/modules/reportes/components/actividad-mensual/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component.ts`.
+
 ## 3. Elegir la estructura de datos
 
 | Respuesta esperada | Motor | Modelo/UI |

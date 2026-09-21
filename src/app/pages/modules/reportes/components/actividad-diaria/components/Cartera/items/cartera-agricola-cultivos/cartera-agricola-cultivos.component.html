@@ -32,41 +32,6 @@
     <app-empty-state titulo="Cargando cartera agrícola" descripcion="Estamos preparando la información de tu nivel autorizado." />
   } @else if (!filaSeleccionada()) {
     <div class="flex flex-col gap-4 sm:gap-5 w-full">
-      @if (rutaJerarquica().length > 0) {
-        <nav class="hidden md:flex items-center gap-1.5 text-[12px]" aria-label="Ruta de cartera agrícola">
-          @for (nodo of rutaJerarquica(); track nodo.cod_rel; let ultimo = $last; let i = $index) {
-            @if (ultimo) {
-              <span
-                class="inline-flex items-center rounded-full border border-[var(--mis-primary)]/30 bg-[var(--mis-primary-light)] px-2.5 py-1 font-semibold text-[var(--mis-primary)] shadow-xs"
-                aria-current="page"
-              >
-                <i class="pi pi-map-marker mr-1 text-[10px]" aria-hidden="true"></i>
-                {{ nodo.des_rel ?? nodo.cod_rel }}
-              </span>
-            } @else {
-              <button
-                type="button"
-                class="text-[var(--mis-primary)] hover:underline"
-                (click)="volverANivel(i)"
-              >
-                {{ nodo.des_rel ?? nodo.cod_rel }}
-              </button>
-              <i class="pi pi-angle-right text-[10px] text-[var(--mis-text-tertiary)]" aria-hidden="true"></i>
-            }
-          }
-        </nav>
-
-        @if (rutaJerarquica().length > 1) {
-          <button
-            type="button"
-            class="md:hidden mis-btn mis-btn-ghost self-start !px-2 !py-1 text-[12px]"
-            (click)="volverAlNivelPadre()"
-          >
-            <i class="pi pi-arrow-left"></i> Volver
-          </button>
-        }
-      }
-
       <!-- Tarjetas KPI Estándar (Design System) -->
       @if (totales().length > 0) {
         <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
@@ -104,6 +69,33 @@
         </section>
       }
 
+      @if (rutaJerarquica().length > 0) {
+        <nav class="hidden md:flex items-center gap-1.5 text-[12px]" aria-label="Ruta de cartera agrícola">
+          @for (nodo of rutaJerarquica(); track nodo.cod_rel; let ultimo = $last; let i = $index) {
+            @if (ultimo) {
+              <span
+                class="inline-flex items-center rounded-full border border-[var(--mis-primary)]/30 bg-[var(--mis-primary-light)] px-2.5 py-1 font-semibold text-[var(--mis-primary)] shadow-xs"
+                aria-current="page"
+              >
+                <i class="pi pi-map-marker mr-1 text-[10px]" aria-hidden="true"></i>
+                {{ nodo.des_rel ?? nodo.cod_rel }}
+              </span>
+            } @else {
+              <button type="button" class="text-[var(--mis-primary)] hover:underline" (click)="volverANivel(i)">
+                {{ nodo.des_rel ?? nodo.cod_rel }}
+              </button>
+              <i class="pi pi-angle-right text-[10px] text-[var(--mis-text-tertiary)]" aria-hidden="true"></i>
+            }
+          }
+        </nav>
+
+        @if (rutaJerarquica().length > 1) {
+          <button type="button" class="md:hidden mis-btn mis-btn-ghost self-start !px-2 !py-1 text-[12px]" (click)="volverAlNivelPadre()">
+            <i class="pi pi-arrow-left"></i> Volver
+          </button>
+        }
+      }
+
       <!-- La tabla es el drill-down: Descripción baja un nivel; las métricas abren gráficos. -->
       <section class="mis-card p-3.5 sm:p-4 overflow-x-auto w-full">
         <app-tabla-dinamica
@@ -112,6 +104,7 @@
           [cargando]="cargando()"
           [seleccionable]="true"
           [columnasClicables]="columnasDrillDown"
+          [destacarFila]="destacarNodoActivo"
           (celdaSeleccionada)="onCeldaSeleccionada($event)"
         />
       </section>

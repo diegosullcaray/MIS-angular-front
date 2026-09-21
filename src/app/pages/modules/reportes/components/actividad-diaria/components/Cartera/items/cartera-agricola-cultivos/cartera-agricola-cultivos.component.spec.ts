@@ -88,4 +88,12 @@ describe('CarteraAgricolaCultivosComponent', () => {
     expect(servicioSpy['carteraAgricola']).toHaveBeenCalledWith({ tip_cod: 9, cod_rel: 'FC' }, '202609');
   });
 
+  it('resalta la fila que representa el nodo activo', () => {
+    const fixture = TestBed.createComponent(CarteraAgricolaCultivosComponent);
+    fixture.componentInstance['nivelActual'].set({ tip_cod: 18, cod_rel: 'AG-1' });
+
+    expect(fixture.componentInstance['destacarNodoActivo']({ htipcod: 18, cod_rel: 'AG-1' })).toBe(true);
+    expect(fixture.componentInstance['destacarNodoActivo']({ htipcod: 18, cod_rel: 'AG-2' })).toBe(false);
+  });
+
 });

@@ -75,6 +75,15 @@ export class CarteraAgricolaCultivosComponent {
   protected readonly tabla = computed(() => this.reporte().tabla);
   /** Celdas accionables de `ddHier()` en el legado `agro-mix-d`. */
   protected readonly columnasDrillDown = ['rdesjer', 'EXTE', 'HCCLI', 'HSALCAPMN', 'HSALVEMN'];
+  /** Conserva la fila total y resalta el nodo que coincide con el nivel activo. */
+  protected readonly destacarNodoActivo = (fila: Record<string, unknown>): boolean => {
+    const nodo = this.nivelActual();
+    return Number(fila['style']) === 1 || (
+      !!nodo &&
+      Number(fila['htipcod']) === nodo.tip_cod &&
+      String(fila['cod_rel'] ?? '') === nodo.cod_rel
+    );
+  };
 
   /** Fila del nivel elegida en la tabla: al elegirla se pasa a la vista de gráficos. */
   protected readonly filaSeleccionada = signal<Record<string, unknown> | null>(null);
