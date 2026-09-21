@@ -10,6 +10,7 @@
 | [ADR-0002](./adr/ADR-0002-color-por-token-css.md) | El color se aplica por token CSS, no por clase utilitaria | Vigente |
 | [ADR-0003](./adr/ADR-0003-linea-base-de-gobernanza.md) | Línea base de gobernanza en lugar de "cero hallazgos" | Vigente |
 | [ADR-0004](./adr/ADR-0004-anclas-de-tour-por-selector-estable.md) | Los recorridos guiados se anclan a selectores estables | Vigente |
+| [ADR-0005](./adr/ADR-0005-cambio-de-perfil-por-dialogo.md) | El cambio de perfil requiere selección y confirmación en diálogo | Vigente |
 
 ## Decisiones vigentes sin ADR propio
 

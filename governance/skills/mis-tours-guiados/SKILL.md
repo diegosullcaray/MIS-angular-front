@@ -103,7 +103,7 @@ El panel lateral del Home (`app-panel-novedades`) lista lo que entrega `Novedade
 {
   id: 'menu-perfil',
   titulo: 'Tu perfil, como en Chrome',
-  resumen: 'Tarjeta con tu cuenta y cambio de perfil en un solo clic.',
+  resumen: 'Tarjeta con tu cuenta y acceso al diálogo de cambio de perfil.',
   icono: 'pi pi-user',
   fecha: '2026-09-08',
   pasos: [ /* … */ ],

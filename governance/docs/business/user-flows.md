@@ -25,7 +25,13 @@
 
 ## Cambio de usuario
 
-El cambio a un alterno limpia el cache de jerarquia, cambia identidad y conserva la identidad original para volver. Deben probarse datos, menu, breadcrumb, recientes y permisos despues del cambio.
+1. El usuario abre el menú de perfil y elige **Cambiar perfil**.
+2. El shell abre un diálogo modal con los perfiles autorizados; cada fila muestra nombre y cargo.
+3. El usuario selecciona una fila y confirma con **Cambiar perfil**. Cancelar, Escape o clic fuera no cambia la identidad.
+4. `AuthService` cambia al alterno, conserva la identidad original y persiste la sesión actualizada. Si ya está en un alterno, el mismo diálogo ofrece volver a la identidad original.
+5. El cambio limpia el cache de jerarquía y los datos dependientes de identidad. Deben probarse datos, menú, breadcrumb, recientes y permisos después del cambio.
+
+La selección vive solo mientras el diálogo está abierto; no se persiste ni se ejecuta por un clic accidental en el menú.
 
 ## Configuracion
 

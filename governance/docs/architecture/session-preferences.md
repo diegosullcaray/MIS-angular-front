@@ -6,6 +6,7 @@ Las preferencias de interfaz y el cierre de sesion son responsabilidades separad
 - El cierre debe limpiar almacenamiento, cookies visibles, caches y service workers cuando sea posible.
 - Las preferencias no deben transportar autorizacion.
 - El usuario alterno debe invalidar el contexto de jerarquia y reportes cacheado.
+- El cambio de perfil se inicia desde el menú del header mediante la acción **Cambiar perfil** y se confirma dentro de un diálogo; la selección temporal no se guarda en preferencias.
 
 ## Donde vive cada pieza
 

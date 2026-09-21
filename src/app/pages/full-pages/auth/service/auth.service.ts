@@ -184,6 +184,7 @@ export class AuthService {
     return {
       id: profile.email || datos.email,
       nombre: profile.nombre || datos.nombre || datos.email.split('@')[0],
+      cargo: profile.cargo,
       email: profile.email || datos.email,
       rol: profile.tip_use === 0 ? 'admin-sistema' : 'supervisor-area',
       subsistemas: [],

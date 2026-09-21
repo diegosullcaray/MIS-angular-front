@@ -8,6 +8,8 @@
 
 `AuthService` mantiene token, alternos, usuario original y expiracion. Cambiar de usuario limpia el cache de jerarquia y actualiza la sesion persistida.
 
+`HeaderComponent` mantiene el estado efímero del flujo de cambio (`selectorPerfilOpen`, `perfilSeleccionado` y `cambiandoPerfil`). El header solo abre el diálogo; `AuthService` es el único dueño de la mutación de identidad. Cerrar o cancelar el diálogo descarta la selección.
+
 ## Estado de preferencias
 
 `PreferenciasService` mantiene apariencia, estructura, anuncios y reportes recientes. El repositorio local usa una sola clave saneada; el adaptador DOM convierte preferencias en variables CSS y atributos de `<html>`.

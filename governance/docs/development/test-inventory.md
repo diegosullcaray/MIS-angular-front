@@ -23,7 +23,7 @@ Metodología completa: [`skills/mis-testing-guide`](../../skills/mis-testing-gui
 
 ## Cobertura funcional E2E
 
-Login, guards, expiración, cambio de usuario, shell responsive, breadcrumb, Home recientes, configuración, comunicados, errores, reportes, jerarquía, cartera, captaciones, clientes, presupuesto, ESG, incentivos y reportes de actividad diaria y mensual.
+Login, guards, expiración, cambio de usuario —incluido el diálogo de selección y confirmación de perfil—, shell responsive, breadcrumb, Home recientes, configuración, comunicados, errores, reportes, jerarquía, cartera, captaciones, clientes, presupuesto, ESG, incentivos y reportes de actividad diaria y mensual.
 
 ## Comandos
 

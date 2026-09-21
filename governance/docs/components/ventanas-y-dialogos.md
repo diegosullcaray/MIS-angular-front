@@ -53,6 +53,12 @@ Cuando existe `.mis-dialog-lights`, el semáforo automático se apaga. El botón
 
 Ejemplo vivo: `src/app/pages/modules/incentivos/ui/selector-nivel-dialog/`.
 
+### Cambio de perfil
+
+El menú de identidad del shell (`src/app/pages/full-pages/layout/components/header/`) ofrece la acción **Cambiar perfil** cuando existen alternos autorizados. La acción abre un `p-dialog` modal; no cambia de usuario directamente desde una fila del menú.
+
+El diálogo lista nombre y cargo, mantiene una única selección temporal y exige confirmación. La identidad original también aparece cuando se está usando un alterno, para permitir volver sin una ruta adicional. Cancelar, Escape y clic fuera cierran sin mutar `AuthService`. El spec vecino del header cubre apertura, confirmación, error y retorno a la identidad original.
+
 ## Tres trampas de PrimeNG que ya costaron tiempo
 
 1. **Los `pTemplate` se resuelven una sola vez**, en `onAfterContentInit`. Un pie envuelto en `@if` nunca se registra: el diálogo se queda sin pie para siempre. Se declara siempre y se esconde con la clase `mis-dialog--sin-pie` cuando ese paso no lo necesita.

@@ -12,6 +12,8 @@ export interface LoginResponseBody {
 export interface PerfilRaw {
     email?: string;
     nombre?: string;
+    /** Cargo mostrado en las cabeceras de los módulos legados migrados. */
+    cargo?: string;
     /** Código de negocio/agencia — lo requieren varios módulos de STG (ej. Kaypacha). */
     cod_bt?: string;
     /** Tipo de usuario: 0 = administrador. STG no tiene una jerarquía de 3 niveles. */

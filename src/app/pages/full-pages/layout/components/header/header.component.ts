@@ -67,6 +67,9 @@ export class HeaderComponent {
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
   protected readonly configuracionOpen = signal(false);
+  /** Selector explícito de perfiles, equivalente al diálogo `Escoge Usuario` del legado. */
+  protected readonly selectorPerfilOpen = signal(false);
+  protected readonly perfilSeleccionado = signal<PerfilDelMenu | null>(null);
   protected readonly buscadorAbierto = signal(false);
   protected readonly cambiandoPerfil = signal<string | null>(null);
 
@@ -127,11 +130,23 @@ export class HeaderComponent {
     this.cerrarDropdownYAbrir(this.confirmarSalirOpen);
   }
 
-  protected async elegirPerfil(perfil: PerfilDelMenu): Promise<void> {
+  /** Abre el selector; el menú de cabecera nunca cambia de cuenta directamente. */
+  protected abrirSelectorPerfil(): void {
+    this.perfilSeleccionado.set(null);
+    this.cerrarDropdownYAbrir(this.selectorPerfilOpen);
+  }
+
+  protected async confirmarCambioPerfil(): Promise<void> {
+    const perfil = this.perfilSeleccionado();
+    if (!perfil || this.cambiandoPerfil()) return;
+
     if (perfil.esOriginal) {
+      this.selectorPerfilOpen.set(false);
+      this.perfilSeleccionado.set(null);
       this.volverAUsuarioOriginal();
       return;
     }
+
     await this.cambiarAPerfil(perfil.alterno!);
   }
 
@@ -142,6 +157,8 @@ export class HeaderComponent {
     try {
       await this.auth.cambiarAUsuarioAlterno(alterno);
       this.dropdownOpen.set(false);
+      this.selectorPerfilOpen.set(false);
+      this.perfilSeleccionado.set(null);
     } catch (err: any) {
       this.toast.error('No se pudo cambiar de perfil', err?.message);
     } finally {
