@@ -62,7 +62,7 @@ export class MenuStgService {
             tipo: 'remote',
             icono: mapMaterialIconToPrimeIcons(padre.icon_sec),
             etiqueta: padre.desc_sec,
-            ruta: hijos ? undefined : this.rutaDeAntItem(padre),
+            ruta: this.rutaDeAntItem(padre), // Mantenemos la ruta base para sincronizar la URL aunque tenga subpaneles
             tienePanel: !!hijos,
           };
         });
