@@ -25,6 +25,8 @@ export interface UsuarioActivo {
    * Recuperaciones".
    */
   numDoc?: string;
+  /** Tipo de usuario de STG (`profile.tip_use`): 1 = asesor/sectorista. */
+  tipoUsuario?: number;
   /** Clase de usuario (`profile.cla_use` del backend Ant), 1=individual, 2=grupal. Lo requiere el módulo de incentivos para determinar qué variables y matriz de comisión cargar. */
   claUse?: number;
   /** Nivel organizacional de Incentivos (`profile.niv` de Ant). Conserva la matriz de permisos del módulo legado. */

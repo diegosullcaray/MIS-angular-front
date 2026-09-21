@@ -70,6 +70,8 @@ export class CarteraAgricolaCultivosComponent {
 
   protected readonly totales = computed(() => this.reporte().totales);
   protected readonly tabla = computed(() => this.reporte().tabla);
+  /** Celdas accionables de `ddHier()` en el legado `agro-mix-d`. */
+  protected readonly columnasDrillDown = ['rdesjer', 'EXTE', 'HCCLI', 'HSALCAPMN', 'HSALVEMN'];
 
   /** Fila del nivel elegida en la tabla: al elegirla se pasa a la vista de gráficos. */
   protected readonly filaSeleccionada = signal<Record<string, unknown> | null>(null);
@@ -109,13 +111,23 @@ export class CarteraAgricolaCultivosComponent {
     this.volverAlListado();
   }
 
-  /** Al hacer clic en la columna "Descripción" se hace drill-down (expande la fila). */
+  /**
+   * Replica `ddHier()` del legado: las métricas abren los gráficos y la
+   * descripción baja un nivel de jerarquía dentro de la misma tabla.
+   */
   protected onCeldaSeleccionada(evento: { clave: string; fila: Record<string, unknown> }): void {
+    const clave = evento.clave.toUpperCase();
+    if (['EXTE', 'HCCLI', 'HSALCAPMN', 'HSALVEMN'].includes(clave)) {
+      this.onFilaSeleccionada(evento.fila);
+      return;
+    }
+
     if (evento.clave.toLowerCase() !== 'rdesjer') return;
     const fila = evento.fila;
     const tip_cod = Number(fila['htipcod']);
     const cod_rel = String(fila['cod_rel'] ?? '');
-    if (!Number.isFinite(tip_cod) || !cod_rel) return;
+    // En el legado los nodos hoja (cliente/asesor) no hacen otra consulta.
+    if (!Number.isFinite(tip_cod) || tip_cod === 999 || tip_cod === 2 || !cod_rel) return;
 
     const expandidas = { ...this.filasExpandidas() };
     if (expandidas[cod_rel]) {
@@ -228,9 +240,26 @@ export class CarteraAgricolaCultivosComponent {
     this.ubicacion.set(null);
   }
 
+  protected estaCargandoSubTabla(fila: Record<string, unknown>): boolean {
+    return !!this.cargandoSubTabla()[this.codigoRelacion(fila)];
+  }
+
+  protected subTablaDe(fila: Record<string, unknown>): CarteraAgricolaResultado | undefined {
+    return this.subTablas().get(this.codigoRelacion(fila));
+  }
+
+  private codigoRelacion(fila: Record<string, unknown>): string {
+    return String(fila['cod_rel'] ?? '');
+  }
+
   private cargar(nodo: HierarquiaNodo, periodo: string): void {
     this.cargando.set(true);
     this.volverAlListado();
+    // El drill-down depende del nodo y del periodo; no reutilizar hijos de una
+    // consulta anterior con la misma clave de relación.
+    this.subTablas.set(new Map());
+    this.filasExpandidas.set({});
+    this.cargandoSubTabla.set({});
     this.servicio.carteraAgricola({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
       next: (reporte) => {
         this.reporte.set(reporte);

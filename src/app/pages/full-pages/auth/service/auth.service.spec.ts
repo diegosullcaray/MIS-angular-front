@@ -150,6 +150,7 @@ describe('AuthService', () => {
     expect(usuario?.email).toBe(environment.devUser);
     expect(usuario?.codBt).toBe('BT-001');
     expect(usuario?.cargo).toBe('Asesora de Negocios');
+    expect(usuario?.tipoUsuario).toBe(0);
     expect(usuario?.nivelIncentivos).toBe('SECTORISTA');
     expect(usuario?.fechaCorte).toBe('20260808');
     expect(shell.usuarioActivo()?.id).toBe(environment.devUser);

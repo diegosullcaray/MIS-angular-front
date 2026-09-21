@@ -75,9 +75,31 @@
           [filas]="tabla().filas"
           [cargando]="cargando()"
           [seleccionable]="true"
-          (filaSeleccionada)="onFilaSeleccionada($event)"
+          [columnasClicables]="columnasDrillDown"
+          dataKey="cod_rel"
+          [expandedRowKeys]="filasExpandidas()"
+          [plantillaExpansion]="detalleJerarquico"
+          (celdaSeleccionada)="onCeldaSeleccionada($event)"
         />
       </section>
+
+      <ng-template #detalleJerarquico let-fila>
+        @if (estaCargandoSubTabla(fila)) {
+          <p class="m-0 text-[12px] text-[var(--mis-text-tertiary)] animate-pulse">Cargando siguiente nivel…</p>
+        } @else if (subTablaDe(fila); as subTabla) {
+          <app-tabla-dinamica
+            [columnas]="subTabla.tabla.columnas"
+            [filas]="subTabla.tabla.filas"
+            [columnasClicables]="columnasDrillDown"
+            dataKey="cod_rel"
+            [expandedRowKeys]="filasExpandidas()"
+            [plantillaExpansion]="detalleJerarquico"
+            (celdaSeleccionada)="onCeldaSeleccionada($event)"
+          />
+        } @else {
+          <p class="m-0 text-[12px] text-[var(--mis-text-tertiary)]">No hay niveles adicionales para este registro.</p>
+        }
+      </ng-template>
     </div>
   } @else {
     <!-- Vista Detalle por Cultivo (Gráficos) -->

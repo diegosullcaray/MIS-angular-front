@@ -1,3 +1,4 @@
+import { effect } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { SelectorAsesorBase } from './selector-asesor.base';
 import type { AsesorSec } from '../models/asesor-sec.model';
@@ -14,6 +15,12 @@ export abstract class ReporteAsesorBase<T> extends SelectorAsesorBase {
   protected abstract readonly avisoSinResultados: string;
   /** Título del toast de error, para los reportes que lo nombran distinto. */
   protected readonly errorDeCarga: string = 'No se pudo cargar el reporte';
+
+  /** Replica la emisión automática de `app-auto-complete-sec` para `tip_use = 1`. */
+  private readonly cargarAsesorPropio = effect(() => {
+    const asesor = this.asesorPropio();
+    if (asesor) this.onAsesorSeleccionado(asesor);
+  });
 
   protected abstract consultar(asesor: AsesorSec): Observable<T>;
 

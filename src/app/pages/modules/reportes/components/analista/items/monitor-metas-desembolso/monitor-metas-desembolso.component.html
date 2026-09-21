@@ -6,7 +6,8 @@
 >
   <div ventana-filtros class="flex flex-col gap-1">
     <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
-    <p-select
+    @if (mostrarSelector()) {
+          <p-select
       [options]="asesores()"
       [ngModel]="asesorSeleccionado()"
       (ngModelChange)="onAsesorSeleccionado($event)"
@@ -18,6 +19,9 @@
       styleClass="w-72 text-[11.5px]"
       ariaLabel="Asesor"
     />
+    } @else {
+      <span class="text-[11.5px] text-[var(--mis-text-secondary)]">{{ asesorSeleccionado()?.nombre }}</span>
+    }
   </div>
 
   @if (!asesorSeleccionado()) {
