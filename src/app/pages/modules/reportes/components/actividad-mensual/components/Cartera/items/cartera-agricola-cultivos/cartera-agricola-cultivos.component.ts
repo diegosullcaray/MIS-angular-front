@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -55,6 +55,7 @@ import { ActividadMensualRepoService } from '../../../../services/actividad-mens
 export class CarteraAgricolaCultivosComponent {
   private readonly servicio = inject(ActividadMensualRepoService);
   private readonly toast = inject(ToastService);
+  private readonly selectorJerarquia = viewChild(HierSelectorComponent);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly columnasDetalle = COLUMNAS_DETALLE_CULTIVO;
@@ -62,6 +63,8 @@ export class CarteraAgricolaCultivosComponent {
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
+  /** Ruta de la tabla: reemplaza el selector jerárquico visible. */
+  protected readonly rutaJerarquica = signal<HierarquiaNodo[]>([]);
   protected readonly reporte = signal<CarteraAgricolaResultado>(CARTERA_AGRICOLA_VACIA);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
@@ -70,6 +73,17 @@ export class CarteraAgricolaCultivosComponent {
 
   protected readonly totales = computed(() => this.reporte().totales);
   protected readonly tabla = computed(() => this.reporte().tabla);
+  /** Celdas accionables de `ddHier()` en el legado `agro-mix-m`. */
+  protected readonly columnasDrillDown = ['rdesjer', 'EXTE', 'HCCLI', 'HSALCAPMN', 'HSALVEMN'];
+  /** Conserva la fila total y resalta el nodo que coincide con el nivel activo. */
+  protected readonly destacarNodoActivo = (fila: Record<string, unknown>): boolean => {
+    const nodo = this.nivelActual();
+    return Number(fila['style']) === 1 || (
+      !!nodo &&
+      Number(fila['htipcod']) === nodo.tip_cod &&
+      String(fila['cod_rel'] ?? '') === nodo.cod_rel
+    );
+  };
 
   /** Fila del nivel elegida en la tabla: al elegirla se pasa a la vista de gráficos. */
   protected readonly filaSeleccionada = signal<Record<string, unknown> | null>(null);
@@ -100,6 +114,55 @@ export class CarteraAgricolaCultivosComponent {
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
     this.volverAlListado();
+  }
+
+  protected onRutaSeleccionada(ruta: HierarquiaNodo[]): void {
+    this.rutaJerarquica.set(ruta);
+  }
+
+  /**
+   * Replica `ddHier()` del legado: las métricas abren los gráficos y la
+   * descripción cambia el nivel y reemplaza la tabla principal.
+   */
+  protected onCeldaSeleccionada(evento: { clave: string; fila: Record<string, unknown> }): void {
+    const clave = evento.clave.toUpperCase();
+    if (['EXTE', 'HCCLI', 'HSALCAPMN', 'HSALVEMN'].includes(clave)) {
+      this.onFilaSeleccionada(evento.fila);
+      return;
+    }
+
+    if (evento.clave.toLowerCase() !== 'rdesjer') return;
+    const fila = evento.fila;
+    const tip_cod = Number(fila['htipcod']);
+    const cod_rel = String(fila['cod_rel'] ?? '');
+    // En el legado los nodos hoja (cliente/asesor) no hacen otra consulta.
+    if (!Number.isFinite(tip_cod) || tip_cod === 999 || tip_cod === 2 || !cod_rel) return;
+
+    const nodo: HierarquiaNodo = {
+      tip_cod,
+      cod_rel,
+      des_rel: String(fila['rdesjer'] ?? fila['DESCRIPCION'] ?? ''),
+    };
+    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
+      this.rutaJerarquica.update((ruta) => [...ruta, nodo]);
+      this.onNivelSeleccionado(nodo);
+    }
+  }
+
+  /** Clic en una miga: vuelve a ese nivel y vuelve a consultar su tabla. */
+  protected volverANivel(indice: number): void {
+    const ruta = this.rutaJerarquica();
+    const nodo = ruta[indice];
+    if (!nodo || indice === ruta.length - 1) return;
+
+    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
+      this.rutaJerarquica.set(ruta.slice(0, indice + 1));
+      this.onNivelSeleccionado(nodo);
+    }
+  }
+
+  protected volverAlNivelPadre(): void {
+    this.volverANivel(this.rutaJerarquica().length - 2);
   }
 
   /** El legado baja al detalle con el `htipcod`/`cod_rel` de la propia fila, no con el nodo elegido. */
