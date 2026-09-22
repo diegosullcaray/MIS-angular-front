@@ -13,13 +13,6 @@ const COLUMNAS: DataTableColumn[] = [
   { field: 'des_col', header: 'Nombre del colaborador', width: '15rem', filterType: 'text' },
   { field: 'HCOLCAR', header: 'Cargo', width: '12rem', filterType: 'text' },
   { field: 'RCODCOL', header: 'Tipo', align: 'center', width: '7rem', filterType: 'text' },
-  {
-    field: 'num_doc',
-    header: 'Documento',
-    width: '8rem',
-    filterType: 'text',
-    mobileVisible: false,
-  },
 ];
 
 /** Diálogo modal para buscar y seleccionar colaboradores. */
