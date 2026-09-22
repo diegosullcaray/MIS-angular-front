@@ -5,30 +5,31 @@
   [conFiltros]="true"
 >
   <div ventana-filtros class="flex flex-col gap-3">
-    <!-- Selector de Jerarquía (independiente de la fecha, solo usa el global) -->
+    <!-- Solo se usa para resolver el nodo inicial autorizado y mantener la
+         ruta interna; la navegación visible ocurre en el breadcrumb. -->
     <app-hier-selector
+      #selectorJerarquia
+      class="hidden"
       [paramsHier]="paramsHier"
-      placeholder="Elegir nivel"
       [reintentarSinFecha]="true"
       (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (rutaSeleccionada)="onRutaSeleccionada($event)"
       (error)="onErrorJerarquia()"
     />
 
-    <!-- Filtro de Periodo -->
+    <!-- Único filtro visible: fecha de corte. -->
     @if (periodos().length > 0) {
-      <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
-        <app-select-filtro
-          etiqueta="Periodo / Corte"
-          [opciones]="periodos()"
-          [valor]="periodo()"
-          (valorChange)="periodo.set($event)"
-        />
-      </div>
+      <app-select-filtro
+        etiqueta="Fecha de corte"
+        [opciones]="periodos()"
+        [valor]="periodo()"
+        (valorChange)="periodo.set($event)"
+      />
     }
   </div>
 
   @if (!nivelActual()) {
-    <app-empty-state titulo="Elige un nivel" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte de cartera de cultivos." />
+    <app-empty-state titulo="Cargando cartera agrícola" descripcion="Estamos preparando la información de tu nivel autorizado." />
   } @else if (!filaSeleccionada()) {
     <div class="flex flex-col gap-4 sm:gap-5 w-full">
       <!-- Tarjetas KPI Estándar (Design System) -->
@@ -68,14 +69,43 @@
         </section>
       }
 
-      <!-- Tabla Principal Seleccionable -->
+      @if (rutaJerarquica().length > 0) {
+        <nav class="hidden md:flex items-center gap-1.5 text-[12px]" aria-label="Ruta de cartera agrícola">
+          @for (nodo of rutaJerarquica(); track nodo.cod_rel; let ultimo = $last; let i = $index) {
+            @if (ultimo) {
+              <span
+                class="inline-flex items-center rounded-full border border-[var(--mis-primary)]/30 bg-[var(--mis-primary-light)] px-2.5 py-1 font-semibold text-[var(--mis-primary)] shadow-xs"
+                aria-current="page"
+              >
+                <i class="pi pi-map-marker mr-1 text-[10px]" aria-hidden="true"></i>
+                {{ nodo.des_rel ?? nodo.cod_rel }}
+              </span>
+            } @else {
+              <button type="button" class="text-[var(--mis-primary)] hover:underline" (click)="volverANivel(i)">
+                {{ nodo.des_rel ?? nodo.cod_rel }}
+              </button>
+              <i class="pi pi-angle-right text-[10px] text-[var(--mis-text-tertiary)]" aria-hidden="true"></i>
+            }
+          }
+        </nav>
+
+        @if (rutaJerarquica().length > 1) {
+          <button type="button" class="md:hidden mis-btn mis-btn-ghost self-start !px-2 !py-1 text-[12px]" (click)="volverAlNivelPadre()">
+            <i class="pi pi-arrow-left"></i> Volver
+          </button>
+        }
+      }
+
+      <!-- La tabla es el drill-down: Descripción baja un nivel; las métricas abren gráficos. -->
       <section class="mis-card p-3.5 sm:p-4 overflow-x-auto w-full">
         <app-tabla-dinamica
           [columnas]="tabla().columnas"
           [filas]="tabla().filas"
           [cargando]="cargando()"
           [seleccionable]="true"
-          (filaSeleccionada)="onFilaSeleccionada($event)"
+          [columnasClicables]="columnasDrillDown"
+          [destacarFila]="destacarNodoActivo"
+          (celdaSeleccionada)="onCeldaSeleccionada($event)"
         />
       </section>
     </div>

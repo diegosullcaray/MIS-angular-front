@@ -193,7 +193,9 @@ export class AuthService {
       fechaCorte: profile.curr_fec,
       fechasHabilitadas: profile.hab_fec,
       numDoc: profile.num_doc,
+      tipoUsuario: profile.tip_use,
       claUse: profile.cla_use,
+      nivelIncentivos: profile.niv,
     };
   }
 

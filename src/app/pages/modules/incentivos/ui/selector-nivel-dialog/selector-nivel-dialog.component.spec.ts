@@ -18,27 +18,35 @@ const ASESOR: AsesorPickItem = {
 
 describe('SelectorNivelDialogComponent', () => {
   let incentivosFalso: {
-    nivelesSelector: NivelSelectorJerarquia[];
+    nivelesSelector: ReturnType<typeof signal<NivelSelectorJerarquia[]>>;
+    puedeVerFinanciera: ReturnType<typeof signal<boolean>>;
+    puedeRestaurarPerfilPropio: ReturnType<typeof signal<boolean>>;
+    requiereSeleccionInicial: ReturnType<typeof signal<boolean>>;
     perfil: ReturnType<typeof signal<unknown>>;
     obtenerAsesores: ReturnType<typeof vi.fn>;
     obtenerNivelesJerarquia: ReturnType<typeof vi.fn>;
     seleccionarAsesor: ReturnType<typeof vi.fn>;
     seleccionarNodoJerarquia: ReturnType<typeof vi.fn>;
     seleccionarFinancieraConfianza: ReturnType<typeof vi.fn>;
+    restaurarPerfilPropio: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
     incentivosFalso = {
-      nivelesSelector: [
+      nivelesSelector: signal([
         { etiqueta: 'Unidades', tipCodListado: 18 },
         { etiqueta: 'Corredores', tipCodListado: 19 },
         { etiqueta: 'Territorios', tipCodListado: 20 },
-      ],
+      ]),
+      puedeVerFinanciera: signal(true),
+      puedeRestaurarPerfilPropio: signal(false),
+      requiereSeleccionInicial: signal(false),
       obtenerAsesores: vi.fn(),
       obtenerNivelesJerarquia: vi.fn(),
       seleccionarAsesor: vi.fn(),
       seleccionarNodoJerarquia: vi.fn(),
       seleccionarFinancieraConfianza: vi.fn(),
+      restaurarPerfilPropio: vi.fn(),
       perfil: signal<unknown>(null),
     };
     TestBed.configureTestingModule({
@@ -258,6 +266,23 @@ describe('SelectorNivelDialogComponent', () => {
     expect(incentivosFalso.seleccionarFinancieraConfianza).toHaveBeenCalledWith(2);
   });
 
+  it('para un coordinador muestra solo los niveles autorizados y la acción Mi perfil', () => {
+    incentivosFalso.nivelesSelector.set([{ etiqueta: 'Unidades', tipCodListado: 18 }]);
+    incentivosFalso.puedeVerFinanciera.set(false);
+    incentivosFalso.puedeRestaurarPerfilPropio.set(true);
+    const fixture = abrirVisible();
+
+    const texto = document.body.textContent ?? '';
+    expect(texto).toContain('Asesores');
+    expect(texto).toContain('Unidades');
+    expect(texto).toContain('Mi perfil');
+    expect(texto).not.toContain('Corredores');
+    expect(texto).not.toContain('FC Individual');
+
+    fixture.componentInstance['restaurarPerfilPropio']();
+    expect(incentivosFalso.restaurarPerfilPropio).toHaveBeenCalled();
+  });
+
   /**
    * Cerrar siempre cierra; a dónde va después depende de si ya hay un nivel
    * cargado. Sin perfil —el primer ingreso de un administrador— quedarse sería
@@ -274,6 +299,19 @@ describe('SelectorNivelDialogComponent', () => {
 
     expect(visibleChangeSpy).toHaveBeenCalledWith(false);
     expect(navegar).toHaveBeenCalledWith(['/app/dashboard']);
+  });
+
+  it('en la selección inicial STAFF no permite cerrar ni abandonar el selector', () => {
+    incentivosFalso.requiereSeleccionInicial.set(true);
+    const fixture = crear();
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const visibleChangeSpy = vi.fn();
+    fixture.componentInstance.visibleChange.subscribe(visibleChangeSpy);
+
+    fixture.componentInstance['cerrar']();
+
+    expect(visibleChangeSpy).not.toHaveBeenCalled();
+    expect(navegar).not.toHaveBeenCalled();
   });
 
   it('cerrar() con un perfil ya cargado no saca al usuario de la pantalla', () => {

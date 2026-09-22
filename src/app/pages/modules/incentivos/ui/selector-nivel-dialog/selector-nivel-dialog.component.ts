@@ -40,7 +40,10 @@ export class SelectorNivelDialogComponent {
 
   readonly visibleChange = output<boolean>();
 
-  protected readonly niveles: NivelSelectorJerarquia[] = this.incentivos.nivelesSelector;
+  protected readonly niveles = this.incentivos.nivelesSelector;
+  protected readonly puedeVerFinanciera = this.incentivos.puedeVerFinanciera;
+  protected readonly puedeRestaurarPerfilPropio = this.incentivos.puedeRestaurarPerfilPropio;
+  protected readonly requiereSeleccionInicial = this.incentivos.requiereSeleccionInicial;
   protected readonly columnasAsesor = COLUMNAS_ASESOR;
   protected readonly camposBusquedaAsesor = BUSQUEDA_ASESOR;
   protected readonly camposBusquedaJerarquia = BUSQUEDA_JERARQUIA;
@@ -117,6 +120,10 @@ export class SelectorNivelDialogComponent {
     this.confirmarYCerrar(() => this.incentivos.seleccionarFinancieraConfianza(claUsu));
   }
 
+  protected restaurarPerfilPropio(): void {
+    this.confirmarYCerrar(() => this.incentivos.restaurarPerfilPropio());
+  }
+
   private confirmarYCerrar(cargar: () => void): void {
     this.volverAlMenu();
     this.visibleChange.emit(false);
@@ -129,6 +136,9 @@ export class SelectorNivelDialogComponent {
   }
 
   protected cerrar(): void {
+    // En Incentivos3 STAFF no puede cerrar el primer selector: todavía no hay
+    // un nivel autorizado desde el cual construir el Cuadro de Mando.
+    if (this.requiereSeleccionInicial()) return;
     this.volverAlMenu();
     this.visibleChange.emit(false);
     if (!this.incentivos.perfil()) {

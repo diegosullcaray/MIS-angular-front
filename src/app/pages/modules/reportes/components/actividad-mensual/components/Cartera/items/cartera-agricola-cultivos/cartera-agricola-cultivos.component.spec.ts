@@ -46,4 +46,26 @@ describe('CarteraAgricolaCultivosComponent', () => {
       expect.any(String),
     );
   });
+
+  it('debe resaltar toda la fila del nodo activo', () => {
+    const fixture = TestBed.createComponent(CarteraAgricolaCultivosComponent);
+    fixture.componentInstance['nivelActual'].set(NODO);
+
+    expect(fixture.componentInstance['destacarNodoActivo']({ htipcod: 1, cod_rel: '100' })).toBe(true);
+    expect(fixture.componentInstance['destacarNodoActivo']({ htipcod: 1, cod_rel: '200' })).toBe(false);
+  });
+
+  it('debe volver al nivel elegido desde el breadcrumb', () => {
+    const fixture = TestBed.createComponent(CarteraAgricolaCultivosComponent);
+    const component = fixture.componentInstance;
+    const raiz = NODO;
+    const hijo: HierarquiaNodo = { tip_cod: 18, cod_rel: '200', desc_rel: 'Asesor 200', lvl: 2 };
+    component['rutaJerarquica'].set([raiz, hijo]);
+    component['nivelActual'].set(hijo);
+
+    component['volverANivel'](0);
+
+    expect(component['rutaJerarquica']()).toEqual([raiz]);
+    expect(component['nivelActual']()).toEqual(raiz);
+  });
 });

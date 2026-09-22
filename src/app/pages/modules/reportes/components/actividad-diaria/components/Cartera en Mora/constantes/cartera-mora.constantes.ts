@@ -94,6 +94,14 @@ export const COD_BASE_GESTION = 'LCCUOTANUEVA_01';
  */
 export const COD_DASHBOARD_REVISION = ['REP_CERCUOT_01', 'REP_CERCUOT_02'] as const;
 
+/** Complementos del Dashboard en Revisión agregados en el último legado STG. */
+export const COD_DASHBOARD_REVISION_COMPLEMENTOS = {
+  /** Tabla navegable de asesores. Usa `fecha` con guiones y `table.regular`. */
+  topAsesores: 'RS_TOP_ZCUO_01',
+  /** Mapas de calor por año de desembolso; el segundo conserva el eje Y invertido. */
+  mapasCalor: ['GRAF_ZCUO_03', 'GRAF_ZCUO_04'],
+} as const;
+
 /** Una serie del Dashboard en Revisión: el legado la lee por POSICIÓN de columna. */
 export interface SerieDashboardRevision {
   readonly nombre: string;

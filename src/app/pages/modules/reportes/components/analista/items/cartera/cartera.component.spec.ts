@@ -5,6 +5,7 @@ import { MessageService as PrimeNgMessageService } from 'primeng/api';
 import { CarteraComponent } from './cartera.component';
 import { CarteraService } from '../../services/cartera.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
+import { ShellStateService } from '../../../../../../../core/services/shell-state.service';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
@@ -37,6 +38,25 @@ describe('CarteraComponent', () => {
   it('al crearse, carga la lista de asesores', () => {
     crear();
     expect(servicioFalso.obtenerAsesores).toHaveBeenCalled();
+  });
+
+  it('para un asesor autenticado carga automáticamente su propio reporte', async () => {
+    TestBed.inject(ShellStateService).setUsuarioActivo({
+      id: 'asesor-1',
+      nombre: 'Ana Torres',
+      email: 'ana.torres@confianza.pe',
+      rol: 'supervisor-area',
+      subsistemas: [],
+      tipoUsuario: 1,
+      numDoc: '87654321',
+    });
+
+    const fixture = crear();
+    await fixture.whenStable();
+
+    expect(servicioFalso.obtenerAsesores).not.toHaveBeenCalled();
+    expect(servicioFalso.obtenerCartera).toHaveBeenCalledWith({ tip_cod: 2, cod_rel: '87654321' });
+    expect(fixture.componentInstance['mostrarSelector']()).toBe(false);
   });
 
   it('onAsesorSeleccionado() carga las 2 tablas de la cartera del asesor elegido', () => {

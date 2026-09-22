@@ -40,6 +40,9 @@ export class CategorizacionDashboardComponent implements OnInit {
   protected readonly requisitos = signal<RequisitoTarjeta[]>([]);
   protected readonly comisiones = signal<ComisionTarjeta[]>([]);
   protected readonly tipoComision = signal<'individual' | 'grupal'>('grupal');
+  /** El legacy actualizó la guía: cada tipo de comisión muestra su propio material. */
+  protected readonly guiaGrupal = '/assets/images/fc/modules/categoriacion/categorizacion2.png';
+  protected readonly guiaIndividual = '/assets/images/fc/modules/categoriacion/categorizacion2_ind.png';
 
   protected readonly dialogAbierto = signal(false);
   protected readonly previewGuia = signal(false);

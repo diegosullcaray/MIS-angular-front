@@ -122,9 +122,9 @@ describe('IncentivosService', () => {
     expect(service.calculadora()).toBe(antes);
   });
 
-  describe('iniciar() — usuario NO admin (aproximación a SECTORISTA individual)', () => {
+  describe('iniciar() — asesor SECTORISTA', () => {
     it('carga directo el perfil propio con su nombre, cargo y avatar de sesión, sin selector', () => {
-      shell.setUsuarioActivo(usuario({ nombre: 'Ana María Torres', cargo: 'Asesora de Negocios', avatarUrl: 'https://foto.test/ana.jpg' }));
+      shell.setUsuarioActivo(usuario({ nombre: 'Ana María Torres', cargo: 'Asesora de Negocios', avatarUrl: 'https://foto.test/ana.jpg', nivelIncentivos: 'SECTORISTA' }));
       service.iniciar();
 
       expect(service.puedeElegirNivel()).toBe(false);
@@ -163,6 +163,49 @@ describe('IncentivosService', () => {
     it('precarga la raíz de jerarquía (base_hier, cod_jer=9) para el selector', () => {
       service.iniciar();
       expect(antAdmin.getBaseHierarchy).toHaveBeenCalledWith('ana.torres@confianza.pe', 9);
+    });
+  });
+
+  describe('iniciar() — permisos por nivel organizacional de Incentivos3', () => {
+    it('un coordinador CORREDOR carga su jerarquía propia y solo puede consultar asesores y unidades', () => {
+      shell.setUsuarioActivo(usuario({ nivelIncentivos: 'CORREDOR', cargo: 'Coordinador', claUse: 1 }));
+      antAdmin.getBaseHierarchy.mockReturnValue(of(respuesta({ base_hierarchy: [{ tip_cod: 19, cod_rel: 'COR-01', flag_cla: 1 }] })));
+
+      service.iniciar();
+
+      expect(service.puedeElegirNivel()).toBe(true);
+      expect(service.requiereSeleccionInicial()).toBe(false);
+      expect(service.nivelesSelector()).toEqual([{ etiqueta: 'Unidades', tipCodListado: 18 }]);
+      expect(service.puedeVerFinanciera()).toBe(false);
+      expect(service.puedeRestaurarPerfilPropio()).toBe(true);
+      expect(ant.getDataSourcesIndividual).toHaveBeenCalledWith('2026', 19, 'COR-01', expect.any(String));
+      expect(service.perfil()).toMatchObject({ nombre: 'Ana Torres', nivel: 'CORREDOR', descripcionNivel: 'Coordinador' });
+      expect(service.monetizado().mostrarModelo).toBe(false);
+    });
+
+    it('un coordinador puede volver a su jerarquía propia después de consultar un asesor', () => {
+      shell.setUsuarioActivo(usuario({ nivelIncentivos: 'TERRITORIO', claUse: 1 }));
+      antAdmin.getBaseHierarchy.mockReturnValue(of(respuesta({ base_hierarchy: [{ tip_cod: 20, cod_rel: 'TER-01', flag_cla: 1 }] })));
+      service.iniciar();
+      service.seleccionarAsesor({ cod_sec: 'BT-002', des_sec: 'Juan Pérez', cod_gru: 1 });
+
+      service.restaurarPerfilPropio();
+
+      expect(ant.getDataSourcesIndividual).toHaveBeenLastCalledWith('2026', 20, 'TER-01', expect.any(String));
+      expect(service.perfil()?.nivel).toBe('TERRITORIO');
+    });
+
+    it('un administrador STAFF debe escoger inicialmente y puede acceder a toda la jerarquía y Financiera Confianza', () => {
+      shell.setUsuarioActivo(usuario({ rol: 'admin-sistema', nivelIncentivos: 'STAFF' }));
+
+      service.iniciar();
+
+      expect(service.puedeElegirNivel()).toBe(true);
+      expect(service.requiereSeleccionInicial()).toBe(true);
+      expect(service.nivelesSelector().map((nivel) => nivel.tipCodListado)).toEqual([18, 19, 20]);
+      expect(service.puedeVerFinanciera()).toBe(true);
+      expect(service.puedeRestaurarPerfilPropio()).toBe(false);
+      expect(ant.getDataSourcesIndividual).not.toHaveBeenCalled();
     });
   });
 

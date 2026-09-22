@@ -66,6 +66,21 @@ describe('HierSelectorComponent', () => {
     expect(rutas.at(-1)).toEqual([expect.objectContaining({ cod_rel: '231' })]);
   });
 
+  it('seleccionarNodo() actualiza el cascada y emite el nuevo nivel', () => {
+    const siguiente: HierarquiaNodo = { tip_cod: 18, cod_rel: 'AG-1', desc_rel: 'Agencia Centro', lvl: 2 };
+    const fixture = crear();
+    const componente = fixture.componentInstance;
+    componente['nodosNivel'].set([
+      { label: 'Empresa', level: 1, data: [RAIZ] },
+      { label: 'Agencia', level: 2, data: [siguiente] },
+    ]);
+    const emitido = vi.fn();
+    componente.nodoSeleccionado.subscribe(emitido);
+
+    expect(componente.seleccionarNodo(siguiente)).toBe(true);
+    expect(emitido).toHaveBeenCalledWith(siguiente);
+  });
+
   it('sin reintentarSinFecha, un nivel vacío no dispara una segunda llamada', () => {
     antAdmin.getLevelHierarchy.mockReturnValue(respuesta('level_hierarchy', []));
     crear();
