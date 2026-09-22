@@ -7,11 +7,8 @@ import type { HierarquiaNodo } from '../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado, type ReporteBloqueUnico } from '../../models/tabla-reporte.model';
 
 /**
- * Estado de un reporte de un solo bloque, para usar con `ReporteSimpleComponent`.
- *
- * La subclase solo aporta `consultar()`. Como se invoca dentro de un `effect`,
- * las señales de filtro que lea ahí quedan registradas como dependencia: al
- * cambiar un filtro se vuelve a consultar sin que el componente lo pida.
+ * Base para un reporte de un solo bloque.
+ * La subclase aporta `consultar()`; al cambiar un filtro el efecto vuelve a llamarla.
  */
 export abstract class ReporteSimpleBase {
   protected readonly toast = inject(ToastService);
@@ -42,9 +39,7 @@ export abstract class ReporteSimpleBase {
     this.error.set(null);
     this.tabla.set(TABLA_VACIA);
     this.cargando.set(true);
-    // Se pasa el nodo COMPLETO: los reportes paginados reenvían también
-    // `lvl_hier`/`des_rel`/`lbl_hier`. Los demás no cambian, porque
-    // `BloqueReporteService.regular()` recorta a `tip_cod`/`cod_rel`.
+    // El nodo completo permite a los reportes paginados reenviar lvl_hier/des_rel/lbl_hier.
     return this.consultar(nodo)
       .subscribe({
       next: ({ tabla1 }) => {

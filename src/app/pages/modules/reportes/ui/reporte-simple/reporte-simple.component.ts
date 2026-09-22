@@ -12,11 +12,7 @@ import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
 export interface BloqueReporte {
   titulo?: string;
   tabla: TablaReporteResultado;
-  /**
-   * Nota al pie de ESTE bloque — el `content.lower` del legado, que va por tabla y no por
-   * reporte (ej. en "Datos por Producto" solo `_03` y `_04` llevan la suya). Para una leyenda
-   * única de todo el reporte está el slot `[nota]`.
-   */
+  /** Nota al pie de este bloque — `content.lower` del legado, por tabla. */
   nota?: string;
 }
 
@@ -28,12 +24,9 @@ export interface PestanaReporte {
 }
 
 /**
- * Armazón de un reporte del `report-cra-v1p1` del legado: ventana + selector de
- * jerarquía + sus bloques de tabla, uno debajo del otro como los apila el legado.
- *
- * Para un solo bloque alcanza con `[tabla]`; para varios, `[bloques]`.
- * Los filtros propios del reporte se proyectan en `[filtros]` (debajo del
- * selector, como en el legado) y la leyenda al pie en `[nota]`.
+ * Armazón de reporte: ventana + selector de jerarquía + bloques de tabla.
+ * Un bloque: `[tabla]`; varios: `[bloques]`; en pestañas: `[pestanas]`.
+ * Filtros propios: slot `[filtros]`. Leyenda al pie: slot `[nota]`.
  */
 @Component({
   selector: 'app-reporte-simple',
@@ -50,7 +43,6 @@ export interface PestanaReporte {
       [conFiltros]="true"
     >
       
-      <!-- ZONA DE FILTROS -->
       <div ventana-filtros class="flex flex-col gap-3">
         <app-hier-selector
           [paramsHier]="paramsHier()"
@@ -63,7 +55,7 @@ export interface PestanaReporte {
         </div>
       </div>
 
-      <!-- ZONA DE CONTENIDO PRINCIPAL (Estado Vacío, Pestañas o Bloques Apilados) -->
+      <!-- Estado: error / vacío / pestañas / bloques -->
       @if (error(); as detalleError) {
         <app-inline-error [detalle]="detalleError" (reintentar)="refrescar()" />
       } @else if (!nivel()) {
@@ -115,13 +107,9 @@ export interface PestanaReporte {
         </div>
       }
 
-      <!-- ZONA INFERIOR DE PROYECCIÓN (Notas y otros elementos html) -->
       <div class="flex flex-col gap-3 mt-4">
-        <!-- Esto proyectará tu <p nota> -->
         <ng-content select="[nota]" />
-        
-        <!-- Esto proyectará tu <h1>HOLA</h1> y cualquier etiqueta sin atributos -->
-        <ng-content /> 
+        <ng-content />
       </div>
 
     </app-window-panel>
@@ -163,17 +151,7 @@ export class ReporteSimpleComponent {
   readonly nivelSeleccionado = output<HierarquiaNodo>();
   readonly errorJerarquia = output<void>();
 
-  /**
-   * Botón de actualizar de la esquina: vuelve a pedir el reporte al backend Ant
-   * con el mismo nodo de jerarquía y la misma fecha de corte.
-   *
-   * No hace falta una salida nueva ni tocar las pantallas que consumen este
-   * armazón: reemitir `nivelSeleccionado` es exactamente lo que ya saben
-   * atender. Se emite una **copia** del nodo a propósito — las pantallas que
-   * consultan dentro de un `effect` sobre `nivelActual` (ver
-   * `ReporteSimpleBase`) no reaccionarían si la señal recibiera la misma
-   * referencia.
-   */
+  /** Reemite el nodo actual como copia nueva para forzar el efecto en el componente contenedor. */
   protected refrescar(): void {
     const nodo = this.nivel();
     if (nodo) this.nivelSeleccionado.emit({ ...nodo });

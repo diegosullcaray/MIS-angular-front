@@ -27,6 +27,6 @@ export const environment: Environment = {
     helpdesk: 'https://sites.google.com/confianza.pe/helpdeskconfianza/index?pli=1&authuser=2',
   },
 
-  /** Identidad para pruebas locales. Para cambiar de perfil no edites este archivo: localStorage.setItem('mis.devUser', 'flor.garcia@confianza.pe'); location.reload(); localStorage.removeItem('mis.devUser'); location.reload(); // cuenta real nilda.quilla@ comercial · giomara.acevedo@ operaciones (157) · flor.garcia@ asesor */
+  /** Usuario para pruebas locales. Cambiar con localStorage.setItem('mis.devUser', 'email'). */
   devUser: 'diego.sullcaray@confianza.pe',
 };

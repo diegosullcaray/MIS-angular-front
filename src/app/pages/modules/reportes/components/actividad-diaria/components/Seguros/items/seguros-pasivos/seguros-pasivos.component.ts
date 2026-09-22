@@ -12,15 +12,7 @@ import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../model
 import type { TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
 import { SegurosService } from '../../services/seguros.service';
 
-/**
- * Seguros Pasivos — legado `repositorio/seguros-pasivos`.
- *
- * Cinco pestañas, no cinco tablas apiladas, y el orden es el de la pantalla: el
- * resumen va primero aunque se pida tercero. La quinta ("Protección 360") queda
- * vacía a propósito — en el legado tampoco muestra nada, porque las variables
- * que su plantilla declara no existen en el componente. Se deja para no cambiar
- * la navegación del reporte.
- */
+/** Seguros Pasivos — cinco pestañas, una por producto. Mapeo del legado `repositorio/seguros-pasivos`. */
 @Component({
   selector: 'app-seguros-pasivos',
   standalone: true,
@@ -39,11 +31,7 @@ export class SegurosPasivosComponent {
   protected readonly error = signal<string | null>(null);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
-  /**
-   * Las cinco pestañas del `mat-tab-group` del legado, con el índice de la
-   * tabla que le toca a cada una. La última no tiene tabla: en el legado
-   * tampoco.
-   */
+  /** Pestañas del legado: la quinta (Protección 360) queda vacía intencionalmente. */
   protected readonly pestanas = [
     { id: 'resumen', titulo: 'Seguro Pasivo Resumen', indice: 0 },
     { id: 'oncologicos', titulo: 'Seguros Oncológicos', indice: 1 },
