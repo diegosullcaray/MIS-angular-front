@@ -15,7 +15,6 @@
       descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte."
     />
   } @else {
-    <!-- Mismas pestañas que el `mat-tab-group` del legado. -->
     <p-tabs [value]="pestanas[0].id">
       <p-tablist>
         @for (p of pestanas; track p.id) {

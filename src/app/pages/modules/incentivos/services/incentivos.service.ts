@@ -191,8 +191,6 @@ export class IncentivosService {
     this.fechaSeleccionada = null;
 
     const nivel = this.nivelOrganizacional;
-    // Sesiones antiguas sin `niv` conservan el comportamiento previo para los
-    // administradores; cuando el backend lo entrega, `niv` es la fuente de verdad.
     const esStaff = nivel === 'STAFF' || (!nivel && this.shell.esAdmin());
     const esCoordinador = ['ADMINISTRACION', 'CORREDOR', 'TERRITORIO'].includes(nivel);
     this.configurarSelector(esStaff ? 'STAFF' : nivel);
@@ -223,8 +221,6 @@ export class IncentivosService {
     }
     const usuario = this.shell.usuarioActivo();
     const claUsu = (usuario?.claUse as 1 | 2) ?? 1;
-    // El legado Incentivos3 muestra la identidad de la sesión, no un texto
-    // genérico: `profile.nombre`, `profile.cargo` y `profile.pic_url`.
     this.seleccionarNivel(
       {
         nombre: usuario?.nombre || 'Mi perfil',

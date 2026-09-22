@@ -30,39 +30,31 @@ import { RecientesService } from './pages/modules/home/services/recientes.servic
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Modo Zoneless obligatorio (sin zone.js)
+    // Zoneless: sin zone.js
     provideZonelessChangeDetection(),
 
-    // Router con binding de @Input desde parámetros de ruta.
-    // `onSameUrlNavigation: 'reload'` hace que navegar a la URL ya activa
-    // destruya y remonte el componente, evitando que volver al explorador y
-    // elegir el mismo reporte deje la pantalla congelada con datos anteriores.
+    // `onSameUrlNavigation: 'reload'` evita que volver a la misma ruta congele la pantalla.
     provideRouter(APP_ROUTES, withComponentInputBinding(), withRouterConfig({ onSameUrlNavigation: 'reload' })),
 
-    // HttpClient con interceptores y Fetch API nativa (compatible con Zoneless)
+    // Fetch API nativa (compatible con Zoneless)
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, httpErrorInterceptor, loadingInterceptor])),
 
     // Cliente OAuth (Google Sign-In) usado por AuthService
     provideOAuthClient(),
 
-    // Restaura la sesión persistida (sessionStorage) antes de renderizar,
-    // para que authGuard no expulse al usuario al refrescar la página.
+    // Restaura la sesión antes del primer render para que authGuard no expulse al usuario.
     provideAppInitializer(() => inject(AuthService).restaurarSesion()),
 
-    // Preferencias de interfaz: `localStorage` es hoy el único adaptador del
-    // puerto, y cambiarlo por uno contra el backend es cambiar este `provide`.
+    // Puerto de preferencias: cambiar el adaptador es cambiar este provide.
     { provide: REPOSITORIO_PREFERENCIAS, useExisting: PreferenciasLocalStorageRepositorio },
     { provide: CATALOGO_ANUNCIOS, useValue: ANUNCIOS_DEL_SISTEMA },
 
-    // Aplica tema, fondo, acento y modo de menú antes del primer render
-    // (evita el parpadeo del aspecto por defecto).
+    // Aplica tema antes del primer render (evita parpadeo).
     provideAppInitializer(() => void inject(PreferenciasService)),
 
-    // Anota en preferencias cada reporte visitado, para los accesos rápidos del
-    // Home. Escucha al router, así que hay que arrancarlo una vez al inicio.
+    // Registra reportes visitados para los accesos rápidos del Home.
     provideAppInitializer(() => inject(RecientesService).iniciar()),
 
-    // PrimeNG con tema personalizado macOS
     providePrimeNG({
       theme: {
         preset: MisTheme,
@@ -74,19 +66,15 @@ export const appConfig: ApplicationConfig = {
           },
         },
       },
-      ripple: false, // Sin ripple — estilo macOS
+      ripple: false,
     }),
     MessageService,
 
-    // Fuentes del buscador: sumar un módulo es agregar acá su `FuenteBusqueda`.
+    // Fuentes del buscador global: agregar un módulo es sumar su FuenteBusqueda aquí.
     { provide: FUENTE_BUSQUEDA, useExisting: FuenteNavegacionService, multi: true },
     { provide: FUENTE_BUSQUEDA, useExisting: FuenteDashboardsService, multi: true },
 
-    // PWA: cachea el app-shell (JS/CSS/íconos) para carga instantánea e
-    // instalación en el dispositivo. Nunca cachea respuestas del backend
-    // Ant/Winder (ver ngsw-config.json) — los datos financieros siempre se
-    // piden en vivo. Deshabilitado en desarrollo (isDevMode) para no pelear
-    // con el ciclo normal de recarga de `ng serve`.
+    // PWA: cachea el app-shell. No cachea datos del backend Ant/Winder (ver ngsw-config.json).
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
