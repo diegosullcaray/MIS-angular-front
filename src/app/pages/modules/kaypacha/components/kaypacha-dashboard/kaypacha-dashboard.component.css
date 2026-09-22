@@ -18,13 +18,14 @@
 
 /* Permitir que col.style de JSONNHEAD1 controle los colores dinámicos de las cabeceras (cyan, rosa, oliva, etc.) */
 :host ::ng-deep .kaypacha-table .p-datatable-thead > tr > th {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 8px 10px;
+  padding: 5px 7px;
   text-align: center;
   border: 1px solid var(--mis-border-strong) !important;
   color: var(--mis-text-primary);
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.15;
 }
 
 :host ::ng-deep .kaypacha-table .p-datatable-tbody > tr > td {

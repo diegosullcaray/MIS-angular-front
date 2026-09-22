@@ -17,7 +17,6 @@
     styleClass="p-datatable-sm p-datatable-gridlines text-xs"
     [scrollable]="!!scrollHeight()"
     [scrollHeight]="scrollHeight()"
-    [class.mis-data-table--compact-headers]="compactHeaders()"
   >
     <ng-template pTemplate="caption">
       @if (mostrarBuscador() || hayColumnasFiltrable() || showRefreshButton()) {
