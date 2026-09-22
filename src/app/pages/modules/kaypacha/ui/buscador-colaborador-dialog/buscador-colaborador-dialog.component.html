@@ -16,6 +16,7 @@
       [loading]="service.cargandoColaboradores()"
       [rows]="8"
       [rowsPerPageOptions]="[8, 15, 25]"
+      [compactHeaders]="true"
       [searchFields]="['cod_bt', 'des_col', 'HCOLCAR', 'RCODCOL', 'num_doc']"
       searchPlaceholder="Buscar por nombre, cargo, código o documento..."
       emptyMessage="No se encontraron colaboradores."

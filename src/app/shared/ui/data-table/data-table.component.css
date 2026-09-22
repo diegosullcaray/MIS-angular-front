@@ -68,6 +68,14 @@
   color: rgba(255, 255, 255, 0.65) !important;
 }
 
+/* Selector de colaboradores: conserva legibilidad, pero no hereda la
+   jerarquía visual más grande de los reportes operativos. */
+:host ::ng-deep .mis-data-table--compact-headers .p-datatable-thead > tr > th {
+  font-size: 10px !important;
+  padding-top: 0.4rem !important;
+  padding-bottom: 0.4rem !important;
+}
+
 :host ::ng-deep .p-datatable-thead th:hover .p-datatable-sort-icon,
 :host ::ng-deep .p-datatable-thead th.p-datatable-column-sorted .p-datatable-sort-icon {
   color: #ffffff !important;
@@ -88,7 +96,6 @@
     display: none;
   }
 }
-
 
 /* ── Fila elegida ─────────────────────────────────────────────
    Solo aplica con `selectableRows`. Va con una barra a la izquierda además

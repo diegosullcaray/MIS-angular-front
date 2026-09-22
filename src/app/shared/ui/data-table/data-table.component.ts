@@ -16,7 +16,18 @@ import { DataTableCellDirective } from './data-table-cell.directive';
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [NgTemplateOutlet, FormsModule, TableModule, ButtonModule, InputTextModule, IconFieldModule, InputIconModule, SelectModule, DatePickerModule, TooltipModule],
+  imports: [
+    NgTemplateOutlet,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    SelectModule,
+    DatePickerModule,
+    TooltipModule,
+  ],
   templateUrl: './data-table.component.html',
   styleUrl: './data-table.component.css',
 })
@@ -34,6 +45,8 @@ export class DataTableComponent<T extends Record<string, unknown> = Record<strin
   readonly searchPlaceholder = input('Buscar...');
   /** Muestra el botón "Actualizar" del caption — el consumidor decide qué hacer al escuchar `refrescar`. */
   readonly showRefreshButton = input(false);
+  /** Variante compacta para selectores con columnas cortas, sin alterar las tablas de reportes. */
+  readonly compactHeaders = input(false);
   readonly refrescar = output<void>();
 
   /** Hace elegible la fila: un clic (o Enter) la resalta y emite `filaSeleccionada`. Apagado, la tabla es de solo lectura. */
@@ -45,14 +58,16 @@ export class DataTableComponent<T extends Record<string, unknown> = Record<strin
   private readonly celdas = contentChildren(DataTableCellDirective);
 
   protected readonly mostrarBuscador = computed(() => this.searchFields().length > 0);
-  protected readonly hayColumnasFiltrable = computed(() => this.columns().some((c) => !!c.filterType));
+  protected readonly hayColumnasFiltrable = computed(() =>
+    this.columns().some((c) => !!c.filterType),
+  );
 
   protected readonly busqueda = signal('');
   protected readonly filtrosVisibles = signal(false);
   protected readonly filtrosColumna = signal<Record<string, unknown>>({});
 
   protected readonly hayFiltrosActivos = computed(() =>
-    Object.values(this.filtrosColumna()).some((v) => v !== undefined && v !== null && v !== '')
+    Object.values(this.filtrosColumna()).some((v) => v !== undefined && v !== null && v !== ''),
   );
 
   protected readonly filasFiltradas = computed<T[]>(() => {
@@ -62,13 +77,21 @@ export class DataTableComponent<T extends Record<string, unknown> = Record<strin
     for (const col of this.columns()) {
       const valor = filtros[col.field];
       if (valor === undefined || valor === null || valor === '') continue;
-      filas = filas.filter((fila) => this.coincideFiltroColumna(fila[col.field], valor, col.filterType));
+      filas = filas.filter((fila) =>
+        this.coincideFiltroColumna(fila[col.field], valor, col.filterType),
+      );
     }
 
     const q = this.busqueda().toLowerCase().trim();
     const campos = this.searchFields();
     if (q && campos.length > 0) {
-      filas = filas.filter((fila) => campos.some((campo) => String(fila[campo] ?? '').toLowerCase().includes(q)));
+      filas = filas.filter((fila) =>
+        campos.some((campo) =>
+          String(fila[campo] ?? '')
+            .toLowerCase()
+            .includes(q),
+        ),
+      );
     }
 
     return filas;
@@ -106,7 +129,11 @@ export class DataTableComponent<T extends Record<string, unknown> = Record<strin
     return valor === null || valor === undefined || valor === '' ? '-' : valor;
   }
 
-  private coincideFiltroColumna(valorCelda: unknown, valorFiltro: unknown, tipo?: DataTableFilterType): boolean {
+  private coincideFiltroColumna(
+    valorCelda: unknown,
+    valorFiltro: unknown,
+    tipo?: DataTableFilterType,
+  ): boolean {
     if (tipo === 'number') return Number(valorCelda) === Number(valorFiltro);
     if (tipo === 'dropdown') return valorCelda === valorFiltro;
     if (tipo === 'date') {
