@@ -13,7 +13,12 @@ import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inli
 import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
+import { HierSelectorComponent } from '../../../../../shared/ui/hier-selector/hier-selector.component';
 import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-table.model';
+import type {
+  HierarquiaNodo,
+  ParamsJerarquia,
+} from '../../../../../shared/ui/hier-selector/jerarquia.model';
 import { ToastService } from '../../../../../shared/services/toast.service';
 
 const COLUMNAS: DataTableColumn[] = [
@@ -21,10 +26,34 @@ const COLUMNAS: DataTableColumn[] = [
   { field: 'HDESSEC', header: 'Nombre Asesor', filterType: 'text' },
   { field: 'HCTACLI', header: 'Cuenta Cli.', filterType: 'text' },
   { field: 'HDESCLI', header: 'Nombre Cliente', filterType: 'text', mobileVisible: false },
-  { field: 'HCODOPE', header: 'Operación', align: 'center', filterType: 'text', mobileVisible: false },
-  { field: 'HFECDES', header: 'Fec. Desembolso', align: 'center', filterType: 'date', mobileVisible: false },
-  { field: 'HMONDES', header: 'Monto Desembolso', align: 'right', filterType: 'number', mobileVisible: false },
-  { field: 'HFECVIS', header: 'Fecha Visita', align: 'center', filterType: 'date', mobileVisible: false },
+  {
+    field: 'HCODOPE',
+    header: 'Operación',
+    align: 'center',
+    filterType: 'text',
+    mobileVisible: false,
+  },
+  {
+    field: 'HFECDES',
+    header: 'Fec. Desembolso',
+    align: 'center',
+    filterType: 'date',
+    mobileVisible: false,
+  },
+  {
+    field: 'HMONDES',
+    header: 'Monto Desembolso',
+    align: 'right',
+    filterType: 'number',
+    mobileVisible: false,
+  },
+  {
+    field: 'HFECVIS',
+    header: 'Fecha Visita',
+    align: 'center',
+    filterType: 'date',
+    mobileVisible: false,
+  },
   {
     field: 'HCUMPLDC',
     header: 'Cumple Destino',
@@ -54,6 +83,7 @@ const COLUMNAS: DataTableColumn[] = [
     DataTableComponent,
     DataTableCellDirective,
     WindowPanelComponent,
+    HierSelectorComponent,
   ],
   templateUrl: './destino-credito.component.html',
   styleUrl: './destino-credito.component.css',
@@ -71,6 +101,12 @@ export class DestinoCreditoComponent implements OnInit {
   readonly selectedItem = signal<DestinoCreditoItem | null>(null);
 
   protected readonly columnas = COLUMNAS;
+  /** Misma jerarquía comercial (código 5) usada por el módulo legacy. */
+  protected readonly paramsHier: ParamsJerarquia = {
+    code: 5,
+    maxLvl: 5,
+    dlgTitulo: 'JERARQUÍA ADMINISTRATIVA COMERCIAL',
+  };
 
   ngOnInit(): void {
     this.cargarDatos();
@@ -85,6 +121,27 @@ export class DestinoCreditoComponent implements OnInit {
         const body = res.body as { resultado?: { result?: DestinoCreditoItem[] } } | null;
         const list = body?.resultado?.result || [];
         this.data.set(list);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('No se pudo cargar la información de Destino de Crédito.');
+        this.loading.set(false);
+      },
+    });
+  }
+
+  /** La jerarquía filtra en backend; nunca se recorta la tabla local para simular permisos. */
+  protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
+    this.cargarDatosPorColaborador(nodo.cod_rel);
+  }
+
+  private cargarDatosPorColaborador(codBt: string): void {
+    this.loading.set(true);
+    this.error.set(null);
+    this.actividadesService.getRegResultadosDestCred(codBt).subscribe({
+      next: (res) => {
+        const body = res.body as { resultado?: { result?: DestinoCreditoItem[] } } | null;
+        this.data.set(body?.resultado?.result ?? []);
         this.loading.set(false);
       },
       error: () => {
@@ -112,7 +169,7 @@ export class DestinoCreditoComponent implements OnInit {
               };
             }
             return it;
-          })
+          }),
         );
       },
       error: () => {

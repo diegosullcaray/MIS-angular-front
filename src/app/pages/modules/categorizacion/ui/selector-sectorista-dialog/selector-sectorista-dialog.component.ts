@@ -1,18 +1,20 @@
-import { Component, computed, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, input, output, signal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
 import type { SectoristaItem } from '../../models/colaborador.model';
+import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
+import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-table.model';
+
+const COLUMNAS: DataTableColumn[] = [
+  { field: 'cod_sec', header: 'Código', width: '8rem', filterType: 'text' },
+  { field: 'des_sec', header: 'Colaborador', width: '18rem', filterType: 'text' },
+];
 
 /** Diálogo de selección de colaborador ("sectorista") — reconstrucción del `SecPickerDialog2` legado (servicio compartido de otro paquete de STG, no incluido en el volcado de referencia de `docs/07-modulos/analista`), con el mismo patrón de tabla + buscador que `BuscadorColaboradorDialogComponent` de Kaypacha (`pages/modules/kaypacha`). */
 @Component({
   selector: 'app-selector-sectorista-dialog',
   standalone: true,
-  imports: [FormsModule, DialogModule, TableModule, ButtonModule, IconFieldModule, InputIconModule, InputTextModule],
+  imports: [DialogModule, ButtonModule, DataTableComponent],
   templateUrl: './selector-sectorista-dialog.component.html',
 })
 export class SelectorSectoristaDialogComponent {
@@ -23,20 +25,8 @@ export class SelectorSectoristaDialogComponent {
   readonly visibleChange = output<boolean>();
   readonly sectoristaSeleccionado = output<SectoristaItem>();
 
-  protected readonly filtro = signal('');
   protected readonly seleccionado = signal<SectoristaItem | null>(null);
-
-  protected readonly filtrados = computed(() => {
-    const termino = this.filtro().toLowerCase().trim();
-    if (!termino) return this.sectoristas();
-    return this.sectoristas().filter(
-      (s) => s.des_sec?.toLowerCase().includes(termino) || s.cod_sec?.toLowerCase().includes(termino)
-    );
-  });
-
-  protected onSeleccionarFila(item: SectoristaItem | SectoristaItem[] | undefined): void {
-    if (item && !Array.isArray(item)) this.seleccionado.set(item);
-  }
+  protected readonly columnas = COLUMNAS;
 
   protected confirmar(): void {
     const item = this.seleccionado();
@@ -48,7 +38,6 @@ export class SelectorSectoristaDialogComponent {
 
   protected cerrar(): void {
     this.visibleChange.emit(false);
-    this.filtro.set('');
     this.seleccionado.set(null);
   }
 }

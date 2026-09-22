@@ -1,5 +1,12 @@
 <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
-  <p-table [value]="filas()" [scrollable]="true" scrollHeight="480px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
+  <p-table
+    [value]="filas()"
+    [scrollable]="true"
+    scrollHeight="480px"
+    [stripedRows]="true"
+    [showGridlines]="true"
+    styleClass="p-datatable-sm"
+  >
     @if (conCaption()) {
       <ng-template pTemplate="caption">
         <ng-content select="[tabla-caption]" />
@@ -11,11 +18,19 @@
         <tr>
           @for (col of columnas(); track col.label) {
             @if (col.hijos?.length) {
-              <th [attr.colspan]="col.hijos!.length" class="text-center text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+              <th
+                [attr.colspan]="col.hijos!.length"
+                class="text-center text-[12px] uppercase whitespace-normal break-words leading-tight"
+                style="background-color: var(--mis-primary); color: var(--mis-text-on-primary)"
+              >
                 {{ col.label }}
               </th>
             } @else {
-              <th rowspan="2" class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+              <th
+                rowspan="2"
+                class="text-[12px] uppercase whitespace-normal break-words leading-tight"
+                style="background-color: var(--mis-primary); color: var(--mis-text-on-primary)"
+              >
                 {{ col.label }}
               </th>
             }
@@ -25,7 +40,12 @@
           @for (col of columnas(); track col.label) {
             @if (col.hijos?.length) {
               @for (hijo of col.hijos; track hijo.key) {
-                <th class="whitespace-nowrap text-[11px]" style="background-color: var(--mis-primary-light);">{{ hijo.label }}</th>
+                <th
+                  class="text-[11px] whitespace-normal break-words leading-tight"
+                  style="background-color: var(--mis-primary-light)"
+                >
+                  {{ hijo.label }}
+                </th>
               }
             }
           }
@@ -33,7 +53,10 @@
       } @else {
         <tr>
           @for (col of columnasPlanas(); track col.key) {
-            <th class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+            <th
+              class="text-[12px] uppercase whitespace-normal break-words leading-tight"
+              style="background-color: var(--mis-primary); color: var(--mis-text-on-primary)"
+            >
               {{ col.label }}
             </th>
           }
@@ -45,7 +68,7 @@
       <tr>
         @for (col of columnasPlanas(); track col.key) {
           <td
-            class="text-[13px]"
+            class="text-[13px] whitespace-normal break-words"
             [pEditableColumn]="fila"
             [pEditableColumnField]="col.key!"
             [pEditableColumnDisabled]="!esEditable()(fila, col.key!)"
@@ -72,7 +95,10 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td [attr.colspan]="columnasPlanas().length || 1" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
+        <td
+          [attr.colspan]="columnasPlanas().length || 1"
+          class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6"
+        >
           Elige un nivel de la jerarquía para ver los datos.
         </td>
       </tr>

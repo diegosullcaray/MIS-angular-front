@@ -1,5 +1,6 @@
 /** Item de la lista de colaboradores para selección en buscador. */
 export interface KaypachaColaboradorItem {
+  [campo: string]: unknown;
   cod_bt: string;
   num_doc?: string;
   des_col: string;

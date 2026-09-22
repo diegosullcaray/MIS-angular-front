@@ -9,7 +9,11 @@ import { SelectorSectoristaDialogComponent } from '../../ui/selector-sectorista-
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { CategorizacionService } from '../../services/categorizacion.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
-import type { ComisionTarjeta, PerfilColaborador, RequisitoTarjeta } from '../../models/dashboard.model';
+import type {
+  ComisionTarjeta,
+  PerfilColaborador,
+  RequisitoTarjeta,
+} from '../../models/dashboard.model';
 import type { NodoJerarquiaAncla, SectoristaItem } from '../../models/colaborador.model';
 
 /** Categorización (`/app/analista/categorizacion`) — tablero de un colaborador: perfil, estado de 4 requisitos y resultados de comisión de 6 periodos. */
@@ -32,7 +36,10 @@ export class CategorizacionDashboardComponent implements OnInit {
   private readonly categorizacion = inject(CategorizacionService);
   private readonly shell = inject(ShellStateService);
 
-  protected readonly esAdmin = computed(() => this.categorizacion.esAdmin());
+  /** Solo el asesor (`tip_use = 1`) abre su propia ficha; los demás roles eligen colaborador. */
+  protected readonly requiereSelector = computed(
+    () => this.shell.usuarioActivo()?.tipoUsuario !== 1,
+  );
 
   protected readonly cargando = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -42,7 +49,8 @@ export class CategorizacionDashboardComponent implements OnInit {
   protected readonly tipoComision = signal<'individual' | 'grupal'>('grupal');
   /** El legacy actualizó la guía: cada tipo de comisión muestra su propio material. */
   protected readonly guiaGrupal = '/assets/images/fc/modules/categoriacion/categorizacion2.png';
-  protected readonly guiaIndividual = '/assets/images/fc/modules/categoriacion/categorizacion2_ind.png';
+  protected readonly guiaIndividual =
+    '/assets/images/fc/modules/categoriacion/categorizacion2_ind.png';
 
   protected readonly dialogAbierto = signal(false);
   protected readonly previewGuia = signal(false);
@@ -72,7 +80,7 @@ export class CategorizacionDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.esAdmin()) {
+    if (this.requiereSelector()) {
       // Solo prepara el nodo ancla — igual que el legado (`showSecPickerDialog(false)`),
       // no carga datos hasta que el admin elija un colaborador.
       this.cargandoAncla.set(true);
@@ -80,6 +88,7 @@ export class CategorizacionDashboardComponent implements OnInit {
         next: (ancla) => {
           this.ancla.set(ancla);
           this.cargandoAncla.set(false);
+          this.dialogAbierto.set(true);
         },
         error: () => this.cargandoAncla.set(false),
       });

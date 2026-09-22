@@ -1,9 +1,19 @@
 <app-window-panel
   titulo="Seguimiento de Destino de Crédito"
+  [conFiltros]="true"
+  [filtrosAbiertos]="true"
   [actualizando]="loading()"
   etiquetaActualizar="Actualizar registros"
   (actualizar)="cargarDatos()"
 >
+  <div ventana-filtros>
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      [anchoCompleto]="true"
+      [reintentarSinFecha]="true"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+    />
+  </div>
   <!-- Criterios de monitoreo: acción propia de la pantalla, junto al botón de la esquina -->
   <app-destino-credito-info-dialog ventana-acciones />
 
@@ -22,7 +32,9 @@
       emptyMessage="No se encontraron registros de destino de crédito."
     >
       <ng-template appDataTableCell="HCODSEC" let-row>
-        <span class="font-mono text-[var(--mis-text-primary)] font-semibold">{{ row.HCODSEC }}</span>
+        <span class="font-mono text-[var(--mis-text-primary)] font-semibold">{{
+          row.HCODSEC
+        }}</span>
       </ng-template>
 
       <ng-template appDataTableCell="HDESSEC" let-row>
@@ -47,7 +59,7 @@
 
       <ng-template appDataTableCell="HMONDES" let-row>
         <span class="font-mono font-semibold text-[var(--mis-text-primary)]">
-          {{ row.HMONDES | currency:'PEN':'symbol':'1.2-2' }}
+          {{ row.HMONDES | currency: 'PEN' : 'symbol' : '1.2-2' }}
         </span>
       </ng-template>
 

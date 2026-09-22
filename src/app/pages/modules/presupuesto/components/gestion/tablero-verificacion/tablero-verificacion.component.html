@@ -1,5 +1,6 @@
 <app-window-panel
-  [conFiltros]="true" [filtrosAbiertos]="true"
+  [conFiltros]="true"
+  [filtrosAbiertos]="true"
   titulo="Tablero de Verificación"
   [altoAuto]="true"
   [actualizando]="cargando()"
@@ -20,7 +21,14 @@
   </div>
 
   <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
-    <p-table [value]="filasFiltradas()" [scrollable]="true" scrollHeight="480px" [stripedRows]="true" [showGridlines]="true" styleClass="p-datatable-sm">
+    <p-table
+      [value]="filasFiltradas()"
+      [scrollable]="true"
+      scrollHeight="480px"
+      [stripedRows]="true"
+      [showGridlines]="true"
+      styleClass="p-datatable-sm"
+    >
       <!-- El buscador filtra lo que ya está en la tabla, no la consulta: por eso
            vive en el caption y no en la franja de filtros de arriba. -->
       <ng-template pTemplate="caption">
@@ -37,30 +45,59 @@
               (ngModelChange)="filtro.set($event)"
             />
           </p-iconfield>
-          <span class="text-[11px] text-[var(--mis-text-tertiary)]">{{ filasFiltradas().length }} de {{ totalFilas() }}</span>
+          <span class="text-[11px] text-[var(--mis-text-tertiary)]"
+            >{{ filasFiltradas().length }} de {{ totalFilas() }}</span
+          >
         </div>
       </ng-template>
 
       <ng-template pTemplate="header">
         <tr>
-          <th rowspan="2" class="whitespace-nowrap text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+          <th
+            rowspan="2"
+            class="text-[12px] uppercase whitespace-normal break-words leading-tight"
+            style="background-color: var(--mis-primary); color: var(--mis-text-on-primary)"
+          >
             Elemento
           </th>
-          <th colspan="3" class="text-center text-[12px] uppercase" style="background-color: var(--mis-primary); color: var(--mis-text-on-primary);">
+          <th
+            colspan="3"
+            class="text-center text-[12px] uppercase"
+            style="background-color: var(--mis-primary); color: var(--mis-text-on-primary)"
+          >
             Verificación
           </th>
         </tr>
         <tr>
-          <th class="whitespace-nowrap text-[11px]" style="background-color: var(--mis-primary-light);">Estado</th>
-          <th class="whitespace-nowrap text-[11px]" style="background-color: var(--mis-primary-light);">Usuario</th>
-          <th class="whitespace-nowrap text-[11px]" style="background-color: var(--mis-primary-light);">Hora</th>
+          <th
+            class="text-[11px] whitespace-normal break-words leading-tight"
+            style="background-color: var(--mis-primary-light)"
+          >
+            Estado
+          </th>
+          <th
+            class="text-[11px] whitespace-normal break-words leading-tight"
+            style="background-color: var(--mis-primary-light)"
+          >
+            Usuario
+          </th>
+          <th
+            class="text-[11px] whitespace-normal break-words leading-tight"
+            style="background-color: var(--mis-primary-light)"
+          >
+            Hora
+          </th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-fila>
         <tr>
           <td class="text-[13px]">{{ fila.des_rel }}</td>
           <td class="text-[13px]">
-            <i [class]="estadoIcono(fila.cod_est).icono" [style.color]="estadoIcono(fila.cod_est).color" [title]="estadoIcono(fila.cod_est).titulo"></i>
+            <i
+              [class]="estadoIcono(fila.cod_est).icono"
+              [style.color]="estadoIcono(fila.cod_est).color"
+              [title]="estadoIcono(fila.cod_est).titulo"
+            ></i>
           </td>
           <td class="text-[13px]">{{ fila.usu_log }}</td>
           <td class="text-[13px]">{{ fila.tim_log }}</td>

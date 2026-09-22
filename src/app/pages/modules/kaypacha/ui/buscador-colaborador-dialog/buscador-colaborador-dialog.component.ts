@@ -1,27 +1,32 @@
-import { Component, model, output, signal, computed, inject } from '@angular/core';
+import { Component, model, output, signal, inject } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { TagModule } from 'primeng/tag';
 import { KaypachaDashboardService } from '../../services/kaypacha-dashboard.service';
 import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.model';
+import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
+import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
+import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-table.model';
+
+const COLUMNAS: DataTableColumn[] = [
+  { field: 'cod_bt', header: 'Código BT', width: '7rem', filterType: 'text' },
+  { field: 'des_col', header: 'Nombre del colaborador', width: '15rem', filterType: 'text' },
+  { field: 'HCOLCAR', header: 'Cargo', width: '12rem', filterType: 'text' },
+  { field: 'RCODCOL', header: 'Tipo', align: 'center', width: '7rem', filterType: 'text' },
+  {
+    field: 'num_doc',
+    header: 'Documento',
+    width: '8rem',
+    filterType: 'text',
+    mobileVisible: false,
+  },
+];
 
 /** Diálogo modal para buscar y seleccionar colaboradores. */
 @Component({
   selector: 'app-buscador-colaborador-dialog',
   standalone: true,
-  imports: [
-    DialogModule,
-    TableModule,
-    ButtonModule,
-    InputTextModule,
-    IconFieldModule,
-    InputIconModule,
-    TagModule,
-  ],
+  imports: [DialogModule, ButtonModule, TagModule, DataTableComponent, DataTableCellDirective],
   templateUrl: './buscador-colaborador-dialog.component.html',
   styleUrl: './buscador-colaborador-dialog.component.css',
 })
@@ -31,34 +36,8 @@ export class BuscadorColaboradorDialogComponent {
   readonly visible = model(false);
   readonly colaboradorSeleccionado = output<KaypachaColaboradorItem>();
 
-  protected readonly filtroTexto = signal('');
   protected readonly itemSeleccionado = signal<KaypachaColaboradorItem | null>(null);
-
-  protected readonly colaboradoresFiltrados = computed(() => {
-    const query = this.filtroTexto().toLowerCase().trim();
-    const todos = this.service.colaboradores();
-    if (!query) return todos;
-
-    return todos.filter(
-      (c) =>
-        (c.des_col && c.des_col.toLowerCase().includes(query)) ||
-        (c.HCOLCAR && c.HCOLCAR.toLowerCase().includes(query)) ||
-        (c.RCODCOL && c.RCODCOL.toLowerCase().includes(query)) ||
-        (c.cod_bt && c.cod_bt.toLowerCase().includes(query)) ||
-        (c.num_doc && c.num_doc.toLowerCase().includes(query))
-    );
-  });
-
-  protected onFilterInput(event: Event): void {
-    const val = (event.target as HTMLInputElement).value;
-    this.filtroTexto.set(val);
-  }
-
-  protected onRowSelect(item: unknown): void {
-    if (item && !Array.isArray(item)) {
-      this.itemSeleccionado.set(item as KaypachaColaboradorItem);
-    }
-  }
+  protected readonly columnas = COLUMNAS;
 
   protected seleccionarYCerrar(): void {
     const item = this.itemSeleccionado();
@@ -70,7 +49,6 @@ export class BuscadorColaboradorDialogComponent {
 
   protected cerrar(): void {
     this.visible.set(false);
-    this.filtroTexto.set('');
     this.itemSeleccionado.set(null);
   }
 }

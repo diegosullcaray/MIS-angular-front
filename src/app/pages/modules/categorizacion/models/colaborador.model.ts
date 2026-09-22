@@ -8,6 +8,7 @@ export interface NodoJerarquiaAncla {
 
 /** Ítem de `list_pick_01` — sectorista seleccionable en el buscador de un admin/supervisor. */
 export interface SectoristaItem {
+  [campo: string]: unknown;
   cod_sec: string;
   des_sec: string;
 }

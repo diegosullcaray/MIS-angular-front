@@ -3,7 +3,9 @@
      y dejaba dos indicadores para una sola espera. El único spinner visible
      es el global; acá el estado se conserva como `aria-busy` para que un
      lector de pantalla siga sabiendo que la tabla está cargando. -->
-<div class="flex-1 overflow-x-auto overflow-y-hidden rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs">
+<div
+  class="flex-1 overflow-x-auto overflow-y-hidden rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs"
+>
   <p-table
     [value]="filasFiltradas()"
     [attr.aria-busy]="loading()"
@@ -20,8 +22,13 @@
       @if (mostrarBuscador() || hayColumnasFiltrable() || showRefreshButton()) {
         <div class="flex flex-nowrap items-center gap-1.5 p-1 overflow-x-auto">
           @if (mostrarBuscador()) {
-            <p-iconfield iconPosition="left" styleClass="flex-1 min-w-[5.5rem] sm:flex-none sm:w-64">
-              <p-inputicon styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]"></p-inputicon>
+            <p-iconfield
+              iconPosition="left"
+              styleClass="flex-1 min-w-[5.5rem] sm:flex-none sm:w-64"
+            >
+              <p-inputicon
+                styleClass="pi pi-search text-xs text-[var(--mis-text-tertiary)]"
+              ></p-inputicon>
               <input
                 #buscadorInput
                 type="text"
@@ -32,7 +39,15 @@
                 class="w-full text-xs"
               />
             </p-iconfield>
-            <p-button icon="pi pi-search" label="Buscar" size="small" styleClass="shrink-0 mis-btn-label-desktop" pTooltip="Buscar" tooltipPosition="top" (onClick)="buscar(buscadorInput.value)"></p-button>
+            <p-button
+              icon="pi pi-search"
+              label="Buscar"
+              size="small"
+              styleClass="shrink-0 mis-btn-label-desktop"
+              pTooltip="Buscar"
+              tooltipPosition="top"
+              (onClick)="buscar(buscadorInput.value)"
+            ></p-button>
           }
 
           @if (hayColumnasFiltrable()) {
@@ -49,12 +64,32 @@
             ></p-button>
 
             @if (filtrosVisibles() && hayFiltrosActivos()) {
-              <p-button icon="pi pi-eraser" label="Limpiar" size="small" severity="danger" [text]="true" styleClass="shrink-0 mis-btn-label-desktop" pTooltip="Limpiar filtros" tooltipPosition="top" (onClick)="limpiarFiltros()"></p-button>
+              <p-button
+                icon="pi pi-eraser"
+                label="Limpiar"
+                size="small"
+                severity="danger"
+                [text]="true"
+                styleClass="shrink-0 mis-btn-label-desktop"
+                pTooltip="Limpiar filtros"
+                tooltipPosition="top"
+                (onClick)="limpiarFiltros()"
+              ></p-button>
             }
           }
 
           @if (showRefreshButton()) {
-            <p-button icon="pi pi-refresh" label="Actualizar" size="small" severity="secondary" [outlined]="true" styleClass="shrink-0 ml-auto mis-btn-label-desktop" pTooltip="Actualizar" tooltipPosition="top" (onClick)="refrescar.emit()"></p-button>
+            <p-button
+              icon="pi pi-refresh"
+              label="Actualizar"
+              size="small"
+              severity="secondary"
+              [outlined]="true"
+              styleClass="shrink-0 ml-auto mis-btn-label-desktop"
+              pTooltip="Actualizar"
+              tooltipPosition="top"
+              (onClick)="refrescar.emit()"
+            ></p-button>
           }
         </div>
       }
@@ -72,7 +107,7 @@
             [style.width]="col.width || '8rem'"
           >
             <span class="flex items-center gap-1 min-w-0">
-              <span class="truncate">{{ col.header }}</span>
+              <span class="whitespace-normal break-words leading-tight">{{ col.header }}</span>
               @if (col.sortable !== false) {
                 <p-sortIcon [field]="col.field" class="shrink-0"></p-sortIcon>
               }
@@ -83,7 +118,10 @@
       @if (filtrosVisibles()) {
         <tr class="bg-[var(--mis-panel-bg)]">
           @for (col of columns(); track col.field) {
-            <th class="!bg-[var(--mis-panel-bg)] p-1 font-normal mis-filtro-col" [class.mis-col-hide-mobile]="col.mobileVisible === false">
+            <th
+              class="!bg-[var(--mis-panel-bg)] p-1 font-normal mis-filtro-col"
+              [class.mis-col-hide-mobile]="col.mobileVisible === false"
+            >
               @switch (col.filterType) {
                 @case ('text') {
                   <input
