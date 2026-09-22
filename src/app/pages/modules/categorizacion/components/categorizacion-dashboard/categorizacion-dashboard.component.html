@@ -41,66 +41,92 @@
     <!-- Fila 1: perfil + imagen guía, dos columnas que estiran perfectamente en desktop y se apilan al 100% en mobile -->
     <div class="flex flex-col lg:flex-row items-stretch gap-4 w-full">
       <!-- Tarjeta de perfil -->
-      <div
-        class="w-full lg:w-[380px] shrink-0 rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-4 flex flex-col gap-4 shadow-xs"
+      <section
+        class="w-full overflow-hidden lg:w-[400px] shrink-0 rounded-2xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-sm"
+        aria-label="Perfil del asesor"
       >
-        <div class="flex items-center gap-3">
+        <div
+          class="flex items-center gap-3 border-b border-[var(--mis-border)] bg-[var(--mis-primary-light)] px-4 py-3"
+        >
           <div
-            class="w-14 h-14 rounded-full bg-[var(--mis-primary-light)] flex items-center justify-center shrink-0"
+            class="flex h-15 w-15 shrink-0 items-center justify-center rounded-2xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-sm"
           >
-            <i class="pi pi-user text-2xl text-[var(--mis-primary-text)]"></i>
+            <i class="pi pi-user text-[26px] text-[var(--mis-primary-text)]"></i>
           </div>
-          <div class="flex flex-col gap-0.5 min-w-0">
-            <span class="text-[16px] font-semibold text-[var(--mis-text-primary)] truncate">{{
+          <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+            <span
+              class="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--mis-secondary)]"
+              >Perfil del asesor</span
+            >
+            <span class="truncate text-[17px] font-semibold text-[var(--mis-text-primary)]">{{
               perfil()!.nombre
             }}</span>
-            <span class="text-[13px] text-[var(--mis-text-secondary)] truncate">{{
+            <span class="truncate text-[13px] text-[var(--mis-text-secondary)]">{{
               perfil()!.cargo
             }}</span>
           </div>
         </div>
 
-        <dl class="grid grid-cols-2 gap-x-3 gap-y-2 text-[13px]">
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Unidad</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.unidad || '—' }}</dd>
+        <dl class="m-0 grid grid-cols-2 gap-px bg-[var(--mis-border)] text-[12px]">
+          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-surface)] px-4 py-3">
+            <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
+              <i class="pi pi-building text-[11px]"></i> Unidad
+            </dt>
+            <dd class="m-0 truncate font-medium text-[var(--mis-text-primary)]">
+              {{ perfil()!.unidad || '—' }}
+            </dd>
           </div>
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Corredor</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.corredor || '—' }}</dd>
+          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-surface)] px-4 py-3">
+            <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
+              <i class="pi pi-sitemap text-[11px]"></i> Corredor
+            </dt>
+            <dd class="m-0 truncate font-medium text-[var(--mis-text-primary)]">
+              {{ perfil()!.corredor || '—' }}
+            </dd>
           </div>
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Territorio</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.territorio || '—' }}</dd>
+          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-surface)] px-4 py-3">
+            <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
+              <i class="pi pi-map-marker text-[11px]"></i> Territorio
+            </dt>
+            <dd class="m-0 truncate font-medium text-[var(--mis-text-primary)]">
+              {{ perfil()!.territorio || '—' }}
+            </dd>
           </div>
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Categoría</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)] font-semibold">
+          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-surface)] px-4 py-3">
+            <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
+              <i class="pi pi-star text-[11px]"></i> Categoría
+            </dt>
+            <dd class="m-0 truncate font-semibold text-[var(--mis-primary-text)]">
               {{ perfil()!.categoria || '—' }}
             </dd>
           </div>
-          <div class="flex flex-col gap-0.5">
-            <dt class="text-[var(--mis-secondary)] font-medium">Género</dt>
-            <dd class="m-0 text-[var(--mis-text-primary)]">{{ perfil()!.genero || '—' }}</dd>
+          <div
+            class="col-span-2 flex min-w-0 flex-row items-center justify-between gap-3 bg-[var(--mis-surface)] px-4 py-2.5"
+          >
+            <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
+              <i class="pi pi-user text-[11px]"></i> Género
+            </dt>
+            <dd class="m-0 truncate font-medium text-[var(--mis-text-primary)]">
+              {{ perfil()!.genero || '—' }}
+            </dd>
           </div>
         </dl>
-      </div>
+      </section>
 
       <!-- Imagen explicativa de la Guía -->
       <div
         class="relative group w-full flex-1 min-w-0 flex items-center justify-center rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 sm:p-4 shadow-xs self-stretch overflow-hidden"
       >
-        <img
+        <p-image
           [src]="tipoComision() === 'individual' ? guiaIndividual : guiaGrupal"
           [alt]="
             tipoComision() === 'individual'
               ? 'Guía de Categorización individual'
               : 'Guía de Categorización grupal'
           "
-          class="w-full h-auto max-h-[360px] object-contain rounded-lg transition-transform duration-200 cursor-pointer"
-          (click)="previewGuia.set(true)"
-          pTooltip="Clic para ampliar guía"
-          tooltipPosition="top"
+          [preview]="true"
+          appendTo="self"
+          imageClass="w-full h-auto max-h-[360px] object-contain rounded-lg cursor-zoom-in"
         />
         <span
           class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3"
@@ -110,22 +136,11 @@
           <img
             src="/assets/images/fc/tours/mascota-guia.png"
             alt="Baby Pachi"
-            class="h-16 w-16 object-contain drop-shadow-md sm:h-24 sm:w-24"
+            class="h-20 w-20 object-contain drop-shadow-md sm:h-28 sm:w-28"
             width="1024"
             height="1024"
           />
         </span>
-        <!-- Botón para ampliar guía en mobile y desktop -->
-        <button
-          type="button"
-          class="absolute top-3 right-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-black/60 hover:bg-black/80 text-white rounded-full p-2 w-8 h-8 flex items-center justify-center border-0 cursor-pointer shadow-md"
-          (click)="previewGuia.set(true)"
-          aria-label="Ampliar guía de categorización"
-          pTooltip="Ampliar guía"
-          tooltipPosition="left"
-        >
-          <i class="pi pi-search-plus text-xs"></i>
-        </button>
       </div>
     </div>
 
@@ -228,30 +243,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Diálogo para ampliar la guía en pantalla completa / lightbox -->
-    <p-dialog
-      [(visible)]="previewGuia"
-      header="Guía de Categorización: Requisitos + Desempeño = Categoriza"
-      [modal]="true"
-      [dismissableMask]="true"
-      [style]="{ width: '92vw', maxWidth: '1100px' }"
-      styleClass="mis-dialog"
-    >
-      <div
-        class="flex items-center justify-center p-2 overflow-auto bg-[var(--mis-panel-bg)] rounded-lg"
-      >
-        <img
-          [src]="tipoComision() === 'individual' ? guiaIndividual : guiaGrupal"
-          [alt]="
-            tipoComision() === 'individual'
-              ? 'Guía de Categorización individual'
-              : 'Guía de Categorización grupal'
-          "
-          class="w-full h-auto max-h-[85vh] object-contain rounded"
-        />
-      </div>
-    </p-dialog>
   }
 
   <app-selector-sectorista-dialog

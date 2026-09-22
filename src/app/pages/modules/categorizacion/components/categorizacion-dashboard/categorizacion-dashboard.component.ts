@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { ImageModule } from 'primeng/image';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -22,8 +22,8 @@ import type { NodoJerarquiaAncla, SectoristaItem } from '../../models/colaborado
   standalone: true,
   imports: [
     TooltipModule,
-    DialogModule,
     ButtonModule,
+    ImageModule,
     ListSkeletonComponent,
     InlineErrorComponent,
     EmptyStateComponent,
@@ -53,7 +53,6 @@ export class CategorizacionDashboardComponent implements OnInit {
     '/assets/images/fc/modules/categoriacion/categorizacion2_ind.png';
 
   protected readonly dialogAbierto = signal(false);
-  protected readonly previewGuia = signal(false);
   protected readonly sectoristas = signal<SectoristaItem[]>([]);
   protected readonly cargandoSectoristas = signal(false);
 
