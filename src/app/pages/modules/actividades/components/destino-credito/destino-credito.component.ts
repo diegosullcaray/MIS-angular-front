@@ -1,6 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
@@ -13,13 +15,14 @@ import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inli
 import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
-import { HierSelectorComponent } from '../../../../../shared/ui/hier-selector/hier-selector.component';
 import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-table.model';
-import type {
-  HierarquiaNodo,
-  ParamsJerarquia,
-} from '../../../../../shared/ui/hier-selector/jerarquia.model';
 import { ToastService } from '../../../../../shared/services/toast.service';
+
+interface AsesorDestinoCredito {
+  codigo: string;
+  nombre: string;
+  etiqueta: string;
+}
 
 const COLUMNAS: DataTableColumn[] = [
   { field: 'HCODSEC', header: 'Cod. Asesor', align: 'center', width: '7rem', filterType: 'text' },
@@ -72,7 +75,9 @@ const COLUMNAS: DataTableColumn[] = [
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ButtonModule,
+    SelectModule,
     TagModule,
     CardModule,
     TooltipModule,
@@ -83,7 +88,6 @@ const COLUMNAS: DataTableColumn[] = [
     DataTableComponent,
     DataTableCellDirective,
     WindowPanelComponent,
-    HierSelectorComponent,
   ],
   templateUrl: './destino-credito.component.html',
   styleUrl: './destino-credito.component.css',
@@ -96,18 +100,28 @@ export class DestinoCreditoComponent implements OnInit {
   readonly error = signal<string | null>(null);
 
   readonly data = signal<DestinoCreditoItem[]>([]);
+  /** El legado carga el conjunto autorizado y lo acota por asesor; no usa una jerarquía como filtro. */
+  protected readonly asesorSeleccionado = signal<AsesorDestinoCredito | null>(null);
+  protected readonly asesores = computed<AsesorDestinoCredito[]>(() => {
+    const asesores = new Map<string, AsesorDestinoCredito>();
+    for (const item of this.data()) {
+      const codigo = item.HCODSEC?.trim();
+      if (!codigo || asesores.has(codigo)) continue;
+
+      const nombre = item.HDESSEC?.trim() || codigo;
+      asesores.set(codigo, { codigo, nombre, etiqueta: `${nombre} (${codigo})` });
+    }
+    return [...asesores.values()].sort((a, b) => a.nombre.localeCompare(b.nombre));
+  });
+  protected readonly dataFiltrada = computed(() => {
+    const asesor = this.asesorSeleccionado();
+    return asesor ? this.data().filter((item) => item.HCODSEC === asesor.codigo) : this.data();
+  });
 
   readonly modalVisible = signal(false);
   readonly selectedItem = signal<DestinoCreditoItem | null>(null);
 
   protected readonly columnas = COLUMNAS;
-  /** Misma jerarquía comercial (código 5) usada por el módulo legacy. */
-  protected readonly paramsHier: ParamsJerarquia = {
-    code: 5,
-    maxLvl: 5,
-    dlgTitulo: 'JERARQUÍA ADMINISTRATIVA COMERCIAL',
-  };
-
   ngOnInit(): void {
     this.cargarDatos();
   }
@@ -121,27 +135,6 @@ export class DestinoCreditoComponent implements OnInit {
         const body = res.body as { resultado?: { result?: DestinoCreditoItem[] } } | null;
         const list = body?.resultado?.result || [];
         this.data.set(list);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('No se pudo cargar la información de Destino de Crédito.');
-        this.loading.set(false);
-      },
-    });
-  }
-
-  /** La jerarquía filtra en backend; nunca se recorta la tabla local para simular permisos. */
-  protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
-    this.cargarDatosPorColaborador(nodo.cod_rel);
-  }
-
-  private cargarDatosPorColaborador(codBt: string): void {
-    this.loading.set(true);
-    this.error.set(null);
-    this.actividadesService.getRegResultadosDestCred(codBt).subscribe({
-      next: (res) => {
-        const body = res.body as { resultado?: { result?: DestinoCreditoItem[] } } | null;
-        this.data.set(body?.resultado?.result ?? []);
         this.loading.set(false);
       },
       error: () => {

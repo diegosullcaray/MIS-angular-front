@@ -5,7 +5,7 @@
   [style]="{ width: '92vw', maxWidth: '640px' }"
   [draggable]="false"
   [resizable]="false"
-  header="Seleccionar colaborador"
+  header="Asesor de Negocios"
   appendTo="body"
 >
   <div class="flex flex-col gap-3">
@@ -14,8 +14,8 @@
       [data]="sectoristas()"
       [loading]="cargando()"
       [rows]="8"
-      [searchFields]="['cod_sec', 'des_sec']"
-      searchPlaceholder="Buscar por nombre o código…"
+      [searchFields]="['des_sec', 'des_uni', 'des_cor', 'des_ter']"
+      searchPlaceholder="Buscar asesor, unidad, corredor o territorio…"
       emptyMessage="Sin colaboradores para mostrar."
       [selectableRows]="true"
       [selectedRow]="seleccionado()"

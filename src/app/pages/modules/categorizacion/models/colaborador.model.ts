@@ -11,4 +11,7 @@ export interface SectoristaItem {
   [campo: string]: unknown;
   cod_sec: string;
   des_sec: string;
+  des_uni?: string;
+  des_cor?: string;
+  des_ter?: string;
 }

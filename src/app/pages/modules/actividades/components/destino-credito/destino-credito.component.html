@@ -6,12 +6,18 @@
   etiquetaActualizar="Actualizar registros"
   (actualizar)="cargarDatos()"
 >
-  <div ventana-filtros>
-    <app-hier-selector
-      [paramsHier]="paramsHier"
-      [anchoCompleto]="true"
-      [reintentarSinFecha]="true"
-      (nodoSeleccionado)="onNivelSeleccionado($event)"
+  <div ventana-filtros class="max-w-xl">
+    <p-select
+      [options]="asesores()"
+      [ngModel]="asesorSeleccionado()"
+      (onChange)="asesorSeleccionado.set($event.value)"
+      optionLabel="etiqueta"
+      [filter]="true"
+      filterBy="etiqueta"
+      [showClear]="true"
+      placeholder="Seleccionar asesor"
+      emptyFilterMessage="No se encontraron asesores."
+      styleClass="w-full"
     />
   </div>
   <!-- Criterios de monitoreo: acción propia de la pantalla, junto al botón de la esquina -->
@@ -25,10 +31,10 @@
   } @else {
     <app-data-table
       [columns]="columnas"
-      [data]="data()"
+      [data]="dataFiltrada()"
       [scrollHeight]="'560px'"
       [searchFields]="['HDESSEC', 'HCODSEC']"
-      searchPlaceholder="Buscar asesor..."
+      searchPlaceholder="Buscar registro..."
       emptyMessage="No se encontraron registros de destino de crédito."
     >
       <ng-template appDataTableCell="HCODSEC" let-row>
