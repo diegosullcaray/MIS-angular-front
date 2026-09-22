@@ -3,7 +3,12 @@ import { ShellStateService } from '../../../../core/services/shell-state.service
 import { MenuStgService } from './menu-stg.service';
 import { KaypachaService } from '../../../modules/ranking-k/services/kaypacha.service';
 import { Location } from '@angular/common';
-import type { RegistroNavegacion, SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../interfaces/sidebar.model';
+import type {
+  RegistroNavegacion,
+  SidebarIcon,
+  SidebarNavPanelConfig,
+  SidebarNavRuta,
+} from '../interfaces/sidebar.model';
 
 /** Árbol de navegación de cada sistema y ubicación actual; lo comparten el rail de sistemas, el explorador y el breadcrumb del header. */
 @Injectable({ providedIn: 'root' })
@@ -19,14 +24,22 @@ export class NavegacionSistemasService {
   /** Lista combinada de íconos base y los que provienen del backend STG. */
   readonly iconos = computed<SidebarIcon[]>(() => {
     const base: SidebarIcon[] = [
-      { id: 'host-inicio', tipo: 'host-inicio', icono: 'pi pi-home', etiqueta: 'Inicio', tienePanel: true },
+      {
+        id: 'host-inicio',
+        tipo: 'host-inicio',
+        icono: 'pi pi-home',
+        etiqueta: 'Inicio',
+        tienePanel: true,
+      },
     ];
 
     const sistemasStg = this.menuStg.sistemas().map((sistema) => {
-      if (sistema.ruta === this.kaypacha.ruta || this.esAnalista(sistema)) return { ...sistema, tienePanel: true };
+      if (sistema.ruta === this.kaypacha.ruta || this.esAnalista(sistema))
+        return { ...sistema, tienePanel: true };
       // El backend sigue mandando un hijo "usuarios" que ya es un diálogo, no una ruta:
       // sin este override el sistema abriría un explorador con un único ítem muerto y sin `ruta`.
-      if (this.esDashboardsIntegrados(sistema)) return { ...sistema, tienePanel: false, ruta: '/app/dashboards' };
+      if (this.esDashboardsIntegrados(sistema))
+        return { ...sistema, tienePanel: false, ruta: '/app/dashboards' };
       return sistema;
     });
 
@@ -34,7 +47,9 @@ export class NavegacionSistemasService {
   });
 
   /** Navegación del sistema activo. Es `null` si el sistema no tiene subnavegación. */
-  readonly panelActivo = computed<SidebarNavPanelConfig | null>(() => this.panelDe(this.shell.sidebarIconActivo()));
+  readonly panelActivo = computed<SidebarNavPanelConfig | null>(() =>
+    this.panelDe(this.shell.sidebarIconActivo()),
+  );
 
   constructor() {
     // El explorador se pinta desde el shell, no desde una ruta. Publicar acá si
@@ -51,7 +66,8 @@ export class NavegacionSistemasService {
     const icono = this.iconos().find((i) => i.id === id);
     if (!icono?.tienePanel) return null;
 
-    if (icono.ruta === this.kaypacha.ruta) return this.kaypacha.panelPara(icono.etiqueta, icono.icono);
+    if (icono.ruta === this.kaypacha.ruta)
+      return this.kaypacha.panelPara(icono.etiqueta, icono.icono);
     if (this.esAnalista(icono)) return this.getPanelAnalista(icono.etiqueta, icono.icono);
 
     return this.getPanelStg(id);
@@ -105,7 +121,7 @@ export class NavegacionSistemasService {
 
       recorrer(
         panel.secciones.flatMap((s) => s.rutas),
-        []
+        [],
       );
     }
 
@@ -140,24 +156,49 @@ export class NavegacionSistemasService {
     this.actualizarUrlExplorador();
   }
 
+  /**
+   * Regresa desde una pantalla STG a la carpeta que declara su `cod_par`.
+   * No se recorta la URL: los reportes legacy suelen usar rutas planas y esa
+   * inferencia terminaba en 404 o en una carpeta equivocada.
+   */
+  volverAPadreDeRuta(ruta: string): boolean {
+    const limpia = ruta.split('?')[0].split('#')[0];
+    const hallazgo = this.menuStg.buscarPorRuta(limpia);
+    if (!hallazgo) return false;
+
+    const actual = hallazgo.nodos[hallazgo.nodos.length - 1];
+    const indicePadre = actual.codigoPadre
+      ? hallazgo.nodos.findIndex((nodo) => nodo.codigo === actual.codigoPadre)
+      : -1;
+
+    // Si el padre es el sistema raíz no figura como carpeta en la cadena.
+    const carpetas = indicePadre >= 0 ? hallazgo.nodos.slice(0, indicePadre + 1) : [];
+    this.abrirEnCarpeta(hallazgo.sistemaId, carpetas);
+    return true;
+  }
+
   /** Refleja el estado del explorador en la barra del navegador de forma cosmética. */
   actualizarUrlExplorador(): void {
     const sistemaId = this.shell.sidebarIconActivo();
     if (!sistemaId) return;
-    
-    const sistema = this.iconos().find(i => i.id === sistemaId);
+
+    const sistema = this.iconos().find((i) => i.id === sistemaId);
     if (!sistema) return;
 
     // Convertir las etiquetas de las carpetas en segmentos URL (ej. "Avance Comercial" -> "avance-comercial")
-    const segmentos = this.rutaExplorador().map(n => this.normalizarParaUrl(n.etiqueta));
+    const segmentos = this.rutaExplorador().map((n) => this.normalizarParaUrl(n.etiqueta));
     const rutaBase = sistema.ruta || `/app/${sistemaId}`;
-    
+
     const path = segmentos.length > 0 ? `${rutaBase}/${segmentos.join('/')}` : rutaBase;
     this.location.replaceState(path);
   }
 
   private normalizarParaUrl(texto: string): string {
-    return texto.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    return texto
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
   }
 
   /** Reconstruye el estado del explorador (módulo y carpetas) a partir de la URL. */
@@ -229,12 +270,19 @@ export class NavegacionSistemasService {
         {
           rutas: [
             { etiqueta: 'Principal', ruta: '/app/analista', icono: 'pi pi-home' },
-            { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
+            {
+              etiqueta: 'Categorización',
+              ruta: '/app/analista/categorizacion',
+              icono: 'pi pi-briefcase',
+            },
             {
               etiqueta: 'Listas',
               icono: 'pi pi-list',
               hijos: [
-                { etiqueta: 'Priorización de Leads', ruta: '/app/analista/listas/priorizacion-leads' },
+                {
+                  etiqueta: 'Priorización de Leads',
+                  ruta: '/app/analista/listas/priorizacion-leads',
+                },
                 { etiqueta: 'Becas Financiera Confianza', ruta: '/app/analista/listas/becas' },
               ],
             },

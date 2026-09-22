@@ -1,4 +1,14 @@
-import { Component, ElementRef, computed, effect, inject, input, linkedSignal, output, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  computed,
+  effect,
+  inject,
+  input,
+  linkedSignal,
+  output,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -66,11 +76,11 @@ export class WindowPanelComponent {
   protected readonly filtrosVisibles = linkedSignal(() => this.filtrosAbiertos());
 
   protected readonly etiquetaZoom = computed(() =>
-    this.pantallaCompleta() ? 'Salir de pantalla completa' : 'Ver en pantalla completa'
+    this.pantallaCompleta() ? 'Salir de pantalla completa' : 'Ver en pantalla completa',
   );
 
   protected readonly etiquetaFiltros = computed(() =>
-    this.filtrosVisibles() ? 'Ocultar filtros' : 'Mostrar filtros'
+    this.filtrosVisibles() ? 'Ocultar filtros' : 'Mostrar filtros',
   );
 
   protected alternarFiltros(): void {
@@ -110,6 +120,10 @@ export class WindowPanelComponent {
       void this.router.navigateByUrl(destino);
       return;
     }
+
+    // Las hojas legacy declaran su sección padre mediante `cod_par`. Resolver
+    // ese código abre la carpeta correcta; el historial no conoce ese nivel.
+    if (this.navegacion.volverAPadreDeRuta(this.router.url)) return;
 
     if (this.shell.exploradorDisponible() && !this.shell.contenidoPendienteSeleccion()) {
       this.shell.setContenidoPendienteSeleccion(true);

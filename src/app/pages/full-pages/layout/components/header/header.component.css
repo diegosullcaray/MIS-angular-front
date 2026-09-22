@@ -235,6 +235,17 @@
   color: var(--mis-text-secondary);
 }
 
+/* Las migas anteriores restauran la navegación a la carpeta padre. */
+.header-breadcrumb ::ng-deep .p-breadcrumb-list > li:not(:last-child) .p-breadcrumb-item-link,
+.header-breadcrumb ::ng-deep .p-breadcrumb-list > li:not(:last-child) .p-menuitem-link {
+  cursor: pointer;
+}
+
+.header-breadcrumb ::ng-deep .p-breadcrumb-list > li:last-child .p-breadcrumb-item-link,
+.header-breadcrumb ::ng-deep .p-breadcrumb-list > li:last-child .p-menuitem-link {
+  cursor: default;
+}
+
 .header-breadcrumb ::ng-deep .p-breadcrumb .p-breadcrumb-item:last-child .p-breadcrumb-item-label,
 .header-breadcrumb ::ng-deep .p-breadcrumb .p-menuitem:last-child .p-menuitem-text {
   color: var(--mis-text-primary);
@@ -242,8 +253,14 @@
 }
 
 @keyframes dropdownFadeIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes headerSearchSweep {
@@ -278,5 +295,4 @@
   .header-buscador-global ::ng-deep .mis-buscador-input {
     height: 40px;
   }
-
 }

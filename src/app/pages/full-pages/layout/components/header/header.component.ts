@@ -140,8 +140,11 @@ export class HeaderComponent {
     }));
   });
 
-  /** El breadcrumb solo comunica contexto: volver se realiza desde el panel. */
-  protected readonly breadcrumbHome: MenuItem = { icon: 'pi pi-home' };
+  /** Inicio de la navegación jerárquica. */
+  protected readonly breadcrumbHome: MenuItem = {
+    icon: 'pi pi-home',
+    command: () => void this.router.navigateByUrl('/app/dashboard'),
+  };
 
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
     if (this.shell.contenidoPendienteSeleccion()) return this.breadcrumbExplorador();
@@ -251,8 +254,11 @@ export class HeaderComponent {
     if (!panel) return [];
 
     return [
-      { label: panel.titulo },
-      ...this.navegacion.rutaExplorador().map((carpeta) => ({ label: carpeta.etiqueta })),
+      { label: panel.titulo, command: () => this.navegacion.irANivel(-1) },
+      ...this.navegacion.rutaExplorador().map((carpeta, indice) => ({
+        label: carpeta.etiqueta,
+        command: () => this.navegacion.irANivel(indice),
+      })),
     ];
   }
 
@@ -277,8 +283,15 @@ export class HeaderComponent {
     if (hallazgo) {
       const carpetas = hallazgo.nodos.slice(0, -1);
       return [
-        { label: this.labelDeRemote(hallazgo.sistemaId) },
-        ...carpetas.map((nodo) => ({ label: nodo.etiqueta })),
+        {
+          label: this.labelDeRemote(hallazgo.sistemaId),
+          command: () => this.navegacion.abrirEnCarpeta(hallazgo.sistemaId, []),
+        },
+        ...carpetas.map((nodo, indice) => ({
+          label: nodo.etiqueta,
+          command: () =>
+            this.navegacion.abrirEnCarpeta(hallazgo.sistemaId, carpetas.slice(0, indice + 1)),
+        })),
         { label: hallazgo.nodos[hallazgo.nodos.length - 1].etiqueta },
       ];
     }

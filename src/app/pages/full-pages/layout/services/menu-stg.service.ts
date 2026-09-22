@@ -32,9 +32,9 @@ export class MenuStgService {
 
     this.modSysAdminService.getMenuItems(email).subscribe({
       next: (response) => {
-        const items = (response.body as any)?.menu_response as AntMenuItem[] ?? [];
+        const items = ((response.body as any)?.menu_response as AntMenuItem[]) ?? [];
 
-        // Optimización: Agrupar elementos por padre en un mapa (O(N)) para evitar usar 
+        // Optimización: Agrupar elementos por padre en un mapa (O(N)) para evitar usar
         // filter() iterativamente en cada nivel recursivo de construirHijos.
         const porPadre = new Map<string, AntMenuItem[]>();
         const padres: AntMenuItem[] = [];
@@ -52,7 +52,7 @@ export class MenuStgService {
         padres.sort((a, b) => (a.order_sec ?? 0) - (b.order_sec ?? 0));
 
         const hijosPorId: Record<string, SidebarNavRuta[]> = {};
-        
+
         const sistemas: SidebarIcon[] = padres.map((padre) => {
           const hijos = this.construirHijos(padre.cod_sec, porPadre);
           if (hijos) hijosPorId[padre.cod_sec] = hijos;
@@ -81,7 +81,10 @@ export class MenuStgService {
   }
 
   /** Construye recursivamente el árbol usando el mapa agrupado. */
-  private construirHijos(codPadre: string, porPadre: Map<string, AntMenuItem[]>): SidebarNavRuta[] | undefined {
+  private construirHijos(
+    codPadre: string,
+    porPadre: Map<string, AntMenuItem[]>,
+  ): SidebarNavRuta[] | undefined {
     // String() coercion previene fallos si Ant mezcla tipos (number vs string) en los IDs
     const hijosRaw = porPadre.get(String(codPadre));
     if (!hijosRaw?.length) return undefined;
@@ -91,6 +94,8 @@ export class MenuStgService {
       .map((hijo) => {
         const nietos = this.construirHijos(hijo.cod_sec, porPadre);
         return {
+          codigo: String(hijo.cod_sec),
+          codigoPadre: hijo.cod_par != null ? String(hijo.cod_par) : undefined,
           etiqueta: hijo.desc_sec,
           ruta: nietos ? undefined : this.rutaDeAntItem(hijo),
           hijos: nietos,

@@ -26,6 +26,10 @@ export interface SidebarNavSeccion {
 }
 
 export interface SidebarNavRuta {
+  /** Identificador de sección de Ant. Permite volver al padre real, no a una URL inferida. */
+  codigo?: string;
+  /** Identificador de la sección padre en Ant (`cod_par`). */
+  codigoPadre?: string;
   etiqueta: string;
   /** Opcional. Si se omite, el nodo actúa como un grupo desplegable. */
   ruta?: string;

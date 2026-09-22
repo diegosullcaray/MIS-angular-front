@@ -63,8 +63,8 @@ describe('MenuStgService', () => {
           { cod_sec: 'B', desc_sec: 'Sistema B', order_sec: 2 },
           { cod_sec: 'A', desc_sec: 'Sistema A', order_sec: 1 },
           { cod_sec: 'A-hijo', cod_par: 'A', desc_sec: 'Hijo de A', act_sec: 'a/hijo' },
-        ])
-      )
+        ]),
+      ),
     );
 
     service.cargar('ana.torres@confianza.pe');
@@ -79,8 +79,8 @@ describe('MenuStgService', () => {
           { cod_sec: 'A', desc_sec: 'Con hijos', order_sec: 1, act_sec: 'a' },
           { cod_sec: 'A-hijo', cod_par: 'A', desc_sec: 'Hijo de A', act_sec: 'a/hijo' },
           { cod_sec: 'B', desc_sec: 'Sin hijos', order_sec: 2, act_sec: 'ranking-k' },
-        ])
-      )
+        ]),
+      ),
     );
 
     service.cargar('ana.torres@confianza.pe');
@@ -94,7 +94,9 @@ describe('MenuStgService', () => {
   });
 
   it('rutaDeAntItem no duplica el segmento /app (usa act_sec tal cual, sin anteponer /app)', () => {
-    getMenuItemsSpy.mockReturnValue(of(respuestaCon([{ cod_sec: 'B', desc_sec: 'B', act_sec: 'app/ranking-k' }])));
+    getMenuItemsSpy.mockReturnValue(
+      of(respuestaCon([{ cod_sec: 'B', desc_sec: 'B', act_sec: 'app/ranking-k' }])),
+    );
 
     service.cargar('ana.torres@confianza.pe');
 
@@ -117,9 +119,14 @@ describe('MenuStgService', () => {
           // cod_par numérico vs cod_sec string — debe emparejar igual (String()).
           { cod_sec: 'nieto', cod_par: 1, desc_sec: 'Nieto directo', act_sec: 'sistema/nieto' },
           { cod_sec: 'grupo', cod_par: '1', desc_sec: 'Grupo intermedio' },
-          { cod_sec: 'hoja', cod_par: 'grupo', desc_sec: 'Hoja final', act_sec: 'sistema/grupo/hoja' },
-        ])
-      )
+          {
+            cod_sec: 'hoja',
+            cod_par: 'grupo',
+            desc_sec: 'Hoja final',
+            act_sec: 'sistema/grupo/hoja',
+          },
+        ]),
+      ),
     );
 
     service.cargar('ana.torres@confianza.pe');
@@ -129,7 +136,13 @@ describe('MenuStgService', () => {
 
     const grupo = hijos.find((h) => h.etiqueta === 'Grupo intermedio');
     expect(grupo?.ruta).toBeUndefined(); // es un grupo, no una hoja
-    expect(grupo?.hijos?.[0]).toEqual({ etiqueta: 'Hoja final', ruta: '/app/sistema/grupo/hoja', hijos: undefined });
+    expect(grupo?.hijos?.[0]).toEqual({
+      codigo: 'hoja',
+      codigoPadre: 'grupo',
+      etiqueta: 'Hoja final',
+      ruta: '/app/sistema/grupo/hoja',
+      hijos: undefined,
+    });
   });
 
   it('buscarPorRuta() encuentra la cadena de etiquetas de una hoja anidada', () => {
@@ -138,9 +151,14 @@ describe('MenuStgService', () => {
         respuestaCon([
           { cod_sec: 'A', desc_sec: 'Actividad Mensual', order_sec: 1 },
           { cod_sec: 'A-1', cod_par: 'A', desc_sec: 'Clientes' },
-          { cod_sec: 'A-1-1', cod_par: 'A-1', desc_sec: 'CMG Clientes Flujo', act_sec: 'a/clientes/cmg' },
-        ])
-      )
+          {
+            cod_sec: 'A-1-1',
+            cod_par: 'A-1',
+            desc_sec: 'CMG Clientes Flujo',
+            act_sec: 'a/clientes/cmg',
+          },
+        ]),
+      ),
     );
 
     service.cargar('ana.torres@confianza.pe');
@@ -148,14 +166,36 @@ describe('MenuStgService', () => {
     expect(service.buscarPorRuta('/app/a/clientes/cmg')).toEqual({
       sistemaId: 'A',
       nodos: [
-        { etiqueta: 'Clientes', ruta: undefined, hijos: [{ etiqueta: 'CMG Clientes Flujo', ruta: '/app/a/clientes/cmg', hijos: undefined }] },
-        { etiqueta: 'CMG Clientes Flujo', ruta: '/app/a/clientes/cmg', hijos: undefined },
+        {
+          codigo: 'A-1',
+          codigoPadre: 'A',
+          etiqueta: 'Clientes',
+          ruta: undefined,
+          hijos: [
+            {
+              codigo: 'A-1-1',
+              codigoPadre: 'A-1',
+              etiqueta: 'CMG Clientes Flujo',
+              ruta: '/app/a/clientes/cmg',
+              hijos: undefined,
+            },
+          ],
+        },
+        {
+          codigo: 'A-1-1',
+          codigoPadre: 'A-1',
+          etiqueta: 'CMG Clientes Flujo',
+          ruta: '/app/a/clientes/cmg',
+          hijos: undefined,
+        },
       ],
     });
   });
 
   it('buscarPorRuta() devuelve null si la ruta no corresponde a ninguna hoja conocida', () => {
-    getMenuItemsSpy.mockReturnValue(of(respuestaCon([{ cod_sec: 'A', cod_par: null, desc_sec: 'A' }])));
+    getMenuItemsSpy.mockReturnValue(
+      of(respuestaCon([{ cod_sec: 'A', cod_par: null, desc_sec: 'A' }])),
+    );
     service.cargar('ana.torres@confianza.pe');
 
     expect(service.buscarPorRuta('/ruta/inexistente')).toBeNull();
