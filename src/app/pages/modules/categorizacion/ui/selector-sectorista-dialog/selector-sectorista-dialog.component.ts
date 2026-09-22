@@ -6,8 +6,11 @@ import { DataTableComponent } from '../../../../../shared/ui/data-table/data-tab
 import type { DataTableColumn } from '../../../../../shared/ui/data-table/data-table.model';
 
 const COLUMNAS: DataTableColumn[] = [
-  { field: 'cod_sec', header: 'Código', width: '8rem', filterType: 'text' },
   { field: 'des_sec', header: 'Colaborador', width: '18rem', filterType: 'text' },
+  { field: 'des_uni', header: 'Unidad', width: '10rem', filterType: 'text' },
+  { field: 'des_cor', header: 'Corredor', width: '10rem', filterType: 'text' },
+
+
 ];
 
 /** Diálogo de selección de colaborador ("sectorista") — reconstrucción del `SecPickerDialog2` legado (servicio compartido de otro paquete de STG, no incluido en el volcado de referencia de `docs/07-modulos/analista`), con el mismo patrón de tabla + buscador que `BuscadorColaboradorDialogComponent` de Kaypacha (`pages/modules/kaypacha`). */
