@@ -33,6 +33,13 @@
   min-height: 0;
 }
 
+/* Si la ventana es de alto automático, no necesita hacer scroll interno,
+   por lo que podemos hacer visible el desbordamiento para evitar cortar
+   elementos flotantes (como tooltips, burbujas o popups). */
+.mis-window--auto .mis-window-body {
+  overflow-y: visible;
+}
+
 /* Barra de título. `grid` de 3 columnas (no flex) para que el título quede
    ópticamente centrado en la ventana aunque el semáforo y las acciones tengan
    anchos distintos, igual que en una ventana de macOS. */
@@ -83,12 +90,12 @@
   font-size: 8px;
   line-height: 1;
   font-weight: var(--mis-font-bold);
-  color: rgba(0, 0, 0, 0.55);
-  opacity: 0;
+  color: rgba(0, 0, 0, 0.65);
+  opacity: 0.65;
   transition: opacity var(--mis-transition-fast);
 }
 
-/* Los glifos aparecen al pasar por el grupo, no por cada luz (macOS). */
+/* Los glifos resaltan al pasar por el grupo o recibir foco. */
 .mis-window-lights:hover .mis-window-light::before,
 .mis-window-light:focus-visible::before {
   opacity: 1;

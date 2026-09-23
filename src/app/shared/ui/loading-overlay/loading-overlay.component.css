@@ -3,8 +3,9 @@
 }
 
 .loading-overlay-wrapper {
-  background: rgba(10, 22, 48, 0.55);
-  backdrop-filter: blur(3px);
+  background: var(--mis-dialog-mask);
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
   animation: loadingOverlayFadeIn 0.15s ease-out;
 }
 

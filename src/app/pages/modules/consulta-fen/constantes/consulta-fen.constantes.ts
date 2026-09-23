@@ -46,3 +46,25 @@ export const COLUMNAS_FEN: DataTableColumn[] = ([
       }
     : columna
 );
+
+export const COLUMNAS_FEN_MOVIL: DataTableColumn[] = ([
+  { field: 'des_dist', header: 'Distrito', width: '7rem', filterType: 'text' },
+  { field: 'exp_mas', header: 'Huayco', width: '3.5rem', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_inu', header: 'Inund.', width: '3.5rem', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_seq', header: 'Sequía', width: '3.5rem', align: 'center', filterType: 'dropdown' },
+  { field: 'exp_pre', header: 'Predom.', width: '3.5rem', align: 'center', filterType: 'dropdown' },
+  { field: 'observacion', header: 'Alerta', align: 'center', sortable: false },
+  { field: 'des_dep', header: 'Departamento', filterType: 'text' },
+  { field: 'des_prov', header: 'Provincia', filterType: 'text' },
+  { field: 'cod_ubi', header: 'UBIGEO', width: '5.5rem', filterType: 'text' },
+] satisfies DataTableColumn[]).map((columna): DataTableColumn =>
+  columna.filterType === 'dropdown'
+    ? {
+        ...columna,
+        dropdownOptions: NIVELES_RIESGO.map((nivel) => ({
+          label: nivel,
+          value: nivel,
+        })),
+      }
+    : columna
+);

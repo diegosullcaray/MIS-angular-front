@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -10,6 +10,7 @@ import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import {
   COLUMNAS_FEN,
+  COLUMNAS_FEN_MOVIL,
   FILTROS_FEN,
   MENSAJE_RIESGO_ALTO_FEN,
 } from '../../constantes/consulta-fen.constantes';
@@ -36,7 +37,7 @@ export class ConsultaFenComponent implements OnInit {
   protected readonly seleccion = signal<FilaRiesgoFen | null>(null);
   protected readonly filtro = signal<ColumnaFiltroFen>(3);
 
-  protected readonly columnas = COLUMNAS_FEN;
+  protected readonly columnas = signal(window.innerWidth < 640 ? COLUMNAS_FEN_MOVIL : COLUMNAS_FEN);
   protected readonly filtros = [...FILTROS_FEN];
   protected readonly mensajeRiesgoAlto = MENSAJE_RIESGO_ALTO_FEN;
   protected readonly indicadoresTabla = [
@@ -85,6 +86,11 @@ export class ConsultaFenComponent implements OnInit {
     ).subscribe(({ columna, revision, sugerencias }) => {
       if (columna === this.filtro() && revision === this.revisionSugerencias) this.sugerencias.set(sugerencias);
     });
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.columnas.set(window.innerWidth < 640 ? COLUMNAS_FEN_MOVIL : COLUMNAS_FEN);
   }
 
   ngOnInit(): void {
@@ -149,10 +155,14 @@ export class ConsultaFenComponent implements OnInit {
   }
 
   protected colorRiesgo(nivel: NivelRiesgoFen): string {
-    if (nivel === 'Muy Alto') return 'var(--mis-danger)';
-    if (nivel === 'Alto') return 'var(--mis-warning)';
-    if (nivel === 'Medio') return 'var(--mis-warning)';
-    return 'var(--mis-success)';
+    if (nivel === 'Muy Alto') return '#ef4444';
+    if (nivel === 'Alto') return '#f97316';
+    if (nivel === 'Medio') return '#eab308';
+    return '#22c55e';
+  }
+
+  protected colorTextoRiesgo(nivel: NivelRiesgoFen): string {
+    return nivel === 'Medio' ? '#0f172a' : '#ffffff';
   }
 
   protected observacion(fila: FilaRiesgoFen): string | null {

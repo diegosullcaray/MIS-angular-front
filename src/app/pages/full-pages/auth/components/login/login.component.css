@@ -56,7 +56,7 @@
   }
 
   .login-card {
-    background: var(--mis-glass-bg) !important;
+    background: var(--mis-surface-translucido) !important;
     backdrop-filter: blur(20px) saturate(190%) !important;
     -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
     border: 1px solid var(--mis-glass-border) !important;
@@ -68,34 +68,18 @@
     margin: 0 auto !important;
   }
 
-  .login-card h1 {
-    color: var(--mis-primary-text) !important;
-    font-weight: 700 !important;
-    font-size: 1.4rem !important;
-    margin-bottom: 0.25rem !important;
-  }
-
-  .login-card p {
-    color: var(--mis-text-secondary) !important;
-    font-size: 0.875rem !important;
-    line-height: 1.4 !important;
-  }
-
-  .login-card span {
-    color: var(--mis-text-tertiary) !important;
-    font-size: 0.75rem !important;
-  }
-
   :host ::ng-deep .login-btn-dark.p-button {
-    background: var(--mis-primary) !important;
-    border-color: var(--mis-primary) !important;
+    background: var(--mis-glass-bg) !important;
+    backdrop-filter: blur(20px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+    border: 1px solid var(--mis-glass-border) !important;
     border-radius: 12px !important;
     padding: 12px 20px !important;
     height: 48px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    color: var(--mis-text-on-primary) !important;
+    color: var(--mis-primary-text) !important;
     box-shadow: var(--mis-shadow-md) !important;
   }
 }

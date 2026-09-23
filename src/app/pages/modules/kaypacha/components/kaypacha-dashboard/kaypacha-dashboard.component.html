@@ -10,18 +10,20 @@
   (actualizar)="limpiarTodo()"
 >
   <!-- Acción propia del módulo, a la izquierda del botón de la esquina -->
+  @if (service.permitirBusqueda()) {
   <button
     ventana-acciones
-    id="tour-kaypacha-tour-btn"
+    id="tour-kaypacha-cambiar-btn"
     type="button"
     class="mis-window-btn"
-    (click)="iniciarTour()"
-    aria-label="Iniciar tour guiado interactivo"
-    pTooltip="Iniciar tour guiado interactivo"
+    (click)="abrirBuscador()"
+    aria-label="Buscar y seleccionar otro colaborador"
+    pTooltip="Buscar y seleccionar otro colaborador"
     tooltipPosition="bottom"
   >
-    <i class="pi pi-question-circle text-[15px]"></i>
+    <i class="pi pi-user-edit text-[14px]"></i>
   </button>
+  }
 
   @if (service.loading()) {
   <div class="p-6 bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)]">
@@ -52,19 +54,6 @@
             placeholder="Asesor de la sesión"
             class="flex-1 w-full bg-[var(--mis-surface)] border border-[var(--mis-primary)] rounded px-3 py-1.5 text-[var(--mis-text-primary)] font-bold text-xs sm:text-sm truncate shadow-xs focus:outline-none"
           />
-          @if (service.permitirBusqueda()) {
-          <p-button
-            id="tour-kaypacha-cambiar-btn"
-            icon="pi pi-user-edit"
-            [rounded]="true"
-            [outlined]="true"
-            severity="primary"
-            size="small"
-            pTooltip="Buscar y seleccionar otro colaborador"
-            tooltipPosition="bottom"
-            (onClick)="abrirBuscador()"
-          ></p-button>
-          }
         </div>
 
         <!-- Etiqueta Cargo -->

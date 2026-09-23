@@ -365,10 +365,25 @@
 }
 
 .demo-luz {
-  display: block;
-  width: 10px;
-  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
+  cursor: pointer;
+}
+
+.demo-luz i {
+  font-size: 8px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.demo-semaforo:hover .demo-luz i {
+  opacity: 1;
 }
 
 .demo-luz--rojo {

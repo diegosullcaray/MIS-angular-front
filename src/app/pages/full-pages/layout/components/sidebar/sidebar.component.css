@@ -27,9 +27,9 @@
 /* En móvil el mismo material se concentra para asegurar contraste sobre el wallpaper. */
 @media (max-width: 639px) {
   .sidebar-rail {
-    background: var(--mis-sidebar-bg) !important;
-    backdrop-filter: var(--mis-sidebar-blur);
-    -webkit-backdrop-filter: var(--mis-sidebar-blur);
+    background: var(--mis-sidebar-solid) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     border-top: 1px solid var(--mis-sidebar-mobile-border);
     box-shadow: var(--mis-sidebar-mobile-shadow);
   }
