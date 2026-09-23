@@ -25,25 +25,11 @@ export class ResumenMovilidadService {
     return this.bloques.regularPaginado(COD_RESUMEN_MOVILIDAD.comercial, nodo, {}, pagina).pipe(map((tabla1) => ({ tabla1 })));
   }
 
-  /** Documento del usuario activo. */
-  documentoUsuario(): string | undefined {
-    return this.shell.usuarioActivo()?.numDoc;
-  }
-
-  /**
-   * Resumen de Movilidad · Recuperaciones. No usa la jerarquía: el host `cra-v6`
-   * arma los parámetros del nodo y después los pisa con los del usuario
-   * logueado, así que el reporte es siempre el suyo — de ahí que no reciba nodo.
-   */
-  recuperaciones(documento: string): Observable<ReporteBloqueUnico> {
-    const params = {
-      fec: this.bloques.fec(),
-      secuency: JSON.stringify([{ tip_cod: TIP_COD_PERSONA, cod_rel: documento, order: 0 }]),
-      tip_cod: TIP_COD_PERSONA,
-      cod_rel: documento,
-    };
+  /** Resumen de Movilidad · Recuperaciones (RESNMOVR_01) */
+  recuperaciones(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
+    const params = { fec: this.bloques.fec() };
     return this.bloques
-      .regularExacto(COD_RESUMEN_MOVILIDAD.recuperaciones, { tip_cod: TIP_COD_PERSONA, cod_rel: documento }, params)
+      .regularExacto(COD_RESUMEN_MOVILIDAD.recuperaciones, nodo, params)
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 }

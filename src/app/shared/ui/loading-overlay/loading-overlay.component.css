@@ -23,11 +23,8 @@
   to { opacity: 1; }
 }
 
-/* Solo la animación del trazo. Aura le suma `p-progressspinner-color`, que
-   cicla por cuatro colores y pisa el `stroke` de marca: el anillo terminaba
-   parpadeando en verde y amarillo en vez del celeste institucional. */
+/* Restaurar el comportamiento de PrimeNG Aura por defecto para el color del spinner */
 :host ::ng-deep .mis-spinner .p-progressspinner-circle {
-  stroke: var(--mis-secondary, #00A2FF);
   animation: p-progressspinner-dash 1.6s ease-in-out infinite;
 }
 

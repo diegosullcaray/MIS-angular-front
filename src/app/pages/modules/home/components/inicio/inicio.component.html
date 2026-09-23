@@ -10,14 +10,16 @@
 />
 
 <section class="inicio" aria-labelledby="inicio-titulo">
-  <header class="inicio-encabezado">
-    <h1 id="inicio-titulo">Accesos recientes</h1>
-  </header>
+  @if (recientes().length > 0) {
+    <header class="inicio-encabezado">
+      <h1 id="inicio-titulo">Accesos recientes</h1>
+    </header>
+  }
 
   <app-demo-navegacion [modo]="ejemploNovedad()" />
 
-  <section class="recientes bg-[var(--mis-glass-bg)] border border-[var(--mis-glass-border)] rounded-[var(--mis-radius-lg)] shadow-[var(--mis-shadow-md)] backdrop-blur-md backdrop-saturate-[140%] overflow-hidden" aria-label="Reportes recientes">
-    @if (recientes().length > 0) {
+  @if (recientes().length > 0) {
+    <section class="recientes bg-[var(--mis-glass-bg)] border border-[var(--mis-glass-border)] rounded-[var(--mis-radius-lg)] shadow-[var(--mis-shadow-md)] backdrop-blur-md backdrop-saturate-[140%] overflow-hidden" aria-label="Reportes recientes">
       <ul class="recientes-lista">
         @for (reporte of recientes(); track reporte.ruta) {
           <li>
@@ -39,12 +41,6 @@
           </li>
         }
       </ul>
-    } @else {
-      <div class="recientes-vacio">
-        <span class="recientes-vacio-icono" aria-hidden="true"><i class="pi pi-compass"></i></span>
-        <p>Todavía no abriste ningún reporte.</p>
-        <span>Abre uno desde el menú lateral y quedará aquí.</span>
-      </div>
-    }
-  </section>
+    </section>
+  }
 </section>
