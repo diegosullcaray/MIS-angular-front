@@ -116,9 +116,8 @@ Agregá `requierePanel: true` **solo** si el recorrido habla del panel. El resto
 se cierra el panel antes de arrancar: está encima de la pantalla y en angosto
 ocupa todo el ancho, así que taparía justo lo que la novedad quiere mostrar.
 
-Las cuatro novedades más recientes salen además en la **bienvenida** de Pachi
-(`app-bienvenida-dialog`), que lee el mismo catálogo. No hay lista duplicada que
-mantener.
+La **bienvenida** de Pachi (`app-bienvenida-dialog`) muestra la novedad más
+reciente del mismo catálogo. No hay una segunda entrada que mantener.
 
 ---
 

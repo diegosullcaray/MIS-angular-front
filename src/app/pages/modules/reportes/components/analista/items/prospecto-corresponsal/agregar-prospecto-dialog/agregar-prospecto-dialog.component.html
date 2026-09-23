@@ -31,7 +31,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">CIIU</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesCiiu()"
         [ngModel]="model().HDCIIU"
         (ngModelChange)="actualizarCampo('HDCIIU', $event)"
@@ -50,7 +50,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Departamento</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesDepartamento()"
         [ngModel]="model().HDEPA"
         (ngModelChange)="actualizarCampo('HDEPA', $event)"
@@ -64,7 +64,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Provincia</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesProvincia()"
         [ngModel]="model().HPROV"
         (ngModelChange)="actualizarCampo('HPROV', $event)"
@@ -78,7 +78,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Distrito</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesDistrito()"
         [ngModel]="model().HDISTR"
         (ngModelChange)="actualizarCampo('HDISTR', $event)"
@@ -92,7 +92,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Territorio</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesTerritorio()"
         [ngModel]="model().HDESTER"
         (ngModelChange)="actualizarCampo('HDESTER', $event)"
@@ -106,7 +106,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Corredor</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesCorredor()"
         [ngModel]="model().HDESCOR"
         (ngModelChange)="actualizarCampo('HDESCOR', $event)"
@@ -120,7 +120,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Agencia</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesAgencia()"
         [ngModel]="model().HDESAGE"
         (ngModelChange)="actualizarCampo('HDESAGE', $event)"
@@ -149,7 +149,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Tipo Agente</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesTipoAgente"
         [ngModel]="model().HTIPAGENT"
         (ngModelChange)="actualizarCampo('HTIPAGENT', $event)"
@@ -186,7 +186,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Cuenta con Licencia Funcionamiento</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesCtaLicencia"
         [ngModel]="model().HCTALICEF"
         (ngModelChange)="actualizarCampo('HCTALICEF', $event)"
@@ -205,7 +205,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Canal Captación</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesCanalCaptacion"
         [ngModel]="model().HCANACAP"
         (ngModelChange)="actualizarCampo('HCANACAP', $event)"

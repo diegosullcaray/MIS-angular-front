@@ -6,6 +6,7 @@
 - [Recorridos guiados](./tours-guiados.md) — tours sobre la interfaz real
 - [Accesibilidad y estados de UI](./accessibility.md)
 - [Guía de KPI](./kpi-guidelines.md)
+- [Liquid Glass del Host](./liquid-glass.md) — implementación de tokens, controles, shell, diálogos y KPI
 - [Modelo de estados](../development/state-model.md) — ownership del estado de datos
 
 La implementación fuente está en `src/app/shared/ui/`, y **cada familia tiene su propio `README.md` junto al código** con el contrato detallado: esos README son la fuente de verdad del componente; estos documentos son el mapa y las reglas.

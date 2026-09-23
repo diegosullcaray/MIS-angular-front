@@ -1,128 +1,179 @@
-/* Historial de reportes, no tarjetas de indicador: una línea por reporte, en
-   segmentos sueltos que dejan ver el fondo de escritorio entre uno y otro. */
-.recientes {
-  display: flex;
-  flex-direction: column;
-  gap: var(--mis-space-2);
+:host {
+  display: block;
   width: 100%;
-  /* El shell ya deja su propio relleno alrededor del router-outlet (`p-3
-     sm:p-4`), pero con el rótulo arrancando ahí mismo la lista quedaba pegada
-     al header. Este margen es del Home y no del shell: el resto de los módulos
-     abren con su propia ventana `.mis-window`, que ya trae su cromo. */
-  margin-top: var(--mis-space-8);
-  /* Ancho de lectura: a lo ancho de un monitor, la fecha se iría al otro
-     extremo de la pantalla y el resto sería un hueco. Además deja ver el
-     fondo de escritorio a la derecha. */
-  max-width: 720px;
 }
 
-/* ── El segmento ──────────────────────────────────────────────
-   Vidrio, los mismos tokens que los paneles del shell: el wallpaper se ve a
-   través pero no queda justo detrás de las letras, que es lo que las volvía
-   ilegibles cuando probé el fondo transparente. */
-.recientes-rotulo,
-.reciente-fila,
-.recientes-vacio {
-  background: var(--mis-glass-bg);
-  backdrop-filter: saturate(180%) blur(12px);
-  border: 1px solid var(--mis-glass-border);
-  border-radius: var(--mis-radius-md);
-}
-
-/* El rótulo va algo más sólido que las filas: es texto chico y suele caer
-   sobre el logo del wallpaper, donde el vidrio de las filas lo dejaría
-   compitiendo con la marca de fondo. */
-.recientes-rotulo {
-  background: var(--mis-surface-translucido);
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--mis-space-2);
+/* Home compacto: los reportes recientes son accesos rápidos, no un tablero ni
+   una superficie que compita con el contenido de los módulos. */
+.inicio {
+  width: min(100%, 760px);
   margin: 0;
-  padding: var(--mis-space-2) var(--mis-space-3);
+  padding-top: var(--mis-space-8);
+}
+
+.inicio-encabezado h1 {
+  margin: 0 0 var(--mis-space-2);
+  color: var(--mis-text-secondary);
   font-size: var(--mis-text-sm);
   font-weight: var(--mis-font-semibold);
-  color: var(--mis-text-secondary);
+  letter-spacing: 0.01em;
 }
 
-.recientes-rotulo .pi {
-  font-size: 12px;
-  color: var(--mis-text-tertiary);
+.recientes {
+  overflow: hidden;
+  background: var(--mis-glass-bg);
+  border: 1px solid var(--mis-glass-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: var(--mis-shadow-md);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
 .recientes-lista {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--mis-space-2);
 }
 
-/* ── La fila ──────────────────────────────────────────────────
-   Sin sombra ni elevación al hover: ese gesto es el de la tarjeta KPI y acá
-   confundiría un historial con un indicador. */
+.recientes-lista li + li {
+  border-top: 1px solid var(--mis-border);
+}
+
+/* Cada fila completa es el enlace: el objetivo táctil supera 44 px sin añadir
+   botones secundarios ni hacer que el historial parezca una colección de KPI. */
 .reciente-fila {
   display: flex;
   align-items: center;
   gap: var(--mis-space-3);
-  padding: var(--mis-space-2) var(--mis-space-3);
+  min-height: 60px;
+  padding: var(--mis-space-3) var(--mis-space-4);
   color: inherit;
   text-decoration: none;
-  transition: background-color var(--mis-transition-fast),
-    border-color var(--mis-transition-fast);
+  transition: background-color var(--mis-transition-fast);
 }
 
-/* Solo tinte y borde: la elevación al pasar el cursor es el gesto de la
-   tarjeta KPI, y acá haría leer el historial como un tablero. */
 .reciente-fila:hover {
-  background: var(--mis-surface-translucido);
-  border-color: var(--mis-border-strong);
+  background: var(--mis-hover-bg);
 }
 
 .reciente-fila:focus-visible {
-  outline: 2px solid var(--mis-primary);
-  outline-offset: 2px;
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--mis-accent);
+  outline-offset: -2px;
+}
+
+.reciente-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  border-radius: var(--mis-radius-sm);
+  background: var(--mis-primary-light);
+  color: var(--mis-primary-text);
+  font-size: 14px;
+}
+
+.reciente-contenido {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
 }
 
 .reciente-nombre {
-  flex: 1;
-  min-width: 0;
+  overflow: hidden;
+  color: var(--mis-text-primary);
   font-size: var(--mis-text-sm);
   font-weight: var(--mis-font-medium);
-  color: var(--mis-text-primary);
-  white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* En pantallas angostas el nombre se queda con todo el ancho: la categoría es
-   contexto, no identidad. */
 .reciente-categoria {
-  display: none;
-  font-weight: var(--mis-font-normal);
-  color: var(--mis-text-tertiary);
+  overflow: hidden;
+  color: var(--mis-text-secondary);
+  font-size: var(--mis-text-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reciente-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  flex: 0 0 auto;
+  color: var(--mis-text-secondary);
+}
+
+.reciente-meta .pi {
+  color: var(--mis-primary-text);
 }
 
 .reciente-fecha {
-  flex-shrink: 0;
   font-size: var(--mis-text-xs);
-  color: var(--mis-text-secondary);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-/* El estado vacío es un segmento más, del mismo alto que una fila: un recuadro
-   grande en una pantalla que se quiso minimalista pesaría más que el historial
-   que va a reemplazar. */
+.reciente-meta .pi {
+  font-size: 12px;
+}
+
 .recientes-vacio {
-  margin: 0;
-  padding: var(--mis-space-2) var(--mis-space-3);
-  font-size: var(--mis-text-sm);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: var(--mis-space-1);
+  padding: var(--mis-space-6) var(--mis-space-4);
   color: var(--mis-text-secondary);
+  font-size: var(--mis-text-sm);
+  text-align: center;
 }
 
-@media (min-width: 640px) {
-  .reciente-categoria {
-    display: inline;
+.recientes-vacio p {
+  margin: var(--mis-space-2) 0 0;
+  color: var(--mis-text-primary);
+  font-size: var(--mis-text-base);
+  font-weight: var(--mis-font-semibold);
+}
+
+.recientes-vacio-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--mis-radius-md);
+  background: var(--mis-primary-light);
+  color: var(--mis-primary-text);
+  font-size: 18px;
+}
+
+@media (max-width: 640px) {
+  .inicio {
+    padding-top: var(--mis-space-5);
+  }
+
+  .inicio-encabezado h1 {
+    margin-left: var(--mis-space-1);
+  }
+
+  .reciente-fila {
+    padding-left: var(--mis-space-3);
+    padding-right: var(--mis-space-3);
+  }
+
+  .reciente-meta .pi {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reciente-fila {
+    transition: none;
   }
 }

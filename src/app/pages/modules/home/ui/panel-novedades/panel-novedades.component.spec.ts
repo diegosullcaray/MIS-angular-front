@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { PanelNovedadesComponent } from './panel-novedades.component';
 import { NovedadesTourService } from '../../services/novedades-tour.service';
 import { DriverTourService } from '../../../../../shared/services/driver-tour.service';
@@ -13,7 +14,7 @@ describe('PanelNovedadesComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [PanelNovedadesComponent],
-      providers: [{ provide: DriverTourService, useValue: tourFalso }],
+      providers: [provideRouter([]), { provide: DriverTourService, useValue: tourFalso }],
     });
   });
 
@@ -47,11 +48,30 @@ describe('PanelNovedadesComponent', () => {
     expect([...fechas].sort((a, b) => b.localeCompare(a))).toEqual(fechas);
   });
 
-  it('al elegir una novedad, arranca su recorrido guiado', () => {
+  it('filtra las novedades por tema y Baby Pachi muestra la pose del tema elegido', () => {
+    const fixture = crear();
+    const servicio = TestBed.inject(NovedadesTourService);
+    const novedad = servicio.novedades.find((item) => item.categoria === 'Buscar')!;
+    const filtro = [
+      ...el(fixture).querySelectorAll<HTMLButtonElement>('.novedades-categoria'),
+    ].find((boton) => boton.textContent?.trim() === 'Buscar')!;
+
+    filtro.click();
+    fixture.detectChanges();
+
+    expect(el(fixture).querySelectorAll('.novedad').length).toBe(1);
+    expect(el(fixture).textContent).toContain(novedad.titulo);
+    expect(el(fixture).querySelector<HTMLImageElement>('.novedades-mascota')?.src).toContain(
+      `mascota-${novedad.posePachi}.png`,
+    );
+  });
+
+  it('al elegir una novedad, prepara la pantalla y arranca su recorrido guiado', async () => {
     const fixture = crear();
     const servicio = TestBed.inject(NovedadesTourService);
 
     (el(fixture).querySelector('.novedad') as HTMLButtonElement).click();
+    await esperarInteraccion();
 
     expect(tourFalso.createQuickTour).toHaveBeenCalledTimes(1);
     const pasos = tourFalso.createQuickTour.mock.calls[0][0];
@@ -121,25 +141,27 @@ describe('PanelNovedadesComponent', () => {
       return TestBed.inject(NovedadesTourService).novedades.findIndex((n) => n.id === id);
     }
 
-    it('al elegir una novedad que señala la pantalla, el panel se cierra', () => {
+    it('al elegir una novedad que señala la pantalla, el panel se cierra', async () => {
       const fixture = crear();
-      const indice = novedadPorId('escritorio');
+      const indice = novedadPorId('busqueda-global');
 
       (el(fixture).querySelectorAll('.novedad')[indice] as HTMLButtonElement).click();
+      await esperarInteraccion();
       fixture.detectChanges();
 
       expect(el(fixture).querySelector('.novedades--cerrado')).not.toBeNull();
       expect(tourFalso.createQuickTour).toHaveBeenCalledTimes(1);
     });
 
-    it('la novedad que habla del panel lo deja abierto', () => {
+    it('las novedades útiles cierran el panel antes de señalar la pantalla', async () => {
       const fixture = crear();
-      const indice = novedadPorId('panel-novedades');
+      const indice = novedadPorId('busqueda-global');
 
       (el(fixture).querySelectorAll('.novedad')[indice] as HTMLButtonElement).click();
+      await esperarInteraccion();
       fixture.detectChanges();
 
-      expect(el(fixture).querySelector('.novedades--cerrado')).toBeNull();
+      expect(el(fixture).querySelector('.novedades--cerrado')).not.toBeNull();
     });
 
     it('abrir() lo levanta desde afuera — es la puerta de la bienvenida', () => {
@@ -153,4 +175,10 @@ describe('PanelNovedadesComponent', () => {
       expect(el(fixture).querySelector('.novedades--cerrado')).toBeNull();
     });
   });
+
+  function esperarInteraccion(): Promise<void> {
+    return new Promise((resolver) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolver())),
+    );
+  }
 });

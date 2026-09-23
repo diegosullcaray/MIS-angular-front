@@ -4,15 +4,15 @@ El sistema explica sus propias pantallas con recorridos sobre la interfaz real: 
 
 ## Las piezas
 
-| Pieza | Dónde | Qué hace |
-|---|---|---|
-| `DriverTourService` | `src/app/shared/services/driver-tour.service.ts` | única puerta a driver.js: configuración por defecto, cierre limpio y el reacomodo de los globos en pantalla angosta |
-| Catálogo por módulo | `*-tour.service.ts` en cada módulo | declara los pasos de ese recorrido |
-| `NovedadesTourService` | `src/app/pages/modules/home/services/novedades-tour.service.ts` | catálogo de novedades del Home; cada una es un recorrido |
-| `app-panel-novedades` | `src/app/pages/modules/home/ui/panel-novedades/` | el panel lateral desde donde se lanzan |
-| Tema del globo | `src/assets/styles/vendor/driver.css` | paleta del sistema y el personaje |
-| Pachi | `src/assets/images/fc/tours/` | recortes del personaje oficial de la marca, una imagen por pose |
-| Bienvenida | `src/app/pages/modules/home/ui/bienvenida-dialog/` | el saludo de Pachi al entrar, una sola vez |
+| Pieza                  | Dónde                                                           | Qué hace                                                                                                            |
+| ---------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `DriverTourService`    | `src/app/shared/services/driver-tour.service.ts`                | única puerta a driver.js: configuración por defecto, cierre limpio y el reacomodo de los globos en pantalla angosta |
+| Catálogo por módulo    | `*-tour.service.ts` en cada módulo                              | declara los pasos de ese recorrido                                                                                  |
+| `NovedadesTourService` | `src/app/pages/modules/home/services/novedades-tour.service.ts` | catálogo de novedades del Home; cada una es un recorrido                                                            |
+| `app-panel-novedades`  | `src/app/pages/modules/home/ui/panel-novedades/`                | el panel lateral desde donde se lanzan                                                                              |
+| Tema del globo         | `src/assets/styles/vendor/driver.css`                           | paleta del sistema y el personaje                                                                                   |
+| Pachi                  | `src/assets/images/fc/tours/`                                   | recortes del personaje oficial de la marca, una imagen por pose                                                     |
+| Bienvenida             | `src/app/pages/modules/home/ui/bienvenida-dialog/`              | el saludo de Pachi al entrar, una sola vez                                                                          |
 
 `DriverTourService` es el único lugar que importa `driver.js`. Un módulo que lo importe por su cuenta se saltea el cierre limpio (`forceClose()` elimina popovers residuales) y el reacomodo de abajo.
 
@@ -55,7 +55,7 @@ Cada paso encuentra su elemento por selector CSS **en tiempo de ejecución**. La
 const ANCLA = {
   rail: '#tour-sidebar-icons',
   perfil: 'header [aria-haspopup="true"]',
-  comunicados: 'header button[aria-label="Comunicados del sistema"]',
+  buscador: 'header button[aria-label="Abrir búsqueda global"]',
 } as const;
 ```
 
@@ -105,23 +105,22 @@ uso". No lo están: borrarlas rompe el recorrido.
 
 ## Agregar una novedad al Home
 
-1. Sumar la entrada al catálogo de `NovedadesTourService` con `id`, `titulo`, `resumen`, `icono`, `fecha` y sus `pasos`.
+1. Publicar solo una mejora verificable y útil para la tarea del usuario. La entrada de `NovedadesTourService` lleva `id`, `titulo`, `resumen`, `icono`, `categoria`, `posePachi`, `fecha` y `pasos`. No publicar el panel de novedades como si fuera una novedad.
 2. Apuntar cada paso a un ancla estable; si la pantalla no tiene ninguna, agregar el `aria-label` que le falta —que además mejora la accesibilidad— antes que un `id` de tour.
 3. Correr `npm run audit:anclas`.
 
-El panel ordena solo por `fecha`, y `esNueva()` decide la etiqueta "Nuevo" con una ventana de 30 días.
+El panel ordena por `fecha`, agrupa dinámicamente las categorías del catálogo y `esNueva()` decide la etiqueta "Nuevo" con una ventana de 30 días. Al elegir un tema, Baby Pachi cambia su pose y explica qué se puede aprender en ese recorrido. La guía de Configuración es secuencial: resalta el perfil, espera su clic, resalta la acción Configuración y después el buscador del diálogo.
+
+Filtros y navegación no abren un reporte ni un sistema de negocio. `app-demo-navegacion` aparece dentro del Home como laboratorio local sin consultas ni permisos: el usuario pulsa el sistema de ejemplo o el embudo y `advanceOnClick` continúa el recorrido sobre el control que acaba de revelar. La búsqueda global se abre y enfoca antes de su guía porque es una acción reversible del propio shell.
 
 **El panel se aparta del recorrido.** Está fijo encima de la pantalla, y en
 angosto ocupa todo el ancho: si quedara abierto, el paso resaltaría algo que el
-propio panel está tapando. Por eso `verGuia()` lo cierra antes de arrancar,
-salvo que la novedad declare `requierePanel: true` —solo la que habla del panel
-mismo—.
+propio panel está tapando. Por eso `verGuia()` lo cierra antes de arrancar.
 
 ## La bienvenida
 
-`app-bienvenida-dialog` (en el Home) saluda con Pachi la primera vez y lista las
-cuatro novedades más recientes del mismo catálogo. Su botón principal abre el
-panel.
+`app-bienvenida-dialog` (en el Home) saluda con Pachi la primera vez y muestra
+la novedad más reciente del mismo catálogo. Su botón principal abre el panel.
 
 Vive en el Home y no en el shell porque `LoginComponent` navega a
 `/app/dashboard`: toda sesión empieza ahí, y así el diálogo lee el catálogo

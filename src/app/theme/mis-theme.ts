@@ -1,45 +1,21 @@
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 
-/** Colores de botón compartidos por `success`/`warn`/`danger` (root sólido, outlined y text) entre modo claro y oscuro: usan `var(--mis-*)`, así que el mismo bloque sirve para ambos — es la propia variable CSS la que cambia de valor con `.dark` en <html>. */
-function botonesSemaforo(colorTexto: string) {
+/** Los tres estados comparten estructura; solo cambian el token y el texto sólido por tema. */
+function botonSemaforo(tipo: 'secondary' | 'success' | 'warning' | 'danger', colorTexto: string) {
+  const color = `var(--mis-${tipo})`;
+  const fondoClaro = `var(--mis-${tipo}-light)`;
   return {
-    success: {
-      background: 'var(--mis-success)',
-      hoverBackground: 'var(--mis-success-light)',
-      activeBackground: 'var(--mis-success-light)',
-      borderColor: 'var(--mis-success)',
-      hoverBorderColor: 'var(--mis-success)',
-      activeBorderColor: 'var(--mis-success)',
-      color: colorTexto,
-      hoverColor: 'var(--mis-success)',
-      activeColor: 'var(--mis-success)',
-      focusRing: { color: 'var(--mis-success)', shadow: 'none' }
-    },
-    warn: {
-      background: 'var(--mis-warning)',
-      hoverBackground: 'var(--mis-warning-light)',
-      activeBackground: 'var(--mis-warning-light)',
-      borderColor: 'var(--mis-warning)',
-      hoverBorderColor: 'var(--mis-warning)',
-      activeBorderColor: 'var(--mis-warning)',
-      color: colorTexto,
-      hoverColor: 'var(--mis-warning)',
-      activeColor: 'var(--mis-warning)',
-      focusRing: { color: 'var(--mis-warning)', shadow: 'none' }
-    },
-    danger: {
-      background: 'var(--mis-danger)',
-      hoverBackground: 'var(--mis-danger-light)',
-      activeBackground: 'var(--mis-danger-light)',
-      borderColor: 'var(--mis-danger)',
-      hoverBorderColor: 'var(--mis-danger)',
-      activeBorderColor: 'var(--mis-danger)',
-      color: colorTexto,
-      hoverColor: 'var(--mis-danger)',
-      activeColor: 'var(--mis-danger)',
-      focusRing: { color: 'var(--mis-danger)', shadow: 'none' }
-    }
+    background: color,
+    hoverBackground: fondoClaro,
+    activeBackground: fondoClaro,
+    borderColor: color,
+    hoverBorderColor: color,
+    activeBorderColor: color,
+    color: colorTexto,
+    hoverColor: color,
+    activeColor: color,
+    focusRing: { color, shadow: 'none' },
   };
 }
 
@@ -49,34 +25,19 @@ const BOTONES_OUTLINED_Y_TEXT = {
     hoverBackground: 'var(--mis-primary-light)',
     activeBackground: 'var(--mis-primary-light)',
     borderColor: 'var(--mis-primary-text)',
-    color: 'var(--mis-primary-text)'
+    color: 'var(--mis-primary-text)',
   },
-  // El "secondary" de marca toma borde/fondo de --mis-secondary pero el texto navy de --mis-primary-text.
-  secondary: {
-    hoverBackground: 'var(--mis-secondary-light)',
-    activeBackground: 'var(--mis-secondary-light)',
-    borderColor: 'var(--mis-secondary)',
-    color: 'var(--mis-primary-text)'
-  },
-  success: {
-    hoverBackground: 'var(--mis-success-light)',
-    activeBackground: 'var(--mis-success-light)',
-    borderColor: 'var(--mis-success)',
-    color: 'var(--mis-success)'
-  },
-  warn: {
-    hoverBackground: 'var(--mis-warning-light)',
-    activeBackground: 'var(--mis-warning-light)',
-    borderColor: 'var(--mis-warning)',
-    color: 'var(--mis-warning)'
-  },
-  danger: {
-    hoverBackground: 'var(--mis-danger-light)',
-    activeBackground: 'var(--mis-danger-light)',
-    borderColor: 'var(--mis-danger)',
-    color: 'var(--mis-danger)'
-  }
+  secondary: botonSemaforoLigero('secondary'),
+  success: botonSemaforoLigero('success'),
+  warn: botonSemaforoLigero('warning'),
+  danger: botonSemaforoLigero('danger'),
 };
+
+function botonSemaforoLigero(tipo: 'secondary' | 'success' | 'warning' | 'danger') {
+  const color = `var(--mis-${tipo})`;
+  const fondoClaro = `var(--mis-${tipo}-light)`;
+  return { hoverBackground: fondoClaro, activeBackground: fondoClaro, borderColor: color, color };
+}
 
 function botonColorScheme(colorTextoSemaforo: string) {
   return {
@@ -91,26 +52,65 @@ function botonColorScheme(colorTextoSemaforo: string) {
         color: 'var(--mis-text-on-primary)',
         hoverColor: 'var(--mis-text-on-primary)',
         activeColor: 'var(--mis-text-on-primary)',
-        focusRing: { color: 'var(--mis-primary)', shadow: 'none' }
+        focusRing: { color: 'var(--mis-primary)', shadow: 'none' },
       },
-      secondary: {
-        background: 'var(--mis-secondary)',
-        hoverBackground: 'var(--mis-secondary-hover)',
-        activeBackground: 'var(--mis-secondary-hover)',
-        borderColor: 'var(--mis-secondary)',
-        hoverBorderColor: 'var(--mis-secondary-hover)',
-        activeBorderColor: 'var(--mis-secondary-hover)',
-        color: 'var(--mis-text-on-secondary)',
-        hoverColor: 'var(--mis-text-on-secondary)',
-        activeColor: 'var(--mis-text-on-secondary)',
-        focusRing: { color: 'var(--mis-secondary)', shadow: 'none' }
-      },
-      ...botonesSemaforo(colorTextoSemaforo)
+      secondary: botonSemaforo('secondary', colorTextoSemaforo),
+      success: botonSemaforo('success', colorTextoSemaforo),
+      warn: botonSemaforo('warning', colorTextoSemaforo),
+      danger: botonSemaforo('danger', colorTextoSemaforo),
     },
     outlined: BOTONES_OUTLINED_Y_TEXT,
-    text: BOTONES_OUTLINED_Y_TEXT
+    text: BOTONES_OUTLINED_Y_TEXT,
   };
 }
+
+/** La escala neutral de Aura coincide entre temas salvo el nivel 100. */
+const SUPERFICIE_COMPARTIDA = {
+  0: '#ffffff',
+  50: '#f8fafc',
+  200: '#e2e8f0',
+  300: '#cbd5e1',
+  400: '#94a3b8',
+  500: '#64748b',
+  600: '#475569',
+  700: '#334155',
+  800: '#1e293b',
+  900: '#0f172a',
+  950: '#020617',
+};
+
+const FONDO_ENCABEZADO_TABLA = {
+  background: 'var(--mis-panel-bg)',
+  borderColor: 'var(--mis-border-strong)',
+  color: 'var(--mis-text-primary)',
+};
+
+/** Aura declara estos valores por esquema; se repiten las referencias, no los valores. */
+const ESQUEMA_TABLA = {
+  root: { borderColor: 'var(--mis-border-strong)' },
+  row: { stripedBackground: 'var(--mis-panel-bg)' },
+  bodyCell: { selectedBorderColor: 'var(--mis-primary)' },
+};
+
+/** Todos los campos de PrimeNG parten de estos tokens; el material visual se
+ * completa en `componentes/controles.css` para que input y select compartan
+ * la misma superficie de vidrio. */
+const CAMPOS = {
+  background: 'var(--mis-field-bg)',
+  filledBackground: 'var(--mis-field-bg)',
+  filledHoverBackground: 'var(--mis-field-bg-hover)',
+  filledFocusBackground: 'var(--mis-field-bg-focus)',
+  borderColor: 'var(--mis-border-control)',
+  hoverBorderColor: 'var(--mis-field-border-hover)',
+  focusBorderColor: 'var(--mis-accent)',
+  invalidBorderColor: 'var(--mis-danger)',
+  color: 'var(--mis-text-primary)',
+  disabledColor: 'var(--mis-text-tertiary)',
+  placeholderColor: 'var(--mis-text-tertiary)',
+  shadow: 'none',
+  borderRadius: 'var(--mis-radius-md)',
+  focusRing: { width: '0', style: 'none', color: 'transparent', offset: '0', shadow: 'none' },
+};
 
 export const MisTheme = definePreset(Aura, {
   semantic: {
@@ -125,66 +125,48 @@ export const MisTheme = definePreset(Aura, {
       700: '#2A4E8F',
       800: '#1D396E', // Base Primary (Navy)
       900: '#162D58', // Hover Primary
-      950: '#0F1E3D'
+      950: '#0F1E3D',
     },
     colorScheme: {
       light: {
+        formField: CAMPOS,
         surface: {
-          0: '#ffffff',
-          50: '#f8fafc',
+          ...SUPERFICIE_COMPARTIDA,
           100: '#f4f6f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617'
         },
         primary: {
           color: '{primary.800}',
           contrastColor: '#ffffff',
           hoverColor: '{primary.900}',
-          activeColor: '{primary.950}'
+          activeColor: '{primary.950}',
         },
         highlight: {
           background: '{primary.50}',
           focusBackground: '{primary.100}',
           color: '{primary.700}',
-          focusColor: '{primary.800}'
-        }
+          focusColor: '{primary.800}',
+        },
       },
       dark: {
+        formField: CAMPOS,
         surface: {
-          0: '#ffffff',
-          50: '#f8fafc',
+          ...SUPERFICIE_COMPARTIDA,
           100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617'
         },
         primary: {
           color: '{primary.400}',
           contrastColor: '{surface.900}',
           hoverColor: '{primary.300}',
-          activeColor: '{primary.200}'
+          activeColor: '{primary.200}',
         },
         highlight: {
           background: 'rgba(255,255,255,.04)',
           focusBackground: 'rgba(255,255,255,.12)',
           color: 'rgba(255,255,255,.87)',
-          focusColor: 'rgba(255,255,255,.87)'
-        }
-      }
-    }
+          focusColor: 'rgba(255,255,255,.87)',
+        },
+      },
+    },
   },
   components: {
     /**
@@ -198,11 +180,7 @@ export const MisTheme = definePreset(Aura, {
      * contra ese fondo — la retícula se perdía en oscuro.
      */
     datatable: {
-      header: {
-        background: 'var(--mis-panel-bg)',
-        borderColor: 'var(--mis-border-strong)',
-        color: 'var(--mis-text-primary)'
-      },
+      header: FONDO_ENCABEZADO_TABLA,
       headerCell: {
         background: 'var(--mis-panel-bg)',
         hoverBackground: 'var(--mis-hover-bg)',
@@ -210,7 +188,7 @@ export const MisTheme = definePreset(Aura, {
         borderColor: 'var(--mis-border-strong)',
         color: 'var(--mis-text-primary)',
         hoverColor: 'var(--mis-text-primary)',
-        selectedColor: 'var(--mis-text-primary)'
+        selectedColor: 'var(--mis-text-primary)',
       },
       row: {
         background: 'var(--mis-surface)',
@@ -218,52 +196,46 @@ export const MisTheme = definePreset(Aura, {
         selectedBackground: 'var(--mis-primary-light)',
         color: 'var(--mis-text-primary)',
         hoverColor: 'var(--mis-text-primary)',
-        selectedColor: 'var(--mis-text-primary)'
+        selectedColor: 'var(--mis-text-primary)',
       },
       // El divisor entre filas es el normal, no el fuerte: el fuerte encuadra
       // la tabla y separa encabezado de cuerpo, y usarlo en cada fila
       // devolvería la retícula dura que se quiere evitar.
       bodyCell: { borderColor: 'var(--mis-border)' },
-      footer: {
-        background: 'var(--mis-panel-bg)',
-        borderColor: 'var(--mis-border-strong)',
-        color: 'var(--mis-text-primary)'
-      },
-      footerCell: {
-        background: 'var(--mis-panel-bg)',
-        borderColor: 'var(--mis-border-strong)',
-        color: 'var(--mis-text-primary)'
-      },
+      footer: FONDO_ENCABEZADO_TABLA,
+      footerCell: FONDO_ENCABEZADO_TABLA,
       sortIcon: {
         color: 'var(--mis-text-tertiary)',
-        hoverColor: 'var(--mis-text-primary)'
+        hoverColor: 'var(--mis-text-primary)',
       },
       /**
        * Aura declara estos tres SOLO por esquema de color, y lo que declara por
-       * esquema le gana a lo de arriba: si no se repiten acá, el contorno de la
-       * tabla vuelve al `{surface.800}` de Aura y las filas pares al
-       * `{surface.950}` (#020617, el gris casi negro). Los dos bloques son
-       * iguales a propósito — son las variables `--mis-*` las que cambian.
+       * esquema le gana a lo de arriba. Ambos temas comparten la estructura y
+       * las variables `--mis-*` resuelven el color efectivo.
        */
       colorScheme: {
-        light: {
-          root: { borderColor: 'var(--mis-border-strong)' },
-          row: { stripedBackground: 'var(--mis-panel-bg)' },
-          bodyCell: { selectedBorderColor: 'var(--mis-primary)' }
-        },
-        dark: {
-          root: { borderColor: 'var(--mis-border-strong)' },
-          row: { stripedBackground: 'var(--mis-panel-bg)' },
-          bodyCell: { selectedBorderColor: 'var(--mis-primary)' }
-        }
-      }
+        light: ESQUEMA_TABLA,
+        dark: ESQUEMA_TABLA,
+      },
     },
-    /** Paleta de marca (panel de estilos de botones) en vez de la escala green/orange/red/sky por defecto de Aura para success/warn/danger, y de surface.100-800 para secondary. */
+    /** Forma y densidad del control en el preset; el relieve visual vive en `assets/styles/componentes/botones.css`. */
     button: {
+      root: {
+        borderRadius: 'var(--mis-radius-full)',
+        roundedBorderRadius: 'var(--mis-radius-full)',
+        gap: 'var(--mis-space-2)',
+        paddingX: 'var(--mis-space-4)',
+        paddingY: '10px',
+        iconOnlyWidth: '44px',
+        sm: { paddingX: 'var(--mis-space-3)', paddingY: '8px', iconOnlyWidth: '40px' },
+        lg: { paddingX: 'var(--mis-space-5)', paddingY: '12px', iconOnlyWidth: '48px' },
+        label: { fontWeight: '600' },
+        raisedShadow: 'var(--mis-shadow-sm)',
+      },
       colorScheme: {
         light: botonColorScheme('#ffffff'),
-        dark: botonColorScheme('var(--mis-text-on-secondary)')
-      }
-    }
-  }
+        dark: botonColorScheme('var(--mis-text-on-secondary)'),
+      },
+    },
+  },
 });

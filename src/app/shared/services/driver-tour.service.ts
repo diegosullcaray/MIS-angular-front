@@ -89,6 +89,11 @@ export class DriverTourService {
     return this.instancia !== null;
   }
 
+  /** Fuerza el avance al siguiente paso (útil si se requieren retrasos para esperar animaciones en lugar de `advanceOnClick`). */
+  moveNext(): void {
+    this.instancia?.moveNext();
+  }
+
   // ─── Reacomodo ────────────────────────────────────────────────────────────
 
   private esAngosto(): boolean {

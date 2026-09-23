@@ -1,0 +1,295 @@
+@if (modo() === 'navegacion') {
+  <section
+    class="demo-navegacion demo-navegacion--navegacion"
+    aria-label="Ejemplo de navegación por paneles"
+  >
+    <!-- Encabezado de la práctica -->
+    <div class="demo-navegacion-encabezado">
+      <p class="demo-navegacion-etiqueta">Práctica guiada</p>
+      <h2>Explora un panel sin abrir un sistema real</h2>
+      <p class="demo-navegacion-descripcion">
+        Los controles de este ejemplo no consultan datos ni cambian tu navegación.
+      </p>
+    </div>
+
+    <!-- Simulación de la interfaz real: shell completo -->
+    <div class="demo-shell">
+      <!-- Col 1: Rail de sistemas (replica el sidebar real con estilo navy) -->
+      <aside class="demo-sidebar-rail" aria-label="Sistemas de ejemplo">
+        <div class="demo-sidebar-wordmark" aria-hidden="true">
+          <span class="demo-sidebar-wordmark-text">MIS</span>
+        </div>
+        <div class="demo-sidebar-separador" aria-hidden="true"></div>
+        <button
+          type="button"
+          class="demo-sidebar-icon demo-sidebar-icon--activo"
+          (click)="abrirPanel()"
+          aria-label="Abrir panel de ejemplo"
+        >
+          <i class="pi pi-chart-bar" aria-hidden="true"></i>
+          <span class="demo-sidebar-icon-label">Reportes</span>
+        </button>
+        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
+          <i class="pi pi-users"></i>
+          <span class="demo-sidebar-icon-label">Clientes</span>
+        </button>
+        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
+          <i class="pi pi-wallet"></i>
+          <span class="demo-sidebar-icon-label">Incentivos</span>
+        </button>
+        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
+          <i class="pi pi-box"></i>
+          <span class="demo-sidebar-icon-label">Productos</span>
+        </button>
+        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
+          <i class="pi pi-building"></i>
+          <span class="demo-sidebar-icon-label">Oficinas</span>
+        </button>
+      </aside>
+
+      <!-- Zona principal: header + contenido -->
+      <div class="demo-main-area">
+        <!-- Header simulado con breadcrumb -->
+        <header class="demo-header">
+          <nav class="demo-breadcrumb" aria-label="Breadcrumb de ejemplo">
+            <ol>
+              <li>
+                <i class="pi pi-home" aria-hidden="true"></i>
+                <span>Inicio</span>
+              </li>
+              @if (panelAbierto()) {
+                <li><span>Reportes</span></li>
+                <li aria-current="page"><span>{{ seccion() }}</span></li>
+              }
+            </ol>
+          </nav>
+          <div class="demo-header-acciones">
+            <span class="demo-header-btn" aria-hidden="true"><i class="pi pi-search"></i></span>
+            <span class="demo-header-btn" aria-hidden="true"><i class="pi pi-sun"></i></span>
+            <span class="demo-header-btn" aria-hidden="true"><i class="pi pi-megaphone"></i></span>
+            <span class="demo-header-pill" aria-hidden="true">
+              <span class="demo-header-avatar">JP</span>
+              <span class="demo-header-nombre">J. Pérez</span>
+            </span>
+          </div>
+        </header>
+
+        <!-- Contenido: panel lateral + ventana del reporte -->
+        <div class="demo-contenido">
+          <!-- Col 2: Panel de secciones (aparece al abrir un sistema) -->
+          @if (panelAbierto()) {
+            <nav class="demo-navegacion-panel" aria-label="Panel de ejemplo">
+              <p class="demo-panel-titulo">Reportes</p>
+              @for (item of ['Resumen', 'Indicadores', 'Detalle', 'Monitor']; track item) {
+                <button
+                  type="button"
+                  class="demo-navegacion-opcion"
+                  [class.demo-navegacion-opcion--activa]="seccion() === item"
+                  (click)="elegirSeccion(item)"
+                >
+                  {{ item }}
+                </button>
+              }
+            </nav>
+          }
+
+          <!-- Col 3: Ventana del reporte -->
+          <div class="demo-ventana">
+            <!-- Barra de título estilo macOS -->
+            <div class="demo-navegacion-barra">
+              <div class="demo-barra-izquierda">
+                <div class="demo-semaforo">
+                  <span class="demo-luz demo-luz--rojo"></span>
+                  <span class="demo-luz demo-luz--amarillo"></span>
+                  <span class="demo-luz demo-luz--verde"></span>
+                </div>
+                <span class="demo-barra-titulo">{{ panelAbierto() ? seccion() : 'Sin reporte abierto' }}</span>
+              </div>
+              <div class="demo-navegacion-acciones">
+                <button
+                  type="button"
+                  (click)="alternarFiltros()"
+                  [attr.aria-label]="
+                    filtrosAbiertos() ? 'Ocultar filtros de ejemplo' : 'Mostrar filtros de ejemplo'
+                  "
+                >
+                  <i
+                    [class]="filtrosAbiertos() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+                <button type="button" aria-label="Actualizar datos de ejemplo" (click)="actualizar()">
+                  <i class="pi pi-refresh" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Franja de filtros -->
+            @if (filtrosAbiertos()) {
+              <div class="demo-navegacion-filtros">
+                <label>
+                  Nivel
+                  <select>
+                    <option>Agencia</option>
+                    <option>Región</option>
+                  </select>
+                </label>
+                <label>
+                  Periodo
+                  <select>
+                    <option>Actual</option>
+                    <option>Anterior</option>
+                  </select>
+                </label>
+                <button type="button" class="demo-navegacion-filtros-limpiar">Limpiar</button>
+              </div>
+            }
+
+            <!-- Cuerpo del reporte simulado -->
+            <div class="demo-cuerpo">
+              @if (panelAbierto()) {
+                <p class="demo-navegacion-estado">
+                  {{ actualizado() ? '✅ Datos de ejemplo actualizados.' : 'Sección seleccionada: ' + seccion() }}
+                </p>
+                <div class="demo-kpis-fila">
+                  <div class="demo-kpi">
+                    <span class="demo-kpi-label">Meta</span>
+                    <span class="demo-kpi-valor">85%</span>
+                  </div>
+                  <div class="demo-kpi">
+                    <span class="demo-kpi-label">Avance</span>
+                    <span class="demo-kpi-valor">72%</span>
+                  </div>
+                  <div class="demo-kpi">
+                    <span class="demo-kpi-label">Desembolso</span>
+                    <span class="demo-kpi-valor">S/ 1.2M</span>
+                  </div>
+                </div>
+              } @else {
+                <p class="demo-navegacion-estado">Selecciona <b>Reportes</b> en el rail para abrir su panel.</p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+} @else if (modo() === 'filtros') {
+  <section
+    class="demo-navegacion demo-navegacion--filtros"
+    aria-label="Ejemplo de filtros de un panel"
+  >
+    <div class="demo-navegacion-encabezado">
+      <p class="demo-navegacion-etiqueta">Práctica guiada</p>
+      <h2>Prueba filtros sin consultar un reporte</h2>
+      <p class="demo-navegacion-descripcion">
+        Este panel es de ejemplo y no modifica datos ni preferencias.
+      </p>
+    </div>
+
+    <div class="demo-shell">
+      <!-- Sidebar rail (mismo estilo) -->
+      <aside class="demo-sidebar-rail" aria-label="Sistemas de ejemplo">
+        <div class="demo-sidebar-wordmark" aria-hidden="true">
+          <span class="demo-sidebar-wordmark-text">MIS</span>
+        </div>
+        <div class="demo-sidebar-separador" aria-hidden="true"></div>
+        <button type="button" class="demo-sidebar-icon demo-sidebar-icon--activo" disabled aria-hidden="true">
+          <i class="pi pi-chart-bar"></i>
+          <span class="demo-sidebar-icon-label">Reportes</span>
+        </button>
+        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
+          <i class="pi pi-users"></i>
+          <span class="demo-sidebar-icon-label">Clientes</span>
+        </button>
+        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
+          <i class="pi pi-wallet"></i>
+          <span class="demo-sidebar-icon-label">Incentivos</span>
+        </button>
+      </aside>
+
+      <div class="demo-main-area">
+        <!-- Header con breadcrumb -->
+        <header class="demo-header">
+          <nav class="demo-breadcrumb" aria-label="Breadcrumb de ejemplo">
+            <ol>
+              <li>
+                <i class="pi pi-home" aria-hidden="true"></i>
+                <span>Inicio</span>
+              </li>
+              <li><span>Reportes</span></li>
+              <li aria-current="page"><span>Panel de ejemplo</span></li>
+            </ol>
+          </nav>
+          <div class="demo-header-acciones">
+            <span class="demo-header-btn" aria-hidden="true"><i class="pi pi-search"></i></span>
+            <span class="demo-header-btn" aria-hidden="true"><i class="pi pi-sun"></i></span>
+            <span class="demo-header-pill" aria-hidden="true">
+              <span class="demo-header-avatar">JP</span>
+              <span class="demo-header-nombre">J. Pérez</span>
+            </span>
+          </div>
+        </header>
+
+        <div class="demo-contenido">
+          <div class="demo-ventana">
+            <!-- Barra de título -->
+            <div class="demo-navegacion-barra">
+              <div class="demo-barra-izquierda">
+                <div class="demo-semaforo">
+                  <span class="demo-luz demo-luz--rojo"></span>
+                  <span class="demo-luz demo-luz--amarillo"></span>
+                  <span class="demo-luz demo-luz--verde"></span>
+                </div>
+                <span class="demo-barra-titulo">Panel de ejemplo</span>
+              </div>
+              <div class="demo-navegacion-acciones">
+                <button
+                  type="button"
+                  (click)="alternarFiltros()"
+                  [attr.aria-label]="
+                    filtrosAbiertos() ? 'Ocultar filtros de ejemplo' : 'Mostrar filtros de ejemplo'
+                  "
+                >
+                  <i
+                    [class]="filtrosAbiertos() ? 'pi pi-filter-slash' : 'pi pi-filter'"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+                <button type="button" aria-label="Actualizar datos de ejemplo" (click)="actualizar()">
+                  <i class="pi pi-refresh" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            @if (filtrosAbiertos()) {
+              <div class="demo-navegacion-filtros">
+                <label>
+                  Nivel
+                  <select>
+                    <option>Agencia</option>
+                    <option>Región</option>
+                  </select>
+                </label>
+                <label>
+                  Periodo
+                  <select>
+                    <option>Actual</option>
+                    <option>Anterior</option>
+                  </select>
+                </label>
+                <button type="button" class="demo-navegacion-filtros-limpiar">Limpiar</button>
+              </div>
+            }
+
+            <div class="demo-cuerpo">
+              <p class="demo-navegacion-estado">
+                {{ actualizado() ? '✅ Datos de ejemplo actualizados.' : 'Sin consultas reales.' }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+}

@@ -7,7 +7,7 @@
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
       @if (mostrarSelector()) {
-              <p-select
+              <p-select appendTo="body"
       [options]="asesores()"
         [ngModel]="asesorSeleccionado()"
         (ngModelChange)="onAsesorSeleccionado($event)"
@@ -26,7 +26,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Semana</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesSemana"
         [ngModel]="semana()"
         (ngModelChange)="onSemanaSeleccionada($event)"

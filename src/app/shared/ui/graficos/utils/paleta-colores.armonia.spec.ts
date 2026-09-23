@@ -4,8 +4,16 @@ import {
   distanciaPerceptual,
   separacionMinima,
   aOklch,
-} from '../../../../theme/contraste.util';
-import { PALETA_SERIES, PALETA_TRAMOS, tokensTema, AZUL, MAGENTA, NARANJA, NAVY } from './paleta-colores.util';
+} from '../../../../theme/color.util';
+import {
+  PALETA_SERIES,
+  PALETA_TRAMOS,
+  tokensTema,
+  AZUL,
+  MAGENTA,
+  NARANJA,
+  NAVY,
+} from './paleta-colores.util';
 
 /**
  * Armonía de las paletas de gráficos.
@@ -75,16 +83,19 @@ describe('PALETA_SERIES (series genéricas de reportes)', () => {
     expect(grises).toEqual([]);
   });
 
-  it.each(['claro', 'oscuro'] as const)('ninguna serie desaparece sobre el fondo del gráfico (%s)', (tema) => {
-    // Umbral de VISIBILIDAD, no el 3:1 de componente de interfaz: una porción de
-    // torta es un dato, no un control, y va acompañada de leyenda y etiqueta.
-    // Seis de estos colores quedan entre 2.0 y 2.8 sobre el blanco del tema
-    // claro — está registrado en la auditoría, y por eso los gráficos NO pueden
-    // quedarse sin leyenda.
-    const { fondo } = tokensTema(tema === 'oscuro');
-    const invisibles = PALETA_SERIES.filter((c) => (contraste(c, fondo) ?? 0) < 1.6);
-    expect(invisibles).toEqual([]);
-  });
+  it.each(['claro', 'oscuro'] as const)(
+    'ninguna serie desaparece sobre el fondo del gráfico (%s)',
+    (tema) => {
+      // Umbral de VISIBILIDAD, no el 3:1 de componente de interfaz: una porción de
+      // torta es un dato, no un control, y va acompañada de leyenda y etiqueta.
+      // Seis de estos colores quedan entre 2.0 y 2.8 sobre el blanco del tema
+      // claro — está registrado en la auditoría, y por eso los gráficos NO pueden
+      // quedarse sin leyenda.
+      const { fondo } = tokensTema(tema === 'oscuro');
+      const invisibles = PALETA_SERIES.filter((c) => (contraste(c, fondo) ?? 0) < 1.6);
+      expect(invisibles).toEqual([]);
+    },
+  );
 });
 
 describe('PALETA_TRAMOS (tramos de mora del analista)', () => {
@@ -103,14 +114,17 @@ describe('PALETA_TRAMOS (tramos de mora del analista)', () => {
     expect(flojos).toEqual([]);
   });
 
-  it.each(['claro', 'oscuro'] as const)('todos los tramos llegan a 3:1 sobre el fondo del gráfico (%s)', (tema) => {
-    // Acá sí se exige el 3:1 en los dos temas: los tramos son pocos y fijos, y
-    // el dashboard del analista los pinta también como puntos y chips sueltos,
-    // sin una leyenda que los rescate.
-    const { fondo } = tokensTema(tema === 'oscuro');
-    const flojos = PALETA_TRAMOS.filter((c) => (contraste(c, fondo) ?? 0) < CONTRASTE.interfaz);
-    expect(flojos).toEqual([]);
-  });
+  it.each(['claro', 'oscuro'] as const)(
+    'todos los tramos llegan a 3:1 sobre el fondo del gráfico (%s)',
+    (tema) => {
+      // Acá sí se exige el 3:1 en los dos temas: los tramos son pocos y fijos, y
+      // el dashboard del analista los pinta también como puntos y chips sueltos,
+      // sin una leyenda que los rescate.
+      const { fondo } = tokensTema(tema === 'oscuro');
+      const flojos = PALETA_TRAMOS.filter((c) => (contraste(c, fondo) ?? 0) < CONTRASTE.interfaz);
+      expect(flojos).toEqual([]);
+    },
+  );
 });
 
 describe('Paleta de reportes mixtos (roles fijos)', () => {
@@ -137,9 +151,12 @@ describe('Paleta de reportes mixtos (roles fijos)', () => {
 });
 
 describe('Tokens de tema de Highcharts', () => {
-  it.each([false, true])('el texto de ejes y leyenda es legible sobre el fondo (oscuro=%s)', (oscuro) => {
-    const { fondo, texto, textoFuerte } = tokensTema(oscuro);
-    expect(contraste(texto, fondo) ?? 0).toBeGreaterThanOrEqual(CONTRASTE.textoGrandeAA);
-    expect(contraste(textoFuerte, fondo) ?? 0).toBeGreaterThanOrEqual(CONTRASTE.textoAA);
-  });
+  it.each([false, true])(
+    'el texto de ejes y leyenda es legible sobre el fondo (oscuro=%s)',
+    (oscuro) => {
+      const { fondo, texto, textoFuerte } = tokensTema(oscuro);
+      expect(contraste(texto, fondo) ?? 0).toBeGreaterThanOrEqual(CONTRASTE.textoGrandeAA);
+      expect(contraste(textoFuerte, fondo) ?? 0).toBeGreaterThanOrEqual(CONTRASTE.textoAA);
+    },
+  );
 });

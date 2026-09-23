@@ -49,6 +49,14 @@ Tailwind se sigue usando normalmente para **todo lo que no es color**: `flex`, `
 
 Listado completo: `src/app/theme/tokens.css`. Un hex fijo en un componente lo marca el auditor (`--regla=tokens-de-color`), porque no responde al tema oscuro ni al acento que elige el usuario.
 
+Para colores derivados de las preferencias y para medir contraste, usar las funciones compartidas de `src/app/theme/color.util.ts`. `textoSobre()` no sustituye una comprobación de contraste; resolver antes las superficies translúcidas con `componerSobre()`. Seguir el procedimiento y los umbrales en [elegir y comprobar colores](../../docs/components/design-system.md#elegir-y-comprobar-colores).
+
+### Superficies de vidrio
+
+Para paneles, tarjetas KPI y diálogos nuevos o rediseñados, seguir la [jerarquía de vidrio adaptativo](../../docs/components/design-system.md#dirección-visual-vidrio-adaptativo) y las [guías KPI](../../docs/components/kpi-guidelines.md). `.mis-window` y `.mis-page` ya usan vidrio; `.agro-kpi` es una variante local de Cartera Agrícola diaria. No extender esa clase a otros módulos por copia. Primero comprobar contraste en ambos temas y con los fondos configurables, una superficie opaca bajo datos densos y un fondo funcional sin `backdrop-filter`.
+
+Para botones, usar `p-button` con severidad y variante apropiadas; `MisTheme` define su forma y paleta, y `assets/styles/componentes/botones.css` su material. Los botones nativos que usan `.mis-btn` siguen ese mismo patrón. Reservar el acento para acciones principales y mantener etiqueta, foco y estado de presión; ver [botones y controles](../../docs/components/design-system.md#botones-y-controles).
+
 ### Por qué no se saltea el token
 
 `PreferenciasService` reescribe estos tokens en tiempo de ejecución: tema claro/oscuro, color de acento y fondo son preferencias del usuario aplicadas como variables CSS sobre `<html>`. Un color fijo se queda quieto mientras el resto de la interfaz cambia.

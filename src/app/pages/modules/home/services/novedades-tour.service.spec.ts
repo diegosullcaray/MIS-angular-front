@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { NovedadesTourService } from './novedades-tour.service';
 import { DriverTourService } from '../../../../shared/services/driver-tour.service';
 
@@ -9,7 +10,7 @@ describe('NovedadesTourService', () => {
   beforeEach(() => {
     driverFalso = { createQuickTour: vi.fn() };
     TestBed.configureTestingModule({
-      providers: [{ provide: DriverTourService, useValue: driverFalso }],
+      providers: [provideRouter([]), { provide: DriverTourService, useValue: driverFalso }],
     });
     servicio = TestBed.inject(NovedadesTourService);
   });
@@ -59,21 +60,26 @@ describe('NovedadesTourService', () => {
   });
 
   it('Pachi se presenta por su nombre en el catálogo', () => {
-    const textos = servicio.novedades.flatMap((n) => n.pasos).map((p) => String(p.popover?.description ?? ''));
+    const textos = servicio.novedades
+      .flatMap((n) => n.pasos)
+      .map((p) => String(p.popover?.description ?? ''));
 
     expect(textos.some((t) => t.includes('Pachi'))).toBe(true);
   });
 
-  it('solo el recorrido del propio panel pide tenerlo a la vista', () => {
-    const conPanel = servicio.novedades.filter((n) => n.requierePanel).map((n) => n.id);
-
-    expect(conPanel).toEqual(['panel-novedades']);
+  it('solo publica recorridos que señalan funciones del sistema, no el panel de novedades', () => {
+    expect(servicio.novedades.map((n) => n.id)).toEqual([
+      'busqueda-global',
+      'sistemas-y-paneles',
+      'configuracion-personal',
+      'filtros-y-paneles',
+    ]);
   });
 
-  it('iniciar() delega los pasos de esa novedad en el motor de tours', () => {
+  it('iniciar() prepara la interfaz y delega los pasos de esa novedad en el motor de tours', async () => {
     const primera = servicio.novedades[0];
 
-    servicio.iniciar(primera.id);
+    await servicio.iniciar(primera.id);
 
     expect(driverFalso.createQuickTour).toHaveBeenCalledTimes(1);
     expect(driverFalso.createQuickTour.mock.calls[0][0]).toEqual(primera.pasos);

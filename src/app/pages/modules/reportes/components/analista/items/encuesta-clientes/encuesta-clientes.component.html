@@ -6,7 +6,7 @@
   <div ventana-filtros class="flex flex-col gap-1">
     <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
     @if (mostrarSelector()) {
-          <p-select
+          <p-select appendTo="body"
       [options]="asesores()"
       [ngModel]="asesorSeleccionado()"
       (ngModelChange)="onAsesorSeleccionado($event)"
@@ -54,7 +54,7 @@
                   <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">
                     ¿Se ha visto afectado por el estado de emergencia establecido por el COVID-19?
                   </span>
-                  <p-select
+                  <p-select appendTo="body"
                     [options]="opcionesAfecNeg"
                     [ngModel]="model().afecNeg"
                     (ngModelChange)="actualizarCampo('afecNeg', $event)"
@@ -67,7 +67,7 @@
 
                 <div class="flex flex-col gap-1">
                   <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">¿Actualmente su negocio está funcionando?</span>
-                  <p-select
+                  <p-select appendTo="body"
                     [options]="opcionesFunNeg"
                     [ngModel]="model().funNeg"
                     (ngModelChange)="actualizarCampo('funNeg', $event)"
@@ -83,7 +83,7 @@
                     <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">
                       Situación de su nivel de ventas/Ingresos después de la declaratoria de emergencia
                     </span>
-                    <p-select
+                    <p-select appendTo="body"
                       [options]="opcionesSitNeg"
                       [ngModel]="model().sitNeg"
                       (ngModelChange)="actualizarCampo('sitNeg', $event)"
@@ -98,7 +98,7 @@
                 @if (!encuestaForm.redNeg().hidden()) {
                   <div class="flex flex-col gap-1">
                     <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">¿En qué % se redujo su nivel de ventas?</span>
-                    <p-select
+                    <p-select appendTo="body"
                       [options]="opcionesRedNeg"
                       [ngModel]="model().redNeg"
                       (ngModelChange)="actualizarCampo('redNeg', $event)"
@@ -113,7 +113,7 @@
                 @if (!encuestaForm.secEco().hidden()) {
                   <div class="flex flex-col gap-1">
                     <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Seleccione Sector Económico</span>
-                    <p-select
+                    <p-select appendTo="body"
                       [options]="opcionesSecEco"
                       [ngModel]="model().secEco"
                       (ngModelChange)="actualizarCampo('secEco', $event)"
@@ -128,7 +128,7 @@
                 @if (!encuestaForm.girNeg().hidden()) {
                   <div class="flex flex-col gap-1">
                     <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Seleccione Giro de negocio actual</span>
-                    <p-select
+                    <p-select appendTo="body"
                       [options]="opcionesGirNeg()"
                       [ngModel]="model().girNeg"
                       (ngModelChange)="actualizarCampo('girNeg', $event)"

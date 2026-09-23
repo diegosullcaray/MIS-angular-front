@@ -10,9 +10,16 @@ import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
 import type { UsuarioActivo } from '../../../../../core/interfaces/shell-state.model';
-import type { SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../../interfaces/sidebar.model';
+import type {
+  SidebarIcon,
+  SidebarNavPanelConfig,
+  SidebarNavRuta,
+} from '../../interfaces/sidebar.model';
 import { FUENTE_BUSQUEDA } from '../../../../../shared/ui/buscador/fuente-busqueda';
-import type { FuenteBusqueda, RegistroBuscable } from '../../../../../shared/ui/buscador/buscador.model';
+import type {
+  FuenteBusqueda,
+  RegistroBuscable,
+} from '../../../../../shared/ui/buscador/buscador.model';
 
 @Component({ template: '', standalone: true })
 class BlankComponent {}
@@ -54,7 +61,10 @@ describe('HeaderComponent', () => {
     cambiarAUsuarioAlterno: ReturnType<typeof vi.fn>;
     volverAUsuarioOriginal: ReturnType<typeof vi.fn>;
   };
-  let menuStgFalso: { sistemas: ReturnType<typeof signal<SidebarIcon[]>>; buscarPorRuta: ReturnType<typeof vi.fn> };
+  let menuStgFalso: {
+    sistemas: ReturnType<typeof signal<SidebarIcon[]>>;
+    buscarPorRuta: ReturnType<typeof vi.fn>;
+  };
   let kaypachaFalso: { buscarCategoria: ReturnType<typeof vi.fn> };
   let navegacionFalso: {
     panelActivo: ReturnType<typeof signal<SidebarNavPanelConfig | null>>;
@@ -73,7 +83,10 @@ describe('HeaderComponent', () => {
       cambiarAUsuarioAlterno: vi.fn().mockResolvedValue(undefined),
       volverAUsuarioOriginal: vi.fn(),
     };
-    menuStgFalso = { sistemas: signal<SidebarIcon[]>([]), buscarPorRuta: vi.fn().mockReturnValue(null) };
+    menuStgFalso = {
+      sistemas: signal<SidebarIcon[]>([]),
+      buscarPorRuta: vi.fn().mockReturnValue(null),
+    };
     kaypachaFalso = { buscarCategoria: vi.fn().mockReturnValue(undefined) };
     navegacionFalso = {
       panelActivo: signal<SidebarNavPanelConfig | null>(null),
@@ -131,7 +144,11 @@ describe('HeaderComponent', () => {
   });
 
   it('breadcrumb de categoria-detalle usa el nombre real de la categoría (KaypachaService)', async () => {
-    kaypachaFalso.buscarCategoria.mockReturnValue({ name: 'Zona Norte', reportType: 'Medal', rdestip: 'cat-1' });
+    kaypachaFalso.buscarCategoria.mockReturnValue({
+      name: 'Zona Norte',
+      reportType: 'Medal',
+      rdestip: 'cat-1',
+    });
 
     const fixture = await crear('/app/ranking-k/categoria/cat-1');
 
@@ -152,15 +169,33 @@ describe('HeaderComponent', () => {
   });
 
   it('breadcrumb de un sistema remoto de STG usa el árbol de MenuStgService, con cada nivel salvo el actual clickeable', async () => {
-    const nodoClientes: SidebarNavRuta = { etiqueta: 'Clientes', hijos: [{ etiqueta: 'CMG Clientes Flujo', ruta: '/app/actividad-mensual/clientes/cmg' }] };
+    const nodoClientes: SidebarNavRuta = {
+      etiqueta: 'Clientes',
+      hijos: [{ etiqueta: 'CMG Clientes Flujo', ruta: '/app/actividad-mensual/clientes/cmg' }],
+    };
     const nodoHoja = nodoClientes.hijos![0];
-    menuStgFalso.buscarPorRuta.mockReturnValue({ sistemaId: 'sist-1', nodos: [nodoClientes, nodoHoja] });
-    menuStgFalso.sistemas.set([{ id: 'sist-1', tipo: 'remote', icono: 'pi', etiqueta: 'Actividad Mensual', tienePanel: true }]);
+    menuStgFalso.buscarPorRuta.mockReturnValue({
+      sistemaId: 'sist-1',
+      nodos: [nodoClientes, nodoHoja],
+    });
+    menuStgFalso.sistemas.set([
+      {
+        id: 'sist-1',
+        tipo: 'remote',
+        icono: 'pi',
+        etiqueta: 'Actividad Mensual',
+        tienePanel: true,
+      },
+    ]);
 
     const fixture = await crear('/app/actividad-mensual/clientes/cmg');
     const items = fixture.componentInstance['breadcrumbItems']();
 
-    expect(items.map((i) => i.label)).toEqual(['Actividad Mensual', 'Clientes', 'CMG Clientes Flujo']);
+    expect(items.map((i) => i.label)).toEqual([
+      'Actividad Mensual',
+      'Clientes',
+      'CMG Clientes Flujo',
+    ]);
     // El último (la pantalla actual) no navega a ningún lado; los anteriores sí.
     expect(items[2].command).toBeUndefined();
 
@@ -171,9 +206,33 @@ describe('HeaderComponent', () => {
     expect(navegacionFalso.abrirEnCarpeta).toHaveBeenCalledWith('sist-1', [nodoClientes]);
   });
 
+  it('breadcrumb de una sección remota directa usa desc_sec y nunca cod_sec', async () => {
+    menuStgFalso.sistemas.set([
+      {
+        id: 'L_ACTI_TASA',
+        tipo: 'remote',
+        icono: 'pi pi-chart-line',
+        etiqueta: 'Actividad y Tasas',
+        ruta: '/app/reportes/leg/com/rda/adm/act-tasa',
+        tienePanel: false,
+      },
+    ]);
+
+    const fixture = await crear('/app/reportes/leg/com/rda/adm/act-tasa');
+
+    expect(fixture.componentInstance['breadcrumbItems']()).toEqual([
+      { label: 'Actividad y Tasas' },
+    ]);
+  });
+
   it('mientras se muestra el explorador del sistema, el breadcrumb refleja la carpeta abierta y vuelve a su nivel al hacer clic', async () => {
     const carpetaA: SidebarNavRuta = { etiqueta: 'Avance Comercial', hijos: [] };
-    navegacionFalso.panelActivo.set({ tipo: 'remote', titulo: 'Reportes', icono: 'pi', secciones: [] });
+    navegacionFalso.panelActivo.set({
+      tipo: 'remote',
+      titulo: 'Reportes',
+      icono: 'pi',
+      secciones: [],
+    });
     navegacionFalso.rutaExplorador.set([carpetaA]);
     shell.setContenidoPendienteSeleccion(true);
 
@@ -214,7 +273,9 @@ describe('HeaderComponent', () => {
   it('despliega el buscador global desde el botón junto al tema', async () => {
     const fixture = await crear('/app/dashboard');
     const el = fixture.nativeElement as HTMLElement;
-    const boton = el.querySelector('button[aria-label="Abrir búsqueda global"]') as HTMLButtonElement;
+    const boton = el.querySelector(
+      'button[aria-label="Abrir búsqueda global"]',
+    ) as HTMLButtonElement;
 
     expect(el.querySelector('app-buscador')).toBeNull();
     boton.click();
@@ -228,7 +289,11 @@ describe('HeaderComponent', () => {
     // Con el campo abierto, el botón deja de ser otra lupa: solo la del input
     // representa la búsqueda y el botón se convierte en cierre.
     expect(el.querySelectorAll('.mis-buscador-lupa')).toHaveLength(1);
-    expect(Array.from(el.querySelectorAll('ng-icon')).some((icono) => icono.getAttribute('name') === 'lucideSearch')).toBe(false);
+    expect(
+      Array.from(el.querySelectorAll('ng-icon')).some(
+        (icono) => icono.getAttribute('name') === 'lucideSearch',
+      ),
+    ).toBe(false);
 
     // El header monta el mismo componente Algolia del explorador: búsqueda
     // instantánea, tolerancia al typo y resultado navegable.
@@ -237,7 +302,9 @@ describe('HeaderComponent', () => {
     input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     expect(el.querySelectorAll('.mis-buscador-opcion')).toHaveLength(1);
-    expect(el.querySelector('.mis-buscador-etiqueta')?.textContent).toContain('Monitor Metas Desembolso');
+    expect(el.querySelector('.mis-buscador-etiqueta')?.textContent).toContain(
+      'Monitor Metas Desembolso',
+    );
 
     boton.click();
     fixture.detectChanges();
@@ -276,7 +343,11 @@ describe('HeaderComponent', () => {
   it('no tiene botón de alternar el panel: en mobile la Col 2 ya no es alcanzable, la navegación vive en el explorador', async () => {
     const fixture = await crear('/app/dashboard');
 
-    expect((fixture.nativeElement as HTMLElement).querySelector('button[aria-label="Alternar menú lateral"]')).toBeNull();
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        'button[aria-label="Alternar menú lateral"]',
+      ),
+    ).toBeNull();
   });
 
   describe('Configuración', () => {
@@ -301,7 +372,11 @@ describe('HeaderComponent', () => {
   });
 
   describe('Cambio de perfil', () => {
-    const ALTERNO = { email: 'carlos.ruiz@confianza.pe', nombre: 'Carlos Ruiz', cargo: 'Supervisor' };
+    const ALTERNO = {
+      email: 'carlos.ruiz@confianza.pe',
+      nombre: 'Carlos Ruiz',
+      cargo: 'Supervisor',
+    };
 
     it('no muestra otros perfiles cuando el usuario no tiene alternates', async () => {
       const fixture = await crear('/app/dashboard');

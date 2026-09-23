@@ -201,7 +201,7 @@
                       <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-2 py-0 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
                         <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-text-secondary)]]="focusedItem() !== item.id"></i>
                       </p-inputgroup-addon>
-                      <p-select
+                      <p-select appendTo="body"
                         [options]="opcionesSistematica"
                         optionLabel="label"
                         optionValue="value"

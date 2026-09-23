@@ -10,7 +10,7 @@
   ></button>
 }
 
-<!-- Col 1: Tira de íconos — barra inferior fija en mobile (estilo Facebook), rail vertical desde sm: -->
+<!-- Col 1: tira de íconos sobre vidrio, como barra inferior en móvil y rail vertical desde sm. -->
 <aside
   id="tour-sidebar-icons"
   [class.sidebar-rail--abierto]="railAbierto()"
@@ -28,18 +28,26 @@
     routerLink="/app/dashboard"
     aria-label="MIS — ir al inicio"
   >
-    <img src="assets/images/fc/logos/mis_white.png" alt="MIS" class="h-4 w-auto opacity-90 hover:opacity-100 transition-opacity" />
+    <img
+      src="assets/images/fc/logos/mis_white.png"
+      alt="MIS"
+      class="h-4 w-auto opacity-90 hover:opacity-100 transition-opacity"
+    />
   </a>
 
-  <div class="sidebar-separador hidden sm:block sm:w-7 sm:h-[1px] sm:mx-0 sm:mb-1 bg-white/12 shrink-0"></div>
+  <div
+    class="sidebar-separador hidden sm:block sm:w-7 sm:h-[1px] sm:mx-0 sm:mb-1 bg-white/12 shrink-0"
+  ></div>
 
   <!-- Contenedor relativo en mobile para alojar los íconos y las flechas de desplazamiento; rail vertical scrollable en desktop -->
-  <div class="sidebar-rail-cuerpo relative flex-1 flex flex-row items-center overflow-hidden w-full h-full sm:flex-col sm:min-h-0 sm:overflow-hidden">
+  <div
+    class="sidebar-rail-cuerpo relative flex-1 flex flex-row items-center overflow-hidden w-full h-full sm:flex-col sm:min-h-0 sm:overflow-hidden"
+  >
     <!-- Flecha izquierda en mobile con difuminado gradual -->
     @if (puedeScrollIzquierda()) {
       <button
         type="button"
-        class="sidebar-rail-edge sidebar-rail-edge--left sm:hidden absolute left-0 z-10 flex shrink-0 items-center justify-start pl-1 w-9 h-full text-white hover:text-white transition-all duration-150 border-0 cursor-pointer p-0"
+        class="sidebar-rail-edge sidebar-rail-edge--left sm:hidden absolute left-0 z-10 flex shrink-0 items-center justify-start pl-1 w-9 h-full p-0"
         (click)="desplazarIzquierda()"
         aria-label="Desplazar íconos a la izquierda"
       >
@@ -55,7 +63,7 @@
     >
       @for (icon of iconos(); track icon.id) {
         <button
-          class="sidebar-icon-btn w-12 h-12 sm:w-11 sm:h-auto shrink-0 flex flex-col items-center justify-center gap-[3px] sm:py-2 border-0 bg-transparent text-white/70 rounded-[10px] cursor-pointer transition-all duration-150 relative hover:bg-white/10 hover:text-white/90"
+          class="sidebar-icon-btn w-12 h-12 sm:w-11 sm:h-auto shrink-0 flex flex-col items-center justify-center gap-[3px] sm:py-2 relative"
           [class.sidebar-icon-btn--active]="iconActivoId() === icon.id"
           [pTooltip]="icon.etiqueta"
           (click)="seleccionarIcono(icon)"
@@ -63,7 +71,10 @@
           [attr.aria-current]="iconActivoId() === icon.id ? 'page' : null"
         >
           <i [class]="icon.icono + ' text-[20px]'"></i>
-          <span class="sidebar-etiqueta text-[9px] font-medium text-center leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]">{{ icon.etiqueta }}</span>
+          <span
+            class="sidebar-etiqueta text-[9px] font-medium text-center leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]"
+            >{{ icon.etiqueta }}</span
+          >
         </button>
       }
     </div>
@@ -72,7 +83,7 @@
     @if (puedeScrollDerecha()) {
       <button
         type="button"
-        class="sidebar-rail-edge sidebar-rail-edge--right sm:hidden absolute right-0 z-10 flex shrink-0 items-center justify-end pr-1 w-9 h-full text-white hover:text-white transition-all duration-150 border-0 cursor-pointer p-0"
+        class="sidebar-rail-edge sidebar-rail-edge--right sm:hidden absolute right-0 z-10 flex shrink-0 items-center justify-end pr-1 w-9 h-full p-0"
         (click)="desplazarDerecha()"
         aria-label="Desplazar íconos a la derecha"
       >

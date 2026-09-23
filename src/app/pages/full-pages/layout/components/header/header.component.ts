@@ -1,13 +1,29 @@
-import { afterNextRender, Component, computed, inject, Injector, signal, viewChild } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  computed,
+  inject,
+  Injector,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
-  lucideChevronDown, lucideSettings,
-  lucideLogOut, lucideSearch, lucideAlertTriangle,
-  lucideUsers, lucideSun, lucideMoon, lucideMenu, lucideMegaphone, lucideX
+  lucideChevronDown,
+  lucideSettings,
+  lucideLogOut,
+  lucideSearch,
+  lucideAlertTriangle,
+  lucideUsers,
+  lucideSun,
+  lucideMoon,
+  lucideMenu,
+  lucideMegaphone,
+  lucideX,
 } from '@ng-icons/lucide';
 
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -39,13 +55,28 @@ interface PerfilDelMenu {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgIconComponent, BreadcrumbModule, DialogModule, ButtonModule, ConfiguracionDialogComponent, BuscadorComponent],
+  imports: [
+    NgIconComponent,
+    BreadcrumbModule,
+    DialogModule,
+    ButtonModule,
+    ConfiguracionDialogComponent,
+    BuscadorComponent,
+  ],
   viewProviders: [
     provideIcons({
-      lucideChevronDown, lucideSettings,
-      lucideLogOut, lucideSearch, lucideAlertTriangle,
-      lucideUsers, lucideSun, lucideMoon, lucideMenu, lucideMegaphone, lucideX
-    })
+      lucideChevronDown,
+      lucideSettings,
+      lucideLogOut,
+      lucideSearch,
+      lucideAlertTriangle,
+      lucideUsers,
+      lucideSun,
+      lucideMoon,
+      lucideMenu,
+      lucideMegaphone,
+      lucideX,
+    }),
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
@@ -76,9 +107,9 @@ export class HeaderComponent {
   private readonly urlActual = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-      map(e => e.urlAfterRedirects)
+      map((e) => e.urlAfterRedirects),
     ),
-    { initialValue: this.router.url }
+    { initialValue: this.router.url },
   );
 
   protected readonly menuSuperpuesto = computed(
@@ -88,7 +119,14 @@ export class HeaderComponent {
   protected readonly otrosPerfiles = computed<PerfilDelMenu[]>(() => {
     const original = this.auth.usuarioOriginal();
     if (original) {
-      return [{ clave: original.email, nombre: original.nombre, detalle: original.email, esOriginal: true }];
+      return [
+        {
+          clave: original.email,
+          nombre: original.nombre,
+          detalle: original.email,
+          esOriginal: true,
+        },
+      ];
     }
 
     if (!this.auth.puedeCambiarUsuario()) return [];
@@ -102,7 +140,10 @@ export class HeaderComponent {
     }));
   });
 
-  protected readonly breadcrumbHome: MenuItem = { icon: 'pi pi-home', routerLink: '/app/dashboard' };
+  protected readonly breadcrumbHome: MenuItem = {
+    icon: 'pi pi-home',
+    routerLink: '/app/dashboard',
+  };
 
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
     if (this.shell.contenidoPendienteSeleccion()) return this.breadcrumbExplorador();
@@ -119,7 +160,7 @@ export class HeaderComponent {
   });
 
   protected toggleDropdown(): void {
-    this.dropdownOpen.update(v => !v);
+    this.dropdownOpen.update((v) => !v);
   }
 
   protected alternarRail(): void {
@@ -241,15 +282,25 @@ export class HeaderComponent {
 
   /** Breadcrumb para rutas de sistemas remotos (STG). */
   private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
+    // Una sección remota puede ser un ícono sin hijos. En ese caso `act_sec`
+    // apunta directamente a la pantalla y no aparece en `hijosPorSistema`.
+    // Su etiqueta ya es `desc_sec`; nunca usar `cod_sec` como texto visible.
+    const seccionDirecta = this.menuStg.sistemas().find((sistema) => sistema.ruta === url);
+    if (seccionDirecta) return [{ label: seccionDirecta.etiqueta }];
+
     const hallazgo = this.menuStg.buscarPorRuta(url);
 
     if (hallazgo) {
       const carpetas = hallazgo.nodos.slice(0, -1);
       return [
-        { label: this.labelDeRemote(hallazgo.sistemaId), command: () => this.navegacion.abrirEnCarpeta(hallazgo.sistemaId, []) },
+        {
+          label: this.labelDeRemote(hallazgo.sistemaId),
+          command: () => this.navegacion.abrirEnCarpeta(hallazgo.sistemaId, []),
+        },
         ...carpetas.map((nodo, i) => ({
           label: nodo.etiqueta,
-          command: () => this.navegacion.abrirEnCarpeta(hallazgo.sistemaId, carpetas.slice(0, i + 1)),
+          command: () =>
+            this.navegacion.abrirEnCarpeta(hallazgo.sistemaId, carpetas.slice(0, i + 1)),
         })),
         { label: hallazgo.nodos[hallazgo.nodos.length - 1].etiqueta },
       ];
@@ -258,13 +309,16 @@ export class HeaderComponent {
     // Fallback: Muestra el último segmento limpio si el árbol aún no cargó.
     const items: MenuItem[] = [{ label: this.labelDeRemote(resto[0]) }];
     if (resto.length > 1) {
-      items.push({ label: this.prettify(resto[resto.length - 1]) });
+      const activo = this.shell.menuItemActivo();
+      const etiqueta =
+        activo?.ruta === url ? activo.etiqueta : this.prettify(resto[resto.length - 1]);
+      items.push({ label: etiqueta });
     }
     return items;
   }
 
   private labelDeRemote(slug: string): string {
-    const stg = this.menuStg.sistemas().find(s => s.id === slug);
+    const stg = this.menuStg.sistemas().find((s) => s.id === slug);
     return stg?.etiqueta ?? this.prettify(slug.replace('subsistema-', ''));
   }
 

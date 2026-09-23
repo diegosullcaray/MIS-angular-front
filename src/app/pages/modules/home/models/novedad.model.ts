@@ -1,5 +1,23 @@
 import type { DriveStep } from 'driver.js';
 
+export type PosePachi =
+  | 'guia'
+  | 'celebra'
+  | 'saluda'
+  | 'piensa'
+  | 'sorpresa'
+  | 'alerta'
+  | 'feliz'
+  | 'camina'
+  | 'buscar'
+  | 'escribe'
+  | 'trabaja'
+  | 'duda'
+  | 'idea';
+
+/** Laboratorio local que permite practicar sin abrir un reporte protegido. */
+export type ModoEjemploNovedad = 'navegacion' | 'filtros' | null;
+
 /**
  * Una mejora del sistema listada en el panel de novedades del Home. Cada una
  * trae su propio recorrido guiado: al elegirla, el tour resalta en pantalla lo
@@ -12,16 +30,12 @@ export interface Novedad {
   resumen: string;
   /** Ícono de PrimeIcons que acompaña al título en la lista. */
   icono: string;
+  /** Tema para agrupar novedades relacionadas en el panel. */
+  categoria: string;
+  /** Pose de Baby Pachi mientras este tema está seleccionado. */
+  posePachi: PosePachi;
   /** Cuándo se publicó, para ordenar y para la etiqueta "Nuevo". */
   fecha: string;
   /** Los pasos del recorrido guiado. */
   pasos: DriveStep[];
-  /**
-   * `true` si el recorrido habla del panel de novedades y necesita verlo.
-   *
-   * El resto **se cierra el panel antes de arrancar**: los pasos señalan cosas
-   * de la pantalla y el panel, que en angosto ocupa todo el ancho, taparía
-   * justo lo que quiere mostrar.
-   */
-  requierePanel?: boolean;
 }

@@ -367,7 +367,7 @@ la X y el Escape justo en el primer ingreso de un administrador.
    con eso desaparece el bloque `.dark` duplicado. El `style="color: #ea580c"`
    de `monetizado-card` pasa a `--mis-warning`.
 
-Los cinco chips se midieron con `contraste.util.ts`: los diez pares
+Los cinco chips se midieron con `contraste()` (ahora en `theme/color.util.ts`): los diez pares
 (claro y oscuro) superan el umbral `textoAA` de 4.5:1.
 
 ### Regresión

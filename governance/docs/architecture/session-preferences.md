@@ -28,7 +28,7 @@ pages/full-pages/layout/
 pages/modules/home/services/recientes.service.ts   historial de reportes del Home
 pages/full-pages/auth/service/limpieza-sesion.service.ts   el borrado al cerrar sesion
 core/services/almacenamiento-navegador.service.ts  envoltorio de storage, cookies y caches
-theme/color.util.ts · theme/contraste.util.ts      aritmetica de color
+theme/color.util.ts                                aritmetica y verificacion de color
 ```
 
 Hasta el 2026-09-08 todo esto estaba en `core/preferencias/`, partido en
@@ -43,7 +43,7 @@ Lo que **no** bajo al layout, y por que:
 |---|---|---|
 | `almacenamiento-navegador` | `core/services/` | Envuelve `localStorage`, cookies y caches. No conoce ninguna pantalla. |
 | `limpieza-sesion` | `auth/service/` | Su unico consumidor es `AuthService`. |
-| `color.util`, `contraste.util` | `theme/` | Los consumen tambien las pruebas de contraste de la paleta y las de armonia de graficos. Dejarlos en el layout obligaria a `theme/` y `shared/` a importar de una pantalla. |
+| `color.util` | `theme/` | La apariencia consume las conversiones; las pruebas de paleta y gráficos usan contraste y separación perceptual del mismo utilitario. Dejarlo en el layout obligaría a `theme/` y `shared/` a importar de una pantalla. |
 | `ModoTema` | `shared/services/theme.service.ts` | El dueno del tema es `ThemeService`; las preferencias solo lo persisten. |
 
 Quedan dos consumos de pantalla a pantalla, asumidos: el Home lee `recientes()`

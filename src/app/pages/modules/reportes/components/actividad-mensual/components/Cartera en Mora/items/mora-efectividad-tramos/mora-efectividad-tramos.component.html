@@ -53,16 +53,16 @@
       @if (tarjetas().length > 0) {
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
           @for (tarjeta of tarjetas(); track tarjeta.etiqueta) {
-            <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col justify-between gap-2">
-              <span class="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-[var(--mis-text-secondary)] line-clamp-1">
+            <div class="kpi-card p-4 sm:p-5 rounded-2xl flex flex-col justify-between gap-3">
+              <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] line-clamp-1">
                 {{ tarjeta.etiqueta }}
               </span>
 
-              <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight">
+              <span class="text-[22px] sm:text-[26px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
                 {{ tarjeta.valor }}
               </span>
 
-              <span class="text-[11px] sm:text-[12px] font-medium text-[var(--mis-text-tertiary)]">
+              <span class="text-[11px] sm:text-[12px] font-medium text-[var(--mis-text-secondary)]">
                 {{ tarjeta.comparativo }}
               </span>
             </div>

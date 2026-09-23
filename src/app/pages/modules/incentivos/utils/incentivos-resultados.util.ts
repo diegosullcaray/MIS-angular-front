@@ -80,10 +80,11 @@ export function mapearResultadosIncentivos(
           tp3: Number(ds3['pag3'] ?? 0),
         };
       }
-      const idxTas = plus.findIndex((p) => p.id === 'tas' && p.show);
-      if (idxTas !== -1) {
-        plus[idxTas] = { ...plus[idxTas], val1: Number(ds3['tas_min'] ?? 0), met: Number(ds3['tas_met'] ?? 0) };
-      }
+    }
+
+    const idxTas = plus.findIndex((p) => p.id === 'tas' && p.show);
+    if (idxTas !== -1) {
+      plus[idxTas] = { ...plus[idxTas], val1: Number(ds3['tas_min'] ?? 0), met: Number(ds3['tas_met'] ?? 0) };
     }
 
     const calculadora: CalculadoraConfig = {

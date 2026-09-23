@@ -6,7 +6,7 @@
   <div ventana-filtros class="flex flex-col gap-1">
     <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
     @if (mostrarSelector()) {
-          <p-select
+          <p-select appendTo="body"
       [options]="asesores()"
       [ngModel]="asesorSeleccionado()"
       (ngModelChange)="onAsesorSeleccionado($event)"
@@ -52,7 +52,7 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div class="flex flex-col gap-1">
                   <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Cliente Contestó Teléfono Otorgado</span>
-                  <p-select
+                  <p-select appendTo="body"
                     [options]="opcionesPreg01"
                     [ngModel]="model().preg_01"
                     (ngModelChange)="actualizarCampo('preg_01', $event)"
@@ -65,7 +65,7 @@
 
                 <div class="flex flex-col gap-1">
                   <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Afectación de su Negocio</span>
-                  <p-select
+                  <p-select appendTo="body"
                     [options]="opcionesPreg02"
                     [ngModel]="model().preg_02"
                     (ngModelChange)="actualizarCampo('preg_02', $event)"
@@ -78,7 +78,7 @@
 
                 <div class="flex flex-col gap-1">
                   <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Mis Ventas Bajaron</span>
-                  <p-select
+                  <p-select appendTo="body"
                     [options]="opcionesPreg03"
                     [ngModel]="model().preg_03"
                     (ngModelChange)="actualizarCampo('preg_03', $event)"
@@ -91,7 +91,7 @@
 
                 <div class="flex flex-col gap-1">
                   <span class="text-[11px] font-medium text-[var(--mis-text-secondary)]">Está de Acuerdo con su Cronograma</span>
-                  <p-select
+                  <p-select appendTo="body"
                     [options]="opcionesPreg04"
                     [ngModel]="model().preg_04"
                     (ngModelChange)="actualizarCampo('preg_04', $event)"

@@ -98,15 +98,21 @@
   filter: brightness(0.85);
 }
 
-.mis-window-light--cerrar { background: #ff5f57; }
+.mis-window-light--cerrar {
+  background: #ff5f57;
+}
 /* Luz que esta ventana no ofrece: se ve, no responde. */
 .mis-window-light--apagada {
   background: var(--mis-window-light-apagada);
   cursor: default;
 }
 /* El amarillo navega hacia atrás (antes minimizaba al explorador). */
-.mis-window-light--volver { background: #febc2e; }
-.mis-window-light--zoom { background: #28c840; }
+.mis-window-light--volver {
+  background: #febc2e;
+}
+.mis-window-light--zoom {
+  background: #28c840;
+}
 
 /* ── Título ───────────────────────────────────────────────── */
 .mis-window-title {
@@ -164,18 +170,23 @@
 /* Botón de la barra de título (también para las acciones que proyecta cada
    módulo, ej. el tour guiado de Kaypacha). */
 .mis-window-btn {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  border: 0;
-  border-radius: var(--mis-radius-sm);
-  background: transparent;
+  border: 1px solid var(--mis-window-bar-border);
+  border-radius: var(--mis-radius-full);
+  background: color-mix(in srgb, var(--mis-surface) 35%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--mis-text-secondary);
   cursor: pointer;
-  transition: background-color var(--mis-transition-fast), color var(--mis-transition-fast);
+  transition:
+    background-color var(--mis-transition-fast),
+    color var(--mis-transition-fast),
+    border-color var(--mis-transition-fast);
 }
 
 .mis-window-btn:hover:not(:disabled) {
@@ -202,7 +213,9 @@
 }
 
 @keyframes mis-window-girar {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Cuerpo ───────────────────────────────────────────────── */

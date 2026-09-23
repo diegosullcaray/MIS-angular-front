@@ -21,6 +21,43 @@
   height: 32px;
 }
 
+/* Acciones compactas del header: cápsulas de vidrio, no íconos sueltos sobre
+   el wallpaper. Conservan superficie y borde aunque no haya soporte blur. */
+.header-action-button,
+.header-profile-trigger {
+  border: 1px solid var(--mis-header-control-border);
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-header-control-bg);
+  color: var(--mis-text-primary);
+  box-shadow:
+    inset 0 1px 0 var(--mis-glass-border),
+    var(--mis-shadow-sm);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  cursor: pointer;
+  transition:
+    transform var(--mis-transition-fast),
+    background-color var(--mis-transition-fast),
+    border-color var(--mis-transition-fast),
+    box-shadow var(--mis-transition-fast);
+}
+
+.header-action-button:hover,
+.header-profile-trigger:hover {
+  background: var(--mis-header-control-hover);
+  border-color: var(--mis-header-control-active);
+  box-shadow:
+    inset 0 1px 0 var(--mis-glass-border),
+    var(--mis-shadow-md);
+  transform: translateY(-1px);
+}
+
+.header-action-button:focus-visible,
+.header-profile-trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--mis-shadow-focus);
+}
+
 .animate-dropdownFadeIn {
   animation: dropdownFadeIn var(--mis-transition-fast) ease;
 }
@@ -242,8 +279,14 @@
 }
 
 @keyframes dropdownFadeIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes headerSearchSweep {
@@ -260,8 +303,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .header-buscador-global {
+  .header-buscador-global,
+  .header-action-button,
+  .header-profile-trigger {
     animation: none;
+    transition: none;
+  }
+
+  .header-action-button:hover,
+  .header-profile-trigger:hover {
+    transform: none;
   }
 }
 
@@ -278,5 +329,4 @@
   .header-buscador-global ::ng-deep .mis-buscador-input {
     height: 40px;
   }
-
 }

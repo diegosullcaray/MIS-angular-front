@@ -12,22 +12,21 @@
   <!-- Tres por fila en vez de cuatro: la tarjeta necesita ancho para que el valor respire. -->
   <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
     @for (t of tarjetas(); track t.etiqueta) {
-    <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex items-center justify-between gap-2.5 sm:gap-3">
-      <div class="flex flex-col gap-1.5 min-w-0">
-        <!-- La etiqueta va arriba: es lo que dice QUÉ se está mirando. -->
-        <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] truncate">
-          {{ t.etiqueta }}
-        </span>
+    <div class="kpi-card p-4 sm:p-5 rounded-2xl flex flex-col justify-between gap-3">
+      <!-- La etiqueta va arriba: es lo que dice QUÉ se está mirando. -->
+      <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] truncate">
+        {{ t.etiqueta }}
+      </span>
 
-        <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums truncate">
-          @if (t.valor === '' || t.valor === null) {
-          —
-          } @else if (isNumeroFinito(t.valor)) {
-          {{ +t.valor | number: '1.0-0' }}
-          } @else {
-          {{ t.valor }}
-          }
-        </span>
+      <span class="text-[22px] sm:text-[26px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums truncate">
+        @if (t.valor === '' || t.valor === null) {
+        —
+        } @else if (isNumeroFinito(t.valor)) {
+        {{ +t.valor | number: '1.0-0' }}
+        } @else {
+        {{ t.valor }}
+        }
+      </span>
 
         <span class="flex items-center gap-1.5 text-[12px] min-w-0">
           @if (t.senal !== 0 && t.delta && t.cumplimiento === undefined) {
@@ -42,13 +41,12 @@
           }
           <span class="text-[var(--mis-text-tertiary)] truncate">{{ t.comparativo }}</span>
         </span>
-      </div>
 
-      @if (t.cumplimiento !== undefined) {
-      <p-knob [ngModel]="valorAnillo(t)" readonly [size]="54" [strokeWidth]="6" valueTemplate="{value}%"
-        [valueColor]="colorAnillo(valorAnillo(t))" rangeColor="var(--mis-border)"
-        textColor="var(--mis-text-primary)" />
-      }
+        @if (t.cumplimiento !== undefined) {
+        <p-knob [ngModel]="valorAnillo(t)" readonly [size]="54" [strokeWidth]="6" valueTemplate="{value}%"
+          [valueColor]="colorAnillo(valorAnillo(t))" rangeColor="var(--mis-border)"
+          textColor="var(--mis-text-primary)" />
+        }
     </div>
     }
   </section>
