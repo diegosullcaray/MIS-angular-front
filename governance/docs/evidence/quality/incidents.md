@@ -584,7 +584,7 @@ Tres casos en `panel-novedades.component.spec.ts` y uno en
 | **Componente** | `src/assets/images/fc/tours/` |
 | **Commit evaluado** | `3eae138` |
 | **Fecha** | 2026-09-11 |
-| **Estado** | **Abierto** — medido, no corregido |
+| **Estado** | **Corregido** el 2026-09-24 — reescaladas a 256 px, 7,55 MB → 0,63 MB |
 
 ### Resultado observado
 
@@ -617,6 +617,15 @@ contra los 7,3 MB actuales.
 El `<img>` de cada paso declara `width`/`height` reales y `decoding="async"`:
 el navegador conoce la proporción antes de decodificar, así que el globo no
 salta mientras el PNG carga. No reduce el peso.
+
+### Corrección (2026-09-24)
+
+Se reescalaron las trece poses a **256 × 256** (el doble del mayor tamaño de
+render) con Pillow, que sí estaba disponible, sin sumar dependencias al
+proyecto: **7,55 MB → 0,63 MB** en total. `conPachi()` declara ahora
+`width`/`height` de 256 (`LADO_MASCOTA`) y `NovedadesTourService` precarga las
+poses de la guía antes del primer globo. Una guía completa baja 270-430 kB.
+Ver INC-2026-09-24-01.
 
 ### Nota sobre la compuerta
 
@@ -844,3 +853,64 @@ inicial no había visto: la URL rota al volver y la región del Home sin nombre.
 
 - **E2E:** 507 en verde y 1 omitido a propósito (clic sobre un gráfico en móvil).
 - **Unitarias:** 1796 en verde.
+
+---
+
+## INC-2026-09-24-01 · Las guías del panel de novedades se trababan
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `shared/services/driver-tour.service.ts`, `home/services/novedades-tour.service.ts` |
+| **Pantalla** | Home (`/app/dashboard`) → panel de novedades → "Ver guía" |
+| **Fecha** | 2026-09-24 |
+| **Estado** | **Corregido** |
+| **Regresión** | `e2e/novedades-tours.spec.ts` (10 casos, escritorio y móvil). Contra el código anterior fallan 6. |
+
+### Resultado observado
+
+Recorrido medido en Playwright, paso por paso:
+
+- **Búsqueda global**: el primer globo tardaba ~2,9 s y arrancaba en el paso 2;
+  en el paso 4 el botón decía "Finalizar" pero no cerraba, y cada clic volvía a
+  empezar una espera de 2,5 s. El overlay quedaba encima.
+- **En escritorio, pulsando rápido**: el clic en la lupa o en el perfil abría la
+  búsqueda o el menú, pero el recorrido no avanzaba; el segundo clic lo volvía a
+  cerrar. El resaltado del paso anterior quedaba marcado.
+- **Configuración en móvil**: el paso 4 resaltaba una columna oculta de 0×0.
+- **Después de la guía de Configuración**, el perfil del header había perdido
+  su `aria-haspopup="true"`.
+
+### Resultado esperado
+
+Cada clic avanza un paso, el último cierra, y al terminar no queda overlay,
+marca de resaltado ni atributo alterado.
+
+### Causa raíz
+
+1. La guía de búsqueda **abría el buscador por su cuenta** antes de arrancar.
+   Abierta, la lupa pasa a "Cerrar búsqueda global" y los pasos 1 y 5
+   (anclados a "Abrir…") se quedaban sin elemento. Con `waitForElement: 2500`,
+   driver.js esperaba 2,5 s cada vez, y un clic nuevo reiniciaba la espera.
+2. **driver.js 1.8 ignora el clic de `advanceOnClick` mientras dura su
+   transición** (400 ms, guarda `__transitionCallback`). La app sí recibía el
+   clic. Y si se avanza antes de que termine la transición, su referencia al
+   elemento anterior queda desfasada y no le quita la marca.
+3. driver.js escribe `aria-haspopup`, `aria-expanded` y `aria-controls` en lo
+   que resalta y al salir **los borra sin reponer** los que el elemento tenía.
+4. `setSteps()` —que usaba el reacomodo al girar el teléfono— hace
+   `resetState()` y pierde la referencia al overlay y al globo.
+
+### Corrección
+
+- `DriverTourService`: el avance de `advanceOnClick` lo hace una escucha propia
+  sobre el elemento (corre después del manejador de la app); la marca de
+  resaltado queda solo en el paso actual; los atributos ARIA se fotografían
+  vivos antes de que driver.js los toque y se reponen enseguida; un ancla que
+  existe pero mide 0×0 se pinta centrada; al girar el teléfono se rearma la
+  instancia en el mismo paso, o solo `refresh()` si los lados no cambiaron.
+- `NovedadesTourService`: la búsqueda y Configuración esperan el clic del
+  usuario en vez de abrir por él; la lupa se ancla con
+  `aria-label$="búsqueda global"`, válido abierta y cerrada; espera de ancla de
+  1,2 s; un turno por `iniciar()` (el doble clic arranca una sola guía); y
+  precarga de las poses de Pachi.
+

@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { of, firstValueFrom } from 'rxjs';
+import { of, firstValueFrom, throwError } from 'rxjs';
 import { ActividadMensualRepoService } from './actividad-mensual-repo.service';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
+import { ContratoCuentaResultadosError } from '../utils/cuenta-resultados.util';
 
 describe('ActividadMensualRepoService', () => {
   let periodos: ReturnType<typeof vi.fn>;
@@ -135,5 +136,48 @@ describe('ActividadMensualRepoService', () => {
     expect(estilo1?.['background-color']).toBe('#22c55e');
     expect(estilo2?.['background-color']).toBe('#ef4444');
     expect(estilo3?.['background-color']).toBe('#eab308');
+  });
+
+  describe('cuentaResultados', () => {
+    const headers = JSON.stringify({ preliminar: 0, fechas: ['2026-06-01', '2026-05-01'] });
+    const fila = { style: 2, cuenta_codigo: 'CR012', cuenta_nombre: 'INGRESOS FINANCIEROS', periodo_actual: 3 };
+
+    it('sin periodo pide NOW con los parámetros del legado', async () => {
+      getRegularTableResult.mockReturnValue(of({ body: { resultado: { headers, data: [fila] } } }));
+      const res = await firstValueFrom(service.cuentaResultados(nodo, null));
+
+      expect(getRegularTableResult).toHaveBeenCalledWith('TAB_CUE_RES_01', { fecha: 'NOW', tip_cod: 1, cod_rel: '100' });
+      expect(res.fecha).toBe('2026-06-01');
+      expect(res.filas).toEqual([fila]);
+    });
+
+    it('con periodo envía la fecha como YYYYMMDD', async () => {
+      getRegularTableResult.mockReturnValue(of({ body: { resultado: { headers, data: [] } } }));
+      const res = await firstValueFrom(service.cuentaResultados(nodo, '2026-05-01'));
+
+      expect(getRegularTableResult.mock.calls.at(-1)?.[1]).toEqual({ fecha: '20260501', tip_cod: 1, cod_rel: '100' });
+      expect(res.fecha).toBe('2026-05-01');
+      expect(res.filas).toEqual([]);
+    });
+
+    it('un periodo mal formado no llega al backend', async () => {
+      getRegularTableResult.mockClear();
+      await expect(firstValueFrom(service.cuentaResultados(nodo, 'Mayo 2026'))).rejects.toThrow(
+        'El período seleccionado tiene un formato inválido.',
+      );
+      expect(getRegularTableResult).not.toHaveBeenCalled();
+    });
+
+    it('un payload inválido es error de contrato, no tabla vacía', async () => {
+      getRegularTableResult.mockReturnValue(of({ body: { resultado: { headers } } }));
+      await expect(firstValueFrom(service.cuentaResultados(nodo, null))).rejects.toBeInstanceOf(
+        ContratoCuentaResultadosError,
+      );
+    });
+
+    it('un fallo del backend se propaga', async () => {
+      getRegularTableResult.mockReturnValue(throwError(() => new Error('backend caído')));
+      await expect(firstValueFrom(service.cuentaResultados(nodo, null))).rejects.toThrow('backend caído');
+    });
   });
 });

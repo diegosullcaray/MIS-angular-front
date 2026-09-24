@@ -81,6 +81,11 @@ no sus celdas.
 Una columna con `semaforoKey` lee ese campo de la fila (`-1`/`0`/`1`) y dibuja el punto de color,
 mismo criterio que `<app-tabla-reporte>`.
 
+Una columna con `colorVariacion` dibuja la flecha del legado (`indicator: 'arrow'`): ▲/▼ según el
+signo, el valor en absoluto y ambos en el color que devuelve la función. La polaridad (si subir es
+bueno o malo) la decide el reporte, no la tabla — p. ej. en Cuenta de Resultados un gasto que baja es
+verde.
+
 ## `<app-editable-table>`
 
 `esEditable` decide celda por celda; por defecto **nada** es editable, así que hay que pasarlo para

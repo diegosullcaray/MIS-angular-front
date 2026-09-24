@@ -8,4 +8,9 @@ export const RENTABILIDAD_ROUTES: Routes = [
         (c) => c.ResultadosUnidadNegocioComponent,
       ),
   },
+  {
+    path: 'repositorio/actividad-mensual/rentabilidad/cuenta-resultados',
+    loadComponent: () =>
+      import('./items/cuenta-resultados/cuenta-resultados.component').then((c) => c.CuentaResultadosComponent),
+  },
 ];

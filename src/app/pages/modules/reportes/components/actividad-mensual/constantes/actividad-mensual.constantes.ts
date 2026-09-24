@@ -107,6 +107,28 @@ export const COD_MENSUAL_REPO = {
   cmgCarteraTabla: 'CMG_CARTERA_01',
   /** CMG Cartera — KPIs. Espera `cod_rel`/`fec`/`tipcod`. */
   cmgCarteraKpis: 'CMG_CARTERA_02',
+  /**
+   * Cuenta de Resultados (PYG FC) — `rentabilidad/cuenta-resultados`. Espera
+   * `fecha` (`YYYYMMDD` o `NOW`) y devuelve en `headers` sus propios periodos.
+   */
+  cuentaResultados: 'TAB_CUE_RES_01',
+} as const;
+
+/**
+ * Cuentas de gasto de Cuenta de Resultados: su variación se lee al revés (bajar
+ * es favorable). Legado `cuenta-resultados.util.ts` (`expenseAccountCodes`).
+ */
+export const CUENTAS_GASTO_CUENTA_RESULTADOS: readonly string[] = [
+  'CR018', 'CR019', 'CR020', 'CR026', 'CR035', 'CR036', 'CR049',
+  'CR062', 'CR068', 'CR069', 'CR074', 'CR075', 'CR076',
+];
+
+/** Mensajes de error de Cuenta de Resultados, textuales del legado. */
+export const MENSAJES_CUENTA_RESULTADOS = {
+  fallo: 'No se pudo cargar el reporte.',
+  metadatosInvalidos: 'El reporte devolvió metadatos inválidos.',
+  respuestaInvalida: 'El reporte devolvió una respuesta inválida.',
+  periodoInvalido: 'El período seleccionado tiene un formato inválido.',
 } as const;
 
 /**

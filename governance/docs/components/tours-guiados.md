@@ -32,6 +32,32 @@ paso activo (`setSteps()` + `moveTo()`). Girar el teléfono a mitad del recorrid
 dejaba los globos contra el borde equivocado: el ancho se leía una sola vez, al
 arrancar.
 
+## Lo que `DriverTourService` corrige de driver.js
+
+driver.js 1.8 tiene tres conductas que trababan los recorridos
+(INC-2026-09-24-01). El servicio las neutraliza para todos los catálogos:
+
+| Conducta de driver.js | Qué hace el servicio |
+|---|---|
+| Ignora el clic de `advanceOnClick` durante su transición de 400 ms, aunque la app sí lo recibe | El avance lo hace una escucha propia sobre el elemento, después del manejador de la app |
+| Si se avanza a mitad de la transición, no le quita la marca al elemento anterior | Deja `driver-active-element` solo en el paso actual |
+| Escribe `aria-haspopup`/`aria-expanded`/`aria-controls` y al salir los borra sin reponer | Los fotografía vivos antes de que driver.js los toque y los repone enseguida |
+
+Además, un ancla que existe pero mide 0×0 (una columna oculta en móvil) se
+pinta centrada en vez de resaltar la nada, y al girar el teléfono la instancia
+se rearma en el mismo paso: `setSteps()` resetea el estado de driver.js y
+dejaba el overlay huérfano.
+
+**No abras por el usuario lo que el paso enseña.** Si un recorrido explica un
+clic (la lupa, el perfil), el paso lleva `advanceOnClick` y espera ese clic.
+Abrirlo antes cambia el elemento —la lupa pasa a "Cerrar búsqueda global"— y
+deja pasos sin ancla. Cuando un control cambia de etiqueta según su estado,
+el ancla tiene que valer para los dos (`aria-label$="búsqueda global"`).
+
+`waitForElement` de las novedades es de 1,2 s: alcanza para que Angular pinte
+lo que abrió el paso anterior y driver.js corta la espera apenas aparece. Una
+espera larga hace que "Siguiente" parezca no responder.
+
 ## Pasos sin ancla
 
 Un paso puede no traer `element`. driver.js lo pinta **centrado**, sin resaltar
@@ -93,11 +119,11 @@ Dos condiciones que no son negociables:
 
 Las piezas de `assets/images/fc/tours/` son recortes del render oficial de la marca, no ilustraciones nuevas.
 
-**Pendiente conocido — el peso.** Las doce poses son PNG de 1024×1024 y suman
-**7,3 MB**; cada una pasa el umbral de 500 kB que marca `npm run audit:activos`.
-En pantalla se pintan entre 64 y 132 px, o sea unas ocho veces más chicas de lo
-que pesan. Redimensionarlas a ~256 px sería la mejora más grande que le queda al
-recorrido en un teléfono. Está registrado en INC-2026-09-11-04.
+**El peso.** Las poses son PNG de 256×256 (el doble del mayor tamaño de
+render) y suman 0,63 MB; antes eran de 1024 px y 7,3 MB
+(INC-2026-09-11-04, corregido). `NovedadesTourService` precarga las poses de la
+guía antes del primer globo: driver.js reubica el globo cuando termina de
+cargar cada imagen, y sin precarga saltaba en cada paso.
 
 **El control de activos no las ve.** `conPachi()` arma la ruta en tiempo de
 ejecución (`${MASCOTA}${pose}.png`), así que el escáner las lista como "sin

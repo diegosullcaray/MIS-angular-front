@@ -4,21 +4,33 @@ import type { DriverTourService } from './driver-tour.service';
 // vi.mock() se hoistea sobre los imports, así que la factory no puede cerrar
 // sobre consts normales del módulo (todavía no existirían en ese punto) —
 // vi.hoisted() sube también la creación de los mocks para que estén listas.
-const { driveMock, destroyMock, setStepsMock, moveToMock, driverFactoryMock } = vi.hoisted(() => {
+const { driveMock, destroyMock, setStepsMock, refreshMock, moveNextMock, driverFactoryMock } = vi.hoisted(() => {
+  const moveNextMock = vi.fn();
   const driveMock = vi.fn();
   const destroyMock = vi.fn();
   const setStepsMock = vi.fn();
-  const moveToMock = vi.fn();
+  const refreshMock = vi.fn();
   const driverFactoryMock = vi.fn((_config: unknown) => ({
     drive: driveMock,
     destroy: destroyMock,
     setSteps: setStepsMock,
-    moveTo: moveToMock,
+    refresh: refreshMock,
+    moveNext: moveNextMock,
     isActive: () => true,
     getActiveIndex: () => 1,
   }));
-  return { driveMock, destroyMock, setStepsMock, moveToMock, driverFactoryMock };
+  return { driveMock, destroyMock, setStepsMock, refreshMock, moveNextMock, driverFactoryMock };
 });
+
+type PasoUsado = { element?: unknown; popover?: { side?: string; align?: string; title?: string } };
+
+/** Resuelve el ancla de un paso como lo haría driver.js al llegar a él. */
+function anclaDe(paso: PasoUsado): Element | null {
+  const ancla = paso.element;
+  if (typeof ancla === 'function') return (ancla as () => Element | null)();
+  if (typeof ancla === 'string') return document.querySelector(ancla);
+  return (ancla as Element | undefined) ?? null;
+}
 
 vi.mock('driver.js', () => ({
   driver: (config: unknown) => driverFactoryMock(config),
@@ -31,7 +43,8 @@ describe('DriverTourService', () => {
     driveMock.mockClear();
     destroyMock.mockClear();
     setStepsMock.mockClear();
-    moveToMock.mockClear();
+    refreshMock.mockClear();
+    moveNextMock.mockClear();
     driverFactoryMock.mockClear();
 
     // Esta suite corre con --isolate=false (un solo realm de JS para todos
@@ -61,7 +74,9 @@ describe('DriverTourService', () => {
 
     expect(driverFactoryMock).toHaveBeenCalledTimes(1);
     const configUsada = driverFactoryMock.mock.calls[0][0] as Record<string, unknown>;
-    expect(configUsada['steps']).toEqual([{ element: '#paso-1', popover: { title: 'Paso 1' } }]);
+    const pasos = configUsada['steps'] as PasoUsado[];
+    expect(pasos).toHaveLength(1);
+    expect(pasos[0].popover).toEqual({ title: 'Paso 1' });
     expect(configUsada['nextBtnText']).toBe('Siguiente');
     expect(driveMock).toHaveBeenCalledTimes(1);
     expect(service.isActive()).toBe(true);
@@ -72,8 +87,153 @@ describe('DriverTourService', () => {
     service.createQuickTour(pasos, { showProgress: false });
 
     const configUsada = driverFactoryMock.mock.calls[0][0] as Record<string, unknown>;
-    expect(configUsada['steps']).toBe(pasos);
+    expect((configUsada['steps'] as PasoUsado[]).map((p) => p.popover)).toEqual([{ title: 'A' }]);
     expect(configUsada['showProgress']).toBe(false);
+  });
+
+  describe('resaltado seguro', () => {
+    type Gancho = (el: Element | undefined, paso: unknown, opts: unknown) => void;
+    const turno = () => new Promise((listo) => setTimeout(listo, 0));
+
+    function pasoUsado(i = 0): PasoUsado & { advanceOnClick?: boolean; onHighlightStarted?: Gancho } {
+      return ((driverFactoryMock.mock.calls[0][0] as Record<string, unknown>)['steps'] as never[])[i];
+    }
+
+    afterEach(() => (document.body.innerHTML = ''));
+
+    // driver.js ignoraba el clic si llegaba durante su animación: la app abría
+    // el menú, el recorrido no avanzaba y el segundo clic lo cerraba.
+    it('un paso advanceOnClick avanza con el clic aunque driver.js esté animando', () => {
+      const boton = document.createElement('button');
+      document.body.append(boton);
+      service.startTour({ steps: [{ element: 'button', advanceOnClick: true, popover: { title: 'A' } }, { popover: { title: 'B' } }] });
+
+      const paso = pasoUsado();
+      expect(paso.advanceOnClick).toBe(false);
+      paso.onHighlightStarted?.(boton, paso, {});
+      boton.click();
+      boton.click();
+
+      expect(moveNextMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('un paso normal no avanza con el clic en el elemento', () => {
+      const boton = document.createElement('button');
+      document.body.append(boton);
+      service.startTour({ steps: [{ element: 'button', popover: { title: 'A' } }] });
+
+      pasoUsado().onHighlightStarted?.(boton, pasoUsado(), {});
+      boton.click();
+
+      expect(moveNextMock).not.toHaveBeenCalled();
+    });
+
+    it('repone los atributos ARIA que driver.js pisa y no devuelve', async () => {
+      const perfil = document.createElement('div');
+      perfil.setAttribute('aria-haspopup', 'true');
+      const otro = document.createElement('div');
+      document.body.append(perfil, otro);
+      service.startTour({ steps: [{ element: 'div', popover: { title: 'A' } }, { popover: { title: 'B' } }] });
+
+      pasoUsado().onHighlightStarted?.(perfil, pasoUsado(), {});
+      // Lo que hace driver.js al resaltar y al pasar al paso siguiente.
+      perfil.setAttribute('aria-haspopup', 'dialog');
+      perfil.classList.add('driver-active-element');
+      await turno(); // el usuario pulsa "Siguiente" en otro turno
+      pasoUsado(1).onHighlightStarted?.(otro, pasoUsado(1), {});
+      perfil.removeAttribute('aria-haspopup');
+      otro.classList.add('driver-active-element');
+      await turno();
+
+      expect(perfil.getAttribute('aria-haspopup')).toBe('true');
+      // Y la marca de resaltado queda solo en el paso actual.
+      expect(perfil.classList.contains('driver-active-element')).toBe(false);
+      expect(otro.classList.contains('driver-active-element')).toBe(true);
+    });
+
+    // La lupa abre el buscador durante su paso: reponer el `false` del comienzo
+    // la dejaba anunciando "cerrado" con el buscador abierto.
+    it('respeta el ARIA que la app cambia mientras el elemento está resaltado', async () => {
+      const lupa = document.createElement('button');
+      lupa.setAttribute('aria-expanded', 'false');
+      document.body.append(lupa);
+      service.startTour({ steps: [{ element: 'button', popover: { title: 'A' } }, { popover: { title: 'B' } }] });
+
+      pasoUsado().onHighlightStarted?.(lupa, pasoUsado(), {});
+      lupa.setAttribute('aria-expanded', 'true'); // driver.js
+      lupa.classList.add('driver-active-element');
+      await turno();
+      lupa.setAttribute('aria-expanded', 'false'); // la app, por ejemplo
+      lupa.setAttribute('aria-expanded', 'true'); // …y vuelve a abrir
+      pasoUsado(1).onHighlightStarted?.(undefined, pasoUsado(1), {});
+      lupa.removeAttribute('aria-expanded'); // limpieza de driver.js
+      await turno();
+
+      expect(lupa.getAttribute('aria-expanded')).toBe('true');
+    });
+
+    it('al cerrar repone el ARIA del último elemento resaltado', async () => {
+      const perfil = document.createElement('div');
+      perfil.setAttribute('aria-haspopup', 'true');
+      document.body.append(perfil);
+      service.startTour({ steps: [{ element: 'div', popover: { title: 'A' } }] });
+
+      pasoUsado().onHighlightStarted?.(perfil, pasoUsado(), {});
+      await turno();
+      // Lo que driver.js hace con el elemento activo al cerrar.
+      destroyMock.mockImplementationOnce(() => perfil.removeAttribute('aria-haspopup'));
+      service.destroyCurrentTour();
+
+      expect(perfil.getAttribute('aria-haspopup')).toBe('true');
+    });
+
+    it('conserva el gancho onHighlightStarted de quien llama', () => {
+      const propio = vi.fn();
+      service.startTour({ steps: [{ popover: { title: 'A' } }], onHighlightStarted: propio });
+
+      pasoUsado().onHighlightStarted?.(undefined, pasoUsado(), {});
+      expect(propio).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('anclas que se resuelven al llegar al paso', () => {
+    function ancla(id: string, ancho: number): HTMLElement {
+      const elemento = document.createElement('div');
+      elemento.id = id;
+      elemento.getBoundingClientRect = () =>
+        ({ top: 0, height: ancho, width: ancho, bottom: ancho, left: 0, right: ancho, x: 0, y: 0, toJSON: () => ({}) }) as DOMRect;
+      document.body.append(elemento);
+      return elemento;
+    }
+
+    afterEach(() => (document.body.innerHTML = ''));
+
+    it('un ancla visible se resalta tal cual', () => {
+      const visible = ancla('visible', 40);
+      service.startTour({ steps: [{ element: '#visible', popover: { title: 'A' } }] });
+
+      const [paso] = (driverFactoryMock.mock.calls[0][0] as Record<string, unknown>)['steps'] as PasoUsado[];
+      expect(anclaDe(paso)).toBe(visible);
+    });
+
+    // En móvil la columna de ajustes existe pero mide 0×0: resaltarla dejaba al
+    // usuario mirando la nada. Ahora el globo va centrado.
+    it('un ancla que existe pero no ocupa lugar se pinta centrada', () => {
+      ancla('oculta', 0);
+      service.startTour({ steps: [{ element: '#oculta', popover: { title: 'A' } }] });
+
+      const [paso] = (driverFactoryMock.mock.calls[0][0] as Record<string, unknown>)['steps'] as PasoUsado[];
+      expect(anclaDe(paso)?.id).toBe('driver-dummy-element');
+    });
+
+    it('un ancla que aparece después (el diálogo del paso anterior) se encuentra al llegar', () => {
+      service.startTour({ steps: [{ element: '#tarde', popover: { title: 'A' } }] });
+      const [paso] = (driverFactoryMock.mock.calls[0][0] as Record<string, unknown>)['steps'] as PasoUsado[];
+      expect(anclaDe(paso)).toBeNull();
+
+      const tarde = ancla('tarde', 40);
+      expect(anclaDe(paso)).toBe(tarde);
+    });
   });
 
   /**
@@ -114,9 +274,9 @@ describe('DriverTourService', () => {
       document.body.innerHTML = '';
     });
 
-    function pasosUsados(): Array<{ element?: string; popover?: { side?: string; align?: string } }> {
-      const configUsada = driverFactoryMock.mock.calls[0][0] as Record<string, unknown>;
-      return configUsada['steps'] as Array<{ element?: string; popover?: { side?: string; align?: string } }>;
+    function pasosUsados(llamada = 0): PasoUsado[] {
+      const configUsada = driverFactoryMock.mock.calls[llamada][0] as Record<string, unknown>;
+      return configUsada['steps'] as PasoUsado[];
     }
 
     it('un ancla en la mitad de abajo manda el globo arriba', () => {
@@ -164,11 +324,32 @@ describe('DriverTourService', () => {
       anclar('rail', ALTO - 60);
       service.startTour({ steps: [{ element: '#rail', popover: { title: 'Barra', side: 'right' } }] });
 
+      // Al girar, el rail pasa a la mitad de arriba: el globo tiene que ir abajo.
+      (document.getElementById('rail') as HTMLElement).getBoundingClientRect = () =>
+        ({ top: 10, height: 40, width: 100, bottom: 50, left: 0, right: 100, x: 0, y: 10, toJSON: () => ({}) }) as DOMRect;
       window.dispatchEvent(new Event('orientationchange'));
       await new Promise((listo) => setTimeout(listo, 200));
 
-      expect(setStepsMock).toHaveBeenCalledTimes(1);
-      expect(moveToMock).toHaveBeenCalledWith(1);
+      // `setSteps()` de driver.js resetea su estado y dejaba overlays huérfanos:
+      // se rearma la instancia y se retoma el mismo paso.
+      expect(setStepsMock).not.toHaveBeenCalled();
+      expect(destroyMock).toHaveBeenCalledTimes(1);
+      expect(driverFactoryMock).toHaveBeenCalledTimes(2);
+      expect(pasosUsados(1)[0].popover?.side).toBe('bottom');
+      expect(driveMock).toHaveBeenLastCalledWith(1);
+      expect(service.isActive()).toBe(true);
+    });
+
+    it('si los lados no cambian, reacomodar es solo refrescar', async () => {
+      anclar('rail', ALTO - 60);
+      service.startTour({ steps: [{ element: '#rail', popover: { title: 'Barra', side: 'right' } }] });
+
+      window.dispatchEvent(new Event('resize'));
+      await new Promise((listo) => setTimeout(listo, 200));
+
+      expect(refreshMock).toHaveBeenCalledTimes(1);
+      expect(destroyMock).not.toHaveBeenCalled();
+      expect(driverFactoryMock).toHaveBeenCalledTimes(1);
     });
   });
 

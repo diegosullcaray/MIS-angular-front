@@ -1,9 +1,60 @@
 :host {
+  /* Tramos del degradado en claro: los azules de marca, que en este tema son oscuros. */
+  --error-fondo-medio: var(--mis-primary-hover);
+  --error-fondo-final: var(--mis-primary);
+  --error-acento: var(--mis-primary);
   display: block;
   width: 100%;
 }
 
-.not-found-wrapper {
-  background: var(--mis-wallpaper) center/cover no-repeat fixed;
+/*
+ * Fondo propio de las páginas de error: NO es `--mis-wallpaper` (el del layout
+ * y el login). Es oscuro en los dos temas —un degradado de los azules de la
+ * marca con un brillo del color del error—; lo que sigue al tema es la tarjeta.
+ * El tema lo decide la preferencia que el layout guarda en `mis.preferencias`.
+ */
+.error-fondo {
+  position: relative;
+  overflow: hidden;
   font-family: var(--mis-font-family);
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 0%, color-mix(in srgb, var(--error-acento) 35%, transparent), transparent 70%),
+    radial-gradient(ellipse 55% 50% at 100% 100%, color-mix(in srgb, var(--mis-secondary) 30%, transparent), transparent 70%),
+    linear-gradient(135deg, var(--mis-sidebar-solid) 0%, var(--error-fondo-medio) 55%, var(--error-fondo-final) 100%);
+}
+
+/* Trama de puntos tenue sobre el degradado. */
+.error-fondo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(color-mix(in srgb, var(--mis-text-on-primary) 14%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, black 30%, transparent 80%); /* la máscara solo usa el alfa */
+  pointer-events: none;
+}
+
+/* En oscuro los azules de marca se aclaran: el degradado baja a los fondos profundos. */
+:host-context(.dark) {
+  --error-fondo-medio: var(--mis-bg);
+  --error-fondo-final: color-mix(in srgb, var(--mis-primary) 45%, var(--mis-bg));
+}
+
+.error-tarjeta {
+  position: relative;
+  background: var(--mis-surface);
+  border: 1px solid var(--mis-border);
+  box-shadow: var(--mis-shadow-lg);
+}
+
+/* Franja superior del color del error. */
+.error-tarjeta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--error-acento);
 }

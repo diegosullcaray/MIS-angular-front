@@ -7,7 +7,7 @@ Las rutas bajo `/app` se conservan compatibles con el `act_sec` del menú STG: n
 La tabla se deriva de `src/app/app.routes.ts` y de los `*.routes.ts` de cada módulo. **No editar a mano**: regenerar con `npm run inventario` (o verificar con `npm run inventario:check`).
 
 <!-- generado:inicio modulos -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-24 · commit b4af615. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-24 · commit e3cd408. No editar a mano. -->
 
 | Módulo | Ruta base | Archivos `*.routes.ts` | Destinos de ruta | Componentes | Servicios | Specs |
 |---|---|---:|---:|---:|---:|---:|
@@ -19,9 +19,9 @@ La tabla se deriva de `src/app/app.routes.ts` y de los `*.routes.ts` de cada mó
 | `herramientas` | `/app/cons_base_negativa` | 1 | 1 | 3 | 1 | 4 |
 | `home` | `/app/dashboard` | 1 | 2 | 4 | 2 | 5 |
 | `incentivos` | `/app/incentivos3` | 1 | 1 | 11 | 1 | 15 |
-| `kaypacha` | `/app/Kaypacha__` | 1 | 1 | 2 | 2 | 4 |
+| `kaypacha` | `/app/Kaypacha__` | 1 | 1 | 2 | 1 | 3 |
 | `ranking-k` | `/app/ranking-k` | 1 | 2 | 5 | 1 | 6 |
-| `reportes` | `/app/reportes` | 30 | 130 | 133 | 53 | 185 |
+| `reportes` | `/app/reportes` | 30 | 131 | 134 | 53 | 187 |
 
 _Total: 11 módulos enlazados desde `app.routes.ts`._
 <!-- generado:fin -->

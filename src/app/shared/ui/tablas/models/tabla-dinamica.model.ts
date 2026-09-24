@@ -14,5 +14,11 @@ export interface ColumnaDinamica {
   semaforoKey?: string;
   /** Función para computar estilo dinámico de celda (color, background, font-weight) según el valor y fila — legado cellStyleFn. */
   cellStyleFn?: (valor: unknown, fila: Record<string, unknown>) => Record<string, string> | undefined;
+  /**
+   * Variación con flecha — `indicator: 'arrow'` + `colorValue` del legado (`dynamic-format-pipe.ts`):
+   * ▲/▼ según el signo, el valor en absoluto y ambos en el color que devuelve la función. La tabla no
+   * decide si subir es bueno: esa polaridad es del reporte. `null` deja la celda sin indicador.
+   */
+  colorVariacion?: (valor: number, fila: Record<string, unknown>) => string | null;
   subs?: ColumnaDinamica[];
 }

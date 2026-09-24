@@ -5,6 +5,20 @@ import type { ModoEjemploNovedad, Novedad, PosePachi } from '../models/novedad.m
 /** Carpeta de las imágenes de Pachi, el personaje que guía los recorridos. */
 const MASCOTA = '/assets/images/fc/tours/mascota-';
 
+/** Lado real de cada PNG de Pachi (se pinta a 64-132 px; 256 cubre pantallas 2x). */
+const LADO_MASCOTA = 256;
+
+/**
+ * Cuánto espera un paso a que aparezca su ancla. Alcanza para que Angular pinte
+ * lo que abrió el paso anterior (el menú, el diálogo); con 2,5 s, un ancla que
+ * nunca llegaba dejaba el botón "Siguiente" sin respuesta y el recorrido parecía
+ * colgado. driver.js corta la espera apenas el ancla aparece.
+ */
+const ESPERA_ANCLA_MS = 1_200;
+
+/** Tope para precargar a Pachi antes del primer globo: mejor arrancar que esperar la red. */
+const ESPERA_PRECARGA_MS = 400;
+
 /**
  * Envuelve el texto del paso con **Pachi**, que es quien "da" la guía.
  * `description` de driver.js se pinta con `innerHTML` (ver `driver.js.mjs`),
@@ -16,7 +30,7 @@ function conPachi(texto: string, pose: PosePachi = 'guia'): string {
   // `width`/`height` son las medidas reales del archivo: con ellas el navegador
   // conoce la proporción antes de decodificar y el globo no salta mientras el
   // PNG carga. El tamaño en pantalla lo sigue fijando el CSS.
-  return `<span class="mis-tour-fila"><img class="mis-tour-mascota mis-tour-mascota--${pose}" src="${MASCOTA}${pose}.png" width="1024" height="1024" decoding="async" alt="" aria-hidden="true"><span class="mis-tour-texto">${texto}</span></span>`;
+  return `<span class="mis-tour-fila"><img class="mis-tour-mascota mis-tour-mascota--${pose}" src="${MASCOTA}${pose}.png" width="${LADO_MASCOTA}" height="${LADO_MASCOTA}" decoding="async" alt="" aria-hidden="true"><span class="mis-tour-texto">${texto}</span></span>`;
 }
 
 /**
@@ -30,10 +44,10 @@ const ANCLA = {
   rail: '#tour-sidebar-icons',
   buscador: '#buscador-global input[aria-label="Buscar reportes y carpetas en todos los sistemas"]',
   buscadorCaja: '#buscador-global .mis-buscador-caja',
-  buscadorBoton: 'header button[aria-label="Abrir búsqueda global"]',
+  // Abierto pasa a "Cerrar búsqueda global": el ancla vale para los dos estados.
+  buscadorBoton: 'header button[aria-label$="búsqueda global"]',
   perfil: 'header [aria-haspopup="true"]',
   abrirConfiguracion: '.perfil-menu .perfil-item',
-  configuracion: '.mis-configuracion-dialog',
   buscarAjuste: '.mis-configuracion-dialog input[aria-label="Buscar ajuste"]',
   configSecciones: '.mis-configuracion-dialog .mis-config-secciones',
   configContenido: '.mis-configuracion-dialog .mis-config-contenido',
@@ -256,15 +270,41 @@ const NOVEDADES: Novedad[] = [
     categoria: 'Personalizar',
     posePachi: 'idea',
     fecha: '2026-09-21',
+    // Secuencial: resalta el perfil y espera su clic, luego la opción
+    // Configuración y después el diálogo. No se abre nada por el usuario, así
+    // "Anterior" nunca vuelve a un paso cuya pantalla ya no existe.
     pasos: [
       {
-        element: ANCLA.configuracion,
+        element: ANCLA.temaBoton,
         popover: {
-          title: '⚙️ Paso 1 · El panel de Configuración',
+          title: '🌗 Paso 1 · Cambia el tema',
           description: conPachi(
-            '¡Abrí la Configuración por ti! Normalmente accedes pulsando tu <b>perfil</b> en la esquina superior y eligiendo <b>Configuración</b> en el menú desplegable.',
+            '¡Hola! Soy <b>Baby Pachi</b>. Este botón alterna entre <b>modo claro</b> y <b>modo oscuro</b>. El cambio se aplica de inmediato y queda guardado en tus preferencias.',
             'saluda',
           ),
+          side: 'bottom',
+          align: 'end',
+        },
+      },
+      {
+        element: ANCLA.perfil,
+        advanceOnClick: true,
+        popover: {
+          title: '👤 Paso 2 · Abre tu perfil',
+          description: conPachi(
+            'El resto de ajustes vive en tu perfil. <b>Púlsalo</b> y te muestro dónde está Configuración.',
+            'guia',
+          ),
+          side: 'bottom',
+          align: 'end',
+        },
+      },
+      {
+        element: ANCLA.abrirConfiguracion,
+        advanceOnClick: true,
+        popover: {
+          title: '⚙️ Paso 3 · Entra a Configuración',
+          description: conPachi('Pulsa <b>Configuración</b> para abrir el panel de ajustes.', 'idea'),
           side: 'left',
           align: 'start',
         },
@@ -272,7 +312,7 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.buscarAjuste,
         popover: {
-          title: '🔍 Paso 2 · Busca un ajuste',
+          title: '🔍 Paso 4 · Busca un ajuste',
           description: conPachi(
             'Escribe aquí para filtrar ajustes. Por ejemplo: <b>apariencia</b>, <b>tema</b> o <b>comunicados</b>. El buscador filtra las secciones e ítems que coincidan con tu texto.',
             'buscar',
@@ -284,10 +324,10 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.configSecciones,
         popover: {
-          title: '📑 Paso 3 · Secciones de configuración',
+          title: '📑 Paso 5 · Secciones de configuración',
           description: conPachi(
-            'La columna de <b>secciones</b> agrupa los ajustes por tema: Apariencia, Estructura de menú, Comunicados y más. Al elegir una sección, sus ítems aparecen en la siguiente columna.',
-            'guia',
+            'La columna de <b>secciones</b> agrupa los ajustes por tema: Apariencia, Estructura de menú, Comunicados y más. Al elegir una sección, sus ítems aparecen al lado.',
+            'piensa',
           ),
           side: 'right',
           align: 'start',
@@ -296,37 +336,13 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.configContenido,
         popover: {
-          title: '🎨 Paso 4 · Panel de ajustes',
+          title: '✅ Paso 6 · Ajusta y listo',
           description: conPachi(
-            'Este panel muestra los <b>controles</b> del ítem seleccionado. Por ejemplo, en <b>Apariencia</b> puedes cambiar el tema claro/oscuro, y en <b>Estructura</b> el tipo de menú.',
-            'idea',
+            'Aquí aparecen los <b>controles</b> del ítem elegido. Los cambios son <b>por usuario</b> y no afectan a otros compañeros. ¡Explora y hazlo tuyo!',
+            'celebra',
           ),
           side: 'left',
           align: 'start',
-        },
-      },
-      {
-        element: ANCLA.temaBoton,
-        popover: {
-          title: '🌗 Paso 5 · Cambia el tema',
-          description: conPachi(
-            'Este botón del header es un atajo para alternar entre <b>modo claro</b> y <b>modo oscuro</b>. El cambio se aplica de inmediato y se guarda en tus preferencias sin abrir Configuración.',
-            'piensa',
-          ),
-          side: 'bottom',
-          align: 'end',
-        },
-      },
-      {
-        element: ANCLA.perfil,
-        popover: {
-          title: '✅ Paso 6 · Todo listo',
-          description: conPachi(
-            'Ya sabes personalizar MIS. Recuerda: los cambios de configuración son <b>por usuario</b> y no afectan a otros compañeros. ¡Explora y hazlo tuyo!',
-            'celebra',
-          ),
-          side: 'bottom',
-          align: 'end',
         },
       },
     ],
@@ -348,69 +364,81 @@ export class NovedadesTourService {
     b.fecha.localeCompare(a.fecha),
   );
 
+  /** Cada `iniciar()` toma un turno: si llega otro mientras prepara, el anterior se descarta. */
+  private turno = 0;
+
   /**
-   * Prepara el control que el recorrido enseña y solo entonces muestra el
-   * globo. Así Pachi no describe una acción que el usuario tendría que abrir
-   * manualmente antes de poder verla.
+   * Prepara lo que el recorrido necesita en pantalla y recién entonces muestra
+   * el globo. Los recorridos que enseñan un clic (la lupa, el perfil) no lo
+   * hacen por el usuario: lo esperan con `advanceOnClick`. Antes la búsqueda se
+   * abría sola, la lupa cambiaba de etiqueta y los pasos 1 y 5 se quedaban sin
+   * ancla: el primero se salteaba y el último dejaba el recorrido colgado.
    */
   async iniciar(id: string): Promise<void> {
     const novedad = this.novedades.find((n) => n.id === id);
     if (!novedad) return;
 
+    const turno = ++this.turno;
+    this.driverTour.forceClose();
     this.ejemploActivo.set(null);
-    await this.prepararInteraccion(novedad.id);
 
-    const pasos = novedad.pasos.map((p) => {
-      if (p.advanceOnClick) {
-        return {
-          ...p,
-          advanceOnClick: true,
-          disableActiveInteraction: false,
-        };
-      }
-      return p;
-    });
+    await Promise.all([this.prepararInteraccion(novedad.id), this.precargarPachi(novedad)]);
+    // Doble clic, u otra guía elegida mientras esta se preparaba: gana la última.
+    if (turno !== this.turno) return;
+
+    const pasos = novedad.pasos.map((p) =>
+      p.advanceOnClick ? { ...p, disableActiveInteraction: false } : p,
+    );
 
     this.driverTour.createQuickTour(pasos, {
       popoverClass: 'mis-tour-popover',
-      waitForElement: 2_500,
+      waitForElement: ESPERA_ANCLA_MS,
       skipMissingElement: true,
-      onDestroyStarted: () => {
-        this.ejemploActivo.set(null);
-      },
+      // `onDestroyed` corre en todo cierre (Esc, ✕, Finalizar); `onDestroyStarted`
+      // no corre cuando el recorrido lo cierra otro código.
+      onDestroyed: () => this.ejemploActivo.set(null),
     });
   }
 
   private async prepararInteraccion(id: string): Promise<void> {
     if (typeof document === 'undefined') return;
 
-    if (id === 'busqueda-global') {
-      this.click('header button[aria-label="Abrir búsqueda global"]');
-      await this.esperarPintado();
-      return;
-    }
-
-    if (id === 'configuracion-personal') {
-      this.click('header [aria-haspopup="true"]');
-      await this.esperarPintado();
-      this.click('.perfil-menu .perfil-item');
-      await this.esperarPintado();
-      return;
-    }
-
     if (id === 'sistemas-y-paneles') {
       this.ejemploActivo.set('navegacion');
       await this.esperarPintado();
-      // Pre-abrir el panel para que los pasos que lo referencian lo encuentren
-      // ya renderizado en el DOM. Sin esto, driver.js no localiza el elemento
-      // y pinta el globo centrado, bloqueando el recorrido.
-      this.click('.demo-navegacion--navegacion [aria-label="Abrir panel de ejemplo"]');
+      // El panel del ejemplo se abre antes: los pasos 3 a 5 hablan de él.
+      document
+        .querySelector<HTMLElement>('.demo-navegacion--navegacion [aria-label="Abrir panel de ejemplo"]')
+        ?.click();
       await this.esperarPintado();
     }
   }
 
-  private click(selector: string): void {
-    (document.querySelector<HTMLElement>(selector) as HTMLButtonElement | null)?.click();
+  /**
+   * Descarga las poses del recorrido antes del primer globo. driver.js vuelve a
+   * ubicar el globo cuando termina de cargar cada imagen: sin precarga, el globo
+   * saltaba de lugar en cada paso nuevo.
+   */
+  private precargarPachi(novedad: Novedad): Promise<unknown> {
+    if (typeof Image === 'undefined') return Promise.resolve();
+    const poses = new Set(
+      novedad.pasos.flatMap((p) =>
+        [...String(p.popover?.description ?? '').matchAll(/mascota-([a-z]+)\.png/g)].map((m) => m[1]),
+      ),
+    );
+    const cargas = [...poses].map((pose) => {
+      const imagen = new Image();
+      const cargada = new Promise<void>((resolver) => {
+        imagen.onload = imagen.onerror = () => resolver();
+      });
+      imagen.src = `${MASCOTA}${pose}.png`;
+      // `decode()` además deja la imagen lista para pintar; no todos los motores lo tienen.
+      return typeof imagen.decode === 'function' ? imagen.decode().catch(() => undefined) : cargada;
+    });
+    return Promise.race([
+      Promise.all(cargas),
+      new Promise((resolver) => setTimeout(resolver, ESPERA_PRECARGA_MS)),
+    ]);
   }
 
   private esperarPintado(): Promise<void> {

@@ -2,7 +2,6 @@
      del panel (semáforo, título centrado y "Actualizar" en la esquina) y el
      contenido del tablero se proyecta como cuerpo de la ventana. -->
 <app-window-panel
-  id="tour-kaypacha-header"
   titulo="Kaypacha"
   subtitulo="Plataforma de desempeño"
   [actualizando]="service.loading()"
@@ -13,7 +12,6 @@
   @if (service.permitirBusqueda()) {
   <button
     ventana-acciones
-    id="tour-kaypacha-cambiar-btn"
     type="button"
     class="mis-window-btn"
     (click)="abrirBuscador()"
@@ -24,19 +22,6 @@
     <i class="pi pi-user-edit text-[14px]"></i>
   </button>
   }
-
-  <button
-    ventana-acciones
-    id="tour-kaypacha-tour-btn"
-    type="button"
-    class="mis-window-btn"
-    (click)="iniciarTour()"
-    aria-label="Iniciar tour guiado"
-    pTooltip="Iniciar tour guiado"
-    tooltipPosition="bottom"
-  >
-    <i class="pi pi-question-circle text-[14px]"></i>
-  </button>
 
   @if (service.loading()) {
   <div class="p-6 bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)]">
@@ -52,7 +37,7 @@
   <section class="bg-[var(--mis-surface)] rounded-2xl p-4 sm:p-5 shadow-sm border border-[var(--mis-border)]">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
       <!-- Bloque Izquierdo: Asesor y Cargo (Col 1-5) -->
-      <div id="tour-kaypacha-asesor-info" class="lg:col-span-5 flex flex-col gap-3">
+      <div class="lg:col-span-5 flex flex-col gap-3">
         <!-- Etiqueta Asesor con Botón Cambiar Colaborador al costado -->
         <div class="flex items-center gap-2">
           <span
@@ -93,7 +78,7 @@
       </div>
 
       <!-- Bloque Derecho: Tarjetas KPI con PrimeNG p-card (Col 8-12) -->
-      <div id="tour-kaypacha-kpi-cards" class="lg:col-span-5 grid grid-cols-2 gap-3">
+      <div class="lg:col-span-5 grid grid-cols-2 gap-3">
         <!-- Tarjeta Puntaje Promedio Final con PrimeNG p-card -->
         <p-card
           styleClass="bg-[var(--mis-kaypacha-oro)] text-[var(--mis-kaypacha-oro-texto)] rounded-xl p-0 shadow-xs border border-[var(--mis-kaypacha-oro-texto)]/20 h-24 flex flex-col justify-center items-center text-center overflow-hidden">
@@ -124,7 +109,7 @@
   </section>
 
   <!-- Bloque 1: Puntos Acumulados -->
-  <section id="tour-kaypacha-puntos-acumulados"
+  <section
     class="bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)] overflow-hidden">
     <!-- Window Header Bar (Legacy rgb(3, 80, 150)) -->
     <div class="kaypacha-window-bar px-5 py-2.5 flex items-center justify-between border-b border-blue-900/30">
@@ -207,7 +192,7 @@
   </section>
 
   <!-- Bloque 2: Variables Históricas -->
-  <section id="tour-kaypacha-variables-historicas"
+  <section
     class="bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)] overflow-hidden">
     <!-- Window Header Bar (Legacy rgb(3, 80, 150)) -->
     <div class="kaypacha-window-bar px-5 py-2.5 flex items-center justify-between border-b border-blue-900/30">

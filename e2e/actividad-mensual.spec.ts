@@ -41,6 +41,7 @@ const REPORTES: readonly [string, string][] = [
   ['/app/reportes/leg/com/rma/adm/cmg_cliente_flujo', 'CMG Clientes Flujo'],
   // 9. Rentabilidad
   ['/app/reportes/leg/com/rma/adm/res-un', 'Resultados por Unidad de Negocio'],
+  ['/app/reportes/repositorio/actividad-mensual/rentabilidad/cuenta-resultados', 'Cuenta de Resultados'],
   // 10. Ranking Kaypacha
   ['/app/reportes/leg/com/rma/adm/rank-kay', 'Ranking Kaypacha Comercial'],
   ['/app/reportes/leg/com/rma/adm/rank-kay-ope', 'Ranking Kaypacha Operaciones'],
