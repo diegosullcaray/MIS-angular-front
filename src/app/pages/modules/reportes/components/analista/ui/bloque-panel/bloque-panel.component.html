@@ -1,0 +1,19 @@
+<section class="bloque" [attr.aria-label]="titulo() || null">
+  @if (titulo()) {
+    <header class="bloque-cabecera">
+      <h3>{{ titulo() }}</h3>
+    </header>
+  }
+
+  <div class="bloque-tabla">
+    <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" />
+  </div>
+
+  @if (nota().length) {
+    <ul class="bloque-nota">
+      @for (linea of nota(); track linea) {
+        <li>{{ linea }}</li>
+      }
+    </ul>
+  }
+</section>

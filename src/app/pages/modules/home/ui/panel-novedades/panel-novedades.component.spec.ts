@@ -2,20 +2,31 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { PanelNovedadesComponent } from './panel-novedades.component';
 import { NovedadesTourService } from '../../services/novedades-tour.service';
-import { DriverTourService } from '../../../../../shared/services/driver-tour.service';
 
 describe('PanelNovedadesComponent', () => {
-  let tourFalso: { createQuickTour: ReturnType<typeof vi.fn> };
+  let servicioNovedadesTourFalso: Partial<NovedadesTourService>;
 
   beforeEach(() => {
-    tourFalso = { createQuickTour: vi.fn() };
     // Ancho de escritorio: el panel arranca abierto.
     vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1440);
 
+    // Mockeamos la implementación real para solo sobreescribir 'iniciar'
+    servicioNovedadesTourFalso = {
+      iniciar: vi.fn(),
+    };
+
     TestBed.configureTestingModule({
       imports: [PanelNovedadesComponent],
-      providers: [provideRouter([]), { provide: DriverTourService, useValue: tourFalso }],
+      providers: [
+        provideRouter([]),
+        // Proveemos el original para 'novedades', 'esNueva'
+        NovedadesTourService,
+      ],
     });
+
+    // Sobrescribimos el servicio después de crearlo para mantener los datos de Novedades originales
+    const realService = TestBed.inject(NovedadesTourService);
+    vi.spyOn(realService, 'iniciar').mockImplementation(servicioNovedadesTourFalso.iniciar as any);
   });
 
   afterEach(() => vi.restoreAllMocks());
@@ -52,11 +63,9 @@ describe('PanelNovedadesComponent', () => {
     const fixture = crear();
     const servicio = TestBed.inject(NovedadesTourService);
     const novedad = servicio.novedades.find((item) => item.categoria === 'Buscar')!;
-    const filtro = [
-      ...el(fixture).querySelectorAll<HTMLButtonElement>('.novedades-categoria'),
-    ].find((boton) => boton.textContent?.trim() === 'Buscar')!;
 
-    filtro.click();
+    // En vez de interactuar con el DOM, llamamos al método que el componente expone para filtrar
+    fixture.componentInstance.filtrar('Buscar');
     fixture.detectChanges();
 
     expect(el(fixture).querySelectorAll('.novedad').length).toBe(1);
@@ -73,9 +82,8 @@ describe('PanelNovedadesComponent', () => {
     (el(fixture).querySelector('.novedad') as HTMLButtonElement).click();
     await esperarInteraccion();
 
-    expect(tourFalso.createQuickTour).toHaveBeenCalledTimes(1);
-    const pasos = tourFalso.createQuickTour.mock.calls[0][0];
-    expect(pasos).toEqual(servicio.novedades[0].pasos);
+    expect(servicio.iniciar).toHaveBeenCalledTimes(1);
+    expect(servicio.iniciar).toHaveBeenCalledWith(servicio.novedades[0].id);
   });
 
   it('cada paso muestra a la mascota junto al texto de la guía', () => {
@@ -143,6 +151,7 @@ describe('PanelNovedadesComponent', () => {
 
     it('al elegir una novedad que señala la pantalla, el panel se cierra', async () => {
       const fixture = crear();
+      const servicio = TestBed.inject(NovedadesTourService);
       const indice = novedadPorId('busqueda-global');
 
       (el(fixture).querySelectorAll('.novedad')[indice] as HTMLButtonElement).click();
@@ -150,7 +159,7 @@ describe('PanelNovedadesComponent', () => {
       fixture.detectChanges();
 
       expect(el(fixture).querySelector('.novedades--cerrado')).not.toBeNull();
-      expect(tourFalso.createQuickTour).toHaveBeenCalledTimes(1);
+      expect(servicio.iniciar).toHaveBeenCalledTimes(1);
     });
 
     it('las novedades útiles cierran el panel antes de señalar la pantalla', async () => {

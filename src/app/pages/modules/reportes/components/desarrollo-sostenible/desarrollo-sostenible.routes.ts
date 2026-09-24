@@ -17,8 +17,4 @@ export const DESARROLLO_SOSTENIBLE_ROUTES: Routes = [
     path: 'repositorio/actividad-diaria/prod-misionales/productos-misionales',
     loadComponent: () => import('./items/productos-misionales/productos-misionales.component').then((m) => m.ProductosMisionalesComponent),
   },
-  {
-    path: 'repositorio/actividad-diaria/poblacion-misional/poblacion-misional',
-    loadComponent: () => import('./items/poblacion-misional/poblacion-misional.component').then((m) => m.PoblacionMisionalComponent),
-  },
 ];

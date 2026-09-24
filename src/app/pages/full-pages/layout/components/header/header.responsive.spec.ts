@@ -83,7 +83,7 @@ describe('HeaderComponent — contrato responsive', () => {
    * En píxeles explícitos y no en `w-11`: el rem del proyecto está escalado y
    * `w-11` (2.75rem) daba 41px, por debajo del mínimo.
    */
-  it('los botones de acción declaran 44px en móvil y densidad de escritorio desde sm', () => {
+  it('los botones de acción declaran 36px (w-9) en móvil y densidad de escritorio desde sm', () => {
     const el = crear();
     const acciones = Array.from(el.querySelectorAll('button')).filter((b) =>
       /Comunicados|modo claro|modo oscuro|búsqueda global/i.test(b.getAttribute('aria-label') ?? ''),
@@ -91,8 +91,8 @@ describe('HeaderComponent — contrato responsive', () => {
 
     expect(acciones.length).toBeGreaterThanOrEqual(3);
     for (const boton of acciones) {
-      expect(boton.className, boton.getAttribute('aria-label') ?? '').toContain('w-[44px]');
-      expect(boton.className, boton.getAttribute('aria-label') ?? '').toContain('h-[44px]');
+      expect(boton.className, boton.getAttribute('aria-label') ?? '').toContain('w-9');
+      expect(boton.className, boton.getAttribute('aria-label') ?? '').toContain('h-9');
       // La densidad de escritorio no cambia: 32px desde el breakpoint `sm`.
       expect(boton.className).toContain('sm:w-8');
       expect(boton.className).toContain('sm:h-8');
@@ -104,7 +104,7 @@ describe('HeaderComponent — contrato responsive', () => {
     const pill = el.querySelector('[role="button"][aria-haspopup="true"]') as HTMLElement;
 
     expect(pill).not.toBeNull();
-    expect(pill.className).toContain('min-h-[44px]');
+    expect(pill.className).toContain('min-h-9');
     expect(pill.className).toContain('sm:min-h-0');
   });
 

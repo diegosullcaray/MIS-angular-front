@@ -60,21 +60,9 @@ describe('ActividadMensualCraService', () => {
     expect(res.length).toBe(1);
   });
 
-  it('gestionCarteraStock debe consultar 2 bloques', async () => {
-    const res = await firstValueFrom(service.gestionCarteraStock(nodo, 0, 1));
-    expect(regulares).toHaveBeenCalled();
-    expect(res.length).toBe(1);
-  });
-
   it('cmgCaptaciones debe consultar GCMGCAP_01', async () => {
     const res = await firstValueFrom(service.cmgCaptaciones(nodo, '20260131'));
     expect(regular).toHaveBeenCalledWith('GCMGCAP_01', nodo, { fec: '20260131' });
-    expect(res.tabla1).toBe(TABLA_VACIA);
-  });
-
-  it('seguimientoBp debe consultar CAP_SEGUI_BP_01', async () => {
-    const res = await firstValueFrom(service.seguimientoBp(nodo, 'TODOS', '20260131'));
-    expect(regular).toHaveBeenCalledWith('CAP_SEGUI_BP_01', nodo, { prod: 'TODOS', fec: '20260131' });
     expect(res.tabla1).toBe(TABLA_VACIA);
   });
 

@@ -25,11 +25,6 @@ export class TableroDigitalService {
     return this.unBloque(COD_TABLERO_DIGITAL.vistaGeneralCanal, nodo);
   }
 
-  /** Gestión por Canal. */
-  gestionCanal(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque(COD_TABLERO_DIGITAL.gestionCanal, nodo);
-  }
-
   /** Vista General de Corresponsal. */
   vistaGeneralCorresponsal(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.unBloque(COD_TABLERO_DIGITAL.vistaGeneralCorresponsal, nodo);
@@ -38,13 +33,6 @@ export class TableroDigitalService {
   /** Gestión de Corresponsal. */
   gestionCorresponsal(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
     return this.unBloque(COD_TABLERO_DIGITAL.gestionCorresponsal, nodo);
-  }
-
-  /** Detalle de Corresponsales. */
-  detalleCorresponsales(nodo: NodoConsulta, pagina = 1): Observable<ReporteBloqueUnico> {
-    return this.bloques
-      .regularPaginado(COD_TABLERO_DIGITAL.detalleCorresponsales, nodo, { fec: this.bloques.fec() }, pagina)
-      .pipe(map((tabla1) => ({ tabla1 })));
   }
 
   /** Opciones de periodo para Tablero Comercial. */

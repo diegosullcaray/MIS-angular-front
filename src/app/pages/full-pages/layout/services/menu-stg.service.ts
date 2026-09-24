@@ -76,7 +76,7 @@ export class MenuStgService {
 
   /** Normaliza la ruta absoluta, asegurando el prefijo /app/ sin duplicarlo. */
   private rutaDeAntItem(item: AntMenuItem): string {
-    const segmento = (item.act_sec || item.cod_sec || '').replace(/^\/+/, '');
+    const segmento = String(item.act_sec || item.cod_sec || '').replace(/^\/+/, '');
     return segmento.startsWith('app/') ? `/${segmento}` : `/app/${segmento}`;
   }
 

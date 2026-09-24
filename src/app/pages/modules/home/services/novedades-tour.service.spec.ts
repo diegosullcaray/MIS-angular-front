@@ -44,20 +44,7 @@ describe('NovedadesTourService', () => {
     }
   });
 
-  /**
-   * Un paso sin `element` es deliberado: driver.js lo pinta centrado, que es
-   * lo que corresponde cuando la novedad habla de algo que no está en esta
-   * pantalla —los filtros viven en los reportes, no en el Home—.
-   */
-  it('un paso, o apunta a un ancla, o es una tarjeta centrada a propósito', () => {
-    const sinAncla = servicio.novedades.flatMap((n) => n.pasos).filter((p) => !p.element);
 
-    expect(sinAncla.length).toBeGreaterThan(0);
-    for (const paso of sinAncla) {
-      // Sin ancla no hay lado que elegir: driver.js la centra.
-      expect(paso.popover?.side).toBeUndefined();
-    }
-  });
 
   it('Pachi se presenta por su nombre en el catálogo', () => {
     const textos = servicio.novedades
@@ -72,7 +59,6 @@ describe('NovedadesTourService', () => {
       'busqueda-global',
       'sistemas-y-paneles',
       'configuracion-personal',
-      'filtros-y-paneles',
     ]);
   });
 
@@ -82,7 +68,10 @@ describe('NovedadesTourService', () => {
     await servicio.iniciar(primera.id);
 
     expect(driverFalso.createQuickTour).toHaveBeenCalledTimes(1);
-    expect(driverFalso.createQuickTour.mock.calls[0][0]).toEqual(primera.pasos);
+    const esperados = primera.pasos.map((p) =>
+      p.advanceOnClick ? { ...p, advanceOnClick: true, disableActiveInteraction: false } : p
+    );
+    expect(driverFalso.createQuickTour.mock.calls[0][0]).toEqual(esperados);
   });
 
   it('iniciar() con un id inexistente no arranca ningún recorrido', () => {

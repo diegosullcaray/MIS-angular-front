@@ -58,16 +58,6 @@ describe('Reportes de Captaciones migrados desde `report-cra-v1p1`', () => {
     expect(llamada()).toEqual({ codRep: 'CMG_CLI_PAS_01', extra: { agru: 'Saldo' } });
   });
 
-  it('"CMG Clientes Pasivo Stock" pide el bloque `_02`, no el `_01` como sus hermanos', () => {
-    TestBed.inject(CmgClientesPasivosService).stock(NODO).subscribe();
-    expect(llamada()).toEqual({ codRep: 'CMG_CLI_PAS_STOCK_02', extra: {} });
-  });
-
-  it('"CMG Clientes Pasivo Detalle" pide CMG_CLI_PAS_DETA_01 con `agru` y `grupo`', () => {
-    TestBed.inject(CmgClientesPasivosService).flujoDetalle(NODO, 'Cuentas', 'Anual').subscribe();
-    expect(llamada()).toEqual({ codRep: 'CMG_CLI_PAS_DETA_01', extra: { agru: 'Cuentas', grupo: 'Anual' } });
-  });
-
   it('"Seguimiento Captaciones Banca Preferente" pide CAP_SEGUI_BP_01 con el filtro `prod`', () => {
     TestBed.inject(SeguimientoBancaPreferenteService).bancaPreferente(NODO, 'Cts').subscribe();
     expect(llamada()).toEqual({ codRep: 'CAP_SEGUI_BP_01', extra: { prod: 'Cts' } });

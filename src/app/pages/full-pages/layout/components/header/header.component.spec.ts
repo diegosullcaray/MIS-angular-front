@@ -132,14 +132,12 @@ describe('HeaderComponent', () => {
     expect(fixture.componentInstance['breadcrumbItems']()).toEqual([{ label: 'Mi espacio' }]);
   });
 
-  it('breadcrumb de una ruta anidada de Presupuesto usa las etiquetas legibles de cada segmento', async () => {
-    const fixture = await crear('/app/presupuesto/lineas/pasivos-patrimonio/car-dep-bp');
+  it('breadcrumb de una ruta anidada del Host usa las etiquetas legibles de cada segmento', async () => {
+    const fixture = await crear('/app/actividades/reg-prosp-corr');
 
     expect(fixture.componentInstance['breadcrumbItems']()).toEqual([
-      { label: 'Presupuesto', routerLink: '/app/presupuesto' },
-      { label: 'Líneas', routerLink: '/app/presupuesto/lineas' },
-      { label: 'Pasivos y Patrimonio', routerLink: '/app/presupuesto/lineas/pasivos-patrimonio' },
-      { label: 'Depósitos Banca Preferente' },
+      { label: 'Actividades', routerLink: '/app/actividades' },
+      { label: 'Prospectos Corresponsal' },
     ]);
   });
 

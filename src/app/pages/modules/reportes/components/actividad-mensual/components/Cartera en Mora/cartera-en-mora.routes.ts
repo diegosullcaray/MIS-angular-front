@@ -40,13 +40,6 @@ export const CARTERA_EN_MORA_ROUTES: Routes = [
       ),
   },
   {
-    path: 'leg/com/rma/adm/gest_cart_her',
-    loadComponent: () =>
-      import('./items/gestion-cartera-reasignada-mes/gestion-cartera-reasignada-mes.component').then(
-        (c) => c.GestionCarteraReasignadaMesComponent,
-      ),
-  },
-  {
     path: 'leg/com/rma/adm/cmg-mora-simp-m',
     loadComponent: () =>
       import('./items/cmg-cartera-mora-sin-impulsa/cmg-cartera-mora-sin-impulsa.component').then(

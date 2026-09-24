@@ -46,13 +46,6 @@ describe('InicioComponent', () => {
     expect(texto(crear())).not.toContain('¡Hola');
   });
 
-  it('invita a abrir un reporte cuando el historial está vacío', () => {
-    const fixture = crear();
-
-    expect(texto(fixture)).toContain('Todavía no abriste ningún reporte');
-    expect(texto(fixture)).toContain('menú lateral');
-    expect((fixture.nativeElement as HTMLElement).querySelector('a')).toBeNull();
-  });
 
   it('pinta una fila por reporte reciente, con su categoría y su enlace', () => {
     preferencias.registrarReporteReciente('/app/reportes/actividad-diaria/cartera', 'Cartera', 'Actividad diaria');

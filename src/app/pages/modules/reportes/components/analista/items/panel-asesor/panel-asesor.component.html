@@ -1,0 +1,286 @@
+<app-window-panel
+  titulo="Panel del asesor"
+  [subtitulo]="subtitulo()"
+  [conFiltros]="!panel.propio()"
+  [filtrosAbiertos]="true"
+  [actualizando]="panel.consultando()"
+  etiquetaActualizar="Actualizar reportes"
+  [permitirActualizar]="!!panel.asesor()"
+  (actualizar)="panel.actualizar()"
+  [altoAuto]="true"
+>
+  <div ventana-filtros class="filtro-asesor">
+    <label for="panel-asesor-selector">Asesor</label>
+    <p-select
+      inputId="panel-asesor-selector"
+      appendTo="body"
+      [options]="panel.asesores()"
+      [ngModel]="panel.asesor()"
+      (ngModelChange)="panel.seleccionarAsesor($event)"
+      optionLabel="nombre"
+      dataKey="dni"
+      [filter]="true"
+      filterBy="nombre"
+      placeholder="Buscar asesor"
+      [loading]="panel.cargandoLista()"
+      styleClass="w-72 text-[11.5px]"
+    />
+  </div>
+
+  @if (panel.errorLista(); as error) {
+    <app-inline-error titulo="No se pudo preparar el panel" [detalle]="error" (reintentar)="panel.recargarAsesores()" />
+  } @else if (panel.cargandoLista()) {
+    <app-list-skeleton [rows]="[1, 2, 3]" [cols]="[1, 2, 3, 4]" />
+  } @else if (!panel.asesor()) {
+    <app-empty-state
+      titulo="Elegí un asesor"
+      descripcion="Selecciona un asesor en el filtro superior para ver su panel 360 y todos sus reportes."
+    />
+  } @else {
+    <!-- Navegación: categorías + buscador -->
+    <nav class="navegacion" aria-label="Secciones del panel">
+      <ul class="pestanas">
+        <li>
+          <button
+            type="button"
+            class="pestana"
+            [class.activa]="pestanaActiva() === 'resumen'"
+            [attr.aria-current]="pestanaActiva() === 'resumen' ? 'page' : null"
+            (click)="abrirPestana('resumen')"
+          >
+            <i class="pi pi-th-large" aria-hidden="true"></i>
+            <span>Resumen 360</span>
+          </button>
+        </li>
+        @for (g of grupos; track g.grupo.id) {
+          <li>
+            <button
+              type="button"
+              class="pestana"
+              [class.activa]="pestanaActiva() === g.grupo.id"
+              [attr.aria-current]="pestanaActiva() === g.grupo.id ? 'page' : null"
+              (click)="abrirPestana(g.grupo.id)"
+            >
+              <i [class]="g.grupo.icono" aria-hidden="true"></i>
+              <span>{{ g.grupo.nombre }}</span>
+              <span class="contador">{{ g.reportes.length }}<span class="solo-lector"> reportes</span></span>
+            </button>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    @if (reporteActivo(); as reporte) {
+      <!-- Reportes de la categoría, del más al menos consultado -->
+      <ul class="chips" aria-label="Reportes de la categoría">
+        @for (r of reportesDelGrupo(); track r.codigo) {
+          <li>
+            <button
+              type="button"
+              class="chip"
+              [class.activa]="r.codigo === reporte.codigo"
+              [attr.aria-current]="r.codigo === reporte.codigo ? 'true' : null"
+              (click)="abrirReporte(r.codigo)"
+            >
+              <i [class]="r.icono" aria-hidden="true"></i>
+              {{ r.nombre }}
+            </button>
+          </li>
+        }
+      </ul>
+
+      <section class="detalle" [attr.aria-labelledby]="'titulo-' + reporte.codigo">
+        <header class="detalle-cabecera">
+          <span class="detalle-icono"><i [class]="reporte.icono" aria-hidden="true"></i></span>
+          <div class="detalle-texto">
+            <h2 [id]="'titulo-' + reporte.codigo">{{ reporte.nombre }}</h2>
+            <p>{{ reporte.descripcion }}</p>
+          </div>
+          <a class="enlace-completo" [routerLink]="reporte.ruta">
+            Abrir reporte completo <i class="pi pi-external-link" aria-hidden="true"></i>
+          </a>
+        </header>
+
+        @if (reporte.codigo === codigoEfectividades) {
+          <div class="filtros-reporte" role="group" aria-label="Filtros de efectividades">
+            @for (f of filtrosEfectividades; track f.campo) {
+              <div class="filtro">
+                <label [for]="'filtro-' + f.campo">{{ f.etiqueta }}</label>
+                <p-select
+                  [inputId]="'filtro-' + f.campo"
+                  appendTo="body"
+                  [options]="f.opciones"
+                  [ngModel]="panel.filtros()[f.campo]"
+                  (ngModelChange)="panel.filtrar(f.campo, $event)"
+                  optionLabel="desc"
+                  optionValue="id"
+                  [filter]="f.opciones.length > 10"
+                  filterBy="desc"
+                  styleClass="w-full text-[11.5px]"
+                />
+              </div>
+            }
+          </div>
+        }
+
+        @let e = estadoActivo();
+        @if (e?.estado === 'error') {
+          <app-inline-error
+            [titulo]="'No se pudo cargar ' + reporte.nombre"
+            detalle="Reintenta la consulta en unos segundos."
+            (reintentar)="panel.reintentar(reporte.codigo)"
+          />
+        } @else if (!e || e.estado === 'cargando') {
+          <app-list-skeleton />
+        } @else if (e.estado === 'listo') {
+          @if (vacio(e.resultado)) {
+            <app-empty-state
+              titulo="Sin resultados"
+              descripcion="Este asesor no tiene datos en este reporte, o los datos podrían seguir procesándose."
+            />
+          } @else {
+            <div class="contenido-reporte">
+              @if (e.resultado.kpiOperaciones || e.resultado.kpiMonto) {
+                <div class="kpis">
+                  @for (k of kpisDesembolso(); track k.etiqueta) {
+                    <div class="kpi" [class]="claseSemaforo(k.semaforo)">
+                      <span class="kpi-etiqueta">{{ k.etiqueta }}</span>
+                      <span class="kpi-valor">{{ k.valor }}</span>
+                      @if (k.semaforo !== null) {
+                        <span class="kpi-pie"><i [class]="iconoSemaforo(k.semaforo)" aria-hidden="true"></i> {{ textoSemaforo(k.semaforo) }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+              @for (grafico of e.resultado.graficos ?? []; track $index) {
+                <div class="tarjeta-grafico">
+                  <app-grafico-mixto [datos]="grafico" [tipo]="reporte.tipoGrafico ?? 'auto'" [fondoTransparente]="true" />
+                </div>
+              }
+              @for (b of bloques(reporte, e.resultado); track b.tabla) {
+                <app-bloque-panel [tabla]="e.resultado[b.tabla]!" [titulo]="b.titulo ?? ''" [nota]="b.nota ?? []" />
+              }
+            </div>
+          }
+        }
+      </section>
+    } @else {
+      <!-- Resumen 360 -->
+      <div class="resumen">
+        <section class="kpis" aria-label="Indicadores principales">
+          @let d = estadoDesembolso();
+          @if (d?.estado === 'error') {
+            <div class="kpi kpi-error">
+              <span class="kpi-etiqueta">Metas de desembolso</span>
+              <button type="button" class="enlace" (click)="panel.reintentar('L_MONI_DESE_SEC')">No se pudo cargar · Reintentar</button>
+            </div>
+          } @else if (!d || d.estado === 'cargando') {
+            <div class="kpi kpi-cargando" aria-hidden="true"></div>
+            <div class="kpi kpi-cargando" aria-hidden="true"></div>
+          } @else {
+            @for (k of kpisDesembolso(); track k.etiqueta) {
+              <button type="button" class="kpi kpi-accion" [class]="claseSemaforo(k.semaforo)" (click)="abrirReporte('L_MONI_DESE_SEC')">
+                <span class="kpi-etiqueta">{{ k.etiqueta }}</span>
+                <span class="kpi-valor">{{ k.valor }}</span>
+                <span class="kpi-pie">
+                  @if (k.semaforo !== null) {
+                    <i [class]="iconoSemaforo(k.semaforo)" aria-hidden="true"></i> {{ textoSemaforo(k.semaforo) }} ·
+                  }
+                  {{ corteDesembolso() || 'Metas de desembolso' }}
+                </span>
+              </button>
+            }
+          }
+
+          @let c = estadoCartera();
+          @if (c?.estado === 'error') {
+            <div class="kpi kpi-error">
+              <span class="kpi-etiqueta">Cartera</span>
+              <button type="button" class="enlace" (click)="panel.reintentar('L_CART_SEC')">No se pudo cargar · Reintentar</button>
+            </div>
+          } @else if (!c || c.estado === 'cargando') {
+            <div class="kpi kpi-cargando" aria-hidden="true"></div>
+            <div class="kpi kpi-cargando" aria-hidden="true"></div>
+          } @else {
+            @for (k of kpisCartera(); track k.etiqueta) {
+              <button type="button" class="kpi kpi-accion" [class]="claseSemaforo(k.semaforo)" (click)="abrirReporte('L_CART_SEC')">
+                <span class="kpi-etiqueta">{{ k.etiqueta }}</span>
+                <span class="kpi-valor">{{ k.valor }}</span>
+                <span class="kpi-pie">Total de cartera</span>
+              </button>
+            }
+          }
+        </section>
+
+        <div class="resumen-grilla">
+          <section class="tarjeta" aria-labelledby="resumen-mora">
+            <header>
+              <h2 id="resumen-mora"><i class="pi pi-chart-bar" aria-hidden="true"></i> Inversión y Stock de Mora</h2>
+              <button type="button" class="enlace" (click)="abrirReporte('L_INVERS_STOCK_SEC')">Ver reporte</button>
+            </header>
+            @let m = estadoMora();
+            @if (m?.estado === 'error') {
+              <app-inline-error detalle="Reintenta la consulta en unos segundos." (reintentar)="panel.reintentar('L_INVERS_STOCK_SEC')" />
+            } @else if (!m || m.estado === 'cargando') {
+              <app-list-skeleton [rows]="[1, 2, 3, 4]" [cols]="[1, 2, 3]" />
+            } @else if (m.estado === 'listo') {
+              @if (vacio(m.resultado)) {
+                <app-empty-state titulo="Sin datos de mora" descripcion="Este asesor no registra inversión ni stock de mora." />
+              } @else {
+                @for (grafico of m.resultado.graficos ?? []; track $index) {
+                  <div class="tarjeta-grafico">
+                    <app-grafico-mixto [datos]="grafico" tipo="linea" [fondoTransparente]="true" />
+                  </div>
+                }
+              }
+            }
+          </section>
+
+          <section class="tarjeta" aria-labelledby="resumen-cartera">
+            <header>
+              <h2 id="resumen-cartera"><i class="pi pi-wallet" aria-hidden="true"></i> Cartera</h2>
+              <button type="button" class="enlace" (click)="abrirReporte('L_CART_SEC')">Ver reporte</button>
+            </header>
+            @if (c?.estado === 'error') {
+              <app-inline-error detalle="Reintenta la consulta en unos segundos." (reintentar)="panel.reintentar('L_CART_SEC')" />
+            } @else if (!c || c.estado === 'cargando') {
+              <app-list-skeleton [rows]="[1, 2, 3, 4]" />
+            } @else if (c.estado === 'listo') {
+              @if (vacio(c.resultado)) {
+                <app-empty-state titulo="Sin cartera" descripcion="Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose." />
+              } @else if (c.resultado.tabla1) {
+                <app-bloque-panel [tabla]="c.resultado.tabla1" />
+              }
+            }
+          </section>
+        </div>
+
+        <section class="mapa" aria-labelledby="resumen-mapa">
+          <h2 id="resumen-mapa">Todos tus reportes</h2>
+          <div class="mapa-grupos">
+            @for (g of grupos; track g.grupo.id) {
+              <div class="mapa-grupo">
+                <h3><i [class]="g.grupo.icono" aria-hidden="true"></i> {{ g.grupo.nombre }}</h3>
+                <ul>
+                  @for (r of g.reportes; track r.codigo) {
+                    <li>
+                      <button type="button" class="acceso" (click)="abrirReporte(r.codigo)">
+                        <i [class]="r.icono" aria-hidden="true"></i>
+                        <span class="acceso-texto">
+                          <strong>{{ r.nombre }}</strong>
+                          <small>{{ r.descripcion }}</small>
+                        </span>
+                        <i class="pi pi-angle-right acceso-flecha" aria-hidden="true"></i>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+    }
+  }
+</app-window-panel>

@@ -12,7 +12,6 @@ const REPORTES: readonly [string, string][] = [
   ['/app/reportes/leg/com/rda/adm/cmg_cliente_flujo', 'Clientes Flujo'],
   ['/app/reportes/leg/com/rda/adm/cmg-cli', 'Stock de Clientes'],
   ['/app/reportes/repositorio/actividad-diaria/clientes/movimiento-clientes', 'Movimiento de Clientes'],
-  ['/app/reportes/repositorio/actividad-diaria/mujer/mujer', 'Ranking Mujer'],
 ];
 
 /** Jerarquía mínima + un `table.regular` con filas de varios `gru`. */
@@ -57,16 +56,6 @@ test.describe('Clientes — smoke de las 6 pantallas migradas', () => {
       expect(page.url()).toContain(ruta);
     });
   }
-
-  test('"Ranking Mujer" parte sus dos tablas en las pestañas del legado', async ({ page }) => {
-    await inyectarSesionVigente(page);
-    await mockBackend(page);
-    await page.goto('/app/reportes/repositorio/actividad-diaria/mujer/mujer');
-    await page.waitForLoadState('networkidle');
-
-    await expect(page.getByRole('tab', { name: 'Ranking Clientes Nuevo Mujeres' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Ranking Clientes Mujeres Total Cartera' })).toBeVisible();
-  });
 
   test('"Movimiento de Clientes" carga sin jerarquía y reparte las filas por `gru`', async ({ page }) => {
     await inyectarSesionVigente(page);

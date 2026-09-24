@@ -43,7 +43,9 @@ describe('PrincipalComponent', () => {
     calculadora: ReturnType<typeof signal<unknown>>;
     monetizado: ReturnType<typeof signal<unknown>>;
     puedeElegirNivel: ReturnType<typeof signal<boolean>>;
-    nivelesSelector: unknown[];
+    nivelesSelector: ReturnType<typeof signal<unknown[]>>;
+    puedeVerFinanciera: ReturnType<typeof signal<boolean>>;
+    puedeRestaurarPerfilPropio: ReturnType<typeof signal<boolean>>;
     fechaActual: ReturnType<typeof signal<string>>;
     seleccionarFecha: ReturnType<typeof vi.fn>;
     fechaCorte: ReturnType<typeof vi.fn>;
@@ -76,7 +78,9 @@ describe('PrincipalComponent', () => {
         puedeSimular: false, modelo: '2026', modeloDescripcion: 'M2026', mostrarModelo: false, fechasHabilitadas: [],
       }),
       puedeElegirNivel: signal(false),
-      nivelesSelector: [],
+      nivelesSelector: signal([]),
+      puedeVerFinanciera: signal(false),
+      puedeRestaurarPerfilPropio: signal(false),
       fechaActual: signal('20260115'),
       seleccionarFecha: vi.fn(),
       fechaCorte: vi.fn().mockReturnValue('20260115'),

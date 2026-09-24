@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.bloque {
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-lg);
+  background: var(--mis-surface);
+  overflow: hidden;
+}
+.bloque-cabecera {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--mis-border);
+}
+h3 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mis-text-primary);
+}
+.bloque-tabla {
+  padding: 8px;
+  overflow-x: auto;
+}
+.bloque-nota {
+  margin: 0;
+  padding: 8px 14px 12px 28px;
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--mis-text-tertiary);
+}

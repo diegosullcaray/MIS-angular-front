@@ -21,15 +21,4 @@ export const COD_SEGUROS = {
   segurosOptativos: 'GRSCMISREP_01',
   /** Selector de periodo de Seguros Optativos — usa `RS_FECH`, no el `RS_FECH02` de Gestión Comercial. */
   periodosSegurosOptativos: 'RS_FECH',
-  /**
-   * `repositorio/seguro-pasivos-graf` (`regularData`, pero con bloques de
-   * gráfico serializados dentro de `result.body[0]`).
-   */
-  evolutivoPasivos: ['GRAFSEGPAS_01', 'GRAFSEGPAS_02'],
 } as const;
-
-/** Título y eje de cada gráfico de Evolutivo Pasivos, en el orden de sus bloques. */
-export const GRAFICOS_EVOLUTIVO_PASIVOS = [
-  { titulo: 'Microseguro Oncológico', tituloEjeY: 'Nro. Pólizas' },
-  { titulo: 'Evolutivo de Seguros Pasivos', tituloEjeY: 'Nro. Pólizas' },
-] as const;

@@ -9,7 +9,6 @@ const REPORTES: readonly [string, string][] = [
   // Seguros
   ['/app/reportes/leg/com/rda/adm/cam-seguros', 'Reporte Seguros'],
   ['/app/reportes/repositorio/actividad-diaria/seguros-pasivos/seguros-pasivos', 'Seguros Pasivos'],
-  ['/app/reportes/repositorio/actividad-diaria/seg-pasivos-graf/seguro-pasivos-grafico', 'Evolutivo Pasivos'],
   ['/app/reportes/repositorio/actividad-diaria/seguro/seguro-com', 'Reporte Seguros Optativos'],
   // Campañas
   ['/app/reportes/leg/com/rda/adm/cam-apa', 'Apadrinamiento'],

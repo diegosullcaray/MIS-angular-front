@@ -8,11 +8,4 @@ export const PORTAFOLIO_REASIGNADO_ROUTES: Routes = [
         (c) => c.GestionCarteraReasignadaComponent,
       ),
   },
-  {
-    path: 'leg/com/rma/adm/gest_cart_stock',
-    loadComponent: () =>
-      import('./items/gestion-cartera-stock/gestion-cartera-stock.component').then(
-        (c) => c.GestionCarteraStockComponent,
-      ),
-  },
 ];

@@ -104,6 +104,7 @@ describe('KaypachaDashboardComponent', () => {
 
   it('iniciarTour() delega en KaypachaTourService', () => {
     const fixture = crear();
+
     fixture.componentInstance['iniciarTour']();
 
     expect(tourFalso.iniciarTourGuiado).toHaveBeenCalled();

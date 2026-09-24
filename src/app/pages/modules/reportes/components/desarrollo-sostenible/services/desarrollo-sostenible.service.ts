@@ -6,11 +6,7 @@ import { mapearBloqueReporte, mapearTablaRegular } from '../../../utils/reportes
 import { fechaCorte, fechaUltimoDia } from '../../../utils/fecha-reporte.util';
 import type { HierarquiaNodo } from '../../../models/jerarquia.model';
 import type { ColumnaReporte, TablaReporteResultado } from '../../../models/tabla-reporte.model';
-import type {
-  ReporteMonitorProductosMisionales,
-  ReportePoblacionMisional,
-  ReporteProductosMisionales,
-} from '../models/desarrollo-sostenible.model';
+import type { ReporteMonitorProductosMisionales, ReporteProductosMisionales } from '../models/desarrollo-sostenible.model';
 import type { KpiOperacionesDesembolsadas } from '../../avance-comercial/models/avance-comercial.model';
 import { COD_DESARROLLO_SOSTENIBLE, COLUMNAS_KPI_MISIONAL } from '../constantes/desarrollo-sostenible.constantes';
 
@@ -43,7 +39,7 @@ export function corregirSemaforosDesempenoSocial(resultado: TablaReporteResultad
   return { ...resultado, headers: [{ ...filaNivel1, columns: encabezado }, ...resultado.headers.slice(1)] };
 }
 
-/** Datos de los reportes del dominio "Desarrollo Sostenible": Monitor Productos Misionales, Desempeño Social, Productos Misionales y Poblaciones Misionales. */
+/** Datos de los reportes del dominio "Desarrollo Sostenible": Monitor Productos Misionales, Desempeño Social y Productos Misionales. */
 @Injectable({ providedIn: 'root' })
 export class DesarrolloSostenibleService {
   private readonly ant = inject(ModReportesService);
@@ -85,18 +81,6 @@ export class DesarrolloSostenibleService {
       corredores: this.ant.getRegularTableResult('prod_misi_01', params).pipe(map(mapearTablaRegular)),
       unidad: this.ant.getRegularTableResult('prod_misi_02', params).pipe(map(mapearTablaRegular)),
       asesores: this.ant.getRegularTableResult('prod_misi_03', params).pipe(map(mapearTablaRegular)),
-    });
-  }
-
-  /** "Poblaciones Misionales" (`pob_misi_01..04`) para un nivel de jerarquía + población. */
-  obtenerPoblacionMisional(nivel: Pick<HierarquiaNodo, 'tip_cod' | 'cod_rel'>, prod: string): Observable<ReportePoblacionMisional> {
-    const params = { tip_cod: nivel.tip_cod, cod_rel: nivel.cod_rel, fec: fechaCorte(this.shell.usuarioActivo()?.fechaCorte), prod };
-
-    return forkJoin({
-      territorio: this.ant.getRegularTableResult('pob_misi_01', params).pipe(map(mapearTablaRegular)),
-      corredores: this.ant.getRegularTableResult('pob_misi_02', params).pipe(map(mapearTablaRegular)),
-      unidad: this.ant.getRegularTableResult('pob_misi_03', params).pipe(map(mapearTablaRegular)),
-      asesores: this.ant.getRegularTableResult('pob_misi_04', params).pipe(map(mapearTablaRegular)),
     });
   }
 }

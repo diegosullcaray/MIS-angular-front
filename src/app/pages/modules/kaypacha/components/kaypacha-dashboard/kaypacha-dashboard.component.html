@@ -25,6 +25,19 @@
   </button>
   }
 
+  <button
+    ventana-acciones
+    id="tour-kaypacha-tour-btn"
+    type="button"
+    class="mis-window-btn"
+    (click)="iniciarTour()"
+    aria-label="Iniciar tour guiado"
+    pTooltip="Iniciar tour guiado"
+    tooltipPosition="bottom"
+  >
+    <i class="pi pi-question-circle text-[14px]"></i>
+  </button>
+
   @if (service.loading()) {
   <div class="p-6 bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)]">
     <app-list-skeleton [rows]="[1, 2, 3, 4, 5, 6]" />

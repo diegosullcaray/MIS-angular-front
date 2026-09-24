@@ -72,7 +72,7 @@ describe('MenuStgService', () => {
     expect(service.sistemas().map((s) => s.id)).toEqual(['A', 'B']);
   });
 
-  it('un sistema con hijos tiene tienePanel=true y sin ruta propia; sin hijos, tienePanel=false y ruta definida', () => {
+  it('un sistema con hijos tiene tienePanel=true y su propia ruta base; sin hijos, tienePanel=false y ruta definida', () => {
     getMenuItemsSpy.mockReturnValue(
       of(
         respuestaCon([
@@ -87,7 +87,7 @@ describe('MenuStgService', () => {
 
     const [conHijos, sinHijos] = service.sistemas();
     expect(conHijos.tienePanel).toBe(true);
-    expect(conHijos.ruta).toBeUndefined();
+    expect(conHijos.ruta).toBe('/app/a');
 
     expect(sinHijos.tienePanel).toBe(false);
     expect(sinHijos.ruta).toBe('/app/ranking-k');

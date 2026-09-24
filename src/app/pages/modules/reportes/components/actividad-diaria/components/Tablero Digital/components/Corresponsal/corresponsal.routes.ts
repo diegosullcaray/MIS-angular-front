@@ -16,12 +16,4 @@ export const TABLERO_CORRESPONSAL_ROUTES: Routes = [
     loadComponent: () =>
       import('./items/gestion-corresponsal/gestion-corresponsal.component').then((c) => c.GestionCorresponsalComponent),
   },
-  {
-    /** Legado `det_correspon` (`RDETCORR_01`, host paginado `cra-V10`, jerarquía `OFI_1`). */
-    path: 'leg/com/rda/adm/det_correspon',
-    loadComponent: () =>
-      import('./items/detalle-corresponsales/detalle-corresponsales.component').then(
-        (c) => c.DetalleCorresponsalesComponent,
-      ),
-  },
 ];

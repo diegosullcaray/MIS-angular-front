@@ -3,19 +3,6 @@ import { Routes } from '@angular/router';
 /** Rutas de los reportes de "Analista" (legado STG `rda/sectorista` + `rda/administracion`) — separadas de `reportes.routes.ts` para que ese archivo no se sature a medida que se migran los ~25 reportes de esta categoría uno por uno. */
 export const ANALISTA_ROUTES: Routes = [
   {
-    path: 'leg/com/rda/sec/cap-ret',
-    loadComponent: () => import('./items/encuesta-clientes/encuesta-clientes.component').then((m) => m.EncuestaClientesComponent),
-  },
-  {
-    path: 'leg/com/rda/sec/repro',
-    loadComponent: () =>
-      import('./items/clientes-reprogramados/clientes-reprogramados.component').then((m) => m.ClientesReprogramadosComponent),
-  },
-  {
-    path: 'leg/com/rda/sec/cli-act',
-    loadComponent: () => import('./items/datos-clientes/datos-clientes.component').then((m) => m.DatosClientesComponent),
-  },
-  {
     path: 'leg/com/rda/sec/cartera',
     loadComponent: () => import('./items/cartera/cartera.component').then((m) => m.CarteraComponent),
   },
@@ -66,22 +53,6 @@ export const ANALISTA_ROUTES: Routes = [
     loadComponent: () => import('./items/autonomia-tasas/autonomia-tasas.component').then((m) => m.AutonomiaTasasComponent),
   },
   {
-    path: 'leg/com/rda/sec/cam-agl',
-    loadComponent: () => import('./items/campana-agil/campana-agil.component').then((m) => m.CampanaAgilComponent),
-  },
-  {
-    path: 'leg/com/rda/sec/canal_alt',
-    loadComponent: () => import('./items/canal-alterno/canal-alterno.component').then((m) => m.CanalAlternoComponent),
-  },
-  {
-    path: 'leg/com/rda/sec/cli_pot',
-    loadComponent: () => import('./items/clientes-potenciales/clientes-potenciales.component').then((m) => m.ClientesPotencialesComponent),
-  },
-  {
-    path: 'leg/com/rda/sec/aut',
-    loadComponent: () => import('./items/autonomias/autonomias.component').then((m) => m.AutonomiasComponent),
-  },
-  {
     path: 'leg/com/rda/sec/proy_M6',
     loadComponent: () => import('./items/colocaciones-diaria/colocaciones-diaria.component').then((m) => m.ColocacionesDiariaComponent),
   },
@@ -98,10 +69,6 @@ export const ANALISTA_ROUTES: Routes = [
     path: 'leg/com/rda/sec/mon_efec_sec',
     loadComponent: () =>
       import('./items/monitor-efectividades/monitor-efectividades.component').then((m) => m.MonitorEfectividadesComponent),
-  },
-  {
-    path: 'leg/com/rda/sec/plan-datos-sec',
-    loadComponent: () => import('./items/plan-datos/plan-datos.component').then((m) => m.PlanDatosComponent),
   },
   {
     path: 'leg/com/rda/sec/plan-mov-sec',

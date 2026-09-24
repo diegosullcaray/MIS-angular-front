@@ -24,18 +24,18 @@ const ANCHO_MINIMO_ABIERTO = 1280;
 export class PanelNovedadesComponent {
   private readonly tours = inject(NovedadesTourService);
 
-  protected readonly novedades = this.tours.novedades;
-  protected readonly categoriaActiva = signal<string | null>(null);
-  protected readonly categorias = computed(() => [
+  readonly novedades = this.tours.novedades;
+  readonly categoriaActiva = signal<string | null>(null);
+  readonly categorias = computed(() => [
     ...new Set(this.novedades.map((novedad) => novedad.categoria)),
   ]);
-  protected readonly novedadesVisibles = computed(() => {
+  readonly novedadesVisibles = computed(() => {
     const categoria = this.categoriaActiva();
     return categoria
       ? this.novedades.filter((novedad) => novedad.categoria === categoria)
       : this.novedades;
   });
-  protected readonly posePachi = computed(() => {
+  readonly posePachi = computed(() => {
     const categoria = this.categoriaActiva();
     return (
       (categoria
@@ -44,22 +44,22 @@ export class PanelNovedadesComponent {
       )?.posePachi ?? 'saluda'
     );
   });
-  protected readonly mensajePachi = computed(() =>
+  readonly mensajePachi = computed(() =>
     this.categoriaActiva()
       ? `Te muestro cómo ${this.categoriaActiva()!.toLocaleLowerCase('es-PE')} en MIS.`
       : 'Elige un tema y te guío paso a paso en la pantalla.',
   );
 
-  protected readonly abierto = signal(this.cabeAbierto());
+  readonly abierto = signal(this.cabeAbierto());
 
   /** Enciende el punto de aviso de la pestaña cuando hay algo publicado hace poco. */
-  protected readonly hayNuevas = computed(() => this.novedades.some((n) => this.tours.esNueva(n)));
+  readonly hayNuevas = computed(() => this.novedades.some((n) => this.tours.esNueva(n)));
 
-  protected alternar(): void {
+  alternar(): void {
     this.abierto.update((v) => !v);
   }
 
-  protected verGuia(novedad: Novedad): void {
+  verGuia(novedad: Novedad): void {
     // El recorrido señala elementos de la pantalla, y el panel está encima de
     // ellos: en angosto ocupa todo el ancho, así que taparía justo lo que la
     // novedad quiere mostrar. El catálogo no publica recorridos autorreferenciales.
@@ -68,7 +68,7 @@ export class PanelNovedadesComponent {
     this.tours.iniciar(novedad.id);
   }
 
-  protected filtrar(categoria: string | null): void {
+  filtrar(categoria: string | null): void {
     this.categoriaActiva.set(categoria);
   }
 
@@ -82,7 +82,7 @@ export class PanelNovedadesComponent {
     this.abierto.set(false);
   }
 
-  protected esNueva(novedad: Novedad): boolean {
+  esNueva(novedad: Novedad): boolean {
     return this.tours.esNueva(novedad);
   }
 

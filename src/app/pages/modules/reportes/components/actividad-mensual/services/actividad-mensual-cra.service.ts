@@ -71,20 +71,9 @@ export class ActividadMensualCraService {
     return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.gestionCarteraReasignadaFlujo, nodo, { ver, fecha: f });
   }
 
-  /** Gestión Cartera Stock. */
-  gestionCarteraStock(nodo: NodoConsulta, ver: number, tipo_ase: number, fecha?: string): Observable<TablaReporteResultado[]> {
-    const f = fecha ?? this.bloques.fecha();
-    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.gestionCarteraStock, nodo, { ver, tipo_ase, fecha: f });
-  }
-
   /** CMG Captaciones. */
   cmgCaptaciones(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
     return this.consultarRegular(COD_MENSUAL_CRA.cmgCaptaciones, nodo, fec ? { fec } : undefined);
-  }
-
-  /** Seguimiento BP. */
-  seguimientoBp(nodo: NodoConsulta, prod: string, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular(COD_MENSUAL_CRA.seguimientoBp, nodo, { prod, ...(fec ? { fec } : {}) });
   }
 
   /** Captación por Canal Comercial. */
@@ -144,11 +133,6 @@ export class ActividadMensualCraService {
       );
   }
 
-  /** Comite de Créditos. */
-  comiteCreditos(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular(COD_MENSUAL_CRA.comiteCreditos, nodo, fec ? { fec } : undefined);
-  }
-
   /** Datos por Producto. */
   datosProducto(nodo: NodoConsulta, fecha?: string): Observable<TablaReporteResultado[]> {
     const f = fecha ?? this.bloques.fecha();
@@ -198,12 +182,6 @@ export class ActividadMensualCraService {
     return this.bloques.graficos(COD_MENSUAL_DEPRECADO.dashboardCeroCuotaNueva, nodo, fec ? { fec } : undefined);
   }
 
-  /** Gestión de Cartera Reasignada Mes. */
-  gestionCarteraReasignadaMes(nodo: NodoConsulta, ver: number, fecha?: string): Observable<TablaReporteResultado[]> {
-    const f = fecha ?? this.bloques.fecha();
-    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.gestionCarteraReasignadaMes, nodo, { ver, fecha: f });
-  }
-
   /** CMG Cartera en Mora Sin Impulsa. */
   cmgCarteraMoraSinImpulsa(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
     return this.consultarRegular(COD_MENSUAL_CRA.cmgCarteraMoraSinImpulsa, nodo, fec ? { fec } : undefined);
@@ -219,10 +197,6 @@ export class ActividadMensualCraService {
     return this.consultarDeprecado(COD_MENSUAL_DEPRECADO.cmgClientesActivo, nodo, fec ? { fec } : undefined);
   }
 
-  /** Desempeño Social. */
-  desempenoSocial(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarRegular(COD_MENSUAL_CRA.desempenoSocial, nodo, fec ? { fec } : undefined);
-  }
 
   /** CMG Clientes Flujo. */
   cmgClientesFlujo(nodo: NodoConsulta, fec?: string): Observable<ReporteBloqueUnico> {

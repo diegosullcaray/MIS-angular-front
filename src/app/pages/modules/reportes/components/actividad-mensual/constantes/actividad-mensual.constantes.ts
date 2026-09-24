@@ -14,24 +14,18 @@ export const COD_MENSUAL_CRA = {
   huellaCarbono: 'HCARBONO_01',
   /** `cmg-capta`, host `cra-v3`. */
   cmgCaptaciones: 'GCMGCAP_01',
-  /** `seg-bp-men`, host `cra-v3`. */
-  seguimientoBp: 'CAP_SEGUI_BP_01',
   /** `capta-caract-canal-comercial-m`, host `cra-v1p1`. */
   captacionCanalComercial: 'CARACT_CARTERA_M_01',
   /** `capta-caract-canal-operacional-m`, host `cra-v1p1`. */
   captacionOperacional: 'CARACT_pas_M_01',
   /** `rep-aut-tas`, host `cra-v1p1`. */
   rankingAutonomiasTasas: 'reporte_autonomia_new_01',
-  /** `seg_comite`, host `cra-v3`. */
-  comiteCreditos: 'SEGUI_COMITE_01',
   /** `cmg-mora`, host `cra-v1p1`. */
   cmgCarteraMora: 'cuadro_Variable_M_01',
   /** `cmg-mora-simp-m`, host `cra-v1p1`. */
   cmgCarteraMoraSinImpulsa: 'cmg_mora_simp_m_01',
   /** `sema-cosechas`, host `cra-v1p1`. */
   semaforoCosechas: 'COSESEMAFORO_01',
-  /** `desemp-social`, host `cra-v3`. */
-  desempenoSocial: 'DESEMP_SOC_01',
   /** `cmg_cliente_flujo`, host `cra-v3`. */
   cmgClientesFlujo: 'CMG_CLIF_01',
   /** `res-un`, host `cra-v1p1`. */
@@ -66,17 +60,12 @@ export const COD_MENSUAL_DEPRECADO = {
 export const COD_MENSUAL_MULTIBLOQUE = {
   /** `gest_cart_her-flujo` (`RS_AGE_COM_CRM_F`), host `cra-v11`. */
   gestionCarteraReasignadaFlujo: ['RS_AGE_COM_CRM_F_01', 'RS_AGE_COM_CRM_F_02'],
-  /** `gest_cart_stock` (`RS_AGE_COM_CRM_S`), host `cra-v11`. */
-  gestionCarteraStock: ['RS_AGE_COM_CRM_S_03', 'RS_AGE_COM_CRM_S_04'],
   /** `dat-prod-men` (`RS_DAT_PRO`), host `cra-v3`. */
   datosProducto: ['RS_DAT_PRO_01', 'RS_DAT_PRO_02', 'RS_DAT_PRO_03', 'RS_DAT_PRO_04'],
   /** `cont-elect-m` (`CONT_ELECT_M`), host `cra-v1p1`. */
   contratacionElectronica: ['CONT_ELECT_M_01', 'CONT_ELECT_M_02', 'CONT_ELECT_M_03'],
   /** `mon-efec-reasig` (`RS_MON_EFECREASIGM`), host `cra-v12`. */
-  monitorEfectividadesReasignados: ['RS_MON_EFECREASIGM_01', 'RS_MON_EFECREASIGM_02'],
-  /** `gest_cart_her` (`RS_AGE_COM_CRM`), host `cra-v11`. */
-  gestionCarteraReasignadaMes: ['RS_AGE_COM_CRM_01', 'RS_AGE_COM_CRM_02'],
-} as const;
+  monitorEfectividadesReasignados: ['RS_MON_EFECREASIGM_01', 'RS_MON_EFECREASIGM_02'],} as const;
 
 /**
  * Programas del Gobierno (`pro-gob-m`, host `cra-v1p3`): cuatro bloques que se

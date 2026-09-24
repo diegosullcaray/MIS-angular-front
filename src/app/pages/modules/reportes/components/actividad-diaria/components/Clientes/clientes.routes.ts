@@ -20,12 +20,6 @@ export const CLIENTES_ROUTES: Routes = [
       import('./items/movimiento-clientes/movimiento-clientes.component')
         .then((c) => c.MovimientoClientesComponent)
   },
-     {
-    path: 'repositorio/actividad-diaria/mujer/mujer',
-    loadComponent: () =>
-      import('./items/ranking-clientes/ranking-clientes.component')
-        .then((c) => c.RankingClientesComponent)
-  },
 
   // components
        {

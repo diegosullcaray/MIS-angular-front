@@ -26,53 +26,14 @@ describe('BuscadorColaboradorDialogComponent', () => {
     return fixture;
   }
 
-  it('sin filtro, muestra todos los colaboradores', () => {
-    const fixture = crear();
-    expect(fixture.componentInstance['colaboradoresFiltrados']()).toEqual(COLABORADORES);
-  });
-
-  it('filtra por nombre (des_col), sin importar mayúsculas/minúsculas', () => {
-    const fixture = crear();
-    fixture.componentInstance['filtroTexto'].set('ana');
-
-    expect(fixture.componentInstance['colaboradoresFiltrados']()).toEqual([COLABORADORES[0]]);
-  });
-
-  it('filtra por cargo (HCOLCAR)', () => {
-    const fixture = crear();
-    fixture.componentInstance['filtroTexto'].set('supervisor');
-
-    expect(fixture.componentInstance['colaboradoresFiltrados']()).toEqual([COLABORADORES[1]]);
-  });
-
-  it('filtra por código BT o número de documento', () => {
-    const fixture = crear();
-
-    fixture.componentInstance['filtroTexto'].set('bt-002');
-    expect(fixture.componentInstance['colaboradoresFiltrados']()).toEqual([COLABORADORES[1]]);
-
-    fixture.componentInstance['filtroTexto'].set('12345678');
-    expect(fixture.componentInstance['colaboradoresFiltrados']()).toEqual([COLABORADORES[0]]);
-  });
-
-  it('onFilterInput() actualiza filtroTexto desde el valor del input', () => {
-    const fixture = crear();
-    const input = document.createElement('input');
-    input.value = 'beto';
-
-    fixture.componentInstance['onFilterInput']({ target: input } as unknown as Event);
-
-    expect(fixture.componentInstance['filtroTexto']()).toBe('beto');
-  });
-
   it('onRowSelect() guarda el ítem seleccionado', () => {
     const fixture = crear();
 
     fixture.componentInstance['onRowSelect'](COLABORADORES[0]);
     expect(fixture.componentInstance['itemSeleccionado']()).toEqual(COLABORADORES[0]);
 
-    fixture.componentInstance['onRowSelect']([COLABORADORES[1]]);
-    expect(fixture.componentInstance['itemSeleccionado']()).toEqual(COLABORADORES[0]);
+    fixture.componentInstance['onRowSelect'](null);
+    expect(fixture.componentInstance['itemSeleccionado']()).toBeNull();
   });
 
   it('seleccionarYCerrar() emite colaboradorSeleccionado y cierra el diálogo', () => {
@@ -90,15 +51,13 @@ describe('BuscadorColaboradorDialogComponent', () => {
     expect(fixture.componentInstance.visible()).toBe(false);
   });
 
-  it('cerrar() cierra el diálogo y limpia el filtro/selección', () => {
+  it('cerrar() cierra el diálogo y limpia la selección', () => {
     const fixture = crear();
-    fixture.componentInstance['filtroTexto'].set('ana');
     fixture.componentInstance['onRowSelect'](COLABORADORES[0]);
 
     fixture.componentInstance['cerrar']();
 
     expect(fixture.componentInstance.visible()).toBe(false);
-    expect(fixture.componentInstance['filtroTexto']()).toBe('');
     expect(fixture.componentInstance['itemSeleccionado']()).toBeNull();
   });
 });

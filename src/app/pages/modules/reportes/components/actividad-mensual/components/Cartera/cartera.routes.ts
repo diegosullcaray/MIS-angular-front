@@ -47,11 +47,6 @@ export const CARTERA_ROUTES: Routes = [
       import('./items/tasas-mes-producto/tasas-mes-producto.component').then((c) => c.TasasMesProductoComponent),
   },
   {
-    path: 'leg/com/rma/adm/seg_comite',
-    loadComponent: () =>
-      import('./items/comite-creditos/comite-creditos.component').then((c) => c.ComiteCreditosComponent),
-  },
-  {
     path: 'leg/com/rma/adm/dat-prod-men',
     loadComponent: () =>
       import('./items/datos-producto/datos-producto.component').then((c) => c.DatosProductoComponent),

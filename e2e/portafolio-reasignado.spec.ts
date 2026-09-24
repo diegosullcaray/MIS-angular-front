@@ -7,7 +7,6 @@ const NIVEL_1 = [{ tip_cod: 9, cod_rel: 'FC', des_rel: 'FINANCIERA', lvl: 1, lbl
 
 /** Ruta del Host ↔ título de cada reporte de Portafolio Reasignado. */
 const REPORTES: readonly [string, string][] = [
-  ['/app/reportes/repositorio/actividad-diaria/reasignado/reasignado', 'Efectividad por tramos'],
   ['/app/reportes/leg/com/rda/adm/gest_cart_her', 'Gestión de Cartera Reasignada'],
   ['/app/reportes/leg/com/rda/adm/mon-efec-reasig', 'Monitor Efectividades Reasignados'],
 ];

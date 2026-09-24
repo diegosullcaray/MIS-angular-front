@@ -62,21 +62,18 @@ export const APP_ROUTES: Routes = [
           import('./pages/modules/herramientas/herramientas.routes').then((m) => m.HERRAMIENTAS_ROUTES)
       },
       {
-        path: 'presupuesto',
-        loadChildren: () =>
-          import('./pages/modules/presupuesto/presupuesto.routes').then((m) => m.PRESUPUESTO_ROUTES)
+        /** Panel 360 del asesor; vive con los reportes de `rda/sectorista` porque consume sus servicios. */
+        path: 'analista/panel-unificado',
+        loadComponent: () =>
+          import('./pages/modules/reportes/components/analista/items/panel-asesor/panel-asesor.component').then(
+            (m) => m.PanelAsesorComponent
+          )
       },
       {
-        /** Módulo `categorizacion`. Va antes que `analista`: si no, la ruta `analista` de abajo captura este path y busca `categorizacion` dentro de ANALISTA_ROUTES, donde no existe. */
+        /** Módulo `categorizacion`. El segmento `analista/` es el `act_sec` del menú legacy. */
         path: 'analista/categorizacion',
         loadChildren: () =>
           import('./pages/modules/categorizacion/categorizacion.routes').then((m) => m.CATEGORIZACION_ROUTES)
-      },
-      {
-        /** Solo Principal y Listas; `prospecto` y `detalle` no se migraron. */
-        path: 'analista',
-        loadChildren: () =>
-          import('./pages/modules/analista/analista.routes').then((m) => m.ANALISTA_ROUTES)
       },
       {
         /** Módulo `framework-esg`. */
