@@ -317,6 +317,24 @@ const REGLAS = [
         ),
   },
   {
+    id: 'tablas-sin-columnas-ocultas',
+    nivel: 'error',
+    titulo: 'en móvil una tabla muestra las mismas columnas que en escritorio',
+    doc: 'skills/mis-component-styling/SKILL.md',
+    porque:
+      'ocultar columnas en teléfono (`mobileVisible: false`) quita datos para decidir —p. ej. distinguir dos asesores de igual nombre—; una tabla ancha se desplaza dentro de su contenedor.',
+    evaluar: (archivos) =>
+      archivos
+        .filter((a) => a.modulo && !a.esSpec && (a.ruta.endsWith('.ts') || a.esPlantilla))
+        .flatMap((a) =>
+          coincidencias(a.contenido, /mobileVisible\s*[:=]\s*['"]?false/g).map((c) => ({
+            ruta: a.ruta,
+            linea: c.linea,
+            detalle: 'columna oculta en móvil — quitar `mobileVisible: false` y dejar que la tabla se desplace',
+          }))
+        ),
+  },
+  {
     id: 'modulo-enrutado',
     nivel: 'aviso',
     titulo: 'cada módulo de negocio está enlazado desde alguna ruta',

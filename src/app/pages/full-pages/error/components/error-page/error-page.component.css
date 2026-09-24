@@ -4,6 +4,6 @@
 }
 
 .error-page-wrapper {
-  background: var(--mis-full-page-bg);
+  background: var(--mis-wallpaper) center/cover no-repeat fixed;
   font-family: var(--mis-font-family);
 }

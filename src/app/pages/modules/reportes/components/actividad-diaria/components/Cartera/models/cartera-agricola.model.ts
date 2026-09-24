@@ -49,7 +49,7 @@ export const COLUMNAS_DETALLE_CULTIVO: DataTableColumn[] = [
   { field: 'HCTACLI', header: 'Cuenta Cliente', filterType: 'text' },
   { field: 'HCAPMON', header: 'Saldo Capital', align: 'right', filterType: 'number' },
   { field: 'HVENMON', header: 'Saldo Vencido', align: 'right', filterType: 'number' },
-  { field: 'HEXTENS', header: 'Extensión', align: 'right', filterType: 'number', mobileVisible: false },
+  { field: 'HEXTENS', header: 'Extensión', align: 'right', filterType: 'number' },
   { field: 'ubicacion', header: 'Ubicación', align: 'center', width: '7rem', sortable: false },
 ];
 
