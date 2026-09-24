@@ -8,7 +8,7 @@
 >
   <main class="min-h-full bg-[var(--mis-bg)] text-[var(--mis-text-primary)]">
     <div class="flex flex-col gap-3 p-3 sm:gap-4 sm:p-5">
-      <section class="grid overflow-visible rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-[var(--mis-shadow-sm)] lg:grid-cols-[minmax(0,1fr)_150px]">
+      <section class="mis-superficie grid overflow-visible rounded-xl shadow-[var(--mis-shadow-sm)] lg:grid-cols-[minmax(0,1fr)_150px]">
         <div class="min-w-0 p-4 sm:p-5">
           <form class="grid gap-3 md:grid-cols-[190px_minmax(0,1fr)_auto] md:items-end" (submit)="$event.preventDefault(); buscar()">
             <div class="min-w-0">
@@ -40,7 +40,7 @@
           </div>
         </div>
 
-        <aside class="relative hidden sm:flex min-h-20 items-center justify-center gap-2 border-t border-[var(--mis-border)] bg-[var(--mis-panel-bg)] px-2 py-2 text-left lg:flex-col lg:border-l lg:border-t-0 lg:text-center">
+        <aside class="relative hidden sm:flex min-h-20 items-center justify-center gap-2 border-t border-[var(--mis-border)] bg-[var(--mis-tile-bg)] px-2 py-2 text-left lg:flex-col lg:border-l lg:border-t-0 lg:text-center">
           <img class="h-16 w-16 shrink-0 object-contain lg:h-20 lg:w-20" [src]="mascota()" alt="Mascota de MIS" width="1024" height="1024" />
           <div class="relative max-w-32 rounded-2xl border border-[var(--mis-border)] bg-[var(--mis-surface)] px-2.5 py-1.5 text-xs font-medium leading-snug text-[var(--mis-text-secondary)] shadow-[var(--mis-shadow-md)] lg:absolute lg:bottom-[calc(100%-0.5rem)] lg:top-auto lg:right-2 lg:left-auto lg:z-30 lg:w-56 lg:max-w-none lg:translate-x-0">
             <span class="absolute -left-1 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border-b border-l border-[var(--mis-border)] bg-[var(--mis-surface)] lg:-bottom-1 lg:top-auto lg:right-6 lg:left-auto lg:translate-x-0 lg:translate-y-0 lg:border-b lg:border-r lg:border-t-0 lg:border-l-0"></span>
@@ -49,7 +49,7 @@
         </aside>
       </section>
 
-      <section class="overflow-hidden rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-[var(--mis-shadow-sm)]" aria-label="Matriz de riesgos" [attr.aria-busy]="servicio.cargando()">
+      <section class="mis-superficie overflow-hidden rounded-xl shadow-[var(--mis-shadow-sm)]" aria-label="Matriz de riesgos" [attr.aria-busy]="servicio.cargando()">
         <header class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mis-border)] px-4 py-3 sm:px-5">
           <div>
             <h2 class="m-0 text-base font-semibold text-[var(--mis-text-primary)]">Matriz de riesgos por distrito</h2>
@@ -63,7 +63,7 @@
         @if (servicio.cargando()) {
           <div class="grid min-h-60 place-items-center p-6 text-center text-sm text-[var(--mis-text-secondary)]"><span>Consultando matriz de riesgos…</span></div>
         } @else if (servicio.error()) {
-          <div class="grid min-h-60 place-items-center gap-3 p-6 text-center"><span class="text-sm text-[var(--mis-text-secondary)]">Revisa la consulta e intenta nuevamente.</span><p-button label="Reintentar" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="reintentar()" /></div>
+          <div class="grid min-h-60 place-items-center gap-3 p-6 text-center"><span class="text-sm text-[var(--mis-text-secondary)]">Revisa la consulta e intenta nuevamente.</span><p-button label="Reintentar" icon="pi pi-refresh" severity="secondary" (onClick)="reintentar()" /></div>
         } @else if (servicio.vacio()) {
           <div class="grid min-h-60 place-items-center p-6 text-center text-sm text-[var(--mis-text-secondary)]">No se encontraron resultados para la búsqueda ingresada.</div>
         } @else if (servicio.filas().length === 1) {
@@ -75,7 +75,7 @@
               </header>
               <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
                 @for (indicador of indicadores(fila); track indicador.etiqueta) {
-                  <article class="rounded-lg border border-[var(--mis-border)] border-t-4 bg-[var(--mis-surface)] p-3" [style.border-top-color]="colorRiesgo(indicador.valor)"><span class="block text-xs text-[var(--mis-text-secondary)]">{{ indicador.etiqueta }}</span><strong class="mt-1 block text-base" [style.color]="colorRiesgo(indicador.valor)">{{ indicador.valor }}</strong></article>
+                  <article class="mis-baldosa rounded-lg border-t-4 p-3" [style.border-top-color]="colorRiesgo(indicador.valor)"><span class="block text-xs text-[var(--mis-text-secondary)]">{{ indicador.etiqueta }}</span><strong class="mt-1 block text-base" [style.color]="colorRiesgo(indicador.valor)">{{ indicador.valor }}</strong></article>
                 }
               </div>
               @if (alertaRiesgo()) {
@@ -101,7 +101,7 @@
               </ng-template>
             </app-data-table>
           </div>
-          <div class="flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--mis-border)] bg-[var(--mis-panel-bg)] p-4 text-xs sm:hidden">
+          <div class="flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--mis-border)] bg-[var(--mis-tile-bg)] p-4 text-xs sm:hidden">
             <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#ef4444]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Muy Alto</strong></span></div>
             <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#f97316]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Alto</strong></span></div>
             <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#eab308]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Medio</strong></span></div>

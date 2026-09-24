@@ -1,5 +1,5 @@
-<div class="flex flex-col gap-2">
-  <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+<div class="tablas">
+  <div class="tabla-marco">
     <p-table [value]="incentivos.tablaVariables()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
@@ -37,8 +37,7 @@
       </ng-template>
     </p-table>
   </div>
-
-  <div class="rounded-lg border border-[var(--mis-border)] overflow-hidden">
+  <div class="tabla-marco">
     <p-table [value]="incentivos.tablaEfectividad()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>

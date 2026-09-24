@@ -1,28 +1,26 @@
 @if (!incentivos.cargando()) {
-  <div class="grid grid-cols-2 gap-2 h-full content-start">
+  <div class="avances">
     @for (item of incentivos.avances(); track item.id) {
       @if (item.show) {
         <button
           type="button"
           data-qa="avance"
-          class="flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors"
-          [class]="item.enab ? 'cursor-pointer hover:bg-[var(--mis-hover-bg)]' : ''"
+          class="avance"
+          [class.avance--activo]="item.enab"
           [disabled]="!item.enab"
+          [attr.aria-label]="item.des + ': ' + (item.val * 100 | number: '.0-1') + '% de avance'"
           (click)="onClic(item)"
         >
-          <!-- Ícono + descripción arriba del anillo, como en el legado. -->
-          <div class="flex items-center justify-center gap-1.5">
-            <i [class]="item.icono + ' text-[13px] text-[var(--mis-text-secondary)]'"></i>
-            <span class="text-[12px] font-medium text-center leading-tight text-[var(--mis-text-primary)]">{{ item.des }}</span>
-          </div>
-
-          <!-- Anillo de avance: el porcentaje va adentro (mismo lugar que la
-               `.pie-box` del legado) y el arco se pinta con un `conic-gradient`
-               —no con un SVG— para que los tokens de color resuelvan en ambos temas. -->
-          <div class="avance-medidor">
+          <!-- Anillo de avance: el arco se pinta con un `conic-gradient` —no con
+               un SVG— para que los tokens de color resuelvan en ambos temas. -->
+          <div class="avance-medidor" aria-hidden="true">
             <div class="avance-anillo" [style.background]="fondoAnillo(item)"></div>
-            <span class="avance-valor">{{ item.val * 100 | number: '.0-1' }}%</span>
+            <span class="avance-valor">{{ item.val * 100 | number: '.0-1' }}<small>%</small></span>
           </div>
+          <span class="avance-etiqueta" aria-hidden="true">
+            <i [class]="item.icono"></i>
+            {{ item.des }}
+          </span>
         </button>
       }
     }

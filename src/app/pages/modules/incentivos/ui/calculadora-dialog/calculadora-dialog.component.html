@@ -63,7 +63,7 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           @for (item of variablesVisibles(); track item.id) {
-            <div class="rounded-xl border bg-[var(--mis-surface)] p-3 flex flex-col gap-3 transition-all duration-300 relative" 
+            <div class="rounded-xl border bg-[var(--mis-tile-bg)] p-3 flex flex-col gap-3 transition-all duration-300 relative" 
                  [class]="focusedItem() === item.id ? 'border-[var(--mis-primary)] shadow-md shadow-[var(--mis-primary)]/20 ring-1 ring-[var(--mis-primary)] z-10' : 'border-[var(--mis-border)] shadow-sm hover:shadow-md'"
                  [class.sm:col-span-2]="item.id === 'efec1'">
               
@@ -104,7 +104,7 @@
 
                 @if (item.id === 'efec1') {
                   <!-- Tramo de Días Especial -->
-                  <div class="col-span-2 grid grid-cols-3 gap-2 bg-[var(--mis-panel-bg)] p-2 rounded-md border border-[var(--mis-border)] transition-colors duration-300">
+                  <div class="mis-baldosa col-span-2 grid grid-cols-3 gap-2 p-2 rounded-md transition-colors duration-300">
                     <div class="flex flex-col gap-1">
                       <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">Pago Puntual</span>
                       <p-inputgroup>
@@ -178,7 +178,7 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           @for (item of plusVisibles(); track item.id) {
-            <div class="rounded-xl border bg-[var(--mis-surface)] p-3 flex flex-col gap-3 transition-all duration-300 relative"
+            <div class="rounded-xl border bg-[var(--mis-tile-bg)] p-3 flex flex-col gap-3 transition-all duration-300 relative"
                  [class]="focusedItem() === item.id ? 'border-amber-500 shadow-md shadow-amber-500/20 ring-1 ring-amber-500 z-10' : 'border-[var(--mis-border)] shadow-sm hover:shadow-md'">
               
               <div class="flex items-center gap-2 border-b border-[var(--mis-border)] pb-2 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
@@ -281,7 +281,7 @@
 
   <ng-template pTemplate="footer">
     <div class="flex items-center justify-end gap-3">
-      <p-button label="Restaurar" [outlined]="true" severity="secondary" size="small" (onClick)="reiniciarValores()" />
+      <p-button label="Restaurar" severity="secondary" size="small" (onClick)="reiniciarValores()" />
       <p-button label="Simular" size="small" [loading]="simulando()" (onClick)="simular()" />
     </div>
   </ng-template>

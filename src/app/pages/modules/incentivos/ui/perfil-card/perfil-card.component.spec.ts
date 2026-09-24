@@ -55,20 +55,12 @@ describe('PerfilCardComponent', () => {
     expect(fixture.componentInstance['claseIcono'](2)).toContain('success');
   });
 
-  it('abrirSelector emite al hacer clic en el botón de cambiar nivel (si puedeElegirNivel)', () => {
+  // El nivel se cambia solo desde la barra de la ventana ("Seleccionar nivel"):
+  // la tarjeta de perfil no tiene un segundo botón para lo mismo.
+  it('no trae un botón propio para cambiar de nivel, ni siquiera si puede elegirlo', () => {
     incentivosFalso.puedeElegirNivel.set(true);
     const fixture = crear();
-    const emitido = vi.fn();
-    fixture.componentInstance.abrirSelector.subscribe(emitido);
-
-    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.pi-search')?.click();
-
-    expect(emitido).toHaveBeenCalled();
-  });
-
-  it('no muestra el botón de cambiar nivel si puedeElegirNivel es false', () => {
-    const fixture = crear();
-    expect((fixture.nativeElement as HTMLElement).querySelector('.pi-search')).toBeNull();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.pi-search, [aria-label="Cambiar de nivel"]')).toBeNull();
   });
 
   it('abrirCalculadora se reemite desde el monetizado-card anidado', () => {

@@ -11,6 +11,7 @@ import type { DetalleSuperPlusEvent } from '../../models/incentivos-eventos.mode
   standalone: true,
   imports: [DecimalPipe],
   templateUrl: './super-plus-grid.component.html',
+  styleUrl: './super-plus-grid.component.css',
 })
 export class SuperPlusGridComponent {
   protected readonly incentivos = inject(IncentivosService);

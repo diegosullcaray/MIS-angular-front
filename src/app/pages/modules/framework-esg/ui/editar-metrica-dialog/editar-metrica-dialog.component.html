@@ -89,7 +89,7 @@
 
   <ng-template pTemplate="footer">
     <div class="flex items-center justify-end gap-3">
-      <p-button label="Cerrar" [outlined]="true" severity="secondary" size="small" (click)="cerrar()" />
+      <p-button label="Cerrar" severity="secondary" size="small" (click)="cerrar()" />
       @if (modoEdicion()) {
         <p-button label="Guardar" size="small" [loading]="guardando()" (onClick)="guardar()" />
       }

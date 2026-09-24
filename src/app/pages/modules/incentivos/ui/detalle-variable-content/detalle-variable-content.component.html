@@ -23,10 +23,10 @@
     }
 
     <div class="flex items-center justify-between flex-wrap gap-2 text-[12px] text-[var(--mis-text-secondary)]">
-      <span class="font-semibold bg-[var(--mis-panel-bg)] border border-[var(--mis-border)] px-3 py-1 rounded-full text-[var(--mis-text-primary)]">
+      <span class="mis-baldosa font-semibold px-3 py-1 rounded-full text-[var(--mis-text-primary)]">
         {{ frame.desLab }}: {{ frame.desRel }}
       </span>
-      <span class="inline-flex items-center gap-1.5 font-medium bg-[var(--mis-panel-bg)] border border-[var(--mis-border)] px-3 py-1 rounded-full text-[var(--mis-text-secondary)]">
+      <span class="mis-baldosa inline-flex items-center gap-1.5 font-medium px-3 py-1 rounded-full text-[var(--mis-text-secondary)]">
         <i class="pi pi-calendar text-[11px] text-[var(--mis-primary-text)]"></i>
         Fecha: {{ frame.resultado.card.f2 }}
       </span>
@@ -63,7 +63,7 @@
         </div>
 
         <!-- Tarjeta Meta & Avance -->
-        <div class="group relative overflow-hidden rounded-xl rounded-tr-[2rem] bg-[var(--mis-surface)] p-4 pb-6 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-[var(--mis-border)]"
+        <div class="mis-superficie group relative overflow-hidden rounded-xl rounded-tr-[2rem] p-4 pb-6 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
              [class]="frame.resultado.card.avan >= 1 ? 'hover:border-[var(--mis-success)]/40' : 'hover:border-[var(--mis-warning)]/40'">
           <div class="flex items-center justify-between mb-1">
             <span class="text-[12px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">{{ etiquetas()?.tarjetas?.[2] ?? 'Meta' }}</span>
@@ -91,8 +91,8 @@
 
     @if (muestraBotonesToggle()) {
       <div class="flex items-center gap-2">
-        <p-button label="Indicadores" icon="pi pi-table" size="small" [outlined]="vistaTabla() !== 'vars'" (onClick)="mostrarVars()" />
-        <p-button label="Ranking" icon="pi pi-list-check" size="small" [outlined]="vistaTabla() !== 'rank'" (onClick)="mostrarRank()" />
+        <p-button label="Indicadores" icon="pi pi-table" size="small" [severity]="vistaTabla() === 'vars' ? 'primary' : 'secondary'" [ariaPressed]="vistaTabla() === 'vars'" (onClick)="mostrarVars()" />
+        <p-button label="Ranking" icon="pi pi-list-check" size="small" [severity]="vistaTabla() === 'rank' ? 'primary' : 'secondary'" [ariaPressed]="vistaTabla() === 'rank'" (onClick)="mostrarRank()" />
       </div>
     }
 

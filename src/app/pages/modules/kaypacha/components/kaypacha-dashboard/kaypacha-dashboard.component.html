@@ -24,17 +24,17 @@
   }
 
   @if (service.loading()) {
-  <div class="p-6 bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)]">
+  <div class="mis-superficie p-6 rounded-2xl shadow-sm">
     <app-list-skeleton [rows]="[1, 2, 3, 4, 5, 6]" />
   </div>
   } @else if (service.error()) {
-  <div class="p-6 bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)]">
+  <div class="mis-superficie p-6 rounded-2xl shadow-sm">
     <app-inline-error [titulo]="'Error al cargar Kaypacha'" [detalle]="service.error()!"
       (reintentar)="service.cargarDatos()" />
   </div>
   } @else {
   <!-- Ficha Asesor, Cargo, Medalla al costado y Tarjetas KPI compactas con PrimeNG -->
-  <section class="bg-[var(--mis-surface)] rounded-2xl p-4 sm:p-5 shadow-sm border border-[var(--mis-border)]">
+  <section class="mis-superficie rounded-2xl p-4 sm:p-5 shadow-sm">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
       <!-- Bloque Izquierdo: Asesor y Cargo (Col 1-5) -->
       <div class="lg:col-span-5 flex flex-col gap-3">
@@ -110,7 +110,7 @@
 
   <!-- Bloque 1: Puntos Acumulados -->
   <section
-    class="bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)] overflow-hidden">
+    class="mis-superficie rounded-2xl shadow-sm overflow-hidden">
     <!-- Window Header Bar (Legacy rgb(3, 80, 150)) -->
     <div class="kaypacha-window-bar px-5 py-2.5 flex items-center justify-between border-b border-blue-900/30">
       <div class="flex items-center gap-2.5">
@@ -124,7 +124,7 @@
     <!-- Content Grid: 2 tablas gemelas lado a lado con PrimeNG p-table -->
     <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-[var(--mis-panel-bg)]/60">
       <!-- Tabla 1 Izquierda -->
-      <div class="kaypacha-table-wrapper border border-[var(--mis-border)] rounded-xl shadow-xs bg-[var(--mis-surface)]">
+      <div class="mis-baldosa kaypacha-table-wrapper rounded-xl">
         <p-table [value]="service.dataSources1()"
           styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
           responsiveLayout="scroll">
@@ -157,7 +157,7 @@
       </div>
 
       <!-- Tabla 1 Derecha -->
-      <div class="kaypacha-table-wrapper border border-[var(--mis-border)] rounded-xl shadow-xs bg-[var(--mis-surface)]">
+      <div class="mis-baldosa kaypacha-table-wrapper rounded-xl">
         <p-table [value]="service.dataSources1()"
           styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
           responsiveLayout="scroll">
@@ -193,7 +193,7 @@
 
   <!-- Bloque 2: Variables Históricas -->
   <section
-    class="bg-[var(--mis-surface)] rounded-2xl shadow-sm border border-[var(--mis-border)] overflow-hidden">
+    class="mis-superficie rounded-2xl shadow-sm overflow-hidden">
     <!-- Window Header Bar (Legacy rgb(3, 80, 150)) -->
     <div class="kaypacha-window-bar px-5 py-2.5 flex items-center justify-between border-b border-blue-900/30">
       <div class="flex items-center gap-2.5">
@@ -207,7 +207,7 @@
     <!-- Content Grid: 2 tablas gemelas lado a lado con PrimeNG p-table -->
     <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-[var(--mis-panel-bg)]/60">
       <!-- Tabla 2 Izquierda -->
-      <div class="kaypacha-table-wrapper border border-[var(--mis-border)] rounded-xl shadow-xs bg-[var(--mis-surface)]">
+      <div class="mis-baldosa kaypacha-table-wrapper rounded-xl">
         <p-table [value]="service.dataSources2()" [scrollable]="true" scrollHeight="200px"
           styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
           responsiveLayout="scroll">
@@ -240,7 +240,7 @@
       </div>
 
       <!-- Tabla 2 Derecha -->
-      <div class="kaypacha-table-wrapper border border-[var(--mis-border)] rounded-xl shadow-xs bg-[var(--mis-surface)]">
+      <div class="mis-baldosa kaypacha-table-wrapper rounded-xl">
         <p-table [value]="service.dataSources2()" [scrollable]="true" scrollHeight="200px"
           styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
           responsiveLayout="scroll">

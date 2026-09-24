@@ -1,19 +1,18 @@
 @if (!incentivos.cargando()) {
-  <div class="grid grid-cols-3 gap-1.5 h-full content-start">
+  <div class="super-plus">
     @for (item of incentivos.superPlus(); track item.id) {
       @if (item.show) {
         <button
           type="button"
-          class="flex flex-col items-center justify-center gap-1 rounded-lg py-2 px-1 transition-opacity"
+          class="super-plus-item"
           [class]="claseCaja(item)"
-          [class.cursor-pointer]="item.enab"
-          [class.hover:opacity-80]="item.enab"
+          [class.super-plus-item--activo]="item.enab"
           [disabled]="!item.enab"
           (click)="onClic(item)"
         >
-          <i [class]="item.icono + ' text-[18px]'"></i>
-          <span class="text-[11px] font-medium text-center leading-tight">{{ item.des }}</span>
-          <span class="text-[12px] font-semibold">S/. {{ item.val | number: '.0-2' }}</span>
+          <span class="super-plus-icono" aria-hidden="true"><i [class]="item.icono"></i></span>
+          <span class="super-plus-texto">{{ item.des }}</span>
+          <span class="super-plus-monto">S/. {{ item.val | number: '.0-2' }}</span>
         </button>
       }
     }

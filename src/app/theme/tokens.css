@@ -82,6 +82,17 @@
   /* Panel de página (`.mis-page`) — vidrio sobre el wallpaper. */
   --mis-glass-bg: rgba(255, 255, 255, 0.7);
   --mis-glass-border: rgba(255, 255, 255, 0.6);
+  /* Tarjetas y secciones de contenido (`.mis-card`, `.mis-superficie`) y sus
+     baldosas internas (`.mis-baldosa`). En claro el vidrio blanco sobre fondo
+     claro no se distinguía: llevan borde de marca y tinte `--mis-primary-light`. */
+  --mis-card-bg: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--mis-surface) 82%, transparent) 0%,
+    color-mix(in srgb, var(--mis-primary-light) 78%, transparent) 100%
+  );
+  --mis-card-border: var(--mis-border-strong);
+  --mis-tile-bg: color-mix(in srgb, var(--mis-primary-light) 55%, var(--mis-surface));
+  --mis-tile-border: var(--mis-border-strong);
   /* Acciones del header: en claro requieren un tinte navy para no perderse sobre el vidrio blanco. */
   --mis-header-control-bg: rgba(255, 255, 255, 0.58);
   --mis-header-control-hover: rgba(255, 255, 255, 0.82);
@@ -251,6 +262,11 @@
   --mis-surface-elevado: rgba(26, 40, 66, 0.95);
   --mis-glass-bg: rgba(22, 32, 52, 0.72);
   --mis-glass-border: rgba(255, 255, 255, 0.08);
+  /* En oscuro el vidrio original ya contrasta: se conserva. */
+  --mis-card-bg: var(--mis-glass-bg);
+  --mis-card-border: color-mix(in srgb, var(--mis-border) 55%, var(--mis-glass-border));
+  --mis-tile-bg: color-mix(in srgb, var(--mis-surface) 55%, transparent);
+  --mis-tile-border: var(--mis-border);
   --mis-header-control-bg: rgba(255, 255, 255, 0.08);
   --mis-header-control-hover: rgba(255, 255, 255, 0.15);
   --mis-header-control-border: rgba(255, 255, 255, 0.16);

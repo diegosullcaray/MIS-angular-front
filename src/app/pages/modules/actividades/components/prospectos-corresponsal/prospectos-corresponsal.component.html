@@ -20,7 +20,7 @@
   } @else if (error()) {
     <app-inline-error [detalle]="error()!" (reintentar)="cargarDatos()" />
   } @else {
-    <div class="rounded-xl overflow-hidden border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs flex-1">
+    <div class="mis-superficie rounded-xl overflow-hidden shadow-xs flex-1">
       <p-table
         [value]="filteredData()"
         [paginator]="true"

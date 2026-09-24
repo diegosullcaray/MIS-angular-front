@@ -1,0 +1,144 @@
+/* Monetizado: total protagonista + desglose segmentado + barra de acciones. */
+
+.monetizado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-4);
+  height: 100%;
+}
+
+.monetizado-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.monetizado-etiqueta,
+.monetizado-bono dt {
+  font-size: 11px;
+  font-weight: var(--mis-font-semibold);
+  letter-spacing: 0.02em;
+  color: var(--mis-text-tertiary);
+}
+
+.monetizado-cifra {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--mis-space-2);
+  font-size: 30px;
+  font-weight: var(--mis-font-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--mis-text-primary);
+}
+
+.monetizado-cifra--total {
+  color: var(--mis-primary-text);
+}
+
+.monetizado-referencial {
+  font-size: 12px;
+  font-weight: var(--mis-font-medium);
+  letter-spacing: 0;
+  color: var(--mis-text-tertiary);
+}
+
+/* Píldora de estado: el color lo decide `claseSituacion()`; el fondo lo tiñe. */
+.monetizado-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: var(--mis-font-semibold);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-radius: var(--mis-radius-full);
+}
+
+.monetizado-estado-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--mis-radius-full);
+  background: currentColor;
+}
+
+/* Desglose segmentado, como un control de macOS. */
+.monetizado-desglose {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  background: var(--mis-tile-bg);
+  border: 1px solid var(--mis-tile-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: inset 0 1px 0 var(--mis-glass-border);
+  overflow: hidden;
+}
+
+.monetizado-bono {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 12px;
+}
+
+.monetizado-bono + .monetizado-bono {
+  border-left: 1px solid var(--mis-tile-border);
+}
+
+.monetizado-bono dd {
+  margin: 0;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: var(--mis-font-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--mis-text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.monetizado-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mis-space-2);
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.monetizado-modelo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-warning);
+  background: var(--mis-warning-light);
+  border-radius: var(--mis-radius-full);
+}
+
+.monetizado-acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  margin-left: auto;
+}
+
+@media (max-width: 639px) {
+  .monetizado-cifra {
+    font-size: 26px;
+  }
+
+  .monetizado-bono {
+    padding: 8px;
+  }
+
+  .monetizado-bono dd {
+    font-size: 13px;
+  }
+}

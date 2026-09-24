@@ -4,12 +4,50 @@
    archivo entero. */
 
 /* ── Cards de gestión (p-card con header/body) ────────────── */
+/* Material de tarjeta Liquid Glass (ver governance/docs/components/liquid-glass.md).
+   `--mis-card-*` y `--mis-tile-*` cambian solos entre claro y oscuro. */
 .mis-card {
-  border: 1px solid var(--mis-border);
+  background: var(--mis-card-bg);
+  border: 1px solid var(--mis-card-border);
   border-radius: var(--mis-radius-md);
-  box-shadow: var(--mis-shadow-sm);
+  box-shadow:
+    inset 0 1px 0 var(--mis-glass-border),
+    var(--mis-shadow-sm);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
   overflow: hidden;
   width: 100%;
+}
+
+/* En `@layer base` para que las utilidades de Tailwind de cada plantilla
+   (sombra, hover, radio) puedan ajustar el material sin pelear con él. */
+@layer base {
+  /* Tarjeta o sección de contenido, sin los efectos de `.mis-card` sobre el
+     layout (ancho completo, recorte): cada plantilla pone su radio y padding. */
+  .mis-superficie {
+    background: var(--mis-card-bg);
+    border: 1px solid var(--mis-card-border);
+    border-radius: var(--mis-radius-lg);
+    box-shadow:
+      inset 0 1px 0 var(--mis-glass-border),
+      var(--mis-shadow-sm);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+  }
+
+  /* Baldosa dentro de una tarjeta: chips, ítems de lista, marcos de tabla. */
+  .mis-baldosa {
+    background: var(--mis-tile-bg);
+    border: 1px solid var(--mis-tile-border);
+    box-shadow: inset 0 1px 0 var(--mis-glass-border);
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .mis-card,
+  .mis-superficie {
+    background: var(--mis-surface);
+  }
 }
 
 .mis-card .p-card-body {

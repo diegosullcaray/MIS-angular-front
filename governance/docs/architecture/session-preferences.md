@@ -67,6 +67,13 @@ INC-2026-09-08-05.
 `sessionStorage` y no una señal en memoria es deliberado: recargar la página no
 puede revivir un aviso que el usuario acaba de cerrar.
 
+**El tema sobrevive al cierre, solo en memoria.** `PreferenciasService.olvidar()`
+vuelve todo a fábrica salvo `apariencia.tema`, que conserva sin escribirlo. Sin
+esto, al expirar la sesión la pantalla "Sesión expirada" aparecía en oscuro (el
+tema de fábrica) aunque la persona trabajaba en claro. El borrado total no
+cambia: `localStorage` queda vacío y una recarga arranca con el tema de fábrica.
+Lo cubren `limpieza-sesion.service.spec.ts` y `e2e/session-expiry.spec.ts`.
+
 **Efecto del borrado de sesión.** `LimpiezaSesionService.limpiarTodo()` vacía
 `localStorage` entero, así que en la práctica "No mostrar este comunicado" dura
 hasta el próximo cierre de sesión. Es una consecuencia conocida de la política

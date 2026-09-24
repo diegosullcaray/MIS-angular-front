@@ -42,14 +42,14 @@
     <div class="flex flex-col lg:flex-row items-stretch gap-4 w-full">
       <!-- Tarjeta de perfil -->
       <section
-        class="w-full overflow-hidden lg:w-[400px] shrink-0 rounded-2xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-sm"
+        class="mis-superficie w-full overflow-hidden lg:w-[400px] shrink-0 rounded-2xl shadow-sm"
         aria-label="Perfil del asesor"
       >
         <div
           class="flex items-center gap-3 border-b border-[var(--mis-border)] bg-[var(--mis-primary-light)] px-4 py-3"
         >
           <div
-            class="flex h-15 w-15 shrink-0 items-center justify-center rounded-2xl border border-[var(--mis-border)] bg-[var(--mis-surface)] shadow-sm"
+            class="mis-baldosa flex h-15 w-15 shrink-0 items-center justify-center rounded-2xl"
           >
             <i class="pi pi-user text-[26px] text-[var(--mis-primary-text)]"></i>
           </div>
@@ -68,7 +68,7 @@
         </div>
 
         <dl class="m-0 grid grid-cols-2 gap-px bg-[var(--mis-border)] text-[12px]">
-          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-surface)] px-4 py-3">
+          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-tile-bg)] px-4 py-3">
             <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
               <i class="pi pi-building text-[11px]"></i> Unidad
             </dt>
@@ -76,7 +76,7 @@
               {{ perfil()!.unidad || '—' }}
             </dd>
           </div>
-          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-surface)] px-4 py-3">
+          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-tile-bg)] px-4 py-3">
             <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
               <i class="pi pi-sitemap text-[11px]"></i> Corredor
             </dt>
@@ -84,7 +84,7 @@
               {{ perfil()!.corredor || '—' }}
             </dd>
           </div>
-          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-surface)] px-4 py-3">
+          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-tile-bg)] px-4 py-3">
             <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
               <i class="pi pi-map-marker text-[11px]"></i> Territorio
             </dt>
@@ -92,7 +92,7 @@
               {{ perfil()!.territorio || '—' }}
             </dd>
           </div>
-          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-surface)] px-4 py-3">
+          <div class="flex min-w-0 flex-col gap-1 bg-[var(--mis-tile-bg)] px-4 py-3">
             <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
               <i class="pi pi-star text-[11px]"></i> Categoría
             </dt>
@@ -101,7 +101,7 @@
             </dd>
           </div>
           <div
-            class="col-span-2 flex min-w-0 flex-row items-center justify-between gap-3 bg-[var(--mis-surface)] px-4 py-2.5"
+            class="col-span-2 flex min-w-0 flex-row items-center justify-between gap-3 bg-[var(--mis-tile-bg)] px-4 py-2.5"
           >
             <dt class="flex items-center gap-1.5 font-medium text-[var(--mis-text-secondary)]">
               <i class="pi pi-user text-[11px]"></i> Género
@@ -115,7 +115,7 @@
 
       <!-- Imagen explicativa de la Guía -->
       <div
-        class="relative group w-full flex-1 min-w-0 flex items-center justify-center rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 sm:p-4 shadow-xs self-stretch overflow-hidden"
+        class="mis-superficie relative group w-full flex-1 min-w-0 flex items-center justify-center rounded-xl p-3 sm:p-4 shadow-xs self-stretch overflow-hidden"
       >
         <p-image
           [src]="tipoComision() === 'individual' ? guiaIndividual : guiaGrupal"
@@ -153,7 +153,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           @for (r of requisitos(); track r.etiqueta) {
             <div
-              class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-3 flex flex-col items-center justify-between gap-1 text-center min-h-[90px] shadow-xs"
+              class="mis-baldosa rounded-lg p-3 flex flex-col items-center justify-between gap-1 text-center min-h-[90px] shadow-xs"
             >
               <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{
                 r.etiqueta
@@ -209,7 +209,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-3">
           @for (c of comisiones(); track $index) {
             <div
-              class="rounded-lg border border-[var(--mis-border)] bg-[var(--mis-surface)] p-2.5 flex flex-col items-center justify-center gap-1 text-center shadow-xs"
+              class="mis-baldosa rounded-lg p-2.5 flex flex-col items-center justify-center gap-1 text-center shadow-xs"
             >
               <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{
                 c.periodo || '—'

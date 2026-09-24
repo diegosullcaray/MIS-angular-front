@@ -1,33 +1,109 @@
-/* Medidor circular de avance — reemplaza el `circle-pie.scss` del legado.
-   El anillo se recorta con `mask` en vez de tapar el centro con un disco
-   opaco: así el hueco deja ver el vidrio del panel en cualquiera de los dos
-   temas, sin tener que adivinar el color de fondo. */
+/* Avance de metas: cada variable es una baldosa de vidrio con su anillo. El
+   anillo se recorta con `mask` en vez de tapar el centro con un disco opaco:
+   así el hueco deja ver el vidrio del panel en cualquiera de los dos temas. */
+.avances {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mis-space-2);
+}
+
+.avance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mis-space-2);
+  min-width: 0;
+  padding: 14px 8px 12px;
+  color: var(--mis-text-primary);
+  background: var(--mis-tile-bg);
+  border: 1px solid var(--mis-tile-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: inset 0 1px 0 var(--mis-glass-border);
+  transition:
+    transform var(--mis-transition-fast),
+    background var(--mis-transition-fast),
+    border-color var(--mis-transition-fast);
+}
+
+.avance:disabled {
+  cursor: default;
+}
+
+.avance--activo {
+  cursor: pointer;
+}
+
+.avance--activo:hover {
+  background: var(--mis-hover-bg);
+  border-color: var(--mis-border-strong);
+  transform: translateY(-1px);
+}
+
+.avance:focus-visible {
+  outline: none;
+  box-shadow: var(--mis-shadow-focus);
+}
+
 .avance-medidor {
   position: relative;
-  width: 64px;
-  height: 64px;
   display: grid;
   place-items: center;
+  width: 76px;
+  height: 76px;
 }
 
 .avance-anillo {
   position: absolute;
   inset: 0;
   border-radius: var(--mis-radius-full);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), black calc(100% - 7px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 8px), black calc(100% - 7px));
 }
 
 .avance-valor {
   position: relative;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: var(--mis-font-bold);
-  color: var(--mis-text-primary);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.avance-valor small {
+  margin-left: 1px;
+  font-size: 10px;
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-secondary);
+}
+
+.avance-etiqueta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: var(--mis-font-medium);
+  line-height: 1.2;
+  text-align: center;
+  color: var(--mis-text-secondary);
+}
+
+.avance-etiqueta i {
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avance {
+    transition: none;
+  }
+
+  .avance--activo:hover {
+    transform: none;
+  }
 }
 
 @media (max-width: 959px) {
   .avance-medidor {
-    width: 54px;
-    height: 54px;
+    width: 64px;
+    height: 64px;
   }
 }

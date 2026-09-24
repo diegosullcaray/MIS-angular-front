@@ -308,7 +308,7 @@ describe('DataTableComponent — fila de filtros por columna', () => {
     expect(el.querySelectorAll('tbody tr').length).toBe(2);
   });
 
-  it('"Desfiltrar" oculta la fila de filtros y limpia los filtros activos', () => {
+  it('"Limpiar" oculta la fila de filtros y limpia los filtros activos', () => {
     const fixture = crear();
     const el = fixture.nativeElement as HTMLElement;
 

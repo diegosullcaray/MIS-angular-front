@@ -4,7 +4,7 @@
      es el global; acá el estado se conserva como `aria-busy` para que un
      lector de pantalla siga sabiendo que la tabla está cargando. -->
 <div
-  class="flex-1 overflow-x-auto overflow-y-hidden rounded-xl border border-[var(--mis-border)] bg-[var(--mis-surface-translucido)] backdrop-blur-sm shadow-xs"
+  class="mis-baldosa flex-1 overflow-x-auto overflow-y-hidden rounded-xl shadow-xs"
 >
   <p-table
     [value]="filasFiltradas()"
@@ -54,12 +54,11 @@
           @if (hayColumnasFiltrable()) {
             <p-button
               [icon]="filtrosVisibles() ? 'pi pi-filter-slash' : 'pi pi-filter'"
-              [label]="filtrosVisibles() ? 'Desfiltrar' : 'Filtrar'"
+              [label]="filtrosVisibles() ? 'Limpiar' : 'Filtrar'"
               size="small"
               severity="secondary"
-              [outlined]="true"
               styleClass="shrink-0 mis-btn-label-desktop"
-              [pTooltip]="filtrosVisibles() ? 'Desfiltrar' : 'Filtrar'"
+              [pTooltip]="filtrosVisibles() ? 'Limpiar' : 'Filtrar'"
               tooltipPosition="top"
               (onClick)="toggleFiltros()"
             ></p-button>
@@ -85,7 +84,6 @@
               label="Actualizar"
               size="small"
               severity="secondary"
-              [outlined]="true"
               styleClass="shrink-0 ml-auto mis-btn-label-desktop"
               pTooltip="Actualizar"
               tooltipPosition="top"

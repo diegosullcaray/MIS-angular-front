@@ -15,7 +15,7 @@
     @for (card of cards; track card.ruta) {
       <a
         [routerLink]="card.ruta"
-        class="nav-card group flex flex-col bg-[var(--mis-surface-translucido)] backdrop-blur-sm rounded-xl border border-[var(--mis-border)] shadow-xs hover:shadow-md hover:border-[var(--mis-border)] transition-all duration-200 cursor-pointer no-underline overflow-hidden"
+        class="mis-superficie nav-card group flex flex-col rounded-xl shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer no-underline overflow-hidden"
       >
         <!-- Top bar de color -->
         <div class="h-1.5 w-full" [style.background]="card.colorIcon"></div>

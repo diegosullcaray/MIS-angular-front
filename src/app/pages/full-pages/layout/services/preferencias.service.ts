@@ -146,9 +146,20 @@ export class PreferenciasService {
     this.repositorio.limpiar();
   }
 
-  /** Restablece preferencias sin guardar (para cierre de sesión). */
+  /**
+   * Restablece preferencias sin guardar (para cierre de sesión).
+   *
+   * Conserva el tema que se está viendo, SOLO en memoria: al expirar la sesión
+   * la pantalla siguiente (error o login) se mostraba de golpe en el tema de
+   * fábrica, oscuro, aunque la persona trabajaba en claro. No se escribe nada:
+   * el borrado total sigue valiendo y una recarga arranca con el de fábrica.
+   */
   olvidar(): void {
-    this._preferencias.set(PREFERENCIAS_POR_DEFECTO);
+    const tema = this._preferencias().apariencia.tema;
+    this._preferencias.set({
+      ...PREFERENCIAS_POR_DEFECTO,
+      apariencia: { ...PREFERENCIAS_POR_DEFECTO.apariencia, tema },
+    });
   }
 
   private parchearApariencia(cambio: Partial<PreferenciasApariencia>): void {

@@ -159,6 +159,23 @@ const REGLAS = [
         ),
   },
   {
+    id: 'botones-sin-outlined',
+    nivel: 'error',
+    titulo: 'ningún botón usa la variante outlined',
+    doc: 'docs/components/liquid-glass.md',
+    porque: 'los botones del Host son rellenos: el principal con color de marca y el resto como secundario. Un botón con solo borde se pierde sobre el vidrio en ambos temas.',
+    evaluar: (archivos) =>
+      archivos
+        .filter((a) => a.esPlantilla)
+        .flatMap((a) =>
+          coincidencias(a.contenido, /\[outlined\]|\boutlined\s*=|p-button-outlined/g).map((c) => ({
+            ruta: a.ruta,
+            linea: c.linea,
+            detalle: `variante outlined: ${c.texto} — usar severity="secondary" o el principal relleno`,
+          }))
+        ),
+  },
+  {
     id: 'entrada-salida-señal',
     nivel: 'aviso',
     titulo: 'input()/output()/viewChild() en vez de decoradores',

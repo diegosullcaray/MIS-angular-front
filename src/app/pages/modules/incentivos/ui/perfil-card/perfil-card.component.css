@@ -1,0 +1,155 @@
+/* Cabecera del Cuadro de Mando: identidad + semáforo | monetizado. */
+
+.perfil {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-4);
+}
+
+.perfil-cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--mis-space-5);
+}
+
+@media (min-width: 768px) {
+  .perfil-cuerpo {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .perfil-lado--monetizado {
+    padding-left: var(--mis-space-5);
+    border-left: 1px solid var(--mis-tile-border);
+  }
+}
+
+.perfil-lado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-4);
+  min-width: 0;
+}
+
+.perfil-identidad {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-3);
+  min-width: 0;
+}
+
+/* Avatar con aro de marca: degradado del primario al secundario. */
+.perfil-avatar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 2px;
+  border-radius: var(--mis-radius-full);
+  background: linear-gradient(135deg, var(--mis-primary), var(--mis-secondary));
+  box-shadow: var(--mis-shadow-sm);
+}
+
+.perfil-avatar img,
+.perfil-avatar i {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--mis-surface);
+}
+
+.perfil-avatar img {
+  object-fit: cover;
+}
+
+.perfil-avatar i {
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  color: var(--mis-primary-text);
+}
+
+.perfil-nombre {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.perfil-titulo {
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: var(--mis-font-bold);
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--mis-text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.perfil-subtitulo {
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--mis-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Semáforo como chips de vidrio. */
+.semaforo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: var(--mis-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.semaforo-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  min-width: 0;
+  padding: 8px 10px;
+  background: var(--mis-tile-bg);
+  border: 1px solid var(--mis-tile-border);
+  border-radius: var(--mis-radius-md);
+  box-shadow: inset 0 1px 0 var(--mis-glass-border);
+}
+
+.semaforo-icono {
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.semaforo-texto {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: var(--mis-font-medium);
+  line-height: 1.2;
+  color: var(--mis-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.perfil-nota {
+  margin: 0;
+  font-size: 10px;
+  color: var(--mis-text-tertiary);
+}
+
+@media (max-width: 639px) {
+  .perfil-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .perfil-titulo {
+    font-size: 15px;
+  }
+
+  .semaforo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,71 @@
+/* Bonos Super Plus: baldosas con el ícono en un círculo. El fondo y el color
+   los decide `claseCaja()` (estado, positivo o negativo); acá solo la forma. */
+.super-plus {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--mis-space-2);
+}
+
+.super-plus-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px 6px 10px;
+  border: 1px solid var(--mis-tile-border);
+  border-radius: var(--mis-radius-lg);
+  box-shadow: inset 0 1px 0 var(--mis-glass-border);
+  transition: transform var(--mis-transition-fast), border-color var(--mis-transition-fast);
+}
+
+.super-plus-item:disabled {
+  cursor: default;
+}
+
+.super-plus-item--activo {
+  cursor: pointer;
+}
+
+.super-plus-item--activo:hover {
+  border-color: var(--mis-border-strong);
+  transform: translateY(-1px);
+}
+
+.super-plus-item:focus-visible {
+  outline: none;
+  box-shadow: var(--mis-shadow-focus);
+}
+
+.super-plus-icono {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  font-size: 15px;
+  background: color-mix(in srgb, var(--mis-surface) 70%, transparent);
+  border-radius: var(--mis-radius-full);
+}
+
+.super-plus-texto {
+  font-size: 11px;
+  font-weight: var(--mis-font-medium);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.super-plus-monto {
+  font-size: 13px;
+  font-weight: var(--mis-font-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .super-plus-item {
+    transition: none;
+  }
+
+  .super-plus-item--activo:hover {
+    transform: none;
+  }
+}

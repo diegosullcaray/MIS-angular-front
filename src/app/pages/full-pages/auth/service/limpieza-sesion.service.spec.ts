@@ -61,6 +61,22 @@ describe('LimpiezaSesionService', () => {
     expect(localStorage.length).toBe(0);
   });
 
+  // Al expirar la sesión la pantalla de error aparecía en oscuro (el tema de
+  // fábrica) aunque la persona trabajaba en claro.
+  it('conserva el tema que se ve, solo en memoria y sin escribirlo', async () => {
+    const limpieza = crear();
+    const preferencias = TestBed.inject(PreferenciasService);
+    preferencias.setTema('claro');
+    preferencias.setFondo('navy');
+
+    await limpieza.limpiarTodo();
+
+    expect(preferencias.apariencia().tema).toBe('claro');
+    expect(preferencias.apariencia().fondo).toBe(PREFERENCIAS_POR_DEFECTO.apariencia.fondo);
+    expect(localStorage.getItem(CLAVE_PREFERENCIAS)).toBeNull();
+    expect(localStorage.length).toBe(0);
+  });
+
   it('si una parte del borrado falla, el resto igual se ejecuta', async () => {
     const limpieza = crear();
     const almacenamiento = TestBed.inject(AlmacenamientoNavegador);

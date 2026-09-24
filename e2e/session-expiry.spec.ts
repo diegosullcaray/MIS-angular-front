@@ -25,4 +25,26 @@ test.describe('Expiración de sesión', () => {
     const sesionRestante = await page.evaluate(() => window.sessionStorage.getItem('mis.sesion'));
     expect(sesionRestante).toBeNull();
   });
+
+  // El borrado total volvía el tema al de fábrica (oscuro) justo antes de
+  // mostrar "Sesión expirada": quien trabajaba en claro la veía en oscuro.
+  test('en modo claro, la pantalla de sesión expirada sigue en claro y no se guarda nada', async ({ page }) => {
+    await page.addInitScript(() => {
+      // Solo la primera carga: la preferencia que tenía la persona antes de expirar.
+      if (!sessionStorage.getItem('e2e.tema-sembrado')) {
+        localStorage.setItem('mis.preferencias', JSON.stringify({ apariencia: { tema: 'claro' } }));
+        sessionStorage.setItem('e2e.tema-sembrado', '1');
+      }
+    });
+    await inyectarSesionExpirada(page);
+    await bloquearGoogle(page);
+
+    await page.goto('/app/dashboard');
+
+    await expect(page).toHaveURL(/\/error\/401$/);
+    await expect(new ErrorPage(page).titulo).toHaveText('Sesión expirada');
+    await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains('dark'))).toBe(false);
+    // El borrado total se mantiene: el tema vive solo en memoria.
+    expect(await page.evaluate(() => localStorage.getItem('mis.preferencias'))).toBeNull();
+  });
 });

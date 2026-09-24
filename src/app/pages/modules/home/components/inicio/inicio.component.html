@@ -24,7 +24,7 @@
   <app-demo-navegacion [modo]="ejemploNovedad()" />
 
   @if (recientes().length > 0) {
-    <section class="recientes bg-[var(--mis-glass-bg)] border border-[var(--mis-glass-border)] rounded-[var(--mis-radius-lg)] shadow-[var(--mis-shadow-md)] backdrop-blur-md backdrop-saturate-[140%] overflow-hidden" aria-label="Reportes recientes">
+    <section class="mis-superficie recientes rounded-[var(--mis-radius-lg)] shadow-[var(--mis-shadow-md)] overflow-hidden" aria-label="Reportes recientes">
       <ul class="recientes-lista">
         @for (reporte of recientes(); track reporte.ruta) {
           <li>
