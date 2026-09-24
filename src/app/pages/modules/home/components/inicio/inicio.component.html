@@ -9,7 +9,12 @@
   (entrarDirecto)="panelNovedades.cerrar()"
 />
 
-<section class="inicio" aria-labelledby="inicio-titulo">
+<!-- Sin recientes no hay encabezado: el nombre de la región no puede apuntar a él. -->
+<section
+  class="inicio"
+  [attr.aria-labelledby]="recientes().length > 0 ? 'inicio-titulo' : null"
+  [attr.aria-label]="recientes().length > 0 ? null : 'Inicio'"
+>
   @if (recientes().length > 0) {
     <header class="inicio-encabezado">
       <h1 id="inicio-titulo">Accesos recientes</h1>

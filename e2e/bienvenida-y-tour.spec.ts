@@ -33,7 +33,8 @@ test.describe('Bienvenida de Pachi', () => {
 
     await expect(bienvenida(page)).toBeVisible();
     await expect(bienvenida(page)).toContainText('Pachi');
-    await expect(bienvenida(page)).toContainText('Filtros y actualizar');
+    // La bienvenida destaca la novedad más reciente del catálogo (`NovedadesTourService`).
+    await expect(bienvenida(page)).toContainText('Encuentra un reporte sin recorrer menús');
   });
 
   test('cerrarla la da por vista y no vuelve en el siguiente ingreso', async ({ page }) => {
@@ -121,7 +122,8 @@ test.describe('El recorrido guiado entra en un teléfono', () => {
   test('el panel se aparta cuando el recorrido señala la pantalla', async ({ page }) => {
     await abrirPanel(page);
 
-    await page.locator('.novedad').filter({ hasText: 'Tu escritorio de inicio' }).click();
+    // Este recorrido señala la demo de navegación del Home, que el panel tapa.
+    await page.locator('.novedad').filter({ hasText: 'Navega por sistemas y sus paneles' }).click();
 
     await expect(page.locator('#novedades-panel')).toHaveClass(/novedades--cerrado/);
     await expect(globo(page)).toBeVisible();

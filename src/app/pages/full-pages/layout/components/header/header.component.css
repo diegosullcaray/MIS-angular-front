@@ -317,6 +317,14 @@
 }
 
 @media (max-width: 639px) {
+  /* Objetivo táctil de 44×44 (WCAG 2.5.5). En píxeles y no en `rem`: con la
+     escala de fuente del sistema, el `w-9 h-9` de la plantilla quedaba en 34 px.
+     El header mide 56 px, así que entran sin cambiar su alto. */
+  .header-action-button {
+    width: 44px;
+    height: 44px;
+  }
+
   /* En móvil el campo se abre bajo la fila de acciones. */
   .header-buscador-global {
     position: absolute;

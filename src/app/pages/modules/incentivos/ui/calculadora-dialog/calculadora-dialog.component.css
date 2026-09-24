@@ -1,0 +1,52 @@
+/*
+ * Campos de la calculadora: editable y bloqueado se distinguen por el FONDO,
+ * no por el color del borde (bordes siempre neutros, `--mis-border`).
+ *
+ * - Editable: `--mis-field-bg` — blanco en claro; en oscuro, el campo oscuro
+ *   del sistema. Es el mismo material que cualquier input del Host.
+ * - Bloqueado (solo lectura): relleno `--mis-primary-light`, tintado en los
+ *   dos temas: se lee como dato calculado, no como algo que se escribe.
+ * - Foco: el borde sigue neutro; lo marca la sombra `--mis-shadow-focus`,
+ *   que es el indicador que exige accesibilidad (no un cambio de color).
+ *
+ * `::ng-deep` sin `:host` a propósito: el diálogo se monta en `body`
+ * (`appendTo="body"`), fuera del árbol del host, y las clases son propias.
+ * El selector doble (`.p-inputtext.calc-campo`) gana al estilo global de
+ * `controles.css` sin `!important`.
+ */
+
+::ng-deep .p-inputtext.calc-campo,
+::ng-deep .p-select.calc-campo,
+::ng-deep .calc-addon {
+  background: var(--mis-field-bg);
+  border-color: var(--mis-border);
+  box-shadow: none;
+}
+
+::ng-deep .p-inputtext.calc-campo:hover:not(:disabled),
+::ng-deep .p-select.calc-campo:not(.p-disabled):hover {
+  background: var(--mis-field-bg-hover);
+  border-color: var(--mis-border);
+}
+
+::ng-deep .p-inputtext.calc-campo:focus,
+::ng-deep .p-select.calc-campo.p-focus {
+  background: var(--mis-field-bg-focus);
+  border-color: var(--mis-border);
+  box-shadow: var(--mis-shadow-focus);
+}
+
+::ng-deep .calc-addon {
+  color: var(--mis-primary-text);
+  padding-inline: 0.5rem;
+}
+
+::ng-deep .calc-lectura {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-sm);
+  background: var(--mis-primary-light);
+}

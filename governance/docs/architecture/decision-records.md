@@ -11,6 +11,8 @@
 | [ADR-0003](./adr/ADR-0003-linea-base-de-gobernanza.md) | Línea base de gobernanza en lugar de "cero hallazgos" | Vigente |
 | [ADR-0004](./adr/ADR-0004-anclas-de-tour-por-selector-estable.md) | Los recorridos guiados se anclan a selectores estables | Vigente |
 | [ADR-0005](./adr/ADR-0005-cambio-de-perfil-por-dialogo.md) | El cambio de perfil requiere selección y confirmación en diálogo | Vigente |
+| [ADR-0006](./adr/ADR-0006-panel-unificado-en-reportes.md) | El panel unificado del asesor vive en `reportes` y se enruta desde `app.routes.ts` | Vigente |
+| [ADR-0007](./adr/ADR-0007-retiro-de-reportes-sin-uso.md) | Retiro de reportes y módulos sin uso (Analista, Presupuesto y 23 reportes) | Vigente |
 
 ## Decisiones vigentes sin ADR propio
 

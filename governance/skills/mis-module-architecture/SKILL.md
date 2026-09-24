@@ -5,7 +5,7 @@ description: Estructura canónica de los módulos de negocio de MIS Host y sus r
 
 # Arquitectura de módulos — MIS Host
 
-Cada módulo de `src/app/pages/modules/` encapsula un dominio de negocio con una división estricta de responsabilidades. Hoy son 12 módulos enlazados desde `app.routes.ts`, con **cero acoplamiento entre ellos**: esa es la invariante que esta guía protege.
+Cada módulo de `src/app/pages/modules/` encapsula un dominio de negocio con una división estricta de responsabilidades. La lista vigente está en el [inventario de módulos](../../docs/architecture/module-inventory.md), que se regenera desde el código; no copies la cifra acá. Entre ellos hay **cero acoplamiento**: esa es la invariante que esta guía protege.
 
 ---
 
@@ -75,6 +75,10 @@ Tres invariantes que el auditor trata como **error**, no como sugerencia:
 | `modulos-desacoplados` | un módulo no importa las tripas de otro |
 
 Lo que dos módulos necesiten compartir sube a `shared/` (si es UI o utilidad genérica) o a `core/` (si es transporte, sesión o un envoltorio del navegador). Nunca se importa de vecino a vecino.
+
+**Composición de rutas.** Si una URL heredada del menú cae bajo el segmento de otro dominio, la pantalla se queda en el módulo dueño de sus datos y se enruta desde `app.routes.ts`, que no es un módulo. Así está `analista/panel-unificado` → `reportes` ([ADR-0006](../../docs/architecture/adr/ADR-0006-panel-unificado-en-reportes.md)). No se resuelve importando el servicio ajeno.
+
+**Módulos sin ruta.** Una carpeta de `pages/modules/` que nadie enlaza es código muerto que compila. La regla `modulo-enrutado` la señala; al retirar pantallas sigue la [guía de retiro](../../docs/development/report-retirement-guide.md).
 
 Las **preferencias de interfaz** son la excepción que confirma la regla: no las comparten dos módulos, las manda el shell. Por eso viven en `pages/full-pages/layout/`, no en `core/`.
 

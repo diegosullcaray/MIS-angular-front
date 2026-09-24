@@ -105,6 +105,64 @@ export function coincidencias(contenido, patron) {
   }));
 }
 
+/* ── Rutas de la aplicación ───────────────────────────────── */
+
+const MODULOS = resolve(SRC_APP, 'pages/modules');
+const escaparRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Carpetas de `src/app/pages/modules/`: un módulo por carpeta. */
+export function modulosDeNegocio() {
+  try {
+    return readdirSync(MODULOS).filter((n) => statSync(join(MODULOS, n)).isDirectory()).sort();
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Módulos que ninguna ruta carga.
+ *
+ * Un módulo queda enlazado si `app.routes.ts` o el `*.routes.ts` de OTRO módulo
+ * lo importa en diferido. Una carpeta sin enlace compila y pasa sus pruebas,
+ * pero nadie puede abrirla: es código muerto que parece vivo.
+ */
+export function modulosSinRuta() {
+  const rutas = listarArchivos(SRC_APP, ['.routes.ts']).map((f) => ({ ruta: rutaRel(f), contenido: readFileSync(f, 'utf8') }));
+  return modulosDeNegocio().filter((modulo) => {
+    const propio = `src/app/pages/modules/${modulo}/`;
+    const referencia = new RegExp(`(pages/modules/|\\.\\./)${escaparRegex(modulo)}/`);
+    return !rutas.some((r) => !r.ruta.startsWith(propio) && referencia.test(r.contenido));
+  });
+}
+
+/** Cada `path:` declarado en algún `*.routes.ts`, como patrón (`:param` acepta un segmento). */
+export function patronesDeRuta() {
+  const paths = new Set();
+  for (const f of listarArchivos(SRC_APP, ['.routes.ts'])) {
+    for (const m of readFileSync(f, 'utf8').matchAll(/path:\s*'([^']*)'/g)) {
+      if (m[1] && m[1] !== '**' && m[1] !== 'app') paths.add(m[1]);
+    }
+  }
+  return [...paths].map(
+    (p) => new RegExp(`^${p.split('/').map((s) => (s.startsWith(':') ? '[^/]+' : escaparRegex(s))).join('/')}$`)
+  );
+}
+
+/**
+ * ¿La URL `/app/…` termina en alguna ruta declarada?
+ *
+ * Las rutas se componen por módulo (`reportes` + `leg/com/rda/adm/x`), así que
+ * basta con que algún sufijo de la URL coincida con un `path:`. No reconstruye
+ * el árbol completo: detecta rutas borradas o mal escritas, que caerían en el
+ * comodín `**` y harían pasar una prueba sin abrir la pantalla que nombra.
+ */
+export function rutaDeclarada(url, patrones) {
+  const limpia = url.replace(/[?#].*$/, '').replace(/^\/app\/?/, '').replace(/\/$/, '');
+  if (!limpia) return true;
+  const segmentos = limpia.split('/');
+  return segmentos.some((_, i) => patrones.some((p) => p.test(segmentos.slice(i).join('/'))));
+}
+
 export function existe(rutaRelativa) {
   return existsSync(resolve(RAIZ, rutaRelativa));
 }

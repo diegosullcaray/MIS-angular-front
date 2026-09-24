@@ -40,12 +40,18 @@
       }
       <div class="flex items-center gap-2 ml-auto">
         @if (incentivos.monetizado().puedeSimular) {
-          <button
-            type="button"
-            class="pi pi-calculator text-[14px] sm:text-[16px] w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-[var(--mis-primary-light)]/20 text-[var(--mis-primary-text)] hover:bg-[var(--mis-primary-light)]/40 transition-colors"
-            title="Calculadora"
-            (click)="abrirCalculadora.emit()"
-          ></button>
+          <!-- Botón de ícono con fondo sólido de marca (brillo y presión globales
+               de `botones.css`). El texto vive en el tooltip; el nombre
+               accesible no depende de él. -->
+          <p-button
+            icon="pi pi-calculator"
+            [rounded]="true"
+            size="small"
+            ariaLabel="Abrir calculadora de incentivos"
+            pTooltip="Calculadora"
+            tooltipPosition="top"
+            (onClick)="abrirCalculadora.emit()"
+          />
         }
         @if (fechaSeleccionada(); as fecha) {
           <p-datepicker

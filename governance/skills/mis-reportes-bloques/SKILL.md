@@ -1,6 +1,6 @@
 ---
 name: mis-reportes-bloques
-description: Crear o modificar reportes de MIS Host preservando motores, jerarquía, fecha y semántica legacy; diagnosticar cifras incorrectas usando la guía canónica y el linaje.
+description: Crear, modificar, agrupar o retirar reportes de MIS Host preservando motores, jerarquía, fecha y semántica legacy; diagnosticar cifras incorrectas usando la guía canónica y el linaje.
 ---
 
 # Reportes por bloques — MIS Host
@@ -32,3 +32,25 @@ Esta skill no replica esas tablas.
 
 Para una cifra incorrecta, seguir [linaje](../../docs/data/lineage.md), no modificar
 filtros o cálculos hasta localizar el borde defectuoso.
+
+## Vistas que agrupan reportes
+
+Un panel que reúne varios reportes (p. ej. el panel unificado del asesor) no
+declara `cod_rep` propios. Delega en los servicios existentes y deja la
+presentación en una pantalla del mismo subdominio.
+
+Los KPI derivados salen solo de una fila de totales (`style === 1`) o de un
+bloque de una fila: nunca se suman filas en el frontend. Ver
+[ADR-0006](../../docs/architecture/adr/ADR-0006-panel-unificado-en-reportes.md).
+
+## Retirar un reporte
+
+Seguir la [guía de retiro](../../docs/development/report-retirement-guide.md) y
+registrarlo en [ADR-0007](../../docs/architecture/adr/ADR-0007-retiro-de-reportes-sin-uso.md).
+
+En resumen:
+
+- Partir del SCODSEC y la ruta legacy, no del nombre visible, porque `rda` y `rma` repiten nombres.
+- Borrar pantalla, métodos exclusivos, constantes y pruebas.
+- Conservar `core/winder`.
+- Cerrar con las reglas `modulo-enrutado`, `e2e-rutas-vigentes` y `linea-base-vigente`.

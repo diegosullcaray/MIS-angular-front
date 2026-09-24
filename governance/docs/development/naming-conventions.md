@@ -42,7 +42,7 @@ Son nombres de compatibilidad, no un estilo a imitar en APIs nuevas.
 
 Restricciones vigentes:
 
-- `analista/categorizacion` debe declararse **antes** que `analista`.
+- Bajo `analista/` solo existen `analista/panel-unificado` y `analista/categorizacion`; el segmento se conserva por el `act_sec` del menú, no porque exista un módulo `analista`.
 - `dashboard` (Home) y `dashboards` (Power BI) son dominios distintos.
 
 ## Tokens de diseño

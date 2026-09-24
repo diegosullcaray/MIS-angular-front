@@ -25,7 +25,7 @@ const NIVEL_2 = [
 
 /** Rutas de dos reportes distintos que montan el mismo selector de jerarquía. */
 const REPORTE_A = '/app/reportes/leg/com/rda/adm/mon-desem';
-const REPORTE_B = '/app/reportes/leg/com/rda/adm/mon-salidas';
+const REPORTE_B = '/app/reportes/repositorio/actividad-diaria/cartera/mon-retenciones';
 
 interface Conteo {
   base: number;

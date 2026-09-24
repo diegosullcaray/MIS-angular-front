@@ -80,8 +80,8 @@
                 <div class="flex flex-col gap-1">
                   <span class="text-[10px] font-bold uppercase text-[var(--mis-text-primary)] tracking-wider">Cierre (Edit)</span>
                   <p-inputgroup>
-                    <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-2 py-0 transition-colors duration-300" [class.border-[var(--mis-primary)]]="focusedItem() === item.id">
-                      <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-[var(--mis-primary)]]="focusedItem() === item.id" [class.text-[var(--mis-text-secondary)]]="focusedItem() !== item.id"></i>
+                    <p-inputgroup-addon styleClass="calc-addon py-0">
+                      <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-[var(--mis-primary)]]="focusedItem() === item.id" [class.text-[var(--mis-primary-text)]]="focusedItem() !== item.id"></i>
                     </p-inputgroup-addon>
                     <p-inputnumber
                       [ngModel]="valorMostrado(item.key, item.formato)"
@@ -91,31 +91,31 @@
                       [minFractionDigits]="2"
                       [maxFractionDigits]="2"
                       [suffix]="item.formato === 'percent' ? '%' : ''"
-                      inputStyleClass="w-full text-[12px] font-bold py-1 bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-[var(--mis-primary)] focus:border-[var(--mis-primary)] text-[var(--mis-text-primary)]"
+                      inputStyleClass="calc-campo w-full text-[12px] font-bold py-1 text-[var(--mis-text-primary)]"
                     />
                   </p-inputgroup>
                 </div>
                 <div class="flex flex-col gap-1">
                   <span class="text-[10px] font-bold uppercase text-[var(--mis-text-secondary)] tracking-wider">Meta Asig.</span>
-                  <div class="bg-[#E2E8F0] shadow-inner dark:bg-white/10 dark:shadow-none rounded-md px-2 py-1 border border-[var(--mis-border)] h-[32px] flex items-center transition-colors duration-300" [class.border-[var(--mis-primary)]]="focusedItem() === item.id">
+                  <div class="calc-lectura">
                     <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ formatear(item.met, item.formato) }}</span>
                   </div>
                 </div>
 
                 @if (item.id === 'efec1') {
                   <!-- Tramo de Días Especial -->
-                  <div class="col-span-2 grid grid-cols-3 gap-2 bg-[var(--mis-panel-bg)] p-2 rounded-md border border-[var(--mis-border)] transition-colors duration-300" [class.border-[var(--mis-primary)]]="focusedItem() === item.id">
+                  <div class="col-span-2 grid grid-cols-3 gap-2 bg-[var(--mis-panel-bg)] p-2 rounded-md border border-[var(--mis-border)] transition-colors duration-300">
                     <div class="flex flex-col gap-1">
                       <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">Pago Puntual</span>
                       <p-inputgroup>
-                        <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-1 py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-text-secondary)]"></i></p-inputgroup-addon>
+                        <p-inputgroup-addon styleClass="calc-addon py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-primary-text)]"></i></p-inputgroup-addon>
                         <p-inputnumber
                           [ngModel]="valorMostrado('tp1', 'percent')"
                           (ngModelChange)="actualizarDesdeInput('tp1', 'percent', $event)"
                           (onFocus)="focusedItem.set(item.id)"
                           (onBlur)="focusedItem.set(null)"
                           suffix="%"
-                          inputStyleClass="w-full text-[11px] text-center font-bold bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-[var(--mis-primary)] focus:border-[var(--mis-primary)] text-[var(--mis-text-primary)] py-1 px-1"
+                          inputStyleClass="calc-campo w-full text-[11px] text-center font-bold text-[var(--mis-text-primary)] py-1 px-1"
                           [class.p-invalid]="errorComposicion()"
                         />
                       </p-inputgroup>
@@ -123,14 +123,14 @@
                     <div class="flex flex-col gap-1">
                       <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">1 a 8 días</span>
                       <p-inputgroup>
-                        <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-1 py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-text-secondary)]"></i></p-inputgroup-addon>
+                        <p-inputgroup-addon styleClass="calc-addon py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-primary-text)]"></i></p-inputgroup-addon>
                         <p-inputnumber
                           [ngModel]="valorMostrado('tp2', 'percent')"
                           (ngModelChange)="actualizarDesdeInput('tp2', 'percent', $event)"
                           (onFocus)="focusedItem.set(item.id)"
                           (onBlur)="focusedItem.set(null)"
                           suffix="%"
-                          inputStyleClass="w-full text-[11px] text-center font-bold bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-[var(--mis-primary)] focus:border-[var(--mis-primary)] text-[var(--mis-text-primary)] py-1 px-1"
+                          inputStyleClass="calc-campo w-full text-[11px] text-center font-bold text-[var(--mis-text-primary)] py-1 px-1"
                           [class.p-invalid]="errorComposicion()"
                         />
                       </p-inputgroup>
@@ -138,14 +138,14 @@
                     <div class="flex flex-col gap-1">
                       <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">9 a más días</span>
                       <p-inputgroup>
-                        <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-1 py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-text-secondary)]"></i></p-inputgroup-addon>
+                        <p-inputgroup-addon styleClass="calc-addon py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-primary-text)]"></i></p-inputgroup-addon>
                         <p-inputnumber
                           [ngModel]="valorMostrado('tp3', 'percent')"
                           (ngModelChange)="actualizarDesdeInput('tp3', 'percent', $event)"
                           (onFocus)="focusedItem.set(item.id)"
                           (onBlur)="focusedItem.set(null)"
                           suffix="%"
-                          inputStyleClass="w-full text-[11px] text-center font-bold bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-[var(--mis-primary)] focus:border-[var(--mis-primary)] text-[var(--mis-text-primary)] py-1 px-1"
+                          inputStyleClass="calc-campo w-full text-[11px] text-center font-bold text-[var(--mis-text-primary)] py-1 px-1"
                           [class.p-invalid]="errorComposicion()"
                         />
                       </p-inputgroup>
@@ -154,7 +154,7 @@
                 }
 
                 <!-- Sub-Totales de la variable -->
-                <div class="col-span-2 grid grid-cols-2 gap-3 mt-0.5 border-t border-[var(--mis-border)] pt-2 transition-colors duration-300" [class.border-[var(--mis-primary)]]="focusedItem() === item.id">
+                <div class="col-span-2 grid grid-cols-2 gap-3 mt-0.5 border-t border-[var(--mis-border)] pt-2 transition-colors duration-300">
                   <div class="flex flex-col">
                     <span class="text-[9px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-[var(--mis-primary)]]="focusedItem() === item.id">Bono Base Est.</span>
                     <span class="text-[13px] font-extrabold text-[var(--mis-primary)]">S/. {{ item.bob | number: '.0-2' }}</span>
@@ -193,13 +193,13 @@
                 <div class="flex flex-col gap-1">
                   <span class="text-[10px] font-bold uppercase" [class]="(item.id === 'clib' || !item.enab) ? 'text-[var(--mis-text-secondary)] tracking-wider' : 'text-[var(--mis-text-primary)] tracking-wider'">{{ etiquetaValor(item) }} {{(item.id === 'clib' || !item.enab) ? '' : '(Edit)'}}</span>
                   @if (item.id === 'clib' || !item.enab) {
-                    <div class="bg-[#E2E8F0] shadow-inner dark:bg-white/10 dark:shadow-none rounded-md px-2 py-1 border border-[var(--mis-border)] h-[32px] flex items-center">
+                    <div class="calc-lectura">
                       <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ formatear(item.val, item.formato) }}</span>
                     </div>
                   } @else if (item.id === 'sis') {
                     <p-inputgroup>
-                      <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-2 py-0 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
-                        <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-text-secondary)]]="focusedItem() !== item.id"></i>
+                      <p-inputgroup-addon styleClass="calc-addon py-0">
+                        <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-primary-text)]]="focusedItem() !== item.id"></i>
                       </p-inputgroup-addon>
                       <p-select appendTo="body"
                         [options]="opcionesSistematica"
@@ -209,13 +209,13 @@
                         (ngModelChange)="actualizar(item.key, $event)"
                         (onFocus)="focusedItem.set(item.id)"
                         (onBlur)="focusedItem.set(null)"
-                        styleClass="w-full text-[12px] font-bold bg-[var(--mis-surface)] border-[var(--mis-border)] text-[var(--mis-text-primary)] h-[32px] flex items-center transition-colors"
+                        styleClass="calc-campo w-full text-[12px] font-bold text-[var(--mis-text-primary)] h-[32px] flex items-center"
                       />
                     </p-inputgroup>
                   } @else {
                     <p-inputgroup>
-                      <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-2 py-0 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
-                        <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-text-secondary)]]="focusedItem() !== item.id"></i>
+                      <p-inputgroup-addon styleClass="calc-addon py-0">
+                        <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-primary-text)]]="focusedItem() !== item.id"></i>
                       </p-inputgroup-addon>
                       <p-inputnumber
                         [ngModel]="valorMostrado(item.key, item.formato)"
@@ -225,7 +225,7 @@
                         [minFractionDigits]="2"
                         [maxFractionDigits]="2"
                         [suffix]="item.formato === 'percent' ? '%' : ''"
-                        inputStyleClass="w-full text-[12px] font-bold py-1 bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-amber-500 focus:border-amber-500 text-[var(--mis-text-primary)] transition-colors"
+                        inputStyleClass="calc-campo w-full text-[12px] font-bold py-1 text-[var(--mis-text-primary)] transition-colors"
                       />
                     </p-inputgroup>
                   }
@@ -234,13 +234,13 @@
                 <div class="flex flex-col gap-1">
                   <span class="text-[10px] font-bold uppercase" [class]="item.id === 'tas' ? 'text-[var(--mis-text-primary)] tracking-wider' : 'text-[var(--mis-text-secondary)] tracking-wider'">{{ etiquetaMeta(item) || 'Meta' }} {{item.id === 'tas' ? '(Edit)' : ''}}</span>
                   @if (item.id === 'prod') {
-                    <div class="bg-[#E2E8F0] shadow-inner dark:bg-white/10 dark:shadow-none rounded-md px-2 py-1 border border-[var(--mis-border)] h-[32px] flex items-center">
+                    <div class="calc-lectura">
                       <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ formatear(item.met, 'number') }}</span>
                     </div>
                   } @else if (item.id === 'tas') {
                     <p-inputgroup>
-                      <p-inputgroup-addon styleClass="bg-[var(--mis-panel-bg)] border-[var(--mis-border)] px-2 py-0 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
-                        <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-text-secondary)]]="focusedItem() !== item.id"></i>
+                      <p-inputgroup-addon styleClass="calc-addon py-0">
+                        <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-amber-500]="focusedItem() === item.id" [class.text-[var(--mis-primary-text)]]="focusedItem() !== item.id"></i>
                       </p-inputgroup-addon>
                       <p-inputnumber
                         [ngModel]="valorMostrado('p_tas2', 'percent')"
@@ -248,11 +248,11 @@
                         (onFocus)="focusedItem.set(item.id)"
                         (onBlur)="focusedItem.set(null)"
                         suffix="%"
-                        inputStyleClass="w-full text-[12px] font-bold py-1 bg-[var(--mis-surface)] border-[var(--mis-border)] hover:border-amber-500 focus:border-amber-500 text-[var(--mis-text-primary)] transition-colors"
+                        inputStyleClass="calc-campo w-full text-[12px] font-bold py-1 text-[var(--mis-text-primary)] transition-colors"
                       />
                     </p-inputgroup>
                   } @else {
-                    <div class="bg-[#E2E8F0] shadow-inner dark:bg-white/10 dark:shadow-none rounded-md px-2 py-1 border border-[var(--mis-border)] h-[32px] flex items-center">
+                    <div class="calc-lectura">
                       <span class="text-[13px] font-extrabold text-[var(--mis-text-tertiary)]">--</span>
                     </div>
                   }

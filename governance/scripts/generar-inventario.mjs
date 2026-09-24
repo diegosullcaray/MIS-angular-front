@@ -20,7 +20,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
 import { execSync } from 'node:child_process';
-import { listarArchivos, opciones, titulo, verde, rojo, gris, RAIZ, SRC_APP, E2E } from './lib/proyecto.mjs';
+import { listarArchivos, modulosSinRuta, opciones, titulo, verde, rojo, gris, RAIZ, SRC_APP, E2E } from './lib/proyecto.mjs';
 
 const { flags } = opciones();
 
@@ -79,6 +79,42 @@ function inventarioModulos() {
       };
     })
     .sort((a, b) => a.modulo.localeCompare(b.modulo));
+}
+
+/**
+ * Pantallas que `app.routes.ts` carga con `loadComponent` directo, sin pasar
+ * por el `*.routes.ts` de su módulo (p. ej. el panel unificado del asesor).
+ * La tabla de módulos solo sigue `loadChildren`, así que sin esto no aparecen.
+ */
+function pantallasDirectas() {
+  const fuente = readFileSync(resolve(SRC_APP, 'app.routes.ts'), 'utf8');
+  const patron = /import\('\.\/pages\/modules\/([^/]+)\/([^']+\.component)'\)/g;
+  return [...fuente.matchAll(patron)]
+    .map((m) => {
+      const ruta = [...fuente.slice(0, m.index).matchAll(/path:\s*'([^']*)'/g)].at(-1)?.[1];
+      return { ruta: `/app/${ruta ?? '?'}`, modulo: m[1], componente: `${m[2]}.ts` };
+    })
+    .sort((a, b) => a.ruta.localeCompare(b.ruta));
+}
+
+/**
+ * Cuántas veces se llama `.metodo(` fuera de `core/winder/`, sin contar specs.
+ *
+ * Es una aproximación textual (no resuelve tipos), suficiente para su uso:
+ * señalar transporte que quedó sin consumidor al retirar una pantalla.
+ */
+function consumidoresPorMetodo(metodos) {
+  const fuentes = listarArchivos(SRC_APP, ['.ts'])
+    .filter((f) => !f.endsWith('.spec.ts') && !f.split(sep).join('/').includes('/core/winder/'))
+    .map((f) => readFileSync(f, 'utf8'));
+  const conteo = new Map(metodos.map((m) => [m, 0]));
+  for (const contenido of fuentes) {
+    for (const metodo of metodos) {
+      const n = contenido.split(`.${metodo}(`).length - 1;
+      if (n) conteo.set(metodo, conteo.get(metodo) + n);
+    }
+  }
+  return conteo;
 }
 
 function inventarioPruebas() {
@@ -192,6 +228,9 @@ function inventarioStrands() {
     });
   }
 
+  const consumidores = consumidoresPorMetodo([...new Set(servicios.flatMap((s) => s.llamadas.map((l) => l.metodo)))]);
+  for (const s of servicios) for (const l of s.llamadas) l.consumidores = consumidores.get(l.metodo) ?? 0;
+
   const rutas = new Set(servicios.flatMap((s) => s.llamadas.map((l) => l.ruta)));
   return { servicios: servicios.sort((a, b) => a.clase.localeCompare(b.clase)), totalRutas: rutas.size };
 }
@@ -266,6 +305,16 @@ function tablaModulos(modulos) {
   ].join('\n');
 }
 
+function bloqueEnlaces(directas, huerfanos) {
+  const lineas = ['**Pantallas enlazadas directamente desde `app.routes.ts`** (no pasan por el `*.routes.ts` de su módulo):', ''];
+  if (directas.length === 0) lineas.push('- Ninguna.');
+  for (const d of directas) lineas.push(`- \`${d.ruta}\` → \`${d.modulo}/${d.componente}\``);
+  lineas.push('', '**Módulos sin ruta** (la carpeta existe pero ninguna ruta la carga; regla `modulo-enrutado`):', '');
+  if (huerfanos.length === 0) lineas.push('- Ninguno.');
+  for (const m of huerfanos) lineas.push(`- \`${m}\` — enlazarlo o retirarlo (ver [guía de retiro](../development/report-retirement-guide.md)).`);
+  return lineas.join('\n');
+}
+
 function tablaCodRep(cat) {
   const filas = cat.entradas
     .map((e) => `| ${e.dominio} | \`${e.constante}\` | ${e.codigos.length} | ${e.codigos.map((c) => `\`${c}\``).join(', ')} |`)
@@ -286,16 +335,21 @@ function tablaStrands(inv) {
         (l) =>
           `| \`${s.appId}\` (${s.puerto}) | \`${s.clase}\` | \`${l.metodo}\` | \`${l.ruta}\` | ${l.verbo} | ${
             l.parametros.length ? l.parametros.map((p) => `\`${p}\``).join(', ') : '—'
-          } | \`${l.respuesta}\` |`
+          } | \`${l.respuesta}\` | ${l.consumidores || '**0**'} |`
       )
     )
     .join('\n');
+  const sinUso = inv.servicios.flatMap((s) => s.llamadas.filter((l) => !l.consumidores).map((l) => `\`${s.clase}.${l.metodo}\``));
   return [
-    '| Módulo Ant | Servicio | Método | Ruta de acción | Verbo | Parámetros de payload | Clave de respuesta |',
-    '|---|---|---|---|---|---|---|',
+    '| Módulo Ant | Servicio | Método | Ruta de acción | Verbo | Parámetros de payload | Clave de respuesta | Llamadas |',
+    '|---|---|---|---|---|---|---|---:|',
     filas,
     '',
     `_${inv.totalRutas} rutas de acción únicas en ${inv.servicios.length} servicios de \`core/winder/instances/\`._`,
+    '',
+    sinUso.length
+      ? `_${sinUso.length} métodos sin llamadas fuera de \`core/winder/\` (transporte congelado; se conservan hasta decidir su retiro): ${sinUso.join(', ')}._`
+      : '_Todos los métodos de transporte tienen al menos una llamada._',
   ].join('\n');
 }
 
@@ -358,6 +412,7 @@ if (flags['json']) {
 
 const resultados = [
   inyectar('governance/docs/architecture/module-inventory.md', 'modulos', tablaModulos(modulos), sello),
+  inyectar('governance/docs/architecture/module-inventory.md', 'enlaces', bloqueEnlaces(pantallasDirectas(), modulosSinRuta()), sello),
   inyectar('governance/docs/development/test-inventory.md', 'pruebas', bloquePruebas(pruebas), sello),
   inyectar('governance/docs/data/catalog.md', 'cod-rep', tablaCodRep(codRep), sello),
   inyectar('governance/docs/data/contracts/action-routes.md', 'rutas-de-accion', tablaStrands(strands), sello),

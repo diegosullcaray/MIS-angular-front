@@ -35,7 +35,7 @@ Las cadenas informan la duración de cada fase, se detienen en la primera que fa
 
 ```bash
 node governance/scripts/ejecutar-pruebas.mjs verificar
-node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/analista
+node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/categorizacion
 node governance/scripts/ejecutar-pruebas.mjs ci --con-e2e
 ```
 
@@ -43,7 +43,7 @@ node governance/scripts/ejecutar-pruebas.mjs ci --con-e2e
 
 ## 2. Auditor de gobernanza
 
-Motor de 14 reglas sobre `src/app`. Cada una declara id, nivel, qué verifica, **por qué** y a qué documento de `governance/docs/` responde.
+Motor de 17 reglas sobre `src/app`, `e2e/` y la línea base. Cada una declara id, nivel, qué verifica, **por qué** y a qué documento de `governance/docs/` responde.
 
 ```bash
 node governance/scripts/validar-gobernanza.mjs                  # informe
@@ -56,7 +56,17 @@ node governance/scripts/validar-gobernanza.mjs --regla=core-aislado,sin-secretos
 
 **Errores** (rompen una invariante): `core-aislado`, `shared-aislado`, `modulos-desacoplados`, `sin-secretos`, `control-flujo-moderno`.
 
-**Avisos** (deuda o convención): `entrada-salida-señal`, `nombres-canonicos`, `tokens-de-color`, `entorno-fuera-de-core`, `prueba-vecina`, `estados-de-datos`, `error-no-silenciado`, `sin-console`, `rutas-lazy`.
+**Avisos** (deuda o convención): `entrada-salida-señal`, `nombres-canonicos`, `tokens-de-color`, `entorno-fuera-de-core`, `prueba-vecina`, `estados-de-datos`, `error-no-silenciado`, `sin-console`, `rutas-lazy`, `modulo-enrutado`, `e2e-rutas-vigentes`, `linea-base-vigente`.
+
+Las tres últimas protegen contra restos al [retirar reportes](../docs/development/report-retirement-guide.md). Leen fuera de `src/app`:
+
+| Regla | Qué mira | Señala |
+|---|---|---|
+| `modulo-enrutado` | `pages/modules/*` contra todos los `*.routes.ts` | Módulo que ni `app.routes.ts` ni otro módulo cargan |
+| `e2e-rutas-vigentes` | URLs `'/app/…'` de `e2e/` contra los `path:` declarados | URL que caería en el comodín `**`; una carpeta del explorador intencional se marca con `// gobernanza: ruta-de-carpeta` |
+| `linea-base-vigente` | `gobernanza.linea-base.json` | Claves de archivos que ya no existen |
+
+La comprobación de URLs es por sufijo, no reconstruye el árbol de rutas. Basta para detectar rutas borradas o mal escritas. No garantiza que la URL completa componga bien.
 
 ### Línea base
 
@@ -93,8 +103,12 @@ Deriva del código y reinyecta entre marcadores `<!-- generado:inicio … -->` /
 | Bloque | Destino |
 |---|---|
 | módulos y rutas | `docs/architecture/module-inventory.md` |
+| pantallas enlazadas directo desde `app.routes.ts` y módulos sin ruta | `docs/architecture/module-inventory.md` |
 | cifras de pruebas | `docs/development/test-inventory.md` |
 | catálogo de `cod_rep` | `docs/data/catalog.md` |
+| rutas de acción Winder, con llamadas fuera de `core/winder/` | `docs/data/contracts/action-routes.md` |
+
+La columna **Llamadas** de rutas de acción cuenta `.metodo(` en `src/app` fuera de `core/winder/` y sin specs. Un **0** marca transporte que quedó sin consumidor. Como Winder está congelado, no se borra automáticamente: se decide su retiro aparte.
 
 El catálogo de `cod_rep` extrae los códigos de reporte de los `constantes/*.constantes.ts`: es el inventario de qué datos consume el frontend, y estaba repartido en 20 archivos sin que nadie pudiera enumerarlo.
 

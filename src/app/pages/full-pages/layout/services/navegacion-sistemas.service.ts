@@ -141,19 +141,24 @@ export class NavegacionSistemasService {
     this.actualizarUrlExplorador();
   }
 
-  /** Refleja el estado del explorador en la barra del navegador de forma cosmética. */
+  /**
+   * Refleja el estado del explorador en la barra del navegador de forma cosmética.
+   *
+   * Solo para sistemas con ruta propia (`/app/reportes/…`): ahí una recarga cae
+   * en el comodín del módulo y `restaurarDesdeUrl` reconstruye la carpeta. Un
+   * sistema sin ruta —Inicio— no tiene URL que recargar: inventar
+   * `/app/host-inicio` dejaba una dirección rota, así que se conserva la actual.
+   */
   actualizarUrlExplorador(): void {
     const sistemaId = this.shell.sidebarIconActivo();
     if (!sistemaId) return;
-    
-    const sistema = this.iconos().find(i => i.id === sistemaId);
-    if (!sistema) return;
+
+    const sistema = this.iconos().find((i) => i.id === sistemaId);
+    if (!sistema?.ruta) return;
 
     // Convertir las etiquetas de las carpetas en segmentos URL (ej. "Avance Comercial" -> "avance-comercial")
-    const segmentos = this.rutaExplorador().map(n => this.normalizarParaUrl(n.etiqueta));
-    const rutaBase = sistema.ruta || `/app/${sistemaId}`;
-    
-    const path = segmentos.length > 0 ? `${rutaBase}/${segmentos.join('/')}` : rutaBase;
+    const segmentos = this.rutaExplorador().map((n) => this.normalizarParaUrl(n.etiqueta));
+    const path = segmentos.length > 0 ? `${sistema.ruta}/${segmentos.join('/')}` : sistema.ruta;
     this.location.replaceState(path);
   }
 

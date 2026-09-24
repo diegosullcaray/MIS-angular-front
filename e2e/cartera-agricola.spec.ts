@@ -26,10 +26,10 @@ async function mockBackend(page: Page) {
       body = {
         resultado: {
           headers: JSON.stringify([
-            { key: 'DESCRIPCION', label: 'Unidad' },
+            { key: 'rdesjer', label: 'Unidad' },
             { key: 'HSALCAPMN', label: 'Saldo', format: { type: 'integer' } },
           ]),
-          data: [{ DESCRIPCION: 'ZONA NORTE', htipcod: 13, cod_rel: 'ZN', HSALCAPMN: 1000, HSALVEMN: 50, HCCLI: 20, EXTE: 15 }],
+          data: [{ rdesjer: 'ZONA NORTE', htipcod: 13, cod_rel: 'ZN', HSALCAPMN: 1000, HSALVEMN: 50, HCCLI: 20, EXTE: 15 }],
           meta1: [{ HSALCAPMN: 900, HSALVEMN: 60, HCCLI: 18, EXTE: 14 }],
         },
       };
@@ -58,14 +58,21 @@ async function clicEnPrimeraBarra(page: Page, indiceGrafico: number) {
   await barra.click({ force: true });
 }
 
-/** Deja la pantalla en la vista de gráficos de "ZONA NORTE". */
+/**
+ * Deja la pantalla en la vista de gráficos de "ZONA NORTE".
+ *
+ * Como en `ddHier()` del legado, la descripción de la fila baja de nivel y las
+ * métricas abren los gráficos: por eso el clic va a la celda de Saldo.
+ */
 async function abrirDetalleDeNivel(page: Page) {
   await inyectarSesionVigente(page);
   await mockBackend(page);
   await page.goto('/app/reportes/repositorio/actividad-diaria/cartera/agro-mix');
   await page.waitForLoadState('networkidle');
-  await page.getByText('ZONA NORTE').first().click();
-  await expect(page.getByRole('heading', { name: /Detalle por cultivo/ })).toBeVisible();
+  const fila = page.locator('app-tabla-dinamica tr').filter({ hasText: 'ZONA NORTE' });
+  // Celdas accionables de la fila, en orden: descripción (drill-down) y Saldo (gráficos).
+  await fila.locator('td.underline').nth(1).click();
+  await expect(page.getByRole('heading', { name: /Detalle por cultivo — ZONA NORTE/ })).toBeVisible();
 }
 
 test.describe('Cartera Agrícola — detalle por cultivo', () => {

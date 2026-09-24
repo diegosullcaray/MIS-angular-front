@@ -23,7 +23,7 @@ test('abre el panel desde Reportes > Analista', async ({ page }) => {
       },
     }),
   );
-  await page.goto('/app/reportes/analista');
+  await page.goto('/app/reportes/analista'); // gobernanza: ruta-de-carpeta (carpeta del explorador)
   await page.getByRole('button', { name: 'Panel unificado del asesor', exact: true }).click();
   await expect(page).toHaveURL(/\/app\/analista\/panel-unificado$/);
   await expect(page.locator('app-panel-unificado')).toBeVisible();

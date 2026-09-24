@@ -754,3 +754,93 @@ Ponerles nombre es una decisión de diseño —¿título visible, o solo
 Lo detectó un spec E2E, no una persona. Es el mismo modo de falla que motivó
 ADR-0004: el marcado cambia, nada deja de compilar, y lo que se rompe es algo
 que solo nota quien usa lector de pantalla.
+
+---
+
+## INC-2026-09-23-01 · El E2E del caché de jerarquía medía una pantalla que no existe
+
+| Campo | Valor |
+|---|---|
+| **Componente** | `e2e/jerarquia-cache.spec.ts` |
+| **Commit evaluado** | `b4af615` + cambios en curso |
+| **Fecha** | 2026-09-23 |
+| **Estado** | **Corregido** |
+| **Evidencia** | Regla `e2e-rutas-vigentes` al estrenarse; `npx playwright test e2e/jerarquia-cache.spec.ts` → 8 pasan |
+
+### Resultado observado
+
+`REPORTE_B` apuntaba a `/app/reportes/leg/com/rda/adm/mon-salidas`, ruta que
+nunca existió. La URL caía en el comodín `**` de `reportes` y abría el
+explorador, así que la prueba pasaba sin montar el segundo selector de
+jerarquía que dice medir.
+
+### Causa raíz
+
+El nombre del legado (`repositorio/mon-salidas`) se confundió con el `path` del
+Host, que es `repositorio/actividad-diaria/cartera/mon-retenciones`. Nada
+verificaba que las URLs de los E2E existieran.
+
+### Corrección
+
+`REPORTE_B` pasa a la ruta real del Monitor de Salidas y Retenciones.
+
+### Prueba de regresión
+
+La regla `e2e-rutas-vigentes` del auditor contrasta cada URL `'/app/…'` de
+`e2e/` con los `path:` declarados.
+
+---
+
+## INC-2026-09-23-02 · 27 E2E en rojo previos al retiro de reportes
+
+| Campo | Valor |
+|---|---|
+| **Componente** | Suites Playwright de Home, bienvenida, header y reportes puntuales |
+| **Commit evaluado** | `b4af615` (sin cambios locales) y el árbol de trabajo con los cambios de ADR-0006/0007 |
+| **Fecha** | 2026-09-23 |
+| **Estado** | **Corregido** |
+| **Evidencia** | Misma lista de 27 fallos en los dos árboles (`desktop-chromium` y `mobile-chromium`); 478 pasan en el árbol actual |
+
+### Resultado observado
+
+| Suite | Síntoma |
+|---|---|
+| `bienvenida-y-tour` | El diálogo de Pachi no lista "Filtros y actualizar"; el recorrido no encuentra la novedad "Tu escritorio de inicio" |
+| `comunicados` | Se espera `Comunicado.png` y una sola lámina; hay `Comunicado1.png` y dos puntos de recorrido |
+| `home-recientes` | No aparece el encabezado "Reportes recientes" |
+| `cambiar-usuario` | El menú del header ya no lista "Otros perfiles" (coherente con ADR-0005: el cambio pasa por diálogo) |
+| `cartera-agricola` | No aparece el encabezado "Detalle por cultivo" |
+| `incentivos` (selector de nivel) | El diálogo abre sin botón de cierre |
+| `responsive-movil` | "Abrir búsqueda global" mide 34 px; se exige 44×44 |
+| `breadcrumb-y-volver` (flecha de volver) | `actualizarUrlExplorador()` reescribe la URL a `/app/host-inicio`; la prueba exige que no cambie |
+
+### Lectura
+
+No los introdujo el retiro de reportes: fallan igual en el commit base. Varios
+síntomas coinciden con cambios de interfaz ya decididos (ADR-0005, comunicado
+nuevo, novedades) y apuntan a **pruebas desactualizadas**. Otros son
+**defectos reales**: el objetivo táctil de 34 px y el diálogo de Incentivos sin
+cierre. Hay que decidir caso por caso qué se corrige, la prueba o la pantalla,
+sin marcarlos como `skip`.
+
+### Corrección
+
+Al revisarlos uno por uno, el diálogo de Incentivos resultó ser una decisión
+vigente y no un defecto. Aparecieron, en cambio, dos defectos que la lectura
+inicial no había visto: la URL rota al volver y la región del Home sin nombre.
+
+| Caso | Tipo | Qué se hizo |
+|---|---|---|
+| `bienvenida-y-tour` | Prueba desactualizada | La bienvenida destaca la novedad más reciente ("Encuentra un reporte sin recorrer menús"). El recorrido que aparta el panel usa "Navega por sistemas y sus paneles". |
+| `comunicados` | Prueba desactualizada | El comunicado publicado tiene dos láminas: se verifica el carrusel (puntos, "Lámina 1 de 2", flechas). |
+| `home-recientes` | Prueba desactualizada + defecto de accesibilidad | Sin historial, el Home no pinta el bloque de recientes (decisión de `b4af615`). La región apuntaba con `aria-labelledby` a un título inexistente; ahora se llama "Inicio" cuando no hay recientes. |
+| `cambiar-usuario` | Prueba desactualizada | Reescrita al diálogo de ADR-0005: elegir, confirmar, cancelar y volver a la identidad propia. |
+| `cartera-agricola` | Prueba desactualizada | La descripción baja de nivel y las métricas abren los gráficos (patrón de la guía de reportes). El clic va a la celda Saldo y el mock usa `rdesjer`. |
+| `incentivos` | Prueba desactualizada | `7b36254` exige que un STAFF elija nivel en el primer ingreso, por paridad con Incentivos3. La prueba afirma que el diálogo no se descarta y que los seis niveles están a la vista, que es lo que protegía INC-2026-09-08-08. |
+| `responsive-movil` | **Defecto real** | Los botones del header medían 34 px en teléfono (`w-9` en `rem`). Se fijan 44×44 px bajo 640 px en `header.component.css`. |
+| `breadcrumb-y-volver` | **Defecto real** | Al volver desde un sistema sin ruta, `actualizarUrlExplorador()` escribía `/app/host-inicio`, una URL inexistente. Ahora solo reescribe la URL de sistemas con ruta propia. Se agrega `navegacion-sistemas.service.spec.ts`. |
+
+**Resultado:**
+
+- **E2E:** 507 en verde y 1 omitido a propósito (clic sobre un gráfico en móvil).
+- **Unitarias:** 1796 en verde.

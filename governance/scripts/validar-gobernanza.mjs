@@ -38,10 +38,27 @@ import {
   gris,
   negrita,
   RAIZ,
+  E2E,
+  listarArchivos,
+  rutaRel,
+  existe,
+  modulosSinRuta,
+  patronesDeRuta,
+  rutaDeclarada,
 } from './lib/proyecto.mjs';
 
 const { flags } = opciones();
 const LINEA_BASE = resolve(RAIZ, 'governance/gobernanza.linea-base.json');
+
+/**
+ * Marca para una URL de E2E que a propósito no es una pantalla: una carpeta del
+ * explorador, que resuelve el comodín `**`. Va en la misma línea que la URL.
+ */
+const MARCA_RUTA_DE_CARPETA = 'gobernanza: ruta-de-carpeta';
+
+/** Suites E2E, leídas una sola vez: las reglas que miran fuera de `src/app` no reciben este índice. */
+const suitesE2e = () =>
+  listarArchivos(E2E, ['.ts']).map((f) => ({ ruta: rutaRel(f), contenido: readFileSync(f, 'utf8') }));
 
 /* ── Catálogo de reglas ───────────────────────────────────── */
 
@@ -298,6 +315,64 @@ const REGLAS = [
             detalle: `ruta ansiosa (${c.texto.trim()}) — usar loadComponent/loadChildren`,
           }))
         ),
+  },
+  {
+    id: 'modulo-enrutado',
+    nivel: 'aviso',
+    titulo: 'cada módulo de negocio está enlazado desde alguna ruta',
+    doc: 'docs/development/report-retirement-guide.md',
+    porque:
+      'un módulo que ninguna ruta carga compila y pasa sus pruebas, pero nadie puede abrirlo: suele quedar así al retirar la pantalla que lo enlazaba.',
+    evaluar: () =>
+      modulosSinRuta().map((modulo) => ({
+        ruta: `src/app/pages/modules/${modulo}`,
+        detalle: `el módulo '${modulo}' no se carga desde app.routes.ts ni desde otro módulo — enlazarlo o retirarlo`,
+      })),
+  },
+  {
+    id: 'e2e-rutas-vigentes',
+    nivel: 'aviso',
+    titulo: 'las URLs que visitan las pruebas E2E existen',
+    doc: 'docs/development/testing.md',
+    porque:
+      'una URL borrada o mal escrita cae en el comodín `**`: la prueba pasa sin abrir la pantalla que nombra, y deja de proteger algo.',
+    evaluar: () => {
+      const patrones = patronesDeRuta();
+      return suitesE2e().flatMap((suite) =>
+        suite.contenido
+          .split('\n')
+          .flatMap((texto, i) =>
+            texto.includes(MARCA_RUTA_DE_CARPETA)
+              ? []
+              : [...texto.matchAll(/['`](\/app\/[^'`\s$]*)['`]/g)].map((m) => ({ url: m[1], linea: i + 1 }))
+          )
+          .filter(({ url }) => !rutaDeclarada(url, patrones))
+          .map(({ url, linea }) => ({
+            ruta: suite.ruta,
+            linea,
+            detalle: `'${url}' no coincide con ninguna ruta declarada — actualizarla o marcarla con '// ${MARCA_RUTA_DE_CARPETA}'`,
+          }))
+      );
+    },
+  },
+  {
+    id: 'linea-base-vigente',
+    nivel: 'aviso',
+    titulo: 'la línea base solo congela archivos que existen',
+    doc: 'docs/architecture/adr/ADR-0003-linea-base-de-gobernanza.md',
+    porque:
+      'una clave de un archivo borrado ya no oculta nada, pero infla la cifra de deuda y hace creer que un problema sigue congelado.',
+    evaluar: () => {
+      if (!existsSync(LINEA_BASE)) return [];
+      const { claves = [] } = JSON.parse(readFileSync(LINEA_BASE, 'utf8'));
+      return claves
+        .map((clave) => clave.split('|')[1])
+        .filter((ruta) => ruta && !existe(ruta))
+        .map((ruta) => ({
+          ruta: 'governance/gobernanza.linea-base.json',
+          detalle: `clave de un archivo que ya no existe: ${ruta} — quitarla`,
+        }));
+    },
   },
 ];
 

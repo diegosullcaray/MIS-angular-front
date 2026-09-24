@@ -189,7 +189,7 @@ E2E es **obligatorio** cuando el cambio toca una ruta, el shell, permisos, el fl
 
 ```bash
 node governance/scripts/ejecutar-pruebas.mjs unit
-node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/analista
+node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/categorizacion
 node governance/scripts/ejecutar-pruebas.mjs watch
 node governance/scripts/ejecutar-pruebas.mjs coverage
 node governance/scripts/ejecutar-pruebas.mjs e2e
