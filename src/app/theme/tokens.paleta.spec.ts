@@ -1,4 +1,4 @@
-import { CONTRASTE, componerSobre, contraste } from './contraste.util';
+import { CONTRASTE, componerSobre, contraste } from './color.util';
 import { TEMAS, type TokenColor } from './tokens.paleta';
 
 /**
@@ -14,7 +14,11 @@ import { TEMAS, type TokenColor } from './tokens.paleta';
  */
 
 /** Resuelve un token a un hex opaco, componiéndolo sobre su fondo si tiene alfa. */
-function resolver(tokens: Record<TokenColor, string>, token: TokenColor, fondo: TokenColor): string {
+function resolver(
+  tokens: Record<TokenColor, string>,
+  token: TokenColor,
+  fondo: TokenColor,
+): string {
   const valor = tokens[token];
   const base = tokens[fondo];
   return componerSobre(valor, componerSobre(base, '#000000') ?? '#000000') ?? valor;
@@ -81,7 +85,9 @@ describe.each(TEMAS)('Tokens de color — tema $nombre', ({ tokens }) => {
     it.each(['mis-surface', 'mis-bg', 'mis-panel-bg'] as const)(
       'el borde de control se distingue de %s',
       (fondo) => {
-        expect(razon(tokens, 'mis-border-control', fondo)).toBeGreaterThanOrEqual(CONTRASTE.interfaz);
+        expect(razon(tokens, 'mis-border-control', fondo)).toBeGreaterThanOrEqual(
+          CONTRASTE.interfaz,
+        );
       },
     );
 
@@ -102,16 +108,18 @@ describe.each(TEMAS)('Tokens de color — tema $nombre', ({ tokens }) => {
     // control: no les aplica el 3:1 (subirlos encuadraría toda la interfaz).
     // Lo que sí tienen que hacer es VERSE: por debajo de 1.2:1 el divisor
     // desaparece contra la superficie y la retícula se pierde.
-    it.each(['mis-border', 'mis-border-strong'] as const)('%s es perceptible sobre la superficie', (borde) => {
-      expect(razon(tokens, borde, 'mis-surface')).toBeGreaterThanOrEqual(1.2);
-    });
+    it.each(['mis-border', 'mis-border-strong'] as const)(
+      '%s es perceptible sobre la superficie',
+      (borde) => {
+        expect(razon(tokens, borde, 'mis-surface')).toBeGreaterThanOrEqual(1.2);
+      },
+    );
 
     it('el borde fuerte contrasta más que el normal', () => {
       expect(razon(tokens, 'mis-border-strong', 'mis-surface')).toBeGreaterThan(
         razon(tokens, 'mis-border', 'mis-surface'),
       );
     });
-
   });
 
   describe('texto terciario (deshabilitado y metadatos, AA grande 3:1)', () => {

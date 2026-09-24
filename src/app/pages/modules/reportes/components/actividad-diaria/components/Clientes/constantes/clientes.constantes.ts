@@ -9,7 +9,4 @@ export const COD_CLIENTES = {
   /** `cmg-cli` — strand deprecado (`reportData`). */
   cmgStock: 'rda/administracion/clientes/cmg_cliente_01',
   /** `mov-cli` — no manda parámetros: trae el movimiento completo. */
-  movimientoClientes: 'MOVIMIENTO_CLIENTES_01',
-  /** `rank-muj` — dos bloques con los mismos parámetros. */
-  rankingMujer: ['RS_RANK_MUJ_01', 'RS_RANK_MUJ_02'],
-} as const;
+  movimientoClientes: 'MOVIMIENTO_CLIENTES_01',} as const;

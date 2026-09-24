@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { KaypachaDashboardComponent } from './kaypacha-dashboard.component';
 import { KaypachaDashboardService } from '../../services/kaypacha-dashboard.service';
-import { KaypachaTourService } from '../../services/kaypacha-tour.service';
 import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.model';
 
 describe('KaypachaDashboardComponent', () => {
@@ -26,7 +25,6 @@ describe('KaypachaDashboardComponent', () => {
     permitirBusqueda: ReturnType<typeof signal<boolean>>;
     colaboradores: ReturnType<typeof signal<KaypachaColaboradorItem[]>>;
   };
-  let tourFalso: { iniciarTourGuiado: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     serviceFalso = {
@@ -49,13 +47,11 @@ describe('KaypachaDashboardComponent', () => {
       permitirBusqueda: signal(true),
       colaboradores: signal<KaypachaColaboradorItem[]>([]),
     };
-    tourFalso = { iniciarTourGuiado: vi.fn() };
 
     TestBed.configureTestingModule({
       imports: [KaypachaDashboardComponent],
       providers: [
         { provide: KaypachaDashboardService, useValue: serviceFalso },
-        { provide: KaypachaTourService, useValue: tourFalso },
       ],
     });
   });
@@ -100,13 +96,6 @@ describe('KaypachaDashboardComponent', () => {
 
     expect(serviceFalso.limpiar).toHaveBeenCalled();
     expect(serviceFalso.cargarDatos).toHaveBeenLastCalledWith();
-  });
-
-  it('iniciarTour() delega en KaypachaTourService', () => {
-    const fixture = crear();
-    fixture.componentInstance['iniciarTour']();
-
-    expect(tourFalso.iniciarTourGuiado).toHaveBeenCalled();
   });
 
   it('imagenMedalla usa la medalla de podio para posiciones del 1 al 20', () => {

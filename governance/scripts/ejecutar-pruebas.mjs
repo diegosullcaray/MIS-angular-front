@@ -270,7 +270,7 @@ ${negrita('Cadenas')}
 
 ${negrita('Ejemplos')}
   node governance/scripts/ejecutar-pruebas.mjs verificar
-  node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/analista
+  node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/categorizacion
   node governance/scripts/ejecutar-pruebas.mjs ci --con-e2e
 `);
       process.exit(desconocido ? 1 : 0);

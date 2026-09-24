@@ -1,36 +1,51 @@
-<!-- El panel de novedades va pegado al borde derecho de la pantalla (`fixed`),
-     así que no compite por el ancho con la columna de recientes. -->
+<!-- El panel de novedades queda fijo al borde derecho; el espacio principal
+     reserva su ancho en pantallas amplias para no quedar debajo de él. -->
 <app-panel-novedades #panelNovedades />
 
 <!-- La bienvenida de Pachi: se abre sola la primera vez y su botón principal
      levanta el panel de al lado. -->
-<app-bienvenida-dialog (verNovedades)="panelNovedades.abrir()" (entrarDirecto)="panelNovedades.cerrar()" />
+<app-bienvenida-dialog
+  (verNovedades)="panelNovedades.abrir()"
+  (entrarDirecto)="panelNovedades.cerrar()"
+/>
 
-<section class="recientes" aria-labelledby="recientes-rotulo">
-  <h2 id="recientes-rotulo" class="recientes-rotulo">
-    <i class="pi pi-clock" aria-hidden="true"></i>
-    Reportes recientes
-  </h2>
+<!-- Sin recientes no hay encabezado: el nombre de la región no puede apuntar a él. -->
+<section
+  class="inicio"
+  [attr.aria-labelledby]="recientes().length > 0 ? 'inicio-titulo' : null"
+  [attr.aria-label]="recientes().length > 0 ? null : 'Inicio'"
+>
+  @if (recientes().length > 0) {
+    <header class="inicio-encabezado">
+      <h1 id="inicio-titulo">Accesos recientes</h1>
+    </header>
+  }
+
+  <app-demo-navegacion [modo]="ejemploNovedad()" />
 
   @if (recientes().length > 0) {
-    <ul class="recientes-lista">
-      @for (reporte of recientes(); track reporte.ruta) {
-        <li>
-          <a class="reciente-fila" [routerLink]="reporte.ruta">
-            <span class="reciente-nombre">
-              {{ reporte.titulo }}
-              @if (reporte.categoria) {
-                <span class="reciente-categoria">· {{ reporte.categoria }}</span>
-              }
-            </span>
-            <span class="reciente-fecha">{{ desde(reporte.fechaVisita) }}</span>
-          </a>
-        </li>
-      }
-    </ul>
-  } @else {
-    <p class="recientes-vacio">
-      Todavía no abriste ningún reporte. Abre uno desde el menú lateral y quedará aquí.
-    </p>
+    <section class="recientes bg-[var(--mis-glass-bg)] border border-[var(--mis-glass-border)] rounded-[var(--mis-radius-lg)] shadow-[var(--mis-shadow-md)] backdrop-blur-md backdrop-saturate-[140%] overflow-hidden" aria-label="Reportes recientes">
+      <ul class="recientes-lista">
+        @for (reporte of recientes(); track reporte.ruta) {
+          <li>
+            <a class="reciente-fila" [routerLink]="reporte.ruta">
+              <span class="reciente-icono" aria-hidden="true">
+                <i class="pi pi-chart-line"></i>
+              </span>
+              <span class="reciente-contenido">
+                <span class="reciente-nombre">{{ reporte.titulo }}</span>
+                @if (reporte.categoria) {
+                  <span class="reciente-categoria">{{ reporte.categoria }}</span>
+                }
+              </span>
+              <span class="reciente-meta">
+                <span class="reciente-fecha">{{ desde(reporte.fechaVisita) }}</span>
+                <i class="pi pi-arrow-up-right" aria-hidden="true"></i>
+              </span>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
   }
 </section>

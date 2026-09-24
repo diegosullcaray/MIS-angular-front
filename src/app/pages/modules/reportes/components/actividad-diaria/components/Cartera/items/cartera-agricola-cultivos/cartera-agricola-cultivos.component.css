@@ -18,7 +18,11 @@
   --mis-primary-hover: #166534;
   --mis-primary-light: rgba(22, 163, 74, 0.12);
   --mis-primary-text: #15803d;
-  --mis-window-bar-bg: linear-gradient(180deg, rgba(240, 253, 244, 0.94) 0%, rgba(220, 252, 231, 0.9) 100%);
+  --mis-window-bar-bg: linear-gradient(
+    180deg,
+    rgba(240, 253, 244, 0.94) 0%,
+    rgba(220, 252, 231, 0.9) 100%
+  );
   --mis-window-bar-border: rgba(21, 128, 61, 0.22);
 }
 
@@ -27,6 +31,90 @@
   --mis-primary-hover: #14532d;
   --mis-primary-light: rgba(74, 222, 128, 0.16);
   --mis-primary-text: #4ade80;
-  --mis-window-bar-bg: linear-gradient(180deg, rgba(20, 83, 45, 0.92) 0%, rgba(14, 59, 32, 0.88) 100%);
+  --mis-window-bar-bg: linear-gradient(
+    180deg,
+    rgba(20, 83, 45, 0.92) 0%,
+    rgba(14, 59, 32, 0.88) 100%
+  );
   --mis-window-bar-border: rgba(74, 222, 128, 0.18);
+}
+
+/* Vidrio discreto inspirado en macOS: el texto permanece sobre una superficie
+   del tema y el brillo queda limitado a la parte superior de cada tarjeta. */
+.agro-kpi {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 164px;
+  overflow: hidden;
+  padding: 20px;
+  border: 1px solid var(--mis-border-strong);
+  border-radius: 24px;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--mis-surface) 92%, transparent),
+    color-mix(in srgb, var(--mis-panel-bg) 82%, transparent)
+  );
+  box-shadow: var(--mis-shadow-md);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.agro-kpi::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 55%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 85% 0%, var(--mis-primary-light), transparent 72%);
+}
+
+.agro-kpi__label {
+  color: var(--mis-text-secondary);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.agro-kpi__value {
+  color: var(--mis-text-primary);
+  font-size: clamp(22px, 2vw, 31px);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.agro-kpi__footer {
+  padding-top: 12px;
+  border-top: 1px solid var(--mis-border);
+}
+
+.agro-kpi__previous {
+  color: var(--mis-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.agro-kpi__trend {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.agro-kpi__trend--positive {
+  color: var(--mis-success);
+  background: var(--mis-success-light);
+}
+
+.agro-kpi__trend--negative {
+  color: var(--mis-danger);
+  background: var(--mis-danger-light);
 }

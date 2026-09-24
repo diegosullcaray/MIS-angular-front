@@ -14,43 +14,46 @@
 
 /* Flechas de desplazamiento de la barra inferior (mobile) */
 .sidebar-rail-edge {
-  box-shadow: none !important;
+  border: 0;
+  color: var(--mis-text-on-primary);
+  cursor: pointer;
+  transition: opacity var(--mis-transition-fast);
 }
 
-/* En mobile: fondo sólido navy para el bottom sidebar y difuminado suave en las flechas */
+.sidebar-rail-edge:hover {
+  opacity: 0.88;
+}
+
+/* En móvil el mismo material se concentra para asegurar contraste sobre el wallpaper. */
 @media (max-width: 639px) {
   .sidebar-rail {
-    background: #1d396e !important;
+    background: var(--mis-sidebar-solid) !important;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.25);
-  }
-
-  :host-context(.dark) .sidebar-rail {
-    background: #09101d !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.45);
+    border-top: 1px solid var(--mis-sidebar-mobile-border);
+    box-shadow: var(--mis-sidebar-mobile-shadow);
   }
 
   .sidebar-rail-edge--left {
-    background: linear-gradient(to right, #1d396e 35%, rgba(29, 57, 110, 0.8) 65%, transparent 100%) !important;
+    background: linear-gradient(
+      to right,
+      var(--mis-sidebar-solid) 35%,
+      var(--mis-sidebar-edge) 65%,
+      transparent 100%
+    ) !important;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
   }
 
   .sidebar-rail-edge--right {
-    background: linear-gradient(to left, #1d396e 35%, rgba(29, 57, 110, 0.8) 65%, transparent 100%) !important;
+    background: linear-gradient(
+      to left,
+      var(--mis-sidebar-solid) 35%,
+      var(--mis-sidebar-edge) 65%,
+      transparent 100%
+    ) !important;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-  }
-
-  :host-context(.dark) .sidebar-rail-edge--left {
-    background: linear-gradient(to right, #09101d 35%, rgba(9, 16, 29, 0.8) 65%, transparent 100%) !important;
-  }
-
-  :host-context(.dark) .sidebar-rail-edge--right {
-    background: linear-gradient(to left, #09101d 35%, rgba(9, 16, 29, 0.8) 65%, transparent 100%) !important;
   }
 }
 
@@ -58,11 +61,7 @@
    se cae a un navy sólido en vez de arriesgar el contraste de los íconos. */
 @supports not (backdrop-filter: blur(1px)) {
   .sidebar-rail {
-    background: #1d396e;
-  }
-
-  :host-context(.dark) .sidebar-rail {
-    background: #09101d;
+    background: var(--mis-sidebar-solid);
   }
 }
 
@@ -74,8 +73,46 @@
 }
 
 .sidebar-icon-btn--active {
-  background: rgba(255, 255, 255, 0.15) !important;
-  color: #fff !important;
+  background: var(--mis-sidebar-item-active) !important;
+  color: var(--mis-text-on-primary) !important;
+  border-color: var(--mis-sidebar-item-border);
+  box-shadow:
+    inset 0 1px 0 var(--mis-glass-border),
+    var(--mis-shadow-sm);
+}
+
+.sidebar-icon-btn {
+  border: 1px solid transparent;
+  border-radius: var(--mis-radius-md);
+  background: transparent;
+  color: color-mix(in srgb, var(--mis-text-on-primary) 76%, transparent);
+  box-shadow: none;
+  cursor: pointer;
+  transition:
+    transform var(--mis-transition-fast),
+    background-color var(--mis-transition-fast),
+    border-color var(--mis-transition-fast),
+    box-shadow var(--mis-transition-fast),
+    color var(--mis-transition-fast);
+}
+
+.sidebar-icon-btn:hover:not(.sidebar-icon-btn--active),
+.sidebar-icon-btn:focus-visible {
+  background: var(--mis-sidebar-item-hover);
+  border-color: var(--mis-sidebar-item-border);
+  color: var(--mis-text-on-primary);
+  box-shadow:
+    inset 0 1px 0 var(--mis-glass-border),
+    var(--mis-shadow-sm);
+}
+
+.sidebar-icon-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.sidebar-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--mis-shadow-focus);
 }
 
 /* Mobile (barra inferior): indicador como barra superior del botón activo. */
@@ -91,6 +128,17 @@
   border-radius: 0 0 var(--mis-radius-xs) var(--mis-radius-xs);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-icon-btn,
+  .sidebar-rail-edge {
+    transition: none;
+  }
+
+  .sidebar-icon-btn:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
 /* Desktop (rail vertical, desde sm:): indicador como barra al borde izquierdo. */
 @media (min-width: 640px) {
   .sidebar-icon-btn--active::before {
@@ -102,7 +150,6 @@
     border-radius: 0 var(--mis-radius-xs) var(--mis-radius-xs) 0;
   }
 }
-
 
 /* ── Modos de menú ────────────────────────────────────────────────────────
    `data-menu` / `data-menu-etiquetas` los escribe `AparienciaDomAdaptador` en
@@ -130,7 +177,9 @@
     z-index: 40;
     visibility: hidden;
     transform: translateX(-100%);
-    transition: transform var(--mis-transition-base), visibility var(--mis-transition-base);
+    transition:
+      transform var(--mis-transition-base),
+      visibility var(--mis-transition-base);
     box-shadow: var(--mis-shadow-lg);
   }
 
@@ -140,7 +189,7 @@
   }
 
   .sidebar-mask {
-    background: rgba(8, 14, 26, 0.35);
+    background: var(--mis-sidebar-mask);
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
   }

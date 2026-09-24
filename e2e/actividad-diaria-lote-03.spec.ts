@@ -16,12 +16,10 @@ const REPORTES: readonly [string, string][] = [
   ['/app/reportes/leg/com/rda/adm/tab-digital', 'Tablero Digital - Corresponsales'],
   ['/app/reportes/repositorio/actividad-diaria/tab-digital/usa-come', 'Tablero Digital Comercial'],
   // Tablero Digital → Operaciones
-  ['/app/reportes/leg/com/rda/adm/GC-tab-digital_vr2-ope', 'Gestión Canal Tablero Digital'],
   ['/app/reportes/leg/com/rda/adm/tab-digital_vr2-ope', 'Tablero Digital'],
   // Tablero Digital → Corresponsal
   ['/app/reportes/leg/com/rda/adm/v-general-cor', 'Vista General - Corresponsales'],
   ['/app/reportes/leg/com/rda/adm/v-gestion-cor', 'Vista Gestión - Corresponsales'],
-  ['/app/reportes/leg/com/rda/adm/det_correspon', 'Detalle Corresponsal'],
   // Resumen de Movilidad (items directos)
   ['/app/reportes/leg/com/rda/adm/res-mov', 'Resumen de Movilidad Comercial'],
   ['/app/reportes/leg/com/rda/adm/res-mov-rec', 'Resumen de Movilidad Recuperaciones'],

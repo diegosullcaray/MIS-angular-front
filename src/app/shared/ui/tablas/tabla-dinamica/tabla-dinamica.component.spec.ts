@@ -289,3 +289,49 @@ describe('TablaDinamicaComponent: fondoDinamico', () => {
     expect(celdaVar(fixture).style.backgroundColor).toBe('');
   });
 });
+
+describe('TablaDinamicaComponent: colorVariacion', () => {
+  const colorVariacion = (valor: number) => (valor >= 0 ? 'var(--mis-success)' : 'var(--mis-danger)');
+  const COLUMNAS_VARIACION: ColumnaDinamica[] = [
+    { key: 'nombre', label: 'Cuenta' },
+    { key: 'var', label: 'Var.', format: { type: 'integer' }, colorVariacion },
+  ];
+
+  function celdaVariacion(valor: unknown): HTMLElement {
+    TestBed.configureTestingModule({ imports: [TablaDinamicaComponent] });
+    const fixture = TestBed.createComponent(TablaDinamicaComponent);
+    fixture.componentRef.setInput('columnas', COLUMNAS_VARIACION);
+    fixture.componentRef.setInput('filas', [{ nombre: 'INGRESOS', var: valor }]);
+    fixture.detectChanges();
+    return fixture.nativeElement.querySelectorAll('tbody td')[1] as HTMLElement;
+  }
+
+  it('negativo: flecha abajo, valor absoluto y color del reporte', () => {
+    const celda = celdaVariacion(-1500);
+    const texto = celda.textContent ?? '';
+
+    expect(texto).toContain('▼');
+    expect(texto).toContain('Baja');
+    expect(texto).not.toContain('-');
+    expect(texto).toMatch(/1.?500/);
+    expect((celda.querySelector('span[style]') as HTMLElement).style.color).toBe('var(--mis-danger)');
+  });
+
+  it('positivo: flecha arriba', () => {
+    const texto = celdaVariacion(20).textContent ?? '';
+    expect(texto).toContain('▲');
+    expect(texto).toContain('Sube');
+  });
+
+  it('cero: sin flecha, conserva el color', () => {
+    const celda = celdaVariacion(0);
+    expect(celda.textContent).not.toMatch(/[▲▼]/);
+    expect((celda.querySelector('span[style]') as HTMLElement).style.color).toBe('var(--mis-success)');
+  });
+
+  it('sin valor: ni flecha ni color', () => {
+    const celda = celdaVariacion(null);
+    expect(celda.textContent?.trim()).toBe('');
+    expect(celda.querySelector('span[style]')).toBeNull();
+  });
+});

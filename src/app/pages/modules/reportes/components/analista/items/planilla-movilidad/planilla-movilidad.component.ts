@@ -9,18 +9,8 @@ import { fechaUltimoDia } from '../../../../utils/fecha-reporte.util';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
-import type { ReportePlanillaMovilidad } from '../../models/planilla-movilidad.model';
+import { CRITERIOS_MOVILIDAD, type ReportePlanillaMovilidad } from '../../models/planilla-movilidad.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
-
-/** Criterios de depuración de puntos geolocalizados — mismo texto en las pestañas "Válidos" y "Depurados" del legado. */
-const CRITERIOS_MOVILIDAD: string[] = [
-  '(1) Coordenadas distintas por día (se aceptan hasta 4 decimales iguales)',
-  '(2) Puntos geolocalizados en distintos a domingos y feriados',
-  '(3) Puntos geolocalizados en días distintos de vacaciones ó licencias',
-  '(4) Conversión de puntos a desplazamientos',
-  '(5) Puntos dentro de la zona de influencia del asesor',
-  '(6) Desplazamientos diarios no totalizan como mínimo 400mts',
-];
 
 /** "Planilla de Movilidad" — migrado de la ruta `leg/com/rda/sec/plan-mov-sec` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v5`, config `PLANMOV` en `crs-map.ts`). */
 @Component({

@@ -98,3 +98,13 @@
   background: var(--mis-primary-light);
   box-shadow: inset 3px 0 0 var(--mis-primary);
 }
+
+/* ── Paginador ────────────────────────────────────────────────
+   Resaltado de la página activa: en algunos temas claros de PrimeNG el botón
+   seleccionado tiene poco contraste. Lo forzamos a nuestro primario. */
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: var(--mis-primary) !important;
+  color: var(--mis-text-on-primary) !important;
+  font-weight: 600;
+}
+@media (max-width: 639px) { :host ::ng-deep .p-paginator { padding: 0.5rem !important; gap: 0.25rem !important; flex-wrap: wrap; justify-content: center; } :host ::ng-deep .p-paginator .p-paginator-element, :host ::ng-deep .p-paginator .p-paginator-page { min-width: 1.75rem !important; height: 1.75rem !important; padding: 0 !important; margin: 0 !important; font-size: 0.75rem !important; } :host ::ng-deep .p-paginator .p-paginator-current { font-size: 0.65rem !important; padding: 0 0.25rem !important; } :host ::ng-deep .p-paginator .p-select { height: 1.75rem !important; min-height: 1.75rem !important; } :host ::ng-deep .p-paginator .p-select .p-select-label { padding: 0 0.5rem !important; font-size: 0.75rem !important; line-height: 1.75rem !important; } }

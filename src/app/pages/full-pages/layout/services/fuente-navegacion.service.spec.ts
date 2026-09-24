@@ -170,7 +170,7 @@ describe('FuenteNavegacionService', () => {
 
       expect(navegar).toHaveBeenCalledWith('/app/reportes/cartera');
       expect(shell.sidebarIconActivo()).toBe('sist-1');
-      expect(shell.contenidoPendienteSeleccion()).toBe(false);
+      expect(shell.contenidoPendienteSeleccion()).toBe(true);
     });
 
     it('abrir una carpeta la sitúa en el explorador, sin navegar', () => {

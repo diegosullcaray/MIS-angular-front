@@ -15,10 +15,6 @@ export const COD_CAPTACIONES = {
   cmgCaptacionesAgencias: 'GCMGCAP_01',
   /** `cmg-cli-pas` — pestaña de flujo. */
   clientesPasivosFlujo: 'CMG_CLI_PAS_01',
-  /** `cmg-cli-pas` — pestaña de stock. */
-  clientesPasivosStock: 'CMG_CLI_PAS_STOCK_02',
-  /** `cmg-cli-pas` — detalle de un grupo del flujo. */
-  clientesPasivosFlujoDetalle: 'CMG_CLI_PAS_DETA_01',
   /** `carterizacion` — el legado ignora las cabeceras del payload y usa las suyas. */
   gestionPasivoComercial: 'RS_CARTEPAS_01',
   /** `recserv-pas`. */

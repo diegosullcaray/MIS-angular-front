@@ -50,9 +50,11 @@ export class TablaDinamicaComponent {
     const tipo = columna.format?.type;
     if (tipo !== 'integer' && tipo !== 'decimal' && tipo !== 'percent') return crudo;
 
-    const numero = Number(crudo);
+    let numero = Number(crudo);
     // Un porcentaje que ya viene con `%` (texto) no es convertible: se deja tal cual.
     if (Number.isNaN(numero)) return crudo;
+    // Con indicador, el signo lo dice la flecha.
+    if (columna.colorVariacion) numero = Math.abs(numero);
 
     if (tipo === 'percent') return formatPercent(numero, this.locale, '1.2-2');
     return formatNumber(numero, this.locale, tipo === 'integer' ? '1.0-0' : '1.2-2');
@@ -111,6 +113,28 @@ export class TablaDinamicaComponent {
       res['color'] = colorTexto;
     }
     return Object.keys(res).length > 0 ? res : null;
+  }
+
+  /** Número de la celda si la columna dibuja indicador de variación; `null` si no aplica. */
+  private numeroVariacion(fila: Record<string, unknown>, columna: ColumnaDinamica): number | null {
+    if (!columna.colorVariacion) return null;
+    const crudo = fila[columna.key];
+    if (crudo == null || crudo === '') return null;
+    const numero = Number(crudo);
+    return Number.isNaN(numero) ? null : numero;
+  }
+
+  /** Flecha del indicador: ▲ si sube, ▼ si baja, vacía en cero. */
+  protected flechaVariacion(fila: Record<string, unknown>, columna: ColumnaDinamica): '▲' | '▼' | '' {
+    const numero = this.numeroVariacion(fila, columna);
+    if (numero === null || numero === 0) return '';
+    return numero > 0 ? '▲' : '▼';
+  }
+
+  /** Color del indicador que declara el reporte. */
+  protected colorIndicador(fila: Record<string, unknown>, columna: ColumnaDinamica): string | null {
+    const numero = this.numeroVariacion(fila, columna);
+    return numero === null ? null : (columna.colorVariacion?.(numero, fila) ?? null);
   }
 
   /** Fila destacada. */

@@ -263,7 +263,10 @@ export class HeaderComponent {
   }
 
   private breadcrumbHost(resto: string[]): MenuItem[] {
+    let rutaAcumulada = '/app';
+
     return resto.map((seg, index) => {
+      rutaAcumulada += `/${seg}`;
       let label = SEGMENTO_LABELS[seg];
 
       // Excepción: Búsqueda dinámica de nombre de categoría para Kaypacha
@@ -272,12 +275,20 @@ export class HeaderComponent {
       }
 
       label = label || 'Detalle';
-      return { label };
+      // Las migas intermedias vuelven a su nivel, igual que las del explorador y las STG.
+      const esUltimo = index === resto.length - 1;
+      return esUltimo ? { label } : { label, routerLink: rutaAcumulada };
     });
   }
 
   /** Breadcrumb para rutas de sistemas remotos (STG). */
   private breadcrumbRemote(resto: string[], url: string): MenuItem[] {
+    // Una sección remota puede ser un ícono sin hijos. En ese caso `act_sec`
+    // apunta directamente a la pantalla y no aparece en `hijosPorSistema`.
+    // Su etiqueta ya es `desc_sec`; nunca usar `cod_sec` como texto visible.
+    const seccionDirecta = this.menuStg.sistemas().find((sistema) => sistema.ruta === url);
+    if (seccionDirecta) return [{ label: seccionDirecta.etiqueta }];
+
     const hallazgo = this.menuStg.buscarPorRuta(url);
 
     if (hallazgo) {
@@ -299,7 +310,10 @@ export class HeaderComponent {
     // Fallback: Muestra el último segmento limpio si el árbol aún no cargó.
     const items: MenuItem[] = [{ label: this.labelDeRemote(resto[0]) }];
     if (resto.length > 1) {
-      items.push({ label: this.prettify(resto[resto.length - 1]) });
+      const activo = this.shell.menuItemActivo();
+      const etiqueta =
+        activo?.ruta === url ? activo.etiqueta : this.prettify(resto[resto.length - 1]);
+      items.push({ label: etiqueta });
     }
     return items;
   }

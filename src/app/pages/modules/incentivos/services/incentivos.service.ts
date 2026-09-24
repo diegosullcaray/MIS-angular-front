@@ -440,9 +440,10 @@ export class IncentivosService {
         const ds = (respuesta.body as SimulacionBody | null)?.resultado;
         if (!ds) return false;
 
-        const bonoBase = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, CLAVES_INCENTIVOS.bonoBase, '');
-        const bonoPlus = sumarPorIds(ds, CFG_INDIVIDUAL_SECTORISTA.prof, CLAVES_INCENTIVOS.bonoPlus, '');
-        const bonoSuperPlus = sumarPorIds(ds, calc.plus.filter((p) => p.suma).map((p) => p.id), CLAVES_INCENTIVOS.bonoSuperPlus, '');
+        const cfg = resolverConfiguracionUsuario(nivel.tipCod, nivel.claUsu);
+        const bonoBase = sumarPorIds(ds, cfg.prof, CLAVES_INCENTIVOS.bonoBase, '');
+        const bonoPlus = sumarPorIds(ds, cfg.prof, CLAVES_INCENTIVOS.bonoPlus, '');
+        const bonoSuperPlus = sumarPorIds(ds, cfg.calS, CLAVES_INCENTIVOS.bonoSuperPlus, '');
 
         const variables = asignarValores(asignarValores(calc.variables, ds, 'bob', CLAVES_INCENTIVOS.bonoBase, '', aNumeroIncentivo), ds, 'bop', CLAVES_INCENTIVOS.bonoPlus, '', aNumeroIncentivo);
         const plus = asignarValores(calc.plus, ds, 'bos', CLAVES_INCENTIVOS.bonoSuperPlus, '', aNumeroIncentivo);

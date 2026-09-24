@@ -1,14 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  computed,
-  effect,
-  inject,
-  input,
-  linkedSignal,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, ElementRef, Injector, computed, effect, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -34,7 +24,7 @@ export class WindowPanelComponent {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   private readonly shell = inject(ShellStateService);
-  private readonly navegacion = inject(NavegacionSistemasService);
+  private readonly injector = inject(Injector);
 
   /** Título de la ventana (centrado en la barra, como en Finder). */
   readonly titulo = input<string>('');
@@ -123,11 +113,11 @@ export class WindowPanelComponent {
 
     // Las hojas legacy declaran su sección padre mediante `cod_par`. Resolver
     // ese código abre la carpeta correcta; el historial no conoce ese nivel.
-    if (this.navegacion.volverAPadreDeRuta(this.router.url)) return;
+    if (this.injector.get(NavegacionSistemasService).volverAPadreDeRuta(this.router.url)) return;
 
     if (this.shell.exploradorDisponible() && !this.shell.contenidoPendienteSeleccion()) {
       this.shell.setContenidoPendienteSeleccion(true);
-      this.navegacion.actualizarUrlExplorador();
+      this.injector.get(NavegacionSistemasService).actualizarUrlExplorador();
       return;
     }
 

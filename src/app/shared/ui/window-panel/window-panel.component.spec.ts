@@ -17,6 +17,8 @@ describe('WindowPanelComponent', () => {
       providers: [provideRouter([{ path: '**', component: BlankComponent }])],
     });
     shell = TestBed.inject(ShellStateService);
+    shell.setExploradorDisponible(false);
+    shell.setContenidoPendienteSeleccion(false);
   });
 
   function crear(inputs: Record<string, unknown> = {}) {

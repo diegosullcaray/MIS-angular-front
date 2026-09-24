@@ -121,3 +121,73 @@ export async function objetivosTactilesChicos(page: Page, minimo = 44): Promise<
     return [...new Set(chicos)].slice(0, 20);
   }, minimo);
 }
+
+/** Un contenedor scrollable que está bloqueado por un padre con overflow:hidden. */
+export interface ScrollBloqueado {
+  readonly selector: string;
+  readonly causa: string;
+}
+
+/**
+ * Detecta contenedores con `overflow-x: auto|scroll` que NO pueden scrollear
+ * porque un ancestro los recorta con `overflow: hidden` o `clip`.
+ *
+ * Es el antipatrón silencioso: el CSS dice "scrollable" pero el usuario no
+ * puede deslizar para ver el resto de la tabla. La tabla se pinta ancha y el
+ * contenido que cae fuera simplemente desaparece.
+ *
+ * El criterio es geométrico: un ancestro con `overflow: hidden` NO bloquea a
+ * un contenedor con scroll que cabe dentro de él (el scroll ocurre adentro).
+ * Solo lo bloquea si el propio contenedor scrollable es más ancho que el
+ * ancestro y se sale de su caja: esa franja queda recortada e inalcanzable.
+ * Comparar contra `scrollWidth` (el ancho del CONTENIDO) marcaba como
+ * bloqueada toda tabla de PrimeNG dentro de una `.mis-card`, aunque se
+ * desplazaba bien; excluir PrimeNG para esquivarlo dejaba sin revisar el
+ * contenedor de casi todas las tablas.
+ */
+export async function contenedoresScrollBloqueados(page: Page): Promise<ScrollBloqueado[]> {
+  return page.evaluate(() => {
+    const salida: { selector: string; causa: string }[] = [];
+
+    const identificar = (el: Element): string => {
+      const id = el.id ? `#${el.id}` : '';
+      const clases = String((el as HTMLElement).className || '')
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 3)
+        .join('.');
+      return `${el.tagName.toLowerCase()}${id}${clases ? '.' + clases : ''}`;
+    };
+
+    for (const el of Array.from(document.body.querySelectorAll<HTMLElement>('*'))) {
+      const estilo = getComputedStyle(el);
+      if (estilo.display === 'none' || estilo.visibility === 'hidden') continue;
+
+      const ox = estilo.overflowX;
+      if (ox !== 'auto' && ox !== 'scroll') continue;
+      // Solo interesa si el contenido realmente desborda (hay algo que scrollear).
+      if (el.scrollWidth <= el.clientWidth + 1) continue;
+
+      // Buscar si algún ancestro lo recorta con hidden/clip.
+      const caja = el.getBoundingClientRect();
+      let padre = el.parentElement;
+      while (padre && padre !== document.body) {
+        const pox = getComputedStyle(padre).overflowX;
+        const cajaPadre = padre.getBoundingClientRect();
+        const seSale = caja.right > cajaPadre.right + 1 || caja.left < cajaPadre.left - 1;
+        if ((pox === 'hidden' || pox === 'clip') && seSale) {
+          salida.push({
+            selector: identificar(el),
+            causa: `bloqueado por ${identificar(padre)} con overflow-x: ${pox}`,
+          });
+          break;
+        }
+        // Si encontramos otro contenedor scrollable antes, el scroll funciona.
+        if (pox === 'auto' || pox === 'scroll') break;
+        padre = padre.parentElement;
+      }
+    }
+
+    return salida.slice(0, 15);
+  });
+}

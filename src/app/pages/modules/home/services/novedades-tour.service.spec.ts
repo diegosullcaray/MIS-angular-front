@@ -1,15 +1,16 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { NovedadesTourService } from './novedades-tour.service';
 import { DriverTourService } from '../../../../shared/services/driver-tour.service';
 
 describe('NovedadesTourService', () => {
-  let driverFalso: { createQuickTour: ReturnType<typeof vi.fn> };
+  let driverFalso: { createQuickTour: ReturnType<typeof vi.fn>; forceClose: ReturnType<typeof vi.fn> };
   let servicio: NovedadesTourService;
 
   beforeEach(() => {
-    driverFalso = { createQuickTour: vi.fn() };
+    driverFalso = { createQuickTour: vi.fn(), forceClose: vi.fn() };
     TestBed.configureTestingModule({
-      providers: [{ provide: DriverTourService, useValue: driverFalso }],
+      providers: [provideRouter([]), { provide: DriverTourService, useValue: driverFalso }],
     });
     servicio = TestBed.inject(NovedadesTourService);
   });
@@ -43,40 +44,75 @@ describe('NovedadesTourService', () => {
     }
   });
 
-  /**
-   * Un paso sin `element` es deliberado: driver.js lo pinta centrado, que es
-   * lo que corresponde cuando la novedad habla de algo que no está en esta
-   * pantalla —los filtros viven en los reportes, no en el Home—.
-   */
-  it('un paso, o apunta a un ancla, o es una tarjeta centrada a propósito', () => {
-    const sinAncla = servicio.novedades.flatMap((n) => n.pasos).filter((p) => !p.element);
 
-    expect(sinAncla.length).toBeGreaterThan(0);
-    for (const paso of sinAncla) {
-      // Sin ancla no hay lado que elegir: driver.js la centra.
-      expect(paso.popover?.side).toBeUndefined();
-    }
-  });
 
   it('Pachi se presenta por su nombre en el catálogo', () => {
-    const textos = servicio.novedades.flatMap((n) => n.pasos).map((p) => String(p.popover?.description ?? ''));
+    const textos = servicio.novedades
+      .flatMap((n) => n.pasos)
+      .map((p) => String(p.popover?.description ?? ''));
 
     expect(textos.some((t) => t.includes('Pachi'))).toBe(true);
   });
 
-  it('solo el recorrido del propio panel pide tenerlo a la vista', () => {
-    const conPanel = servicio.novedades.filter((n) => n.requierePanel).map((n) => n.id);
-
-    expect(conPanel).toEqual(['panel-novedades']);
+  it('solo publica recorridos que señalan funciones del sistema, no el panel de novedades', () => {
+    expect(servicio.novedades.map((n) => n.id)).toEqual([
+      'busqueda-global',
+      'sistemas-y-paneles',
+      'configuracion-personal',
+    ]);
   });
 
-  it('iniciar() delega los pasos de esa novedad en el motor de tours', () => {
+  it('iniciar() prepara la interfaz y delega los pasos de esa novedad en el motor de tours', async () => {
     const primera = servicio.novedades[0];
 
-    servicio.iniciar(primera.id);
+    await servicio.iniciar(primera.id);
+
+    expect(driverFalso.forceClose).toHaveBeenCalled();
+    expect(driverFalso.createQuickTour).toHaveBeenCalledTimes(1);
+    const esperados = primera.pasos.map((p) =>
+      p.advanceOnClick ? { ...p, disableActiveInteraction: false } : p
+    );
+    expect(driverFalso.createQuickTour.mock.calls[0][0]).toEqual(esperados);
+    // Espera corta: con 2,5 s un ancla ausente dejaba "Siguiente" sin respuesta.
+    expect(driverFalso.createQuickTour.mock.calls[0][1].waitForElement).toBeLessThanOrEqual(1_500);
+  });
+
+  it('un doble clic en la guía arranca un solo recorrido', async () => {
+    const id = servicio.novedades[0].id;
+
+    await Promise.all([servicio.iniciar(id), servicio.iniciar(id)]);
 
     expect(driverFalso.createQuickTour).toHaveBeenCalledTimes(1);
-    expect(driverFalso.createQuickTour.mock.calls[0][0]).toEqual(primera.pasos);
+  });
+
+  // Antes la búsqueda se abría sola: la lupa pasaba a "Cerrar búsqueda global",
+  // el paso 1 perdía su ancla y el 5 dejaba el recorrido colgado.
+  it('la búsqueda global espera el clic del usuario y su ancla vale abierta y cerrada', async () => {
+    const lupa = document.createElement('button');
+    lupa.setAttribute('aria-label', 'Abrir búsqueda global');
+    const clic = vi.fn();
+    lupa.addEventListener('click', clic);
+    const header = document.createElement('header');
+    header.append(lupa);
+    document.body.append(header);
+
+    await servicio.iniciar('busqueda-global');
+
+    expect(clic).not.toHaveBeenCalled();
+    const pasos = driverFalso.createQuickTour.mock.calls[0][0];
+    expect(pasos[0].advanceOnClick).toBe(true);
+    const selector = String(pasos[0].element);
+    expect(document.querySelector(selector)).toBe(lupa);
+    lupa.setAttribute('aria-label', 'Cerrar búsqueda global');
+    expect(document.querySelector(String(pasos.at(-1).element))).toBe(lupa);
+    header.remove();
+  });
+
+  it('Configuración enseña el camino: espera el clic en el perfil y en la opción', () => {
+    const config = servicio.novedades.find((n) => n.id === 'configuracion-personal')!;
+    const conClic = config.pasos.filter((p) => p.advanceOnClick).map((p) => p.element);
+
+    expect(conClic).toEqual(['header [aria-haspopup="true"]', '.perfil-menu .perfil-item']);
   });
 
   it('iniciar() con un id inexistente no arranca ningún recorrido', () => {

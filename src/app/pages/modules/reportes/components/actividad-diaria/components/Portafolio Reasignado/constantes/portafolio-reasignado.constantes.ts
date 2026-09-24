@@ -1,7 +1,5 @@
 /** Códigos de reporte (`cod_rep`) de Portafolio Reasignado. */
 export const COD_PORTAFOLIO_REASIGNADO = {
-  /** `mon-efec-reasig` — efectividad por tramos, motor `table.regular`. */
-  efectividadPorTramos: 'RS_MON_EFECREASIG_03',
   /** `gest_cart_her` — resumen. */
   gestionResumen: 'RS_AGE_COM_CR_01',
   /** `gest_cart_her` — detalle, con sus filtros propios. */

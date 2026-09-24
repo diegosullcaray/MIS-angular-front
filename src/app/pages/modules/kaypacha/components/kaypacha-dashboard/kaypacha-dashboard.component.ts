@@ -7,7 +7,6 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { NgStyle } from '@angular/common';
 import { KaypachaDashboardService } from '../../services/kaypacha-dashboard.service';
-import { KaypachaTourService } from '../../services/kaypacha-tour.service';
 import { BuscadorColaboradorDialogComponent } from '../../ui/buscador-colaborador-dialog/buscador-colaborador-dialog.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
@@ -36,7 +35,6 @@ import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.
 })
 export class KaypachaDashboardComponent implements OnInit, OnDestroy {
   protected readonly service = inject(KaypachaDashboardService);
-  protected readonly tourService = inject(KaypachaTourService);
 
   protected readonly mostrarDialogBuscador = signal(false);
 
@@ -60,10 +58,6 @@ export class KaypachaDashboardComponent implements OnInit, OnDestroy {
   protected limpiarTodo(): void {
     this.service.limpiar();
     this.service.cargarDatos();
-  }
-
-  protected iniciarTour(): void {
-    this.tourService.iniciarTourGuiado();
   }
 
   protected get imagenMedalla(): string {

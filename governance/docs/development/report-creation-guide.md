@@ -10,10 +10,12 @@ Primero ubica el dominio funcional y el submodulo de la ruta:
 |---|---|
 | Es reportería operativa/comercial? | `src/app/pages/modules/reportes/` |
 | Es una pantalla de actividades o captura? | `pages/modules/actividades/` |
-| Es una consulta de presupuesto? | `pages/modules/presupuesto/` |
 | Es analitica, ESG, incentivos, ranking o herramientas? | Usa el modulo principal correspondiente |
+| Es una vista que reune varios reportes existentes? | Una pantalla en el subdominio que ya tiene esas consultas, reutilizando sus servicios (patron del [panel unificado](../architecture/adr/ADR-0006-panel-unificado-en-reportes.md)) |
 
 En `reportes`, elige ademas el subdominio: Actividad Diaria, Actividad Mensual, Avance Comercial, Desarrollo Sostenible o Analista.
+
+Antes de crear, confirma que el reporte no figure en el [registro de retirados](../architecture/adr/ADR-0007-retiro-de-reportes-sin-uso.md). Para quitar uno, sigue la [guia de retiro](./report-retirement-guide.md).
 
 ## 2. Identificar la jerarquia
 
@@ -25,9 +27,8 @@ Busca primero el nivel que el reporte necesita. No elijas por intuicion: copia e
 | `PARAMS_HIER_MACRO` | Consulta por macro |
 | `PARAMS_HIER_UNIDAD` | Consulta por unidad, zona o agencia segun contrato |
 | `PARAMS_HIER_OFICINA` | Consulta por oficina |
-| `PARAMS_HIER_SEGUROS_PASIVOS` | Consulta de seguros pasivos |
 
-Las constantes viven en `src/app/pages/modules/reportes/models/jerarquia.model.ts` (y su equivalente en `presupuesto/models/`). No elijas por intuicion: copia la constante de un reporte del mismo dominio.
+Las constantes viven en `src/app/pages/modules/reportes/models/jerarquia.model.ts`. No elijas por intuicion: copia la constante de un reporte del mismo dominio. Si el legado usa una jerarquia que ahi no existe (p. ej. la `14` de seguros pasivos, retirada con Evolutivo Pasivos), declarala junto a las demas; no la inventes en el componente.
 
 El selector entrega un `NodoConsulta` con `tip_cod` y `cod_rel`. Si el backend requiere el nodo completo, usa `regularPaginado` y conserva `lvl`, `lbl_hier` y demas campos.
 

@@ -153,7 +153,7 @@ export class TablaReporteComponent {
 
   /** Alineación de la celda de datos. */
   protected alineacion(columna: ColumnaReporte): string {
-    if (this.esSemaforo(columna)) return 'text-left w-8 pl-1 pr-1';
+    if (this.esSemaforo(columna)) return 'text-center w-8 px-1';
     const tipo = columna.format?.['type'];
     return tipo === 'number' || tipo === 'percent' ? 'text-right' : 'text-left';
   }

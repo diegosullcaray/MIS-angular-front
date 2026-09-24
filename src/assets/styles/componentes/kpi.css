@@ -1,42 +1,74 @@
-/* Tarjeta KPI
+/* Tarjeta KPI — Liquid Glass
    Extraído de `components.css`, que había crecido a 1095 líneas y 21
    secciones inconexas: una sola clase de una ventana obligaba a abrir el
    archivo entero. */
 
-/* ── Tarjeta KPI ──────────────────────────────────────────────
-   El estándar de `governance/docs/components/kpi-guidelines.md`.
-   Vive acá y no en cada componente porque son ~40 líneas idénticas que se
-   copiaban por pantalla; el riel toma `--mis-primary`, así que un panel que
-   redefine ese token (la agrícola, en verde) lo hereda sin tocar nada. */
+/* ── Tarjeta KPI (Liquid Glass) ────────────────────────────────
+   Estilo inspirado en el componente `.agro-kpi` de cartera agrícola y la
+   referencia de governance/docs/components/kpi-guidelines.md.
+   Usa backdrop-filter + radial-gradient shimmer para el efecto de vidrio
+   líquido. El token `--mis-primary` se hereda, así que un panel que lo
+   redefine (la agrícola en verde, etc.) lo obtiene sin tocar nada. */
 .kpi-card {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
-  background: var(--mis-surface);
-  border: 1px solid var(--mis-border);
-  box-shadow: var(--mis-shadow-sm);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--mis-surface) 92%, transparent),
+    color-mix(in srgb, var(--mis-panel-bg) 82%, transparent)
+  );
+  border: 1px solid var(--mis-border-strong);
+  border-radius: 20px;
+  box-shadow: var(--mis-shadow-md);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
   transition: transform var(--mis-transition-base), box-shadow var(--mis-transition-base),
     border-color var(--mis-transition-base);
 }
 
 .kpi-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--mis-shadow-md);
-  border-color: var(--mis-border-strong);
+  transform: translateY(-3px);
+  box-shadow: var(--mis-shadow-lg);
+  border-color: var(--mis-primary);
 }
 
+/* Shimmer radial que captura el color primario del panel en la esquina
+   superior derecha — el z-index negativo lo mantiene detrás del contenido. */
 .kpi-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 60%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 85% 0%,
+    var(--mis-primary-light),
+    transparent 72%
+  );
+  opacity: 0.8;
+  transition: opacity var(--mis-transition-base);
+}
+
+.kpi-card:hover::before {
+  opacity: 1;
+}
+
+/* Línea de acento en la parte superior al hacer hover */
+.kpi-card::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, var(--mis-primary), transparent);
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--mis-primary), var(--mis-secondary, var(--mis-primary)), transparent);
   opacity: 0;
-  transition: opacity var(--mis-transition-fast);
+  transition: opacity var(--mis-transition-base);
 }
 
-.kpi-card:hover::before {
+.kpi-card:hover::after {
   opacity: 1;
 }
 
@@ -52,4 +84,11 @@
   background-color: var(--mis-danger-light);
   color: var(--mis-danger);
   border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* @supports: navegadores sin backdrop-filter reciben un fondo sólido legible */
+@supports not (backdrop-filter: blur(1px)) {
+  .kpi-card {
+    background: var(--mis-surface);
+  }
 }

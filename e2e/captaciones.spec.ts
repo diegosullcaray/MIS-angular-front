@@ -31,8 +31,6 @@ const REPORTES: readonly [string, string][] = [
   ['/app/reportes/leg/com/rda/adm/capta-caract-canal-comercial', 'Captación por Canal Comercial'],
   ['/app/reportes/leg/com/rda/adm/capta-caract-canal-operacional', 'Captación por Canal Operaciones'],
   ['/app/reportes/leg/com/rda/adm/cmg-cli-pas', 'CMG Clientes Pasivo'],
-  ['/app/reportes/leg/com/rda/adm/cmg-cli-pas-stock', 'CMG Clientes Pasivo Stock'],
-  ['/app/reportes/leg/com/rda/adm/cmg-cli-pas-detalle', 'CMG Clientes Pasivo Detalle'],
   ['/app/reportes/leg/com/rda/adm/cap-segui-bp', 'Seguimiento Captaciones Banca Preferente'],
   ['/app/reportes/leg/com/rda/adm/gest-red-ag', 'Gestión Red de Agencias'],
 ];

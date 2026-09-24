@@ -1,88 +1,90 @@
 :host {
-    display: block;
-    width: 100%;
-    min-height: 100vh;
+  display: block;
+  width: 100%;
+  min-height: 100vh;
 }
 
 .login-wrapper {
-    font-family: var(--mis-font-family);
-    animation: loginFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--mis-font-family);
+  animation: loginFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-banner-velo {
+  background: var(--mis-login-banner-overlay);
 }
 
 @keyframes loginFadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Fondo con `--mis-primary`, no `--mis-text-primary`: ese último se aclara en
    modo oscuro y dejaría el botón blanco con texto blanco. */
 :host ::ng-deep .login-btn-dark.p-button {
-    background: var(--mis-primary) !important;
-    border-color: var(--mis-primary) !important;
-    color: var(--mis-text-on-primary) !important;
+  background: var(--mis-primary) !important;
+  border-color: var(--mis-primary) !important;
+  color: var(--mis-text-on-primary) !important;
 }
 
 :host ::ng-deep .login-btn-dark.p-button:not(:disabled):hover {
-    background: var(--mis-primary-hover) !important;
-    border-color: var(--mis-primary-hover) !important;
+  background: var(--mis-primary-hover) !important;
+  border-color: var(--mis-primary-hover) !important;
 }
 
 /* Mobile responsive login view */
 @media (max-width: 767.98px) {
-    .login-right-panel {
-        background-image: url('/assets/images/fc/fondos/wallpaper_login_cell.png') !important;
-        background-repeat: no-repeat !important;
-        background-size: cover !important;
-        background-position: center center !important;
-        justify-content: flex-end !important;
-        padding-top: 2rem !important;
-        padding-bottom: min(90px, 10vh) !important; /* Prevents overlapping with Financiera Confianza brand footer */
-        width: 100% !important;
-        min-height: 100vh !important;
-        min-height: 100dvh !important;
-    }
+  .login-right-panel {
+    background-image: url('/assets/images/fc/fondos/wallpaper_login_cell.png') !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    justify-content: flex-end !important;
+    padding-top: 2rem !important;
+    padding-bottom: min(
+      90px,
+      10vh
+    ) !important; /* Prevents overlapping with Financiera Confianza brand footer */
+    width: 100% !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+  }
 
-    .login-card {
-        background: rgba(255, 255, 255, 0.72) !important;
-        backdrop-filter: blur(20px) saturate(190%) !important;
-        -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.5) !important;
-        border-radius: 24px !important;
-        padding: 32px 24px !important;
-        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.12) !important;
-        width: 100% !important;
-        max-w: 350px !important;
-        margin: 0 auto !important;
-    }
+  .login-card {
+    background: var(--mis-surface-translucido) !important;
+    backdrop-filter: blur(20px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+    border: 1px solid var(--mis-glass-border) !important;
+    border-radius: 24px !important;
+    padding: 32px 24px !important;
+    box-shadow: var(--mis-shadow-lg) !important;
+    width: 100% !important;
+    max-width: 350px !important;
+    margin: 0 auto !important;
+  }
 
-    .login-card h1 {
-        color: #0b2265 !important; /* Corporate dark navy/blue */
-        font-weight: 700 !important;
-        font-size: 1.4rem !important;
-        margin-bottom: 0.25rem !important;
-    }
+  /* Relleno de marca también en móvil: con el vidrio (`--mis-glass-bg`) el botón
+     quedaba blanco en modo claro, sin peso de acción principal. */
+  :host ::ng-deep .login-btn-dark.p-button {
+    background: var(--mis-primary) !important;
+    border: 1px solid var(--mis-primary) !important;
+    border-radius: 12px !important;
+    padding: 12px 20px !important;
+    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: var(--mis-text-on-primary) !important;
+    box-shadow: var(--mis-shadow-md) !important;
+  }
 
-    .login-card p {
-        color: #4a5568 !important; /* Darker gray for readability on light glassmorphism */
-        font-size: 0.875rem !important;
-        line-height: 1.4 !important;
-    }
-
-    .login-card span {
-        color: #718096 !important;
-        font-size: 0.75rem !important;
-    }
-
-    :host ::ng-deep .login-btn-dark.p-button {
-        background: var(--mis-primary) !important;
-        border-color: var(--mis-primary) !important;
-        border-radius: 12px !important;
-        padding: 12px 20px !important;
-        height: 48px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 12px rgba(29, 57, 110, 0.2) !important;
-    }
+  :host ::ng-deep .login-btn-dark.p-button:not(:disabled):hover {
+    background: var(--mis-primary-hover) !important;
+    border-color: var(--mis-primary-hover) !important;
+  }
 }

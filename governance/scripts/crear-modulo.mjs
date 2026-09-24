@@ -556,8 +556,8 @@ const cardHtml = `<div
 
 const principalTs = `import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
@@ -571,7 +571,7 @@ import { ${constante}_FILAS_POR_PAGINA } from '../../constantes/${kebab}.constan
   standalone: true,
   imports: [
     TableModule,
-    ButtonModule,
+    WindowPanelComponent,
     TagModule,
     EmptyStateComponent,
     InlineErrorComponent,
@@ -605,18 +605,14 @@ export class PrincipalComponent implements OnInit, OnDestroy {
 }
 `;
 
-const principalHtml = `<div class="flex flex-col gap-6 p-6">
-  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-    <div>
-      <h1 class="m-0 text-[22px] font-semibold" style="color: var(--mis-text-primary)">${titulo_}</h1>
-      <p class="m-0 mt-1 text-[13px]" style="color: var(--mis-text-secondary)">
-        Consulta del módulo ${titulo_}.
-      </p>
-    </div>
-    <p-button label="Actualizar" icon="pi pi-refresh" severity="secondary" [loading]="cargando()" (onClick)="consultar()" />
-  </header>
+const principalHtml = `<app-window-panel
+  titulo="${titulo_}"
+  subtitulo="Consulta del módulo ${titulo_}."
+  [actualizando]="cargando()"
+  (actualizar)="consultar()"
+>
 
-  <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
     <app-${kebab}-resumen-card titulo="Registros" [valor]="totalRegistros()" />
     <app-${kebab}-resumen-card titulo="Monto acumulado" [valor]="totalMonto()" detalle="Suma de las filas visibles" />
   </section>
@@ -658,7 +654,7 @@ const principalHtml = `<div class="flex flex-col gap-6 p-6">
       </p-table>
     </div>
   }
-</div>
+</app-window-panel>
 `;
 
 const principalSpec = `import { TestBed } from '@angular/core/testing';

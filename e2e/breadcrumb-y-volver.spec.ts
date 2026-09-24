@@ -10,8 +10,8 @@ import { ShellPage } from './pages/shell.page';
  * - Los paneles tipo ventana no tenían forma de volver salvo el semáforo, que
  *   lleva al inicio y no al paso anterior.
  */
-/** Cuatro niveles: Presupuesto › Líneas › Activos › Cartera de Créditos. */
-const RUTA_PROFUNDA = '/app/presupuesto/lineas/activos/car-cre';
+/** Ruta anidada del Host: Actividades › Prospectos Corresponsal. */
+const RUTA_PROFUNDA = '/app/actividades/reg-prosp-corr';
 
 async function abrir(page: import('@playwright/test').Page, ruta: string) {
   await inyectarSesionVigente(page);
@@ -54,8 +54,8 @@ test.describe('Breadcrumb en escritorio', () => {
       .filter(Boolean);
 
     expect(etiquetas).not.toContain('…');
-    expect(etiquetas).toContain('Líneas');
-    expect(etiquetas).toContain('Cartera de Créditos');
+    expect(etiquetas).toContain('Actividades');
+    expect(etiquetas).toContain('Prospectos Corresponsal');
   });
 });
 

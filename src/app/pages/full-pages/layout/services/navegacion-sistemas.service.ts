@@ -3,12 +3,8 @@ import { ShellStateService } from '../../../../core/services/shell-state.service
 import { MenuStgService } from './menu-stg.service';
 import { KaypachaService } from '../../../modules/ranking-k/services/kaypacha.service';
 import { Location } from '@angular/common';
-import type {
-  RegistroNavegacion,
-  SidebarIcon,
-  SidebarNavPanelConfig,
-  SidebarNavRuta,
-} from '../interfaces/sidebar.model';
+import type { RegistroNavegacion, SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../interfaces/sidebar.model';
+import { ACCESO_PANEL_UNIFICADO, conPanelUnificado } from '../utils/panel-unificado-menu.util';
 
 /** Árbol de navegación de cada sistema y ubicación actual; lo comparten el rail de sistemas, el explorador y el breadcrumb del header. */
 @Injectable({ providedIn: 'root' })
@@ -177,19 +173,24 @@ export class NavegacionSistemasService {
     return true;
   }
 
-  /** Refleja el estado del explorador en la barra del navegador de forma cosmética. */
+  /**
+   * Refleja el estado del explorador en la barra del navegador de forma cosmética.
+   *
+   * Solo para sistemas con ruta propia (`/app/reportes/…`): ahí una recarga cae
+   * en el comodín del módulo y `restaurarDesdeUrl` reconstruye la carpeta. Un
+   * sistema sin ruta —Inicio— no tiene URL que recargar: inventar
+   * `/app/host-inicio` dejaba una dirección rota, así que se conserva la actual.
+   */
   actualizarUrlExplorador(): void {
     const sistemaId = this.shell.sidebarIconActivo();
     if (!sistemaId) return;
 
     const sistema = this.iconos().find((i) => i.id === sistemaId);
-    if (!sistema) return;
+    if (!sistema?.ruta) return;
 
     // Convertir las etiquetas de las carpetas en segmentos URL (ej. "Avance Comercial" -> "avance-comercial")
     const segmentos = this.rutaExplorador().map((n) => this.normalizarParaUrl(n.etiqueta));
-    const rutaBase = sistema.ruta || `/app/${sistemaId}`;
-
-    const path = segmentos.length > 0 ? `${rutaBase}/${segmentos.join('/')}` : rutaBase;
+    const path = segmentos.length > 0 ? `${sistema.ruta}/${segmentos.join('/')}` : sistema.ruta;
     this.location.replaceState(path);
   }
 
@@ -269,23 +270,8 @@ export class NavegacionSistemasService {
       secciones: [
         {
           rutas: [
-            { etiqueta: 'Principal', ruta: '/app/analista', icono: 'pi pi-home' },
-            {
-              etiqueta: 'Categorización',
-              ruta: '/app/analista/categorizacion',
-              icono: 'pi pi-briefcase',
-            },
-            {
-              etiqueta: 'Listas',
-              icono: 'pi pi-list',
-              hijos: [
-                {
-                  etiqueta: 'Priorización de Leads',
-                  ruta: '/app/analista/listas/priorizacion-leads',
-                },
-                { etiqueta: 'Becas Financiera Confianza', ruta: '/app/analista/listas/becas' },
-              ],
-            },
+            { ...ACCESO_PANEL_UNIFICADO },
+            { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
           ],
         },
       ],
@@ -302,7 +288,7 @@ export class NavegacionSistemasService {
       tipo: 'remote',
       titulo,
       icono: stg?.icono ?? 'pi pi-th-large',
-      secciones: [{ titulo, rutas: hijosStg }],
+      secciones: [{ titulo, rutas: stg?.ruta === '/app/reportes' ? conPanelUnificado(hijosStg) : hijosStg }],
     };
   }
 }

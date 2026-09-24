@@ -13,11 +13,6 @@ export const SEGUROS_ROUTES: Routes = [
     loadComponent: () => import('./items/seguros-pasivos/seguros-pasivos.component').then((c) => c.SegurosPasivosComponent),
   },
   {
-    /** Legado `repositorio/seguro-pasivos-graf` (`GRAFSEGPAS_01` y `_02`, bloques de gráfico). */
-    path: 'repositorio/actividad-diaria/seg-pasivos-graf/seguro-pasivos-grafico',
-    loadComponent: () => import('./items/evolutivo-pasivos/evolutivo-pasivos.component').then((c) => c.EvolutivoPasivosComponent),
-  },
-  {
     /** Legado `repositorio/seguro-com` (`GRSCMISREP_01`, motor `table.regular`). */
     path: 'repositorio/actividad-diaria/seguro/seguro-com',
     loadComponent: () => import('./items/seguros-optativos/seguros-optativos.component').then((c) => c.SegurosOptativosComponent),

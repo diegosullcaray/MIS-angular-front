@@ -88,10 +88,31 @@ Dos condiciones:
 
 Las piezas de `src/assets/images/fc/tours/` son recortes del render oficial, no dibujos nuevos.
 
-Dos cosas sobre los archivos: **pesan de más** —doce PNG de 1024×1024, 7,3 MB en
-total, para pintarse a 64-132 px; está anotado en INC-2026-09-11-04— y el
-control de activos **no los ve**, porque `conPachi()` arma la ruta en tiempo de
-ejecución. Aparecen como "sin uso" y no lo están.
+Dos cosas sobre los archivos: son PNG de **256×256** (0,63 MB las trece;
+antes 1024 px y 7,3 MB, INC-2026-09-11-04) y el control de activos **no los
+ve**, porque `conPachi()` arma la ruta en tiempo de ejecución. Aparecen como
+"sin uso" y no lo están. Una pose nueva se agrega ya a 256 px.
+
+---
+
+## 4 bis. Lo que el servicio ya resuelve (no lo repitas)
+
+`DriverTourService` corrige tres conductas de driver.js que trababan los
+recorridos (INC-2026-09-24-01): avanza el `advanceOnClick` aunque el clic llegue
+en plena animación, deja la marca de resaltado solo en el paso actual y repone
+los `aria-*` que driver.js pisa. Un ancla de 0×0 se pinta centrada.
+
+Lo que sí depende del catálogo:
+
+- **No abras por el usuario lo que el paso enseña.** Un paso que explica un clic
+  lleva `advanceOnClick` y lo espera.
+- **Si el control cambia de etiqueta con su estado, el ancla vale para ambos**
+  (`header button[aria-label$="búsqueda global"]`).
+- `waitForElement` corto (las novedades usan 1,2 s): una espera larga hace que
+  "Siguiente" parezca muerto.
+
+La regresión es `e2e/novedades-tours.spec.ts`: recorre cada guía con clics
+inmediatos. Una novedad nueva se suma a su lista `GUIAS`.
 
 ---
 
@@ -116,9 +137,8 @@ Agregá `requierePanel: true` **solo** si el recorrido habla del panel. El resto
 se cierra el panel antes de arrancar: está encima de la pantalla y en angosto
 ocupa todo el ancho, así que taparía justo lo que la novedad quiere mostrar.
 
-Las cuatro novedades más recientes salen además en la **bienvenida** de Pachi
-(`app-bienvenida-dialog`), que lee el mismo catálogo. No hay lista duplicada que
-mantener.
+La **bienvenida** de Pachi (`app-bienvenida-dialog`) muestra la novedad más
+reciente del mismo catálogo. No hay una segunda entrada que mantener.
 
 ---
 

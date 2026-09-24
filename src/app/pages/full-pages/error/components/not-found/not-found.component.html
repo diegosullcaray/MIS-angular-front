@@ -1,7 +1,7 @@
-<div class="not-found-wrapper min-h-screen w-full flex flex-col items-center justify-center p-4">
-  <div class="mis-card bg-[var(--mis-surface-elevado)] backdrop-blur-xl border border-[var(--mis-glass-border)] shadow-2xl rounded-2xl p-8 sm:p-12 max-w-md w-full flex flex-col items-center justify-center gap-4 text-center">
-    <div class="w-16 h-16 rounded-full bg-[var(--mis-primary-light)] flex items-center justify-center shrink-0">
-      <ng-icon name="lucideCompass" size="32" class="text-[var(--mis-primary-text)]" />
+<div class="error-fondo min-h-screen w-full flex flex-col items-center justify-center p-4">
+  <div class="error-tarjeta rounded-2xl p-8 sm:p-12 max-w-md w-full flex flex-col items-center justify-center gap-4 text-center">
+    <div class="w-16 h-16 rounded-full bg-[var(--mis-primary-light)] text-[var(--mis-primary-text)] flex items-center justify-center shrink-0">
+      <ng-icon name="lucideCompass" size="32" color="currentColor" />
     </div>
 
     <div class="text-6xl font-extrabold text-[var(--mis-primary-text)] leading-none tracking-tight">404</div>
@@ -15,7 +15,7 @@
 
     <a
       routerLink="/app/dashboard"
-      class="inline-flex items-center justify-center gap-2 mt-2 px-5 py-2.5 rounded-xl bg-[var(--mis-primary)] text-white no-underline text-xs font-semibold shadow-md transition-all duration-150 hover:bg-[var(--mis-primary-hover)] hover:scale-[1.02]"
+      class="inline-flex items-center justify-center gap-2 mt-2 px-5 py-2.5 rounded-xl bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] no-underline text-xs font-semibold shadow-md transition-all duration-150 hover:bg-[var(--mis-primary-hover)] hover:scale-[1.02]"
     >
       <ng-icon name="lucideHome" size="16" />
       Volver al inicio

@@ -14,9 +14,7 @@
           alt="Atención en oficina Financiera Confianza"
           class="absolute inset-0 w-full h-full object-cover block"
         />
-        <div
-          class="absolute inset-0 bg-gradient-to-t from-[rgba(5,11,24,0.9)] via-[rgba(5,11,24,0.15)] to-transparent"
-        ></div>
+        <div class="login-banner-velo absolute inset-0"></div>
         <div class="relative mt-auto p-8 md:p-12 flex flex-col items-center gap-2">
           <img
             src="assets/images/fc/logos/fc_blank.png"
@@ -34,7 +32,9 @@
         <div class="absolute top-6 left-6 hidden md:flex items-center gap-2">
           <!-- El wordmark navy es ilegible en oscuro: se cambia por la versión blanca. -->
           <img [src]="logoMis()" alt="MIS" class="h-9 w-auto" />
-          <span class="text-lg font-bold text-[var(--mis-primary-text)]">Sistema de Información</span>
+          <span class="text-lg font-bold text-[var(--mis-primary-text)]"
+            >Sistema de Información</span
+          >
         </div>
 
         <div class="login-card w-full max-w-[380px] flex flex-col gap-4">
@@ -45,12 +45,11 @@
             </p>
           </div>
 
-          <p-button
-            (onClick)="onGoogleLogin()"
-            styleClass="w-full login-btn-dark mt-1"
-          >
+          <p-button (onClick)="onGoogleLogin()" styleClass="w-full login-btn-dark mt-1">
             <div class="flex items-center justify-center gap-3 w-full">
-              <span class="flex items-center justify-center bg-white rounded-full p-1.5 shrink-0 shadow-sm">
+              <span
+                class="flex items-center justify-center bg-white rounded-full p-1.5 shrink-0 shadow-sm"
+              >
                 <svg class="w-4 h-4 block" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
@@ -74,9 +73,7 @@
             </div>
           </p-button>
 
-          <span class="text-xs text-[var(--mis-text-tertiary)] text-center">{{
-            appVersion
-          }}</span>
+          <span class="text-xs text-[var(--mis-text-tertiary)] text-center">{{ appVersion }}</span>
         </div>
       </div>
     </div>

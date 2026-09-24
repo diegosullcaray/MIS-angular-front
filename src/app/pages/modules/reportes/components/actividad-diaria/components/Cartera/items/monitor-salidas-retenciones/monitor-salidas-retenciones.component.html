@@ -19,13 +19,13 @@
       @for (t of tarjetas(); track $index; let i = $index) {
         <button
           type="button"
-          class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-1 text-left"
+          class="kpi-card p-4 sm:p-5 rounded-2xl flex flex-col gap-2 text-left"
           [class.cursor-pointer]="tarjetaAbreDetalle(i)"
           [class.cursor-default]="!tarjetaAbreDetalle(i)"
           [disabled]="!tarjetaAbreDetalle(i)"
           (click)="onTarjeta(i)"
         >
-          <span class="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">{{ t.lbl }}</span>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)]">{{ t.lbl }}</span>
 
           <div class="flex items-center gap-2">
             @if (t.tl != null && t.tl !== -99) {

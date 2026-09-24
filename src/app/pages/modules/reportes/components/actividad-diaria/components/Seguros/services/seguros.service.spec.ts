@@ -65,49 +65,6 @@ describe('SegurosService', () => {
     expect(getRegularTableResult.mock.calls[0][1]).toEqual({ tip_cod: 9, cod_rel: 'FC', fec: '2025-11-30' });
   });
 
-  describe('"Evolutivo Pasivos" — series serializadas', () => {
-    function conBloques(cuerpo1: unknown, cuerpo2: unknown = {}) {
-      getRegularData
-        .mockReturnValueOnce(of({ code: '0', headers: {}, body: { result: { body: [cuerpo1] } } }))
-        .mockReturnValueOnce(of({ code: '0', headers: {}, body: { result: { body: [cuerpo2] } } }));
-    }
-
-    it('parsea `categories` y `series` cuando vienen como JSON válido', () => {
-      conBloques({
-        categories: '["Ene","Feb"]',
-        series: '[{"name":"Pólizas","data":[10,20],"color":"#4472c4"}]',
-      });
-
-      let graficos: { titulo: string; categorias: string[]; series: { nombre: string; datos: unknown[] }[] }[] = [];
-      servicio.evolutivoPasivos(NODO).subscribe((g) => (graficos = g));
-
-      expect(graficos[0].categorias).toEqual(['Ene', 'Feb']);
-      expect(graficos[0].series[0]).toMatchObject({ nombre: 'Pólizas', datos: [10, 20] });
-    });
-
-    /**
-     * El legado resuelve estas cadenas con `eval()`. Acá van por `JSON.parse`:
-     * si el backend emitiera literales de JavaScript, el gráfico tiene que
-     * quedar VACÍO, nunca mostrar datos inventados.
-     */
-    it('descarta el bloque si el payload no es JSON, en vez de romper o inventar datos', () => {
-      conBloques({ categories: "['Ene','Feb']", series: '[{name:"x",data:[1]}]' });
-
-      let graficos: unknown[] = [];
-      expect(() => servicio.evolutivoPasivos(NODO).subscribe((g) => (graficos = g))).not.toThrow();
-      expect(graficos).toEqual([]);
-    });
-
-    it('descarta el bloque si faltan `categories` o `series`', () => {
-      conBloques({ categories: '["Ene"]' });
-
-      let graficos: unknown[] = [];
-      servicio.evolutivoPasivos(NODO).subscribe((g) => (graficos = g));
-
-      expect(graficos).toEqual([]);
-    });
-  });
-
   /**
    * Tarea 5 de `incidencias-mora-actualizado.md`: "faltan los filtros de fecha".
    * El legado (`seguro-com.component.ts`) usa `RS_FECH` y su valor reemplaza al

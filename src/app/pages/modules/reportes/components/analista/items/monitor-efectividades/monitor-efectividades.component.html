@@ -7,7 +7,7 @@
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
       @if (mostrarSelector()) {
-              <p-select
+              <p-select appendTo="body"
       [options]="asesores()"
         [ngModel]="asesorSeleccionado()"
         (ngModelChange)="onAsesorSeleccionado($event)"
@@ -26,7 +26,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Tramo</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesTramo"
         [ngModel]="filtros().tramof"
         (ngModelChange)="actualizarFiltro('tramof', $event)"
@@ -39,7 +39,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Producto</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesProducto"
         [ngModel]="filtros().prod"
         (ngModelChange)="actualizarFiltro('prod', $event)"
@@ -54,7 +54,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Compromiso Roto</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesSiNo"
         [ngModel]="filtros().comp_r"
         (ngModelChange)="actualizarFiltro('comp_r', $event)"
@@ -67,7 +67,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">0 Cuota</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesSiNo"
         [ngModel]="filtros().zcuo"
         (ngModelChange)="actualizarFiltro('zcuo', $event)"
@@ -80,7 +80,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">1 Cuota</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesSiNo"
         [ngModel]="filtros().ucuo"
         (ngModelChange)="actualizarFiltro('ucuo', $event)"
@@ -93,7 +93,7 @@
 
     <div class="flex flex-col gap-1">
       <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Tramo Días Gestión</span>
-      <p-select
+      <p-select appendTo="body"
         [options]="opcionesTramoDiasGestion"
         [ngModel]="filtros().tdcr"
         (ngModelChange)="actualizarFiltro('tdcr', $event)"

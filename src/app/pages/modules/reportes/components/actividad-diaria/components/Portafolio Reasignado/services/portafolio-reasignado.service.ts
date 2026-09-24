@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
-import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { OpcionFiltro } from '../../../../../models/filtros.model';
 import { TODO } from '../models/portafolio-reasignado.model';
 import { COD_PORTAFOLIO_REASIGNADO } from '../constantes/portafolio-reasignado.constantes';
@@ -11,16 +10,6 @@ import { COD_PORTAFOLIO_REASIGNADO } from '../constantes/portafolio-reasignado.c
 @Injectable({ providedIn: 'root' })
 export class PortafolioReasignadoService {
   private readonly bloques = inject(BloqueReporteService);
-
-  /** Reporte de Efectividad por Tramos. */
-  efectividadPorTramos(nodo: NodoConsulta, imp: number): Observable<TablaDinamicaResultado> {
-    return this.bloques.tablaRegularCon(COD_PORTAFOLIO_REASIGNADO.efectividadPorTramos, {
-      tip_cod: nodo.tip_cod,
-      cod_rel: nodo.cod_rel,
-      fec: this.bloques.fecha(),
-      imp,
-    });
-  }
 
   /** Resumen de Gestión de Cartera Reasignada. */
   gestionResumen(nodo: NodoConsulta, ver: number): Observable<TablaReporteResultado> {

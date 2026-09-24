@@ -65,45 +65,22 @@ describe('ResumenMovilidadService', () => {
     });
   });
 
-  /**
-   * `cra-v6` arma los parámetros del nodo y después los PISA enteros con los del
-   * usuario logueado. El reporte es siempre el del propio usuario, sin importar
-   * qué nivel se elija — por eso su pantalla no lleva selector de jerarquía.
-   */
   describe('"Resumen de Movilidad Recuperaciones" (host `cra-v6`)', () => {
-    it('consulta por el documento del usuario, no por la jerarquía', () => {
-      servicio.recuperaciones('44556677').subscribe();
+    it('manda los parámetros del nodo y la fecha de corte', () => {
+      servicio.recuperaciones(NODO_COMPLETO).subscribe();
 
       expect(getRegularData.mock.calls[0][0]).toBe('RESNMOVR_01');
       expect(getRegularData.mock.calls[0][1]).toEqual({
         fec: '20251130',
-        secuency: '[{"tip_cod":2,"cod_rel":"44556677","order":0}]',
-        tip_cod: 2,
-        cod_rel: '44556677',
+        tip_cod: 9,
+        cod_rel: 'FC',
       });
     });
 
-    it('el `tip_cod` es 2 (personas), no el 9 de la jerarquía de unidades', () => {
-      servicio.recuperaciones('44556677').subscribe();
-
-      expect(getRegularData.mock.calls[0][1]).toMatchObject({ tip_cod: 2 });
-    });
-
     it('va por `regularData`: su entrada del mapa declara `ReportType.REGULAR`', () => {
-      servicio.recuperaciones('44556677').subscribe();
+      servicio.recuperaciones(NODO_COMPLETO).subscribe();
 
       expect(getDeprecatedData).not.toHaveBeenCalled();
-    });
-
-    it('`documentoUsuario()` devuelve el `num_doc` del perfil', () => {
-      expect(servicio.documentoUsuario()).toBe('44556677');
-    });
-
-    /** Sin documento no hay consulta posible: la pantalla lo dice en vez de pedir datos de otro. */
-    it('`documentoUsuario()` devuelve undefined si el backend no lo mandó', () => {
-      shell.setUsuarioActivo(usuario());
-
-      expect(servicio.documentoUsuario()).toBeUndefined();
     });
   });
 });

@@ -2,6 +2,8 @@ import { Component, computed, inject, output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { IncentivosService } from '../../services/incentivos.service';
 
 function aFecha(f: string): Date {
@@ -19,7 +21,7 @@ function aYYYYMMDD(d: Date): string {
 @Component({
   selector: 'app-monetizado-card',
   standalone: true,
-  imports: [DecimalPipe, FormsModule, DatePickerModule],
+  imports: [DecimalPipe, FormsModule, DatePickerModule, ButtonModule, TooltipModule],
   templateUrl: './monetizado-card.component.html',
 })
 export class MonetizadoCardComponent {

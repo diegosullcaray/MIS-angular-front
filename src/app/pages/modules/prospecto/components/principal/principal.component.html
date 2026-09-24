@@ -1,0 +1,64 @@
+<app-window-panel
+  titulo="Prospecto"
+  subtitulo="Consulta del módulo Prospecto."
+  [actualizando]="cargando()"
+  (actualizar)="consultar()"
+>
+  <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
+    <app-prospecto-resumen-card titulo="Registros" [valor]="totalRegistros()" />
+  </section>
+
+  <!--
+    Los cuatro estados, excluyentes entre sí y en este orden: el error gana
+    sobre el vacío, porque una consulta fallida no es "no hay datos".
+  -->
+  @if (error()) {
+    <app-inline-error [detalle]="error()!" (reintentar)="consultar()" />
+  } @else if (cargando()) {
+    <app-list-skeleton />
+  } @else if (vacio()) {
+    <app-empty-state
+      titulo="Sin resultados"
+      descripcion="No hay información para la fecha de corte y los filtros actuales."
+    />
+  } @else {
+    <div class="overflow-hidden rounded-xl border" style="border-color: var(--mis-border)">
+      <p-table [value]="filas()" [paginator]="true" [rows]="filasPorPagina" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th colspan="4" class="text-center bg-mis-surface-muted">Clientes</th>
+            <th colspan="6" class="text-center bg-mis-surface-muted">Corresponsales</th>
+          </tr>
+          <tr>
+            <th>Fecha</th>
+            <th>Nombre Prospecto</th>
+            <th>DNI</th>
+            <th>Nombre Comercial</th>
+            <th>Estado</th>
+            <th>Fecha Estado</th>
+            <th>Canal Captación</th>
+            <th>Territorio</th>
+            <th>Corredor</th>
+            <th>Agencia</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-fila>
+          <tr>
+            <td class="font-mono text-xs">{{ fila.fecha }}</td>
+            <td>{{ fila.nombre }}</td>
+            <td class="font-mono text-xs">{{ fila.documento }}</td>
+            <td>{{ fila.comercial }}</td>
+            <td class="text-center">
+              <p-tag [value]="fila.estado" [severity]="fila.estado === 'ACTIVO' ? 'success' : 'secondary'" />
+            </td>
+            <td class="font-mono text-xs">{{ fila.fechaEstado }}</td>
+            <td>{{ fila.canal }}</td>
+            <td>{{ fila.territorio }}</td>
+            <td>{{ fila.corredor }}</td>
+            <td>{{ fila.agencia }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+</app-window-panel>

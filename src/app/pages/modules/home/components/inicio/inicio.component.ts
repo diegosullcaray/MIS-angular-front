@@ -3,19 +3,28 @@ import { RouterLink } from '@angular/router';
 import { PreferenciasService } from '../../../../full-pages/layout/services/preferencias.service';
 import { PanelNovedadesComponent } from '../../ui/panel-novedades/panel-novedades.component';
 import { BienvenidaDialogComponent } from '../../ui/bienvenida-dialog/bienvenida-dialog.component';
+import { DemoNavegacionComponent } from '../../ui/demo-navegacion/demo-navegacion.component';
+import { NovedadesTourService } from '../../services/novedades-tour.service';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [RouterLink, PanelNovedadesComponent, BienvenidaDialogComponent],
+  imports: [
+    RouterLink,
+    PanelNovedadesComponent,
+    BienvenidaDialogComponent,
+    DemoNavegacionComponent,
+  ],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.css',
 })
 export class InicioComponent {
   private readonly preferencias = inject(PreferenciasService);
+  private readonly novedadesTour = inject(NovedadesTourService);
 
   /** Los últimos reportes abiertos, del más reciente al más antiguo. */
   protected readonly recientes = this.preferencias.recientes;
+  protected readonly ejemploNovedad = this.novedadesTour.ejemploActivo;
 
   /**
    * Antigüedad en palabras: en un acceso rápido importa "qué tan reciente",

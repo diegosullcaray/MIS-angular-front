@@ -77,20 +77,6 @@ export const CAPTACIONES_ROUTES: Routes = [
 
         .then((c) => c.CmgClientesFlujoComponent)
   },
-  {
-    path: 'leg/com/rda/adm/cmg-cli-pas-stock',
-    loadComponent: () =>
-      import('./components/CMG Clientes Pasivos/cmg-clientes-stock/cmg-clientes-stock.component')
-
-        .then((c) => c.CmgClientesStockComponent)
-  },
-  {
-    path: 'leg/com/rda/adm/cmg-cli-pas-detalle',
-    loadComponent: () =>
-      import('./components/CMG Clientes Pasivos/cmg-clientes-flujo-detalle/cmg-clientes-flujo-detalle.component')
-
-        .then((c) => c.CmgClientesFlujoDetalleComponent)
-  },
 
   {
     path: 'leg/com/rda/adm/cap-segui-bp',

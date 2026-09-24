@@ -28,18 +28,6 @@ describe('PortafolioReasignadoService', () => {
     servicio = TestBed.inject(PortafolioReasignadoService);
   });
 
-  it('"Efectividad por tramos" va por `table.regular` con su filtro `imp`', () => {
-    servicio.efectividadPorTramos(NODO, 2).subscribe();
-
-    expect(getRegularData).not.toHaveBeenCalled();
-    expect(getRegularTableResult).toHaveBeenCalledWith('RS_MON_EFECREASIG_03', {
-      tip_cod: 9,
-      cod_rel: 'FC',
-      fec: '2025-11-30',
-      imp: 2,
-    });
-  });
-
   it('el resumen de "Gestión de Cartera Reasignada" pide RS_AGE_COM_CR_01 con `ver`', () => {
     servicio.gestionResumen(NODO, 1).subscribe();
 

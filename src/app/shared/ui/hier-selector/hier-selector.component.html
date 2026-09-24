@@ -8,7 +8,7 @@
       <span class="text-[10px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">
         {{ cbo.label }}
       </span>
-      <p-select
+      <p-select appendTo="body"
         [options]="cbo.data"
         [ngModel]="valoresSeleccionados()[i]"
         (onChange)="onSeleccionarNivel(i, $event.value)"

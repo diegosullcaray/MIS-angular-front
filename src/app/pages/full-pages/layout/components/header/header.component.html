@@ -1,10 +1,12 @@
-<div class="flex h-full w-full items-center justify-end gap-1 px-2 relative sm:justify-start sm:gap-3 sm:px-4">
+<div
+  class="flex h-full w-full items-center justify-end gap-1 px-2 relative sm:justify-start sm:gap-3 sm:px-4"
+>
   <!-- Botón del rail: solo existe en el modo de menú "superpuesto", donde el
        rail no está anclado y este es el único camino para abrirlo. En los
        demás modos el rail se ve siempre y el botón sobra. -->
   @if (menuSuperpuesto()) {
     <button
-      class="hidden sm:flex w-8 h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      class="header-action-button hidden sm:flex w-8 h-8 items-center justify-center shrink-0"
       (click)="alternarRail()"
       [attr.aria-expanded]="shell.railSuperpuestoAbierto()"
       aria-label="Mostrar u ocultar el menú de sistemas"
@@ -35,7 +37,7 @@
     <!-- La búsqueda global vive junto a las acciones globales, no dentro de
          un módulo. Al abrirse aparece el campo y busca al escribir. -->
     <button
-      class="w-[44px] h-[44px] sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      class="header-action-button w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center shrink-0"
       (click)="alternarBuscador()"
       [attr.aria-expanded]="buscadorAbierto()"
       [attr.aria-controls]="buscadorAbierto() ? 'buscador-global' : null"
@@ -49,7 +51,7 @@
 
     <!-- Alternar tema claro/oscuro -->
     <button
-      class="w-[44px] h-[44px] sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      class="header-action-button w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center shrink-0"
       (click)="alternarTema()"
       [attr.aria-label]="theme.oscuro() ? 'Activar modo claro' : 'Activar modo oscuro'"
       [attr.aria-pressed]="theme.oscuro()"
@@ -63,7 +65,7 @@
          punto solo cuando queda algo sin leer; el diálogo se abre solo la
          primera vez y desde acá se relee cuando se quiera. -->
     <button
-      class="relative w-[44px] h-[44px] sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-[var(--mis-panel-bg)] text-[var(--mis-text-secondary)] hover:text-[var(--mis-text-primary)] flex items-center justify-center shrink-0 border-0 cursor-pointer transition-colors duration-150"
+      class="header-action-button relative w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center shrink-0"
       (click)="anuncios.abrir()"
       aria-label="Comunicados del sistema"
       title="Comunicados"
@@ -79,7 +81,7 @@
 
     <!-- Pill de usuario minimalista -->
     <div
-      class="flex items-center justify-center sm:justify-start gap-0 sm:gap-2 p-0.5 sm:pr-2 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-full border border-[var(--mis-border)] cursor-pointer transition-all duration-150 select-none hover:bg-[var(--mis-panel-bg)] hover:border-[var(--mis-border-strong)] active:scale-95 sm:active:scale-100"
+      class="header-profile-trigger flex items-center justify-center sm:justify-start gap-0 sm:gap-2 p-0.5 sm:pr-2 min-h-9 min-w-9 sm:min-h-0 sm:min-w-0 select-none"
       (click)="toggleDropdown()"
       (keydown.enter)="toggleDropdown()"
       tabindex="0"
@@ -99,9 +101,17 @@
         }
       </div>
       <div class="hidden sm:flex flex-col min-w-0">
-        <span class="text-[12px] font-medium text-[var(--mis-text-primary)] leading-tight truncate">{{ shell.usuarioActivo()?.nombre }}</span>
+        <span
+          class="text-[12px] font-medium text-[var(--mis-text-primary)] leading-tight truncate"
+          >{{ shell.usuarioActivo()?.nombre }}</span
+        >
       </div>
-      <ng-icon name="lucideChevronDown" size="12" class="hidden sm:block text-[var(--mis-text-tertiary)] transition-transform duration-150 shrink-0" [class.rotate-180]="dropdownOpen()" />
+      <ng-icon
+        name="lucideChevronDown"
+        size="12"
+        class="hidden sm:block text-[var(--mis-text-tertiary)] transition-transform duration-150 shrink-0"
+        [class.rotate-180]="dropdownOpen()"
+      />
     </div>
 
     <!-- Menú de perfil (mismo recorrido que el selector de perfiles de
@@ -110,10 +120,7 @@
     @if (dropdownOpen()) {
       <div class="perfil-menu animate-dropdownFadeIn" role="menu">
         <div class="perfil-tarjeta">
-          <div
-            class="perfil-avatar"
-            [class.avatar-alterno]="auth.esUsuarioAlterno()"
-          >
+          <div class="perfil-avatar" [class.avatar-alterno]="auth.esUsuarioAlterno()">
             @if (auth.esUsuarioAlterno()) {
               <ng-icon name="lucideUsers" size="22" aria-label="Viendo como otro usuario" />
             } @else {
@@ -129,7 +136,11 @@
           <span class="perfil-item-nombre">Configuración</span>
         </button>
 
-        <button class="perfil-item perfil-item--peligro" role="menuitem" (click)="pedirConfirmacionSalir()">
+        <button
+          class="perfil-item perfil-item--peligro"
+          role="menuitem"
+          (click)="pedirConfirmacionSalir()"
+        >
           <ng-icon name="lucideLogOut" size="15" />
           <span class="perfil-item-nombre">Cerrar sesión</span>
         </button>
@@ -145,7 +156,10 @@
         }
       </div>
       <!-- Overlay para cerrar el menú al click fuera -->
-      <div class="fixed inset-0 z-[calc(var(--mis-z-dropdown)-1)]" (click)="dropdownOpen.set(false)"></div>
+      <div
+        class="fixed inset-0 z-[calc(var(--mis-z-dropdown)-1)]"
+        (click)="dropdownOpen.set(false)"
+      ></div>
     }
   </div>
 
@@ -160,7 +174,9 @@
     [resizable]="false"
   >
     <div class="flex gap-4 items-start pt-2">
-      <div class="w-10 h-10 rounded-full bg-[var(--mis-warning-light)] flex items-center justify-center shrink-0">
+      <div
+        class="w-10 h-10 rounded-full bg-[var(--mis-warning-light)] flex items-center justify-center shrink-0"
+      >
         <ng-icon name="lucideAlertTriangle" size="22" class="text-[var(--mis-warning)]" />
       </div>
       <p class="m-0 text-xs text-[var(--mis-text-secondary)] leading-normal">
@@ -174,11 +190,7 @@
         severity="secondary"
         (click)="confirmarSalirOpen.set(false)"
       />
-      <p-button
-        label="Cerrar sesión"
-        severity="danger"
-        (click)="confirmarCerrarSesion()"
-      />
+      <p-button label="Cerrar sesión" severity="danger" (click)="confirmarCerrarSesion()" />
     </div>
   </p-dialog>
 
@@ -203,13 +215,19 @@
         <button
           type="button"
           class="w-full flex items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-[var(--mis-panel-bg)]"
-          [style.border-color]="perfilSeleccionado()?.clave === perfil.clave ? 'var(--mis-primary)' : null"
-          [style.background-color]="perfilSeleccionado()?.clave === perfil.clave ? 'var(--mis-primary-light)' : null"
+          [style.border-color]="
+            perfilSeleccionado()?.clave === perfil.clave ? 'var(--mis-primary)' : null
+          "
+          [style.background-color]="
+            perfilSeleccionado()?.clave === perfil.clave ? 'var(--mis-primary-light)' : null
+          "
           [attr.aria-selected]="perfilSeleccionado()?.clave === perfil.clave"
           role="option"
           (click)="perfilSeleccionado.set(perfil)"
         >
-          <span class="perfil-avatar-mini" aria-hidden="true">{{ inicialesDe(perfil.nombre) }}</span>
+          <span class="perfil-avatar-mini" aria-hidden="true">{{
+            inicialesDe(perfil.nombre)
+          }}</span>
           <span class="perfil-item-texto">
             <span class="perfil-item-nombre">{{ perfil.nombre }}</span>
             @if (perfil.detalle) {
@@ -221,7 +239,12 @@
     </div>
 
     <div class="flex justify-end gap-2 mt-4">
-      <p-button label="Cancelar" [text]="true" severity="secondary" (onClick)="selectorPerfilOpen.set(false)" />
+      <p-button
+        label="Cancelar"
+        [text]="true"
+        severity="secondary"
+        (onClick)="selectorPerfilOpen.set(false)"
+      />
       <p-button
         label="Cambiar perfil"
         [disabled]="!perfilSeleccionado() || !!cambiandoPerfil()"
@@ -230,7 +253,6 @@
       />
     </div>
   </p-dialog>
-
 
   <!-- Configuración del sistema -->
   <app-configuracion-dialog

@@ -53,7 +53,7 @@ node governance/scripts/validar-gobernanza.mjs --json            # para herramie
 
 **Errores**: `core-aislado`, `shared-aislado`, `modulos-desacoplados`, `sin-secretos`, `control-flujo-moderno`.
 
-**Avisos**: `entrada-salida-señal`, `nombres-canonicos`, `tokens-de-color`, `entorno-fuera-de-core`, `prueba-vecina`, `estados-de-datos`, `error-no-silenciado`, `sin-console`, `rutas-lazy`.
+**Avisos**: `entrada-salida-señal`, `nombres-canonicos`, `tokens-de-color`, `entorno-fuera-de-core`, `prueba-vecina`, `estados-de-datos`, `error-no-silenciado`, `sin-console`, `rutas-lazy`, `modulo-enrutado`, `e2e-rutas-vigentes`, `linea-base-vigente`.
 
 ### Línea base
 

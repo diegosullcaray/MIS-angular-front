@@ -6,7 +6,6 @@ import { ShellStateService } from '../../../../../../../../core/services/shell-s
 import type { UsuarioActivo } from '../../../../../../../../core/interfaces/shell-state.model';
 
 const NODO = { tip_cod: 2, cod_rel: 'OFI-01' };
-const NODO_COMPLETO = { tip_cod: 2, cod_rel: 'OFI-01', des_rel: 'Oficina 1', lbl_hier: 'Oficina', lvl_hier: 3 };
 const RESPUESTA = { code: '0', headers: {}, body: { result: { headers: [], body: [], additional: {} } } };
 
 function usuario(): UsuarioActivo {
@@ -52,16 +51,13 @@ describe('TableroDigitalService', () => {
   });
 
   /**
-   * Los dos reportes de "Gestión" declaran `_02` en el mapa. Pedir `_01` —que
-   * es lo que proponía ese enunciado— apunta a un bloque que no existe.
+   * "Gestión de Corresponsal" declara `_02` en el mapa. Pedir `_01` apunta a
+   * un bloque que no existe.
    */
-  it.each([
-    ['gestionCanal', 'GCTABDIG_VR2_OPE_02'],
-    ['gestionCorresponsal', 'RVIUWGCORE_02'],
-  ])('"%s" usa el id `_02`, no `_01`', (metodo, codRep) => {
-    (servicio[metodo as 'gestionCanal' | 'gestionCorresponsal'])(NODO).subscribe();
+  it('"gestionCorresponsal" usa el id `_02`, no `_01`', () => {
+    servicio.gestionCorresponsal(NODO).subscribe();
 
-    expect(getRegularData.mock.calls[0][0]).toBe(codRep);
+    expect(getRegularData.mock.calls[0][0]).toBe('RVIUWGCORE_02');
   });
 
   it.each([
@@ -75,46 +71,17 @@ describe('TableroDigitalService', () => {
 
   it('todos van por `regularData`: sus entradas del mapa declaran `ReportType.REGULAR`', () => {
     servicio.vistaGeneralCanal(NODO).subscribe();
-    servicio.gestionCanal(NODO).subscribe();
     servicio.vistaGeneralCorresponsal(NODO).subscribe();
     servicio.gestionCorresponsal(NODO).subscribe();
 
     expect(getDeprecatedData).not.toHaveBeenCalled();
-    expect(getRegularData).toHaveBeenCalledTimes(4);
+    expect(getRegularData).toHaveBeenCalledTimes(3);
   });
 
   it('los bloques cuya tabla declara `params: { fec }` lo mandan', () => {
     servicio.vistaGeneralCanal(NODO).subscribe();
 
     expect(getRegularData.mock.calls[0][1]).toEqual({ tip_cod: 2, cod_rel: 'OFI-01', fec: '20251130' });
-  });
-
-  /**
-   * `cra-V10` arma `{ ...page, ...filter, ...level }`: `pagen` y el nodo
-   * COMPLETO, no solo `tip_cod`/`cod_rel`. Sin eso el backend responde
-   * "Resultado vacio para: regularData".
-   */
-  describe('"Detalle Corresponsales" (host paginado `cra-V10`)', () => {
-    it('manda `pagen` y el nodo completo, más el `fec` de su tabla', () => {
-      servicio.detalleCorresponsales(NODO_COMPLETO).subscribe();
-
-      expect(getRegularData.mock.calls[0][0]).toBe('RDETCORR_01');
-      expect(getRegularData.mock.calls[0][1]).toEqual({
-        pagen: 1,
-        tip_cod: 2,
-        cod_rel: 'OFI-01',
-        des_rel: 'Oficina 1',
-        lbl_hier: 'Oficina',
-        lvl_hier: 3,
-        fec: '20251130',
-      });
-    });
-
-    it('la página pedida viaja en `pagen`', () => {
-      servicio.detalleCorresponsales(NODO_COMPLETO, 4).subscribe();
-
-      expect(getRegularData.mock.calls[0][1]).toMatchObject({ pagen: 4 });
-    });
   });
 
   /**

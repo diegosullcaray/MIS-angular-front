@@ -6,44 +6,18 @@
  * deprecado (`reportData`); el resto, por `regularData`.
  */
 export const COD_ANALISTA = {
-  /** Autonomías. */
-  autonomias: 'LST_AUT_01',
-  /** Campaña Ágil — lleva el número de semana en `sem`. */
-  campanaAgil: 'rda/sectorista/campania_agil/campana_agil_sec_01',
-  /** Canal Alterno. */
-  canalAlterno: 'rda/sectorista/canal_alt/canal_alt_sec_01',
   /** Cero Cuotas. */
   ceroCuotas: 'rda/sectorista/cero_cuota/cero_cuota_sec_01',
   /** Clientes Nuevos y Recurrentes. */
   clientesNuevosRecurrentes: 'rda/sectorista/clientes_nuevos_recurrente/cliente_nuevo_rec_01',
-  /** Clientes Potenciales. */
-  clientesPotenciales: 'rda/sectorista/cli_pot/cli_pot_sec_01',
-  /** Clientes Reprogramados — listado. */
-  clientesReprogramados: 'RES_SEC_REP_01',
-  /** Clientes Reprogramados — guardado del formulario (`postRegularUpdate`). */
-  clientesReprogramadosGuardar: 'UP_REPRO_01',
-  /** Datos de Clientes — detalle. */
-  datosClientes: 'DET_CLI_01',
-  /** Datos de Clientes — catálogo de ciudades. */
-  datosClientesCiudades: 'SEL_CIU_01',
-  /** Datos de Clientes — guardado del formulario (`postRegularUpdate`). */
-  datosClientesGuardar: 'UPD_CLI_01',
   /** Desempeño Social. */
   desempenoSocial: 'DESE_SOC_AS_01',
-  /** Encuesta de Clientes — listado. */
-  encuestaClientes: 'LIS_CAPRET_01',
-  /** Encuesta de Clientes — catálogo CIIU. */
-  encuestaClientesCiiu: 'SEL_CIU_02',
-  /** Encuesta de Clientes — guardado (`postRegularUpdate`). */
-  encuestaClientesGuardar: 'UPD_CAPRET_01',
   /** Grupos por Vencer. */
   gruposPorVencer: 'rda/sectorista/grupo_pdm/grupo_pdm_sec_01',
   /** Inversión, Stock y Mora — bloques de gráfico (`graphicData`). */
   inversionStockMora: 'rda/sectorista/brecha/brecha_inversion_sec_01',
   /** Monitor de Efectividades — paginado. */
   monitorEfectividades: 'RS_MON_EFEC_SEC_01',
-  /** Plan de Datos. */
-  planDatos: 'P_Datos_02',
   /** Prospecto Corresponsal — listado. */
   prospectoCorresponsal: 'LIS_PROSPE_01',
   /** Prospecto Corresponsal — catálogo de jerarquías. */

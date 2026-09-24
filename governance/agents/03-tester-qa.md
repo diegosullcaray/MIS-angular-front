@@ -79,7 +79,7 @@ Además, según lo que se haya tocado:
 
 ```bash
 node governance/scripts/ejecutar-pruebas.mjs unit                      # todas las unitarias
-node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/analista
+node governance/scripts/ejecutar-pruebas.mjs unit src/app/pages/modules/categorizacion
 node governance/scripts/ejecutar-pruebas.mjs coverage
 node governance/scripts/ejecutar-pruebas.mjs e2e
 node governance/scripts/ejecutar-pruebas.mjs verificar                 # estático: gobernanza + docs + tokens + inventarios

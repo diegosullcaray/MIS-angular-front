@@ -37,18 +37,24 @@ test('en el primer ingreso se abre solo y muestra la imagen del comunicado', asy
   await expect(visor(page)).toBeVisible();
   // Se ve una lámina a la vez, sea el comunicado de una pieza o de varias.
   await expect(imagen(page)).toHaveCount(1);
-  await expect(imagen(page)).toHaveAttribute('src', 'assets/images/fc/ads/Comunicado.png');
+  // Abre en la primera lámina del comunicado publicado (`ANUNCIOS_DEL_SISTEMA`).
+  await expect(imagen(page)).toHaveAttribute('src', 'assets/images/fc/ads/Comunicado1.png');
 });
 
-test('el comunicado publicado tiene una sola lámina: no aparecen controles de recorrido', async ({ page }) => {
+test('el comunicado publicado tiene dos láminas y se recorre con sus controles', async ({ page }) => {
   await page.goto('/app/dashboard');
   await expect(visor(page)).toBeVisible();
 
-  // El carrusel solo existe cuando hay más de una lámina. Con una, el diálogo
-  // se ve exactamente como antes de que existiera el recorrido.
-  await expect(puntos(page)).toHaveCount(0);
-  await expect(visor(page).getByRole('button', { name: 'Lámina siguiente' })).toBeHidden();
-  await expect(visor(page).getByRole('button', { name: 'Lámina anterior' })).toBeHidden();
+  // Con más de una lámina aparece el carrusel: un punto por lámina y flechas.
+  await expect(puntos(page)).toHaveCount(2);
+  await expect(visor(page)).toContainText('Lámina 1 de 2');
+
+  await visor(page).getByRole('button', { name: 'Lámina siguiente' }).click();
+  await expect(imagen(page)).toHaveAttribute('src', 'assets/images/fc/ads/Comunicado2.png');
+  await expect(visor(page)).toContainText('Lámina 2 de 2');
+
+  await visor(page).getByRole('button', { name: 'Lámina 1 de 2' }).click();
+  await expect(imagen(page)).toHaveAttribute('src', 'assets/images/fc/ads/Comunicado1.png');
 });
 
 test('cerrarlo lo da por leído y NO vuelve a abrirse en el ingreso siguiente', async ({ page }) => {

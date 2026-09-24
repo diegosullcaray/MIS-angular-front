@@ -7,9 +7,9 @@ import type { Novedad } from '../../models/novedad.model';
 const ANCHO_MINIMO_ABIERTO = 1280;
 
 /**
- * Panel de novedades del Home: una barra pegada al borde derecho con las
- * mejoras del sistema. Cada una arranca su recorrido guiado, en el que el
- * personaje de la marca va señalando en pantalla lo que la novedad cuenta.
+ * Panel de novedades del Home: una barra pegada al borde derecho con recorridos
+ * sobre funciones reales del sistema. Se filtran por tema y Baby Pachi cambia
+ * su pose y mensaje para orientar la elección.
  *
  * Se puede plegar contra el borde; el estado vive solo mientras dura la
  * sesión de la pantalla —no es una preferencia guardada.
@@ -24,24 +24,52 @@ const ANCHO_MINIMO_ABIERTO = 1280;
 export class PanelNovedadesComponent {
   private readonly tours = inject(NovedadesTourService);
 
-  protected readonly novedades = this.tours.novedades;
+  readonly novedades = this.tours.novedades;
+  readonly categoriaActiva = signal<string | null>(null);
+  readonly categorias = computed(() => [
+    ...new Set(this.novedades.map((novedad) => novedad.categoria)),
+  ]);
+  readonly novedadesVisibles = computed(() => {
+    const categoria = this.categoriaActiva();
+    return categoria
+      ? this.novedades.filter((novedad) => novedad.categoria === categoria)
+      : this.novedades;
+  });
+  readonly posePachi = computed(() => {
+    const categoria = this.categoriaActiva();
+    return (
+      (categoria
+        ? this.novedades.find((novedad) => novedad.categoria === categoria)
+        : this.novedades[0]
+      )?.posePachi ?? 'saluda'
+    );
+  });
+  readonly mensajePachi = computed(() =>
+    this.categoriaActiva()
+      ? `Te muestro cómo ${this.categoriaActiva()!.toLocaleLowerCase('es-PE')} en MIS.`
+      : 'Elige un tema y te guío paso a paso en la pantalla.',
+  );
 
-  protected readonly abierto = signal(this.cabeAbierto());
+  readonly abierto = signal(this.cabeAbierto());
 
   /** Enciende el punto de aviso de la pestaña cuando hay algo publicado hace poco. */
-  protected readonly hayNuevas = computed(() => this.novedades.some((n) => this.tours.esNueva(n)));
+  readonly hayNuevas = computed(() => this.novedades.some((n) => this.tours.esNueva(n)));
 
-  protected alternar(): void {
+  alternar(): void {
     this.abierto.update((v) => !v);
   }
 
-  protected verGuia(novedad: Novedad): void {
+  verGuia(novedad: Novedad): void {
     // El recorrido señala elementos de la pantalla, y el panel está encima de
     // ellos: en angosto ocupa todo el ancho, así que taparía justo lo que la
-    // novedad quiere mostrar. La excepción es el recorrido que habla del panel.
-    if (!novedad.requierePanel) this.abierto.set(false);
+    // novedad quiere mostrar. El catálogo no publica recorridos autorreferenciales.
+    this.abierto.set(false);
 
     this.tours.iniciar(novedad.id);
+  }
+
+  filtrar(categoria: string | null): void {
+    this.categoriaActiva.set(categoria);
   }
 
   /** Abre el panel desde afuera — lo usa la bienvenida de Pachi. */
@@ -54,7 +82,7 @@ export class PanelNovedadesComponent {
     this.abierto.set(false);
   }
 
-  protected esNueva(novedad: Novedad): boolean {
+  esNueva(novedad: Novedad): boolean {
     return this.tours.esNueva(novedad);
   }
 

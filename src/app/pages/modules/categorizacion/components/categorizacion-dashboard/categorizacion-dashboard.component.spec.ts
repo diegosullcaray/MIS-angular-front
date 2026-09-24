@@ -15,6 +15,8 @@ function usuario(overrides: Partial<UsuarioActivo> = {}): UsuarioActivo {
     rol: 'supervisor-area',
     subsistemas: [],
     codBt: 'BT-001',
+    // Asesor (`tip_use = 1`): el único rol que abre su propia ficha sin elegir colaborador.
+    tipoUsuario: 1,
     ...overrides,
   };
 }
@@ -60,8 +62,7 @@ describe('CategorizacionDashboardComponent', () => {
     return fixture;
   }
 
-  it('para un colaborador (no admin), carga su propia categorización con el codBt de la sesión activa', () => {
-    categorizacionFalso.esAdmin.mockReturnValue(false);
+  it('para un asesor, carga su propia categorización con el codBt de la sesión activa', () => {
     const fixture = crear();
 
     expect(categorizacionFalso.obtenerDetalle).toHaveBeenCalledWith('BT-001');
@@ -71,8 +72,8 @@ describe('CategorizacionDashboardComponent', () => {
     expect(fixture.componentInstance['cargando']()).toBe(false);
   });
 
-  it('para un admin, solo prepara el nodo ancla — no carga ninguna categorización hasta elegir colaborador', () => {
-    categorizacionFalso.esAdmin.mockReturnValue(true);
+  it('para otro rol, solo prepara el nodo ancla — no carga ninguna categorización hasta elegir colaborador', () => {
+    shell.setUsuarioActivo(usuario({ tipoUsuario: 2 }));
     const fixture = crear();
 
     expect(categorizacionFalso.obtenerAnclaAdmin).toHaveBeenCalled();
@@ -81,7 +82,7 @@ describe('CategorizacionDashboardComponent', () => {
   });
 
   it('abrirSelector() abre el diálogo y pide la lista de sectoristas usando el nodo ancla', () => {
-    categorizacionFalso.esAdmin.mockReturnValue(true);
+    shell.setUsuarioActivo(usuario({ tipoUsuario: 2 }));
     const fixture = crear();
     const instancia = fixture.componentInstance;
 
@@ -95,7 +96,7 @@ describe('CategorizacionDashboardComponent', () => {
   });
 
   it('abrirSelector() muestra el spinner de carga si se hace click antes de que resuelva el nodo ancla', () => {
-    categorizacionFalso.esAdmin.mockReturnValue(true);
+    shell.setUsuarioActivo(usuario({ tipoUsuario: 2 }));
     categorizacionFalso.obtenerAnclaAdmin.mockReturnValue(new Subject<NodoJerarquiaAncla | null>());
     const fixture = crear();
     const instancia = fixture.componentInstance;
@@ -109,7 +110,7 @@ describe('CategorizacionDashboardComponent', () => {
   });
 
   it('abrirSelector() no vuelve a pedir la lista si ya se cargó antes', () => {
-    categorizacionFalso.esAdmin.mockReturnValue(true);
+    shell.setUsuarioActivo(usuario({ tipoUsuario: 2 }));
     const fixture = crear();
     const instancia = fixture.componentInstance;
 
@@ -123,7 +124,7 @@ describe('CategorizacionDashboardComponent', () => {
   });
 
   it('onSectoristaSeleccionado() carga la categorización del colaborador elegido', () => {
-    categorizacionFalso.esAdmin.mockReturnValue(true);
+    shell.setUsuarioActivo(usuario({ tipoUsuario: 2 }));
     const fixture = crear();
 
     fixture.componentInstance['onSectoristaSeleccionado']({ cod_sec: 'SEC-1', des_sec: 'Juan Pérez' });

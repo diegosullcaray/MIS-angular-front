@@ -1,0 +1,564 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Demo Navegación — CSS
+   Réplica estilizada del shell real (sidebar + header + panel + ventana)
+   para la práctica guiada de novedades.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Contenedor raíz ─────────────────────────────────────────────────────── */
+.demo-navegacion {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  padding: var(--mis-space-6);
+  background: var(--mis-glass-bg);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+/* ── Encabezado ──────────────────────────────────────────────────────────── */
+.demo-navegacion-encabezado {
+  margin-bottom: var(--mis-space-4);
+}
+
+.demo-navegacion-etiqueta {
+  margin: 0;
+  color: var(--mis-primary-text);
+  font-size: var(--mis-text-xs);
+  font-weight: var(--mis-font-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.demo-navegacion h2 {
+  margin: var(--mis-space-1) 0;
+  color: var(--mis-text-primary);
+  font-size: var(--mis-text-lg);
+}
+
+.demo-navegacion-descripcion {
+  margin: 0;
+  color: var(--mis-text-secondary);
+  font-size: var(--mis-text-sm);
+}
+
+/* ── Shell completo ──────────────────────────────────────────────────────── */
+.demo-shell {
+  display: flex;
+  min-height: 320px;
+  overflow: hidden;
+  border: 1px solid var(--mis-border-strong);
+  border-radius: var(--mis-radius-lg);
+  background: var(--mis-surface-translucido);
+  box-shadow: var(--mis-shadow-md);
+}
+
+/* ── Sidebar Rail (replica el sidebar real navy con glassmorphism) ──────── */
+.demo-sidebar-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 64px;
+  min-width: 64px;
+  padding: var(--mis-space-1) 0;
+  background: var(--mis-sidebar-bg);
+  backdrop-filter: var(--mis-sidebar-blur);
+  -webkit-backdrop-filter: var(--mis-sidebar-blur);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .demo-sidebar-rail {
+    background: var(--mis-sidebar-solid);
+  }
+}
+
+.demo-sidebar-wordmark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 36px;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.demo-sidebar-wordmark-text {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.demo-sidebar-separador {
+  width: 28px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+  margin-bottom: 4px;
+}
+
+.demo-sidebar-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 44px;
+  height: auto;
+  padding: 8px 0;
+  border: 1px solid transparent;
+  border-radius: var(--mis-radius-md);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.56);
+  cursor: pointer;
+  transition:
+    transform var(--mis-transition-fast),
+    background-color var(--mis-transition-fast),
+    border-color var(--mis-transition-fast),
+    box-shadow var(--mis-transition-fast),
+    color var(--mis-transition-fast);
+  font-family: inherit;
+  position: relative;
+}
+
+.demo-sidebar-icon i {
+  font-size: 20px;
+}
+
+.demo-sidebar-icon-label {
+  font-size: 9px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40px;
+}
+
+.demo-sidebar-icon:hover:not(.demo-sidebar-icon--activo):not(:disabled) {
+  background: var(--mis-sidebar-item-hover);
+  border-color: var(--mis-sidebar-item-border);
+  color: rgba(255, 255, 255, 1);
+  box-shadow:
+    inset 0 1px 0 var(--mis-glass-border),
+    var(--mis-shadow-sm);
+  transform: translateY(-1px);
+}
+
+.demo-sidebar-icon--activo {
+  background: var(--mis-sidebar-item-active) !important;
+  color: rgba(255, 255, 255, 1) !important;
+  border-color: var(--mis-sidebar-item-border);
+  box-shadow:
+    inset 0 1px 0 var(--mis-glass-border),
+    var(--mis-shadow-sm);
+}
+
+/* Indicador lateral activo (barra izquierda, como el sidebar real) */
+.demo-sidebar-icon--activo::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: var(--mis-secondary);
+  border-radius: 0 var(--mis-radius-xs) var(--mis-radius-xs) 0;
+}
+
+.demo-sidebar-icon:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* ── Zona principal (header + contenido) ─────────────────────────────────── */
+.demo-main-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Header simulado con breadcrumb ──────────────────────────────────────── */
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+  padding: 0 var(--mis-space-3);
+  background: var(--mis-surface-translucido);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--mis-border);
+}
+
+.demo-breadcrumb ol {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-secondary);
+}
+
+.demo-breadcrumb li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.demo-breadcrumb li + li::before {
+  content: '/';
+  margin: 0 6px;
+  color: var(--mis-text-tertiary);
+}
+
+.demo-breadcrumb li[aria-current="page"] span {
+  color: var(--mis-text-primary);
+  font-weight: var(--mis-font-semibold);
+}
+
+.demo-breadcrumb i {
+  font-size: 12px;
+}
+
+.demo-header-acciones {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.demo-header-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--mis-radius-sm);
+  color: var(--mis-text-secondary);
+  font-size: 14px;
+}
+
+.demo-header-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px 2px 2px;
+  border-radius: 999px;
+  cursor: default;
+}
+
+.demo-header-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--mis-primary);
+  color: var(--mis-text-on-primary);
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.demo-header-nombre {
+  font-size: var(--mis-text-xs);
+  font-weight: 500;
+  color: var(--mis-text-primary);
+  white-space: nowrap;
+}
+
+/* ── Zona de contenido (panel + ventana) ─────────────────────────────────── */
+.demo-contenido {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Panel de secciones ──────────────────────────────────────────────────── */
+.demo-navegacion-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mis-space-1);
+  width: 160px;
+  min-width: 160px;
+  padding: var(--mis-space-3);
+  border-right: 1px solid var(--mis-border);
+  background: var(--mis-glass-bg);
+}
+
+.demo-panel-titulo {
+  margin: 0 0 var(--mis-space-1) 0;
+  color: var(--mis-text-primary);
+  font-size: var(--mis-text-xs);
+  font-weight: var(--mis-font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.demo-navegacion-opcion {
+  min-height: 30px;
+  padding: 6px 12px;
+  text-align: left;
+  border: 0;
+  border-radius: var(--mis-radius-sm);
+  background: transparent;
+  color: var(--mis-text-secondary);
+  font: inherit;
+  font-size: var(--mis-text-xs);
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast), color var(--mis-transition-fast);
+}
+
+.demo-navegacion-opcion:hover {
+  background: var(--mis-hover-bg);
+  color: var(--mis-text-primary);
+}
+
+.demo-navegacion-opcion--activa {
+  background: var(--mis-primary-light);
+  color: var(--mis-primary-text);
+}
+
+/* ── Ventana de reporte ──────────────────────────────────────────────────── */
+.demo-ventana {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Barra de título (semáforo + título + acciones) ──────────────────────── */
+.demo-navegacion-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 38px;
+  padding: 0 var(--mis-space-3);
+  border-bottom: 1px solid var(--mis-border);
+  color: var(--mis-text-primary);
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+}
+
+.demo-barra-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-semaforo {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.demo-luz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.demo-luz i {
+  font-size: 8px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.demo-semaforo:hover .demo-luz i {
+  opacity: 1;
+}
+
+.demo-luz--rojo {
+  background: #ff5f57;
+}
+
+.demo-luz--amarillo {
+  background: #febc2e;
+}
+
+.demo-luz--verde {
+  background: #28c840;
+}
+
+.demo-barra-titulo {
+  font-size: var(--mis-text-sm);
+  font-weight: var(--mis-font-semibold);
+  color: var(--mis-text-primary);
+}
+
+.demo-navegacion-acciones {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.demo-navegacion-acciones button,
+.demo-navegacion-barra button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--mis-radius-sm);
+  background: transparent;
+  color: var(--mis-text-secondary);
+  font: inherit;
+  font-size: var(--mis-text-xs);
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast), color var(--mis-transition-fast);
+}
+
+.demo-navegacion-acciones button:hover,
+.demo-navegacion-acciones button:focus-visible,
+.demo-navegacion-barra button:hover,
+.demo-navegacion-barra button:focus-visible {
+  background: var(--mis-hover-bg);
+  color: var(--mis-primary-text);
+}
+
+/* ── Filtros ─────────────────────────────────────────────────────────────── */
+.demo-navegacion-filtros {
+  display: flex;
+  gap: var(--mis-space-3);
+  flex-wrap: wrap;
+  padding: var(--mis-space-3);
+  border-bottom: 1px solid var(--mis-border);
+}
+
+.demo-navegacion-filtros label {
+  display: flex;
+  align-items: center;
+  gap: var(--mis-space-2);
+  color: var(--mis-text-secondary);
+  font-size: var(--mis-text-xs);
+}
+
+.demo-navegacion-filtros select {
+  min-height: 30px;
+  border: 1px solid var(--mis-border-control);
+  border-radius: var(--mis-radius-sm);
+  background: var(--mis-field-bg);
+  color: var(--mis-text-primary);
+  padding: 0 var(--mis-space-2);
+  font: inherit;
+  font-size: var(--mis-text-xs);
+}
+
+.demo-navegacion-filtros-limpiar {
+  border: 1px solid var(--mis-border-control);
+  border-radius: var(--mis-radius-sm);
+  background: transparent;
+  color: var(--mis-text-secondary);
+  font: inherit;
+  font-size: var(--mis-text-xs);
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: background-color var(--mis-transition-fast), color var(--mis-transition-fast);
+}
+
+.demo-navegacion-filtros-limpiar:hover {
+  background: var(--mis-hover-bg);
+  color: var(--mis-primary-text);
+}
+
+/* ── Cuerpo del reporte ──────────────────────────────────────────────────── */
+.demo-cuerpo {
+  flex: 1;
+  padding: var(--mis-space-4);
+}
+
+.demo-navegacion-estado {
+  margin: 0 0 var(--mis-space-3) 0;
+  color: var(--mis-text-secondary);
+  font-size: var(--mis-text-sm);
+}
+
+/* ── KPIs simulados ──────────────────────────────────────────────────────── */
+.demo-kpis-fila {
+  display: flex;
+  gap: var(--mis-space-3);
+  flex-wrap: wrap;
+}
+
+.demo-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--mis-space-3);
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-md);
+  background: var(--mis-glass-bg);
+  min-width: 100px;
+  flex: 1;
+}
+
+.demo-kpi-label {
+  font-size: var(--mis-text-xs);
+  color: var(--mis-text-secondary);
+  font-weight: 500;
+}
+
+.demo-kpi-valor {
+  font-size: var(--mis-text-xl, 20px);
+  font-weight: var(--mis-font-bold, 700);
+  color: var(--mis-text-primary);
+}
+
+/* ── Responsive: en pantallas angostas oculta las columnas decorativas ──── */
+@media (max-width: 640px) {
+  .demo-sidebar-rail {
+    width: 48px;
+    min-width: 48px;
+  }
+
+  .demo-sidebar-icon-label,
+  .demo-sidebar-wordmark,
+  .demo-sidebar-separador {
+    display: none;
+  }
+
+  .demo-sidebar-icon {
+    width: 36px;
+    padding: 6px 0;
+  }
+
+  .demo-navegacion-panel {
+    width: 120px;
+    min-width: 120px;
+  }
+
+  .demo-header-nombre,
+  .demo-header-pill {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-sidebar-icon,
+  .demo-navegacion-opcion,
+  .demo-navegacion-acciones button {
+    transition: none;
+  }
+
+  .demo-sidebar-icon:hover:not(:disabled) {
+    transform: none;
+  }
+}

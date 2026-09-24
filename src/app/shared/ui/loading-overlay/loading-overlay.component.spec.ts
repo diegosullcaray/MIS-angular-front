@@ -49,7 +49,7 @@ describe('LoadingOverlayComponent', () => {
 
     const overlay = fixture.nativeElement.querySelector('.loading-overlay-wrapper');
     expect(overlay.querySelector('img')?.getAttribute('aria-hidden')).toBe('true');
-    expect(overlay.textContent).toContain('Cargando');
+    expect(overlay.textContent).toContain('Espere un momento...');
   });
 
   it('muestra el mensaje personalizado si está presente', () => {

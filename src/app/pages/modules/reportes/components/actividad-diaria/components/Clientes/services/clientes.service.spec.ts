@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { ClientesSimplesService } from './clientes-simples.service';
-import { RankingMujerService } from './ranking-mujer.service';
 import { MovimientoClientesService } from './movimiento-clientes.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
@@ -63,18 +62,6 @@ describe('Reportes de Clientes', () => {
         'rda/administracion/clientes/cmg_cliente_01',
         expect.objectContaining({ tip_cod: 9, cod_rel: 'FC', fec: '20251130' }),
       );
-    });
-  });
-
-  describe('"Ranking Mujer" (motor `table.regular`)', () => {
-    it('pide sus dos tablas con los nombres de parámetro de ESTE reporte', () => {
-      TestBed.inject(RankingMujerService).obtener(NODO).subscribe();
-
-      // Acá el motor espera `tip_cod`/`cod_rel`/`fec`, no los `tipcod`/`codrel`/`fecha` de Carterización.
-      const esperado = { tip_cod: 9, cod_rel: 'FC', fec: '2025-11-30' };
-      expect(getRegularTableResult.mock.calls.map((c) => c[0])).toEqual(['RS_RANK_MUJ_01', 'RS_RANK_MUJ_02']);
-      expect(getRegularTableResult.mock.calls[0][1]).toEqual(esperado);
-      expect(getRegularTableResult.mock.calls[1][1]).toEqual(esperado);
     });
   });
 

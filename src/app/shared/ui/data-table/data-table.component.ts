@@ -1,4 +1,4 @@
-import { Component, computed, contentChildren, input, output, signal } from '@angular/core';
+import { Component, computed, contentChildren, input, model, output, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -24,7 +24,7 @@ export class DataTableComponent<T extends Record<string, unknown> = Record<strin
   readonly columns = input.required<DataTableColumn[]>();
   readonly data = input.required<T[]>();
   readonly loading = input(false);
-  readonly rows = input(10);
+  readonly rows = model(10);
   readonly rowsPerPageOptions = input([10, 25, 50]);
   readonly scrollHeight = input<string>();
   readonly emptyMessage = input('No se encontraron registros.');

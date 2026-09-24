@@ -73,27 +73,12 @@ export const CARTERA_EN_MORA_ROUTES: Routes = [
       import('./items/seguimiento-portafolio/seguimiento-portafolio.component').then((c) => c.SeguimientoPortafolioComponent),
   },
 
-  // items — reportes del árbol `repositorio`
-  {
-    /** Legado `repositorio/mon-imr` (`mon_imr.*` del backend `rep2`). */
-    path: 'repositorio/actividad-diaria/cartera/mon-imr',
-    loadComponent: () => import('./items/monitor-imr/monitor-imr.component').then((c) => c.MonitorImrComponent),
-  },
-
   // components/Cero Cuotas Nuevas — la familia de reportes de cero cuotas de nuevo ingreso
   {
     /** Legado `graf-dashboard` (`rda/administracion/mora/Dashboard_rda_01`, bloque `graphic`). */
     path: 'leg/com/rda/adm/graf-dashboard',
     loadComponent: () =>
       import('./components/Cero Cuotas Nuevas/items/dashboard/dashboard.component').then((c) => c.CeroCuotasDashboardComponent),
-  },
-  {
-    /** Legado `repositorio/cero-cuotas` (`REP_CERCUOT_01` y `_02`). */
-    path: 'repositorio/actividad-diaria/mora/cero-cuotas',
-    loadComponent: () =>
-      import('./components/Cero Cuotas Nuevas/items/dashboard-revision/dashboard-revision.component').then(
-        (c) => c.CeroCuotasDashboardRevisionComponent,
-      ),
   },
   {
     /** Legado `cmd-cerocuotanueva` (`CMCUONUEV`, bloques `_01` y `_02`). */

@@ -190,7 +190,7 @@ describe('SidebarComponent', () => {
     expect(shell.sidebarIconActivo()).toBe('host-inicio');
   });
 
-  it('panelActivo() arma el panel propio de "Analista" (Principal/Categorización/Listas) en vez del panel remoto de STG', () => {
+  it('panelActivo() arma el panel propio de "Analista" (Panel unificado/Categorización) en vez del panel remoto de STG', () => {
     menuStgFalso.sistemas.set([{ id: 'sist-an', tipo: 'remote', icono: 'pi pi-briefcase', etiqueta: 'Analista', tienePanel: true }]);
     menuStgFalso.hijosPorSistema.set({ 'sist-an': [{ etiqueta: 'Categorización', ruta: '/app/analista/categorizacion' }] });
     crear();
@@ -200,16 +200,8 @@ describe('SidebarComponent', () => {
 
     expect(panel?.titulo).toBe('Analista');
     expect(panel?.secciones[0].rutas).toEqual([
-      { etiqueta: 'Principal', ruta: '/app/analista', icono: 'pi pi-home' },
+      { etiqueta: 'Panel unificado del asesor', ruta: '/app/analista/panel-unificado', icono: 'pi pi-th-large' },
       { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
-      {
-        etiqueta: 'Listas',
-        icono: 'pi pi-list',
-        hijos: [
-          { etiqueta: 'Priorización de Leads', ruta: '/app/analista/listas/priorizacion-leads' },
-          { etiqueta: 'Becas Financiera Confianza', ruta: '/app/analista/listas/becas' },
-        ],
-      },
     ]);
   });
 

@@ -25,6 +25,7 @@ const OPCIONES_SISTEMATICA = [
   standalone: true,
   imports: [DialogModule, ButtonModule, InputNumberModule, SelectModule, InputGroupModule, InputGroupAddonModule, AnimateOnScrollModule, FormsModule, DecimalPipe],
   templateUrl: './calculadora-dialog.component.html',
+  styleUrl: './calculadora-dialog.component.css',
 })
 export class CalculadoraDialogComponent {
   focusedItem = signal<string | null>(null);

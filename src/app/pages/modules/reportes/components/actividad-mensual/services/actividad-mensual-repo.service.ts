@@ -1,9 +1,15 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, forkJoin, map } from 'rxjs';
+import { Observable, forkJoin, map, throwError } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { filasDeResultado, resultadoCrudo, tablaDeResultado } from '../../../utils/reportes-mapeo.util';
-import { COD_MENSUAL_REPO } from '../constantes/actividad-mensual.constantes';
+import { COD_MENSUAL_REPO, MENSAJES_CUENTA_RESULTADOS } from '../constantes/actividad-mensual.constantes';
+import {
+  ContratoCuentaResultadosError,
+  fechaCuentaParaBackend,
+  mapearCuentaResultados,
+} from '../utils/cuenta-resultados.util';
+import type { CuentaResultadosResultado } from '../models/cuenta-resultados.model';
 import { aplicarEstilosEstructuraDesembolsos } from '../utils/estructura-desembolsos.util';
 import { tarjetasCmgCarteraMensual } from '../utils/actividad-mensual-mapeo.util';
 import { seriesDeGraficoConColor } from '../../../../../../shared/ui/graficos/utils/series-grafico.util';
@@ -117,6 +123,20 @@ export class ActividadMensualRepoService {
         };
       }),
     );
+  }
+
+  /**
+   * Cuenta de Resultados. Sin periodo pide `NOW` y el backend responde con el
+   * más reciente; los periodos elegibles vienen en la misma respuesta.
+   */
+  cuentaResultados(nodo: NodoConsulta, periodo: string | null): Observable<CuentaResultadosResultado> {
+    const fecha = periodo === null ? 'NOW' : fechaCuentaParaBackend(periodo);
+    if (!fecha) {
+      return throwError(() => new ContratoCuentaResultadosError(MENSAJES_CUENTA_RESULTADOS.periodoInvalido));
+    }
+    return this.reportes
+      .getRegularTableResult(COD_MENSUAL_REPO.cuentaResultados, { fecha, tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel })
+      .pipe(map((r) => mapearCuentaResultados(resultadoCrudo(r), periodo)));
   }
 
   private paramsConFecha(nodo: NodoConsulta, fecha?: string): Record<string, unknown> {

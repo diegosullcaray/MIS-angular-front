@@ -18,6 +18,7 @@ import type { OpcionFiltro } from '../opcion-filtro.model';
         [(ngModel)]="valor"
         [styleClass]="'text-[11.5px] ' + ancho()"
         [ariaLabel]="etiqueta()"
+        appendTo="body"
       />
     </div>
   `,

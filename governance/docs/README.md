@@ -49,6 +49,8 @@ Contratos vigentes: [transporte Winder/Ant](./data/contracts/winder-transport.md
 | Ver qué `cod_rep` consume el sistema | [Catálogo de datos](./data/catalog.md) |
 | Agregar o tocar un módulo | [Guía de módulos](./development/module-guide.md) |
 | Crear un reporte paso a paso | [Guía de creación de reportes](./development/report-creation-guide.md) |
+| Retirar un reporte o un módulo sin dejar restos | [Guía de retiro](./development/report-retirement-guide.md) · [reportes retirados](./architecture/adr/ADR-0007-retiro-de-reportes-sin-uso.md) |
+| Entender el panel unificado del asesor | [ADR-0006](./architecture/adr/ADR-0006-panel-unificado-en-reportes.md) |
 | Saber cómo se nombra un archivo | [Convenciones de nombres](./development/naming-conventions.md) |
 | Saber qué verifica el pipeline | [Compuertas de calidad](./development/quality-gates.md) |
 | Entender un término del payload | [Glosario](./data/glossary.md) |

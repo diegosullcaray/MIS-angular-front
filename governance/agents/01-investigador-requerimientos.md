@@ -24,7 +24,7 @@ Antes de proponer nada, tener presente cómo está construido esto de verdad:
 | Hecho | Consecuencia para la especificación |
 |---|---|
 | El transporte es **Winder/Ant**, no REST | Un reporte se identifica por `cod_rep` y un *strand*, no por una URL. No especifiques `GET /api/algo`. |
-| Los datos llegan por un servicio `Mod*Service` de `src/app/core/winder/instances/` | La especificación debe nombrar cuál: `ModReportesService`, `ModPresupuestoService`, etc. |
+| Los datos llegan por un servicio `Mod*Service` de `src/app/core/winder/instances/` | La especificación debe nombrar cuál: `ModReportesService`, `ModIncentivosService`, etc. |
 | Todo reporte se consulta sobre un **nodo de jerarquía** y una **fecha de corte** | Faltando cualquiera de los dos, la consulta es incorrecta aunque compile. |
 | La autorización real vive en backend | El menú y los guards son presentación. Nunca especifiques "se oculta el botón" como control de acceso. |
 | Existen 4 motores de reporte | `regularData`, `table.regular`, `graphicData` y `reportData` (legado). Elegir uno es una decisión de la fase 1, no del desarrollador. |

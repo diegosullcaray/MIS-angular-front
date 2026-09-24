@@ -23,15 +23,21 @@ test.describe('Home · reportes recientes', () => {
 
   test('no muestra el saludo de bienvenida', async ({ page }) => {
     await page.goto('/app/dashboard');
-    await expect(page.getByRole('heading', { name: 'Reportes recientes' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Inicio' })).toBeVisible();
 
     await expect(page.locator('body')).not.toContainText('¡Hola');
   });
 
-  test('invita a abrir un reporte en el primer ingreso', async ({ page }) => {
+  // Desde b4af615 el Home sin historial no reserva un bloque vacío: solo muestra
+  // la demo de navegación. La región conserva un nombre accesible propio.
+  test('en el primer ingreso no pinta el bloque de recientes', async ({ page }) => {
     await page.goto('/app/dashboard');
 
-    await expect(page.getByText('Todavía no abriste ningún reporte')).toBeVisible();
+    const inicio = page.getByRole('region', { name: 'Inicio' });
+    await expect(inicio).toBeVisible();
+    await expect(inicio.locator('app-demo-navegacion')).toBeAttached();
+    await expect(page.getByRole('region', { name: 'Reportes recientes' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Accesos recientes' })).toHaveCount(0);
     await expect(page.locator('a.reciente-fila')).toHaveCount(0);
   });
 
@@ -50,6 +56,9 @@ test.describe('Home · reportes recientes', () => {
     });
 
     await page.goto('/app/dashboard');
+
+    await expect(page.getByRole('heading', { name: 'Accesos recientes' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Accesos recientes' })).toBeVisible();
 
     const tarjeta = page.locator('a.reciente-fila');
     await expect(tarjeta).toHaveCount(1);

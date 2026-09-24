@@ -13,11 +13,17 @@ import type { AsesorPickItem, NivelSelectorJerarquia, NodoJerarquiaIncentivo } f
 
 type Vista = 'menu' | 'asesores' | 'jerarquia';
 
+/**
+ * Las cuatro columnas se ven también en teléfono, igual que en escritorio:
+ * para elegir un asesor hace falta ubicarlo en su unidad, corredor y
+ * territorio. Si no entran, la tabla se desplaza en horizontal dentro del
+ * diálogo (`app-data-table` ya envuelve con `overflow-x-auto`).
+ */
 const COLUMNAS_ASESOR: DataTableColumn[] = [
-  { field: 'des_sec', header: 'Asesor', filterType: 'text' },
-  { field: 'des_uni', header: 'Unidad', filterType: 'text' },
-  { field: 'des_cor', header: 'Corredor', filterType: 'text', mobileVisible: false },
-  { field: 'des_ter', header: 'Territorio', filterType: 'text', mobileVisible: false },
+  { field: 'des_sec', header: 'Asesor', filterType: 'text', width: '14rem' },
+  { field: 'des_uni', header: 'Unidad', filterType: 'text', width: '10rem' },
+  { field: 'des_cor', header: 'Corredor', filterType: 'text', width: '10rem' },
+  { field: 'des_ter', header: 'Territorio', filterType: 'text', width: '10rem' },
 ];
 
 const BUSQUEDA_ASESOR = ['des_sec', 'des_uni', 'des_cor', 'des_ter', 'cod_sec'];

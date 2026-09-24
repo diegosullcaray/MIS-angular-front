@@ -45,18 +45,6 @@ export const PARAMS_HIER_FC: ParamsJerarquia = {
   dlgTitulo: 'JERARQUIA UNIDAD',
 };
 
-/** Código de jerarquía de seguros pasivos. */
-export const COD_JERARQUIA_SEGUROS_PASIVOS = 14;
-/** Nivel máximo de jerarquía de seguros pasivos. */
-export const NIVEL_MAXIMO_JERARQUIA_SEGUROS_PASIVOS = 4;
-
-/** Parámetros de jerarquía de seguros pasivos. */
-export const PARAMS_HIER_SEGUROS_PASIVOS: ParamsJerarquia = {
-  code: COD_JERARQUIA_SEGUROS_PASIVOS,
-  maxLvl: NIVEL_MAXIMO_JERARQUIA_SEGUROS_PASIVOS,
-  dlgTitulo: 'JERARQUIA UNIDAD',
-};
-
 /** Código de jerarquía macro. */
 export const COD_JERARQUIA_MACRO = 13;
 /** Profundidad máxima de `MAC_2`. */

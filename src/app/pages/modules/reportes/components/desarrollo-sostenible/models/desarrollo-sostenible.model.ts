@@ -32,21 +32,6 @@ export const OPCIONES_PRODUCTO_MISIONAL_PANEL: OpcionProductoMisionalPanel[] = [
   { id: 'Producto Verde', desc: 'Crédito Verde' },
 ];
 
-/** Opción del filtro "Población" del panel `pob_misi_*` (legado: `poblacion-misional.util.ts`, `filter1`). */
-export interface OpcionPoblacionMisional {
-  id: string;
-  desc: string;
-}
-
-/** Valores exactos del legado — variable enviada al backend es `prod`. */
-export const OPCIONES_POBLACION_MISIONAL: OpcionPoblacionMisional[] = [
-  { id: 'ClientesNuevos', desc: 'Clientes Nuevos' },
-  { id: 'Mujer', desc: 'Mujer' },
-  { id: 'Rural', desc: 'Rural' },
-  { id: 'Bancarizado', desc: 'Bancarizado' },
-  { id: 'Vulnerable', desc: 'Vulnerable' },
-];
-
 /** Resultado combinado de "Monitor Productos Misionales" (`DesarrolloSostenibleService.obtenerMonitorProductosMisionales`). */
 export interface ReporteMonitorProductosMisionales {
   kpiOperaciones: KpiOperacionesDesembolsadas | null;
@@ -58,14 +43,6 @@ export interface ReporteMonitorProductosMisionales {
 /** Resultado combinado de "Productos Misionales" (`DesarrolloSostenibleService.obtenerProductosMisionales`). */
 export interface ReporteProductosMisionales {
   resumen: TablaDinamicaResultado;
-  territorio: TablaDinamicaResultado;
-  corredores: TablaDinamicaResultado;
-  unidad: TablaDinamicaResultado;
-  asesores: TablaDinamicaResultado;
-}
-
-/** Resultado combinado de "Poblaciones Misionales" (`DesarrolloSostenibleService.obtenerPoblacionMisional`). */
-export interface ReportePoblacionMisional {
   territorio: TablaDinamicaResultado;
   corredores: TablaDinamicaResultado;
   unidad: TablaDinamicaResultado;

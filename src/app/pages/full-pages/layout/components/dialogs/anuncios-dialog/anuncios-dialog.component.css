@@ -33,7 +33,7 @@
   max-width: 100%;
   max-height: min(80vh, 860px);
   object-fit: contain;
-  background: #ffffff;
+  background: var(--mis-surface);
 }
 
 /* En el carrusel la lámina conserva sus dimensiones proporcionales y manda el
@@ -88,7 +88,9 @@
   border-radius: var(--mis-radius-full);
   background: var(--mis-border-strong);
   cursor: pointer;
-  transition: background var(--mis-transition-fast), transform var(--mis-transition-fast);
+  transition:
+    background var(--mis-transition-fast),
+    transform var(--mis-transition-fast);
 }
 
 .mis-anuncio-punto:hover {

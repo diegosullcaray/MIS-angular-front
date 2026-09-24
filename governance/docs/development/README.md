@@ -7,6 +7,7 @@ Cómo se trabaja en este repositorio.
 - [Convenciones de nombres](./naming-conventions.md) — sufijos, rutas e identificadores
 - [Guía de módulos](./module-guide.md) — estructura y responsabilidad por capa
 - [Guía de creación de reportes](./report-creation-guide.md) — el flujo más frecuente del proyecto
+- [Guía de retiro de reportes y módulos](./report-retirement-guide.md) — qué borrar, qué conservar y cómo verificar que no quedan restos
 - [Modelo de estados](./state-model.md) — ownership del estado y ciclo carga/vacío/error
 - [Testing](./testing.md) — estrategia · [Inventario de pruebas](./test-inventory.md) — cifras derivadas
 - [Compuertas de calidad](./quality-gates.md) — qué se verifica, con qué comando y qué bloquea
