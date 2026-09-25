@@ -15,6 +15,7 @@ const REPORTES: readonly [string, string][] = [
   ['/app/reportes/leg/com/rda/adm/mon-efectramoscomer', 'Reporte de Pago Puntual'],
   ['/app/reportes/leg/com/rda/adm/ava-port', 'Seguimiento de Portafolio'],
   ['/app/reportes/leg/com/rda/adm/graf-dashboard', 'Dashboard'],
+  ['/app/reportes/repositorio/actividad-diaria/mora/cero-cuotas', 'Dashboard en Revisión'],
   ['/app/reportes/leg/com/rda/adm/cmd-cerocuotanueva', 'Cuadro de Mando'],
   ['/app/reportes/leg/com/rda/adm/Top-CeroCuota', 'Top'],
   ['/app/reportes/leg/com/rda/adm/list-cero-cuotas', 'Base de Gestión'],

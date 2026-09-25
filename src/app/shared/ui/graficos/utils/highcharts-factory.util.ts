@@ -16,7 +16,13 @@ import type {
   PorcionGrafico,
   SerieGrafico,
 } from '../models/grafico-comun.model';
-import { AZUL, PALETA_SERIES, colorSerieReporte, esPorcentaje, tokensTema } from './paleta-colores.util';
+import {
+  AZUL,
+  PALETA_SERIES,
+  colorSerieReporte,
+  esPorcentaje,
+  tokensTema,
+} from './paleta-colores.util';
 
 /** Infiere la forma del gráfico a partir de las series. */
 function inferirTipo(series: readonly SerieGrafico[]): 'barra' | 'columna' {
@@ -49,7 +55,11 @@ export function opcionesBase(oscuro: boolean, fondoTransparente = false): Option
 }
 
 /** Gráfico de barras/columnas/líneas a partir de un `BloqueGrafico`. */
-export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: OpcionesGrafico = {}): Options {
+export function opcionesMixto(
+  bloque: BloqueGrafico,
+  oscuro: boolean,
+  config: OpcionesGrafico = {},
+): Options {
   const { tipo = 'auto', formato = 'soles', fondoTransparente = false, apilado = false } = config;
   const esApilado = apilado || Boolean(bloque.apilado);
   const base = opcionesBase(oscuro, fondoTransparente);
@@ -60,10 +70,12 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
   const estiloTexto = { color: texto, fontSize: '11px' };
   // En modo `linea` no hay eje secundario: todas las series comparten el eje de valores.
   // Ahí van las de porcentaje y las que lo pidan explícitamente (`secundaria`).
-  const enEjeSecundario = (s: SerieGrafico) => forma !== 'linea' && (s.secundaria ?? esPorcentaje(s.nombre));
+  const enEjeSecundario = (s: SerieGrafico) =>
+    forma !== 'linea' && (s.secundaria ?? esPorcentaje(s.nombre));
   const secundarias = bloque.series.filter(enEjeSecundario);
   // El eje secundario se rotula en "%" solo si TODO lo que va ahí es porcentaje.
-  const ejeSecundarioEnPorcentaje = secundarias.length > 0 && secundarias.every((s) => esPorcentaje(s.nombre));
+  const ejeSecundarioEnPorcentaje =
+    secundarias.length > 0 && secundarias.every((s) => esPorcentaje(s.nombre));
   // `bar` invierte los ejes (barras horizontales); `column` las deja verticales.
   const tipoBase = forma === 'columna' ? 'column' : forma === 'linea' ? 'spline' : 'bar';
 
@@ -74,7 +86,11 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
       const nombreLower = (serie.nombre ?? '').toLowerCase();
       if (nombreLower.includes('real')) {
         color = '#0284C7'; // Azul para barras Real
-      } else if (nombreLower.includes('meta') || nombreLower.includes('ppto') || nombreLower.includes('presupuesto')) {
+      } else if (
+        nombreLower.includes('meta') ||
+        nombreLower.includes('ppto') ||
+        nombreLower.includes('presupuesto')
+      ) {
         color = '#1D396E'; // Navy para Meta
       } else if (bloque.series.length > 1) {
         const paleta = ['#0284C7', '#003f5c', '#16a34a', '#bc5090', '#ff7c43', '#2f9bd8'];
@@ -104,12 +120,14 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
               return Math.abs(valor) >= 1_000_000
                 ? `${(valor / 1_000_000).toFixed(1)} M`
                 : Math.abs(valor) >= 1_000
-                ? `${(valor / 1_000).toFixed(0)} k`
-                : Highcharts.numberFormat(valor, 0, '.', ',');
+                  ? `${(valor / 1_000).toFixed(0)} k`
+                  : Highcharts.numberFormat(valor, 0, '.', ',');
             }
             return Highcharts.numberFormat(valor, 0, '.', ',');
           },
-          style: { fontSize: '10px', fontWeight: 'bold', color },
+          // Highcharts aplica `textOutline: contrast` por defecto y dibuja un
+          // halo negro alrededor de las cifras en series de línea.
+          style: { fontSize: '10px', fontWeight: 'bold', color, textOutline: 'none' },
         },
       };
     }
@@ -131,15 +149,15 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
             return Math.abs(valor) >= 1_000_000
               ? `${(Math.abs(valor) / 1_000_000).toFixed(1)} M`
               : Math.abs(valor) >= 1_000
-              ? `${(Math.abs(valor) / 1_000).toFixed(0)} k`
-              : Highcharts.numberFormat(Math.abs(valor), 0, '.', ',');
+                ? `${(Math.abs(valor) / 1_000).toFixed(0)} k`
+                : Highcharts.numberFormat(Math.abs(valor), 0, '.', ',');
           }
           if (formato === 'soles') {
             return Math.abs(valor) >= 1_000_000
               ? `${(valor / 1_000_000).toFixed(1)} M`
               : Math.abs(valor) >= 1_000
-              ? `${(valor / 1_000).toFixed(0)} k`
-              : Highcharts.numberFormat(valor, 0, '.', ',');
+                ? `${(valor / 1_000).toFixed(0)} k`
+                : Highcharts.numberFormat(valor, 0, '.', ',');
           }
           return Highcharts.numberFormat(valor, 0, '.', ',');
         },
@@ -151,7 +169,12 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
           ...(esApilado ? { color: '#ffffff' } : {}),
         },
       },
-      ...(forma === 'linea' ? { connectNulls: true, marker: { enabled: true, radius: 4, symbol: simbolos[i % simbolos.length] } } : {}),
+      ...(forma === 'linea'
+        ? {
+            connectNulls: true,
+            marker: { enabled: true, radius: 4, symbol: simbolos[i % simbolos.length] },
+          }
+        : {}),
     };
   });
 
@@ -189,7 +212,10 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
     },
     yAxis: [
       {
-        title: { text: bloque.tituloEjeY ?? 'En miles', style: { ...estiloTexto, fontWeight: 'bold' } },
+        title: {
+          text: bloque.tituloEjeY ?? 'En miles',
+          style: { ...estiloTexto, fontWeight: 'bold' },
+        },
         labels: { formatter: formateadorEjeValor, style: estiloTexto },
         gridLineColor: linea,
         ...(esApilado
@@ -206,8 +232,8 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
                     absVal >= 1_000_000
                       ? `${(val / 1_000_000).toFixed(1)} M`
                       : absVal >= 1_000
-                      ? `${(val / 1_000).toFixed(1)} k`
-                      : Highcharts.numberFormat(val, 0, '.', ',');
+                        ? `${(val / 1_000).toFixed(1)} k`
+                        : Highcharts.numberFormat(val, 0, '.', ',');
                   const bgColor = this.isNegative ? '#ef4444' : '#10b981';
                   return `<div style="background-color:${bgColor}; color:#ffffff; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:10px; box-shadow:0 1px 2px rgba(0,0,0,0.2);">${texto}</div>`;
                 },
@@ -217,7 +243,12 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
       },
       {
         title: {
-          text: secundarias.length > 0 ? (ejeSecundarioEnPorcentaje ? '%' : undefined) : (bloque.tituloEjeY ?? 'En miles'),
+          text:
+            secundarias.length > 0
+              ? ejeSecundarioEnPorcentaje
+                ? '%'
+                : undefined
+              : (bloque.tituloEjeY ?? 'En miles'),
           style: { ...estiloTexto, fontWeight: 'bold' },
         },
         labels: ejeSecundarioEnPorcentaje
@@ -253,12 +284,22 @@ export function opcionesMixto(bloque: BloqueGrafico, oscuro: boolean, config: Op
 }
 
 /** Torta/dona: leyenda abajo, sin etiquetas sobre las porciones. */
-export function opcionesPie(porciones: readonly PorcionGrafico[], oscuro: boolean, config: OpcionesGrafico = {}): Options {
+export function opcionesPie(
+  porciones: readonly PorcionGrafico[],
+  oscuro: boolean,
+  config: OpcionesGrafico = {},
+): Options {
   const base = opcionesBase(oscuro, config.fondoTransparente ?? false);
   return {
     ...base,
     chart: { ...base.chart, type: 'pie' },
-    legend: { ...base.legend, enabled: true, align: 'center', verticalAlign: 'bottom', layout: 'horizontal' },
+    legend: {
+      ...base.legend,
+      enabled: true,
+      align: 'center',
+      verticalAlign: 'bottom',
+      layout: 'horizontal',
+    },
     plotOptions: {
       pie: {
         showInLegend: true,

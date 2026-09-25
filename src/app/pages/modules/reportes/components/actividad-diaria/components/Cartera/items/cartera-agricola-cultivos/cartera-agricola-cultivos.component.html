@@ -39,10 +39,25 @@
       @if (totales().length > 0) {
         <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
           @for (t of totales(); track t.etiqueta) {
-            <div class="agro-kpi flex flex-col justify-between gap-5">
-              <span class="agro-kpi__label">{{ t.etiqueta }}</span>
+            <div class="kpi-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col justify-between gap-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] truncate">
+                  {{ t.etiqueta }}
+                </span>
+                @if (t.senal !== 0) {
+                  <span
+                    class="flex items-center gap-1 text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full"
+                    [class.trend-badge-positive]="t.senal > 0"
+                    [class.trend-badge-negative]="t.senal < 0"
+                    [attr.aria-label]="'Variación frente al mes anterior: ' + (t.actual - t.anterior | number: '1.0-0')"
+                  >
+                    {{ t.actual - t.anterior | number: '1.0-0' }}
+                    <i class="pi text-[10px]" [class.pi-arrow-up]="t.senal > 0" [class.pi-arrow-down]="t.senal < 0" aria-hidden="true"></i>
+                  </span>
+                }
+              </div>
 
-              <span class="agro-kpi__value">
+              <span class="text-[20px] sm:text-[24px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums">
                 @if (t.formato === 'moneda') {
                   S/ {{ t.actual | number: '1.0-0' }}
                 } @else {
@@ -50,26 +65,9 @@
                 }
               </span>
 
-              <div class="agro-kpi__footer flex flex-wrap items-center justify-between gap-2">
-                <span class="agro-kpi__previous"
-                  >Mes anterior: {{ t.anterior | number: '1.0-0' }}</span
-                >
-                @if (t.senal !== 0) {
-                  <span
-                    class="agro-kpi__trend inline-flex items-center gap-1"
-                    [class.agro-kpi__trend--positive]="t.senal > 0"
-                    [class.agro-kpi__trend--negative]="t.senal < 0"
-                  >
-                    <i
-                      class="pi text-[10px]"
-                      [class.pi-arrow-up]="t.senal > 0"
-                      [class.pi-arrow-down]="t.senal < 0"
-                      aria-hidden="true"
-                    ></i>
-                    {{ t.actual - t.anterior | number: '1.0-0' }}
-                  </span>
-                }
-              </div>
+              <span class="text-[11px] sm:text-[12px] font-medium text-[var(--mis-text-secondary)] tabular-nums">
+                Mes anterior: {{ t.anterior | number: '1.0-0' }}
+              </span>
             </div>
           }
         </section>

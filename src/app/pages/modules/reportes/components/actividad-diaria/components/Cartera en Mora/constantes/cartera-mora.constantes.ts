@@ -87,3 +87,77 @@ export const CORTES_TOP_CERO_CUOTAS = [
 
 /** `list-cero-cuotas`, host paginado `cra-V10`, con su filtro `tipcuota`. */
 export const COD_BASE_GESTION = 'LCCUOTANUEVA_01';
+
+/**
+ * `repositorio/cero-cuotas` — "Dashboard en Revisión". Va por `table.regular`
+ * con `fecha` (con guiones), no por el motor mixto.
+ */
+export const COD_DASHBOARD_REVISION = ['REP_CERCUOT_01', 'REP_CERCUOT_02'] as const;
+
+/** Complementos del Dashboard en Revisión incorporados en STG. */
+export const COD_DASHBOARD_REVISION_COMPLEMENTOS = {
+  /** Las cuatro KPI de cabecera. */
+  kpis: 'RS_CARD_ZCUO_01',
+  /** Tabla navegable de asesores. */
+  topAsesores: 'RS_TOP_ZCUO_01',
+  /** Mapas de calor por año de desembolso. */
+  mapasCalor: ['GRAF_ZCUO_03', 'GRAF_ZCUO_04'],
+} as const;
+
+export interface SerieDashboardRevision {
+  readonly nombre: string;
+  readonly columna: number;
+  readonly color: string;
+}
+
+export interface GraficoDashboardRevision {
+  readonly titulo: string;
+  readonly bloque: 0 | 1;
+  readonly series: readonly SerieDashboardRevision[];
+  /** Los saldos se dividen entre 1.000.000, igual que el legado. */
+  readonly enMillones?: boolean;
+}
+
+/** Los cuatro gráficos que compone el dashboard legacy. */
+export const GRAFICOS_DASHBOARD_REVISION: readonly GraficoDashboardRevision[] = [
+  {
+    titulo: 'Cero Cuotas Nuevo Ingreso (N°)',
+    bloque: 0,
+    series: [
+      { nombre: 'Total Nro', columna: 4, color: '#a6a6a6' },
+      { nombre: 'Nuevo Ingreso', columna: 2, color: '#4472c4' },
+      { nombre: 'Mantiene', columna: 6, color: '#ffc000' },
+    ],
+  },
+  {
+    titulo: 'Cero Cuotas Nuevo Ingreso (S/MM)',
+    bloque: 0,
+    enMillones: true,
+    series: [
+      { nombre: 'Total Saldo', columna: 5, color: '#a6a6a6' },
+      { nombre: 'Nuevo Ingreso', columna: 3, color: '#4472c4' },
+      { nombre: 'Mantiene', columna: 7, color: '#ffc000' },
+    ],
+  },
+  {
+    titulo: 'Nuevo Ingreso x Tramos de Atraso (N°)',
+    bloque: 1,
+    series: [
+      { nombre: '1. <=8 días', columna: 2, color: '#4472c4' },
+      { nombre: '2. <9 - 15 días', columna: 4, color: '#00b0f0' },
+      { nombre: '3. <16 - 30 días', columna: 6, color: '#ffc000' },
+      { nombre: '4. >31 días', columna: 8, color: '#e53935' },
+    ],
+  },
+  {
+    titulo: 'Nuevo Ingreso x Tramos de Atraso (S/MM)',
+    bloque: 1,
+    enMillones: true,
+    series: [
+      { nombre: '1. <=8 días', columna: 3, color: '#4472c4' },
+      { nombre: '2. <9 - 15 días', columna: 5, color: '#00b0f0' },
+      { nombre: '3. <16 - 30 días', columna: 7, color: '#ffc000' },
+      { nombre: '4. >31 días', columna: 9, color: '#e53935' },
+    ],
+  },
+];

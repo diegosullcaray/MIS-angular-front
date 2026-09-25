@@ -7,6 +7,7 @@ import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inli
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { SelectorSectoristaDialogComponent } from '../../ui/selector-sectorista-dialog/selector-sectorista-dialog.component';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
+import { ImagenAmpliableDirective } from '../../../../../shared/ui/imagen-ampliable/imagen-ampliable.directive';
 import { CategorizacionService } from '../../services/categorizacion.service';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 import type {
@@ -29,6 +30,7 @@ import type { NodoJerarquiaAncla, SectoristaItem } from '../../models/colaborado
     EmptyStateComponent,
     SelectorSectoristaDialogComponent,
     WindowPanelComponent,
+    ImagenAmpliableDirective,
   ],
   templateUrl: './categorizacion-dashboard.component.html',
 })

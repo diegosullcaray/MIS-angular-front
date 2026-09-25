@@ -81,6 +81,14 @@ export const CARTERA_EN_MORA_ROUTES: Routes = [
       import('./components/Cero Cuotas Nuevas/items/dashboard/dashboard.component').then((c) => c.CeroCuotasDashboardComponent),
   },
   {
+    /** Legado `repositorio/cero-cuotas` (`REP_CERCUOT_01` y `_02`). */
+    path: 'repositorio/actividad-diaria/mora/cero-cuotas',
+    loadComponent: () =>
+      import('./components/Cero Cuotas Nuevas/items/dashboard-revision/dashboard-revision.component').then(
+        (c) => c.CeroCuotasDashboardRevisionComponent,
+      ),
+  },
+  {
     /** Legado `cmd-cerocuotanueva` (`CMCUONUEV`, bloques `_01` y `_02`). */
     path: 'leg/com/rda/adm/cmd-cerocuotanueva',
     loadComponent: () =>

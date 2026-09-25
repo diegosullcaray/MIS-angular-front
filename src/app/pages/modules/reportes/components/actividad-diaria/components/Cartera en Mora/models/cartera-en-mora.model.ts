@@ -43,3 +43,13 @@ export const OPCIONES_PRODUCTO_NUEVO_INGRESO: OpcionFiltro[] = [
   { id: '21', desc: 'NEGOCIOS FAE MUJER' },
 ];
 export const PRODUCTO_NUEVO_INGRESO_POR_DEFECTO = '0';
+
+/** Una tarjeta del bloque `RS_CARD_ZCUO_01` del dashboard Cero Cuotas. */
+export interface KpiCeroCuotas {
+  etiqueta: string;
+  actual: number;
+  anterior: number;
+  variacion: number;
+  /** En tramos de mora, bajar es favorable; en saldos, subir lo es. */
+  favorableCuandoBaja: boolean;
+}

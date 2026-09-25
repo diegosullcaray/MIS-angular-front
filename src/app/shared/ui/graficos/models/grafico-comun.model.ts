@@ -27,6 +27,16 @@ export interface BloqueGrafico {
   apilado?: boolean;
 }
 
+/** Datos neutrales para un heatmap de Highcharts. */
+export interface MapaCalorGrafico {
+  titulo: string;
+  categoriasX: string[];
+  categoriasY: string[];
+  valores: number[][];
+  /** El legado puede mostrar la primera categoría arriba o abajo. */
+  ejeYInvertido?: boolean;
+}
+
 /** Una porción de un gráfico de torta/dona (`<app-grafico-pie>`). */
 export interface PorcionGrafico {
   nombre: string;

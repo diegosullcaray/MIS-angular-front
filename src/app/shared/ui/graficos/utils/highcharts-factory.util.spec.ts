@@ -17,15 +17,33 @@ function ejeSecundario(opciones: ReturnType<typeof opcionesMixto>): YAxisOptions
 
 describe('opcionesMixto: eje secundario', () => {
   it('por defecto solo las series con "%" en el nombre van al eje secundario', () => {
-    const opciones = opcionesMixto(bloque([
-      { nombre: 'Saldo', datos: [1, 2] },
-      { nombre: 'Avance %', datos: [0.5, 0.6] },
-    ]), false, { tipo: 'columna' });
+    const opciones = opcionesMixto(
+      bloque([
+        { nombre: 'Saldo', datos: [1, 2] },
+        { nombre: 'Avance %', datos: [0.5, 0.6] },
+      ]),
+      false,
+      { tipo: 'columna' },
+    );
 
     const [saldo, avance] = seriesDe(opciones);
     expect(saldo).toMatchObject({ type: 'column', yAxis: 0 });
     expect(avance).toMatchObject({ type: 'spline', yAxis: 1 });
     expect(ejeSecundario(opciones).visible).toBe(true);
+  });
+
+  it('quita el contorno por defecto de Highcharts de las etiquetas de línea', () => {
+    const opciones = opcionesMixto(
+      bloque([
+        { nombre: 'Saldo', datos: [1, 2] },
+        { nombre: 'Avance %', datos: [0.5, 0.6] },
+      ]),
+      false,
+      { tipo: 'columna' },
+    );
+
+    const avance = seriesDe(opciones)[1] as { dataLabels?: { style?: { textOutline?: string } } };
+    expect(avance.dataLabels?.style?.textOutline).toBe('none');
   });
 
   /**
@@ -35,10 +53,14 @@ describe('opcionesMixto: eje secundario', () => {
    * órdenes de magnitud menor— queda aplastada contra el cero.
    */
   it('`secundaria` manda al eje secundario una serie que NO es de porcentaje', () => {
-    const opciones = opcionesMixto(bloque([
-      { nombre: 'Saldo Vigente', datos: [2_400_000_000, 2_410_000_000], secundaria: true },
-      { nombre: 'Var. Saldo Vigente', datos: [10_000, -5_000] },
-    ]), false, { tipo: 'columna' });
+    const opciones = opcionesMixto(
+      bloque([
+        { nombre: 'Saldo Vigente', datos: [2_400_000_000, 2_410_000_000], secundaria: true },
+        { nombre: 'Var. Saldo Vigente', datos: [10_000, -5_000] },
+      ]),
+      false,
+      { tipo: 'columna' },
+    );
 
     const [saldo, variacion] = seriesDe(opciones);
     expect(saldo).toMatchObject({ type: 'spline', yAxis: 1 });
@@ -46,37 +68,51 @@ describe('opcionesMixto: eje secundario', () => {
   });
 
   it('ese eje NO se rotula en "%" cuando lo que va ahí no es un porcentaje', () => {
-    const opciones = opcionesMixto(bloque([
-      { nombre: 'Saldo Vigente', datos: [1], secundaria: true },
-      { nombre: 'Var. Saldo Vigente', datos: [2] },
-    ]), false, { tipo: 'columna' });
+    const opciones = opcionesMixto(
+      bloque([
+        { nombre: 'Saldo Vigente', datos: [1], secundaria: true },
+        { nombre: 'Var. Saldo Vigente', datos: [2] },
+      ]),
+      false,
+      { tipo: 'columna' },
+    );
 
     expect(ejeSecundario(opciones).labels).not.toHaveProperty('format');
     expect(ejeSecundario(opciones).labels).toHaveProperty('formatter');
   });
 
   it('`secundaria: false` gana sobre el "%" del nombre', () => {
-    const opciones = opcionesMixto(bloque([
-      { nombre: 'Avance %', datos: [1], secundaria: false },
-      { nombre: 'Saldo', datos: [2] },
-    ]), false, { tipo: 'columna' });
+    const opciones = opcionesMixto(
+      bloque([
+        { nombre: 'Avance %', datos: [1], secundaria: false },
+        { nombre: 'Saldo', datos: [2] },
+      ]),
+      false,
+      { tipo: 'columna' },
+    );
 
     expect(seriesDe(opciones)[0]).toMatchObject({ type: 'column', yAxis: 0 });
     expect(ejeSecundario(opciones).visible).toBe(false);
   });
 
   it('sin nada en el eje secundario, ese eje queda oculto', () => {
-    const opciones = opcionesMixto(bloque([{ nombre: 'Saldo', datos: [1] }]), false, { tipo: 'columna' });
+    const opciones = opcionesMixto(bloque([{ nombre: 'Saldo', datos: [1] }]), false, {
+      tipo: 'columna',
+    });
 
     expect(ejeSecundario(opciones).visible).toBe(false);
   });
 
   /** En modo `linea` todas las series comparten el eje de valores. */
   it('el modo `linea` ignora `secundaria`: no hay eje secundario', () => {
-    const opciones = opcionesMixto(bloque([
-      { nombre: 'Saldo', datos: [1], secundaria: true },
-      { nombre: 'Avance %', datos: [2] },
-    ]), false, { tipo: 'linea' });
+    const opciones = opcionesMixto(
+      bloque([
+        { nombre: 'Saldo', datos: [1], secundaria: true },
+        { nombre: 'Avance %', datos: [2] },
+      ]),
+      false,
+      { tipo: 'linea' },
+    );
 
     expect(seriesDe(opciones).every((s) => (s as { yAxis?: number }).yAxis === 0)).toBe(true);
     expect(ejeSecundario(opciones).visible).toBe(false);

@@ -96,4 +96,24 @@ describe('CarteraAgricolaCultivosComponent', () => {
     expect(fixture.componentInstance['destacarNodoActivo']({ htipcod: 18, cod_rel: 'AG-2' })).toBe(false);
   });
 
+  it('muestra las tarjetas KPI estandar con el indicador de movimiento mensual', () => {
+    const fixture = TestBed.createComponent(CarteraAgricolaCultivosComponent);
+    fixture.componentInstance['nivelActual'].set(NODO);
+    fixture.detectChanges();
+    fixture.componentInstance['reporte'].set({
+      tabla: { columnas: [], filas: [] },
+      totales: [
+        { etiqueta: 'Saldo Capital', formato: 'moneda', actual: 1200, anterior: 1000, senal: 1 },
+        { etiqueta: 'Clientes', formato: 'entero', actual: 80, anterior: 100, senal: -1 },
+      ],
+    });
+    fixture.detectChanges();
+
+    const tarjetas = (fixture.nativeElement as HTMLElement).querySelectorAll('.kpi-card');
+    expect(tarjetas).toHaveLength(2);
+    expect(tarjetas[0].textContent).toContain('200');
+    expect(tarjetas[0].querySelector('.trend-badge-positive')).toBeTruthy();
+    expect(tarjetas[1].querySelector('.trend-badge-negative')).toBeTruthy();
+  });
+
 });
