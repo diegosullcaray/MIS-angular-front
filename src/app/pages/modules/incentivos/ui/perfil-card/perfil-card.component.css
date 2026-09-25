@@ -46,7 +46,7 @@
   height: 56px;
   padding: 2px;
   border-radius: var(--mis-radius-full);
-  background: linear-gradient(135deg, var(--mis-primary), var(--mis-secondary));
+  background: var(--mis-inc-avatar);
   box-shadow: var(--mis-shadow-sm);
 }
 
@@ -95,7 +95,7 @@
   white-space: nowrap;
 }
 
-/* Semáforo como chips de vidrio. */
+/* Semáforo como chips de vidrio (escritorio): ícono + nombre. */
 .semaforo {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
@@ -133,6 +133,39 @@
   -webkit-box-orient: vertical;
 }
 
+/* Teléfono y tablet (`lt-md` del legado, < 960 px): una fila de íconos, sin texto. */
+@media (max-width: 959px) {
+  .semaforo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: var(--mis-space-1, 4px);
+  }
+
+  .semaforo-chip {
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: var(--mis-radius-full);
+  }
+
+  .semaforo-icono {
+    font-size: 20px;
+  }
+
+  .semaforo-texto,
+  .perfil-nota--larga {
+    display: none;
+  }
+}
+
+@media (min-width: 960px) {
+  .perfil-nota--corta {
+    display: none;
+  }
+}
+
 .perfil-nota {
   margin: 0;
   font-size: 10px;
@@ -147,9 +180,5 @@
 
   .perfil-titulo {
     font-size: 15px;
-  }
-
-  .semaforo {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

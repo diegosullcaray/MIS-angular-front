@@ -20,12 +20,15 @@
           </div>
         </div>
 
-        <!-- Semáforo: el color del ícono es el estado de la variable. -->
+        <!-- Semáforo: el color del ícono es el estado de la variable. En teléfono y tablet
+             (< 960 px) van solo los íconos, como el `fxHide.lt-md` del legado; el nombre sigue
+             en el tooltip y para lectores de pantalla. -->
         <ul class="semaforo" aria-label="Estado de las variables">
           @for (item of semaforoVisible(); track item.id) {
-            <li class="semaforo-chip">
-              <i [class]="item.icono + ' semaforo-icono ' + claseIcono(item.val)" aria-hidden="true"></i>
+            <li class="semaforo-chip" [title]="item.des + ': ' + estadoTexto(item.val)">
+              <i [class]="item.icono + ' semaforo-icono'" [style.color]="colorEstado(item.val)" aria-hidden="true"></i>
               <span class="semaforo-texto">{{ item.des }}</span>
+              <span class="sr-only">{{ estadoTexto(item.val) }}</span>
             </li>
           }
         </ul>
@@ -37,8 +40,10 @@
       </div>
     </div>
 
+    <!-- Como el legado (`layout.isMobile`): en teléfono y tablet va la versión corta. -->
     <p class="perfil-nota">
-      *Los cálculos son referenciales y están sujetos a variaciones al final de mes y ajustes particulares de la normativa.
+      <span class="perfil-nota--larga">*Los cálculos son referenciales y están sujetos a variaciones al final de mes y ajustes particulares de la normativa.</span>
+      <span class="perfil-nota--corta">*Los cálculos son referenciales y están sujetos a variaciones.</span>
     </p>
   </div>
 }

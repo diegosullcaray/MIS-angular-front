@@ -51,7 +51,7 @@ describe('DetalleBancarizacionDialogComponent', () => {
     incentivosFalso.obtenerBancarizacion.mockReturnValue(of({ filas: [], totales: null }));
     const fixture = crear();
 
-    expect(fixture.componentInstance['claseIndicador'](1)).toContain('success');
+    expect(fixture.componentInstance['claseIndicador'](1)).toContain('--mis-inc-positivo');
     expect(fixture.componentInstance['claseIndicador'](0)).toContain('tertiary');
   });
 

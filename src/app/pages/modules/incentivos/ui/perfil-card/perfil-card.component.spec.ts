@@ -48,11 +48,17 @@ describe('PerfilCardComponent', () => {
     expect(fixture.componentInstance['semaforoVisible']().map((s) => s.id)).toEqual(['car']);
   });
 
-  it('claseIcono() distingue mal(0)/regular(1)/bien(otro)', () => {
+  it('colorEstado() usa la paleta del legado: 0 rojo, 1 verde, otro gris', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['claseIcono'](0)).toContain('danger');
-    expect(fixture.componentInstance['claseIcono'](1)).toContain('warning');
-    expect(fixture.componentInstance['claseIcono'](2)).toContain('success');
+    expect(fixture.componentInstance['colorEstado'](0)).toBe('var(--mis-inc-semaforo-mal)');
+    expect(fixture.componentInstance['colorEstado'](1)).toBe('var(--mis-inc-semaforo-bien)');
+    expect(fixture.componentInstance['colorEstado'](2)).toBe('var(--mis-inc-semaforo-neutro)');
+  });
+
+  it('cada ícono del semáforo lleva el nombre y el estado en su tooltip, para cuando el texto no se ve', () => {
+    const chip = (crear().nativeElement as HTMLElement).querySelector('.semaforo-chip');
+    expect(chip?.getAttribute('title')).toBe('Cartera: cumple');
+    expect(chip?.querySelector('.sr-only')?.textContent?.trim()).toBe('cumple');
   });
 
   // El nivel se cambia solo desde la barra de la ventana ("Seleccionar nivel"):

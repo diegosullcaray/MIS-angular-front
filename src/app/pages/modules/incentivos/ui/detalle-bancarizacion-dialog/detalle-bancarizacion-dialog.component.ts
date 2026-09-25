@@ -54,7 +54,7 @@ export class DetalleBancarizacionDialogComponent {
   }
 
   protected claseIndicador(valor: number): string {
-    return valor === 1 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-text-tertiary)]';
+    return valor === 1 ? 'text-[var(--mis-inc-positivo)]' : 'text-[var(--mis-text-tertiary)]';
   }
 
   protected cerrar(): void {

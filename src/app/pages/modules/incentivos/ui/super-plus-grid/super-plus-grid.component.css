@@ -16,7 +16,21 @@
   border: 1px solid var(--mis-tile-border);
   border-radius: var(--mis-radius-lg);
   box-shadow: inset 0 1px 0 var(--mis-glass-border);
+  color: var(--mis-inc-sp-texto);
   transition: transform var(--mis-transition-fast), border-color var(--mis-transition-fast);
+}
+
+/* Colores del legado (`super-plus.component.scss`). */
+.super-plus-item--normal {
+  background: var(--mis-inc-sp-activo);
+}
+
+.super-plus-item--negativo {
+  background: var(--mis-inc-sp-negativo);
+}
+
+.super-plus-item--inactivo {
+  background: var(--mis-inc-sp-inactivo);
 }
 
 .super-plus-item:disabled {
@@ -43,7 +57,7 @@
   width: 32px;
   height: 32px;
   font-size: 15px;
-  background: color-mix(in srgb, var(--mis-surface) 70%, transparent);
+  background: color-mix(in srgb, var(--mis-inc-sp-texto) 22%, transparent);
   border-radius: var(--mis-radius-full);
 }
 
