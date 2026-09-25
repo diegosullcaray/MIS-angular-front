@@ -72,6 +72,12 @@ export class TablaReporteComponent {
   protected readonly claseBarraEsqueleto = CLASE_BARRA_ESQUELETO;
   protected readonly columnasEsqueleto = columnasEsqueleto;
 
+  /**
+   * Filas que pinta la tabla: mientras carga, ninguna, así se ve el esqueleto (`emptymessage`)
+   * también al recargar (otro nivel, filtro, página) y no quedan las filas viejas sin indicador.
+   */
+  protected readonly filasMostradas = computed(() => (this.cargando() ? [] : this.filas()));
+
   readonly encabezados = input.required<FilaEncabezadoReporte[]>();
   readonly filas = input.required<FilaReporte[]>();
   readonly cargando = input(false);

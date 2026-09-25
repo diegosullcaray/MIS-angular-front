@@ -58,7 +58,7 @@
           <app-tabla-dinamica
             [columnas]="topAsesores().columnas"
             [filas]="topAsesores().filas"
-            [cargando]="false"
+            [cargando]="cargando()"
             [columnasClicables]="['descripcion']"
             (celdaSeleccionada)="onTopAsesorSeleccionado($event)"
           />

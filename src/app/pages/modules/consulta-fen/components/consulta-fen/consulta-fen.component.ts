@@ -8,6 +8,7 @@ import { Subject, catchError, debounceTime, distinctUntilChanged, filter, map, o
 import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
+import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import {
   COLUMNAS_FEN,
   COLUMNAS_FEN_MOVIL,
@@ -23,7 +24,7 @@ import { esRiesgoAlto } from '../../utils/consulta-fen.util';
   standalone: true,
   imports: [
     FormsModule, ButtonModule, InputTextModule, SelectModule, TagModule,
-    DataTableComponent, DataTableCellDirective, WindowPanelComponent,
+    DataTableComponent, DataTableCellDirective, WindowPanelComponent, ListSkeletonComponent,
   ],
   templateUrl: './consulta-fen.component.html',
 })

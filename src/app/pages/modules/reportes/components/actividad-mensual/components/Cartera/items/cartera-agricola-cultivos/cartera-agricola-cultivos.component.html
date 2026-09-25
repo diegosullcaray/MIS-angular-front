@@ -170,6 +170,7 @@
         <app-data-table
           [columns]="columnasDetalle"
           [data]="d.filas"
+          [loading]="cargandoGraficos()"
           [searchFields]="busquedaDetalle"
           searchPlaceholder="Buscar por producto, cliente, estado o cuenta..."
           emptyMessage="No se encontraron clientes para este cultivo."

@@ -32,11 +32,11 @@
 
   <!-- Tabla diaria (bloque _01 del legado) -->
   <div class="mis-card p-3 overflow-x-auto">
-    <app-tabla-reporte [encabezados]="tablaDetalle().headers" [filas]="tablaDetalle().body" [cargando]="false" />
+    <app-tabla-reporte [encabezados]="tablaDetalle().headers" [filas]="tablaDetalle().body" [cargando]="cargando()" />
   </div>
 
   <!-- Tabla resumen (bloque _02 del legado) -->
   <div class="mis-card p-3 overflow-x-auto">
-    <app-tabla-reporte [encabezados]="tablaSimple().headers" [filas]="tablaSimple().body" [cargando]="false" />
+    <app-tabla-reporte [encabezados]="tablaSimple().headers" [filas]="tablaSimple().body" [cargando]="cargando()" />
   </div>
 </app-window-panel>

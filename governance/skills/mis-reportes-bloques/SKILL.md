@@ -29,12 +29,17 @@ Esta skill no replica esas tablas.
    Si las filas son niveles de la jerarquía, drill down según el estándar: selector oculto,
    `<app-ruta-jerarquica>` como migas (sin botón "Volver") y primera columna clicable solo si hay
    a dónde bajar. `npm run audit:governance` falla si se rompen.
-6. Consultas fuera de la base: cancelación anterior + destrucción, limpieza de
+6. Carga: cada tabla recibe el estado de carga de SUS datos (`[cargando]`, `[loading]` en
+   `app-data-table`) y muestra su esqueleto dentro de su tarjeta; el spinner global se corta con la
+   primera respuesta. Varios bloques: `BloqueReporteService.regulares()` los entrega a medida que
+   llegan (`TABLA_PENDIENTE` en los que faltan). Nunca `[cargando]="false"` fijo (regla
+   `tabla-con-esqueleto`).
+7. Consultas fuera de la base: cancelación anterior + destrucción, limpieza de
    resultados obsoletos, error persistente y reintento.
-7. Pruebas focalizadas para datos, vacío, payload inválido/error y respuestas fuera
+8. Pruebas focalizadas para datos, vacío, payload inválido/error y respuestas fuera
    de orden. E2E de flujo para cambios sensibles; aplicar el
    [proceso según riesgo](../../docs/development/quality-gates.md).
-8. Regenerar inventario si cambian rutas/pruebas, ejecutar verificaciones y actualizar
+9. Regenerar inventario si cambian rutas/pruebas, ejecutar verificaciones y actualizar
    contrato solo si cambió realmente.
 
 Para una cifra incorrecta, seguir [linaje](../../docs/data/lineage.md), no modificar

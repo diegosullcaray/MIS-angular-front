@@ -11,6 +11,12 @@ fusionarse.
 | `<app-tabla-dinamica>` | Columnas **anidadas** (`subs`) y semáforos por celda, del motor `table.regular` | `ColumnaDinamica` |
 | `<app-editable-table>` | Celdas **editables** en línea, con un nivel de agrupación | `ColumnaTabla` |
 
+**Todas muestran esqueleto mientras cargan** (`[cargando]`, o `[loading]` en `app-data-table`):
+no pintan filas —tampoco las de la consulta anterior— y dibujan filas de esqueleto dentro de la
+tarjeta; si todavía no llegaron las columnas, usan columnas de relleno. Es obligatorio enlazar ese
+estado a la carga real de los datos (`npm run audit:governance`, regla `tabla-con-esqueleto`).
+Ver [Estándar de reportes](../../../../../governance/docs/components/estandar-reportes.md).
+
 Todas resaltan la fila al pasar el cursor (`[rowHover]="true"`, color `--mis-table-row-hover-bg`), como el legado. Ver [Estándar de reportes](../../../../../governance/docs/components/estandar-reportes.md).
 
 `<app-data-table>` vive aparte porque es la de propósito general: si tu tabla es plana y necesitás
@@ -50,7 +56,7 @@ import { TABLA_VACIA } from '…/pages/modules/reportes/models/tabla-reporte.mod
 |---|---|---|---|
 | `encabezados` | `FilaEncabezadoReporte[]` | — | **Requerido.** Una entrada por fila de cabecera |
 | `filas` | `FilaReporte[]` | — | **Requerido** |
-| `cargando` | `boolean` | `false` | Estado de carga |
+| `cargando` | `boolean` | `false` | Estado de carga: mientras es `true` pinta filas de esqueleto en vez de las filas (ver abajo) |
 | `seleccionable` | `boolean` | `false` | Hace las filas clicables |
 
 | Output | Cuándo |
@@ -76,7 +82,7 @@ no sus celdas.
 |---|---|---|---|
 | `columnas` | `ColumnaDinamica[]` | — | **Requerido.** Con `subs` para agrupar |
 | `filas` | `Record<string, unknown>[]` | — | **Requerido** |
-| `cargando` | `boolean` | `false` | Estado de carga |
+| `cargando` | `boolean` | `false` | Estado de carga: mientras es `true` pinta filas de esqueleto en vez de las filas (ver abajo) |
 | `colorearVariaciones` | `boolean` | `false` | Pinta los negativos en rojo |
 | `seleccionable` | `boolean` | `false` | Hace las filas clicables |
 
@@ -111,7 +117,7 @@ protected readonly puedeEditar = (fila: FilaLineaSimple, key: string) =>
 |---|---|---|---|
 | `columnas` | `ColumnaTabla[]` | — | **Requerido.** Con `hijos` para agrupar |
 | `filas` | `T[]` | `[]` | Filas |
-| `cargando` | `boolean` | `false` | Muestra skeletons |
+| `cargando` | `boolean` | `false` | Mientras es `true` pinta filas de esqueleto en vez de las filas |
 | `conCaption` | `boolean` | `false` | Proyecta un caption propio |
 | `esEditable` | `(fila, key) => boolean` | `() => false` | Qué celdas se pueden editar |
 

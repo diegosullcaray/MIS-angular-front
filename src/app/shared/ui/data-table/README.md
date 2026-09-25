@@ -73,7 +73,7 @@ Sirve también para columnas que no son un dato: definí la columna con un `fiel
 |---|---|---|---|
 | `columns` | `DataTableColumn[]` | — | **Requerido** |
 | `data` | `T[]` | — | **Requerido** |
-| `loading` | `boolean` | `false` | Estado de carga de `p-table` |
+| `loading` | `boolean` | `false` | Estado de carga: mientras es `true` pinta filas de esqueleto en vez de las filas. Obligatorio enlazarlo (regla `tabla-con-esqueleto`) |
 | `rows` | `number` | `10` | Filas por página |
 | `rowsPerPageOptions` | `number[]` | `[10, 25, 50]` | Opciones del paginador |
 | `scrollHeight` | `string` | — | Alto con scroll interno (ej. `'60vh'`) |

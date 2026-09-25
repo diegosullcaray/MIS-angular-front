@@ -12,7 +12,7 @@
   <app-data-table
     [columns]="columnas"
     [data]="resultados()"
-    [attr.aria-busy]="cargando()"
+    [loading]="cargando()"
     [rows]="8"
     [rowsPerPageOptions]="[8, 15, 25]"
     [searchFields]="['HCTACLI', 'HDESCLI']"

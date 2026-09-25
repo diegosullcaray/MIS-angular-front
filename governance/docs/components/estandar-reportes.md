@@ -53,6 +53,18 @@ con controles sueltos.
   (`shared/ui/tablas/max-filas.directive.ts`), que mide hasta el pie de la fila 16 y aplica el tope
   `FRACCION_MAX_ALTO_VENTANA`. Un `p-table` propio lleva `appMaxFilas` y `[scrollable]="true"`; no se fija un
   `scrollHeight` en píxeles.
+- **Esqueleto mientras carga, siempre dentro de la tarjeta de la tabla.** Toda tabla recibe el
+  estado de carga de SUS datos: `[cargando]` en `app-tabla-reporte`, `app-tabla-dinamica` y
+  `app-editable-table`; `[loading]` en `app-data-table`. Mientras es `true` la tabla no pinta filas
+  (ni las de la consulta anterior) y dibuja filas de esqueleto; sin columnas todavía, usa columnas
+  de relleno. Nunca un `false` fijo, nunca "Sin datos" mientras carga, nunca un spinner local.
+  - Es la otra mitad de la **carga independiente**: el spinner global se corta con la primera
+    respuesta de la consulta, así que las tablas que siguen esperando se ven por su esqueleto.
+  - En un reporte de varias tablas, cada una lleva SU estado: el bloque pendiente
+    (`TABLA_PENDIENTE`, o `cargando` del bloque en `app-reporte-simple`), no uno general que
+    tape las que ya llegaron.
+  - Un `p-table` propio fuera de Reportes, si no puede usar una tabla compartida, cubre la carga con
+    `app-list-skeleton` o `p-skeleton` en el lugar de la tabla.
 - **El paginador es parte de la tabla**: va dentro de la misma tarjeta, pegado al pie de la tabla
   (como el `mat-paginator` del legado), nunca suelto debajo de ella.
 
@@ -210,6 +222,7 @@ CI) falla si un reporte las rompe.
 | Regla del auditor | Qué exige |
 |---|---|
 | `tabla-con-hover` | Todo `<p-table>` de reportes y de las tablas compartidas lleva `[rowHover]="true"` |
+| `tabla-con-esqueleto` | Toda tabla compartida en `pages/` enlaza su estado de carga (`[cargando]` / `[loading]`), y no con un `true`/`false` fijo |
 | `filtros-en-baldosa` | Un reporte con filtros propios los pone en `<app-grupo-filtros>` (o usa un armazón que ya lo hace) |
 | `nota-de-unidad-en-chip` | Ningún "Expresado en…" como texto suelto: va en `<app-chip-informativo>` |
 | `drill-down-con-migas` | Un reporte con el selector de jerarquía oculto usa `<app-ruta-jerarquica>`, no migas armadas a mano |

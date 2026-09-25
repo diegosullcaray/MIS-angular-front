@@ -33,7 +33,7 @@ Qué verifica cada compuerta, qué bloquea y cómo se maneja la deuda heredada: 
 |---|---|
 | [`crear-modulo.mjs`](./scripts/crear-modulo.mjs) | genera un módulo completo: estructura canónica, servicio contra Winder/Ant, los cuatro estados y specs que ya pasan |
 | [`ejecutar-pruebas.mjs`](./scripts/ejecutar-pruebas.mjs) | lanzador único de pruebas, auditorías y cadenas de verificación |
-| [`validar-gobernanza.mjs`](./scripts/validar-gobernanza.mjs) | motor de 17 reglas de arquitectura, seguridad y consistencia de rutas, con niveles y línea base |
+| [`validar-gobernanza.mjs`](./scripts/validar-gobernanza.mjs) | motor de 24 reglas de arquitectura, seguridad y consistencia de rutas, con niveles y línea base |
 | [`validar-documentacion.mjs`](./scripts/validar-documentacion.mjs) | enlaces, rutas y símbolos citados en `governance/` que ya no existen |
 | [`generar-inventario.mjs`](./scripts/generar-inventario.mjs) | deriva del código el inventario de módulos y de pruebas |
 | [`verificar-bundle.mjs`](./scripts/verificar-bundle.mjs) | controla el artefacto de producción: identidades, source maps, tokens, peso |

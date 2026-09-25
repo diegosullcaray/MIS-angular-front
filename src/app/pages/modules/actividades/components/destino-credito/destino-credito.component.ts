@@ -10,7 +10,6 @@ import { ActividadesService } from '../../services/actividades.service';
 import type { DestinoCreditoItem } from '../../models/actividades.model';
 import { DestinoCreditoDialogComponent } from '../../ui/destino-credito-dialog/destino-credito-dialog.component';
 import { DestinoCreditoInfoDialogComponent } from '../../ui/destino-credito-info-dialog/destino-credito-info-dialog.component';
-import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { DataTableComponent } from '../../../../../shared/ui/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
@@ -57,7 +56,6 @@ const COLUMNAS: DataTableColumn[] = [
     TagModule,
     CardModule,
     TooltipModule,
-    ListSkeletonComponent,
     InlineErrorComponent,
     DestinoCreditoDialogComponent,
     DestinoCreditoInfoDialogComponent,

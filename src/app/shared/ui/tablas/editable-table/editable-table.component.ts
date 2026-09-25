@@ -6,6 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import type { CeldaEditadaEvent, ColumnaTabla, FilaTabla, TipoColumna } from '../models/tabla-editable.model';
 import { formatearNumero } from '../../../utils/formato.util';
 import { MaxFilasDirective } from '../max-filas.directive';
+import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO, columnasEsqueleto } from '../esqueleto-tabla';
 
 /** Tabla editable genérica de Presupuesto — reemplaza al `stg-table` legado (`customComponentCell`/`customComponentStyler`/`onEditCell`) con el propio mecanismo de edición inline de PrimeNG (`pEditableColumn`/`p-cellEditor`). */
 @Component({
@@ -18,6 +19,12 @@ export class EditableTableComponent<T extends FilaTabla = FilaTabla> {
   readonly columnas = input.required<ColumnaTabla[]>();
   readonly filas = input<T[]>([]);
   readonly cargando = input(false);
+
+  protected readonly filasEsqueleto = FILAS_ESQUELETO;
+  protected readonly claseBarraEsqueleto = CLASE_BARRA_ESQUELETO;
+  protected readonly columnasEsqueleto = columnasEsqueleto;
+  /** Mientras carga no pinta filas: se ve el esqueleto, también al recargar. */
+  protected readonly filasMostradas = computed(() => (this.cargando() ? [] : this.filas()));
   /** Dibuja la barra de caption con lo que proyecte la pantalla en `[tabla-caption]` (ej. el buscador de Responsables). */
   readonly conCaption = input(false);
   /** `() => false` (todo de solo lectura) si no se provee — ej. Comp. Prod. Monto/Ratio. */

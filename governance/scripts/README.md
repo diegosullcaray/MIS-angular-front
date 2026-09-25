@@ -43,7 +43,7 @@ node governance/scripts/ejecutar-pruebas.mjs ci --con-e2e
 
 ## 2. Auditor de gobernanza
 
-Motor de 17 reglas sobre `src/app`, `e2e/` y la línea base. Cada una declara id, nivel, qué verifica, **por qué** y a qué documento de `governance/docs/` responde.
+Motor de 24 reglas sobre `src/app`, `e2e/` y la línea base. Cada una declara id, nivel, qué verifica, **por qué** y a qué documento de `governance/docs/` responde.
 
 ```bash
 node governance/scripts/validar-gobernanza.mjs                  # informe

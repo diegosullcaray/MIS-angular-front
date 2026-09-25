@@ -61,7 +61,8 @@
         </header>
 
         @if (servicio.cargando()) {
-          <div class="grid min-h-60 place-items-center p-6 text-center text-sm text-[var(--mis-text-secondary)]"><span>Consultando matriz de riesgos…</span></div>
+          <!-- Esqueleto mientras consulta: el resultado puede ser una ficha o una tabla. -->
+          <div class="p-3 sm:p-4"><span class="sr-only">Consultando matriz de riesgos…</span><app-list-skeleton /></div>
         } @else if (servicio.error()) {
           <div class="grid min-h-60 place-items-center gap-3 p-6 text-center"><span class="text-sm text-[var(--mis-text-secondary)]">Revisa la consulta e intenta nuevamente.</span><p-button label="Reintentar" icon="pi pi-refresh" severity="secondary" (onClick)="reintentar()" /></div>
         } @else if (servicio.vacio()) {
@@ -85,7 +86,7 @@
           }
         } @else if (servicio.filas().length > 1) {
           <div class="overflow-x-auto p-3 sm:p-4">
-            <app-data-table [columns]="columnas()" [data]="servicio.filas()" [selectableRows]="true" [selectedRow]="seleccion()" [rows]="10" [searchFields]="['cod_ubi', 'des_dist', 'des_prov', 'des_dep']" searchPlaceholder="Buscar en los resultados..." (filaSeleccionada)="seleccionar($event)">
+            <app-data-table [columns]="columnas()" [data]="servicio.filas()" [loading]="servicio.cargando()" [selectableRows]="true" [selectedRow]="seleccion()" [rows]="10" [searchFields]="['cod_ubi', 'des_dist', 'des_prov', 'des_dep']" searchPlaceholder="Buscar en los resultados..." (filaSeleccionada)="seleccionar($event)">
               @for (indicador of indicadoresTabla; track indicador.campo) {
                 <ng-template [appDataTableCell]="indicador.campo" let-row>
                   <span class="inline-flex h-3 w-3 rounded-full sm:hidden" [style.background-color]="colorRiesgo(row[indicador.campo])" role="img" [attr.aria-label]="indicador.etiqueta + ': ' + row[indicador.campo]"></span>

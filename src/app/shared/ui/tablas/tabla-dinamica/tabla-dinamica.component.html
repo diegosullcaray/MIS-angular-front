@@ -3,7 +3,7 @@
      y dejaba dos indicadores para una sola espera. Mientras carga, la tabla
      pinta filas de esqueleto (carga independiente: el overlay global se va con
      la primera respuesta) y conserva `aria-busy` para los lectores de pantalla. -->
-<p-table appMaxFilas [value]="filas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm"
+<p-table appMaxFilas [value]="filasMostradas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm"
          [paginator]="filasPorPagina() > 0" [rows]="filasPorPagina() || filas().length" [showFirstLastIcon]="true" [alwaysShowPaginator]="false"
          [dataKey]="dataKey()" [expandedRowKeys]="expandedRowKeys()">
   <ng-template pTemplate="header">

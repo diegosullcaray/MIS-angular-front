@@ -17,4 +17,6 @@ export class BloquePanelComponent {
   /** Nota corta sobre la tabla (la unidad, p. ej.), como chip. */
   readonly chip = input('');
   readonly nota = input<readonly string[]>([]);
+  /** La tabla del bloque todavía está cargando: muestra su esqueleto. */
+  readonly cargando = input(false);
 }

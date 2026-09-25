@@ -358,6 +358,30 @@ const REGLAS = [
         ),
   },
   {
+    id: 'tabla-con-esqueleto',
+    nivel: 'error',
+    titulo: 'toda tabla compartida recibe su estado de carga (esqueleto mientras carga)',
+    doc: 'docs/components/estandar-reportes.md',
+    porque:
+      'con la carga independiente el spinner global se va con la primera respuesta: cada tabla que sigue esperando tiene que pintar su esqueleto dentro de su tarjeta. Sin `[cargando]` (o `[loading]` en `app-data-table`) la tabla muestra "Sin datos" o las filas viejas mientras carga; con un `false` fijo, nunca muestra el esqueleto.',
+    evaluar: (archivos) =>
+      archivos
+        .filter((a) => a.esPlantilla && a.ruta.startsWith('src/app/pages/'))
+        .flatMap((a) =>
+          coincidencias(a.contenido, /<app-(tabla-reporte|tabla-dinamica|editable-table|data-table)\b[^>]*>/g).flatMap((c) => {
+            const entrada = c.texto.startsWith('<app-data-table') ? 'loading' : 'cargando';
+            const enlace = new RegExp(`\\[${entrada}\\]\\s*=\\s*"([^"]*)"`).exec(c.texto);
+            if (!enlace) {
+              return [{ ruta: a.ruta, linea: c.linea, detalle: `tabla sin \`[${entrada}]\` — enlazar el estado de carga de sus datos` }];
+            }
+            if (/^\s*(false|true)\s*$/.test(enlace[1])) {
+              return [{ ruta: a.ruta, linea: c.linea, detalle: `\`[${entrada}]="${enlace[1].trim()}"\` fijo — enlazar la señal de carga real` }];
+            }
+            return [];
+          }),
+        ),
+  },
+  {
     id: 'filtros-en-baldosa',
     nivel: 'error',
     titulo: 'los filtros propios de un reporte van en `<app-grupo-filtros>`',
