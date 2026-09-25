@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
+import type { Subscription } from 'rxjs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
-import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
@@ -8,30 +8,23 @@ import { ToastService } from '../../../../../../../../../shared/services/toast.s
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
-import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { TableroDigitalService } from '../../services/tablero-digital.service';
-import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /**
- * "Tablero Digital Comercial"
- * (`repositorio/actividad-diaria/tab-digital/usa-come`) — legado
- * `repositorio/usabilidad-comercial-m` (`RS_TAB_COM_01`).
+ * "Tablero Digital Comercial" (`repositorio/actividad-diaria/tab-digital/usa-come`) — legado
+ * `repositorio/usabilidad_comercial/usa_come` (`RS_TAB_COM_01`, motor `table.regular`).
  *
- * El único del módulo que NO sale de `cra-map.ts`: vive en el repositorio, va
- * por el motor `table.regular` (columnas dinámicas) y su corte no es el del
- * usuario sino el del selector de periodo (`RS_FECH`), igual que "Seguros
- * Optativos".
+ * Como el legado diario: consulta con la fecha de corte del usuario (sin selector de periodo, que
+ * es del reporte mensual `usabilidad-comercial-m`) y pinta las columnas estáticas del legado.
  */
 @Component({
   selector: 'app-tablero-digital-comercial',
   standalone: true,
   imports: [
     HierSelectorComponent,
-    SelectFiltroComponent,
     TablaDinamicaComponent,
     EmptyStateComponent,
     WindowPanelComponent,
-    GrupoFiltrosComponent,
   ],
   templateUrl: './tablero-digital-comercial.component.html',
 })
@@ -46,25 +39,17 @@ export class TableroDigitalComercialComponent {
   protected readonly tabla = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
-  /** Cortes disponibles; vacío mientras `RS_FECH` no responda. */
-  protected readonly periodos = signal<OpcionFiltro[]>([]);
-  protected readonly periodo = signal('');
-
   protected readonly columnas = computed(() => this.tabla().columnas);
   protected readonly filas = computed(() => this.tabla().filas);
 
   constructor() {
-    this.servicio.periodosTableroComercial().subscribe((opciones) => {
-      this.periodos.set(opciones);
-      // El legado deja seleccionado el primero, que es el corte más reciente.
-      if (opciones.length > 0) this.periodo.set(opciones[0].id);
-    });
-
-    // Un cambio de periodo recarga el reporte sobre el nivel que ya esté abierto.
-    effect(() => {
+    // `onCleanup` cancela la consulta anterior al cambiar de nivel.
+    effect((onCleanup) => {
       const nodo = this.nivelActual();
-      const periodo = this.periodo();
-      if (nodo) this.cargar(nodo, periodo);
+      if (nodo) {
+        const consulta = this.cargar(nodo);
+        onCleanup(() => consulta.unsubscribe());
+      }
     });
   }
 
@@ -72,9 +57,10 @@ export class TableroDigitalComercialComponent {
     this.nivelActual.set(nodo);
   }
 
-  private cargar(nodo: HierarquiaNodo, periodo: string): void {
+  private cargar(nodo: HierarquiaNodo): Subscription {
     this.cargando.set(true);
-    this.servicio.tableroComercial({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
+    this.tabla.set(TABLA_DINAMICA_VACIA);
+    return this.servicio.tableroComercial({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
       next: (tabla) => {
         this.tabla.set(tabla);
         this.cargando.set(false);

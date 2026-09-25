@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, forkJoin, map } from 'rxjs';
+import { Observable, map, merge, scan } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { OpcionFiltro } from '../../../../../models/filtros.model';
@@ -43,8 +43,12 @@ export class CampanasService {
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 
-  /** Reporte de Agendamiento. */
-  agendamiento(nodo: NodoConsulta, filtros: FiltrosAgenda): Observable<TablaDinamicaResultado[]> {
+  /**
+   * Reporte de Agendamiento: las cuatro tablas del legado, **con carga independiente**. Emite el
+   * arreglo cada vez que responde una, con `null` en las que todavía esperan, para que una tabla
+   * lenta (los "Detalle" traen miles de filas) no retenga a las demás.
+   */
+  agendamiento(nodo: NodoConsulta, filtros: FiltrosAgenda): Observable<(TablaDinamicaResultado | null)[]> {
     const base = {
       tip_cod: nodo.tip_cod,
       cod_rel: nodo.cod_rel,
@@ -52,11 +56,17 @@ export class CampanasService {
       fuga: filtros.fuga,
       prop: filtros.prop,
     };
-    return forkJoin([
+    const consultas = [
       this.bloques.tablaRegularCon(COD_CAMPANAS.agendamientoBases, { ...base, mode: 1 }),
       this.bloques.tablaRegularCon(COD_CAMPANAS.agendamientoBases, { ...base, mode: 2 }),
       this.bloques.tablaRegularCon(COD_CAMPANAS.agendamientoDetalle, { ...base, mode: 1, nom: filtros.rango }),
       this.bloques.tablaRegularCon(COD_CAMPANAS.agendamientoResumen, { ...base, mode: 1, nom: filtros.rango }),
-    ]);
+    ];
+    return merge(...consultas.map((consulta$, i) => consulta$.pipe(map((tabla) => ({ i, tabla }))))).pipe(
+      scan(
+        (tablas: (TablaDinamicaResultado | null)[], { i, tabla }) => tablas.map((t, j) => (j === i ? tabla : t)),
+        consultas.map(() => null),
+      ),
+    );
   }
 }

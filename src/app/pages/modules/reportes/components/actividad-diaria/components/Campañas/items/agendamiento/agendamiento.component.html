@@ -14,7 +14,7 @@
     />
   } @else {
     <!-- Las cuatro pestañas del legado (`mat-tab-group`), cada una con su propia secuencia de filtros. -->
-    <p-tabs value="resumen-total">
+    <p-tabs [(value)]="pestana">
       <p-tablist>
         <p-tab value="resumen-total" class="!py-2 !px-3">Resumen Total</p-tab>
         <p-tab value="resumen-bases" class="!py-2 !px-3">Resumen por Bases</p-tab>
@@ -35,13 +35,16 @@
                 ancho="w-52"
               />
             </app-grupo-filtros>
-            <div class="mis-card p-3 overflow-x-auto">
-              <app-tabla-dinamica
-                [columnas]="resumenTotal().columnas"
-                [filas]="resumenTotal().filas"
-                [cargando]="cargando()"
-              />
-            </div>
+            <!-- Solo la pestaña visible pinta su tabla. -->
+            @if (pestana() === 'resumen-total') {
+              <div class="mis-card p-3 overflow-x-auto">
+                <app-tabla-dinamica
+                  [columnas]="resumenTotal().columnas"
+                  [filas]="resumenTotal().filas"
+                  [cargando]="cargandoTabla(0)"
+                />
+              </div>
+            }
           </div>
         </p-tabpanel>
 
@@ -57,13 +60,16 @@
                 ancho="w-52"
               />
             </app-grupo-filtros>
-            <div class="mis-card p-3 overflow-x-auto">
-              <app-tabla-dinamica
-                [columnas]="resumenPorBases().columnas"
-                [filas]="resumenPorBases().filas"
-                [cargando]="cargando()"
-              />
-            </div>
+            <!-- Solo la pestaña visible pinta su tabla. -->
+            @if (pestana() === 'resumen-bases') {
+              <div class="mis-card p-3 overflow-x-auto">
+                <app-tabla-dinamica
+                  [columnas]="resumenPorBases().columnas"
+                  [filas]="resumenPorBases().filas"
+                  [cargando]="cargandoTabla(1)"
+                />
+              </div>
+            }
           </div>
         </p-tabpanel>
 
@@ -83,13 +89,17 @@
               />
               <app-select-filtro etiqueta="Rango de fechas Cancela" [opciones]="opcionesRango" [(valor)]="rango" ancho="w-48" />
             </app-grupo-filtros>
-            <div class="mis-card p-3 overflow-x-auto">
-              <app-tabla-dinamica
-                [columnas]="detalleBasesVivas().columnas"
-                [filas]="detalleBasesVivas().filas"
-                [cargando]="cargando()"
-              />
-            </div>
+            <!-- Solo la pestaña visible pinta su tabla. -->
+            @if (pestana() === 'detalle-vivas') {
+              <div class="mis-card p-3 overflow-x-auto">
+                <app-tabla-dinamica
+                  [columnas]="detalleBasesVivas().columnas"
+                  [filas]="detalleBasesVivas().filas"
+                  [cargando]="cargandoTabla(2)"
+                  [filasPorPagina]="filasPorPaginaDetalle"
+                />
+              </div>
+            }
           </div>
         </p-tabpanel>
 
@@ -110,13 +120,17 @@
                 ancho="w-52"
               />
             </app-grupo-filtros>
-            <div class="mis-card p-3 overflow-x-auto">
-              <app-tabla-dinamica
-                [columnas]="detalleBasesAutomaticas().columnas"
-                [filas]="detalleBasesAutomaticas().filas"
-                [cargando]="cargando()"
-              />
-            </div>
+            <!-- Solo la pestaña visible pinta su tabla. -->
+            @if (pestana() === 'detalle-auto') {
+              <div class="mis-card p-3 overflow-x-auto">
+                <app-tabla-dinamica
+                  [columnas]="detalleBasesAutomaticas().columnas"
+                  [filas]="detalleBasesAutomaticas().filas"
+                  [cargando]="cargandoTabla(3)"
+                  [filasPorPagina]="filasPorPaginaDetalle"
+                />
+              </div>
+            }
           </div>
         </p-tabpanel>
       </p-tabpanels>

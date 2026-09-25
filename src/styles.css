@@ -21,4 +21,23 @@
 @source "./src/**/*.ts";
 
 /* ── PrimeNG cssLayer ordering ────────────────────────────── */
-@layer theme, base, primeng, utilities;
+@layer theme, base, primeng, utilities;
+/* Tablas con `appMaxFilas` (ver shared/ui/tablas/max-filas.directive.ts): al hacer scroll dentro
+   de la tabla, el encabezado queda fijo arriba. */
+.mis-max-filas .p-datatable-table-container > .p-datatable-table > .p-datatable-thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* `app-tabla-reporte` con `[ajustarAncho]`: además de dejar saltar de línea los encabezados,
+   reduce el relleno y un punto la letra para que las columnas se angosten de forma proporcional
+   y la tabla entre en el ancho de escritorio sin scroll horizontal. */
+.mis-tabla-compacta .p-datatable-tbody > tr > td {
+  padding: 0.3rem 0.4rem;
+  font-size: 12px;
+}
+.mis-tabla-compacta .p-datatable-thead > tr > th {
+  padding: 0.35rem 0.3rem;
+  font-size: 10.5px;
+}

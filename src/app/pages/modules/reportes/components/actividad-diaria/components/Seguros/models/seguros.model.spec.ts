@@ -1,4 +1,4 @@
-import { kpisDeFilaTotal, KPIS_SEGUROS_OPTATIVOS_VACIOS } from './seguros.model';
+import { kpisDeFilaTotal, KPIS_SEGUROS_OPTATIVOS_VACIOS, nodoDrillDownSeguros } from './seguros.model';
 
 /**
  * Regresión de la incidencia 8 de `docs/09-incidencias/incidencias-mora.md`:
@@ -79,3 +79,22 @@ describe('kpisDeFilaTotal', () => {
     });
   });
 });
+
+describe('nodoDrillDownSeguros (ddHier del legado)', () => {
+  it('toma htipcod/hcodrel, también en mayúsculas, y la descripción de RNOMSUB', () => {
+    expect(nodoDrillDownSeguros({ htipcod: 20, hcodrel: 'T1', RNOMSUB: 'Territorio Norte' })).toEqual({
+      tip_cod: 20,
+      cod_rel: 'T1',
+      des_rel: 'Territorio Norte',
+    });
+    expect(nodoDrillDownSeguros({ HTIPCOD: 18, HCODREL: 'U5', RNOMSUB: 'Unidad' })).toMatchObject({ tip_cod: 18, cod_rel: 'U5' });
+  });
+
+  it('no baja con tip_cod 999, 2 o 7 ni sin código', () => {
+    expect(nodoDrillDownSeguros({ htipcod: 999, hcodrel: 'X' })).toBeNull();
+    expect(nodoDrillDownSeguros({ htipcod: 2, hcodrel: 'X' })).toBeNull();
+    expect(nodoDrillDownSeguros({ htipcod: 7, hcodrel: 'X' })).toBeNull();
+    expect(nodoDrillDownSeguros({ htipcod: 20 })).toBeNull();
+  });
+});
+

@@ -59,4 +59,21 @@ describe('AppUsoComponent', () => {
     }
     expect(fixture.componentInstance).toBeTruthy();
   });
+
+  it('las aclaraciones * y ** van encima de la tabla y el glosario debajo, como el legado', () => {
+    servicioSpy['usoApp'].mockReturnValue(of({ tabla1: { headers: [], body: [], additional: {} } }));
+    const fixture = TestBed.createComponent(AppUsoComponent);
+    (fixture.componentInstance as unknown as { onNivelSeleccionado(n: HierarquiaNodo): void }).onNivelSeleccionado(NODO);
+    TestBed.tick();
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const tabla = el.querySelector('app-tabla-reporte')!;
+    const aclaracion = el.querySelector('[encabezado]')!;
+    const glosario = el.querySelector('[nota]')!;
+    expect(aclaracion.textContent).toContain('excluye Bantotal');
+    expect(aclaracion.compareDocumentPosition(tabla) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(glosario.compareDocumentPosition(tabla) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
+  });
 });
+

@@ -1,9 +1,10 @@
 <!-- Sin `[loading]` de PrimeNG a propósito: pintaba una máscara con spinner
      SOBRE la tabla, que se sumaba al overlay global de `app-loading-overlay`
-     y dejaba dos indicadores para una sola espera. El único spinner visible
-     es el global; acá el estado se conserva como `aria-busy` para que un
-     lector de pantalla siga sabiendo que la tabla está cargando. -->
-<p-table [value]="filas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" scrollHeight="620px" styleClass="p-datatable-sm"
+     y dejaba dos indicadores para una sola espera. Mientras carga, la tabla
+     pinta filas de esqueleto (carga independiente: el overlay global se va con
+     la primera respuesta) y conserva `aria-busy` para los lectores de pantalla. -->
+<p-table appMaxFilas [value]="filas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm"
+         [paginator]="filasPorPagina() > 0" [rows]="filasPorPagina() || filas().length" [showFirstLastIcon]="true" [alwaysShowPaginator]="false"
          [dataKey]="dataKey()" [expandedRowKeys]="expandedRowKeys()">
   <ng-template pTemplate="header">
     @for (fila of encabezados().filas; track $index) {
@@ -70,10 +71,20 @@
   </ng-template>
 
   <ng-template pTemplate="emptymessage">
-    <tr>
-      <td [attr.colspan]="encabezados().columnasHoja.length || 1" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
-        Sin datos para mostrar.
-      </td>
-    </tr>
+    @if (cargando()) {
+      @for (f of filasEsqueleto; track f) {
+        <tr class="fila-esqueleto" aria-hidden="true">
+          @for (c of encabezados().columnasHoja; track $index) {
+            <td class="py-2"><div [class]="claseBarraEsqueleto" [style.width.%]="60 + ((f + $index) % 3) * 15"></div></td>
+          }
+        </tr>
+      }
+    } @else {
+      <tr>
+        <td [attr.colspan]="encabezados().columnasHoja.length || 1" class="text-center text-[13px] text-[var(--mis-text-tertiary)] py-6">
+          Sin datos para mostrar.
+        </td>
+      </tr>
+    }
   </ng-template>
 </p-table>

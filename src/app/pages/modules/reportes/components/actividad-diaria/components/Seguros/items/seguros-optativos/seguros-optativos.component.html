@@ -1,28 +1,27 @@
 <app-window-panel titulo="Reporte Seguros Optativos" subtitulo="Seguros" [permitirActualizar]="false" [conFiltros]="true">
-  <div ventana-filtros class="flex flex-wrap items-end gap-3">
-    <app-hier-selector
-      [paramsHier]="paramsHier"
-      placeholder="Elegir nivel"
-      (nodoSeleccionado)="onNivelSeleccionado($event)"
-      (error)="onErrorJerarquia()"
-    />
-    <!--
-      El "filtro de fecha" del legado no es un calendario libre: es la lista de
-      cortes que devuelve `RS_FECH`. Solo se pinta cuando el backend la manda;
-      si viene vacía el reporte se queda con la fecha de corte del usuario.
-    -->
-    <app-grupo-filtros>
-      @if (periodos().length) {
-        <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
-      }
-    </app-grupo-filtros>
-  </div>
+  <!-- Como el legado, la jerarquía no se elige en un desplegable: el selector oculto solo resuelve
+       el nodo autorizado y lleva la ruta; se navega con el drill down de la tabla y las migas. -->
+  <app-hier-selector
+    class="hidden"
+    [paramsHier]="paramsHier"
+    (nodoSeleccionado)="onNivelSeleccionado($event)"
+    (rutaSeleccionada)="onRutaSeleccionada($event)"
+    (error)="onErrorJerarquia()"
+  />
+
+  <!--
+    El "filtro de fecha" del legado no es un calendario libre: es la lista de
+    cortes que devuelve `RS_FECH`. Solo se pinta cuando el backend la manda;
+    si viene vacía el reporte se queda con la fecha de corte del usuario.
+  -->
+  <app-grupo-filtros ventana-filtros>
+    @if (periodos().length) {
+      <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
+    }
+  </app-grupo-filtros>
 
   @if (!nivelActual()) {
-    <app-empty-state
-      titulo="Elige un nivel"
-      descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte."
-    />
+    <app-empty-state titulo="Cargando el reporte" descripcion="Resolviendo tu nivel de la jerarquía." />
   } @else {
     @let k = kpis();
 
@@ -91,8 +90,17 @@
       </div>
     </section>
 
+    <app-ruta-jerarquica [ruta]="rutaJerarquica()" etiqueta="Ruta de seguros optativos" (irANivel)="volverANivel($event)" />
+
+    <!-- La tabla es el drill down: RNOMSUB baja un nivel. -->
     <div class="mis-card p-3 overflow-x-auto">
-      <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
+      <app-tabla-dinamica
+        [columnas]="tabla().columnas"
+        [filas]="tabla().filas"
+        [cargando]="cargando()"
+        [columnasClicables]="columnasDrillDown()"
+        (celdaSeleccionada)="onCeldaSeleccionada($event)"
+      />
     </div>
   }
 </app-window-panel>

@@ -1,3 +1,5 @@
+import type { HierarquiaNodo } from '../../../../../models/jerarquia.model';
+
 /**
  * KPIs de "Reporte Seguros Optativos" — legado `seguro-com.component.ts`
  * (`kpiTotales`), que los saca de la PRIMERA FILA de la tabla (`data[0]`), no
@@ -61,5 +63,28 @@ export function kpisDeFilaTotal(filas: Record<string, unknown>[]): KpisSegurosOp
     totalSeguros: num('TSegOS'),
     penetracionGlobal: penetracion(fila['PorcPenOS']),
     porTipo: TIPOS_SEGURO.map((t) => ({ etiqueta: t.etiqueta, valor: num(t.clave) })),
+  };
+}
+
+/** Columna que baja de nivel en Seguros Optativos: `ddHier` del legado solo responde a `RNOMSUB`. */
+export const CLAVE_DRILL_DOWN_SEGUROS = 'RNOMSUB';
+
+/** `tip_cod` que el legado no deja bajar (`ddHier`: 999 y 2 son totales/sin nivel, 7 el último). */
+const SIN_DRILL_DOWN_SEGUROS = new Set([999, 2, 7]);
+
+/**
+ * Nodo al que baja una fila de Seguros Optativos, con la misma regla que `ddHier` del legado
+ * (`seguro-com.component.ts`): `htipcod`/`hcodrel`, en minúsculas o mayúsculas, o si no
+ * `tip_cod`/`cod_rel`; `null` si falta alguno o el `tip_cod` no baja.
+ */
+export function nodoDrillDownSeguros(fila: Record<string, unknown>): HierarquiaNodo | null {
+  const tipCod = Number(fila['htipcod'] ?? fila['HTIPCOD'] ?? fila['tip_cod']);
+  const codRel = fila['hcodrel'] ?? fila['HCODREL'] ?? fila['cod_rel'];
+  if (!Number.isFinite(tipCod) || codRel === null || codRel === undefined || codRel === '') return null;
+  if (SIN_DRILL_DOWN_SEGUROS.has(tipCod)) return null;
+  return {
+    tip_cod: tipCod,
+    cod_rel: String(codRel),
+    des_rel: String(fila[CLAVE_DRILL_DOWN_SEGUROS] ?? fila['descripcion'] ?? fila['DESCRIPCION'] ?? 'Detalle'),
   };
 }

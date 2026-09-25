@@ -4,16 +4,21 @@ import { TableModule } from 'primeng/table';
 import { NgTemplateOutlet } from '@angular/common';
 import { aplanarEncabezados } from './tabla-dinamica.util';
 import type { ColumnaDinamica } from '../models/tabla-dinamica.model';
+import { MaxFilasDirective } from '../max-filas.directive';
+import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO } from '../esqueleto-tabla';
 
 /** Tabla dinámica (reemplaza a `stg-table2`). */
 @Component({
   selector: 'app-tabla-dinamica',
   standalone: true,
-  imports: [TableModule, NgTemplateOutlet],
+  imports: [TableModule, NgTemplateOutlet, MaxFilasDirective],
   templateUrl: './tabla-dinamica.component.html',
   styleUrl: './tabla-dinamica.component.css',
 })
 export class TablaDinamicaComponent {
+  protected readonly filasEsqueleto = FILAS_ESQUELETO;
+  protected readonly claseBarraEsqueleto = CLASE_BARRA_ESQUELETO;
+
   private readonly locale = inject(LOCALE_ID);
 
   readonly columnas = input.required<ColumnaDinamica[]>();
@@ -28,6 +33,13 @@ export class TablaDinamicaComponent {
 
   /** Fondo dinámico verde/rojo según el signo del valor. */
   readonly fondoDinamico = input(false);
+
+  /**
+   * Paginación en el cliente: con un valor > 0 la tabla muestra esa cantidad de filas por página
+   * y su paginador al pie (dentro de la tabla). Solo se renderizan las filas de la página, así una
+   * tabla de miles de filas no congela la pantalla (legado `stg-paginator` + `prepareDataForPagination`).
+   */
+  readonly filasPorPagina = input(0);
 
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<Record<string, unknown>>();

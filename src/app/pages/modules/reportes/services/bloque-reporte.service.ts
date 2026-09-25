@@ -1,13 +1,13 @@
 import { HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, forkJoin, map, of, throwError } from 'rxjs';
+import { Observable, catchError, map, merge, of, scan, throwError } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { mapearBloqueReporte, mapearBloquesGrafico, mapearPeriodos, mapearTablaRegular } from '../utils/reportes-mapeo.util';
 import { fechaCorte, fechaCorteCompacta } from '../utils/fecha-reporte.util';
 import { esBloqueVacio } from '../utils/error-bloque.util';
 import type { HierarquiaNodo } from '../models/jerarquia.model';
-import { TABLA_VACIA, type TablaReporteResultado } from '../models/tabla-reporte.model';
+import { TABLA_PENDIENTE, TABLA_VACIA, type TablaReporteResultado } from '../models/tabla-reporte.model';
 import type { TablaDinamicaResultado } from '../models/tabla-dinamica.model';
 import type { BloqueGrafico } from '../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { OpcionFiltro } from '../../../../shared/ui/formularios/opcion-filtro.model';
@@ -96,12 +96,21 @@ export class BloqueReporteService {
     return this.regularTolerante(codRep, nodo, extra);
   }
 
-  /** Ejecuta múltiples consultas en paralelo. */
+  /**
+   * Varios bloques regularData, **con carga independiente**: emite el arreglo completo cada vez
+   * que responde un bloque, con `TABLA_PENDIENTE` en los que todavía esperan. Así el primer bloque
+   * se ve apenas llega y uno lento no retiene a los demás (antes era un `forkJoin`, que no
+   * mostraba nada hasta el último). El orden del arreglo es siempre el de `bloques`; si un bloque
+   * falla, falla la consulta, igual que antes.
+   */
   regulares(
     bloques: readonly { codRep: string; extra?: Record<string, unknown> }[],
     nodo: NodoConsulta,
   ): Observable<TablaReporteResultado[]> {
-    return forkJoin(bloques.map((b) => this.regular(b.codRep, nodo, b.extra)));
+    const respuestas = bloques.map((b, i) => this.regular(b.codRep, nodo, b.extra).pipe(map((tabla) => ({ i, tabla }))));
+    return merge(...respuestas).pipe(
+      scan((tablas, { i, tabla }) => tablas.map((t, j) => (j === i ? tabla : t)), bloques.map(() => TABLA_PENDIENTE)),
+    );
   }
 
   /** Fecha de corte en formato YYYY-MM-DD. */

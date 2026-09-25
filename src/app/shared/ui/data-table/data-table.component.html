@@ -1,12 +1,13 @@
 <!-- Sin `[loading]` de PrimeNG a propósito: pintaba una máscara con spinner
      SOBRE la tabla, que se sumaba al overlay global de `app-loading-overlay`
-     y dejaba dos indicadores para una sola espera. El único spinner visible
-     es el global; acá el estado se conserva como `aria-busy` para que un
-     lector de pantalla siga sabiendo que la tabla está cargando. -->
+     y dejaba dos indicadores para una sola espera. Mientras carga, la tabla
+     pinta filas de esqueleto (carga independiente: el overlay global se va con
+     la primera respuesta) y conserva `aria-busy` para los lectores de pantalla. -->
 <div
   class="mis-baldosa flex-1 overflow-x-auto overflow-y-hidden rounded-xl shadow-xs"
 >
   <p-table
+    appMaxFilas
     [value]="filasFiltradas()"
     [rowHover]="true"
     [attr.aria-busy]="loading()"
@@ -17,7 +18,7 @@
     [showCurrentPageReport]="true"
     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
     styleClass="p-datatable-sm p-datatable-gridlines text-xs"
-    [scrollable]="!!scrollHeight()"
+    [scrollable]="true"
     [scrollHeight]="scrollHeight()"
   >
     <ng-template pTemplate="caption">
@@ -207,15 +208,25 @@
     </ng-template>
 
     <ng-template pTemplate="emptymessage">
-      <tr>
-        <td [attr.colspan]="columns().length" class="text-center py-8">
-          <div class="flex flex-col items-center gap-2">
-            <i class="pi pi-search text-2xl text-[var(--mis-text-tertiary)]"></i>
-            <span class="font-medium text-[var(--mis-text-secondary)]">{{ emptyMessage() }}</span>
-            <span class="text-xs text-[var(--mis-text-tertiary)]">{{ emptyHint() }}</span>
-          </div>
-        </td>
-      </tr>
+      @if (loading()) {
+        @for (f of filasEsqueleto; track f) {
+          <tr class="fila-esqueleto" aria-hidden="true">
+            @for (c of columns(); track $index) {
+              <td class="py-2"><div [class]="claseBarraEsqueleto" [style.width.%]="60 + ((f + $index) % 3) * 15"></div></td>
+            }
+          </tr>
+        }
+      } @else {
+        <tr>
+          <td [attr.colspan]="columns().length" class="text-center py-8">
+            <div class="flex flex-col items-center gap-2">
+              <i class="pi pi-search text-2xl text-[var(--mis-text-tertiary)]"></i>
+              <span class="font-medium text-[var(--mis-text-secondary)]">{{ emptyMessage() }}</span>
+              <span class="text-xs text-[var(--mis-text-tertiary)]">{{ emptyHint() }}</span>
+            </div>
+          </td>
+        </tr>
+      }
     </ng-template>
   </p-table>
 </div>

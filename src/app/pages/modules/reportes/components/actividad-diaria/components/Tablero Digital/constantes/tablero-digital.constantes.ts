@@ -8,8 +8,6 @@ export const COD_TABLERO_DIGITAL = {
   vistaGeneralCorresponsal: 'RVIUWGCOR_01',
   /** `viuw-gcore` — gestión de corresponsales. */
   gestionCorresponsal: 'RVIUWGCORE_02',
-  /** Selector de periodo del Tablero Comercial. */
-  periodosTableroComercial: 'RS_FECH',
-  /** `tab-com` — Tablero Comercial, motor `table.regular`. */
+  /** `tab-com` — Tablero Comercial diario (`usa_come` del legado), motor `table.regular`. */
   tableroComercial: 'RS_TAB_COM_01',
 } as const;

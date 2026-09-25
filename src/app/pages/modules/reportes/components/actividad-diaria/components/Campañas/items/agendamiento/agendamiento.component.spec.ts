@@ -120,4 +120,53 @@ describe('AgendamientoComponent', () => {
     expect(agendamiento).toHaveBeenCalledTimes(1);
     expect(agendamiento).toHaveBeenCalledWith({ tip_cod: 9, cod_rel: 'FC' }, { fuga: 0, prop: 0, rango: 2 });
   });
+
+  describe('rendimiento (la pantalla se congelaba al cargar)', () => {
+    const TABLA = (n: number) => ({
+      columnas: [{ key: 'n', label: 'N' }],
+      filas: Array.from({ length: n }, (_, i) => ({ n: i + 1 })),
+    });
+
+    function crearCon(tablas: unknown[]) {
+      TestBed.configureTestingModule({
+        imports: [AgendamientoComponent],
+        providers: [{ provide: CampanasService, useValue: { agendamiento: vi.fn().mockReturnValue(of(tablas)) } }, PrimeNgMessageService],
+      });
+      const fixture = TestBed.createComponent(AgendamientoComponent);
+      const inst = fixture.componentInstance as unknown as {
+        onNivelSeleccionado(n: HierarquiaNodo): void;
+        pestana: { set(v: string): void };
+      };
+      inst.onNivelSeleccionado(NODO);
+      fixture.detectChanges();
+      return { fixture, inst, el: fixture.nativeElement as HTMLElement };
+    }
+
+    it('solo renderiza la tabla de la pestaña visible', () => {
+      const { el } = crearCon([TABLA(3), TABLA(3), TABLA(3), TABLA(3)]);
+      expect(el.querySelectorAll('app-tabla-dinamica')).toHaveLength(1);
+    });
+
+    it('las tablas "Detalle" van paginadas de a 10, como el legado', () => {
+      const { fixture, inst, el } = crearCon([TABLA(3), TABLA(3), TABLA(2000), TABLA(3)]);
+      inst.pestana.set('detalle-vivas');
+      fixture.detectChanges();
+
+      expect(el.querySelectorAll('app-tabla-dinamica tbody tr')).toHaveLength(10);
+      expect(el.querySelector('app-tabla-dinamica .p-paginator')).not.toBeNull();
+    });
+
+    it('una tabla que todavía no respondió muestra su esqueleto y las demás sus datos', () => {
+      const { fixture, inst, el } = crearCon([TABLA(3), null, null, null]);
+      // Las tres últimas siguen en vuelo.
+      (fixture.componentInstance as unknown as { cargando: { set(v: boolean): void } }).cargando.set(true);
+      fixture.detectChanges();
+      expect(el.querySelectorAll('app-tabla-dinamica tbody tr:not(.fila-esqueleto)')).toHaveLength(3);
+
+      inst.pestana.set('resumen-bases');
+      fixture.detectChanges();
+      expect(el.querySelectorAll('app-tabla-dinamica tbody tr.fila-esqueleto').length).toBeGreaterThan(0);
+    });
+  });
 });
+

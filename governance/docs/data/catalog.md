@@ -33,7 +33,7 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica en CI.
 
 <!-- generado:inicio cod-rep -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-25 · commit ed6b2205. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-25 · commit 776b0d5. No editar a mano. -->
 
 | Dominio | Constante | Códigos | `cod_rep` declarados |
 |---|---|---:|---|
@@ -64,7 +64,7 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 | reportes / actividad-diaria / Reportes PDM | `COD_REPORTES_PDM` | 2 | `SEG_PDM_01`, `GRBSOLI_01` |
 | reportes / actividad-diaria | `COD_RESUMEN_MOVILIDAD` | 2 | `RESNMOV_01`, `RESNMOVR_01` |
 | reportes / actividad-diaria / Seguros | `COD_SEGUROS` | 10 | `GRSCMIS_01`, `GRSCMIS_02`, `GRSCMIS_04`, `GRSCMIS_05`, `RS_SEG_PAS_03`, `RS_SEG_PAS_01`, `RS_SEG_PAS_02`, `RS_SEG_PAS_04`, `GRSCMISREP_01`, `RS_FECH` |
-| reportes / actividad-diaria / Tablero Digital | `COD_TABLERO_DIGITAL` | 7 | `TABDIG_01`, `TABDIG_02`, `TABDIG_VR2_01`, `RVIUWGCOR_01`, `RVIUWGCORE_02`, `RS_FECH`, `RS_TAB_COM_01` |
+| reportes / actividad-diaria / Tablero Digital | `COD_TABLERO_DIGITAL` | 6 | `TABDIG_01`, `TABDIG_02`, `TABDIG_VR2_01`, `RVIUWGCOR_01`, `RVIUWGCORE_02`, `RS_TAB_COM_01` |
 
 _188 códigos únicos en 28 constantes._
 <!-- generado:fin -->
