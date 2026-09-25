@@ -89,3 +89,6 @@ export const BANCA_SOLIDARIA_VACIA: BancaSolidariaResultado = {
   tabla: { columnas: [], filas: [] },
   ...derivadosDeFilaTotal([]),
 };
+
+/** Columna que baja de nivel en Banca Solidaria: `ddHier` del legado solo responde a `descripcion`. */
+export const CLAVE_DRILL_DOWN_BANCA_SOLIDARIA = 'descripcion';
