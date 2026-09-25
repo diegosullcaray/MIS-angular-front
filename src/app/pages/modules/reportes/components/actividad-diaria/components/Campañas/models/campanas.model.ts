@@ -25,3 +25,9 @@ export const OPCIONES_RANGO_AGENDA: OpcionFiltro<number>[] = [
 ];
 
 export const FILTRO_AGENDA_POR_DEFECTO = 0;
+
+/**
+ * Filas por página de las dos tablas "Detalle" de Agendamiento: el legado las pagina en el
+ * cliente de a 10 (`stg-paginator`, `prepareDataForPagination(10, …)`).
+ */
+export const FILAS_POR_PAGINA_DETALLE_AGENDA = 10;

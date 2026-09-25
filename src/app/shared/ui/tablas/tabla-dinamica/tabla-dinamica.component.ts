@@ -34,6 +34,13 @@ export class TablaDinamicaComponent {
   /** Fondo dinámico verde/rojo según el signo del valor. */
   readonly fondoDinamico = input(false);
 
+  /**
+   * Paginación en el cliente: con un valor > 0 la tabla muestra esa cantidad de filas por página
+   * y su paginador al pie (dentro de la tabla). Solo se renderizan las filas de la página, así una
+   * tabla de miles de filas no congela la pantalla (legado `stg-paginator` + `prepareDataForPagination`).
+   */
+  readonly filasPorPagina = input(0);
+
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<Record<string, unknown>>();
 

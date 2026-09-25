@@ -1,8 +1,8 @@
 <!-- Sin `[loading]` de PrimeNG a propósito: pintaba una máscara con spinner
      SOBRE la tabla, que se sumaba al overlay global de `app-loading-overlay`
-     y dejaba dos indicadores para una sola espera. El único spinner visible
-     es el global; acá el estado se conserva como `aria-busy` para que un
-     lector de pantalla siga sabiendo que la tabla está cargando. -->
+     y dejaba dos indicadores para una sola espera. Mientras carga, la tabla
+     pinta filas de esqueleto (carga independiente: el overlay global se va con
+     la primera respuesta) y conserva `aria-busy` para los lectores de pantalla. -->
 <p-table appMaxFilas [value]="filas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm" [class.mis-tabla-compacta]="ajustarAncho()">
   <ng-template pTemplate="header">
     @for (filaEnc of filasEncabezado(); track $index) {

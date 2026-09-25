@@ -1,6 +1,6 @@
 import { HttpContext } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { CampanasService } from './campanas.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
@@ -101,4 +101,28 @@ describe('CampanasService', () => {
       expect(opciones).toEqual([{ id: 'TODO', desc: 'TODO' }]);
     });
   });
+
+  describe('agendamiento()', () => {
+    it('entrega cada tabla apenas responde, con null en las que siguen esperando', () => {
+      const respuestas = [0, 1, 2, 3].map(() => new Subject<unknown>());
+      let llamada = 0;
+      const getRegularTableResult = vi.fn(() => respuestas[llamada++]);
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({ providers: [{ provide: ModReportesService, useValue: { getRegularTableResult } }] });
+      TestBed.inject(ShellStateService).setUsuarioActivo(usuario());
+      const emisiones: unknown[][] = [];
+      TestBed.inject(CampanasService)
+        .agendamiento(NODO, { fuga: 0, prop: 0, rango: 1 })
+        .subscribe((t) => emisiones.push(t));
+
+      respuestas[2].next({ code: '0', headers: {}, body: { resultado: { headers: '[]', data: [{ n: 1 }] } } });
+      respuestas[2].complete();
+
+      expect(getRegularTableResult).toHaveBeenCalledTimes(4);
+      expect(emisiones).toHaveLength(1);
+      expect(emisiones[0][0]).toBeNull();
+      expect(emisiones[0][2]).toMatchObject({ filas: [{ n: 1 }] });
+    });
+  });
 });
+

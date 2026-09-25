@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
+import type { Subscription } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
@@ -10,6 +11,7 @@ import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selec
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
 import {
+  FILAS_POR_PAGINA_DETALLE_AGENDA,
   FILTRO_AGENDA_POR_DEFECTO,
   OPCIONES_NIVEL_FUGA,
   OPCIONES_NIVEL_PROPENSION,
@@ -29,6 +31,11 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
  * Las cuatro se piden siempre juntas —cualquier filtro dispara las cuatro
  * consultas—, así que el rango elegido en "Detalle Bases Vivas" también llega
  * al bloque de la última pestaña aunque ahí ese filtro no se vea.
+ *
+ * Rendimiento: la pantalla se congelaba porque las cuatro tablas (las "Detalle" traen miles de
+ * filas) se pintaban enteras y a la vez. Ahora, como el legado, las dos "Detalle" van paginadas de
+ * a 10 en el cliente; solo se renderiza la tabla de la pestaña visible; cada tabla se muestra
+ * apenas responde (carga independiente) y un cambio de filtro cancela las consultas anteriores.
  */
 @Component({
   selector: 'app-agendamiento',
@@ -58,9 +65,15 @@ export class AgendamientoComponent {
   protected readonly propension = signal(FILTRO_AGENDA_POR_DEFECTO);
   protected readonly rango = signal(FILTRO_AGENDA_POR_DEFECTO);
 
+  protected readonly filasPorPaginaDetalle = FILAS_POR_PAGINA_DETALLE_AGENDA;
+
   protected readonly cargando = signal(false);
-  protected readonly tablas = signal<TablaDinamicaResultado[]>([]);
+  /** Una entrada por tabla; `null` mientras esa tabla todavía no respondió. */
+  protected readonly tablas = signal<(TablaDinamicaResultado | null)[]>([]);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
+
+  /** Pestaña visible: solo esa renderiza su tabla. */
+  protected readonly pestana = signal<string | number | undefined>('resumen-total');
 
   /** Las cuatro tablas del legado, en el orden en que responde el service — una por pestaña. */
   protected readonly resumenTotal = computed(() => this.tablas()[0] ?? TABLA_DINAMICA_VACIA);
@@ -69,28 +82,36 @@ export class AgendamientoComponent {
   protected readonly detalleBasesAutomaticas = computed(() => this.tablas()[3] ?? TABLA_DINAMICA_VACIA);
 
   constructor() {
-    effect(() => {
+    // `onCleanup` cancela las consultas en vuelo al cambiar de nivel o de filtro.
+    effect((onCleanup) => {
       const nodo = this.nivelActual();
       const filtros = { fuga: this.fuga(), prop: this.propension(), rango: this.rango() };
-      if (nodo) this.cargar(nodo, filtros);
+      if (nodo) {
+        const consulta = this.cargar(nodo, filtros);
+        onCleanup(() => consulta.unsubscribe());
+      }
     });
+  }
+
+  /** Si la tabla `indice` todavía está esperando su respuesta (muestra su esqueleto). */
+  protected cargandoTabla(indice: number): boolean {
+    return this.cargando() && !this.tablas()[indice];
   }
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
   }
 
-  private cargar(nodo: HierarquiaNodo, filtros: { fuga: number; prop: number; rango: number }): void {
+  private cargar(nodo: HierarquiaNodo, filtros: { fuga: number; prop: number; rango: number }): Subscription {
     this.cargando.set(true);
-    this.servicio.agendamiento({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, filtros).subscribe({
-      next: (tablas) => {
-        this.tablas.set(tablas);
-        this.cargando.set(false);
-      },
+    this.tablas.set([]);
+    return this.servicio.agendamiento({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, filtros).subscribe({
+      next: (tablas) => this.tablas.set(tablas),
       error: () => {
         this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
         this.cargando.set(false);
       },
+      complete: () => this.cargando.set(false),
     });
   }
 }
