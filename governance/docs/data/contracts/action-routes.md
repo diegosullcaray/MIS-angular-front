@@ -32,7 +32,7 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica en CI.
 
 <!-- generado:inicio rutas-de-accion -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-25 · commit ed6b2205. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-25 · commit 5d77697. No editar a mano. -->
 
 | Módulo Ant | Servicio | Método | Ruta de acción | Verbo | Parámetros de payload | Clave de respuesta | Llamadas |
 |---|---|---|---|---|---|---|---:|
@@ -78,7 +78,7 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 | `rep2` (6304) | `ModRep2Service` | `getMonImrResultados` | `mon_imr.resultados` | GET | — | `response` | **0** |
 | `rep2` (6304) | `ModRep2Service` | `getMonSalidasDetalle` | `mon_sali_ret.detalle` | GET | — | `response` | 1 |
 | `rep2` (6304) | `ModRep2Service` | `getMonSalidasResultados` | `mon_sali_ret.resultados` | GET | — | `response` | 1 |
-| `reporting` (5304) | `ModReportesService` | `getGraphicData` | `graphicData` | GET | `cod_rep` | `result` | 4 |
+| `reporting` (5304) | `ModReportesService` | `getGraphicData` | `graphicData` | GET | `cod_rep` | `result` | 5 |
 | `reporting` (5304) | `ModReportesService` | `getRegularData` | `regularData` | GET | `cod_rep` | `result` | 20 |
 | `reporting` (5304) | `ModReportesService` | `getDeprecatedData` | `reportData` | GET | `cod_rep` | `result` | 15 |
 | `reporting` (5304) | `ModReportesService` | `getRegularTableResult` | `table.regular` | GET | `cod_rep` | `resultado` | 27 |

@@ -8,6 +8,9 @@ import { MaxFilasDirective } from '../max-filas.directive';
 import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO, columnasEsqueleto } from '../esqueleto-tabla';
 
 /** Tabla dinámica (reemplaza a `stg-table2`). */
+/** Propiedades de ancho del `style` de una columna que `ajustarAncho` deja de aplicar. */
+const ANCHOS_FIJOS = new Set(['width', 'min-width', 'minWidth']);
+
 @Component({
   selector: 'app-tabla-dinamica',
   standalone: true,
@@ -47,6 +50,17 @@ export class TablaDinamicaComponent {
    * tabla de miles de filas no congela la pantalla (legado `stg-paginator` + `prepareDataForPagination`).
    */
   readonly filasPorPagina = input(0);
+  /**
+   * Corta con "…" los textos que no caben en la celda (ancho máximo en `.celda-truncada`) y
+   * muestra el valor completo en un tooltip nativo al pasar el mouse. Para columnas de nombres
+   * largos (asesores, agencias) que se montaban sobre la celda vecina.
+   */
+  readonly truncarTexto = input(false);
+  /**
+   * Tabla sin scroll horizontal: celdas compactas, encabezados que saltan de línea y sin los
+   * anchos fijos de las columnas (lo que forzaba el scroll). Las celdas de datos no se parten.
+   */
+  readonly ajustarAncho = input(false);
 
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<Record<string, unknown>>();
@@ -111,6 +125,13 @@ export class TablaDinamicaComponent {
   }
 
   /** Estilo de celda dinámico: combina `cellStyle`, `cellStyleFn`, `fondoDinamico`, `destacada` y color sin colisiones. */
+  /** Estilo del encabezado; con `ajustarAncho` se ignoran sus anchos fijos. */
+  protected estiloEncabezado(columna: ColumnaDinamica): Record<string, string> | null {
+    const estilo = columna.style ?? null;
+    if (!estilo || !this.ajustarAncho()) return estilo;
+    return Object.fromEntries(Object.entries(estilo).filter(([prop]) => !ANCHOS_FIJOS.has(prop)));
+  }
+
   protected estiloCelda(fila: Record<string, unknown>, columna: ColumnaDinamica): Record<string, string> | null {
     const res: Record<string, string> = {};
     if (columna.cellStyle) {

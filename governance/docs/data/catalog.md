@@ -33,7 +33,7 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica en CI.
 
 <!-- generado:inicio cod-rep -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-25 · commit 776b0d5. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-25 · commit 5d77697. No editar a mano. -->
 
 | Dominio | Constante | Códigos | `cod_rep` declarados |
 |---|---|---:|---|
@@ -57,7 +57,10 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 | reportes / desarrollo-sostenible | `COD_DESARROLLO_SOSTENIBLE` | 3 | `Monitor_Dese_misi_02`, `Monitor_Dese_misi_01`, `DESEMP_SOC_01` |
 | reportes / actividad-mensual | `COD_MENSUAL_CRA` | 14 | `P_Datos_01`, `HCARBONO_01`, `GCMGCAP_01`, `CARACT_CARTERA_M_01`, `CARACT_pas_M_01`, `reporte_autonomia_new_01`, `cuadro_Variable_M_01`, `cmg_mora_simp_m_01`, `COSESEMAFORO_01`, `CMG_CLIF_01`, `resultado_unidad_negocio_rma_01`, `rankKay_01`, `rankKayOpe_01`, `rankKayrecu_01` |
 | reportes / actividad-mensual | `COD_MENSUAL_DEPRECADO` | 7 | `rma/administracion/Cartera/cartera_producto_rma_02`, `rma/administracion/Cartera/cartera_producto_rma_01`, `rma/administracion/Cartera/tasa_producto_rma_01`, `rma/administracion/Riesgos/grafico_cosechas_01`, `rma/administracion/Mora/mora_efectividad_tramos_rma_01`, `rma/administracion/mora/Dashboard_rma_01`, `rma/administracion/Clientes/cmg_clientes_rma_01` |
-| reportes / actividad-mensual | `COD_MENSUAL_MULTIBLOQUE` | 26 | `RS_AGE_COM_CRM_F_01`, `RS_AGE_COM_CRM_F_02`, `RS_DAT_PRO_01`, `RS_DAT_PRO_02`, `RS_DAT_PRO_03`, `RS_DAT_PRO_04`, `CONT_ELECT_M_01`, `CONT_ELECT_M_02`, `CONT_ELECT_M_03`, `RS_MON_EFECREASIGM_01`, `RS_MON_EFECREASIGM_02`, `RPROGOB_M_01`, `RPROGOB_M_02`, `RPROGOB_M_03`, `RPROGOB_M_04`, `RS_MON_EFECM_01`, `RS_MON_EFECM_02`, `RS_MON_EFECM_03`, `RS_MON_EFECM_03`, `RS_FECH`, `RS_TAB_COM_01`, `RS_DESEMB_02`, `RS_AGROMIX_01`, `CMG_CARTERA_01`, `CMG_CARTERA_02`, `TAB_CUE_RES_01` |
+| reportes / actividad-mensual | `COD_MENSUAL_MULTIBLOQUE` | 8 | `RS_DAT_PRO_01`, `RS_DAT_PRO_02`, `RS_DAT_PRO_03`, `RS_DAT_PRO_04`, `CONT_ELECT_M_01`, `CONT_ELECT_M_02`, `CONT_ELECT_M_03`, `CONT_ELECT_M_04` |
+| reportes / actividad-mensual | `COD_MENSUAL_REPO` | 7 | `RS_FECH`, `RS_TAB_COM_01`, `RS_DESEMB_02`, `RS_AGROMIX_01`, `CMG_CARTERA_01`, `CMG_CARTERA_02`, `TAB_CUE_RES_01` |
+| reportes / actividad-mensual | `COD_MONITOR_EFECTIVIDADES_DETALLE` | 3 | `RS_MON_EFECM_02`, `RS_MON_EFECREASIGM_02`, `SEL_EFEC_01` |
+| reportes / actividad-mensual | `COD_MONITOR_EFECTIVIDADES_REASIGNADOS_RESUMEN` | 1 | `RS_MON_EFECREASIGM_01` |
 | reportes / actividad-diaria / Portafolio Reasignado | `COD_PORTAFOLIO_REASIGNADO` | 5 | `RS_AGE_COM_CR_01`, `RS_AGE_COM_CR_03`, `RS_MON_EFECREASIG_01`, `RS_MON_EFECREASIG_02`, `SEL_EFEC_01` |
 | reportes / actividad-diaria / Proyecciones | `COD_PROYECCIONES` | 4 | `PROYEC_COLREC_01`, `PROYEC_COLREC_03`, `PROYEC_DIACOLREC_01`, `PROYEC_DIACOLREC_02` |
 | consulta-fen | `COD_REPORTE_FEN` | 1 | `CON_AGRO_FEN` |
@@ -66,7 +69,7 @@ Cada `cod_rep` identifica una consulta del backend: es el activo de datos más c
 | reportes / actividad-diaria / Seguros | `COD_SEGUROS` | 10 | `GRSCMIS_01`, `GRSCMIS_02`, `GRSCMIS_04`, `GRSCMIS_05`, `RS_SEG_PAS_03`, `RS_SEG_PAS_01`, `RS_SEG_PAS_02`, `RS_SEG_PAS_04`, `GRSCMISREP_01`, `RS_FECH` |
 | reportes / actividad-diaria / Tablero Digital | `COD_TABLERO_DIGITAL` | 6 | `TABDIG_01`, `TABDIG_02`, `TABDIG_VR2_01`, `RVIUWGCOR_01`, `RVIUWGCORE_02`, `RS_TAB_COM_01` |
 
-_188 códigos únicos en 28 constantes._
+_181 códigos únicos en 31 constantes._
 <!-- generado:fin -->
 
 ### Cómo leer esta tabla

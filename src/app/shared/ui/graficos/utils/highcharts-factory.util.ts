@@ -60,7 +60,7 @@ export function opcionesMixto(
   oscuro: boolean,
   config: OpcionesGrafico = {},
 ): Options {
-  const { tipo = 'auto', formato = 'soles', fondoTransparente = false, apilado = false } = config;
+  const { tipo = 'auto', formato = 'soles', fondoTransparente = false, apilado = false, decimales = 1 } = config;
   const esApilado = apilado || Boolean(bloque.apilado);
   const base = opcionesBase(oscuro, fondoTransparente);
   const { texto, textoFuerte, linea } = tokensTema(oscuro);
@@ -118,7 +118,7 @@ export function opcionesMixto(
             }
             if (formato === 'soles') {
               return Math.abs(valor) >= 1_000_000
-                ? `${(valor / 1_000_000).toFixed(1)} M`
+                ? `${(valor / 1_000_000).toFixed(decimales)} M`
                 : Math.abs(valor) >= 1_000
                   ? `${(valor / 1_000).toFixed(0)} k`
                   : Highcharts.numberFormat(valor, 0, '.', ',');
@@ -147,14 +147,14 @@ export function opcionesMixto(
           }
           if (esApilado) {
             return Math.abs(valor) >= 1_000_000
-              ? `${(Math.abs(valor) / 1_000_000).toFixed(1)} M`
+              ? `${(Math.abs(valor) / 1_000_000).toFixed(decimales)} M`
               : Math.abs(valor) >= 1_000
                 ? `${(Math.abs(valor) / 1_000).toFixed(0)} k`
                 : Highcharts.numberFormat(Math.abs(valor), 0, '.', ',');
           }
           if (formato === 'soles') {
             return Math.abs(valor) >= 1_000_000
-              ? `${(valor / 1_000_000).toFixed(1)} M`
+              ? `${(valor / 1_000_000).toFixed(decimales)} M`
               : Math.abs(valor) >= 1_000
                 ? `${(valor / 1_000).toFixed(0)} k`
                 : Highcharts.numberFormat(valor, 0, '.', ',');
@@ -230,7 +230,7 @@ export function opcionesMixto(
                   const absVal = Math.abs(val);
                   const texto =
                     absVal >= 1_000_000
-                      ? `${(val / 1_000_000).toFixed(1)} M`
+                      ? `${(val / 1_000_000).toFixed(decimales)} M`
                       : absVal >= 1_000
                         ? `${(val / 1_000).toFixed(1)} k`
                         : Highcharts.numberFormat(val, 0, '.', ',');

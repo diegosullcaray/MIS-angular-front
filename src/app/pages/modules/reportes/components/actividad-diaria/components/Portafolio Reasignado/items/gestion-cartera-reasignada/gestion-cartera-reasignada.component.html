@@ -24,17 +24,18 @@
           <app-tabla-reporte [encabezados]="resumen().headers" [filas]="resumen().body"
             [cargando]="cargandoResumen()" />
 
-          <!-- `content.lower` de `cuadro_Variable_Riesgo_01` en `cra-map.ts`. -->
-          <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
-            <b>reacción de visita al cliente versus la geolocalización del domicilio legal registrada en el " Alta de
-            persona"</b><br />
+          <!-- `content.lower` de `RS_AGE_COM_CR` en `com-map.module.ts`. -->
+          <p class="text-[11px] text-[var(--mis-text-tertiary)] mt-2 mb-0 leading-relaxed">
+            <b>* Mide la distancia entre la geolocalización de la reacción de visita al cliente versus la geolocalización
+            del domicilio legal registrada en el "Alta de persona".</b>
           </p>
   
         </div>
       </p-tabpanel>
 
       <p-tabpanel value="detalle">
-        <app-detalle-reasignado [tabla]="detalle()" [cargando]="cargandoDetalle()" [total]="totalDetalle()"
+        <!-- `cra-v11` no configura Última Gestión, Fecha Compromiso ni Asesor: el detalle solo depende del nivel y de "Mostrar por". -->
+        <app-detalle-reasignado [tabla]="detalle()" [cargando]="cargandoDetalle()" [total]="totalDetalle()" [filtrosComunes]="false"
           [opcionesUltimaGestion]="opcionesUltimaGestion()" [(asesor)]="asesor" [(fechaCompromiso)]="fechaCompromiso"
           [(ultimaGestion)]="ultimaGestion" [(pagina)]="pagina" (buscarAsesor)="onBuscarAsesor()" />
       </p-tabpanel>

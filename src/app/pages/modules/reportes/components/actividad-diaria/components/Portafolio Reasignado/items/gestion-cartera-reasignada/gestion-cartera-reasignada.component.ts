@@ -42,6 +42,7 @@ export class GestionCarteraReasignadaComponent extends ReporteReasignadoTabsBase
   }
 
   protected consultarDetalle(nodo: NodoConsulta, extra: Record<string, unknown>): Observable<TablaReporteResultado> {
-    return this.servicio.gestionDetalle(nodo, this.mostrarPor(), extra);
+    // `cra-v11` no manda los filtros comunes del detalle (Última Gestión, Fecha Compromiso, Asesor): solo la página.
+    return this.servicio.gestionDetalle(nodo, this.mostrarPor(), Number(extra['pagen'] ?? 1));
   }
 }

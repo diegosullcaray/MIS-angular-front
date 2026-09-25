@@ -55,7 +55,7 @@
         <section class="grid grid-cols-1 xl:grid-cols-2 gap-4 w-full">
           @for (grafico of graficos(); track grafico.titulo) {
             <div class="mis-card p-3 sm:p-4 h-[380px] sm:h-[400px] flex flex-col">
-              <app-grafico-mixto [datos]="grafico" tipo="columna" />
+              <app-grafico-mixto [datos]="grafico" tipo="columna" [decimales]="0" />
             </div>
           }
         </section>

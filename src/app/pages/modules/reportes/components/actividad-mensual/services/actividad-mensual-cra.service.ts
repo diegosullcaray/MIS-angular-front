@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, forkJoin, map } from 'rxjs';
+import { Observable, forkJoin, map, merge, scan } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
-import type { ReporteBloqueUnico, TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { TABLA_PENDIENTE, type ReporteBloqueUnico, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import type { OpcionFiltro } from '../../../models/filtros.model';
 import {
   type CarteraProductoResultado,
   extraerTarjetasCarteraProducto,
@@ -20,6 +21,9 @@ import {
   COD_MENSUAL_CRA,
   COD_MENSUAL_DEPRECADO,
   COD_MENSUAL_MULTIBLOQUE,
+  COD_MONITOR_EFECTIVIDADES_DETALLE,
+  COD_MONITOR_EFECTIVIDADES_REASIGNADOS_RESUMEN,
+  type ReporteGestionCarteraReasignadaMensual,
 } from '../constantes/actividad-mensual.constantes';
 import type { BloqueGrafico } from '../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
@@ -65,10 +69,29 @@ export class ActividadMensualCraService {
     return this.consultarRegular(COD_MENSUAL_CRA.huellaCarbono, nodo, { cargambiental, ...(fec ? { fec } : {}) });
   }
 
-  /** Gestión Cartera Reasignada Flujo. */
-  gestionCarteraReasignadaFlujo(nodo: NodoConsulta, ver: number, fecha?: string): Observable<TablaReporteResultado[]> {
-    const f = fecha ?? this.bloques.fecha();
-    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.gestionCarteraReasignadaFlujo, nodo, { ver, fecha: f });
+  /** Gestión de Cartera Reasignada mensual, pestaña "Resumen" (`_01`), con "Mostrar por" y la Fecha Cierre. */
+  gestionCarteraReasignadaResumen(
+    reporte: ReporteGestionCarteraReasignadaMensual,
+    nodo: NodoConsulta,
+    ver: number,
+    fecha: string,
+  ): Observable<TablaReporteResultado> {
+    return this.bloques.regularTolerante(`${reporte}_01`, nodo, { ver, fecha });
+  }
+
+  /**
+   * Gestión de Cartera Reasignada mensual, pestaña "Detalle": el `_03` paginado, con `pagen` y el
+   * nodo COMPLETO de la jerarquía (`rendererSync()` de `cra-v11`). Antes se pedía el `_02` sin
+   * paginar y solo con `tip_cod`/`cod_rel`, y el detalle no mostraba filas.
+   */
+  gestionCarteraReasignadaDetalle(
+    reporte: ReporteGestionCarteraReasignadaMensual,
+    nodo: NodoConsulta,
+    ver: number,
+    fecha: string,
+    pagina = 1,
+  ): Observable<TablaReporteResultado> {
+    return this.bloques.regularPaginadoTolerante(`${reporte}_03`, nodo, { ver, fecha }, pagina);
   }
 
   /** CMG Captaciones. */
@@ -144,19 +167,53 @@ export class ActividadMensualCraService {
     return this.consultarRegular(COD_MENSUAL_CRA.cmgCarteraMora, nodo, fec ? { fec } : undefined);
   }
 
-  /** Evolutivo Cosechas. */
-  evolutivoCosechas(nodo: NodoConsulta, prod: string, subpro: string, madu: string, op: string, fec?: string): Observable<ReporteBloqueUnico> {
-    return this.consultarDeprecado(COD_MENSUAL_DEPRECADO.evolutivoCosechas, nodo, { prod, subpro, madu, op, ...(fec ? { fec } : {}) });
+  /**
+   * Gráfico de Cosechas (`graf-cosechas`) — legado `rma/administracion/Riesgos/grafico_cosechas`
+   * sobre el host `cra-v3`: es un **gráfico** (`graphic: _01`), pedido con `getGraphicData` y solo
+   * con el nivel y sus cuatro filtros (sin fecha). Antes se pedía como tabla deprecada y fallaba.
+   */
+  evolutivoCosechas(nodo: NodoConsulta, prod: string, subpro: string, madu: string, op: string): Observable<BloqueGrafico[]> {
+    return this.bloques.graficosExacto(COD_MENSUAL_DEPRECADO.evolutivoCosechas, nodo, { prod, subpro, madu, op });
   }
 
   /** Monitor Efectividades. */
-  monitorEfectividades(nodo: NodoConsulta, fecha?: string): Observable<TablaReporteResultado[]> {
-    const f = fecha ?? this.bloques.fecha();
-    const bloques = BLOQUES_MONITOR_EFECTIVIDADES.map(({ codRep, tram }) => ({
-      codRep,
-      extra: { fecha: f, ...(tram ? { tram } : {}) },
-    }));
-    return this.bloques.regulares(bloques, nodo);
+  monitorEfectividades(nodo: NodoConsulta, fecha: string): Observable<TablaReporteResultado[]> {
+    // Carga independiente y tolerante: un tramo sin filas (500 de Ant) no tumba los otros bloques.
+    const respuestas = BLOQUES_MONITOR_EFECTIVIDADES.map(({ codRep, tram }, i) =>
+      this.bloques.regularTolerante(codRep, nodo, { fecha, ...(tram ? { tram } : {}) }).pipe(map((tabla) => ({ i, tabla }))),
+    );
+    return merge(...respuestas).pipe(
+      scan(
+        (tablas, { i, tabla }) => tablas.map((t, j) => (j === i ? tabla : t)),
+        BLOQUES_MONITOR_EFECTIVIDADES.map(() => TABLA_PENDIENTE),
+      ),
+    );
+  }
+
+  /**
+   * "Detalle de Efectividades" (`_02` de `mon-efec` o de `mon-efec-reasig`): paginado en el
+   * servidor y con sus filtros propios. Como el legado (`rendererSync()` de `cra-v4`/`cra-v12`),
+   * va con `pagen` y el nodo COMPLETO de la jerarquía; `pagen` va después de los filtros para que
+   * la página pedida no se pise.
+   */
+  detalleEfectividades(
+    reporte: keyof Pick<typeof COD_MONITOR_EFECTIVIDADES_DETALLE, 'monitor' | 'reasignados'>,
+    nodo: NodoConsulta,
+    fecha: string,
+    filtros: Record<string, unknown>,
+    pagina = 1,
+  ): Observable<TablaReporteResultado> {
+    return this.bloques.regularPaginadoTolerante(COD_MONITOR_EFECTIVIDADES_DETALLE[reporte], nodo, { fecha, ...filtros, pagen: pagina }, pagina);
+  }
+
+  /** Opciones de "Última Gestión" del detalle, que el legado trae del backend (`SEL_EFEC_01`). */
+  opcionesUltimaGestion(): Observable<OpcionFiltro[]> {
+    return this.bloques.regular(COD_MONITOR_EFECTIVIDADES_DETALLE.opcionesUltimaGestion, { tip_cod: 0, cod_rel: '' }).pipe(
+      map((tabla) => [
+        { id: 'TODO', desc: 'TODO' },
+        ...tabla.body.map((fila) => ({ id: String(fila['id'] ?? ''), desc: String(fila['desc'] ?? fila['id'] ?? '') })),
+      ]),
+    );
   }
 
   /** Mora y Efectividad por Tramos. */
@@ -172,9 +229,8 @@ export class ActividadMensualCraService {
   }
 
   /** Monitor Efectividades Reasignados. */
-  monitorEfectividadesReasignados(nodo: NodoConsulta, fecha?: string): Observable<TablaReporteResultado[]> {
-    const f = fecha ?? this.bloques.fecha();
-    return this.mismosParams(COD_MENSUAL_MULTIBLOQUE.monitorEfectividadesReasignados, nodo, { fecha: f });
+  monitorEfectividadesReasignados(nodo: NodoConsulta, fecha: string): Observable<TablaReporteResultado> {
+    return this.bloques.regularTolerante(COD_MONITOR_EFECTIVIDADES_REASIGNADOS_RESUMEN, nodo, { fecha });
   }
 
   /** Dashboard Cero Cuota Nueva. */

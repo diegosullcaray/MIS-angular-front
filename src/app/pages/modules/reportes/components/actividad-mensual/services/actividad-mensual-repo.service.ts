@@ -19,6 +19,8 @@ import {
   totalesAgro,
 } from '../../actividad-diaria/components/Cartera/utils/cartera-mapeo.util';
 import { GRAFICOS_AGRICOLA } from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
+import { COLUMNAS_TABLERO_COMERCIAL } from '../../actividad-diaria/components/Tablero Digital/models/tablero-comercial.model';
+import { semaforosTableroComercial } from '../../actividad-diaria/components/Tablero Digital/utils/tablero-comercial.util';
 import type { TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../models/tabla-dinamica.model';
 import type { CmgCarteraResultado } from '../../actividad-diaria/components/Cartera/models/cmg-cartera.model';
 import type {
@@ -44,9 +46,16 @@ export class ActividadMensualRepoService {
     return this.bloques.periodos(codRep);
   }
 
-  /** Tablero Digital Comercial. */
+  /**
+   * Tablero Digital Comercial mensual — legado `repositorio/usabilidad-comercial-m`. Igual que el
+   * diario: `RS_TAB_COM_01` no manda `headers`, así que las columnas son las del `tblHeaders`
+   * estático del legado (sin ellas la tabla quedaba sin columnas y no se pintaba) y los semáforos
+   * se calculan en el cliente. La fecha es la del cierre elegido en `RS_FECH`.
+   */
   tableroDigitalComercial(nodo: NodoConsulta, fecha?: string): Observable<TablaDinamicaResultado> {
-    return this.bloques.tablaRegularCon(COD_MENSUAL_REPO.tableroDigitalComercial, this.paramsConFecha(nodo, fecha));
+    return this.bloques
+      .tablaRegularCon(COD_MENSUAL_REPO.tableroDigitalComercial, this.paramsConFecha(nodo, fecha))
+      .pipe(map((tabla) => ({ columnas: COLUMNAS_TABLERO_COMERCIAL, filas: semaforosTableroComercial(tabla.filas) })));
   }
 
   /** Estructura de Desembolsos mensual, con su coloración condicional. */

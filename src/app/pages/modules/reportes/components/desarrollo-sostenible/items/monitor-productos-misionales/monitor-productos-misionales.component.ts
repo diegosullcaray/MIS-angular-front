@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
-import { SkeletonModule } from 'primeng/skeleton';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Component, computed, inject, signal } from '@angular/core';
+import { ChipInformativoComponent } from '../../../../../../../shared/ui/chip-informativo/chip-informativo.component';
+import { severidadSemaforo } from '../../../../utils/semaforo.util';
 import { HierSelectorComponent } from '../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { PARAMS_HIER_UNIDAD } from '../../../../models/jerarquia.model';
@@ -19,7 +19,7 @@ import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formulario
 @Component({
   selector: 'app-monitor-productos-misionales',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent, GrupoFiltrosComponent, SelectFiltroComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, ChipInformativoComponent, WindowPanelComponent, GrupoFiltrosComponent, SelectFiltroComponent],
   templateUrl: './monitor-productos-misionales.component.html',
 })
 export class MonitorProductosMisionalesComponent {
@@ -35,6 +35,12 @@ export class MonitorProductosMisionalesComponent {
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   protected readonly kpiOperaciones = signal<KpiOperacionesDesembolsadas | null>(null);
+  /** "Operaciones Desembolsadas — Cumplimiento de Meta" como chip con el semáforo del backend. */
+  protected readonly chipOperaciones = computed(() => {
+    const k = this.kpiOperaciones();
+    return k?.cumpl_des_acum ? `Operaciones Desembolsadas · Cumplimiento de Meta: ${k.cumpl_des_acum}` : null;
+  });
+  protected readonly severidadOperaciones = computed(() => severidadSemaforo(this.kpiOperaciones()?.style_cumpl_des_acum));
   protected readonly tablaDetalle = signal<TablaReporteResultado>(TABLA_VACIA);
   protected readonly tablaSimple = signal<TablaReporteResultado>(TABLA_VACIA);
 

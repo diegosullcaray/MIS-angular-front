@@ -35,6 +35,8 @@ export class GraficoMixtoComponent {
   readonly fondoTransparente = input(false);
   /** Si las barras/columnas deben apilarse (stacking: 'normal'). */
   readonly apilado = input(false);
+  /** Decimales de las etiquetas abreviadas en millones ("12.3 M"); `0` las deja enteras. */
+  readonly decimales = input(1);
 
   /** Emite la categoría clickeada — abre el detalle del reporte que la escuche. */
   readonly puntoSeleccionado = output<string>();
@@ -45,6 +47,7 @@ export class GraficoMixtoComponent {
       formato: this.formato(),
       fondoTransparente: this.fondoTransparente(),
       apilado: this.apilado() || Boolean(this.datos().apilado),
+      decimales: this.decimales(),
     })
   );
 }

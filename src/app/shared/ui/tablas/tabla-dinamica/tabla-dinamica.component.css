@@ -1,3 +1,9 @@
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr.fila-destacada > td {
   font-weight: 700;
 }
+
+/* `truncarTexto`: la celda no pasa de este ancho; el texto sobrante se corta con "…". */
+.celda-truncada {
+  max-width: 14rem;
+  overflow: hidden;
+}

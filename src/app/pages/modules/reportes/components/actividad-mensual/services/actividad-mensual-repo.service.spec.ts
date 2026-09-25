@@ -55,7 +55,9 @@ describe('ActividadMensualRepoService', () => {
       cod_rel: nodo.cod_rel,
       fec: '2026-08-28',
     });
-    expect(res).toBe(TABLA_DINAMICA_VACIA);
+    // El backend no manda headers: las columnas son las del `tblHeaders` del legado.
+    expect(res.columnas.map((c) => c.key)).toEqual(['descripcion', 'avance_mes']);
+    expect(res.filas).toEqual([]);
   });
 
   /**

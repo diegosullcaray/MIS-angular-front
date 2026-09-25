@@ -44,4 +44,13 @@ describe('TableroDigitalComercialComponent', () => {
       expect.any(String),
     );
   });
+
+  it('espera el cierre de RS_FECH y consulta una sola vez con él', () => {
+    const fixture = TestBed.createComponent(TableroDigitalComercialComponent);
+    fixture.detectChanges();
+    fixture.componentInstance['onNivelSeleccionado'](NODO);
+    fixture.detectChanges();
+    expect(servicioSpy.tableroDigitalComercial).toHaveBeenCalledTimes(1);
+    expect(servicioSpy.tableroDigitalComercial).toHaveBeenCalledWith(expect.anything(), '2026-08');
+  });
 });

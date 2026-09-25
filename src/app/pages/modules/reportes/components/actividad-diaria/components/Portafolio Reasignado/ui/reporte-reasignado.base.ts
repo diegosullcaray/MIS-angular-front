@@ -1,5 +1,5 @@
 import { effect, inject, signal } from '@angular/core';
-import type { Observable } from 'rxjs';
+import type { Observable, Subscription } from 'rxjs';
 import { ToastService } from '../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../utils/hier-selector-error.util';
 import type { NodoConsulta } from '../../../../../services/bloque-reporte.service';
@@ -53,18 +53,25 @@ export abstract class ReporteReasignadoTabsBase {
       error: () => undefined,
     });
 
-    effect(() => {
+    // `onCleanup` cancela la consulta en vuelo: una respuesta tardía del nivel o filtro anterior
+    // ya no pisa la del actual.
+    effect((onCleanup) => {
       const nodo = this.nivelActual();
-      if (nodo) this.cargarResumen(nodo);
+      if (!nodo) return;
+      const sub = this.cargarResumen(nodo);
+      onCleanup(() => sub.unsubscribe());
     });
 
-    effect(() => {
+    effect((onCleanup) => {
       const nodo = this.nivelActual();
-      if (nodo) this.cargarDetalle(nodo);
+      if (!nodo) return;
+      const sub = this.cargarDetalle(nodo);
+      onCleanup(() => sub.unsubscribe());
     });
   }
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
+    this.pagina.set(1);
     this.nivelActual.set(nodo);
   }
 
@@ -84,9 +91,9 @@ export abstract class ReporteReasignadoTabsBase {
     return paramsDetalleComunes(filtros);
   }
 
-  private cargarResumen(nodo: HierarquiaNodo): void {
+  private cargarResumen(nodo: HierarquiaNodo): Subscription {
     this.cargandoResumen.set(true);
-    this.consultarResumen({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
+    return this.consultarResumen({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
       next: (tabla) => {
         this.resumen.set(tabla);
         this.cargandoResumen.set(false);
@@ -98,9 +105,10 @@ export abstract class ReporteReasignadoTabsBase {
     });
   }
 
-  private cargarDetalle(nodo: HierarquiaNodo): void {
+  private cargarDetalle(nodo: HierarquiaNodo): Subscription {
     this.cargandoDetalle.set(true);
-    this.consultarDetalle({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, this.paramsComunes()).subscribe({
+    // El detalle va con el nodo completo de la jerarquía, como el legado (`...level`).
+    return this.consultarDetalle(nodo, this.paramsComunes()).subscribe({
       next: (tabla) => {
         this.detalle.set(tabla);
         this.totalDetalle.set(Number(tabla.additional['Total'] ?? 0));

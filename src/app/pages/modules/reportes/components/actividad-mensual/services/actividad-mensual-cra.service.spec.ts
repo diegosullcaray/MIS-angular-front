@@ -8,6 +8,9 @@ describe('ActividadMensualCraService', () => {
   let regular: ReturnType<typeof vi.fn>;
   let deprecado: ReturnType<typeof vi.fn>;
   let regulares: ReturnType<typeof vi.fn>;
+  let graficosExacto: ReturnType<typeof vi.fn>;
+  let regularTolerante: ReturnType<typeof vi.fn>;
+  let regularPaginadoTolerante: ReturnType<typeof vi.fn>;
   let service: ActividadMensualCraService;
 
   const nodo: NodoConsulta = { tip_cod: 1, cod_rel: '100' };
@@ -17,6 +20,9 @@ describe('ActividadMensualCraService', () => {
     deprecado = vi.fn().mockReturnValue(of(TABLA_VACIA));
     regulares = vi.fn().mockReturnValue(of([TABLA_VACIA]));
     const graficos = vi.fn().mockReturnValue(of([]));
+    graficosExacto = vi.fn().mockReturnValue(of([]));
+    regularTolerante = vi.fn().mockReturnValue(of(TABLA_VACIA));
+    regularPaginadoTolerante = vi.fn().mockReturnValue(of(TABLA_VACIA));
 
     TestBed.configureTestingModule({
       providers: [
@@ -28,6 +34,9 @@ describe('ActividadMensualCraService', () => {
             deprecado,
             regulares,
             graficos,
+            graficosExacto,
+            regularTolerante,
+            regularPaginadoTolerante,
             fecha: () => '2026-08-28',
             fec: () => '20260828',
           },
@@ -54,10 +63,12 @@ describe('ActividadMensualCraService', () => {
     expect(res.tabla1).toBe(TABLA_VACIA);
   });
 
-  it('gestionCarteraReasignadaFlujo debe consultar 2 bloques', async () => {
-    const res = await firstValueFrom(service.gestionCarteraReasignadaFlujo(nodo, 0));
-    expect(regulares).toHaveBeenCalled();
-    expect(res.length).toBe(1);
+  it('Gestión de Cartera Reasignada mensual: resumen `_01` y detalle `_03` paginado con el nodo completo', async () => {
+    const nodoCompleto = { tip_cod: 1, cod_rel: '100', desc_rel: 'Unidad', lvl: 2 };
+    await firstValueFrom(service.gestionCarteraReasignadaResumen('RS_AGE_COM_CRM_F', nodo, 1, '20260831'));
+    await firstValueFrom(service.gestionCarteraReasignadaDetalle('RS_AGE_COM_CRM', nodoCompleto, 0, '20260831', 2));
+    expect(regularTolerante).toHaveBeenCalledWith('RS_AGE_COM_CRM_F_01', nodo, { ver: 1, fecha: '20260831' });
+    expect(regularPaginadoTolerante).toHaveBeenCalledWith('RS_AGE_COM_CRM_03', nodoCompleto, { ver: 0, fecha: '20260831' }, 2);
   });
 
   it('cmgCaptaciones debe consultar GCMGCAP_01', async () => {
@@ -80,9 +91,14 @@ describe('ActividadMensualCraService', () => {
     expect(res.length).toBe(1);
   });
 
-  it('contratacionElectronica debe consultar 3 bloques', async () => {
+  it('contratacionElectronica debe consultar los 4 bloques del mapa rda (host cra-v1p1)', async () => {
     const res = await firstValueFrom(service.contratacionElectronica(nodo));
-    expect(regulares).toHaveBeenCalled();
+    expect(regulares.mock.calls[0][0].map((b: { codRep: string }) => b.codRep)).toEqual([
+      'CONT_ELECT_M_01',
+      'CONT_ELECT_M_02',
+      'CONT_ELECT_M_03',
+      'CONT_ELECT_M_04',
+    ]);
     expect(res.length).toBe(1);
   });
 
@@ -98,15 +114,15 @@ describe('ActividadMensualCraService', () => {
     expect(res.tabla1).toBe(TABLA_VACIA);
   });
 
-  it('evolutivoCosechas debe consultar rma/administracion/Riesgos/grafico_cosechas_01', async () => {
-    const res = await firstValueFrom(service.evolutivoCosechas(nodo, 'TODO', 'TODO', '3', 'Saldo'));
-    expect(deprecado).toHaveBeenCalledWith('rma/administracion/Riesgos/grafico_cosechas_01', nodo, {
+  it('evolutivoCosechas pide el gráfico grafico_cosechas_01 con sus cuatro filtros y sin fecha, como el legado', async () => {
+    await firstValueFrom(service.evolutivoCosechas(nodo, 'TODO', 'TODO', '3', 'Saldo'));
+    expect(graficosExacto).toHaveBeenCalledWith('rma/administracion/Riesgos/grafico_cosechas_01', nodo, {
       prod: 'TODO',
       subpro: 'TODO',
       madu: '3',
       op: 'Saldo',
     });
-    expect(res.tabla1).toBe(TABLA_VACIA);
+    expect(deprecado).not.toHaveBeenCalled();
   });
 
   it('resultadosUnidadNegocio debe consultar resultado_unidad_negocio_rma_01', async () => {

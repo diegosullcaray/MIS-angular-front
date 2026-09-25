@@ -64,6 +64,8 @@ export interface OpcionesGrafico {
   fondoTransparente?: boolean;
   /** Gráfico de barras o columnas apiladas (stacking: 'normal'). */
   apilado?: boolean;
+  /** Decimales de las cifras abreviadas en millones ("12.3 M") de las etiquetas; por defecto 1. */
+  decimales?: number;
   /** Solo en torta: la vacía por el centro (`innerSize`) para dejarla como dona. */
   dona?: boolean;
 }

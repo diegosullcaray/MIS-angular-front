@@ -9,11 +9,13 @@ import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 const NODO: HierarquiaNodo = { tip_cod: 1, cod_rel: '100', desc_rel: 'Unidad 100', lvl: 1 };
 
 describe('MonitorEfectividadesReasignadosComponent', () => {
-  let servicioSpy: { monitorEfectividadesReasignados: ReturnType<typeof vi.fn> };
+  let servicioSpy: Record<'monitorEfectividadesReasignados' | 'detalleEfectividades' | 'opcionesUltimaGestion', ReturnType<typeof vi.fn>>;
 
   beforeEach(() => {
     servicioSpy = {
-      monitorEfectividadesReasignados: vi.fn().mockReturnValue(of([TABLA_VACIA, TABLA_VACIA])),
+      monitorEfectividadesReasignados: vi.fn().mockReturnValue(of(TABLA_VACIA)),
+      detalleEfectividades: vi.fn().mockReturnValue(of(TABLA_VACIA)),
+      opcionesUltimaGestion: vi.fn().mockReturnValue(of([{ id: 'TODO', desc: 'TODO' }])),
     };
 
     TestBed.configureTestingModule({
@@ -38,6 +40,20 @@ describe('MonitorEfectividadesReasignadosComponent', () => {
     expect(servicioSpy.monitorEfectividadesReasignados).toHaveBeenCalledWith(
       expect.objectContaining({ tip_cod: 1, cod_rel: '100' }),
       expect.any(String),
+    );
+  });
+
+  it('la pestaña "Detalle de Efectividades" pide el `_02` con sus filtros propios, no el resumen', () => {
+    const fixture = TestBed.createComponent(MonitorEfectividadesReasignadosComponent);
+    fixture.detectChanges();
+    fixture.componentInstance['onNivelSeleccionado'](NODO);
+    fixture.detectChanges();
+    expect(servicioSpy.detalleEfectividades).toHaveBeenCalledWith(
+      'reasignados',
+      expect.objectContaining({ tip_cod: 1, cod_rel: '100' }),
+      expect.any(String),
+      expect.objectContaining({ tramof: 'TODO', prod: 'TODO', comp_r: 'TODO', resp: 'TODO', fcompro: 'TODO', nom: '%%' }),
+      1,
     );
   });
 });

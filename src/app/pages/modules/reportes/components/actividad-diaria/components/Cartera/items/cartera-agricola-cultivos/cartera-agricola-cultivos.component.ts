@@ -8,6 +8,7 @@ import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { DataTableComponent } from '../../../../../../../../../shared/ui/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../../../../../../../shared/ui/data-table/data-table-cell.directive';
+import { EsqueletoGraficoComponent } from '../../../../../../../../../shared/ui/graficos/esqueleto-grafico/esqueleto-grafico.component';
 import { GraficoMixtoComponent } from '../../../../../../../../../shared/ui/graficos/grafico-mixto/grafico-mixto.component';
 import { MapaUbicacionComponent } from '../../../../../../../../../shared/ui/mapas/mapa-ubicacion/mapa-ubicacion.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
@@ -47,6 +48,7 @@ import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ru
     DataTableComponent,
     DataTableCellDirective,
     GraficoMixtoComponent,
+    EsqueletoGraficoComponent,
     MapaUbicacionComponent,
     EmptyStateComponent,
     WindowPanelComponent,
@@ -93,6 +95,8 @@ export class CarteraAgricolaCultivosComponent {
   protected readonly filaSeleccionada = signal<Record<string, unknown> | null>(null);
   protected readonly graficos = signal<BloqueGrafico[]>([]);
   protected readonly cargandoGraficos = signal(false);
+  /** Un esqueleto por bloque de `GRAFICOS_AGRICOLA` mientras cargan los gráficos de detalle. */
+  protected readonly esqueletosGraficos = GRAFICOS_AGRICOLA.map((_, i) => i);
 
   /** Detalle del cultivo elegido en un gráfico; `null` mantiene el modal cerrado. */
   protected readonly detalle = signal<DetalleCultivo | null>(null);
