@@ -11,6 +11,7 @@ import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../model
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
 import type { OpcionFiltro } from '../../../../../../../../../shared/ui/formularios/opcion-filtro.model';
 import { ActividadMensualRepoService } from '../../../../services/actividad-mensual-repo.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** \"Estructura de Desembolsos\" (`repositorio/actividad-mensual/cartera/estructura-desembolsos`).
  *
@@ -26,6 +27,7 @@ import { ActividadMensualRepoService } from '../../../../services/actividad-mens
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './estructura-desembolsos.component.html',
   styleUrl: './estructura-desembolsos.component.css',

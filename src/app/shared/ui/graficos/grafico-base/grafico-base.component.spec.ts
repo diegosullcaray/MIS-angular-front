@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ComponentFixture } from '@angular/core/testing';
-import Highcharts from 'highcharts';
+import Highcharts from 'highcharts/esm/highcharts.js';
 import { GraficoBaseComponent } from './grafico-base.component';
 
 describe('GraficoBaseComponent', () => {

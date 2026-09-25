@@ -192,7 +192,7 @@ export const MisTheme = definePreset(Aura, {
       },
       row: {
         background: 'var(--mis-surface)',
-        hoverBackground: 'var(--mis-hover-bg)',
+        hoverBackground: 'var(--mis-table-row-hover-bg)',
         selectedBackground: 'var(--mis-primary-light)',
         color: 'var(--mis-text-primary)',
         hoverColor: 'var(--mis-text-primary)',

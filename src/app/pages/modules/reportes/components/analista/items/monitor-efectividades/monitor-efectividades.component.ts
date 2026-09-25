@@ -16,12 +16,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { SelectorAsesorBase } from '../../ui/selector-asesor.base';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import type { FiltrosMonitorEfectividades } from '../../models/monitor-efectividades.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Detalle Monitor de Efectividades Asesor" — migrado de la ruta `leg/com/rda/sec/mon_efec_sec` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v3`, config `RS_MON_EFEC_SEC` en `crs-map.ts`). */
 @Component({
   selector: 'app-monitor-efectividades',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './monitor-efectividades.component.html',
 })
 export class MonitorEfectividadesComponent extends SelectorAsesorBase {

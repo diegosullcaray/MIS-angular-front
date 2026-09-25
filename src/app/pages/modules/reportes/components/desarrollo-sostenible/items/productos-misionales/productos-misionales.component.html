@@ -6,18 +6,9 @@
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
 
-    <div class="flex flex-col gap-1">
-      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Productos</span>
-      <p-select appendTo="body"
-        [options]="opcionesProducto"
-        optionLabel="desc"
-        optionValue="id"
-        [ngModel]="productoSeleccionado()"
-        (ngModelChange)="onProductoSeleccionado($event)"
-        styleClass="w-56 text-[11.5px]"
-        ariaLabel="Productos"
-      />
-    </div>
+    <app-grupo-filtros>
+      <app-select-filtro etiqueta="Productos" [opciones]="opcionesProducto" [valor]="productoSeleccionado()" (valorChange)="onProductoSeleccionado($event)" ancho="w-56" />
+    </app-grupo-filtros>
   </div>
 
   <div class="mis-card p-3 overflow-x-auto">

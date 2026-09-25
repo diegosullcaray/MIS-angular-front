@@ -29,6 +29,7 @@ import {
   type UbicacionCliente,
 } from '../../../../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
 import { ActividadMensualRepoService } from '../../../../services/actividad-mensual-repo.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Cartera Agrícola - Cultivos" (`repositorio/actividad-mensual/cartera/agro-mix-m`). */
 @Component({
@@ -48,6 +49,7 @@ import { ActividadMensualRepoService } from '../../../../services/actividad-mens
     MapaUbicacionComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './cartera-agricola-cultivos.component.html',
   styleUrl: './cartera-agricola-cultivos.component.css',

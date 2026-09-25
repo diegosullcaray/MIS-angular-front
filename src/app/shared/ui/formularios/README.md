@@ -43,6 +43,30 @@ directo. El tipo del `id` se infiere de las opciones: con `OpcionFiltro<number>`
 | `ancho` | `string` | `'w-44'` | Clase de Tailwind para el ancho |
 | `valor` | `model<T>` | — | **Requerido.** Banda doble |
 
+## `<app-grupo-filtros>`
+
+Baldosa de vidrio (`.mis-baldosa`) que agrupa los **filtros propios** del reporte, con el mismo
+material, padding y disposición que la tarjeta de `app-hier-selector`. Todo filtro propio va dentro
+de una: así la franja de filtros se lee como tarjetas hermanas y no como controles sueltos.
+
+```html
+<div ventana-filtros class="flex flex-col gap-3">
+  <app-hier-selector [paramsHier]="paramsHier" (nodoSeleccionado)="onNivel($event)" />
+  <app-grupo-filtros>
+    <app-select-filtro etiqueta="Tipo" [opciones]="opcionesTipo" [(valor)]="tipo" />
+    <app-select-filtro etiqueta="Canal" [opciones]="opcionesCanal" [(valor)]="canal" ancho="w-52" />
+  </app-grupo-filtros>
+</div>
+```
+
+Si los filtros son todo el slot, la baldosa puede llevar el atributo: `<app-grupo-filtros ventana-filtros>`.
+`app-reporte-simple` y `app-detalle-reasignado` ya envuelven su slot `[filtros]` en una, así que ahí
+no hay que agregarla. Si queda vacía (p. ej. un `@if` en falso) se oculta sola.
+
+| Input | Tipo | Por defecto | Para qué |
+|---|---|---|---|
+| `anchoCompleto` | `boolean` | `true` | Ocupa todo el ancho, igual que `app-hier-selector`; `false` la ajusta al contenido |
+
 ## `OpcionFiltro`
 
 ```typescript

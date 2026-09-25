@@ -1,6 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TagModule } from 'primeng/tag';
 import { HierSelectorComponent } from '../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { EmptyStateComponent } from '../../../../../../../shared/ui/empty-state/empty-state.component';
@@ -8,6 +9,7 @@ import { PARAMS_HIER_UNIDAD } from '../../../../models/jerarquia.model';
 import { AvanceComercialService } from '../../services/avance-comercial.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../utils/hier-selector-error.util';
+import { severidadSemaforo } from '../../../../utils/semaforo.util';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
@@ -18,7 +20,7 @@ import { TabsModule } from 'primeng/tabs';
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent, TabsModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent, TabsModule, TagModule],
   templateUrl: './monitor-metas-desembolso.component.html',
 })
 export class MonitorMetasDesembolsoComponent {
@@ -64,16 +66,38 @@ export class MonitorMetasDesembolsoComponent {
       },
     });
   }
-  // Agrega esto en tu componente TypeScript
+  /**
+   * Chip informativo por pestaña, en reemplazo de las tarjetas KPI de arriba.
+   * El color sigue la misma regla de semáforo que ya colorea las celdas de las
+   * tablas (`style_cumpl_des_acum` / `style_cumpl_ope_acum`: 1 verde, 0 ámbar,
+   * -1 rojo) — si el backend marca el acumulado en rojo es porque no llega a
+   * la meta, igual que en el legado.
+   */
+  protected readonly chipOperaciones = computed(() => {
+    const k = this.kpiOperaciones();
+    return k?.cumpl_des_acum ? `Cumplimiento de Meta: ${k.cumpl_des_acum}` : null;
+  });
+  protected readonly severidadOperaciones = computed(() => severidadSemaforo(this.kpiOperaciones()?.style_cumpl_des_acum));
+
+  protected readonly chipMonto = computed(() => {
+    const k = this.kpiMonto();
+    return k?.cumpl_ope_acum ? `Cumplimiento de Meta: ${k.cumpl_ope_acum}` : null;
+  });
+  protected readonly severidadMonto = computed(() => severidadSemaforo(this.kpiMonto()?.style_cumpl_ope_acum));
+
   protected readonly tabs = [
     {
       id: 'tab1',
       titulo: 'Operaciones Desembolsadas',
+      chip: this.chipOperaciones,
+      severidad: this.severidadOperaciones,
       tablas: [this.tabla1] // Solo una tabla
     },
     {
       id: 'tab2',
       titulo: 'Monto Desembolsado',
+      chip: this.chipMonto,
+      severidad: this.severidadMonto,
       tablas: [this.tabla2, this.tabla3, this.tabla4] // Tres tablas
     }
   ];

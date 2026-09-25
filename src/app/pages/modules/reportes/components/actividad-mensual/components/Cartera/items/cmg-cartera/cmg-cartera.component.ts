@@ -19,6 +19,7 @@ import {
 } from '../../../../../actividad-diaria/components/Cartera/models/cmg-cartera.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { ActividadMensualRepoService } from '../../../../services/actividad-mensual-repo.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "CMG Cartera" (`repositorio/actividad-mensual/cartera/cmg-cartera-m`). */
 @Component({
@@ -33,6 +34,7 @@ import { ActividadMensualRepoService } from '../../../../services/actividad-mens
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './cmg-cartera.component.html',
   styleUrl: './cmg-cartera.component.css',

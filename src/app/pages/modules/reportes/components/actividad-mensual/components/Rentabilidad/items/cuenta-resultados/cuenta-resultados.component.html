@@ -12,14 +12,14 @@
       (error)="onErrorJerarquia()"
     />
     @if (periodos().length > 0) {
-      <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+      <app-grupo-filtros>
         <app-select-filtro
           etiqueta="Período"
           [opciones]="periodos()"
           [valor]="periodo()"
           (valorChange)="onPeriodoChange($event)"
         />
-      </div>
+      </app-grupo-filtros>
     }
   </div>
 

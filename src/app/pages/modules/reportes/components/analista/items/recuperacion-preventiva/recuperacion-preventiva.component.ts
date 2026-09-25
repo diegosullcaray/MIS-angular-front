@@ -9,12 +9,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteRecuperacionPreventiva } from '../../models/recuperacion-preventiva.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Recuperación Preventiva" — migrado de la ruta `leg/com/rda/sec/rec-prev` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/recuperacion_preventiva/recuperacion_preventiva` en `crs-map.ts`). */
 @Component({
   selector: 'app-recuperacion-preventiva',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './recuperacion-preventiva.component.html',
 })
 export class RecuperacionPreventivaComponent extends ReporteAsesorBase<ReporteRecuperacionPreventiva> {

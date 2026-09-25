@@ -9,12 +9,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteSeguros } from '../../models/seguros.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Seguros" — migrado de la ruta `leg/com/rda/sec/seg` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/seguros/seguros_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-seguros',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './seguros.component.html',
 })
 export class SegurosComponent extends ReporteAsesorBase<ReporteSeguros> {

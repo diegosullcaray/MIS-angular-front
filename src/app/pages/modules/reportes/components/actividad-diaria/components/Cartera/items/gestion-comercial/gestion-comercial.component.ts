@@ -23,6 +23,7 @@ import {
   type GestionComercialResultado,
 } from '../../models/gestion-comercial.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Gestión Comercial" (`repositorio/actividad-diaria/cartera/gest-comercial`). */
 @Component({
@@ -39,6 +40,7 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
     GraficoMixtoComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './gestion-comercial.component.html',
 })

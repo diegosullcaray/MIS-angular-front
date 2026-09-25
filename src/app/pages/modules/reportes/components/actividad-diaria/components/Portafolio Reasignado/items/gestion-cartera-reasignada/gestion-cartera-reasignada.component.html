@@ -3,7 +3,9 @@
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel"
       (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
-    <app-select-filtro etiqueta="Mostrar por" [opciones]="opcionesMostrarPor" [(valor)]="mostrarPor" ancho="w-48" />
+    <app-grupo-filtros>
+      <app-select-filtro etiqueta="Mostrar por" [opciones]="opcionesMostrarPor" [(valor)]="mostrarPor" ancho="w-48" />
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
-import Highcharts from 'highcharts';
-import Heatmap from 'highcharts/modules/heatmap';
+import Highcharts from 'highcharts/esm/highcharts.js';
+import Heatmap from 'highcharts/esm/modules/heatmap.js';
 import { ThemeService } from '../../../services/theme.service';
 import type { MapaCalorGrafico } from '../models/grafico-comun.model';
 import { GraficoBaseComponent } from '../grafico-base/grafico-base.component';

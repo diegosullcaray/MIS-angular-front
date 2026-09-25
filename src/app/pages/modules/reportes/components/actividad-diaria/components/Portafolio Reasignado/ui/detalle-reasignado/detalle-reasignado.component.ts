@@ -8,6 +8,7 @@ import { SelectModule } from 'primeng/select';
 import { TablaReporteComponent } from '../../../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import type { TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** Filas por página del detalle — el paginador del legado (`table-ajax`) usa el default de Material. */
 const POR_PAGINA = 10;
@@ -31,6 +32,7 @@ const POR_PAGINA = 10;
     PaginatorModule,
     SelectModule,
     TablaReporteComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './detalle-reasignado.component.html',
 })

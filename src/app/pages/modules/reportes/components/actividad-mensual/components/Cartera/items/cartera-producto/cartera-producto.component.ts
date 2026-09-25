@@ -17,6 +17,7 @@ import {
   type CarteraProductoResultado,
 } from './models/cartera-producto.model';
 import { ActividadMensualCraService } from '../../../../services/actividad-mensual-cra.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Cartera por Producto" (`leg/com/rma/adm/cart-prod`). */
 @Component({
@@ -29,6 +30,7 @@ import { ActividadMensualCraService } from '../../../../services/actividad-mensu
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './cartera-producto.component.html',
   styleUrl: './cartera-producto.component.css',

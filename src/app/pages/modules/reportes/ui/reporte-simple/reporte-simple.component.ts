@@ -5,6 +5,7 @@ import { TablaReporteComponent } from '../../../../../shared/ui/tablas/tabla-rep
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
+import { GrupoFiltrosComponent } from '../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
 
@@ -31,7 +32,7 @@ export interface PestanaReporte {
 @Component({
   selector: 'app-reporte-simple',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, InlineErrorComponent, WindowPanelComponent, TabsModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, InlineErrorComponent, WindowPanelComponent, GrupoFiltrosComponent, TabsModule],
   template: `
     <app-window-panel
       [titulo]="titulo()"
@@ -50,9 +51,9 @@ export interface PestanaReporte {
           (nodoSeleccionado)="nivelSeleccionado.emit($event)"
           (error)="errorJerarquia.emit()"
         />
-        <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+        <app-grupo-filtros>
           <ng-content select="[filtros]" />
-        </div>
+        </app-grupo-filtros>
       </div>
 
       <!-- Estado: error / vacío / pestañas / bloques -->

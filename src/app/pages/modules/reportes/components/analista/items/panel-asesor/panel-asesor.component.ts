@@ -24,6 +24,7 @@ import {
 } from '../../models/monitor-efectividades.model';
 import type { GrupoPanelAsesor, KpiPanelAsesor, ReportePanelAsesor, ResultadoPanelAsesor } from '../../models/panel-asesor.model';
 import { bloquesDe, gruposOrdenados, kpisDeTotales, semaforoKpi, sinDatos } from '../../utils/panel-asesor.util';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 type PestanaPanel = 'resumen' | GrupoPanelAsesor;
 
@@ -60,6 +61,7 @@ const FILTROS_EFECTIVIDADES: readonly FiltroEfectividades[] = [
     ListSkeletonComponent,
     GraficoMixtoComponent,
     BloquePanelComponent,
+    GrupoFiltrosComponent,
   ],
   providers: [PanelAsesorService, PanelAsesorConsultasService],
   templateUrl: './panel-asesor.component.html',

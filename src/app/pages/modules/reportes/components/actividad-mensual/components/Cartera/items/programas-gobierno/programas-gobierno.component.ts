@@ -14,6 +14,7 @@ import {
   fechaBasePorDefecto,
 } from '../../../../models/actividad-mensual-filtros.model';
 import { ActividadMensualCraService } from '../../../../services/actividad-mensual-cra.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Programas del Gobierno" (`leg/com/rma/adm/pro-gob-m`). */
 @Component({
@@ -30,6 +31,7 @@ import { ActividadMensualCraService } from '../../../../services/actividad-mensu
     Tab,
     TabPanels,
     TabPanel,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './programas-gobierno.component.html',
   styleUrl: './programas-gobierno.component.css',

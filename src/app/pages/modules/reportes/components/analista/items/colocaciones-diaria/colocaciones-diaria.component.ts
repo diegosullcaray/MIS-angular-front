@@ -9,12 +9,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteColocacionesDiaria } from '../../models/colocaciones-diaria.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Colocaciones diaria Operación, Monto y Recuperación" — migrado de la ruta `leg/com/rda/sec/proy_M6` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `PROYEC_DIACOLREC_AS` en `crs-map.ts`). */
 @Component({
   selector: 'app-colocaciones-diaria',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './colocaciones-diaria.component.html',
 })
 export class ColocacionesDiariaComponent extends ReporteAsesorBase<ReporteColocacionesDiaria> {

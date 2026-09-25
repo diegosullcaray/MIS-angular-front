@@ -11,21 +11,23 @@
       cortes que devuelve `RS_FECH02`. Solo se pinta cuando el backend la manda;
       si viene vacía el reporte se queda con la fecha de corte del usuario.
     -->
-    @if (periodos().length) {
-      <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
-    } @else {
-      <div class="flex flex-col gap-1">
-        <label class="text-[11px] font-medium text-[var(--mis-text-secondary)] uppercase tracking-wider">Fecha</label>
-        <p-datepicker
-          [(ngModel)]="fechaCalendario"
-          (ngModelChange)="onFechaCalendarioChange($event)"
-          dateFormat="yy-mm-dd"
-          [showIcon]="true"
-          placeholder="Seleccionar fecha"
-          class="p-inputtext-sm"
-        />
-      </div>
-    }
+    <app-grupo-filtros>
+      @if (periodos().length) {
+        <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
+      } @else {
+        <div class="flex flex-col gap-1">
+          <label class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Fecha</label>
+          <p-datepicker
+            [(ngModel)]="fechaCalendario"
+            (ngModelChange)="onFechaCalendarioChange($event)"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            placeholder="Seleccionar fecha"
+            class="p-inputtext-sm"
+          />
+        </div>
+      }
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

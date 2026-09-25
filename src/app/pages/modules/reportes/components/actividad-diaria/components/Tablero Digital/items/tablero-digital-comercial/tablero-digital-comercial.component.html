@@ -15,9 +15,11 @@
       El periodo del legado es la lista de cortes que devuelve `RS_FECH`, no un
       calendario libre. Si viene vacía, el reporte usa el corte del usuario.
     -->
-    @if (periodos().length) {
-      <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
-    }
+    <app-grupo-filtros>
+      @if (periodos().length) {
+        <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
+      }
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

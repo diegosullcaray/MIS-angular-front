@@ -18,6 +18,7 @@ import {
   normalizarFechaCuenta,
 } from '../../../../utils/cuenta-resultados.util';
 import { ActividadMensualRepoService } from '../../../../services/actividad-mensual-repo.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** Nodo y periodo de una consulta; `fecha: null` pide el periodo más reciente (`NOW`). */
 interface ConsultaCuenta {
@@ -43,6 +44,7 @@ interface ConsultaCuenta {
     InlineErrorComponent,
     ListSkeletonComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './cuenta-resultados.component.html',
 })

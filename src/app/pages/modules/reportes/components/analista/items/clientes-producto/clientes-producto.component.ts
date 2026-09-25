@@ -9,12 +9,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteClientesProducto } from '../../models/clientes-producto.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Clientes Producto" — migrado de la ruta `leg/com/rda/sec/cli-prod` (legado STG, `ReportCrsV1Component`, config `rda/sectorista/cliente_producto/cliente_producto_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-clientes-producto',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './clientes-producto.component.html',
 })
 export class ClientesProductoComponent extends ReporteAsesorBase<ReporteClientesProducto> {

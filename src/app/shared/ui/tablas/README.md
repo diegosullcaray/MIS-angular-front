@@ -11,6 +11,8 @@ fusionarse.
 | `<app-tabla-dinamica>` | Columnas **anidadas** (`subs`) y semáforos por celda, del motor `table.regular` | `ColumnaDinamica` |
 | `<app-editable-table>` | Celdas **editables** en línea, con un nivel de agrupación | `ColumnaTabla` |
 
+Todas resaltan la fila al pasar el cursor (`[rowHover]="true"`, color `--mis-table-row-hover-bg`), como el legado. Ver [Estándar de reportes](../../../../../governance/docs/components/estandar-reportes.md).
+
 `<app-data-table>` vive aparte porque es la de propósito general: si tu tabla es plana y necesitás
 buscador o filtros, empezá por ella.
 

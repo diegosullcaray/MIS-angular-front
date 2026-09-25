@@ -12,6 +12,7 @@ import type { TablaReporteResultado } from '../../../../../../models/tabla-repor
 import { MOSTRAR_POR_POR_DEFECTO, OPCIONES_MOSTRAR_POR } from '../../models/portafolio-reasignado.model';
 import { DetalleReasignadoComponent } from '../../ui/detalle-reasignado/detalle-reasignado.component';
 import { ReporteReasignadoTabsBase } from '../../ui/reporte-reasignado.base';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Gestión de Cartera Reasignada" (`leg/com/rda/adm/gest_cart_her`) — legado `RS_AGE_COM_CR` sobre el host `cra-v11`. */
 @Component({
@@ -25,6 +26,7 @@ import { ReporteReasignadoTabsBase } from '../../ui/reporte-reasignado.base';
     EmptyStateComponent,
     WindowPanelComponent,
     DetalleReasignadoComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './gestion-cartera-reasignada.component.html',
 })

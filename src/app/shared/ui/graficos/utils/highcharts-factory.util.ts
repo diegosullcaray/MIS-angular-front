@@ -1,7 +1,7 @@
 /** Fábrica de configuraciones de Highcharts centralizada. */
 // El build ESM de Highcharts 13 solo expone `default` en runtime, pero sus
 // tipos son exports con nombre — de ahí la importación partida en dos.
-import Highcharts from 'highcharts';
+import Highcharts from 'highcharts/esm/highcharts.js';
 import type {
   AxisLabelsFormatterContextObject,
   Options,

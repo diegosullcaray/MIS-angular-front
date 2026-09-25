@@ -2,10 +2,10 @@
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir agencia"
       (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
-    <div class="flex items-end gap-3 flex-wrap">
+    <app-grupo-filtros>
       <app-select-filtro etiqueta="Tipo" [opciones]="opcionesTipo" [(valor)]="tipo" ancho="w-36" />
       <app-select-filtro etiqueta="Canal" [opciones]="opcionesCanal" [(valor)]="canal" ancho="w-52" />
-    </div>
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

@@ -10,6 +10,7 @@ import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../model
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { ActividadMensualRepoService } from '../../../../services/actividad-mensual-repo.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Tablero Digital Comercial" (`repositorio/actividad-mensual/tab-digital/usa-come-m`). */
 @Component({
@@ -21,6 +22,7 @@ import { ActividadMensualRepoService } from '../../../../services/actividad-mens
     TablaDinamicaComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './tablero-digital-comercial.component.html',
   styleUrl: './tablero-digital-comercial.component.css',

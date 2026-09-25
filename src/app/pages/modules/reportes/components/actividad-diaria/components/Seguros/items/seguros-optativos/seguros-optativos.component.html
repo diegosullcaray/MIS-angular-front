@@ -11,9 +11,11 @@
       cortes que devuelve `RS_FECH`. Solo se pinta cuando el backend la manda;
       si viene vacía el reporte se queda con la fecha de corte del usuario.
     -->
-    @if (periodos().length) {
-      <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
-    }
+    <app-grupo-filtros>
+      @if (periodos().length) {
+        <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
+      }
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

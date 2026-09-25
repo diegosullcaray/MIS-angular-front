@@ -12,6 +12,7 @@ import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../.
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { kpisDeFilaTotal } from '../../models/seguros.model';
 import { SegurosService } from '../../services/seguros.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /**
  * "Reporte Seguros Optativos" (`repositorio/actividad-diaria/seguro/seguro-com`)
@@ -36,6 +37,7 @@ import { SegurosService } from '../../services/seguros.service';
     TablaDinamicaComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './seguros-optativos.component.html',
 })

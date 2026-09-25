@@ -8,6 +8,7 @@ import { WindowPanelComponent } from '../../../../../../../../../shared/ui/windo
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /**
  * "Ranking Comercial" (`repositorio/actividad-diaria/cartera/rank-comercial`).
@@ -26,6 +27,7 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
     TablaDinamicaComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './ranking-comercial.component.html',
 })

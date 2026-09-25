@@ -2,7 +2,9 @@
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel"
       (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
-    <app-select-filtro etiqueta="Fase" [opciones]="opcionesFase" [(valor)]="fase" ancho="w-60" />
+    <app-grupo-filtros>
+      <app-select-filtro etiqueta="Fase" [opciones]="opcionesFase" [(valor)]="fase" ancho="w-60" />
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

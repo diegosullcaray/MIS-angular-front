@@ -8,11 +8,11 @@
     Sin selector de jerarquía a propósito: el legado pide el ranking completo y
     filtra en el cliente, así que este reporte solo usa sus tres filtros propios.
   -->
-  <div ventana-filtros class="flex flex-wrap items-end gap-3">
+  <app-grupo-filtros ventana-filtros>
     <app-input-filtro etiqueta="Unidad" placeholder="Buscar unidad…" [(valor)]="unidad" />
     <app-input-filtro etiqueta="Corredor" placeholder="Buscar corredor…" [(valor)]="corredor" />
     <app-select-filtro etiqueta="Territorio" [opciones]="territorios()" [(valor)]="territorio" ancho="w-52" />
-  </div>
+  </app-grupo-filtros>
 
   @if (error()) {
     <app-empty-state

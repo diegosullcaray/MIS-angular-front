@@ -18,6 +18,7 @@ import {
   type TarjetaCmgCartera,
 } from '../../models/cmg-cartera.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "CMG Cartera" (`repositorio/actividad-diaria/cartera/cmg-cartera`). */
 @Component({
@@ -32,6 +33,7 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './cmg-cartera.component.html',
 })

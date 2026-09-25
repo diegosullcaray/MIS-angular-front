@@ -9,12 +9,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteCaptaciones } from '../../models/captaciones.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Captaciones" — migrado de la ruta `leg/com/rda/sec/capta` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/captaciones/captacion_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-captaciones',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './captaciones.component.html',
 })
 export class CaptacionesComponent extends ReporteAsesorBase<ReporteCaptaciones> {

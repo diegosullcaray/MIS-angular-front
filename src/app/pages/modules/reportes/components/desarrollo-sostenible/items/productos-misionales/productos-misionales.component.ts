@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { HierSelectorComponent } from '../../../../../../../shared/ui/hier-selector/hier-selector.component';
@@ -13,12 +11,14 @@ import { OPCIONES_PRODUCTO_MISIONAL_PANEL } from '../../models/desarrollo-sosten
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../models/tabla-dinamica.model';
+import { SelectFiltroComponent } from '../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Productos Misionales" — migrado de la ruta `repositorio/actividad-diaria/prod-misionales/productos-misionales` (legado STG, `reportes/repositorio/panel-misionales`, `cod_rep: prod_misi_01..05`). */
 @Component({
   selector: 'app-productos-misionales',
   standalone: true,
-  imports: [FormsModule, HierSelectorComponent, TablaDinamicaComponent, SelectModule, TabsModule, SkeletonModule, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaDinamicaComponent, TabsModule, SkeletonModule, WindowPanelComponent, GrupoFiltrosComponent, SelectFiltroComponent],
   templateUrl: './productos-misionales.component.html',
 })
 export class ProductosMisionalesComponent {

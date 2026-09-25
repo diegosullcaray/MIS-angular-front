@@ -9,12 +9,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteInversionStockMora } from '../../models/inversion-stock-mora.model';
 import type { BloqueGrafico } from '../../../../../../../shared/ui/graficos/models/grafico-comun.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Inversión y Stock de Mora" — migrado de la ruta `leg/com/rda/sec/inv-stk` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v2`, config `rda/sectorista/brecha/brecha_inversion_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-inversion-stock-mora',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, GraficoMixtoComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, GraficoMixtoComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './inversion-stock-mora.component.html',
 })
 export class InversionStockMoraComponent extends ReporteAsesorBase<ReporteInversionStockMora> {

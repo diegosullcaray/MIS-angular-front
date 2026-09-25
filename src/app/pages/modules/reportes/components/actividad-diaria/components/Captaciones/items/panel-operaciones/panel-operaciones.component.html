@@ -8,7 +8,9 @@
       (nodoSeleccionado)="onNivelSeleccionado($event)"
       (error)="onErrorJerarquia()"
     />
-    <app-select-filtro etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" ancho="w-56" />
+    <app-grupo-filtros>
+      <app-select-filtro etiqueta="Producto" [opciones]="opcionesProducto" [(valor)]="producto" ancho="w-56" />
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

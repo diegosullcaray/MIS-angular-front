@@ -11,12 +11,13 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { AsesorSec } from '../../models/asesor-sec.model';
 import { SelectorAsesorBase } from '../../ui/selector-asesor.base';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Prospecto Corresponsal" — migrado de la ruta `leg/com/rda/sec/sec-prosp` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-prospe`, título real "Prospectos Corresponsales", `cod_rep: 'LIS_PROSPE'`). */
 @Component({
   selector: 'app-prospecto-corresponsal',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent, AgregarProspectoDialogComponent, TooltipModule, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent, AgregarProspectoDialogComponent, TooltipModule, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './prospecto-corresponsal.component.html',
 })
 export class ProspectoCorresponsalComponent extends SelectorAsesorBase {

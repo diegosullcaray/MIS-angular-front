@@ -51,7 +51,7 @@ export class MiReporte {
 | `placeholder` | `string` | `'Elegir jerarquía'` | Placeholder de los desplegables |
 | `autoSeleccionar` | `boolean` | `true` | Preselecciona la raíz y la emite al cargar |
 | `raizFija` | `HierarquiaNodo[] \| null` | `null` | Raíz ya conocida; ahorra la llamada a `base_hier` |
-| `anchoCompleto` | `boolean` | `false` | Ocupa todo el ancho y manda "Limpiar" a la derecha |
+| `anchoCompleto` | `boolean` | `true` | Ocupa todo el ancho de la franja ("Limpiar" queda junto al último nivel); `false` la ajusta al contenido |
 | `reintentarSinFecha` | `boolean` | `false` | Reintenta sin filtro de fecha si un nivel vuelve vacío |
 
 | Output | Cuándo |

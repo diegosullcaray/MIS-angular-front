@@ -9,7 +9,7 @@
     />
 
     <!-- Filtros Personales (abajo, dispuestos horizontalmente en desktop) -->
-    <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+    <app-grupo-filtros>
       <app-select-filtro
         etiqueta="Fase"
         [opciones]="opcionesFase"
@@ -24,7 +24,7 @@
           (valorChange)="periodo.set($event)"
         />
       }
-    </div>
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

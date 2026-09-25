@@ -13,7 +13,13 @@
   } @else {
     <div class="mis-card p-3 overflow-x-auto">
       <!-- El legado (`carterizacion.component.ts`) no colorea variaciones en este reporte, a diferencia de Vinculación Cartera. -->
-      <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
+      <app-tabla-dinamica
+        [columnas]="tabla().columnas"
+        [filas]="tabla().filas"
+        [cargando]="cargando()"
+        [columnasClicables]="columnasDrillDown()"
+        (celdaSeleccionada)="onCeldaSeleccionada($event)"
+      />
     </div>
   }
 </app-window-panel>

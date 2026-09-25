@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import Highcharts from 'highcharts';
+import Highcharts from 'highcharts/esm/highcharts.js';
 import { ThemeService } from '../../../services/theme.service';
 import { GraficoMapaCalorComponent } from './grafico-mapa-calor.component';
 

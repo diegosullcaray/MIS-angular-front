@@ -16,6 +16,7 @@ import {
   OPCIONES_RANGO_AGENDA,
 } from '../../models/campanas.model';
 import { CampanasService } from '../../services/campanas.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /**
  * Agendamiento — legado `repositorio/agenda-comercial`.
@@ -39,6 +40,7 @@ import { CampanasService } from '../../services/campanas.service';
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './agendamiento.component.html',
 })

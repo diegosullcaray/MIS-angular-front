@@ -9,12 +9,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteClientesNuevosRecurrentes } from '../../models/clientes-nuevos-recurrentes.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Clientes Nuevos y Recurrentes" — migrado de la ruta `leg/com/rda/sec/cli-nue-rec` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/clientes_nuevos_recurrente/cliente_nuevo_rec` en `crs-map.ts`). */
 @Component({
   selector: 'app-clientes-nuevos-recurrentes',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './clientes-nuevos-recurrentes.component.html',
 })
 export class ClientesNuevosRecurrentesComponent extends ReporteAsesorBase<ReporteClientesNuevosRecurrentes> {

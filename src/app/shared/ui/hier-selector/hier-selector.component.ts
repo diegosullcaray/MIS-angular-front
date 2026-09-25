@@ -50,8 +50,12 @@ export class HierSelectorComponent implements OnInit {
   readonly autoSeleccionar = input(true);
   /** Raíz ya conocida por la pantalla; ahorra la llamada a `base_hier`. */
   readonly raizFija = input<HierarquiaNodo[] | null>(null);
-  /** Ocupa todo el ancho y empuja "Limpiar" a la derecha, en vez de ajustarse al contenido. */
-  readonly anchoCompleto = input(false);
+  /**
+   * `true` (default): la tarjeta ocupa todo el ancho de la franja de filtros, igual que
+   * `app-grupo-filtros`. "Limpiar" queda junto al último nivel, no empujado al borde.
+   * `false` la ajusta al contenido.
+   */
+  readonly anchoCompleto = input(true);
   /**
    * Si un nivel vuelve vacío con el filtro de fecha, lo reintenta sin él.
    *

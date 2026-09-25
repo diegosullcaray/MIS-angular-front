@@ -11,12 +11,13 @@ import { PARAMS_HIER_MACRO, type HierarquiaNodo } from '../../../../../../models
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
 import { OPCIONES_PRODUCTO_PASIVO_AMPLIADO, TODOS } from '../../../../../../models/filtros.model';
 import { PanelOperacionesService } from '../../services/panel-operaciones.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Panel Operaciones" (`leg/com/rda/adm/panel-operaciones`) — panel de gestión de la RED. */
 @Component({
   selector: 'app-panel-operaciones',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, SelectFiltroComponent, EmptyStateComponent, WindowPanelComponent, TabsModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, SelectFiltroComponent, EmptyStateComponent, WindowPanelComponent, TabsModule, GrupoFiltrosComponent],
   templateUrl: './panel-operaciones.component.html',
 })
 export class PanelOperacionesComponent {

@@ -24,6 +24,7 @@ import {
   type ResultadoSalidas,
 } from '../../models/monitor-salidas.model';
 import { MonitorSalidasService } from '../../services/monitor-salidas.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Monitor Salidas y Retenciones" (`repositorio/actividad-diaria/cartera/mon-retenciones`). */
 @Component({
@@ -38,6 +39,7 @@ import { MonitorSalidasService } from '../../services/monitor-salidas.service';
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './monitor-salidas-retenciones.component.html',
 })

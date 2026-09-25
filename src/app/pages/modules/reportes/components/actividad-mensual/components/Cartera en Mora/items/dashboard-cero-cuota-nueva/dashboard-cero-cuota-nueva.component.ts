@@ -13,6 +13,7 @@ import {
   fechaBasePorDefecto,
 } from '../../../../models/actividad-mensual-filtros.model';
 import { ActividadMensualCraService } from '../../../../services/actividad-mensual-cra.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Dashboard Cero Cuota Nueva" (`leg/com/rma/adm/graf-dashboard-CN`). */
 @Component({
@@ -24,6 +25,7 @@ import { ActividadMensualCraService } from '../../../../services/actividad-mensu
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './dashboard-cero-cuota-nueva.component.html',
   styleUrl: './dashboard-cero-cuota-nueva.component.css',

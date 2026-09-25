@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { HierSelectorComponent } from '../../../../../../../shared/ui/hier-selector/hier-selector.component';
@@ -14,12 +12,14 @@ import { WindowPanelComponent } from '../../../../../../../shared/ui/window-pane
 import type { HierarquiaNodo } from '../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import type { KpiOperacionesDesembolsadas } from '../../../avance-comercial/models/avance-comercial.model';
+import { SelectFiltroComponent } from '../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Monitor Productos Misionales" — migrado de la ruta `mon-desem-misi` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese_misi'`). */
 @Component({
   selector: 'app-monitor-productos-misionales',
   standalone: true,
-  imports: [FormsModule, HierSelectorComponent, TablaReporteComponent, SelectModule, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent, GrupoFiltrosComponent, SelectFiltroComponent],
   templateUrl: './monitor-productos-misionales.component.html',
 })
 export class MonitorProductosMisionalesComponent {

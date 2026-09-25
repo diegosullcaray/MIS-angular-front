@@ -18,14 +18,16 @@
     />
 
     <!-- Único filtro visible: fecha de corte. -->
-    @if (periodos().length > 0) {
-      <app-select-filtro
-        etiqueta="Fecha de corte"
-        [opciones]="periodos()"
-        [valor]="periodo()"
-        (valorChange)="periodo.set($event)"
-      />
-    }
+    <app-grupo-filtros>
+      @if (periodos().length > 0) {
+        <app-select-filtro
+          etiqueta="Fecha de corte"
+          [opciones]="periodos()"
+          [valor]="periodo()"
+          (valorChange)="periodo.set($event)"
+        />
+      }
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

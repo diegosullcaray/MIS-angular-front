@@ -26,7 +26,7 @@
         <!-- "Resumen Total" — legado: Nivel de Fuga + Nivel de propensión. -->
         <p-tabpanel value="resumen-total">
           <div class="flex flex-col gap-3">
-            <div class="flex items-end gap-3 flex-wrap">
+            <app-grupo-filtros>
               <app-select-filtro etiqueta="Nivel de fuga" [opciones]="opcionesFuga" [(valor)]="fuga" ancho="w-52" />
               <app-select-filtro
                 etiqueta="Nivel de propensión"
@@ -34,7 +34,7 @@
                 [(valor)]="propension"
                 ancho="w-52"
               />
-            </div>
+            </app-grupo-filtros>
             <div class="mis-card p-3 overflow-x-auto">
               <app-tabla-dinamica
                 [columnas]="resumenTotal().columnas"
@@ -48,7 +48,7 @@
         <!-- "Resumen por Bases" — legado: mismos dos filtros que "Resumen Total". -->
         <p-tabpanel value="resumen-bases">
           <div class="flex flex-col gap-3">
-            <div class="flex items-end gap-3 flex-wrap">
+            <app-grupo-filtros>
               <app-select-filtro etiqueta="Nivel de fuga" [opciones]="opcionesFuga" [(valor)]="fuga" ancho="w-52" />
               <app-select-filtro
                 etiqueta="Nivel de propensión"
@@ -56,7 +56,7 @@
                 [(valor)]="propension"
                 ancho="w-52"
               />
-            </div>
+            </app-grupo-filtros>
             <div class="mis-card p-3 overflow-x-auto">
               <app-tabla-dinamica
                 [columnas]="resumenPorBases().columnas"
@@ -74,7 +74,7 @@
         -->
         <p-tabpanel value="detalle-vivas">
           <div class="flex flex-col gap-3">
-            <div class="flex items-end gap-3 flex-wrap">
+            <app-grupo-filtros>
               <app-select-filtro
                 etiqueta="Nivel de propensión"
                 [opciones]="opcionesPropension"
@@ -82,7 +82,7 @@
                 ancho="w-52"
               />
               <app-select-filtro etiqueta="Rango de fechas Cancela" [opciones]="opcionesRango" [(valor)]="rango" ancho="w-48" />
-            </div>
+            </app-grupo-filtros>
             <div class="mis-card p-3 overflow-x-auto">
               <app-tabla-dinamica
                 [columnas]="detalleBasesVivas().columnas"
@@ -101,7 +101,7 @@
         -->
         <p-tabpanel value="detalle-auto">
           <div class="flex flex-col gap-3">
-            <div class="flex items-end gap-3 flex-wrap">
+            <app-grupo-filtros>
               <app-select-filtro etiqueta="Nivel de fuga" [opciones]="opcionesFuga" [(valor)]="fuga" ancho="w-52" />
               <app-select-filtro
                 etiqueta="Nivel de propensión"
@@ -109,7 +109,7 @@
                 [(valor)]="propension"
                 ancho="w-52"
               />
-            </div>
+            </app-grupo-filtros>
             <div class="mis-card p-3 overflow-x-auto">
               <app-tabla-dinamica
                 [columnas]="detalleBasesAutomaticas().columnas"

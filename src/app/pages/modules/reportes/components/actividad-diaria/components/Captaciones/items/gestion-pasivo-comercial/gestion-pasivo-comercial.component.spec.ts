@@ -42,4 +42,40 @@ describe('GestionPasivoComercialComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
+  describe('drill down', () => {
+    const TOTAL = { htipcod: 9, cod_rel: 'FC', descripcion: 'Total', style: 1 };
+    const HIJA = { htipcod: 18, cod_rel: 'AG-1', descripcion: 'Agencia Centro' };
+
+    function conFilas(filas: Record<string, unknown>[]) {
+      const fixture = TestBed.createComponent(GestionPasivoComercialComponent);
+      const cmp = fixture.componentInstance;
+      cmp['nivelActual'].set(NODO);
+      cmp['tabla'].set({ columnas: [], filas });
+      return cmp;
+    }
+
+    it('vuelve clicable la descripción solo si alguna fila trae un nodo hijo', () => {
+      expect(conFilas([TOTAL, HIJA])['columnasDrillDown']()).toEqual(['descripcion']);
+      // La fila de totales es el nivel actual: sola, no ofrece drill.
+      expect(conFilas([TOTAL])['columnasDrillDown']()).toEqual([]);
+      expect(conFilas([{ descripcion: 'Sin nodo' }])['columnasDrillDown']()).toEqual([]);
+    });
+
+    it('al hacer clic en la descripción de una fila baja a su nivel', () => {
+      const cmp = conFilas([TOTAL, HIJA]);
+      cmp['onCeldaSeleccionada']({ clave: 'descripcion', fila: HIJA });
+
+      expect(servicioSpy['obtener']).toHaveBeenCalledWith({ tip_cod: 18, cod_rel: 'AG-1' });
+      expect(cmp['nivelActual']()).toMatchObject({ tip_cod: 18, cod_rel: 'AG-1' });
+    });
+
+    it('ignora la fila de totales y las otras columnas', () => {
+      const cmp = conFilas([TOTAL, HIJA]);
+      cmp['onCeldaSeleccionada']({ clave: 'descripcion', fila: TOTAL });
+      cmp['onCeldaSeleccionada']({ clave: 'CAP_4', fila: HIJA });
+
+      expect(servicioSpy['obtener']).not.toHaveBeenCalled();
+    });
+  });
+
 });

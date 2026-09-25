@@ -10,6 +10,7 @@ import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../model
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { TableroDigitalService } from '../../services/tablero-digital.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /**
  * "Tablero Digital Comercial"
@@ -30,6 +31,7 @@ import { TableroDigitalService } from '../../services/tablero-digital.service';
     TablaDinamicaComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './tablero-digital-comercial.component.html',
 })

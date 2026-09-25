@@ -9,12 +9,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteGruposPorVencer } from '../../models/grupos-por-vencer.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Grupos por Vencer" — migrado de la ruta `leg/com/rda/sec/pdm` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/grupo_pdm/grupo_pdm_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-grupos-por-vencer',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './grupos-por-vencer.component.html',
 })
 export class GruposPorVencerComponent extends ReporteAsesorBase<ReporteGruposPorVencer> {

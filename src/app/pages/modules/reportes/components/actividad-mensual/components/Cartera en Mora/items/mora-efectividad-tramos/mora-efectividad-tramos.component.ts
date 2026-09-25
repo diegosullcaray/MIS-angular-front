@@ -16,6 +16,7 @@ import {
   type MoraEfectividadTramosResultado,
 } from './models/mora-efectividad-tramos.model';
 import { ActividadMensualCraService } from '../../../../services/actividad-mensual-cra.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Mora y Efectividad por Tramos" (`leg/com/rma/adm/mor-efe`). */
 @Component({
@@ -27,6 +28,7 @@ import { ActividadMensualCraService } from '../../../../services/actividad-mensu
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './mora-efectividad-tramos.component.html',
   styleUrl: './mora-efectividad-tramos.component.css',

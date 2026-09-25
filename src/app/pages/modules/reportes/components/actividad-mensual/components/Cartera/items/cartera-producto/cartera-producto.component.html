@@ -9,14 +9,14 @@
     />
 
     <!-- Filtro de Fecha -->
-    <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+    <app-grupo-filtros>
       <app-select-filtro
         etiqueta="Fecha Cierre"
         [opciones]="opcionesFechaBase"
         [valor]="fechaBase()"
         (valorChange)="fechaBase.set($event)"
       />
-    </div>
+    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {

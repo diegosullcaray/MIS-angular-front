@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import Highcharts from 'highcharts';
+import Highcharts from 'highcharts/esm/highcharts.js';
 import { GraficoMixtoComponent } from './grafico-mixto.component';
 import { ThemeService } from '../../../services/theme.service';
 import type { BloqueGrafico } from '../models/grafico-comun.model';

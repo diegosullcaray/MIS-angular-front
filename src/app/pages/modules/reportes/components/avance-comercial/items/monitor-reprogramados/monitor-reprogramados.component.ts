@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { HierSelectorComponent } from '../../../../../../../shared/ui/hier-selector/hier-selector.component';
@@ -14,12 +12,14 @@ import { OPCIONES_TIPO_MON_REP } from '../../models/avance-comercial.model';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { HierarquiaNodo } from '../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { SelectFiltroComponent } from '../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Monitor Reprogramados" — migrado de la ruta `mon-rep` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'RS_MON_REP'`). */
 @Component({
   selector: 'app-monitor-reprogramados',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SelectModule, FormsModule, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent, GrupoFiltrosComponent, SelectFiltroComponent],
   templateUrl: './monitor-reprogramados.component.html',
 })
 export class MonitorReprogramadosComponent {

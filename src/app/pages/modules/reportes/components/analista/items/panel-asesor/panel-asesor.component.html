@@ -9,23 +9,25 @@
   (actualizar)="panel.actualizar()"
   [altoAuto]="true"
 >
-  <div ventana-filtros class="filtro-asesor">
-    <label for="panel-asesor-selector">Asesor</label>
-    <p-select
-      inputId="panel-asesor-selector"
-      appendTo="body"
-      [options]="panel.asesores()"
-      [ngModel]="panel.asesor()"
-      (ngModelChange)="panel.seleccionarAsesor($event)"
-      optionLabel="nombre"
-      dataKey="dni"
-      [filter]="true"
-      filterBy="nombre"
-      placeholder="Buscar asesor"
-      [loading]="panel.cargandoLista()"
-      styleClass="w-72 text-[11.5px]"
-    />
-  </div>
+  <app-grupo-filtros ventana-filtros>
+    <div class="filtro-asesor">
+      <label for="panel-asesor-selector">Asesor</label>
+      <p-select
+        inputId="panel-asesor-selector"
+        appendTo="body"
+        [options]="panel.asesores()"
+        [ngModel]="panel.asesor()"
+        (ngModelChange)="panel.seleccionarAsesor($event)"
+        optionLabel="nombre"
+        dataKey="dni"
+        [filter]="true"
+        filterBy="nombre"
+        placeholder="Buscar asesor"
+        [loading]="panel.cargandoLista()"
+        styleClass="w-72 text-[11.5px]"
+      />
+    </div>
+  </app-grupo-filtros>
 
   @if (panel.errorLista(); as error) {
     <app-inline-error titulo="No se pudo preparar el panel" [detalle]="error" (reintentar)="panel.recargarAsesores()" />

@@ -16,6 +16,7 @@ import {
   type TasasMesProductoResultado,
 } from './models/tasas-mes-producto.model';
 import { ActividadMensualCraService } from '../../../../services/actividad-mensual-cra.service';
+import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Tasas Mes por Producto" (`leg/com/rma/adm/tp-mes`). */
 @Component({
@@ -27,6 +28,7 @@ import { ActividadMensualCraService } from '../../../../services/actividad-mensu
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
+    GrupoFiltrosComponent,
   ],
   templateUrl: './tasas-mes-producto.component.html',
   styleUrl: './tasas-mes-producto.component.css',

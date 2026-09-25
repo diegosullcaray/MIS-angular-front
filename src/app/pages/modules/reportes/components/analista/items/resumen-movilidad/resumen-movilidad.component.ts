@@ -9,12 +9,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteResumenMovilidad } from '../../models/resumen-movilidad.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /** "Resumen de Movilidad" — migrado de la ruta `leg/com/rda/sec/res-mov-sec` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `RESNMOV` en `crs-map.ts`). */
 @Component({
   selector: 'app-resumen-movilidad',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent],
+  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './resumen-movilidad.component.html',
 })
 export class ResumenMovilidadComponent extends ReporteAsesorBase<ReporteResumenMovilidad> {
