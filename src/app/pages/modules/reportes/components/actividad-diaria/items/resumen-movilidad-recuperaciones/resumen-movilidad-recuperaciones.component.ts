@@ -10,6 +10,9 @@ import { ResumenMovilidadService } from '../../services/resumen-movilidad.servic
 /**
  * "Resumen de Movilidad Recuperaciones" (`leg/com/rda/adm/res-mov-rec`) —
  * legado `RESNMOVR_01`, host `cra-v6`.
+ *
+ * El legado trae todas las filas y las pagina en el cliente de a 30 (`theme_tb3`, el
+ * `mat-paginator` de `app-table-multiheader`): acá `[paginacionLocal]` del armazón.
  */
 @Component({
   selector: 'app-resumen-movilidad-recuperaciones',

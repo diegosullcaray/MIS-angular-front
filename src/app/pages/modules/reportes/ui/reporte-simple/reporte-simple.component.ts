@@ -1,4 +1,4 @@
-import { Component, computed, input, model, output } from '@angular/core';
+import { Component, computed, input, linkedSignal, model, output } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
 import { PaginatorModule, type PaginatorState } from 'primeng/paginator';
 import { HierSelectorComponent } from '../../../../../shared/ui/hier-selector/hier-selector.component';
@@ -9,7 +9,7 @@ import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/wind
 import { ChipInformativoComponent } from '../../../../../shared/ui/chip-informativo/chip-informativo.component';
 import { GrupoFiltrosComponent } from '../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
+import type { FilaReporte, TablaReporteResultado } from '../../models/tabla-reporte.model';
 
 /** Un bloque del reporte: su tabla y, si el legado se lo pone, su título. */
 export interface BloqueReporte {
@@ -33,7 +33,7 @@ export interface PestanaReporte {
 /**
  * Armazón de reporte: ventana + selector de jerarquía + bloques de tabla.
  * Un bloque: `[tabla]`; varios: `[bloques]`; en pestañas: `[pestanas]`.
- * Filtros propios: slot `[filtros]`. Leyenda al pie: slot `[nota]`. Unidad: `chip` (o el del bloque).
+ * Filtros propios: slot `[filtros]`. Notas sobre la tabla: slot `[encabezado]`. Leyenda al pie: slot `[nota]`. Unidad: `chip` (o el del bloque).
  */
 @Component({
   selector: 'app-reporte-simple',
@@ -61,6 +61,13 @@ export interface PestanaReporte {
           <ng-content select="[filtros]" />
         </app-grupo-filtros>
       </div>
+
+      <!-- Notas que el legado pone ENCIMA de la tabla (\`content.higher\`): slot \`[encabezado]\`. -->
+      @if (nivel() && !error()) {
+        <div class="flex flex-col gap-2 mb-3 empty:hidden">
+          <ng-content select="[encabezado]" />
+        </div>
+      }
 
       <!-- Estado: error / vacío / pestañas / bloques -->
       @if (error(); as detalleError) {
@@ -110,15 +117,15 @@ export interface PestanaReporte {
                 <app-chip-informativo [texto]="bloque.chip" />
               }
               <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
+                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="filasVisibles(bloque.tabla.body)" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
                 <!-- El paginador es parte de la tabla, como el mat-paginator de \`app-table-ajax\`: va
                      dentro de su tarjeta, pegado al pie. Los reportes paginados son de un solo bloque. -->
-                @if (primero && totalFilas() !== null) {
+                @if (primero && totalPaginador(bloque.tabla.body); as total) {
                   <p-paginator
                     class="border-t border-[var(--mis-border)] mt-2 pt-1"
-                    [first]="(pagina() - 1) * filasPorPagina()"
+                    [first]="(paginaActual() - 1) * filasPorPagina()"
                     [rows]="filasPorPagina()"
-                    [totalRecords]="totalFilas() ?? 0"
+                    [totalRecords]="total"
                     [showFirstLastIcon]="true"
                     (onPageChange)="onPagina($event)"
                     styleClass="text-[12px] !bg-transparent"
@@ -177,6 +184,27 @@ export class ReporteSimpleComponent {
   readonly totalFilas = input<number | null>(null);
   readonly filasPorPagina = input(30);
   readonly pagina = model(1);
+  /**
+   * Paginación en el cliente, como el `mat-paginator` de `app-table-multiheader` del legado
+   * (`theme_tb3`): llegan todas las filas y la tabla muestra `filasPorPagina` por página.
+   */
+  readonly paginacionLocal = input(false);
+  /** Página del paginador local; vuelve a la primera cuando llega otra tabla. */
+  protected readonly paginaLocal = linkedSignal({ source: () => this.tabla(), computation: () => 1 });
+  protected readonly paginaActual = computed(() => (this.paginacionLocal() ? this.paginaLocal() : this.pagina()));
+
+  /** Filas que muestra la tabla: todas, o la página actual con paginación local. */
+  protected filasVisibles(filas: FilaReporte[]): FilaReporte[] {
+    if (!this.paginacionLocal()) return filas;
+    const desde = (this.paginaLocal() - 1) * this.filasPorPagina();
+    return filas.slice(desde, desde + this.filasPorPagina());
+  }
+
+  /** Total del paginador, o `null` si no va paginador. */
+  protected totalPaginador(filas: FilaReporte[]): number | null {
+    if (this.paginacionLocal()) return filas.length > 0 ? filas.length : null;
+    return this.totalFilas();
+  }
 
   protected readonly lista = computed<BloqueReporte[]>(() => {
     const varios = this.bloques();
@@ -192,7 +220,9 @@ export class ReporteSimpleComponent {
   readonly errorJerarquia = output<void>();
 
   protected onPagina(evento: PaginatorState): void {
-    this.pagina.set((evento.page ?? 0) + 1);
+    const pagina = (evento.page ?? 0) + 1;
+    if (this.paginacionLocal()) this.paginaLocal.set(pagina);
+    else this.pagina.set(pagina);
   }
 
   /** Reemite el nodo actual como copia nueva para forzar el efecto en el componente contenedor. */

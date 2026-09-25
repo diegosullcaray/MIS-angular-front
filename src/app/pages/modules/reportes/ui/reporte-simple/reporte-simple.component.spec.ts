@@ -120,4 +120,46 @@ describe('ReporteSimpleComponent', () => {
       expect(emitido).not.toHaveBeenCalled();
     });
   });
+
+  describe('paginación local (cra-v6 del legado)', () => {
+    const TABLA_70 = {
+      headers: [{ columns: [{ columnDef: 'n', header: 'N', isdata: 1 }] }],
+      body: Array.from({ length: 70 }, (_, i) => ({ n: `fila ${i + 1}` })),
+      additional: {},
+    };
+
+    function crearLocal() {
+      const fixture = TestBed.createComponent(ReporteSimpleComponent);
+      fixture.componentRef.setInput('titulo', 'Reporte Prueba');
+      fixture.componentRef.setInput('paramsHier', PARAMS);
+      fixture.componentRef.setInput('nivel', RAIZ);
+      fixture.componentRef.setInput('tabla', TABLA_70);
+      fixture.componentRef.setInput('paginacionLocal', true);
+      fixture.detectChanges();
+      return fixture;
+    }
+
+    const filas = (el: HTMLElement) => Array.from(el.querySelectorAll('app-tabla-reporte tbody tr')).map((tr) => tr.textContent?.trim());
+
+    it('muestra 30 filas por página y el paginador dentro de la tarjeta de la tabla', () => {
+      const el = crearLocal().nativeElement as HTMLElement;
+      expect(filas(el)).toHaveLength(30);
+      expect(filas(el)[0]).toBe('fila 1');
+      expect(el.querySelector('.mis-card p-paginator')).not.toBeNull();
+    });
+
+    it('cambiar de página muestra las filas siguientes; otra tabla vuelve a la primera', () => {
+      const fixture = crearLocal();
+      (fixture.componentInstance as unknown as { onPagina(e: { page: number }): void }).onPagina({ page: 2 });
+      fixture.detectChanges();
+      const el = fixture.nativeElement as HTMLElement;
+      expect(filas(el)).toHaveLength(10);
+      expect(filas(el)[0]).toBe('fila 61');
+
+      fixture.componentRef.setInput('tabla', { ...TABLA_70 });
+      fixture.detectChanges();
+      expect(filas(el)[0]).toBe('fila 1');
+    });
+  });
 });
+
