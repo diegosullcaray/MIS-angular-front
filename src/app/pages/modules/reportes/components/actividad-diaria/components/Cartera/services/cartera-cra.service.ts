@@ -55,14 +55,16 @@ export class CarteraCraService {
   }
 
   /** Detalle Incentivos PDM. */
-  detalleIncentivosPdm(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.bloques.regularPaginado(COD_CARTERA_CRA.detalleIncentivosPdm, nodo).pipe(map((tabla1) => ({ tabla1 })));
+  detalleIncentivosPdm(nodo: NodoConsulta, pagina = 1): Observable<ReporteBloqueUnico> {
+    return this.bloques
+      .regularPaginado(COD_CARTERA_CRA.detalleIncentivosPdm, nodo, {}, pagina)
+      .pipe(map((tabla1) => ({ tabla1 })));
   }
 
   /** Desembolsos PDM. */
-  desembolsosPdm(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
+  desembolsosPdm(nodo: NodoConsulta, pagina = 1): Observable<ReporteBloqueUnico> {
     return this.bloques
-      .regularPaginado(COD_CARTERA_CRA.desembolsosPdm, nodo, { fecha: this.bloques.fec() })
+      .regularPaginado(COD_CARTERA_CRA.desembolsosPdm, nodo, { fecha: this.bloques.fec() }, pagina)
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 

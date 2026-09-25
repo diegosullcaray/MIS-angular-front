@@ -28,10 +28,19 @@ export function normalizarPresentacionLegada(tabla: TablaReporteResultado): Tabl
         ...(orden.has(col) ? { ordenPresentacion: col.ordenPresentacion ?? orden.get(col) } : {}),
         style: {
           ...col.style,
-          color: col.style?.['color'] ?? ((col.header ?? col.columnDef).toLowerCase().includes('real')
-            ? 'var(--mis-success)' : 'var(--mis-text-on-primary)'),
+          color: col.style?.['color'] ?? colorEncabezadoLegado(col.header ?? col.columnDef, col.style?.background),
         },
       })),
     })),
   };
+}
+
+/**
+ * Texto del encabezado: el legado lo pinta siempre claro (`#f5f5f5` en `_legacy.scss`). El verde de
+ * "Real" solo va sobre el azul por defecto; si el backend ya le da fondo a la columna (p. ej. el verde
+ * de *Destino de Crédito*), el texto va blanco para no quedar verde sobre verde.
+ */
+function colorEncabezadoLegado(texto: string, fondo: string | undefined): string {
+  if (fondo) return 'var(--mis-text-on-primary)';
+  return texto.toLowerCase().includes('real') ? 'var(--mis-success)' : 'var(--mis-text-on-primary)';
 }

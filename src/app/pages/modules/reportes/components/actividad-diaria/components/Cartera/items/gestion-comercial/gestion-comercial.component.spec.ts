@@ -84,4 +84,79 @@ describe('GestionComercialComponent', () => {
     expect(el.textContent).toContain('Var Saldo Cartera Vigente');
     expect(el.textContent).toContain('Var Clientes Stock');
   });
+
+  /** Drill down del legado (`ddHier` / `changeHier` sobre `hierBuffer`). */
+  describe('drill down', () => {
+    const TOTAL = { descripcion: 'Financiera Confianza', htipcod: 9, hcodrel: 'FC', style: 1 };
+    const TERRITORIO = { descripcion: 'Territorio Norte', htipcod: 20, hcodrel: 'T1', style: 0 };
+
+    type Instancia = {
+      onNivelSeleccionado(n: HierarquiaNodo): void;
+      onRutaSeleccionada(r: HierarquiaNodo[]): void;
+      onCeldaSeleccionada(e: { clave: string; fila: Record<string, unknown> }): void;
+      volverANivel(i: number): void;
+      columnasDrillDown(): string[];
+      rutaJerarquica(): HierarquiaNodo[];
+    };
+
+    function crearCon(filas: Record<string, unknown>[]) {
+      const gestionComercial = vi.fn().mockReturnValue(
+        of({
+          filas,
+          varSaldoVigente: { columnas: [], filas: [] },
+          varClientesStock: { columnas: [], filas: [] },
+          kpis: KPIS_GESTION_COMERCIAL_VACIOS,
+          graficos: [],
+        }),
+      );
+      TestBed.configureTestingModule({
+        imports: [GestionComercialComponent],
+        providers: [
+          {
+            provide: CarteraRepositorioService,
+            useValue: { gestionComercial, periodosGestionComercial: vi.fn().mockReturnValue(of([])) },
+          },
+          PrimeNgMessageService,
+        ],
+      });
+      const fixture = TestBed.createComponent(GestionComercialComponent);
+      const inst = fixture.componentInstance as unknown as Instancia;
+      inst.onRutaSeleccionada([NODO]);
+      inst.onNivelSeleccionado(NODO);
+      TestBed.tick();
+      return { inst, gestionComercial };
+    }
+
+    it('la descripción es clicable solo si alguna fila baja de nivel', () => {
+      expect(crearCon([TOTAL, TERRITORIO]).inst.columnasDrillDown()).toEqual(['descripcion']);
+      TestBed.resetTestingModule();
+      expect(crearCon([TOTAL]).inst.columnasDrillDown()).toEqual([]);
+    });
+
+    it('clic en la descripción baja con htipcod/hcodrel; otras columnas y el total no bajan', () => {
+      const { inst, gestionComercial } = crearCon([TOTAL, TERRITORIO]);
+      gestionComercial.mockClear();
+
+      inst.onCeldaSeleccionada({ clave: 'prod_ind', fila: TERRITORIO });
+      inst.onCeldaSeleccionada({ clave: 'descripcion', fila: TOTAL });
+      TestBed.tick();
+      expect(gestionComercial).not.toHaveBeenCalled();
+
+      inst.onCeldaSeleccionada({ clave: 'descripcion', fila: TERRITORIO });
+      TestBed.tick();
+      expect(gestionComercial).toHaveBeenLastCalledWith({ tip_cod: 20, cod_rel: 'T1' }, undefined);
+      expect(inst.rutaJerarquica().map((n) => n.cod_rel)).toEqual(['FC', 'T1']);
+    });
+
+    it('una miga vuelve a ese nivel y recorta la ruta', () => {
+      const { inst, gestionComercial } = crearCon([TOTAL, TERRITORIO]);
+      inst.onCeldaSeleccionada({ clave: 'descripcion', fila: TERRITORIO });
+      TestBed.tick();
+      inst.volverANivel(0);
+      TestBed.tick();
+
+      expect(gestionComercial).toHaveBeenLastCalledWith({ tip_cod: 9, cod_rel: 'FC' }, undefined);
+      expect(inst.rutaJerarquica().map((n) => n.cod_rel)).toEqual(['FC']);
+    });
+  });
 });

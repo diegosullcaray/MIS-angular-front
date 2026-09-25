@@ -19,4 +19,10 @@ describe('normalizarPresentacionLegada', () => {
     const vista = normalizarPresentacionLegada({ headers: [{ columns: [columna] }], body: [], additional: {} });
     expect(vista.headers[0].columns[0]).toMatchObject(columna);
   });
+
+  it('un encabezado con fondo del backend lleva texto blanco aunque diga "Real"', () => {
+    const columna = { columnDef: 'real_mes', header: 'Real', isdata: 1, style: { background: '#1B7A3D' } };
+    const vista = normalizarPresentacionLegada({ headers: [{ columns: [columna] }], body: [], additional: {} });
+    expect(vista.headers[0].columns[0].style?.['color']).toBe('var(--mis-text-on-primary)');
+  });
 });

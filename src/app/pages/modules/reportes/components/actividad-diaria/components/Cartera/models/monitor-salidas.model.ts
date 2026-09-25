@@ -37,6 +37,17 @@ export function metricaDeTarjeta(indice: number): string | undefined {
   return indice === 1 ? 'sali1' : indice === 2 ? 'sali3' : 'clive';
 }
 
+/** Columna que baja de nivel (`ddHier` del legado): la descripción de la fila. */
+export const CLAVE_DRILL_DOWN_SALIDAS = 'desc';
+
+/** Columnas que abren el listado de clientes de su métrica (`link2` en el legado). */
+export const METRICAS_DETALLE_SALIDAS: readonly string[] = ['sali1', 'sali3', 'clive'];
+
+/** El asesor (`tip_cod` 1) es el último nivel: su fila no baja (`ctFn` y `ddHier` del legado). */
+export function esNivelAsesor(tipCod: number): boolean {
+  return tipCod === 1;
+}
+
 /** Clave para el semáforo de churn. */
 export const CLAVE_SEMAFORO_CHURN = 'ret_tl';
 

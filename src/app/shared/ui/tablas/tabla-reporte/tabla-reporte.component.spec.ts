@@ -291,6 +291,19 @@ describe('TablaReporteComponent', () => {
     }
   });
 
+  it('con encabezadoUniforme, el color de la columna del backend no pinta el encabezado', () => {
+    const fixture = crear(
+      [{ columns: [{ columnDef: 'nom', header: 'Nombre', isdata: 1, style: { background: '#FF0000', color: '#000000' } }] }],
+      [{ nom: 'Agencia 1' }],
+    );
+    fixture.componentRef.setInput('encabezadoUniforme', true);
+    fixture.detectChanges();
+
+    const th = (fixture.nativeElement as HTMLElement).querySelector('thead th') as HTMLElement;
+    expect(th.style.backgroundColor).toBe('var(--mis-primary)');
+    expect(th.style.color).toBe('var(--mis-text-on-primary)');
+  });
+
   it('sin color del backend, el encabezado usa el azul del tema', () => {
     const fixture = crear();
     const th = (fixture.nativeElement as HTMLElement).querySelector('thead th') as HTMLElement;
@@ -303,6 +316,21 @@ describe('TablaReporteComponent', () => {
     const celdas = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('tbody td')) as HTMLElement[];
     expect(celdas[1].style.background).toBe('rgb(253, 230, 138)');
     expect(celdas[0].style.background).toBe('');
+  });
+
+  it('una celda con fondo del backend lleva el texto que contrasta: blanco sobre verde', () => {
+    const fixture = crear(ENCABEZADOS, [{ ...FILAS[0], background_monto: '#1B7A3D' }, { ...FILAS[0], background_monto: '#FDE68A' }]);
+
+    const filas = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr')) as HTMLElement[];
+    const texto = (fila: HTMLElement) => (fila.querySelectorAll('td')[1].querySelector('span') as HTMLElement).style.color;
+    expect(texto(filas[0])).toBe('rgb(255, 255, 255)');
+    expect(texto(filas[1])).not.toBe('rgb(255, 255, 255)');
+  });
+
+  it('el color_<columnDef> del backend manda sobre el contraste automático', () => {
+    const fixture = crear(ENCABEZADOS, [{ ...FILAS[0], background_monto: '#1B7A3D', color_monto: '#000000' }]);
+    const span = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody td')[1].querySelector('span') as HTMLElement;
+    expect(span.style.color).toBe('rgb(0, 0, 0)');
   });
 
   it('style_<columnDef> tiñe el texto de una celda suelta según el signo', () => {

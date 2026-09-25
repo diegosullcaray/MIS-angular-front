@@ -28,6 +28,15 @@ export class SaldoCarteraComponent extends ReporteBloquesBase {
     'Productividad',
   ];
 
+  /** `content.lower` de cada bloque en `cra-map.ts` del legado (`RS_SAL_CAR`), mismo orden que `titulos`. */
+  protected override readonly notas = [
+    '<b>*Considerar que los saldos de cartera no incluyen los ajustes de traslados GECO que se realizarán para el pago del REVA.</b>',
+    undefined,
+    '<b>*Considerar que los saldos de cartera no incluyen los ajustes de traslados GECO que se realizarán para el pago del REVA.</b>',
+    undefined,
+    '<b>a:</b> Variación con respecto al cierre del mes anterior.',
+  ];
+
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.saldoCartera(nodo);
   }
@@ -37,26 +46,19 @@ export class SaldoCarteraComponent extends ReporteBloquesBase {
    * (`_04`/`_05` vigentes, `_01`/`_02`/`_03` totales) para no scrollear tanto.
    */
   protected pestanas(): PestanaReporte[] | undefined {
-    const tablas = this.tablas();
-    if (tablas.length === 0) return undefined;
+    const bloques = this.bloques();
+    if (bloques.length === 0) return undefined;
 
     return [
       {
         id: 'vigente',
         titulo: 'Saldo Vigente',
-        bloques: [
-          { titulo: this.titulos[0], tabla: tablas[0] },
-          { titulo: this.titulos[1], tabla: tablas[1] }
-        ]
+        bloques: bloques.slice(0, 2),
       },
       {
         id: 'total',
         titulo: 'Saldo Total',
-        bloques: [
-          { titulo: this.titulos[2], tabla: tablas[2] },
-          { titulo: this.titulos[3], tabla: tablas[3] },
-          { titulo: this.titulos[4], tabla: tablas[4] }
-        ]
+        bloques: bloques.slice(2),
       }
     ];
   }
