@@ -1,0 +1,287 @@
+<title>Guion Keynote MIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #f3f4f6;
+    --surface: #ffffff;
+    --ink: #1b2029;
+    --muted: #5a6371;
+    --rule: #d8dce2;
+    --accent: #1d5fa6;
+    --accent-soft: #e5eef8;
+    --legacy: #8a6d3b;
+    --legacy-soft: #f6efe2;
+    --flag: #a3401f;
+    --flag-soft: #fbece6;
+    --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --body: "IBM Plex Sans", "Segoe UI", Roboto, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1217; --surface: #171b22; --ink: #e6e9ee; --muted: #9aa3b1; --rule: #2a303a;
+      --accent: #6cb4f0; --accent-soft: #16263a; --legacy: #d3b27a; --legacy-soft: #2a2317;
+      --flag: #f08a66; --flag-soft: #2d1a13; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1217; --surface: #171b22; --ink: #e6e9ee; --muted: #9aa3b1; --rule: #2a303a;
+    --accent: #6cb4f0; --accent-soft: #16263a; --legacy: #d3b27a; --legacy-soft: #2a2317;
+    --flag: #f08a66; --flag-soft: #2d1a13; color-scheme: dark;
+  }
+
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.6; padding-inline: 20px; padding-block: 40px 72px; }
+  .page { max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+  h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: -0.015em; }
+  h1 { font-size: clamp(34px, 5vw, 54px); font-weight: 800; line-height: 1.05; }
+  h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 700; line-height: 1.15; }
+  h3 { font-size: 17px; font-weight: 700; }
+  p { margin: 0; max-width: 68ch; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+  header { display: flex; flex-direction: column; gap: 18px; border-bottom: 1px solid var(--rule); padding-bottom: 32px; }
+  .logline { font-size: 18px; color: var(--muted); max-width: 62ch; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 28px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+  .meta b { color: var(--ink); font-weight: 500; }
+
+  section { display: flex; flex-direction: column; gap: 20px; }
+  .section-head { display: flex; flex-direction: column; gap: 6px; }
+
+  .specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .spec { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; }
+  .spec p, .spec li { font-size: 14px; }
+  .spec ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 13px; color: var(--muted); }
+  .tag { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; padding: 1px 7px; border-radius: 4px; white-space: nowrap; }
+  .tag--real { background: var(--accent-soft); color: var(--accent); }
+  .tag--legacy { background: var(--legacy-soft); color: var(--legacy); }
+  .tag--flag { background: var(--flag-soft); color: var(--flag); }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .metric { border-top: 2px solid var(--ink); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .metric .value { font-family: var(--display); font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .metric .value.pending { color: var(--flag); font-size: 22px; }
+  .metric p { font-size: 13px; color: var(--muted); }
+
+  .act { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+  .act-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 20px; padding: 20px 22px; border-bottom: 1px solid var(--rule); }
+  .act-head .tc { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 720px; }
+  th { text-align: left; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 16px; border-bottom: 1px solid var(--rule); }
+  td { vertical-align: top; padding: 16px; border-bottom: 1px solid var(--rule); font-size: 14px; }
+  tr:last-child td { border-bottom: 0; }
+  td.tc { width: 72px; font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.visual { width: 46%; }
+  .cue { font-family: var(--mono); font-size: 12px; color: var(--accent); display: block; margin-bottom: 4px; }
+  .sfx { font-family: var(--mono); font-size: 12px; color: var(--muted); display: block; margin-top: 6px; }
+  .line { font-size: 15.5px; line-height: 1.65; }
+  .line em { font-style: normal; font-weight: 600; }
+  .pause { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  td ul { margin: 6px 0 0; padding-left: 18px; }
+
+  .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .note { border-left: 3px solid var(--flag); padding: 4px 0 4px 16px; display: flex; flex-direction: column; gap: 6px; }
+  .note p { font-size: 14px; }
+  code { font-family: var(--mono); font-size: 0.9em; }
+</style>
+
+<div class="page">
+
+<header>
+  <span class="eyebrow">Guion del video · Público general</span>
+  <h1>Todo el MIS.<br>Una sola ventana.</h1>
+  <p class="logline">Video corto, de unos 72 segundos, para presentar el nuevo MIS a todos los colaboradores de Confianza. Habla de lo que cambia en el día a día, sin términos técnicos. Cada escena del sistema es una grabación real del MIS nuevo con datos de ejemplo.</p>
+  <div class="meta">
+    <span>Duración <b>1:12</b></span>
+    <span>Formato <b>1920 × 1080, 30 fps</b></span>
+    <span>Voz <b>por grabar</b></span>
+    <span>Música <b>por agregar</b></span>
+  </div>
+</header>
+
+<section>
+  <div class="section-head">
+    <span class="eyebrow">Cómo leer este guion</span>
+    <p>La columna de la izquierda es lo que ya está en el video. La de la derecha es la locución para grabar encima, con los mismos tiempos.</p>
+  </div>
+  <div class="legend">
+    <span><span class="tag tag--real">EN EL VIDEO</span> ya está grabado y montado</span>
+    <span><span class="tag tag--flag">POR COMPLETAR</span> dato o recurso que falta antes de publicar</span>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="eyebrow">Idea central</span>
+    <h2>Lo que la gente tiene que llevarse</h2>
+  </div>
+  <div class="specs">
+    <div class="spec">
+      <h3>El mensaje</h3>
+      <p><b>“Todo lo que necesitas. Nada que estorbe.”</b></p>
+      <p>El MIS de siempre, con la misma información, pero más fácil de leer, más rápido de usar y disponible también en el teléfono.</p>
+    </div>
+    <div class="spec">
+      <h3>Lo que molestaba antes</h3>
+      <ul>
+        <li>Pantallas llenas de información, difíciles de leer.</li>
+        <li>Esperas sin saber qué estaba pasando.</li>
+        <li>Tablas tan anchas que no cabían en la pantalla.</li>
+      </ul>
+    </div>
+    <div class="spec">
+      <h3>Lo que se ve ahora</h3>
+      <ul>
+        <li>Cada reporte se abre en su propia ventana, limpia y ordenada.</li>
+        <li>La información aparece por partes, apenas está lista.</li>
+        <li>Un clic lleva al detalle, con gráficos fáciles de leer.</li>
+        <li>Modo claro u oscuro, a elección.</li>
+        <li>Incentivos y metas en el teléfono, con los colores de siempre.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="eyebrow">Guion</span>
+    <h2>Escena por escena</h2>
+  </div>
+
+  <article class="act">
+    <div class="act-head">
+      <h3>La pregunta de todos los días</h3>
+      <span class="tc">00:00 – 00:11</span>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Tiempo</th><th>En pantalla</th><th>Locución</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="tc">00:00</td>
+            <td class="visual"><span class="cue">TARJETA · FONDO NEGRO</span>Aparece en tono ámbar: “Todos los días hacemos la misma pregunta.” Luego, en blanco y grande: “¿Cómo va mi cartera hoy?” <span class="tag tag--real">EN EL VIDEO</span><span class="sfx">Música: pulso suave y grave.</span></td>
+            <td class="line">Todos los días, en cada agencia, nos hacemos la misma pregunta. <span class="pause">[pausa]</span> ¿Cómo va mi cartera hoy?</td>
+          </tr>
+          <tr>
+            <td class="tc">00:05</td>
+            <td class="visual"><span class="cue">TARJETA</span>“La respuesta estaba ahí. Pero costaba llegar a ella.” Entran una a una: “Pantallas llenas.” “Esperas sin saber qué pasaba.” “Tablas que no cabían en la pantalla.” <span class="tag tag--real">EN EL VIDEO</span></td>
+            <td class="line">La respuesta siempre estuvo ahí. <span class="pause">[pausa]</span> Pero llegar a ella costaba. Pantallas llenas. Esperas sin saber qué pasaba. Tablas que no cabían.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="act">
+    <div class="act-head">
+      <h3>El nuevo MIS</h3>
+      <span class="tc">00:11 – 00:34</span>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Tiempo</th><th>En pantalla</th><th>Locución</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="tc">00:11</td>
+            <td class="visual"><span class="cue">TARJETA · REVELACIÓN</span>Se abre una ventana de vidrio con tres botones de color. Dentro: “El nuevo MIS”. Debajo: “Todo lo que necesitas. Nada que estorbe.” <span class="tag tag--real">EN EL VIDEO</span><span class="sfx">Música: sube y se vuelve más luminosa.</span></td>
+            <td class="line">Por eso creamos el nuevo MIS. <span class="pause">[pausa]</span> Todo lo que necesitas. Nada que estorbe.</td>
+          </tr>
+          <tr>
+            <td class="tc">00:17</td>
+            <td class="visual"><span class="cue">SISTEMA · INICIO</span>Pantalla de inicio del MIS con la marca y las novedades. Leyenda: “Una sola ventana para todo tu trabajo.” <span class="tag tag--real">EN EL VIDEO</span></td>
+            <td class="line">Todo tu trabajo, en un solo lugar.</td>
+          </tr>
+          <tr>
+            <td class="tc">00:22</td>
+            <td class="visual"><span class="cue">SISTEMA · SALDO CARTERA</span>Se abre el reporte. Aparece el aviso “Espere un momento” y enseguida la primera tabla. Las siguientes se ven como barras grises que se llenan solas. Leyenda: “y la información aparece apenas está lista.” <span class="tag tag--real">EN EL VIDEO</span></td>
+            <td class="line">Abres un reporte, y la información aparece apenas está lista. <span class="pause">[pausa]</span> Ya no esperas a que cargue todo para empezar a leer.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="act">
+    <div class="act-head">
+      <h3>Más fácil de usar</h3>
+      <span class="tc">00:34 – 00:53</span>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Tiempo</th><th>En pantalla</th><th>Locución</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="tc">00:34</td>
+            <td class="visual"><span class="cue">SISTEMA · CARTERA AGRÍCOLA</span>Tabla por zona con tarjetas de resumen arriba. El cursor hace clic en el saldo de la zona Centro. Leyenda: “¿Quieres ver más? Un clic.” <span class="tag tag--real">EN EL VIDEO</span></td>
+            <td class="line">¿Quieres ver más? <span class="pause">[pausa]</span> Un clic.</td>
+          </tr>
+          <tr>
+            <td class="tc">00:39</td>
+            <td class="visual"><span class="cue">SISTEMA · DETALLE</span>Aparecen los gráficos por cultivo: café, cacao, arroz, papa, maíz y palta. Leyenda: “Y el detalle aparece en gráficos, listo para leer.” <span class="tag tag--real">EN EL VIDEO</span></td>
+            <td class="line">Y el detalle aparece en gráficos claros, listos para leer y para decidir.</td>
+          </tr>
+          <tr>
+            <td class="tc">00:44</td>
+            <td class="visual"><span class="cue">SISTEMA · MODO OSCURO</span>El cursor toca el botón de la luna y toda la pantalla pasa a modo oscuro. Leyenda: “De día o de noche, como prefieras.” <span class="tag tag--real">EN EL VIDEO</span><span class="sfx">Sonido: un tono suave al cambiar.</span></td>
+            <td class="line">De día o de noche. <span class="pause">[pausa]</span> Como prefieras.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="act">
+    <div class="act-head">
+      <h3>En tu teléfono y cierre</h3>
+      <span class="tc">00:53 – 01:12</span>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Tiempo</th><th>En pantalla</th><th>Locución</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="tc">00:53</td>
+            <td class="visual"><span class="cue">SISTEMA · TELÉFONO</span>El Cuadro de Mando de Incentivos en un teléfono: el total del mes, los indicadores como íconos de colores, los anillos de avance y los bonos. Leyenda: “Y en tu teléfono, tus metas al día.” <span class="tag tag--real">EN EL VIDEO</span></td>
+            <td class="line">Y cuando estás fuera de la oficina, tus metas e incentivos van contigo, en tu teléfono. <span class="pause">[pausa]</span> Con los colores que ya conoces.</td>
+          </tr>
+          <tr>
+            <td class="tc">01:05</td>
+            <td class="visual"><span class="cue">TARJETA · CIERRE</span>Una ventana de vidrio con: “Todo el MIS. Una sola ventana.” Debajo: “Muy pronto en todas las agencias.” Fundido a negro. <span class="tag tag--real">EN EL VIDEO</span> Si ya hay fecha, cambiar el texto por “Disponible desde el [fecha]”. <span class="tag tag--flag">POR COMPLETAR</span></td>
+            <td class="line">El nuevo MIS llega muy pronto a todas las agencias. <span class="pause">[pausa]</span> Todo el MIS. <span class="pause">[pausa]</span> Una sola ventana.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="eyebrow">Antes de publicar</span>
+    <h2>Lo que falta</h2>
+  </div>
+  <div class="notes">
+    <div class="note">
+      <h3>Grabar la voz</h3>
+      <p>El video no tiene voz. Graba la locución de la columna derecha con una voz cálida y pausada, siguiendo los tiempos. Cada escena ya dura lo suficiente para leer su texto con calma.</p>
+    </div>
+    <div class="note">
+      <h3>Agregar música</h3>
+      <p>Usa una pista con licencia de uso interno: suave al inicio, más luminosa desde “El nuevo MIS” y baja al final para que se escuche la última frase.</p>
+    </div>
+    <div class="note">
+      <h3>Fecha de lanzamiento</h3>
+      <p>La tarjeta final dice “Muy pronto en todas las agencias”. Cuando haya fecha, se cambia en el texto de esa tarjeta y se vuelve a exportar el video.</p>
+    </div>
+    <div class="note">
+      <h3>Datos de ejemplo</h3>
+      <p>Las cifras, zonas y nombres del video son de ejemplo, no son datos reales de la financiera. Si se quiere mostrar un reporte real, grabarlo desde un entorno de prueba con datos anonimizados.</p>
+    </div>
+  </div>
+</section>
+
+</div>
