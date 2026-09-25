@@ -1,13 +1,13 @@
 import { DestroyRef, Directive, ElementRef, afterNextRender, inject, input } from '@angular/core';
 
 /** Filas del cuerpo que se ven a la vez en cualquier tabla del Host; el resto, con scroll dentro. */
-export const MAX_FILAS_VISIBLES = 12;
+export const MAX_FILAS_VISIBLES = 14;
 
 /**
  * Tope de alto de una tabla, como fracción de la altura de la ventana: con tarjetas KPI, pestañas
- * o filtros arriba, ni siquiera 12 filas deben hacer scrollear el panel en una pantalla baja.
+ * o filtros arriba, ni siquiera 14 filas deben hacer scrollear el panel en una pantalla baja.
  */
-export const FRACCION_MAX_ALTO_VENTANA = 0.55;
+export const FRACCION_MAX_ALTO_VENTANA = 0.62;
 
 /**
  * Limita el alto de un `p-table` a `MAX_FILAS_VISIBLES` filas del cuerpo y, además, a

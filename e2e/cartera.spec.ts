@@ -93,7 +93,7 @@ test.describe('Cartera — smoke de las pantallas migradas', () => {
   });
 });
 
-test.describe('Tablas: 12 filas visibles y paginador dentro de la tabla', () => {
+test.describe('Tablas: 14 filas visibles y paginador dentro de la tabla', () => {
   /** Página de 30 filas de un reporte paginado en servidor (`additional.Total`), como `DET_INCEN_PDM`. */
   async function mockPaginado(page: Page) {
     const encabezados = [
@@ -111,8 +111,8 @@ test.describe('Tablas: 12 filas visibles y paginador dentro de la tabla', () => 
     });
   }
 
-  test('"Desembolsos PDM" muestra 12 filas con scroll interno y el paginador en la tarjeta de la tabla', async ({ page }) => {
-    // Ventana alta: acá manda el límite de 12 filas, no el tope por alto de ventana.
+  test('"Desembolsos PDM" muestra 14 filas con scroll interno y el paginador en la tarjeta de la tabla', async ({ page }) => {
+    // Ventana alta: acá manda el límite de 14 filas, no el tope por alto de ventana.
     await page.setViewportSize({ width: 1400, height: 1300 });
     await inyectarSesionVigente(page);
     await mockPaginado(page);
@@ -132,17 +132,17 @@ test.describe('Tablas: 12 filas visibles y paginador dentro de la tabla', () => 
       .poll(() => contenedor.evaluate((el) => el.scrollHeight > el.clientHeight))
       .toBe(true);
 
-    // La fila 12 entra entera y la 13 queda debajo del borde: el resto se ve con el scroll.
-    const { pie12, inicio13, bordeInferior } = await contenedor.evaluate((el) => {
+    // La fila 14 entra entera y la 15 queda debajo del borde: el resto se ve con el scroll.
+    const { pie14, inicio15, bordeInferior } = await contenedor.evaluate((el) => {
       const filas = el.querySelectorAll('tbody tr');
       return {
-        pie12: filas[11].getBoundingClientRect().bottom,
-        inicio13: filas[12].getBoundingClientRect().top,
+        pie14: filas[13].getBoundingClientRect().bottom,
+        inicio15: filas[14].getBoundingClientRect().top,
         bordeInferior: el.getBoundingClientRect().bottom,
       };
     });
-    expect(pie12).toBeLessThanOrEqual(bordeInferior + 1);
-    expect(inicio13).toBeGreaterThanOrEqual(bordeInferior - 1);
+    expect(pie14).toBeLessThanOrEqual(bordeInferior + 1);
+    expect(inicio15).toBeGreaterThanOrEqual(bordeInferior - 1);
     // Y el panel de la ventana no hace scroll: la tabla lo resuelve por dentro.
     const panel = page.locator('app-window-panel').first();
     await expect
@@ -150,7 +150,7 @@ test.describe('Tablas: 12 filas visibles y paginador dentro de la tabla', () => 
       .toBe(false);
   });
 
-  test('en una ventana baja la tabla no pasa del 55 % del alto y el panel no scrollea', async ({ page }) => {
+  test('en una ventana baja la tabla no pasa del 62 % del alto y el panel no scrollea', async ({ page }) => {
     await page.setViewportSize({ width: 1366, height: 700 });
     await inyectarSesionVigente(page);
     await mockPaginado(page);
@@ -162,7 +162,7 @@ test.describe('Tablas: 12 filas visibles y paginador dentro de la tabla', () => 
       .filter({ has: page.locator('app-tabla-reporte') })
       .locator('.p-datatable-table-container');
     await expect(contenedor.locator('tbody tr')).toHaveCount(30);
-    await expect.poll(() => contenedor.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(Math.round(700 * 0.55) + 1);
+    await expect.poll(() => contenedor.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(Math.round(700 * 0.62) + 1);
   });
 });
 
