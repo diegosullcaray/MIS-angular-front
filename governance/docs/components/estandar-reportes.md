@@ -48,6 +48,30 @@ con controles sueltos.
   ajustar la intensidad se toca el token, no cada tabla.
 - La tabla va en su tarjeta: `<div class="mis-card p-3 overflow-x-auto">`.
 
+### Formato de los números
+
+**El formato lo decide el backend, no la pantalla.** Cada columna trae `format` y
+`app-tabla-reporte` lo respeta tal como lo hacía el legado:
+
+| Campo | Qué es | Ejemplo |
+|---|---|---|
+| `type` | `number`, `percent`, `traffic-light`, `string` | `"percent"` |
+| `mode` | Decimales, en notación `digitsInfo` de `DecimalPipe`: `{enteros}.{mín}-{máx}` | `".0-0"` montos sin decimales · `"1.1-2"` porcentajes con 1 a 2 |
+| `unit` | Unidad detrás del número | `"pbs"` en *Var. TAPP Mes/Stock* → `7 pbs` |
+
+- Montos: sin decimales (`".0-0"`) y con separador de miles. Porcentajes: hasta 2 decimales.
+- **Nunca** redondear ni cortar decimales en el servicio o en la plantilla del reporte: si un
+  reporte se ve con decimales de más, el arreglo va en `formatear()` de `app-tabla-reporte` (que
+  lee `mode`/`unit`), no en un parche por reporte. Si el backend no manda `mode`, se usan los
+  decimales por defecto (número hasta 3, porcentaje 1).
+
+### Tablas anchas
+
+Una tabla de muchas columnas no debe sacar scroll horizontal en escritorio: se usa
+`[ajustarAncho]="true"` en `app-tabla-reporte`, que deja hacer salto de línea a los encabezados e
+ignora los anchos fijos del backend. El contenedor conserva `overflow-x-auto` solo como respaldo
+para pantallas angostas. Ejemplo: *Captaciones por Canal* (18 columnas).
+
 ### Drill down (bajar de nivel desde la tabla)
 
 Si las filas son niveles de la jerarquía, la descripción es un enlace que baja a ese nivel:
@@ -89,6 +113,22 @@ Toda nota corta que acompaña a una tabla va como **chip** (`<app-chip-informati
 
 Lo que **no** es chip: el título de una tabla ("Cero Cuota", "Ahorro Programado") y las notas al
 pie o leyendas (`nota` de los bloques, `content.lower` del legado), que van debajo de la tabla.
+
+## Cómo se hace cumplir
+
+Estas reglas no dependen de acordarse: `npm run audit:governance` (y `npm run verify`, que corre en
+CI) falla si un reporte las rompe.
+
+| Regla del auditor | Qué exige |
+|---|---|
+| `tabla-con-hover` | Todo `<p-table>` de reportes y de las tablas compartidas lleva `[rowHover]="true"` |
+| `filtros-en-baldosa` | Un reporte con filtros propios los pone en `<app-grupo-filtros>` (o usa un armazón que ya lo hace) |
+| `nota-de-unidad-en-chip` | Ningún "Expresado en…" como texto suelto: va en `<app-chip-informativo>` |
+
+El formato de números (`mode` / `unit`) lo cubren las pruebas de `tabla-reporte.component.spec.ts`
+con valores reales de *Captaciones por Canal*. Las reglas viven en
+`governance/scripts/validar-gobernanza.mjs`; una regla nueva de este estándar se agrega ahí, no
+solo en este documento.
 
 ## Ver también
 

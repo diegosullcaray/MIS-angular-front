@@ -22,12 +22,17 @@ Esta skill no replica esas tablas.
    `ReporteSimpleBase`, enlazar `[error]="error()"` además de carga y tabla.
    La base conserva el error y cancela por filtros/destrucción; el armazón lo muestra.
    Las tablas solo resuelven carga/vacío y formato, no errores de consulta.
-5. Consultas fuera de la base: cancelación anterior + destrucción, limpieza de
+5. Cumplir el [estándar de reportes](../../docs/components/estandar-reportes.md): filtros
+   propios en `<app-grupo-filtros>` a todo el ancho, tablas con resaltado de fila, formato de
+   números desde `format.mode`/`unit` del backend (nunca redondear en el reporte), notas como
+   "Expresado en…" en `<app-chip-informativo>` y `[ajustarAncho]="true"` en tablas anchas.
+   `npm run audit:governance` falla si se rompen.
+6. Consultas fuera de la base: cancelación anterior + destrucción, limpieza de
    resultados obsoletos, error persistente y reintento.
-6. Pruebas focalizadas para datos, vacío, payload inválido/error y respuestas fuera
+7. Pruebas focalizadas para datos, vacío, payload inválido/error y respuestas fuera
    de orden. E2E de flujo para cambios sensibles; aplicar el
    [proceso según riesgo](../../docs/development/quality-gates.md).
-7. Regenerar inventario si cambian rutas/pruebas, ejecutar verificaciones y actualizar
+8. Regenerar inventario si cambian rutas/pruebas, ejecutar verificaciones y actualizar
    contrato solo si cambió realmente.
 
 Para una cifra incorrecta, seguir [linaje](../../docs/data/lineage.md), no modificar

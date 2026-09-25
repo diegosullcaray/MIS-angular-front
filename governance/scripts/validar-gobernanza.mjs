@@ -334,6 +334,73 @@ const REGLAS = [
         ),
   },
   {
+    id: 'tabla-con-hover',
+    nivel: 'error',
+    titulo: 'las tablas de reportes resaltan la fila al pasar el cursor',
+    doc: 'docs/components/estandar-reportes.md',
+    porque:
+      'el legado resalta la fila bajo el cursor y en tablas de 15+ columnas es lo que evita leer el dato de la fila de al lado; sin `[rowHover]="true"` el tema de PrimeNG no lo pinta.',
+    evaluar: (archivos) =>
+      archivos
+        .filter(
+          (a) =>
+            a.esPlantilla &&
+            (a.modulo === 'reportes' || a.ruta.startsWith('src/app/shared/ui/tablas/') || a.ruta.startsWith('src/app/shared/ui/data-table/')),
+        )
+        .flatMap((a) =>
+          coincidencias(a.contenido, /<p-table\b[^>]*>/g)
+            .filter((c) => !/\browHover\b/.test(c.texto))
+            .map((c) => ({
+              ruta: a.ruta,
+              linea: c.linea,
+              detalle: '`<p-table>` sin `[rowHover]="true"` — o usar una de las tablas compartidas, que ya lo traen',
+            })),
+        ),
+  },
+  {
+    id: 'filtros-en-baldosa',
+    nivel: 'error',
+    titulo: 'los filtros propios de un reporte van en `<app-grupo-filtros>`',
+    doc: 'docs/components/estandar-reportes.md',
+    porque:
+      'la franja de filtros se lee como tarjetas hermanas (jerarquía + filtros propios); un control suelto rompe el estándar visual. `app-reporte-simple` y `app-detalle-reasignado` ya envuelven su slot.',
+    evaluar: (archivos) =>
+      archivos
+        .filter(
+          (a) =>
+            a.esPlantilla &&
+            a.modulo === 'reportes' &&
+            a.contenido.includes('ventana-filtros') &&
+            !/<app-(grupo-filtros|reporte-simple|detalle-reasignado)\b/.test(a.contenido),
+        )
+        .flatMap((a) =>
+          coincidencias(a.contenido, /<(app-select-filtro|app-input-filtro|p-select|p-datepicker)\b/g)
+            .slice(0, 1)
+            .map((c) => ({
+              ruta: a.ruta,
+              linea: c.linea,
+              detalle: 'filtro propio fuera de una baldosa — envolverlo en `<app-grupo-filtros>`',
+            })),
+        ),
+  },
+  {
+    id: 'nota-de-unidad-en-chip',
+    nivel: 'error',
+    titulo: 'la unidad de una tabla ("Expresado en…") va en un chip',
+    doc: 'docs/components/estandar-reportes.md',
+    porque: 'una nota corta sobre la tabla se muestra con `<app-chip-informativo>`, igual en todos los reportes, no como texto suelto.',
+    evaluar: (archivos) =>
+      archivos
+        .filter((a) => a.esPlantilla && a.modulo === 'reportes')
+        .flatMap((a) =>
+          coincidencias(a.contenido, />\s*Expresado en\b[^<]*</g).map((c) => ({
+            ruta: a.ruta,
+            linea: c.linea,
+            detalle: 'nota de unidad como texto — usar `<app-chip-informativo texto="Expresado en …" />`',
+          })),
+        ),
+  },
+  {
     id: 'tablas-sin-columnas-ocultas',
     nivel: 'error',
     titulo: 'en móvil una tabla muestra las mismas columnas que en escritorio',

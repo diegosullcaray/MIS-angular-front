@@ -32,7 +32,7 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica en CI.
 
 <!-- generado:inicio rutas-de-accion -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-24 · commit e3cd408. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-25 · commit ed6b2205. No editar a mano. -->
 
 | Módulo Ant | Servicio | Método | Ruta de acción | Verbo | Parámetros de payload | Clave de respuesta | Llamadas |
 |---|---|---|---|---|---|---|---:|
@@ -81,7 +81,7 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 | `reporting` (5304) | `ModReportesService` | `getGraphicData` | `graphicData` | GET | `cod_rep` | `result` | 4 |
 | `reporting` (5304) | `ModReportesService` | `getRegularData` | `regularData` | GET | `cod_rep` | `result` | 20 |
 | `reporting` (5304) | `ModReportesService` | `getDeprecatedData` | `reportData` | GET | `cod_rep` | `result` | 15 |
-| `reporting` (5304) | `ModReportesService` | `getRegularTableResult` | `table.regular` | GET | `cod_rep` | `resultado` | 24 |
+| `reporting` (5304) | `ModReportesService` | `getRegularTableResult` | `table.regular` | GET | `cod_rep` | `resultado` | 27 |
 | `secciones` (5301) | `ModSeccionesService` | `getDetalleCategorizacion` | `categorizacion.detalle` | GET | `cod_bt` | `resultado` | 1 |
 | `secciones` (5301) | `ModSeccionesService` | `getDetalleCliente` | `dashboard.cliente` | GET | `cod_bt`, `num_doc`, `tip_doc`, `pais` | `resultado` | **0** |
 | `secciones` (5301) | `ModSeccionesService` | `getHistoricoVariable` | `dashboard.historico` | GET | `cod_bt`, `cod_var` | `resultado` | **0** |
