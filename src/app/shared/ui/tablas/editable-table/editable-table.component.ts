@@ -5,12 +5,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
 import type { CeldaEditadaEvent, ColumnaTabla, FilaTabla, TipoColumna } from '../models/tabla-editable.model';
 import { formatearNumero } from '../../../utils/formato.util';
+import { MaxFilasDirective } from '../max-filas.directive';
 
 /** Tabla editable genérica de Presupuesto — reemplaza al `stg-table` legado (`customComponentCell`/`customComponentStyler`/`onEditCell`) con el propio mecanismo de edición inline de PrimeNG (`pEditableColumn`/`p-cellEditor`). */
 @Component({
   selector: 'app-editable-table',
   standalone: true,
-  imports: [TableModule, FormsModule, InputTextModule, SkeletonModule],
+  imports: [TableModule, FormsModule, InputTextModule, SkeletonModule, MaxFilasDirective],
   templateUrl: './editable-table.component.html',
 })
 export class EditableTableComponent<T extends FilaTabla = FilaTabla> {

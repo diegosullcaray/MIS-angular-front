@@ -99,7 +99,7 @@ export interface PestanaReporte {
         </p-tabs>
       } @else {
         <div class="flex flex-col gap-5">
-          @for (bloque of lista(); track $index) {
+          @for (bloque of lista(); track $index; let primero = $first) {
             <section class="flex flex-col gap-2">
               @if (bloque.titulo) {
                 <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
@@ -109,21 +109,24 @@ export interface PestanaReporte {
               }
               <div class="mis-card p-3 overflow-x-auto">
                 <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
+                <!-- El paginador es parte de la tabla, como el mat-paginator de \`app-table-ajax\`: va
+                     dentro de su tarjeta, pegado al pie. Los reportes paginados son de un solo bloque. -->
+                @if (primero && totalFilas() !== null) {
+                  <p-paginator
+                    class="border-t border-[var(--mis-border)] mt-2 pt-1"
+                    [first]="(pagina() - 1) * filasPorPagina()"
+                    [rows]="filasPorPagina()"
+                    [totalRecords]="totalFilas() ?? 0"
+                    [showFirstLastIcon]="true"
+                    (onPageChange)="onPagina($event)"
+                    styleClass="text-[12px] !bg-transparent"
+                  />
+                }
               </div>
               @if (bloque.nota) {
                 <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
               }
             </section>
-          }
-          @if (totalFilas() !== null) {
-            <p-paginator
-              [first]="(pagina() - 1) * filasPorPagina()"
-              [rows]="filasPorPagina()"
-              [totalRecords]="totalFilas() ?? 0"
-              [showFirstLastIcon]="true"
-              (onPageChange)="onPagina($event)"
-              styleClass="text-[12px]"
-            />
           }
         </div>
       }

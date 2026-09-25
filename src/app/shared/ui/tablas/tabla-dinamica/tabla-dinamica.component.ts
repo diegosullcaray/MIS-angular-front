@@ -4,12 +4,13 @@ import { TableModule } from 'primeng/table';
 import { NgTemplateOutlet } from '@angular/common';
 import { aplanarEncabezados } from './tabla-dinamica.util';
 import type { ColumnaDinamica } from '../models/tabla-dinamica.model';
+import { MaxFilasDirective } from '../max-filas.directive';
 
 /** Tabla dinámica (reemplaza a `stg-table2`). */
 @Component({
   selector: 'app-tabla-dinamica',
   standalone: true,
-  imports: [TableModule, NgTemplateOutlet],
+  imports: [TableModule, NgTemplateOutlet, MaxFilasDirective],
   templateUrl: './tabla-dinamica.component.html',
   styleUrl: './tabla-dinamica.component.css',
 })

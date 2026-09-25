@@ -92,3 +92,55 @@ test.describe('Cartera — smoke de las pantallas migradas', () => {
     await expect(page.getByLabel('Territorio')).toBeVisible();
   });
 });
+
+test.describe('Tablas: 18 filas visibles y paginador dentro de la tabla', () => {
+  /** Página de 30 filas de un reporte paginado en servidor (`additional.Total`), como `DET_INCEN_PDM`. */
+  async function mockPaginado(page: Page) {
+    const encabezados = [
+      { columns: [{ columnDef: 'des', header: 'Descripción', isdata: 1 }, { columnDef: 'mon', header: 'Monto', isdata: 2, format: { type: 'number' } }] },
+    ];
+    const filas = Array.from({ length: 30 }, (_, i) => ({ des: `Fila ${i + 1}`, mon: (i + 1) * 1000 }));
+
+    await page.route('**/cores2/ant/**', (route) => {
+      const strands = route.request().headers()['winder-params'] ?? '';
+      let body: unknown;
+      if (strands.includes('base_hier')) body = { base_hierarchy: [RAIZ] };
+      else if (strands.includes('level_hier')) body = { level_hierarchy: NIVEL_1 };
+      else body = { result: { headers: encabezados, body: filas, additional: { Total: 95 } } };
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ code: '0', headers: {}, body }) });
+    });
+  }
+
+  test('"Desembolsos PDM" muestra 18 filas con scroll interno y el paginador en la tarjeta de la tabla', async ({ page }) => {
+    await inyectarSesionVigente(page);
+    await mockPaginado(page);
+    await page.goto('/app/reportes/leg/com/rda/adm/det-ince-pdm');
+    await page.waitForLoadState('networkidle');
+
+    const tarjeta = page.locator('.mis-card').filter({ has: page.locator('app-tabla-reporte') });
+    await expect(tarjeta.locator('tbody tr')).toHaveCount(30);
+    const paginador = tarjeta.locator('p-paginator');
+    await expect(paginador).toBeVisible();
+    // En una sola línea: flechas y números uno al lado del otro, no apilados.
+    const altoPaginador = await paginador.evaluate((el) => el.getBoundingClientRect().height);
+    expect(altoPaginador).toBeLessThan(70);
+
+    const contenedor = tarjeta.locator('.p-datatable-table-container');
+    await expect
+      .poll(() => contenedor.evaluate((el) => el.scrollHeight > el.clientHeight))
+      .toBe(true);
+
+    // La fila 18 entra entera y la 19 queda debajo del borde: el resto se ve con el scroll.
+    const { pie18, inicio19, bordeInferior } = await contenedor.evaluate((el) => {
+      const filas = el.querySelectorAll('tbody tr');
+      return {
+        pie18: filas[17].getBoundingClientRect().bottom,
+        inicio19: filas[18].getBoundingClientRect().top,
+        bordeInferior: el.getBoundingClientRect().bottom,
+      };
+    });
+    expect(pie18).toBeLessThanOrEqual(bordeInferior + 1);
+    expect(inicio19).toBeGreaterThanOrEqual(bordeInferior - 1);
+  });
+});
+

@@ -3,7 +3,7 @@
      y dejaba dos indicadores para una sola espera. El único spinner visible
      es el global; acá el estado se conserva como `aria-busy` para que un
      lector de pantalla siga sabiendo que la tabla está cargando. -->
-<p-table [value]="filas()" [attr.aria-busy]="cargando()" [rowHover]="true" styleClass="p-datatable-sm">
+<p-table appMaxFilas [value]="filas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm">
   <ng-template pTemplate="header">
     @for (filaEnc of filasEncabezado(); track $index) {
       <tr>

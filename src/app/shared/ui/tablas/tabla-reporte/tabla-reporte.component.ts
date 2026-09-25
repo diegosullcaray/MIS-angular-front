@@ -2,6 +2,7 @@ import { Component, computed, input, output } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { normalizarHex, textoSobre } from '../../../../theme/color.util';
 import type { ColumnaReporte, FilaEncabezadoReporte, FilaReporte } from '../models/tabla-reporte.model';
+import { MaxFilasDirective } from '../max-filas.directive';
 
 function numeroColumnas(cols: ColumnaReporte['cols']): number {
   return cols ? Number(cols) : 1;
@@ -62,7 +63,7 @@ function decimalesDeModo(
 @Component({
   selector: 'app-tabla-reporte',
   standalone: true,
-  imports: [TableModule],
+  imports: [TableModule, MaxFilasDirective],
   templateUrl: './tabla-reporte.component.html',
 })
 export class TablaReporteComponent {

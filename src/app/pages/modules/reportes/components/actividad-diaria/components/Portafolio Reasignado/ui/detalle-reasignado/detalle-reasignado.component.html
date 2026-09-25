@@ -43,15 +43,16 @@
     <p-button label="Buscar asesor" icon="pi pi-search" size="small" (onClick)="buscarAsesor.emit()" />
   </app-grupo-filtros>
 
+  <!-- El paginador va dentro de la tarjeta de la tabla, pegado a su pie. -->
   <div class="mis-card p-3 overflow-x-auto">
     <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" [cargando]="cargando()" />
+    <p-paginator
+      class="border-t border-[var(--mis-border)] mt-2 pt-1"
+      [first]="primeraFila"
+      [rows]="porPagina"
+      [totalRecords]="total()"
+      (onPageChange)="onPagina($event)"
+      styleClass="text-[12px] !bg-transparent"
+    />
   </div>
-
-  <p-paginator
-    [first]="primeraFila"
-    [rows]="porPagina"
-    [totalRecords]="total()"
-    (onPageChange)="onPagina($event)"
-    styleClass="text-[12px]"
-  />
 </div>

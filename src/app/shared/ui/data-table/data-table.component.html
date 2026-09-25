@@ -7,6 +7,7 @@
   class="mis-baldosa flex-1 overflow-x-auto overflow-y-hidden rounded-xl shadow-xs"
 >
   <p-table
+    appMaxFilas
     [value]="filasFiltradas()"
     [rowHover]="true"
     [attr.aria-busy]="loading()"
@@ -17,7 +18,7 @@
     [showCurrentPageReport]="true"
     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
     styleClass="p-datatable-sm p-datatable-gridlines text-xs"
-    [scrollable]="!!scrollHeight()"
+    [scrollable]="true"
     [scrollHeight]="scrollHeight()"
   >
     <ng-template pTemplate="caption">

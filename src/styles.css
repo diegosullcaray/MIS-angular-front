@@ -21,4 +21,11 @@
 @source "./src/**/*.ts";
 
 /* ── PrimeNG cssLayer ordering ────────────────────────────── */
-@layer theme, base, primeng, utilities;
+@layer theme, base, primeng, utilities;
+/* Tablas con `appMaxFilas` (ver shared/ui/tablas/max-filas.directive.ts): al hacer scroll dentro
+   de la tabla, el encabezado queda fijo arriba. */
+.mis-max-filas .p-datatable-table-container > .p-datatable-table > .p-datatable-thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}

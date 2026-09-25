@@ -11,12 +11,13 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { TooltipModule } from 'primeng/tooltip';
 import type { DataTableColumn, DataTableFilterType } from './data-table.model';
 import { DataTableCellDirective } from './data-table-cell.directive';
+import { MaxFilasDirective } from '../tablas/max-filas.directive';
 
 /** Tabla genérica sobre `p-table`: arma encabezado, orden por columna y paginador a partir de `columns`, con búsqueda manual opcional en el `caption` (solo filtra al hacer clic en "Buscar" o Enter, no en cada tecla) y una fila de filtros por columna (texto/número/dropdown/fecha, togglable con "Filtrar") para las columnas que definen `filterType`. */
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [NgTemplateOutlet, FormsModule, TableModule, ButtonModule, InputTextModule, IconFieldModule, InputIconModule, SelectModule, DatePickerModule, TooltipModule],
+  imports: [NgTemplateOutlet, FormsModule, TableModule, ButtonModule, InputTextModule, IconFieldModule, InputIconModule, SelectModule, DatePickerModule, TooltipModule, MaxFilasDirective],
   templateUrl: './data-table.component.html',
   styleUrl: './data-table.component.css',
 })
