@@ -1,4 +1,5 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import type { Subscription } from 'rxjs';
 import { DecimalPipe, PercentPipe } from '@angular/common';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
@@ -10,7 +11,8 @@ import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selec
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
-import { kpisDeFilaTotal } from '../../models/seguros.model';
+import { CLAVE_DRILL_DOWN_SEGUROS, kpisDeFilaTotal, nodoDrillDownSeguros } from '../../models/seguros.model';
+import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
 import { SegurosService } from '../../services/seguros.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
@@ -25,6 +27,10 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
  * El selector de periodo sale de `RS_FECH` (`meta1[0].json_result`) y su valor
  * reemplaza a la fecha de corte del usuario en la consulta. No es un calendario
  * libre: son los cortes que el backend declara disponibles.
+ *
+ * Se navega por drill down, como el legado: la jerarquía arranca en el nodo autorizado, la columna
+ * `RNOMSUB` de cada fila baja a ese nivel (`ddHier`) y las migas vuelven atrás (`changeHier` sobre
+ * `hierBuffer`). El selector de jerarquía queda oculto; el único filtro visible es el periodo.
  */
 @Component({
   selector: 'app-seguros-optativos',
@@ -38,12 +44,14 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
     EmptyStateComponent,
     WindowPanelComponent,
     GrupoFiltrosComponent,
+    RutaJerarquicaComponent,
   ],
   templateUrl: './seguros-optativos.component.html',
 })
 export class SegurosOptativosComponent {
   private readonly servicio = inject(SegurosService);
   private readonly toast = inject(ToastService);
+  private readonly selectorJerarquia = viewChild(HierSelectorComponent);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
@@ -55,6 +63,14 @@ export class SegurosOptativosComponent {
   /** Cortes disponibles; vacío mientras `RS_FECH` no responda. */
   protected readonly periodos = signal<OpcionFiltro[]>([]);
   protected readonly periodo = signal('');
+
+  /** Ruta de la raíz al nivel actual, para las migas (`hierBuffer` del legado). */
+  protected readonly rutaJerarquica = signal<HierarquiaNodo[]>([]);
+
+  /** `RNOMSUB` solo es clicable si alguna fila tiene a dónde bajar. */
+  protected readonly columnasDrillDown = computed(() =>
+    this.tabla().filas.some((fila) => this.nodoHijo(fila)) ? [CLAVE_DRILL_DOWN_SEGUROS] : [],
+  );
 
   /** Los KPIs salen de la fila total de la propia tabla, como en el legado. */
   protected readonly kpis = computed(() => kpisDeFilaTotal(this.tabla().filas));
@@ -72,10 +88,14 @@ export class SegurosOptativosComponent {
     });
 
     // Un cambio de periodo recarga el reporte sobre el nivel que ya esté abierto.
-    effect(() => {
+    // `onCleanup` cancela la consulta en vuelo al bajar/subir de nivel o cambiar de periodo.
+    effect((onCleanup) => {
       const nodo = this.nivelActual();
       const periodo = this.periodo();
-      if (nodo) this.cargar(nodo, periodo);
+      if (nodo) {
+        const consulta = this.cargar(nodo, periodo);
+        onCleanup(() => consulta.unsubscribe());
+      }
     });
   }
 
@@ -89,9 +109,47 @@ export class SegurosOptativosComponent {
     this.nivelActual.set(nodo);
   }
 
-  private cargar(nodo: HierarquiaNodo, periodo: string): void {
+  protected onRutaSeleccionada(ruta: HierarquiaNodo[]): void {
+    this.rutaJerarquica.set(ruta);
+  }
+
+  /** Clic en una celda: solo `RNOMSUB` baja de nivel, como `ddHier` del legado. */
+  protected onCeldaSeleccionada({ clave, fila }: { clave: string; fila: Record<string, unknown> }): void {
+    if (clave !== CLAVE_DRILL_DOWN_SEGUROS) return;
+    const nodo = this.nodoHijo(fila);
+    if (!nodo) return;
+
+    // Por el selector oculto, que emite el nodo y la ruta nueva. Si el nodo no está entre sus
+    // opciones, se agrega a la ruta y se consulta igual.
+    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
+      this.rutaJerarquica.update((ruta) => [...ruta, nodo]);
+      this.onNivelSeleccionado(nodo);
+    }
+  }
+
+  /** Clic en una miga: vuelve a ese nivel y recorta la ruta (`changeHier`). */
+  protected volverANivel(indice: number): void {
+    const ruta = this.rutaJerarquica();
+    const nodo = ruta[indice];
+    if (!nodo || indice === ruta.length - 1) return;
+
+    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
+      this.rutaJerarquica.set(ruta.slice(0, indice + 1));
+      this.onNivelSeleccionado(nodo);
+    }
+  }
+
+  /** Nodo al que baja la fila; `null` si no baja o es el nivel que ya se está viendo. */
+  private nodoHijo(fila: Record<string, unknown>): HierarquiaNodo | null {
+    const nodo = nodoDrillDownSeguros(fila);
+    const actual = this.nivelActual();
+    if (!nodo || (actual && nodo.tip_cod === actual.tip_cod && nodo.cod_rel === actual.cod_rel)) return null;
+    return nodo;
+  }
+
+  private cargar(nodo: HierarquiaNodo, periodo: string): Subscription {
     this.cargando.set(true);
-    this.servicio.segurosOptativos({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
+    return this.servicio.segurosOptativos({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
       next: (tabla) => {
         this.tabla.set(tabla);
         this.cargando.set(false);
