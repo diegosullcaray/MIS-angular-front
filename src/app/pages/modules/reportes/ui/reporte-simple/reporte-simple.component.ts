@@ -21,6 +21,11 @@ export interface BloqueReporte {
   chip?: string;
   /** El bloque todavía no respondió: su tabla muestra el esqueleto (carga independiente). */
   cargando?: boolean;
+  /**
+   * El bloque es la tabla paginada en el servidor (`app-table-ajax` del legado): lleva el paginador
+   * de `totalFilas`/`pagina` dentro de su tarjeta y los encabezados con el color del tema.
+   */
+  paginado?: boolean;
 }
 
 /** Una pestaña, para los reportes cuyo host del legado reparte los bloques en `mat-tab`s. */
@@ -94,7 +99,18 @@ export interface PestanaReporte {
                         <app-chip-informativo [texto]="bloque.chip" />
                       }
                       <div class="mis-card p-3 overflow-x-auto">
-                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
+                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme() || !!bloque.paginado" />
+                        @if (bloque.paginado && totalFilas(); as total) {
+                          <p-paginator
+                            class="border-t border-[var(--mis-border)] mt-2 pt-1"
+                            [first]="(pagina() - 1) * filasPorPagina()"
+                            [rows]="filasPorPagina()"
+                            [totalRecords]="total"
+                            [showFirstLastIcon]="true"
+                            (onPageChange)="onPagina($event)"
+                            styleClass="text-[12px] !bg-transparent"
+                          />
+                        }
                       </div>
                       @if (bloque.nota) {
                         <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>

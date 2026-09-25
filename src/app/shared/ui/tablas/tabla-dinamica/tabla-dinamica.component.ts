@@ -5,7 +5,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { aplanarEncabezados } from './tabla-dinamica.util';
 import type { ColumnaDinamica } from '../models/tabla-dinamica.model';
 import { MaxFilasDirective } from '../max-filas.directive';
-import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO } from '../esqueleto-tabla';
+import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO, columnasEsqueleto } from '../esqueleto-tabla';
 
 /** Tabla dinámica (reemplaza a `stg-table2`). */
 @Component({
@@ -18,6 +18,7 @@ import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO } from '../esqueleto-tabla';
 export class TablaDinamicaComponent {
   protected readonly filasEsqueleto = FILAS_ESQUELETO;
   protected readonly claseBarraEsqueleto = CLASE_BARRA_ESQUELETO;
+  protected readonly columnasEsqueleto = columnasEsqueleto;
 
   private readonly locale = inject(LOCALE_ID);
 

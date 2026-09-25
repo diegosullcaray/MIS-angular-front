@@ -93,7 +93,7 @@ test.describe('Cartera — smoke de las pantallas migradas', () => {
   });
 });
 
-test.describe('Tablas: 18 filas visibles y paginador dentro de la tabla', () => {
+test.describe('Tablas: 12 filas visibles y paginador dentro de la tabla', () => {
   /** Página de 30 filas de un reporte paginado en servidor (`additional.Total`), como `DET_INCEN_PDM`. */
   async function mockPaginado(page: Page) {
     const encabezados = [
@@ -111,7 +111,9 @@ test.describe('Tablas: 18 filas visibles y paginador dentro de la tabla', () => 
     });
   }
 
-  test('"Desembolsos PDM" muestra 18 filas con scroll interno y el paginador en la tarjeta de la tabla', async ({ page }) => {
+  test('"Desembolsos PDM" muestra 12 filas con scroll interno y el paginador en la tarjeta de la tabla', async ({ page }) => {
+    // Ventana alta: acá manda el límite de 12 filas, no el tope por alto de ventana.
+    await page.setViewportSize({ width: 1400, height: 1300 });
     await inyectarSesionVigente(page);
     await mockPaginado(page);
     await page.goto('/app/reportes/leg/com/rda/adm/det-ince-pdm');
@@ -130,17 +132,67 @@ test.describe('Tablas: 18 filas visibles y paginador dentro de la tabla', () => 
       .poll(() => contenedor.evaluate((el) => el.scrollHeight > el.clientHeight))
       .toBe(true);
 
-    // La fila 18 entra entera y la 19 queda debajo del borde: el resto se ve con el scroll.
-    const { pie18, inicio19, bordeInferior } = await contenedor.evaluate((el) => {
+    // La fila 12 entra entera y la 13 queda debajo del borde: el resto se ve con el scroll.
+    const { pie12, inicio13, bordeInferior } = await contenedor.evaluate((el) => {
       const filas = el.querySelectorAll('tbody tr');
       return {
-        pie18: filas[17].getBoundingClientRect().bottom,
-        inicio19: filas[18].getBoundingClientRect().top,
+        pie12: filas[11].getBoundingClientRect().bottom,
+        inicio13: filas[12].getBoundingClientRect().top,
         bordeInferior: el.getBoundingClientRect().bottom,
       };
     });
-    expect(pie18).toBeLessThanOrEqual(bordeInferior + 1);
-    expect(inicio19).toBeGreaterThanOrEqual(bordeInferior - 1);
+    expect(pie12).toBeLessThanOrEqual(bordeInferior + 1);
+    expect(inicio13).toBeGreaterThanOrEqual(bordeInferior - 1);
+    // Y el panel de la ventana no hace scroll: la tabla lo resuelve por dentro.
+    const panel = page.locator('app-window-panel').first();
+    await expect
+      .poll(() => panel.evaluate((el) => [...el.querySelectorAll<HTMLElement>('*')].some((n) => getComputedStyle(n).overflowY.match(/auto|scroll/) && !n.classList.contains('p-datatable-table-container') && n.scrollHeight > n.clientHeight + 1)))
+      .toBe(false);
+  });
+
+  test('en una ventana baja la tabla no pasa del 55 % del alto y el panel no scrollea', async ({ page }) => {
+    await page.setViewportSize({ width: 1366, height: 700 });
+    await inyectarSesionVigente(page);
+    await mockPaginado(page);
+    await page.goto('/app/reportes/leg/com/rda/adm/det-ince-pdm');
+    await page.waitForLoadState('networkidle');
+
+    const contenedor = page
+      .locator('.mis-card')
+      .filter({ has: page.locator('app-tabla-reporte') })
+      .locator('.p-datatable-table-container');
+    await expect(contenedor.locator('tbody tr')).toHaveCount(30);
+    await expect.poll(() => contenedor.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(Math.round(700 * 0.55) + 1);
   });
 });
 
+test.describe('Carga independiente: spinner hasta la primera tabla, esqueleto en las que faltan', () => {
+  test('"Saldo Cartera": el spinner se corta con el primer bloque y los demás muestran esqueleto', async ({ page }) => {
+    const encabezados = [{ columns: [{ columnDef: 'des', header: 'Descripción', isdata: 1 }] }];
+    let bloques = 0;
+    await page.route('**/cores2/ant/**', async (route) => {
+      const strands = route.request().headers()['winder-params'] ?? '';
+      let body: unknown;
+      let espera = 0;
+      if (strands.includes('base_hier')) body = { base_hierarchy: [RAIZ] };
+      else if (strands.includes('level_hier')) body = { level_hierarchy: NIVEL_1 };
+      else if (strands.includes('regularData')) {
+        // El primer bloque que se pide responde rápido; el resto tarda.
+        espera = bloques++ === 0 ? 1500 : 6000;
+        body = { result: { headers: encabezados, body: [{ des: 'Fila' }], additional: {} } };
+      } else body = {};
+      if (espera) await new Promise((r) => setTimeout(r, espera));
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ code: '0', headers: {}, body }) }).catch(() => undefined);
+    });
+    await inyectarSesionVigente(page);
+    await page.goto('/app/reportes/leg/com/rda/adm/saldo');
+
+    const spinner = page.locator('app-loading-overlay [role="status"]');
+    await expect(spinner).toBeVisible();
+
+    // Llega el primer bloque: se va el spinner y las tablas que faltan muestran su esqueleto.
+    await expect(spinner).toBeHidden({ timeout: 5000 });
+    await expect(page.locator('app-tabla-reporte tbody tr:not(.fila-esqueleto)').first()).toBeVisible();
+    await expect(page.locator('app-tabla-reporte tbody tr.fila-esqueleto').first()).toBeVisible();
+  });
+});

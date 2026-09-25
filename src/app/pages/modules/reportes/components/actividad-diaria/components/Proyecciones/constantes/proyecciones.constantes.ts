@@ -1,9 +1,8 @@
 /** Códigos de reporte (`cod_rep`) de Proyecciones. */
 export const COD_PROYECCIONES = {
   /**
-   * `proy_M1` — Proyección de Colocación. Mueve mucha data y alguno de sus dos
-   * bloques puede volver vacío, así que van por `regularLento()`. El `_03` no
-   * lleva `fec`.
+   * `proy_M1` — Proyección de Colocación (`com-map`, host `cra-v11`). El `_01` es el resumen, con
+   * `fec`; el `_03` el detalle, paginado en el servidor (`pagen` + nodo completo, sin `fec`).
    */
   colocacionConFecha: 'PROYEC_COLREC_01',
   colocacionSinFecha: 'PROYEC_COLREC_03',
