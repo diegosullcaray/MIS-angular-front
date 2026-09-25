@@ -35,23 +35,44 @@ describe('ProyeccionesService', () => {
   });
 
   it('"Proyección colocación" va por `regularData` aunque su `reportType` esté comentado (host `-v11`)', () => {
-    servicio.colocacion(NODO).subscribe();
+    servicio.colocacionResumen(NODO).subscribe();
+    servicio.colocacionDetalle(NODO).subscribe();
 
     expect(getDeprecatedData).not.toHaveBeenCalled();
-    expect(getRegularData).toHaveBeenCalledTimes(2);
-  });
-
-  it('pide los ids `_01` y `_03`: el `_02` no existe en el mapa', () => {
-    servicio.colocacion(NODO).subscribe();
-
     expect(getRegularData.mock.calls.map(([codRep]) => codRep)).toEqual(['PROYEC_COLREC_01', 'PROYEC_COLREC_03']);
   });
 
-  it('solo el `_01` declara `fec` en el mapa; el `_03` no lleva params propios', () => {
-    servicio.colocacion(NODO).subscribe();
+  it('el resumen (`_01`) lleva `fec`, como declara el mapa', () => {
+    servicio.colocacionResumen(NODO).subscribe();
 
     expect(getRegularData.mock.calls[0][1]).toEqual({ tip_cod: 9, cod_rel: 'FC', fec: '20251130' });
-    expect(getRegularData.mock.calls[1][1]).toEqual({ tip_cod: 9, cod_rel: 'FC' });
+  });
+
+  /**
+   * Incidencia: la pestaña "Detalle" daba 500 ("Resultado vacio para: regularData"). El legado
+   * (`report-cra-v11.component.ts`, `rendererSync()`) pide el `_03` paginado, con `pagen` y el nodo
+   * completo de la jerarquía, sin `fec`; el Host lo pedía solo con `tip_cod`/`cod_rel`.
+   */
+  it('el detalle (`_03`) va paginado: `pagen` y el nodo completo, sin `fec`', () => {
+    const nodo = { tip_cod: 18, cod_rel: 'U5', des_rel: 'Unidad 5', lbl_hier: 'UNIDAD', lvl_hier: 4 };
+    servicio.colocacionDetalle(nodo, 3).subscribe();
+
+    expect(getRegularData).toHaveBeenCalledWith('PROYEC_COLREC_03', { pagen: 3, ...nodo });
+    expect(getRegularData.mock.calls[0][1]).not.toHaveProperty('fec');
+  });
+
+  it('una página sin filas (500 "resultado vacío") queda como tabla vacía; otro error se propaga', () => {
+    getRegularData.mockReturnValueOnce(
+      throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Resultado vacio para: regularData' })),
+    );
+    let tabla: unknown;
+    servicio.colocacionDetalle(NODO).subscribe((t) => (tabla = t));
+    expect(tabla).toEqual({ headers: [], body: [], additional: {} });
+
+    getRegularData.mockReturnValueOnce(throwError(() => new Error('red caída')));
+    const error = vi.fn();
+    servicio.colocacionDetalle(NODO).subscribe({ error });
+    expect(error).toHaveBeenCalled();
   });
 
   it('"Proyección diaria" pide `_01` y `_02`: el `_03` está comentado en el mapa', () => {
@@ -75,23 +96,21 @@ describe('ProyeccionesService', () => {
       return getRegularData.mock.calls[indice][2];
     }
 
-    it('los dos bloques van sin contexto de timeout', () => {
-      servicio.colocacion(NODO).subscribe();
+    it('el resumen va sin contexto de timeout', () => {
+      servicio.colocacionResumen(NODO).subscribe();
 
       expect(contextoDe(0)).toBeUndefined();
-      expect(contextoDe(1)).toBeUndefined();
     });
 
-    it('un bloque sin datos no tumba al otro: queda como tabla vacía', () => {
-      getRegularData
-        .mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Resultado vacio para: regularData' })))
-        .mockReturnValueOnce(of(RESPUESTA));
+    it('un resumen sin datos queda como tabla vacía', () => {
+      getRegularData.mockReturnValueOnce(
+        throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Resultado vacio para: regularData' })),
+      );
 
-      let tablas: unknown[] | undefined;
-      servicio.colocacion(NODO).subscribe((t) => (tablas = t));
+      let tabla: unknown;
+      servicio.colocacionResumen(NODO).subscribe((t) => (tabla = t));
 
-      expect(tablas).toHaveLength(2);
-      expect(tablas?.[0]).toEqual({ headers: [], body: [], additional: {} });
+      expect(tabla).toEqual({ headers: [], body: [], additional: {} });
     });
 
     it('"Proyección diaria" tampoco', () => {
