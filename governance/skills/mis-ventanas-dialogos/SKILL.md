@@ -113,7 +113,7 @@ protected readonly estiloDialogo = computed(() => ({
 }));
 ```
 
-- Carga, vacío y error dentro del diálogo siguen las mismas reglas que en una pantalla: `app-list-skeleton`, `app-empty-state`, `app-inline-error`.
+- Carga, vacío y error dentro del diálogo siguen las mismas reglas que en una pantalla: una tabla dentro del diálogo pinta su propio esqueleto (`[cargando]`/`[loading]`); lo que no es tabla, `app-list-skeleton`; `app-empty-state` y `app-inline-error`.
 
 ---
 

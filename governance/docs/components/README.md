@@ -6,7 +6,7 @@
 - [Recorridos guiados](./tours-guiados.md) — tours sobre la interfaz real
 - [Accesibilidad y estados de UI](./accessibility.md)
 - [Guía de KPI](./kpi-guidelines.md)
-- [Estándar de reportes](./estandar-reportes.md) — franja de filtros, hover de tablas, semáforo e indicadores por pestaña
+- [Estándar de reportes](./estandar-reportes.md) — franja de filtros; cómo se comportan las tablas (alto máximo, esqueleto y carga independiente, paginación, encabezados, ancho, drill down); semáforo, chips y tarjetas KPI
 - [Liquid Glass del Host](./liquid-glass.md) — implementación de tokens, controles, shell, diálogos y KPI
 - [Modelo de estados](../development/state-model.md) — ownership del estado de datos
 

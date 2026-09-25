@@ -72,11 +72,11 @@ nodo sin alterar el contrato. Las referencias de implementación son
 
 - `regular()`: bloque normal, agrega `fec` si no se envia fecha.
 - `regularExacto()`: el contrato exige parametros exactos y no quieres fecha automatica.
-- `regularPaginado()`: el backend necesita `pagen` y nodo completo.
+- `regularPaginado()`: tabla paginada en el servidor (legado `app-table-ajax`): manda `pagen` y el nodo completo. Sin eso el backend responde 500 "Resultado vacio".
 - `regularTolerante()`: un 500 del backend significa bloque vacio conocido.
-- `regulares()`: varios bloques independientes en paralelo.
+- `regulares()`: varios bloques independientes en paralelo, **con carga independiente**: emite cada bloque apenas responde (`TABLA_PENDIENTE` en los que faltan). Preferirlo a un `forkJoin` propio, que no muestra nada hasta el último.
 - `tablaRegularCon()`: tabla dinamica con parametros propios.
-- `regularLento()`: bloque que excede los tiempos normales.
+- `regularLento()`: bloque de data masiva que puede volver vacío (tolera el 500 de bloque vacío). No sirve para tablas paginadas: esas van con `regularPaginado()`.
 - `tablaRegular()`: tabla dinamica sobre el nodo.
 - `graficos()`: bloques Highcharts ya mapeados.
 - `periodos()`: opciones de filtro de periodo.
@@ -101,6 +101,10 @@ pages/modules/reportes/<submodulo>/
 ```
 
 En `reportes` las pantallas hoja van en `items/`. Fuera de ese modulo van en `components/` — ver [convenciones de nombres](../development/naming-conventions.md).
+
+Toda tabla sigue la [sección de tablas del estándar](../components/estandar-reportes.md#2-tablas):
+tabla compartida en su tarjeta, `[cargando]` enlazado a la carga real (esqueleto), alto máximo con
+scroll interno, paginador dentro de la tarjeta y paginación igual a la del legado.
 
 Para selector y tablas usa `app-reporte-simple`. El contenedor conserva el estado
 de consulta y pasa `[error]` y `[cargando]`; el armazón muestra error persistente y
@@ -135,4 +139,4 @@ Backend, OAuth y Winder están congelados. El scaffold requiere `--cod-rep`, per
 DTO y formato numérico siguen siendo ejemplos pendientes de adaptar; no son
 evidencia de un contrato verificado. Pruebas según [riesgo](./quality-gates.md).
 
-El reporte no esta terminado porque renderiza una tabla. Debe tener contrato trazable, jerarquia correcta, estados completos, pruebas, accesibilidad, ruta navegable y evidencia de que un error real no se confunde con una respuesta vacia.
+El reporte no esta terminado porque renderiza una tabla. Sus tablas muestran esqueleto mientras cargan (y el spinner global se corta con la primera respuesta), respetan el alto maximo, paginan como el legado y no sacan scroll horizontal en escritorio. Debe tener contrato trazable, jerarquia correcta, estados completos, pruebas, accesibilidad, ruta navegable y evidencia de que un error real no se confunde con una respuesta vacia.

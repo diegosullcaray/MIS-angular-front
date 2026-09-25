@@ -83,6 +83,23 @@ Toda vista que consuma backend modela cuatro estados, **excluyentes y en este or
 
 El orden importa: **el error va primero**. Si el vacío se evalúa antes, una consulta que falló se muestra como "no hay datos" y el usuario reintenta un filtro en vez de avisar de una caída. Ese fue exactamente el defecto que degradó al sistema legado.
 
+**Con una tabla, el estado "cargando" lo pinta la propia tabla**: no se reemplaza por
+`app-list-skeleton`, se le pasa `[cargando]` (o `[loading]` en `app-data-table`) y la tabla dibuja su
+esqueleto dentro de su tarjeta. El error sigue yendo primero:
+
+```html
+@if (error()) {
+  <app-inline-error [detalle]="error()!" (reintentar)="consultar()" />
+} @else {
+  <div class="mis-card p-3 overflow-x-auto">
+    <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" [cargando]="cargando()" />
+  </div>
+}
+```
+
+`app-list-skeleton` queda para lo que no es una tabla compartida (tarjetas, listas, fichas, un
+`p-table` propio). Reglas completas de las tablas: [estándar de reportes](../../docs/components/estandar-reportes.md#2-tablas).
+
 ### Componentes de estado, ya construidos
 
 No escribas versiones caseras. Están en `src/app/shared/ui/`, cada uno con su `README.md`:
@@ -91,10 +108,10 @@ No escribas versiones caseras. Están en `src/app/shared/ui/`, cada uno con su `
 |---|---|
 | `app-inline-error` | `titulo`, `detalle`, `accionLabel` (default "Reintentar"), salida `reintentar` |
 | `app-empty-state` | `icono`, `titulo`, `descripcion`, `accionLabel`, salida `accion` |
-| `app-list-skeleton` | `rows`, `cols` — skeleton pulsante de tabla |
-| `app-loading-overlay` | superposición de carga a nivel de pantalla |
+| `app-list-skeleton` | `rows`, `cols` — esqueleto pulsante para lo que no es una tabla compartida (las tablas traen el suyo) |
+| `app-loading-overlay` | spinner global: lo maneja `LoadingService`; se corta con la primera respuesta de cada consulta |
 
-Si la pantalla delega en `app-reporte-simple`, `app-tabla-reporte`, `app-tabla-dinamica` o `app-data-table`, **esos componentes ya resuelven vacío y error por contrato**: no dupliques la lógica alrededor.
+Si la pantalla delega en `app-reporte-simple`, `app-tabla-reporte`, `app-tabla-dinamica` o `app-data-table`, **esos componentes ya resuelven carga (esqueleto) y vacío por contrato**, y el armazón también el error: no dupliques la lógica alrededor, pero sí enlazá su estado de carga real.
 
 ---
 
@@ -103,16 +120,11 @@ Si la pantalla delega en `app-reporte-simple`, `app-tabla-reporte`, `app-tabla-d
 El tema es un preset propio (`src/app/theme/mis-theme.ts`) construido sobre los mismos tokens `--mis-*`, con `cssLayer` ordenado como `theme, base, primeng, utilities` y sin ripple (estilo macOS). Por eso un `p-button` ya sale con la paleta corporativa: no hay que pintarlo por encima.
 
 ```html
-<!-- Tablas financieras: densidad alta, montos a la derecha con cifras tabulares -->
-<p-table [value]="filas()" [paginator]="true" [rows]="20" styleClass="p-datatable-sm">
-  <ng-template pTemplate="body" let-fila>
-    <tr>
-      <td class="font-mono text-xs">{{ fila.codigo }}</td>
-      <td class="text-right tabular-nums">{{ fila.montoFormateado }}</td>
-      <td class="text-center"><p-tag [value]="fila.estado" [severity]="fila.activo ? 'success' : 'secondary'" /></td>
-    </tr>
-  </ng-template>
-</p-table>
+<!-- Tablas: una de las compartidas, en su tarjeta, con su estado de carga. Traen densidad alta,
+     resaltado de fila, alto máximo con scroll interno y esqueleto. -->
+<div class="mis-card p-3 overflow-x-auto">
+  <app-data-table [columns]="columnas" [data]="filas()" [loading]="cargando()" />
+</div>
 
 <!-- Botones -->
 <p-button label="Consultar" icon="pi pi-search" />
@@ -145,8 +157,10 @@ Un diálogo se cierra al completar la acción con éxito, no antes.
 | `class="bg-surface-card text-text-primary"` | no existen: elemento sin estilo |
 | `style="color: #6b7280"` | no acompaña al tema oscuro |
 | Estado vacío evaluado antes que el error | una caída del backend se muestra como "sin datos" |
-| Spinner propio en vez de `app-list-skeleton` | inconsistencia visual y una implementación más que mantener |
+| Spinner propio, o `app-list-skeleton` en lugar de una tabla compartida | inconsistencia visual; la tabla ya pinta su esqueleto con `[cargando]`/`[loading]` |
+| `[cargando]="false"` fijo o sin enlazar | la tabla nunca muestra esqueleto: "Sin datos" o filas viejas mientras carga (regla `tabla-con-esqueleto`) |
+| `p-table` propio con `scrollHeight` en px o paginador fuera de la tarjeta | rompe el alto máximo y el paginador dentro de la tabla del estándar |
 | Envolver `app-tabla-reporte` en tu propio `@if (vacio())` | doble estado vacío, uno de ellos siempre mal |
 | `p-dialog` sin `[modal]` ni `[dismissableMask]` | se rompe el patrón de foco del resto del sistema |
 
-Verificación: `node governance/scripts/validar-gobernanza.mjs --regla=tokens-de-color,estados-de-datos`
+Verificación: `node governance/scripts/validar-gobernanza.mjs --regla=tokens-de-color,estados-de-datos,tabla-con-esqueleto`

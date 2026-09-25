@@ -32,7 +32,7 @@ import { WindowPanelComponent } from '…/shared/ui/window-panel/window-panel.co
   (actualizar)="reintentar()"
 >
   <!-- El contenido sin slot va al cuerpo del panel. -->
-  <app-data-table [columns]="columnas" [data]="filas()" />
+  <app-data-table [columns]="columnas" [data]="filas()" [loading]="cargando()" />
 </app-window-panel>
 ```
 

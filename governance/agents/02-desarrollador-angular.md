@@ -91,7 +91,9 @@ Se modelan siempre, y son excluyentes en este orden — **el error gana sobre el
 }
 ```
 
-Usar los componentes compartidos de `src/app/shared/ui/` (`app-inline-error`, `app-empty-state`, `app-list-skeleton`, `app-loading-overlay`), no versiones caseras. Si la pantalla delega en `app-reporte-simple`, `app-tabla-reporte`, `app-tabla-dinamica` o `app-data-table`, esos componentes ya resuelven vacío y error por contrato: no dupliques.
+Usar los componentes compartidos de `src/app/shared/ui/` (`app-inline-error`, `app-empty-state`, `app-list-skeleton`), no versiones caseras. El spinner global (`app-loading-overlay`) no se maneja desde la pantalla: lo pone `LoadingService` en cada consulta y se corta con su primera respuesta.
+
+**Con una tabla, "cargando" es el esqueleto de la propia tabla**, no `app-list-skeleton`: se le pasa `[cargando]` (`[loading]` en `app-data-table`) enlazado a la carga real de SUS datos, nunca un valor fijo (regla `tabla-con-esqueleto`). Si la pantalla delega en `app-reporte-simple`, `app-tabla-reporte`, `app-tabla-dinamica` o `app-data-table`, esos componentes ya resuelven carga y vacío (y el armazón, el error): no dupliques. Alto, paginación, encabezados y drill down: [estándar de reportes](../docs/components/estandar-reportes.md#2-tablas).
 
 ---
 

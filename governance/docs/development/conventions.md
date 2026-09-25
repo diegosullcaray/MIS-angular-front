@@ -43,7 +43,7 @@
 
 - Color por token `--mis-*`, con `text-[var(--mis-*)]` o `style`. No existen clases utilitarias semánticas; un hex fijo no acompaña al tema oscuro.
 - Los cuatro estados con los componentes de `shared/ui`: el error se evalúa **antes** que el vacío.
-- `ReporteSimpleBase` conserva error y cancela; enlazar `[error]` en `app-reporte-simple`. Las tablas compartidas resuelven carga/vacío, no errores de consulta. Un toast no sustituye el estado persistente.
+- `ReporteSimpleBase` conserva error y cancela; enlazar `[error]` en `app-reporte-simple`. Las tablas compartidas resuelven carga (esqueleto) y vacío, no errores de consulta: su `[cargando]`/`[loading]` se enlaza siempre a la carga real de sus datos (regla `tabla-con-esqueleto`). Un toast no sustituye el estado persistente.
 - Lucide para UI nueva del Host; conservar PrimeIcons donde PrimeNG/legacy ya lo requiere. No reescribir iconos sin beneficio funcional.
 - Mantener comentarios que expliquen restricciones/contratos, no narraciones que repitan métodos. Formatear archivos tocados con Prettier (`printWidth: 100`).
 

@@ -9,17 +9,17 @@ Cada carpeta tiene su propio README con la API y ejemplos.
 | Carpeta | Qué es |
 |---|---|
 | [`buscador/`](./buscador/README.md) | Búsqueda instantánea del Host; los módulos se suman registrando una `FuenteBusqueda` |
-| [`data-table/`](./data-table/README.md) | Tabla plana de propósito general: buscador, filtros por columna, paginador |
+| [`data-table/`](./data-table/README.md) | Tabla plana de propósito general: buscador, filtros por columna, paginador, esqueleto |
 | [`empty-state/`](./empty-state/README.md) | Lista sin datos |
 | [`formularios/`](./formularios/README.md) | Controles de formulario genéricos (`<app-select-filtro>`) |
 | [`graficos/`](./graficos/README.md) | Todas las gráficas, sobre Highcharts |
 | [`hier-selector/`](./hier-selector/README.md) | Selector de jerarquía organizativa en cascada |
 | [`inline-error/`](./inline-error/README.md) | Error de API dentro de la vista, con reintento |
-| [`list-skeleton/`](./list-skeleton/README.md) | Skeleton de tabla mientras cargan datos |
-| [`loading-overlay/`](./loading-overlay/README.md) | Spinner global (vía `LoadingService`) |
+| [`list-skeleton/`](./list-skeleton/README.md) | Esqueleto de carga para lo que no es una tabla compartida (las tablas traen el suyo) |
+| [`loading-overlay/`](./loading-overlay/README.md) | Spinner global (vía `LoadingService`): cada consulta, hasta su primera respuesta |
 | [`mapas/`](./mapas/README.md) | Mapas sobre MapLibre (`<app-mapa-ubicacion>`) |
 | [`redirect-overlay/`](./redirect-overlay/README.md) | Transición al salir a una plataforma externa |
-| [`tablas/`](./tablas/README.md) | Multi-encabezado, columnas anidadas y celdas editables |
+| [`tablas/`](./tablas/README.md) | Multi-encabezado, columnas anidadas y celdas editables; alto máximo (`appMaxFilas`) y esqueleto comunes |
 | [`window-panel/`](./window-panel/README.md) | Panel de módulo con cromo de ventana macOS |
 
 ## Dónde va un modelo
