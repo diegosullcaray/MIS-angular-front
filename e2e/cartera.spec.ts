@@ -144,3 +144,34 @@ test.describe('Tablas: 18 filas visibles y paginador dentro de la tabla', () => 
   });
 });
 
+test.describe('Carga independiente: spinner hasta la primera tabla, esqueleto en las que faltan', () => {
+  test('"Saldo Cartera": el spinner se corta con el primer bloque y los demás muestran esqueleto', async ({ page }) => {
+    const encabezados = [{ columns: [{ columnDef: 'des', header: 'Descripción', isdata: 1 }] }];
+    let bloques = 0;
+    await page.route('**/cores2/ant/**', async (route) => {
+      const strands = route.request().headers()['winder-params'] ?? '';
+      let body: unknown;
+      let espera = 0;
+      if (strands.includes('base_hier')) body = { base_hierarchy: [RAIZ] };
+      else if (strands.includes('level_hier')) body = { level_hierarchy: NIVEL_1 };
+      else if (strands.includes('regularData')) {
+        // El primer bloque que se pide responde rápido; el resto tarda.
+        espera = bloques++ === 0 ? 1500 : 6000;
+        body = { result: { headers: encabezados, body: [{ des: 'Fila' }], additional: {} } };
+      } else body = {};
+      if (espera) await new Promise((r) => setTimeout(r, espera));
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ code: '0', headers: {}, body }) }).catch(() => undefined);
+    });
+    await inyectarSesionVigente(page);
+    await page.goto('/app/reportes/leg/com/rda/adm/saldo');
+
+    const spinner = page.locator('app-loading-overlay [role="status"]');
+    await expect(spinner).toBeVisible();
+
+    // Llega el primer bloque: se va el spinner y las tablas que faltan muestran su esqueleto.
+    await expect(spinner).toBeHidden({ timeout: 5000 });
+    await expect(page.locator('app-tabla-reporte tbody tr:not(.fila-esqueleto)').first()).toBeVisible();
+    await expect(page.locator('app-tabla-reporte tbody tr.fila-esqueleto').first()).toBeVisible();
+  });
+});
+

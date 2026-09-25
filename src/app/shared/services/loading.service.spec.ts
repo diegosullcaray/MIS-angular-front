@@ -65,39 +65,62 @@ describe('LoadingService', () => {
   });
 
   describe('carga independiente de las peticiones HTTP', () => {
+    /** Termina la tarea actual: lo que arranque después es una tanda nueva. */
+    const otraTarea = () => Promise.resolve();
+
     it('una tanda muestra el overlay hasta que responde la primera petición', () => {
-      service.iniciarPeticion();
+      const tanda = service.iniciarPeticion();
       service.iniciarPeticion();
       service.iniciarPeticion();
       expect(service.cargando()).toBe(true);
 
-      service.terminarPeticion();
+      service.terminarPeticion(tanda);
       expect(service.cargando()).toBe(false);
       expect(service.estado().requestCount).toBe(2);
     });
 
-    it('cuando terminan todas, la siguiente tanda vuelve a mostrar el overlay', () => {
-      service.iniciarPeticion();
-      service.terminarPeticion();
+    it('cuando terminan todas, la siguiente tanda vuelve a mostrar el overlay', async () => {
+      service.terminarPeticion(service.iniciarPeticion());
       expect(service.cargando()).toBe(false);
+      await otraTarea();
 
       service.iniciarPeticion();
       expect(service.cargando()).toBe(true);
     });
 
-    it('una petición que se suma a una tanda ya respondida no vuelve a tapar la pantalla', () => {
-      service.iniciarPeticion();
-      service.iniciarPeticion();
-      service.terminarPeticion();
+    it('una consulta nueva muestra el spinner aunque otra anterior siga en vuelo', async () => {
+      const periodos = service.iniciarPeticion();
+      await otraTarea();
 
+      // Arrancan las tablas del reporte mientras la anterior sigue pendiente.
+      const reporte = service.iniciarPeticion();
       service.iniciarPeticion();
+      expect(service.cargando()).toBe(true);
+
+      service.terminarPeticion(reporte);
+      expect(service.cargando()).toBe(false);
+      service.terminarPeticion(periodos);
+      expect(service.estado().requestCount).toBe(1);
+    });
+
+    it('la respuesta de una consulta anterior no corta el spinner de la nueva', async () => {
+      // Las opciones del siguiente nivel de la jerarquía siguen en vuelo...
+      const jerarquia = service.iniciarPeticion();
+      await otraTarea();
+      // ...cuando arrancan los bloques del reporte.
+      const bloque = service.iniciarPeticion();
+      service.iniciarPeticion();
+
+      service.terminarPeticion(jerarquia);
+      expect(service.cargando()).toBe(true);
+
+      service.terminarPeticion(bloque);
       expect(service.cargando()).toBe(false);
     });
 
     it('un show() manual sigue bloqueando aunque las peticiones ya respondieran', () => {
       service.show('Guardando...');
-      service.iniciarPeticion();
-      service.terminarPeticion();
+      service.terminarPeticion(service.iniciarPeticion());
       expect(service.cargando()).toBe(true);
       expect(service.estado().message).toBe('Guardando...');
 
@@ -106,4 +129,3 @@ describe('LoadingService', () => {
     });
   });
 });
-

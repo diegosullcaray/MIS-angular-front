@@ -211,7 +211,7 @@
       @if (loading()) {
         @for (f of filasEsqueleto; track f) {
           <tr class="fila-esqueleto" aria-hidden="true">
-            @for (c of columns(); track $index) {
+            @for (c of columnasEsqueleto(columns()); track $index) {
               <td class="py-2"><div [class]="claseBarraEsqueleto" [style.width.%]="60 + ((f + $index) % 3) * 15"></div></td>
             }
           </tr>

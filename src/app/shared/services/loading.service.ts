@@ -15,9 +15,10 @@ const INACTIVO: LoadingState = { isLoading: false, requestCount: 0 };
  * - `show()`/`hide()` manuales (guardar, operaciones que sí deben bloquear): el overlay queda
  *   hasta que se cierra la última.
  * - Peticiones HTTP (`iniciarPeticion()`/`terminarPeticion()`, las usa `loadingInterceptor`):
- *   **carga independiente**. Una tanda de peticiones muestra el overlay hasta que responde la
- *   primera; desde ahí la pantalla ya tiene algo que mostrar y cada tabla que sigue esperando
- *   pinta su propio esqueleto. Así una consulta lenta no tapa las que ya llegaron.
+ *   **carga independiente**. Toda consulta nueva muestra el overlay, que se corta con la primera
+ *   respuesta de esa misma consulta: desde ahí la sección ya tiene algo que mostrar y cada tabla
+ *   que sigue esperando pinta su propio esqueleto. Así una consulta lenta no tapa las que ya
+ *   llegaron, y una respuesta de una consulta anterior no corta el spinner de la nueva.
  */
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,12 @@ export class LoadingService {
   private manuales = 0;
   private mensaje?: string;
   private peticiones = 0;
-  /** Si en la tanda de peticiones en curso ya respondió alguna. */
-  private respondioAlguna = false;
+  /** Tanda más reciente: las peticiones que arrancan juntas (un reporte pide sus bloques a la vez). */
+  private tanda = 0;
+  /** Si la tanda actual todavía acepta peticiones: se cierra al terminar la tarea que la abrió. */
+  private tandaAbierta = false;
+  /** Si ya respondió alguna petición de la tanda más reciente. */
+  private respondioLaTanda = false;
 
   /** Muestra el spinner. */
   show(message?: string): void {
@@ -48,17 +53,31 @@ export class LoadingService {
     this.publicar();
   }
 
-  /** Una petición HTTP arranca. Si no había ninguna en vuelo, empieza una tanda nueva. */
-  iniciarPeticion(): void {
-    if (this.peticiones === 0) this.respondioAlguna = false;
+  /**
+   * Una petición HTTP arranca y devuelve su tanda. Las que arrancan en la misma tarea (los bloques
+   * de un reporte, pedidos a la vez) forman una tanda; la primera de una tanda nueva vuelve a
+   * mostrar el overlay aunque sigan en vuelo peticiones anteriores.
+   */
+  iniciarPeticion(): number {
+    if (!this.tandaAbierta) {
+      this.tanda++;
+      this.respondioLaTanda = false;
+      this.tandaAbierta = true;
+      queueMicrotask(() => (this.tandaAbierta = false));
+    }
     this.peticiones++;
     this.publicar();
+    return this.tanda;
   }
 
-  /** Una petición HTTP terminó: con la primera respuesta de la tanda, el overlay se retira. */
-  terminarPeticion(): void {
+  /**
+   * Una petición HTTP terminó. Solo una respuesta de la tanda más reciente retira el overlay: la
+   * de una petición anterior (p. ej. las opciones del siguiente nivel de la jerarquía, que llegan
+   * mientras el reporte recién arranca) no corta el spinner de la consulta nueva.
+   */
+  terminarPeticion(tanda = this.tanda): void {
     this.peticiones = Math.max(0, this.peticiones - 1);
-    this.respondioAlguna = true;
+    if (tanda === this.tanda) this.respondioLaTanda = true;
     this.publicar();
   }
 
@@ -72,7 +91,7 @@ export class LoadingService {
 
   private publicar(): void {
     const requestCount = this.manuales + this.peticiones;
-    const isLoading = this.manuales > 0 || (this.peticiones > 0 && !this.respondioAlguna);
+    const isLoading = this.manuales > 0 || (this.peticiones > 0 && !this.respondioLaTanda);
     this.estadoInterno.set(
       isLoading
         ? { isLoading, requestCount, ...(this.mensaje ? { message: this.mensaje } : {}) }

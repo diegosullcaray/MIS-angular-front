@@ -49,11 +49,12 @@ carga queda colgada. En un `subscribe` conviene ponerlo en `next` y en `error`, 
 ## Carga independiente de las peticiones HTTP
 
 El `loadingInterceptor` no usa `show()`/`hide()`: usa `iniciarPeticion()`/`terminarPeticion()`.
-Una **tanda** de peticiones (desde que no había ninguna en vuelo) muestra el overlay solo hasta
-que responde la **primera**; desde ahí el reporte ya tiene algo que mostrar y cada tabla que sigue
-esperando pinta su propio esqueleto (`cargando` de las tablas compartidas). Los reportes de varios
-bloques reciben cada tabla apenas llega (`BloqueReporteService.regulares()` emite por bloque, con
-`TABLA_PENDIENTE` en los que faltan). Así una API lenta no tapa las tablas que ya respondieron.
+**Toda consulta que arranca muestra el overlay**, y este se corta con la **primera respuesta** que
+llega después: desde ahí la sección ya tiene algo que mostrar y cada tabla que sigue esperando
+pinta su propio esqueleto (`cargando` de las tablas compartidas). Los reportes de varios bloques
+reciben cada tabla apenas llega (`BloqueReporteService.regulares()` emite por bloque, con
+`TABLA_PENDIENTE` en los que faltan). Una consulta nueva (otro nivel, filtro o pantalla) vuelve a
+mostrar el overlay aunque quede alguna anterior en vuelo.
 
 Los `show()` manuales (guardar, operaciones que sí deben bloquear) siguen cubriendo la pantalla
 hasta su `hide()`, aunque las peticiones ya hayan respondido.

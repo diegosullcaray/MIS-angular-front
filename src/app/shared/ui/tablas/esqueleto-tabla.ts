@@ -7,3 +7,11 @@ export const FILAS_ESQUELETO = [0, 1, 2, 3, 4, 5] as const;
 
 /** Clase de la barra animada de cada celda de esqueleto. */
 export const CLASE_BARRA_ESQUELETO = 'h-3 rounded bg-[var(--mis-border-strong)] animate-pulse';
+
+/** Celdas por fila de esqueleto cuando la tabla todavía no tiene columnas (aún no respondió). */
+export const COLUMNAS_ESQUELETO = [0, 1, 2, 3, 4] as const;
+
+/** Las columnas de la tabla, o las de relleno si todavía no llegaron. */
+export function columnasEsqueleto<T>(columnas: readonly T[]): readonly unknown[] {
+  return columnas.length ? columnas : COLUMNAS_ESQUELETO;
+}

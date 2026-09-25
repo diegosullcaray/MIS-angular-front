@@ -12,7 +12,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import type { DataTableColumn, DataTableFilterType } from './data-table.model';
 import { DataTableCellDirective } from './data-table-cell.directive';
 import { MaxFilasDirective } from '../tablas/max-filas.directive';
-import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO } from '../tablas/esqueleto-tabla';
+import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO, columnasEsqueleto } from '../tablas/esqueleto-tabla';
 
 /** Tabla genérica sobre `p-table`: arma encabezado, orden por columna y paginador a partir de `columns`, con búsqueda manual opcional en el `caption` (solo filtra al hacer clic en "Buscar" o Enter, no en cada tecla) y una fila de filtros por columna (texto/número/dropdown/fecha, togglable con "Filtrar") para las columnas que definen `filterType`. */
 @Component({
@@ -25,6 +25,7 @@ import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO } from '../tablas/esqueleto-tabl
 export class DataTableComponent<T extends Record<string, unknown> = Record<string, unknown>> {
   protected readonly filasEsqueleto = FILAS_ESQUELETO;
   protected readonly claseBarraEsqueleto = CLASE_BARRA_ESQUELETO;
+  protected readonly columnasEsqueleto = columnasEsqueleto;
 
   readonly columns = input.required<DataTableColumn[]>();
   readonly data = input.required<T[]>();
