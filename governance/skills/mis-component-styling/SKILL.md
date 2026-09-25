@@ -117,7 +117,7 @@ El tema es un preset propio (`src/app/theme/mis-theme.ts`) construido sobre los 
 <!-- Botones -->
 <p-button label="Consultar" icon="pi pi-search" />
 <p-button label="Actualizar" icon="pi pi-refresh" severity="secondary" [loading]="cargando()" />
-<p-button icon="pi pi-eye" [rounded]="true" [text]="true" size="small" ariaLabel="Ver detalle" />
+<p-button icon="pi pi-eye" [rounded]="true"  size="small" ariaLabel="Ver detalle" />
 
 <!-- Diálogos: siempre modales y descartables -->
 <p-dialog [modal]="true" [dismissableMask]="true" [(visible)]="abierto">

@@ -191,7 +191,7 @@
 
     <ng-template pTemplate="footer">
       <div class="flex justify-end gap-2 pt-1">
-        <p-button label="Cancelar" severity="secondary" [text]="true" size="small" (onClick)="modalVisible.set(false)"></p-button>
+        <p-button label="Cancelar" severity="secondary"  size="small" (onClick)="modalVisible.set(false)"></p-button>
         <p-button label="Registrar Prospecto" icon="pi pi-check" severity="primary" size="small" [loading]="guardando()" (onClick)="guardarRegistro()"></p-button>
       </div>
     </ng-template>

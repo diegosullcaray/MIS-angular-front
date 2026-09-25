@@ -1,74 +1,78 @@
-# 🚀 Requerimientos de Refactorización y Correcciones - MIS Angular
+# Contexto y Rol
+Actúa como un **Desarrollador Senior en Angular** encargado de corregir inconsistencias visuales, migrar reportes faltantes e integrar reglas de UI/Gobernanza respecto al sistema *Legacy* dentro de la estructura de la aplicación (`src/app/modules/reportes/...`).
 
 ---
 
-## 📌 1. Shell Layout & Navegación
-
-* **Breadcrumb sin click para retroceder:** 
-  * Eliminar la funcionalidad del evento `click` que regresa a la pantalla anterior en los componentes de *Breadcrumbs*. 
-  * La navegación/retorno ya se gestiona desde el botón centralizado dentro de los paneles. El *breadcrumb* quedará puramente como un indicador de ruta estático.
-* **Corrección de Indexación de Rutas (Error 404):** 
-  * Revisar y corregir la indexación dinámica de navegación/menú para asegurar que los links apunten a las rutas válidas y evitar pantallas de error 404.
+## 🎯 Objetivo General
+Corregir los errores de color, paginación, notas pie de página, migración de módulos y comportamiento de *drill-down* especificados para cada una de las URLs detalladas a continuación.
 
 ---
 
-## 📌 2. Módulo Kaypacha (`/app/Kaypacha__`)
+## 📋 Lista de Tareas por Ruta / Componente
 
-* **Eliminar Input de Buscador:**
-  * Remover el `<input>` de búsqueda manual ubicado en la cabecera del diálogo.
-* **Uso de Tabla Compartida (`Shared DataTable`):**
-  * Reemplazar la tabla actual del diálogo por el componente compartido (`shared`), el cual integra nativamente el filtrado individual por columnas.
+### 1. Estructura Desembolsos
+* **Ruta:** `/app/reportes/repositorio/actividad-diaria/cartera/estructura-desembolsos`
+* **Acción:**
+  - Corregir los colores de la **última fila** (Totales/Resumen) de la tabla.
+  - Alinear los colores exactamente a la paleta corporativa y/o de tokens CSS utilizada en el sistema *Legacy*.
+
+### 2. Saldo Puntual de Cartera
+* **Ruta:** `/app/reportes/leg/com/rda/adm/saldo`
+* **Acción:**
+  - Agregar la nota informativa o leyenda explicativa justo debajo de la tabla **"Saldo puntual de cartera vigente"**:
+    > `*Considerar que los saldos de cartera no incluyen los ajustes de traslados GECO que se realizarán para el pago del REVA.`
+
+### 3. Monitor Retenciones (Drill-Down)
+* **Ruta:** `/app/reportes/repositorio/actividad-diaria/cartera/mon-retenciones`
+* **Acción:**
+  - Revisar las directrices documentadas en `governance/` sobre interacción e hipervínculos (*drill-down*).
+  - Implementar la funcionalidad de **Drill-Down** correspondiente en las celdas/filas del reporte para permitir la navegación/profundización de datos.
+
+### 4. Gestión Comercial (Migración de Reporte)
+* **Ruta:** `/app/reportes/repositorio/actividad-diaria/cartera/gest-comercial`
+* **Acción:**
+  - Realizar la migración del reporte desde el sistema *Legacy*.
+  - Mapear las columnas, cálculos, tarjetas y filtros respetando la lógica de negocio y presentación del reporte original.
+
+### 5. Portafolio Agro
+* **Ruta:** `/app/reportes/leg/com/rda/adm/port-agro`
+* **Acción:**
+  - Agregar los identificadores de unidad/moneda en las cabeceras o subtítulos del reporte:
+    - **Expresado en PEN**
+    - **%**
+
+### 6. Desembolsos Diarios
+* **Ruta:** `/app/reportes/leg/com/rda/adm/desem-dia`
+* **Acción:**
+  - Colocar la siguiente nota explicativa debajo de la tabla **"Desembolsos habilitados para posible contratación electrónica*"**:
+    > `* Créditos individuales hasta S/. 20 mil`
+
+### 7. Autonomía de Tasas
+* **Ruta:** `/app/reportes/leg/com/rda/adm/aut-tasa`
+* **Acción:**
+  - Revisar las tablas del reporte *Legacy*.
+  - Completar e incluir todas las notas informativas, leyendas y pies de tabla faltantes en **todas** las tablas de este reporte.
+
+### 8. Resultados Incentivos PDM
+* **Ruta:** `/app/reportes/leg/com/rda/adm/res-inc_pdm`
+* **Acción:**
+  - **Color de columnas:** Corregir para utilizar un color único correspondiente al token/custom theme global del sistema.
+  - **Paginador:** Implementar el paginador idéntico al que posee la versión *Legacy*.
+
+### 9. Desembolso Crédito
+* **Ruta:** `/app/reportes/leg/com/rda/adm/des-cred`
+* **Acción:**
+  - Corregir el estilo de texto en la columna con fondo verde: cambiar el color de la tipografía/letra a **blanco (`#FFFFFF`)** para asegurar un contraste accesible.
+
+### 10. Detalle Incentivos PDM
+* **Ruta:** `/app/reportes/leg/com/rda/adm/det-ince-pdm`
+* **Acción:**
+  - **Colores:** Eliminar los colores rojos de las columnas y unificar según el estándar/custom theme del proyecto.
+  - **Paginador:** Incluir el paginador correspondiente emulando la funcionalidad *Legacy*.
 
 ---
 
-## 📌 3. Estándar Global para Tablas en Paneles
-
-* **Eliminación de Scrollbar Horizontal:**
-  * Ajustar el diseño e integración CSS para reducir las dimensiones e impedir la aparición no deseada de scrollbar horizontal siempre que sea posible.
-* **Salto de Línea en Encabezados:**
-  * Configurar `white-space: normal` y ruptura de palabras en los encabezados de columna para reducir el ancho ocupado por nombres de tabla muy largos.
-
----
-
-## 📌 4. Módulo Actividades - Destino de Crédito (`/app/actividades/dest-credito`)
-
-* **Corrección del Filtro de Asesores/Colaboradores:**
-  * Revisar la lógica del *Legacy*.
-  * En la versión actual se está aplicando el filtro erróneamente sobre la data local de la tabla. Se debe corregir para que consulte/filtre correctamente a los colaboradores según la jerarquía establecida.
-
----
-
-## 📌 5. Módulo Presupuesto (Líneas y Gestión)
-
-> **Rutas impactadas:**
-> * `/app/presupuesto/lineas/activos/car-cre`
-> * `/app/presupuesto/lineas/pasivos-patrimonio/car-dep-red`
-> * `/app/presupuesto/lineas/pasivos-patrimonio/car-dep-bp`
-> * `/app/presupuesto/lineas/pasivos-patrimonio/seg-com`
-> * `/app/presupuesto/lineas/pasivos-patrimonio/seg-ope`
-> * `/app/presupuesto/gestion/seguimiento/tbl-ver`
-
-* **Color y Proporciones de Tablas:**
-  * Homologar los colores de la tabla con los tokens cromáticos definidos en el sistema.
-  * Reajustar el ancho y proporciones relativas de las celdas/columnas.
-* **Alineación del Botón "Verificar":**
-  * Ubicar el botón "Verificar" alineado a la derecha en la misma línea del *header* de las pestañas (*tabs*).
-
----
-
-## 📌 6. Módulo Analista - Categorización (`/app/analista/categorizacion`)
-
-### A. Selector de Asesores
-* **Despliegue Automático por Rol:**
-  * Si el usuario autenticado tiene rol de **Coordinador** o **Administrador**, desplegar el diálogo modal selector de asesor al ingresar (tal como en *Legacy*).
-* **Integración de Tabla Shared en Modal:**
-  * Reemplazar la grilla del modal por la tabla compartida de *Shared* con filtros por columna.
-  * Restablecer la totalidad de columnas requeridas según la definición del módulo *Legacy*.
-
-### B. Layout, Perfil y Tooltip "Baby Pachi"
-* **Ampliación a Pantalla Completa (Full Screen):**
-  * Al hacer clic en el botón de maximizar/ampliar pantalla, la vista debe abarcar todo el *layout* global (sobreponiéndose a la barra lateral y cabecera) y no quedarse limitada al panel interno.
-* **Tooltip en Avatar de "Baby Pachi":**
-  * Cambiar la visualización del globo de texto para que aparezca únicamente en el evento `hover` (Tooltip sobre el cursor) y no de forma permanente.
-* **Tarjeta de Perfil:**
-  * Rediseñar la tarjeta de perfil mejorando la maquetación CSS, espaciados y jerarquía visual.
+## 🛠️ Criterios de Aceptación Técnica
+1. **Tokens CSS:** Utilizar los tokens centralizados definidos en `src/app/theme/tokens.css` para aplicar los colores del sistema sin harcodear estilos in situ siempre que sea posible.
+2. **Componentes Compartidos:** Reorganizar o reutilizar los componentes de `TablaDinamicaComponent` o `TablaReporteComponent` ubicados en `src/app/shared/ui/tablas/` para paginación y notas pie de página.
+3. **Compilación y Tests:** Asegurar que la aplicación compile sin errores de TypeScript y que las pruebas asociadas a la ruta ejecuten correctamente (`npm run test` o comandos Playwright en `/e2e`).

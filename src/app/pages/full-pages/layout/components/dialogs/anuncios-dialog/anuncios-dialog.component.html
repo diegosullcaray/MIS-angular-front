@@ -41,7 +41,7 @@
           class="mis-anuncio-flecha mis-anuncio-flecha--anterior"
           icon="pi pi-chevron-left"
           [rounded]="true"
-          [text]="true"
+          
           severity="secondary"
           ariaLabel="Lámina anterior"
           (onClick)="anterior()"
@@ -50,7 +50,7 @@
           class="mis-anuncio-flecha mis-anuncio-flecha--siguiente"
           icon="pi pi-chevron-right"
           [rounded]="true"
-          [text]="true"
+          
           severity="secondary"
           ariaLabel="Lámina siguiente"
           (onClick)="siguiente()"
@@ -87,7 +87,7 @@
   }
 
   <ng-template pTemplate="footer">
-    <p-button label="No mostrar este comunicado" [text]="true" severity="secondary" (click)="noMostrarEste()" />
+    <p-button label="No mostrar este comunicado"  severity="secondary" (click)="noMostrarEste()" />
     <p-button label="Entendido" (click)="cerrar()" />
   </ng-template>
 </p-dialog>
