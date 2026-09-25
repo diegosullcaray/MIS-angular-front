@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { inyectarSesionVigente } from './fixtures/session';
 
 /**
- * Smoke exhaustivo de los 35 reportes migrados de "Actividad Mensual" (Ejercicio 03).
+ * Smoke exhaustivo de los 36 reportes migrados de "Actividad Mensual" (Ejercicio 03).
  */
 const REPORTES: readonly [string, string][] = [
   // 1. Aplicativo Movil
@@ -12,7 +12,8 @@ const REPORTES: readonly [string, string][] = [
   // 3. Huella Carbono
   ['/app/reportes/leg/com/rma/adm/huella-carbono-m', 'Huella Carbono'],
   // 4. Portafolio Reasignado
-  ['/app/reportes/leg/com/rma/adm/gest_cart_her-flujo', 'Gestión de Cartera Reasignada'],
+  ['/app/reportes/leg/com/rma/adm/gest_cart_her', 'Gestión de Cartera Reasignada Mes'],
+  ['/app/reportes/leg/com/rma/adm/gest_cart_her-flujo', 'Gestión de Cartera Reasignada Base Flujo'],
   // 5. Captaciones
   ['/app/reportes/leg/com/rma/adm/cmg-capta', 'CMG Captaciones'],
   ['/app/reportes/leg/com/rma/adm/capta-caract-canal-comercial-m', 'Captación por Canal Comercial'],
@@ -48,7 +49,7 @@ const REPORTES: readonly [string, string][] = [
   ['/app/reportes/leg/com/rma/adm/rank-kay-recu', 'Ranking Kaypacha Recuperaciones'],
 ];
 
-test.describe('Actividad Mensual — smoke de las 35 rutas migradas', () => {
+test.describe('Actividad Mensual — smoke de las 36 rutas migradas', () => {
   for (const [ruta, titulo] of REPORTES) {
     test(`${titulo} resuelve en ${ruta}`, async ({ page }) => {
       await inyectarSesionVigente(page);

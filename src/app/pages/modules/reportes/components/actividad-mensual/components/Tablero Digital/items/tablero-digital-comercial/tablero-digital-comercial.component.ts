@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
+import type { Subscription } from 'rxjs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
@@ -44,16 +45,29 @@ export class TableroDigitalComercialComponent {
   protected readonly columnas = computed(() => this.tabla().columnas);
   protected readonly filas = computed(() => this.tabla().filas);
 
+  /** `RS_FECH` ya respondió (con o sin cierres): recién ahí se consulta, como el legado. */
+  private readonly periodosListos = signal(false);
+
   constructor() {
-    this.servicio.periodos('RS_FECH').subscribe((opciones) => {
-      this.periodos.set(opciones);
-      if (opciones.length > 0) this.periodo.set(String(opciones[0].id));
+    this.servicio.periodos('RS_FECH').subscribe({
+      next: (opciones) => {
+        this.periodos.set(opciones);
+        if (opciones.length > 0) this.periodo.set(String(opciones[0].id));
+        this.periodosListos.set(true);
+      },
+      error: () => this.periodosListos.set(true),
     });
 
-    effect(() => {
+    // `onCleanup` cancela la consulta en vuelo: sin él, una respuesta tardía del nivel o del
+    // cierre anterior pisaba la tabla del actual.
+    effect((onCleanup) => {
       const nodo = this.nivelActual();
       const periodo = this.periodo();
-      if (nodo) this.cargar(nodo, periodo);
+      if (!nodo) return;
+      this.cargando.set(true);
+      if (!this.periodosListos()) return;
+      const sub = this.cargar(nodo, periodo);
+      onCleanup(() => sub.unsubscribe());
     });
   }
 
@@ -61,9 +75,8 @@ export class TableroDigitalComercialComponent {
     this.nivelActual.set(nodo);
   }
 
-  private cargar(nodo: HierarquiaNodo, periodo: string): void {
-    this.cargando.set(true);
-    this.servicio.tableroDigitalComercial({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
+  private cargar(nodo: HierarquiaNodo, periodo: string): Subscription {
+    return this.servicio.tableroDigitalComercial({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
       next: (tabla) => {
         this.tabla.set(tabla);
         this.cargando.set(false);

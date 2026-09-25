@@ -96,6 +96,11 @@ contrato de cada componente, en `src/app/shared/ui/tablas/README.md`.
   respuesta tardía de otro nivel no pisa la actual.
 - Un `p-table` propio que no puede ser una tabla compartida (fuera de Reportes) cubre la carga con
   `app-list-skeleton` o `p-skeleton` en el lugar de la tabla.
+- **Gráficos y tarjetas KPI también cargan con esqueleto**, nunca con un texto ("Cargando
+  gráficos…"). Mientras un gráfico no responde, su tarjeta (mismo tamaño) muestra
+  `<app-esqueleto-grafico />` (`shared/ui/graficos/esqueleto-grafico`); las tarjetas KPI, barras en
+  pulso con los tokens `--mis-border`/`--mis-border-strong`. Ejemplo: *Agro Mix* diario y mensual,
+  *Cosechas*.
 
 ### Paginación
 
@@ -170,7 +175,17 @@ letra en celdas y encabezados), para que las columnas se angosten de forma propo
 de montos de siete dígitos entran en 1366 px sin scroll horizontal (`e2e/tablas-anchas.spec.ts`).
 
 El contenedor conserva `overflow-x-auto` solo como respaldo para pantallas angostas. Ejemplos:
-*Captaciones por Canal* (18 columnas), *Panel Operaciones*, *Clientes* y *Proyección colocación*.
+*Captaciones por Canal* (18 columnas), *Panel Operaciones*, *Clientes*, *Proyección colocación* y
+*Captación por Canal Comercial* mensual.
+
+`app-tabla-dinamica` tiene el mismo `[ajustarAncho]` (modo compacto, encabezados que saltan de
+línea y sin los `width`/`min-width` del `style` de la columna); p. ej. *Estructura de Desembolsos*
+mensual.
+
+**Textos largos en celdas estrechas** (nombres de asesores, agencias): `[truncarTexto]="true"` en
+`app-tabla-dinamica` corta con "…" lo que no cabe (tope de ancho de la celda) y muestra el valor
+completo en el tooltip nativo (`title`). Nunca un texto que se monte sobre la celda vecina. Ejemplo:
+pestaña *Asesores* de *Productos Misionales*.
 
 ### Drill down (bajar de nivel desde la tabla)
 

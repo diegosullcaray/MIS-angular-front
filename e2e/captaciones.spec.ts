@@ -68,8 +68,10 @@ test.describe('Captaciones — smoke de las pantallas migradas', () => {
     const filtros = page.locator('[ventana-filtros]');
     await expect(filtros).toHaveClass(/flex-col/);
 
+    // Regla `filtros-en-baldosa`: los filtros propios van en su `app-grupo-filtros`, debajo del selector.
     const orden = await filtros.evaluate((el) => [...el.children].map((c) => c.tagName.toLowerCase()));
     expect(orden[0]).toBe('app-hier-selector');
-    expect(orden[1]).toBe('app-select-filtro');
+    expect(orden[1]).toBe('app-grupo-filtros');
+    await expect(filtros.locator('app-grupo-filtros app-select-filtro')).toHaveCount(1);
   });
 });

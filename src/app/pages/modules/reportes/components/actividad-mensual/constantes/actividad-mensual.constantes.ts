@@ -58,14 +58,17 @@ export const COD_MENSUAL_DEPRECADO = {
 
 /** Reportes de varios bloques: el orden del array es el de las tablas que devuelven. */
 export const COD_MENSUAL_MULTIBLOQUE = {
-  /** `gest_cart_her-flujo` (`RS_AGE_COM_CRM_F`), host `cra-v11`. */
-  gestionCarteraReasignadaFlujo: ['RS_AGE_COM_CRM_F_01', 'RS_AGE_COM_CRM_F_02'],
   /** `dat-prod-men` (`RS_DAT_PRO`), host `cra-v3`. */
   datosProducto: ['RS_DAT_PRO_01', 'RS_DAT_PRO_02', 'RS_DAT_PRO_03', 'RS_DAT_PRO_04'],
-  /** `cont-elect-m` (`CONT_ELECT_M`), host `cra-v1p1`. */
-  contratacionElectronica: ['CONT_ELECT_M_01', 'CONT_ELECT_M_02', 'CONT_ELECT_M_03'],
-  /** `mon-efec-reasig` (`RS_MON_EFECREASIGM`), host `cra-v12`. */
-  monitorEfectividadesReasignados: ['RS_MON_EFECREASIGM_01', 'RS_MON_EFECREASIGM_02'],} as const;
+  /**
+   * `cont-elect-m` (`CONT_ELECT_M`), host `cra-v1p1`. Ese host lee el mapa de **rda**
+   * (`rda/administracion/cra-map.ts`), que declara cuatro tablas; la de rma solo tres.
+   */
+  contratacionElectronica: ['CONT_ELECT_M_01', 'CONT_ELECT_M_02', 'CONT_ELECT_M_03', 'CONT_ELECT_M_04'],
+} as const;
+
+/** `mon-efec-reasig` (`RS_MON_EFECREASIGM`), host `cra-v12`: el resumen; el `_02` es su detalle. */
+export const COD_MONITOR_EFECTIVIDADES_REASIGNADOS_RESUMEN = 'RS_MON_EFECREASIGM_01';
 
 /**
  * Programas del Gobierno (`pro-gob-m`, host `cra-v1p3`): cuatro bloques que se
@@ -79,15 +82,35 @@ export const BLOQUES_PROGRAMAS_GOBIERNO: readonly { codRep: string; var: number 
 ] as const;
 
 /**
- * Monitor Efectividades (`mon-efec`, host `cra-v4`): dos bloques propios más el
- * mismo `_03` pedido dos veces, uno por tramo de mora.
+ * Monitor Efectividades (`mon-efec`, `RS_MON_EFECM`, host `cra-v4`), pestaña "Monitor de
+ * Efectividades": el `_01` y el mismo `_03` pedido dos veces, uno por tramo de mora. El `_02` es
+ * la pestaña "Detalle de Efectividades" (`COD_MONITOR_EFECTIVIDADES_DETALLE`): pedido acá, sin
+ * sus filtros ni `pagen`, el backend respondía 500 y tumbaba el reporte entero.
  */
 export const BLOQUES_MONITOR_EFECTIVIDADES: readonly { codRep: string; tram?: string }[] = [
   { codRep: 'RS_MON_EFECM_01' },
-  { codRep: 'RS_MON_EFECM_02' },
   { codRep: 'RS_MON_EFECM_03', tram: '1. -30-0' },
   { codRep: 'RS_MON_EFECM_03', tram: '2. 1-30' },
 ] as const;
+
+/** Bloques de "Detalle de Efectividades" (`_02`, paginado y con filtros propios) y su catálogo de "Última Gestión". */
+export const COD_MONITOR_EFECTIVIDADES_DETALLE = {
+  monitor: 'RS_MON_EFECM_02',
+  reasignados: 'RS_MON_EFECREASIGM_02',
+  opcionesUltimaGestion: 'SEL_EFEC_01',
+} as const;
+
+/**
+ * Gestión de Cartera Reasignada mensual, host `cra-v11`: `leg/com/rma/adm/gest_cart_her`
+ * (`RS_AGE_COM_CRM`) y `leg/com/rma/adm/gest_cart_her-flujo` (`RS_AGE_COM_CRM_F`). Ese host pinta
+ * el `_01` en la pestaña "Resumen" y pide el `_03` —paginado— en la pestaña "Detalle".
+ */
+export const REPORTES_GESTION_CARTERA_REASIGNADA_MENSUAL = {
+  RS_AGE_COM_CRM: 'Gestión de Cartera Reasignada Mes',
+  RS_AGE_COM_CRM_F: 'Gestión de Cartera Reasignada Base Flujo',
+} as const;
+
+export type ReporteGestionCarteraReasignadaMensual = keyof typeof REPORTES_GESTION_CARTERA_REASIGNADA_MENSUAL;
 
 /** Reportes del motor `table.regular` (columnas dinámicas), legado `repositorio/*`. */
 export const COD_MENSUAL_REPO = {

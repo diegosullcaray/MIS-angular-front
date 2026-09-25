@@ -37,11 +37,20 @@ describe('PortafolioReasignadoService', () => {
   });
 
   it('el detalle de "Gestión" pide el bloque `_03`, aunque el mapa declare ese tramo como `_02`', () => {
-    servicio.gestionDetalle(NODO, 0, { pagen: 2 }).subscribe();
+    servicio.gestionDetalle(NODO, 0, 2).subscribe();
 
     const [codRep, params] = getRegularData.mock.calls[0];
     expect(codRep).toBe('RS_AGE_COM_CR_03');
-    expect(params).toMatchObject({ ver: 0, pagen: 2 });
+    expect(params).toMatchObject({ ver: 0, pagen: 2, fecha: '20251130' });
+  });
+
+  it('el detalle va paginado con el nodo COMPLETO de la jerarquía, como el `...level` del legado', () => {
+    const nodoCompleto = { tip_cod: 9, cod_rel: 'FC', desc_rel: 'Financiera', lvl: 2 };
+    servicio.gestionDetalle(nodoCompleto, 1, 1).subscribe();
+    servicio.monitorDetalle(nodoCompleto, { pagen: 3 }).subscribe();
+
+    expect(getRegularData.mock.calls[0][1]).toMatchObject({ ...nodoCompleto, pagen: 1, ver: 1 });
+    expect(getRegularData.mock.calls[1][1]).toMatchObject({ ...nodoCompleto, pagen: 3 });
   });
 
   it('"Monitor Efectividades" separa el bloque de resumen del de detalle', () => {

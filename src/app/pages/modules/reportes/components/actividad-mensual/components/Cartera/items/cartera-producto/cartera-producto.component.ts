@@ -64,17 +64,12 @@ export class CarteraProductoComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** KPIs en enteros (millones redondeados), sin decimales. */
   protected formatearValor(valor: number | string): string {
     if (valor === '' || valor === null || valor === undefined) return '0';
-    if (typeof valor === 'number') {
-      return valor.toLocaleString('en-US');
-    }
-    const clean = String(valor).replace(/,/g, '');
-    const num = parseFloat(clean);
-    if (!isNaN(num)) {
-      return num.toLocaleString('en-US');
-    }
-    return String(valor);
+    const num = typeof valor === 'number' ? valor : parseFloat(String(valor).replace(/,/g, ''));
+    if (Number.isNaN(num)) return String(valor);
+    return num.toLocaleString('en-US', { maximumFractionDigits: 0 });
   }
 
   private cargar(nodo: HierarquiaNodo, fec: string): void {

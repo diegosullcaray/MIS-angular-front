@@ -18,13 +18,14 @@ Se retiran del frontend, con su ruta, componente, métodos de servicio que solo 
 | Módulo `presupuesto` completo | Cartera Créditos, Depósitos Red, Depósitos BP, Seguros Comercial, Seguros Operaciones, Responsables, Tablero Verificación |
 | Reportes Analista (`rda/sec`) | Encuesta Clientes, Clientes Reprogramados, Campaña Ágil, Datos Clientes, Canal Alternativo, Clientes Potenciales, Plan de Datos, Autonomías |
 | Actividad Diaria | CMG Clientes Stock, CMG Clientes Flujo Detalle, Detalle Corresponsales, Efectividad de Cartera Reasignada, Gestión por Canal, Dashboard en Revisión, Evolutivo Pasivos, Ranking Clientes, Monitor IMR |
-| Actividad Mensual | Gestión de Cartera Stock, Seguimiento BP, Desempeño Social, Comité de Créditos, Gestión de Cartera Reasignada Mes |
+| Actividad Mensual | Gestión de Cartera Stock, Seguimiento BP, Desempeño Social, Comité de Créditos, ~~Gestión de Cartera Reasignada Mes~~ (restituida, ver abajo) |
 | Desarrollo Sostenible | Poblaciones Misionales |
 
 Límites de la decisión:
 
 - **Se conserva el transporte Winder** (`core/winder/instances/`), aunque algunos métodos queden sin llamadas (p. ej. `ModPresupuestoService` y los `getMonImr*` de `ModRep2Service`). La restricción vigente congela Winder. El inventario de rutas de acción marca esos métodos con **0** llamadas para decidir su retiro aparte.
 - **Se conserva** `/app/reportes/leg/com/rda/adm/gest_cart_her` (versión diaria). Solo se retiró la mensual (`rma/adm/gest_cart_her`).
+- **Enmienda (2026-09-25):** negocio volvió a pedir la mensual *Gestión de Cartera Reasignada Mes* (menú *Actividad Mensual > Cartera en Mora*). Se restituyó `/app/reportes/leg/com/rma/adm/gest_cart_her` (`RS_AGE_COM_CRM`, host `cra-v11`), compartiendo componente con `gest_cart_her-flujo` (`RS_AGE_COM_CRM_F`); la ruta elige el reporte con `data.reporte`.
 - **No requirieron cambios** las pantallas de la lista sin implementación en este repositorio: Corresponsal, Prospectos Corresponsal, Reasignación Cartera Capt, Usuarios, Rutas y Usabilidad.
 
 ## Consecuencias

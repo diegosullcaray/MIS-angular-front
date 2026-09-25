@@ -81,4 +81,30 @@ test.describe('Portafolio Reasignado — smoke de las 3 pantallas migradas', () 
     await page.waitForTimeout(600);
     expect(pedidos.some((p) => p.params.includes('%perez%'))).toBe(true);
   });
+
+  test('"Gestión de Cartera Reasignada Mes" (rma) vuelve a existir, con Resumen/Detalle y el detalle `_03` paginado', async ({ page }) => {
+    await inyectarSesionVigente(page);
+    await mockBackend(page);
+    await page.goto('/app/reportes/leg/com/rma/adm/gest_cart_her');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByRole('heading', { name: 'Gestión de Cartera Reasignada Mes', exact: true })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Resumen' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Detalle' })).toBeVisible();
+    // "Mostrar por" y "Fecha Cierre" lado a lado, en la misma baldosa.
+    await expect(page.locator('[ventana-filtros] app-grupo-filtros app-select-filtro')).toHaveCount(2);
+    expect(pedidos.some((p) => p.params.includes('RS_AGE_COM_CRM_03') && p.params.includes('pagen'))).toBe(true);
+  });
+
+  test('"Monitor de Efectividades" mensual trae la pestaña "Detalle de Efectividades" con sus filtros', async ({ page }) => {
+    await inyectarSesionVigente(page);
+    await mockBackend(page);
+    await page.goto('/app/reportes/leg/com/rma/adm/mon-efec');
+    await page.waitForLoadState('networkidle');
+    await page.getByRole('tab', { name: 'Detalle de Efectividades' }).click();
+
+    for (const filtro of ['Tramo', 'Producto', 'Compromiso Roto', '0 Cuota', '1 Cuota', 'Tramo Días Gestión', 'Precosecha']) {
+      await expect(page.getByLabel(filtro, { exact: true })).toBeVisible();
+    }
+  });
 });

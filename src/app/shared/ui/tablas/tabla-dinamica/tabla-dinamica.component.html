@@ -3,7 +3,7 @@
      y dejaba dos indicadores para una sola espera. Mientras carga, la tabla
      pinta filas de esqueleto (carga independiente: el overlay global se va con
      la primera respuesta) y conserva `aria-busy` para los lectores de pantalla. -->
-<p-table appMaxFilas [value]="filasMostradas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm"
+<p-table appMaxFilas [value]="filasMostradas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm" [class.mis-tabla-compacta]="ajustarAncho()"
          [paginator]="filasPorPagina() > 0" [rows]="filasPorPagina() || filas().length" [showFirstLastIcon]="true" [alwaysShowPaginator]="false"
          [dataKey]="dataKey()" [expandedRowKeys]="expandedRowKeys()">
   <ng-template pTemplate="header">
@@ -13,9 +13,12 @@
           <th
             [attr.colspan]="columna.colspan"
             [attr.rowspan]="columna.rowspan"
-            class="text-[12px] uppercase text-center whitespace-nowrap border border-[var(--mis-text-on-primary)]/25"
+            class="text-[12px] uppercase text-center border border-[var(--mis-text-on-primary)]/25"
+            [class.whitespace-nowrap]="!ajustarAncho()"
+            [class.whitespace-normal]="ajustarAncho()"
+            [class.break-words]="ajustarAncho()"
             style="color: var(--mis-text-on-primary);"
-            [style]="columna.style ?? null"
+            [style]="estiloEncabezado(columna)"
             [style.background-color]="columna.style?.['background'] ?? 'var(--mis-primary)'"
           >
             {{ columna.label }}
@@ -34,17 +37,19 @@
       @for (columna of encabezados().columnasHoja; track columna.key) {
         <td
           class="text-[13px] whitespace-nowrap"
+          [class.celda-truncada]="truncarTexto()"
           [class.font-bold]="destacada(fila) || (fondoDinamico() && signoFondoDinamico(fila, columna) !== null)"
           [class.cursor-pointer]="clicable(columna)"
           [class.underline]="clicable(columna)"
           [style]="estiloCelda(fila, columna)"
           (click)="onClickCelda(columna, fila)"
         >
-          <div class="flex items-center w-full">
+          <div class="flex items-center w-full min-w-0">
             @if (mostrarSemaforo(fila, columna)) {
               <i class="pi pi-circle-fill text-[10px] mr-2 shrink-0" [class]="colorSemaforo(fila, columna)"></i>
             }
-            <span class="flex-1" [class]="alineacion(columna)" [style.color]="colorIndicador(fila, columna)">
+            <span class="flex-1" [class]="alineacion(columna)" [class.truncate]="truncarTexto()" [class.min-w-0]="truncarTexto()"
+                  [attr.title]="truncarTexto() ? valor(fila, columna) : null" [style.color]="colorIndicador(fila, columna)">
               @if (flechaVariacion(fila, columna); as flecha) {
                 <span aria-hidden="true" class="text-[10px] mr-1">{{ flecha }}</span>
                 <span class="sr-only">{{ flecha === '▲' ? 'Sube' : 'Baja' }}</span>

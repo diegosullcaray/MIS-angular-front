@@ -12,7 +12,7 @@ import {
 } from '../../../../models/actividad-mensual-filtros.model';
 import { ActividadMensualCraService } from '../../../../services/actividad-mensual-cra.service';
 
-/** "Contratación Electrónica" (`leg/com/rma/adm/cont-elect-m`). */
+/** "Contratación Electrónica" (`leg/com/rma/adm/cont-elect-m`): las cuatro tablas de `CONT_ELECT_M` del mapa rda que lee el host `cra-v1p1`. */
 @Component({
   selector: 'app-mensual-contratacion-electronica',
   standalone: true,
@@ -29,8 +29,11 @@ export class ContratacionElectronicaComponent extends ReporteBloquesBase {
   protected override readonly titulos = [
     'Desembolsos habilitados para posible contratación electrónica*',
     'Desembolsos por contratación electrónica',
-    'Participación de contratación electrónica',
+    'Participación de contratación electrónica en desembolsos habilitados de CE',
+    'Participación de contratación electrónica en desembolsos totales',
   ] as const;
+
+  protected override readonly notas = ['<b>* Créditos individuales hasta S/. 20 mil</b>'];
 
   protected override consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.contratacionElectronica(nodo, this.fechaBase());

@@ -50,6 +50,20 @@ export class BloqueReporteService {
       .pipe(map(mapearBloqueReporte));
   }
 
+  /**
+   * Tabla paginada en el servidor (`app-table-ajax` del legado) que tolera la página vacía: Ant
+   * responde 500 ("Resultado vacio para: regularData") cuando no hay filas. `nodo` debe ser el
+   * nodo COMPLETO de la jerarquía, como lo manda el legado (`...level`).
+   */
+  regularPaginadoTolerante(
+    codRep: string,
+    nodo: NodoConsulta,
+    extra: Record<string, unknown> = {},
+    pagina = 1,
+  ): Observable<TablaReporteResultado> {
+    return this.regularPaginado(codRep, nodo, extra, pagina).pipe(this.tolerarBloqueVacio(TABLA_VACIA));
+  }
+
   /** Consulta de bloque regularData con parámetros exactos, sin fecha por defecto. */
   regularExacto(codRep: string, nodo: NodoConsulta, extra: Record<string, unknown> = {}): Observable<TablaReporteResultado> {
     const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, ...extra };
@@ -157,6 +171,13 @@ export class BloqueReporteService {
     };
     return this.reportes
       .getGraphicData(codRep, params)
+      .pipe(map(mapearBloquesGrafico), this.tolerarBloqueVacio<BloqueGrafico[]>([]));
+  }
+
+  /** Bloques de gráficos con parámetros exactos, sin fecha por defecto (reportes que el legado pide sin `fec`). */
+  graficosExacto(codRep: string, nodo: NodoConsulta, extra: Record<string, unknown> = {}): Observable<BloqueGrafico[]> {
+    return this.reportes
+      .getGraphicData(codRep, { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, ...extra })
       .pipe(map(mapearBloquesGrafico), this.tolerarBloqueVacio<BloqueGrafico[]>([]));
   }
 }

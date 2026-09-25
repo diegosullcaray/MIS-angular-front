@@ -16,9 +16,15 @@ export class PortafolioReasignadoService {
     return this.bloqueConFecha(COD_PORTAFOLIO_REASIGNADO.gestionResumen, nodo, { ver });
   }
 
-  /** Detalle de Gestión de Cartera Reasignada. */
-  gestionDetalle(nodo: NodoConsulta, ver: number, extra: Record<string, unknown>): Observable<TablaReporteResultado> {
-    return this.bloqueConFecha(COD_PORTAFOLIO_REASIGNADO.gestionDetalle, nodo, { ver, ...extra });
+  /**
+   * Detalle de Gestión de Cartera Reasignada (`RS_AGE_COM_CR_03`, pestaña "Detalle" de `cra-v11`).
+   *
+   * El legado (`rendererSync()`) lo pide paginado: `pagen`, el nodo COMPLETO de la jerarquía, el
+   * `fecha` del bloque y "Mostrar por". Pedido solo con `tip_cod`/`cod_rel` el backend no devuelve
+   * filas; una página vacía llega como 500 y se muestra como tabla vacía.
+   */
+  gestionDetalle(nodo: NodoConsulta, ver: number, pagina = 1): Observable<TablaReporteResultado> {
+    return this.bloques.regularPaginadoTolerante(COD_PORTAFOLIO_REASIGNADO.gestionDetalle, nodo, { fecha: this.bloques.fec(), ver }, pagina);
   }
 
   /** Resumen de Monitor Efectividades Reasignados. */
@@ -26,9 +32,13 @@ export class PortafolioReasignadoService {
     return this.bloqueConFecha(COD_PORTAFOLIO_REASIGNADO.monitorResumen, nodo);
   }
 
-  /** Detalle de Monitor Efectividades Reasignados. */
+  /**
+   * Detalle de Monitor Efectividades Reasignados (`_02` de `cra-v12`): paginado, con el nodo
+   * COMPLETO de la jerarquía y sus filtros (`pagen` viene en `extra`), como el legado.
+   */
   monitorDetalle(nodo: NodoConsulta, extra: Record<string, unknown>): Observable<TablaReporteResultado> {
-    return this.bloqueConFecha(COD_PORTAFOLIO_REASIGNADO.monitorDetalle, nodo, extra);
+    const pagina = Number(extra['pagen'] ?? 1);
+    return this.bloques.regularPaginadoTolerante(COD_PORTAFOLIO_REASIGNADO.monitorDetalle, nodo, { fecha: this.bloques.fec(), ...extra }, pagina);
   }
 
   /** Opciones de Última Gestión. */
