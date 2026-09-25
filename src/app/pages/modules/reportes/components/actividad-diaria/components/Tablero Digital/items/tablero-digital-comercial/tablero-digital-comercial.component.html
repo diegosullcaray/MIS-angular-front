@@ -4,23 +4,13 @@
   [permitirActualizar]="false"
   [conFiltros]="true"
 >
-  <div ventana-filtros class="flex flex-wrap items-end gap-3">
-    <app-hier-selector
-      [paramsHier]="paramsHier"
-      placeholder="Elegir nivel"
-      (nodoSeleccionado)="onNivelSeleccionado($event)"
-      (error)="onErrorJerarquia()"
-    />
-    <!--
-      El periodo del legado es la lista de cortes que devuelve `RS_FECH`, no un
-      calendario libre. Si viene vacía, el reporte usa el corte del usuario.
-    -->
-    <app-grupo-filtros>
-      @if (periodos().length) {
-        <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
-      }
-    </app-grupo-filtros>
-  </div>
+  <app-hier-selector
+    ventana-filtros
+    [paramsHier]="paramsHier"
+    placeholder="Elegir nivel"
+    (nodoSeleccionado)="onNivelSeleccionado($event)"
+    (error)="onErrorJerarquia()"
+  />
 
   @if (!nivelActual()) {
     <app-empty-state

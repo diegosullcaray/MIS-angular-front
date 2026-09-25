@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { TableroDigitalService } from './tablero-digital.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../../../../../core/services/shell-state.service';
@@ -85,11 +85,11 @@ describe('TableroDigitalService', () => {
   });
 
   /**
-   * "Tablero Digital Comercial" no está en `cra-map.ts`: vive en el repositorio
-   * y su corte sale del selector de periodo, no de la fecha del usuario.
+   * "Tablero Digital Comercial" diario: legado `repositorio/usabilidad_comercial/usa_come`, que
+   * consulta con la fecha de corte y pinta sus propias columnas (`tblHeaders`).
    */
   describe('"Tablero Digital Comercial" (repositorio)', () => {
-    it('va por el motor `table.regular`, no por `regularData`', () => {
+    it('va por el motor `table.regular` con la fecha de corte del usuario', () => {
       servicio.tableroComercial({ tip_cod: 9, cod_rel: 'FC' }).subscribe();
 
       expect(getRegularData).not.toHaveBeenCalled();
@@ -100,20 +100,15 @@ describe('TableroDigitalService', () => {
       });
     });
 
-    it('el periodo elegido reemplaza al corte del usuario', () => {
-      servicio.tableroComercial({ tip_cod: 9, cod_rel: 'FC' }, '2025-10-31').subscribe();
-
-      expect(getRegularTableResult.mock.calls[0][1]).toMatchObject({ fec: '2025-10-31' });
-    });
-
-    it('las opciones salen de `RS_FECH`', () => {
+    it('usa las columnas del legado aunque la respuesta no traiga headers, y calcula los semáforos', async () => {
       getRegularTableResult.mockReturnValue(
-        of({ code: '0', headers: {}, body: { resultado: { meta1: [{ json_result: '[]' }] } } }),
+        of({ code: '0', headers: {}, body: { resultado: { data: [{ descripcion: 'FC', var_enro: -1, cumplUsa: 1.1 }] } } }),
       );
 
-      servicio.periodosTableroComercial().subscribe();
+      const tabla = await firstValueFrom(servicio.tableroComercial({ tip_cod: 9, cod_rel: 'FC' }));
 
-      expect(getRegularTableResult).toHaveBeenCalledWith('RS_FECH', { fec: '2025-11-30' });
+      expect(tabla.columnas.map((c) => c.label)).toEqual(['Descripción', 'Avance Mes']);
+      expect(tabla.filas[0]).toMatchObject({ descripcion: 'FC', sem_var_enro: -1, sem_cumplUsa: 1 });
     });
   });
 });
