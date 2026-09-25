@@ -41,13 +41,13 @@ describe('MaxFilasDirective', () => {
     return { contenedor, el, directiva };
   }
 
-  it('con más de 12 filas limita el alto al pie de la fila 12 y saca scroll interno', () => {
+  it('con más de 16 filas limita el alto al pie de la fila 16 y saca scroll interno', () => {
     const { contenedor } = crear(40);
     expect(contenedor.style.maxHeight).toBe(`${ALTO_ENCABEZADO + MAX_FILAS_VISIBLES * ALTO_FILA}px`);
     expect(contenedor.style.overflowY).toBe('auto');
   });
 
-  it('con 12 filas o menos deja la tabla con su alto natural', () => {
+  it('con 16 filas o menos deja la tabla con su alto natural', () => {
     const { contenedor } = crear(MAX_FILAS_VISIBLES);
     expect(contenedor.style.maxHeight).toBe('');
   });
@@ -56,7 +56,7 @@ describe('MaxFilasDirective', () => {
     expect(crear(5).el.querySelector('p-table')?.classList).toContain('mis-max-filas');
   });
 
-  it('nunca pasa del tope de alto de la ventana, aunque haya menos de 12 filas', () => {
+  it('nunca pasa del tope de alto de la ventana, aunque haya menos de 16 filas', () => {
     const { contenedor, directiva } = crear(5);
     const tope = Math.round(window.innerHeight * FRACCION_MAX_ALTO_VENTANA);
     Object.defineProperty(contenedor, 'scrollHeight', { configurable: true, value: tope + 200 });
