@@ -4,7 +4,7 @@ import { ToastService } from '../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../utils/hier-selector-error.util';
 import type { NodoConsulta } from '../../services/bloque-reporte.service';
 import type { HierarquiaNodo } from '../../models/jerarquia.model';
-import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
+import { TABLA_PENDIENTE, type TablaReporteResultado } from '../../models/tabla-reporte.model';
 import type { BloqueReporte } from './reporte-simple.component';
 
 /**
@@ -37,7 +37,12 @@ export abstract class ReporteBloquesBase {
 
   /** Lo que espera el `[bloques]` de `app-reporte-simple`. */
   protected bloques(): BloqueReporte[] {
-    return this.tablas().map((tabla, i) => ({ titulo: this.titulos[i], tabla, nota: this.notas[i] }));
+    return this.tablas().map((tabla, i) => ({
+      titulo: this.titulos[i],
+      tabla,
+      nota: this.notas[i],
+      cargando: tabla === TABLA_PENDIENTE,
+    }));
   }
 
   constructor() {
@@ -63,6 +68,8 @@ export abstract class ReporteBloquesBase {
     this.cargando.set(true);
     return this.consultar({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel })
       .subscribe({
+      // Carga independiente: `consultar()` emite cada vez que responde un bloque; con el primero
+      // ya se muestra el reporte y los que faltan quedan con su esqueleto.
       next: (tablas) => {
         this.tablas.set(tablas);
         this.cargando.set(false);

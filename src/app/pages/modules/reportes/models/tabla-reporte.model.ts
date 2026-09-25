@@ -23,3 +23,10 @@ export interface ReporteDosBloques {
 /** Estado inicial de un bloque aún sin cargar. */
 export const TABLA_VACIA: TablaReporteResultado = { headers: [], body: [], additional: {} };
 
+/**
+ * Bloque que todavía no respondió (carga independiente, ver `BloqueReporteService.regulares`).
+ * Es una tabla vacía —quien la procese no se rompe— pero se distingue por identidad: la tabla
+ * que la recibe muestra su esqueleto en vez de "Sin datos".
+ */
+export const TABLA_PENDIENTE: TablaReporteResultado = { headers: [], body: [], additional: {} };
+

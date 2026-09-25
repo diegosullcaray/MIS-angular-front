@@ -3,6 +3,7 @@ import { TableModule } from 'primeng/table';
 import { normalizarHex, textoSobre } from '../../../../theme/color.util';
 import type { ColumnaReporte, FilaEncabezadoReporte, FilaReporte } from '../models/tabla-reporte.model';
 import { MaxFilasDirective } from '../max-filas.directive';
+import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO } from '../esqueleto-tabla';
 
 function numeroColumnas(cols: ColumnaReporte['cols']): number {
   return cols ? Number(cols) : 1;
@@ -67,6 +68,9 @@ function decimalesDeModo(
   templateUrl: './tabla-reporte.component.html',
 })
 export class TablaReporteComponent {
+  protected readonly filasEsqueleto = FILAS_ESQUELETO;
+  protected readonly claseBarraEsqueleto = CLASE_BARRA_ESQUELETO;
+
   readonly encabezados = input.required<FilaEncabezadoReporte[]>();
   readonly filas = input.required<FilaReporte[]>();
   readonly cargando = input(false);

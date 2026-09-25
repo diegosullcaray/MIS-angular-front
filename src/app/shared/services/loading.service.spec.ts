@@ -63,4 +63,47 @@ describe('LoadingService', () => {
     expect(service.estado()).toEqual({ isLoading: false, requestCount: 0 });
     expect(service.cargando()).toBe(false);
   });
+
+  describe('carga independiente de las peticiones HTTP', () => {
+    it('una tanda muestra el overlay hasta que responde la primera petición', () => {
+      service.iniciarPeticion();
+      service.iniciarPeticion();
+      service.iniciarPeticion();
+      expect(service.cargando()).toBe(true);
+
+      service.terminarPeticion();
+      expect(service.cargando()).toBe(false);
+      expect(service.estado().requestCount).toBe(2);
+    });
+
+    it('cuando terminan todas, la siguiente tanda vuelve a mostrar el overlay', () => {
+      service.iniciarPeticion();
+      service.terminarPeticion();
+      expect(service.cargando()).toBe(false);
+
+      service.iniciarPeticion();
+      expect(service.cargando()).toBe(true);
+    });
+
+    it('una petición que se suma a una tanda ya respondida no vuelve a tapar la pantalla', () => {
+      service.iniciarPeticion();
+      service.iniciarPeticion();
+      service.terminarPeticion();
+
+      service.iniciarPeticion();
+      expect(service.cargando()).toBe(false);
+    });
+
+    it('un show() manual sigue bloqueando aunque las peticiones ya respondieran', () => {
+      service.show('Guardando...');
+      service.iniciarPeticion();
+      service.terminarPeticion();
+      expect(service.cargando()).toBe(true);
+      expect(service.estado().message).toBe('Guardando...');
+
+      service.hide();
+      expect(service.cargando()).toBe(false);
+    });
+  });
 });
+

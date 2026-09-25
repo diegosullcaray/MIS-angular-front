@@ -19,6 +19,8 @@ export interface BloqueReporte {
   nota?: string;
   /** Unidad de la tabla ("Expresado en PEN y %") — `content.higher` del legado; va como chip encima. */
   chip?: string;
+  /** El bloque todavía no respondió: su tabla muestra el esqueleto (carga independiente). */
+  cargando?: boolean;
 }
 
 /** Una pestaña, para los reportes cuyo host del legado reparte los bloques en `mat-tab`s. */
@@ -85,7 +87,7 @@ export interface PestanaReporte {
                         <app-chip-informativo [texto]="bloque.chip" />
                       }
                       <div class="mis-card p-3 overflow-x-auto">
-                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
+                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
                       </div>
                       @if (bloque.nota) {
                         <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
@@ -108,7 +110,7 @@ export interface PestanaReporte {
                 <app-chip-informativo [texto]="bloque.chip" />
               }
               <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
+                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
                 <!-- El paginador es parte de la tabla, como el mat-paginator de \`app-table-ajax\`: va
                      dentro de su tarjeta, pegado al pie. Los reportes paginados son de un solo bloque. -->
                 @if (primero && totalFilas() !== null) {

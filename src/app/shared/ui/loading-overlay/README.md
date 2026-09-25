@@ -46,12 +46,25 @@ entre sí.
 Por eso todo `show()` necesita su `hide()`, también en el camino de error — si no, la pantalla de
 carga queda colgada. En un `subscribe` conviene ponerlo en `next` y en `error`, o usar `finalize()`.
 
+## Carga independiente de las peticiones HTTP
+
+El `loadingInterceptor` no usa `show()`/`hide()`: usa `iniciarPeticion()`/`terminarPeticion()`.
+Una **tanda** de peticiones (desde que no había ninguna en vuelo) muestra el overlay solo hasta
+que responde la **primera**; desde ahí el reporte ya tiene algo que mostrar y cada tabla que sigue
+esperando pinta su propio esqueleto (`cargando` de las tablas compartidas). Los reportes de varios
+bloques reciben cada tabla apenas llega (`BloqueReporteService.regulares()` emite por bloque, con
+`TABLA_PENDIENTE` en los que faltan). Así una API lenta no tapa las tablas que ya respondieron.
+
+Los `show()` manuales (guardar, operaciones que sí deben bloquear) siguen cubriendo la pantalla
+hasta su `hide()`, aunque las peticiones ya hayan respondido.
+
 ## API de `LoadingService`
 
 | Miembro | Qué es |
 |---|---|
 | `show(mensaje?)` | Muestra la pantalla de carga, con un texto opcional debajo (por defecto, «Cargando…») |
 | `hide()` | Descuenta una petición; la oculta si no quedan otras |
+| `iniciarPeticion()` / `terminarPeticion()` | Uso del interceptor: carga independiente (ver arriba) |
 | `estado` | Signal de solo lectura: `{ isLoading, message, requestCount }` |
 | `cargando` | Atajo `computed<boolean>` para plantillas |
 
