@@ -74,11 +74,21 @@ llega a la meta.
   `semaforo(valor)` da `1 | 0 | -1 | null`, y `severidadSemaforo(valor)` da la `severity` de
   PrimeNG (`success` / `warn` / `danger`, o `info` si no hay dato).
 
-## 4. Indicadores por pestaña
+## 4. Chips informativos
 
-Cuando un indicador resume una pestaña (p. ej. el cumplimiento de meta en *Monitor Metas
-Desembolso*), va como **chip** (`p-tag`) dentro de esa pestaña, sobre sus tablas, con la severidad
-del semáforo. No como tarjeta KPI grande arriba de las pestañas, que no dice a cuál pertenece.
+Toda nota corta que acompaña a una tabla va como **chip** (`<app-chip-informativo>`, en
+`shared/ui/chip-informativo`) justo encima de la tabla, nunca como texto suelto:
+
+- **Unidad de la tabla**, p. ej. *Expresado en PEN y %*:
+  `<app-chip-informativo texto="Expresado en PEN y %" />`. En el Panel del asesor va en el campo
+  `chip` del bloque (`BloquePanelAsesor`), no en `titulo`: no es un título.
+- **Indicador de una pestaña**, p. ej. el cumplimiento de meta en *Monitor Metas Desembolso*: va
+  dentro de esa pestaña, sobre sus tablas, con la severidad del semáforo
+  (`[severidad]="severidadSemaforo(...)"`). No como tarjeta KPI grande arriba de las pestañas, que
+  no dice a cuál pertenece.
+
+Lo que **no** es chip: el título de una tabla ("Cero Cuota", "Ahorro Programado") y las notas al
+pie o leyendas (`nota` de los bloques, `content.lower` del legado), que van debajo de la tabla.
 
 ## Ver también
 

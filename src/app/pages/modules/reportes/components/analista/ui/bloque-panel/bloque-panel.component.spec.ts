@@ -19,12 +19,13 @@ const RESUMEN: TablaReporteResultado = {
 };
 
 describe('BloquePanelComponent', () => {
-  function crear(titulo = '', nota: string[] = []) {
+  function crear(titulo = '', nota: string[] = [], chip = '') {
     TestBed.configureTestingModule({ imports: [BloquePanelComponent] });
     const fixture = TestBed.createComponent(BloquePanelComponent);
     fixture.componentRef.setInput('tabla', RESUMEN);
     fixture.componentRef.setInput('titulo', titulo);
     fixture.componentRef.setInput('nota', nota);
+    fixture.componentRef.setInput('chip', chip);
     fixture.detectChanges();
     return fixture.nativeElement as HTMLElement;
   }
@@ -39,5 +40,15 @@ describe('BloquePanelComponent', () => {
 
   it('sin título no pinta cabecera', () => {
     expect(crear().querySelector('header')).toBeNull();
+  });
+
+  it('muestra la nota de unidad como chip, no como título', () => {
+    const el = crear('', [], 'Expresado en PEN y %');
+    expect(el.querySelector('app-chip-informativo')?.textContent).toContain('Expresado en PEN y %');
+    expect(el.querySelector('h3')).toBeNull();
+  });
+
+  it('sin chip no pinta ninguno', () => {
+    expect(crear('Resumen').querySelector('app-chip-informativo')).toBeNull();
   });
 });

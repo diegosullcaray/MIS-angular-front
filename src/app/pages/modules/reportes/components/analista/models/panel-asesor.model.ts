@@ -22,6 +22,8 @@ export type GrupoPanelAsesor = 'cartera' | 'colocacion' | 'recuperacion' | 'gest
 export interface BloquePanelAsesor {
   tabla: ClaveTabla;
   titulo?: string;
+  /** Nota corta sobre la tabla (p. ej. la unidad), mostrada como chip; no es un título. */
+  chip?: string;
   nota?: readonly string[];
 }
 

@@ -49,6 +49,26 @@ describe('TablaReporteComponent', () => {
     expect(fixture.componentInstance['formatear'](0.85, columnaPorcentaje)).toBe('85.0%');
   });
 
+  it('formatear() respeta el mode (decimales) y la unit del backend, como el legado', () => {
+    const fixture = crear();
+    const formatear = (valor: unknown, format: Record<string, unknown>) =>
+      fixture.componentInstance['formatear'](valor, { columnDef: 'x', format });
+
+    // Valores reales de "Captaciones por Canal" (`captacion_canal_01`).
+    expect(formatear(1484988086.45, { type: 'number', mode: '.0-0' })).toBe('1,484,988,086');
+    expect(formatear(-1083623.3499999046, { type: 'number', mode: '.0-0' })).toBe('-1,083,623');
+    expect(formatear(0.049265, { type: 'percent', mode: '1.1-2' })).toBe('4.93%');
+    expect(formatear(0.0452, { type: 'percent', mode: '1.1-2' })).toBe('4.52%');
+    expect(formatear(0.04, { type: 'percent', mode: '1.1-2' })).toBe('4.0%');
+    expect(formatear(7.380000000000026, { type: 'number', mode: '.0-0', unit: 'pbs' })).toBe('7 pbs');
+    expect(formatear(-17.680000000000057, { type: 'number', mode: '.0-0', unit: 'pbs' })).toBe('-18 pbs');
+  });
+
+  it('formatear() ignora un mode que no entiende y usa los decimales por defecto', () => {
+    const fixture = crear();
+    expect(fixture.componentInstance['formatear'](1500.5, { columnDef: 'x', format: { type: 'number', mode: 'raro' } })).toBe('1,500.5');
+  });
+
   it('formatear() devuelve cadena vacía para valores nulos/indefinidos', () => {
     const fixture = crear();
     expect(fixture.componentInstance['formatear'](null, ENCABEZADOS[0].columns[0])).toBe('');

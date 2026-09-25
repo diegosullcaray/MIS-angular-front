@@ -161,7 +161,7 @@
                 </div>
               }
               @for (b of bloques(reporte, e.resultado); track b.tabla) {
-                <app-bloque-panel [tabla]="e.resultado[b.tabla]!" [titulo]="b.titulo ?? ''" [nota]="b.nota ?? []" />
+                <app-bloque-panel [tabla]="e.resultado[b.tabla]!" [titulo]="b.titulo ?? ''" [chip]="b.chip ?? ''" [nota]="b.nota ?? []" />
               }
             </div>
           }

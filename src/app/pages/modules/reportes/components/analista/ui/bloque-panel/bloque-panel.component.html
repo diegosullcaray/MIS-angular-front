@@ -5,6 +5,10 @@
     </header>
   }
 
+  @if (chip()) {
+    <app-chip-informativo [texto]="chip()" />
+  }
+
   <div class="bloque-tabla">
     <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" />
   </div>

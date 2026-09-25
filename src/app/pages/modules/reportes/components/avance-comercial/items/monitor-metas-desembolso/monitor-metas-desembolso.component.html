@@ -27,7 +27,7 @@
             <div class="flex flex-col gap-4">
               <!-- Chip informativo con el cumplimiento de meta de la pestaña -->
               @if (tab.chip(); as chip) {
-                <p-tag [value]="chip" [severity]="tab.severidad()" styleClass="self-start text-[11px] font-medium" />
+                <app-chip-informativo [texto]="chip" [severidad]="tab.severidad()" />
               }
               <!-- Iteramos sobre las tablas configuradas para esta pestaña -->
               @for (tabla of tab.tablas; track $index) {

@@ -8,12 +8,13 @@ import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selec
 import { PARAMS_HIER_OFICINA, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
 import { CaptacionPorCanalService } from '../../../Captaciones/services/captacion-por-canal.service';
+import { ChipInformativoComponent } from '../../../../../../../../../shared/ui/chip-informativo/chip-informativo.component';
 
 /** "Captaciones por Canal" (`leg/com/rda/adm/cap-age`) — CAPTACIONES RED. */
 @Component({
   selector: 'app-captacion-por-canal',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, WindowPanelComponent, ChipInformativoComponent],
   templateUrl: './captacion-por-canal.component.html',
 })
 export class CaptacionPorCanalComponent {

@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TagModule } from 'primeng/tag';
 import { HierSelectorComponent } from '../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { EmptyStateComponent } from '../../../../../../../shared/ui/empty-state/empty-state.component';
@@ -15,12 +14,13 @@ import type { HierarquiaNodo } from '../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas } from '../../models/avance-comercial.model';
 import { TabsModule } from 'primeng/tabs';
+import { ChipInformativoComponent } from '../../../../../../../shared/ui/chip-informativo/chip-informativo.component';
 
 /** "Monitor Metas Desembolso" — migrado de la ruta `mon-desem` (legado STG, `reportes/legacy/comercial/rda/administracion`, `cod_rep: 'Monitor_Dese'`). */
 @Component({
   selector: 'app-monitor-metas-desembolso',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent, TabsModule, TagModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, SkeletonModule, ProgressSpinnerModule, WindowPanelComponent, TabsModule, ChipInformativoComponent],
   templateUrl: './monitor-metas-desembolso.component.html',
 })
 export class MonitorMetasDesembolsoComponent {

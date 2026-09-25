@@ -7,7 +7,8 @@ La libreria compartida debe permanecer agnostica del dominio. Los componentes re
 | Datos | `app-data-table` | `columns`, `data`, `loading`, busqueda, filtros y seleccion de fila | fecha, numero, dropdown, vacio y refresh |
 | Reportes | `app-tabla-reporte` | headers multi-fila y filas | hidden, colspan, semaforo, estilos backend |
 | Reportes | `app-tabla-dinamica` | columnas anidadas y filas | formato numerico, variaciones, semaforo, celdas clicables |
-| Formularios | `app-select-filtro`, `app-input-filtro` | opciones/valor/eventos | filtros dependientes del modulo |
+| Formularios | `app-select-filtro`, `app-input-filtro`, `app-grupo-filtros` | opciones/valor/eventos; la baldosa agrupa los filtros propios | filtros dependientes del modulo; baldosa vacia se oculta |
+| Estados | `app-chip-informativo` | `texto`, `severidad`, `icono` | notas cortas sobre una tabla (unidad, indicador de pestaña) |
 | Jerarquia | `app-hier-selector` | `ParamsJerarquia`, nodo/ruta/error | cache, fecha de corte, fallback, reset |
 | Visualizacion | `app-grafico-base`, `app-grafico-mixto`, `app-grafico-pie` | opciones o modelos graficos | destruir instancia, tema, click de punto |
 | Mapas | `app-mapa-ubicacion` | latitud, longitud, etiqueta | tiles externos, pin, resize, cleanup |

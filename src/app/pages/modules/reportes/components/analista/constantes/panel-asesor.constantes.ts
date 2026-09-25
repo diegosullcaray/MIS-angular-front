@@ -46,7 +46,7 @@ export const REPORTES_ASESOR: readonly ReportePanelAsesor[] = [
     descripcion: 'Seguimiento de resultados de tu gestión de cobranza.',
     grupo: 'recuperacion',
     icono: 'pi pi-check-square',
-    bloques: [{ tabla: 'tabla1', titulo: 'Expresado en PEN y %' }],
+    bloques: [{ tabla: 'tabla1', chip: 'Expresado en PEN y %' }],
   },
   {
     codigo: 'L_GPDM_SEC',
@@ -83,7 +83,7 @@ export const REPORTES_ASESOR: readonly ReportePanelAsesor[] = [
     descripcion: 'Tu gestión de seguros.',
     grupo: 'colocacion',
     icono: 'pi pi-shield',
-    bloques: [{ tabla: 'tabla1', titulo: 'Expresado en PEN y %' }],
+    bloques: [{ tabla: 'tabla1', chip: 'Expresado en PEN y %' }],
   },
   {
     codigo: 'L_CER_CUO_SEC',
