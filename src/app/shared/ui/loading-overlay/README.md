@@ -1,7 +1,8 @@
 # `<app-loading-overlay>`
 
 Pantalla de carga completa: un anillo girando con el Puma de espera en el centro. Cubre todo,
-incluidos los diálogos, mientras haya peticiones en vuelo.
+incluidos los diálogos, desde que arranca una consulta hasta su **primera respuesta** (ver
+"Carga independiente" más abajo); lo que sigue cargando se ve por el esqueleto de cada tabla.
 
 El anillo es un `<p-progress-spinner>` y la imagen es `assets/images/fc/avatars/mis_wait.png`, el
 Puma institucional de espera. **Es la misma composición —y el mismo archivo— que usan
@@ -17,8 +18,9 @@ descripción del dibujo.
 (`shell-layout.component.html`); desde cualquier módulo se controla con `LoadingService`. El
 componente no tiene inputs: lee el estado del servicio y se muestra solo.
 
-Para la carga de una sección puntual va [`<app-list-skeleton>`](../list-skeleton/README.md) o el
-`[loading]` de `<app-data-table>`. Este overlay es para lo que bloquea la pantalla entera.
+Para la carga de una tabla va su propio esqueleto (`[cargando]`, o `[loading]` de
+`<app-data-table>`); para otra sección puntual, [`<app-list-skeleton>`](../list-skeleton/README.md).
+Este overlay es para lo que bloquea la pantalla entera.
 
 ## Uso
 

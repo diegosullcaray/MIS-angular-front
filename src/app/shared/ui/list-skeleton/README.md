@@ -4,6 +4,11 @@ Skeleton pulsante con forma de tabla: una fila de encabezado y N filas de celdas
 Se muestra mientras cargan los datos, en lugar de un spinner, para que el layout no salte cuando
 llega la respuesta.
 
+**No reemplaza a una tabla compartida.** `app-tabla-reporte`, `app-tabla-dinamica`,
+`app-data-table` y `app-editable-table` pintan su propio esqueleto dentro de su tarjeta con
+`[cargando]` / `[loading]` (ver el [estándar de reportes](../../../../../governance/docs/components/estandar-reportes.md#2-tablas)).
+Este componente es para lo que no es una de ellas: fichas, listas, tarjetas o un `p-table` propio.
+
 ## Uso
 
 ```typescript
@@ -20,7 +25,8 @@ import { ListSkeletonComponent } from '…/shared/ui/list-skeleton/list-skeleton
 @if (cargando()) {
   <app-list-skeleton />
 } @else {
-  <app-data-table [columns]="columnas" [data]="filas()" />
+  <!-- una ficha, una lista o un p-table propio: no una tabla compartida -->
+  <app-resumen-cliente [datos]="resumen()" />
 }
 ```
 
@@ -41,5 +47,5 @@ Ajustando la grilla a la tabla real, para que el salto al cargar sea mínimo:
 Los arrays se usan solo por su **largo** y como clave de `track`: el contenido no se muestra. Se
 reciben como arrays y no como números porque el template itera con `@for` directamente sobre ellos.
 
-`DataTableComponent` ya trae su propio estado de carga (`[loading]`), así que dentro de una
-`<app-data-table>` este componente no hace falta.
+Las tablas compartidas ya traen su propio esqueleto: con ellas se enlaza `[cargando]` (o
+`[loading]` en `<app-data-table>`) y este componente no hace falta.

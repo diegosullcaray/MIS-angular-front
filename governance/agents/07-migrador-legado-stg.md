@@ -58,11 +58,22 @@ El legado es Material y RxJS imperativo; el Host es PrimeNG, señales y componen
 | Legado | Host |
 |---|---|
 | `MatTableDataSource` + paginador propio | `app-data-table` con `columns` y `searchFields` |
+| `app-table-ajax` (`theme_tb3`, hosts `cra-V10`/`cra-v11`): `pagen` + nodo completo | paginación en el servidor (`ReportePaginadoBase`, `regularPaginado()`, `paginado: true`) |
+| `app-table-multiheader` con `mat-paginator` | `[paginacionLocal]` de `app-reporte-simple` |
+| `stg-paginator` + `prepareDataForPagination(n)` | `[filasPorPagina]="n"` de `app-tabla-dinamica` |
+| `hierBuffer` + `ddHier`/`changeHier` | selector oculto + `app-ruta-jerarquica` + celda clicable (drill down del estándar) |
+| `tblHeaders` estático en el componente | columnas en el `models/` del módulo (el backend puede no mandar `headers`) |
+| `content.higher` / `content.lower` del mapa | slot `[encabezado]` / `nota` del bloque, con el texto del legado |
 | `MatDialog` con cabecera propia | `p-dialog` con el cromo estándar |
 | Servicio con `subscribe` anidado | fachada de módulo + señales |
 | Filtro manual sobre el array | filtros por columna del componente compartido |
 
 Una diferencia deliberada respecto del legado se documenta en el PR. Una diferencia accidental es un defecto.
+
+Antes de portar, confirmar **qué mapa y qué host** usa la ruta: `cra-map` y `com-map` repiten `module`, y
+una ruta diaria puede apuntar a un reporte distinto del mensual con nombre parecido
+(`usa_come` ≠ `usabilidad-comercial-m`). Los parámetros de cada tabla (`pagen`, nodo completo,
+`fec` o no) salen del host (`renderTable`, `rendererSync`, `setDs`), no del nombre del reporte.
 
 ### 4. Verificar contra la fuente
 

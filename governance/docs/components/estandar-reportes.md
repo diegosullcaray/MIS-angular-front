@@ -38,35 +38,104 @@ con controles sueltos.
 
 ## 2. Tablas
 
-- **Resaltado de fila al pasar el cursor, siempre.** Como en el legado. Las cuatro tablas
-  compartidas (`app-tabla-reporte`, `app-tabla-dinamica`, `app-data-table`, `app-editable-table`)
-  ya lo traen con `[rowHover]="true"`. Un `p-table` propio dentro de un reporte tiene que llevarlo
-  también; mejor aún, usar una de las compartidas.
-- El color sale del token `--mis-table-row-hover-bg` (claro y oscuro en `theme/tokens.css`),
-  conectado en `theme/mis-theme.ts` (`datatable.row.hoverBackground`). Es más marcado que
-  `--mis-hover-bg` a propósito: ese es el de menús y listas, y en una tabla no se notaba. Para
-  ajustar la intensidad se toca el token, no cada tabla.
+Resumen de cómo se comporta **toda** tabla del Host. El detalle de cada punto está debajo; el
+contrato de cada componente, en `src/app/shared/ui/tablas/README.md`.
+
+| Aspecto | Regla | Quién lo resuelve |
+|---|---|---|
+| Componente | Una de las cuatro compartidas: `app-tabla-reporte`, `app-tabla-dinamica`, `app-data-table`, `app-editable-table`. Un `p-table` propio es la excepción | — |
+| Contenedor | La tabla va en su tarjeta `mis-card`; paginador, esqueleto y scroll quedan **dentro** de esa tarjeta | la pantalla |
+| Alto | Hasta **16 filas** visibles y nunca más del **62 %** del alto de la ventana; después, scroll interno con encabezado fijo | `appMaxFilas` |
+| Carga | **Esqueleto** dentro de la tabla mientras carga; el spinner global se corta con la primera respuesta | `[cargando]` / `[loading]` + `LoadingService` |
+| Paginación | Paginador dentro de la tarjeta, pegado al pie de la tabla | armazón / tabla |
+| Filas | Resaltado al pasar el cursor | `[rowHover]` |
+| Números | Formato del backend (`format.mode` / `unit`) | `app-tabla-reporte` |
+| Ancho | Sin scroll horizontal en escritorio: `[ajustarAncho]` (modo compacto) | `app-tabla-reporte` |
+| Encabezados | Color del backend o, en tablas paginadas del legado, color único del tema | `encabezadoUniforme` |
+| Jerarquía | Si las filas son niveles, la descripción baja de nivel (drill down) | la pantalla + `app-ruta-jerarquica` |
+
+### Contenedor y resaltado
+
 - La tabla va en su tarjeta: `<div class="mis-card p-3 overflow-x-auto">`.
-- **16 filas visibles como máximo, y nunca más del 62 % del alto de la ventana.** Pasado eso la
-  tabla saca su propio scroll vertical y el encabezado queda fijo; el panel no scrollea. Lo
-  resuelven las cuatro tablas compartidas con la directiva `appMaxFilas`
-  (`shared/ui/tablas/max-filas.directive.ts`), que mide hasta el pie de la fila 16 y aplica el tope
-  `FRACCION_MAX_ALTO_VENTANA`. Un `p-table` propio lleva `appMaxFilas` y `[scrollable]="true"`; no se fija un
+- **Resaltado de fila al pasar el cursor, siempre**, como en el legado. Las cuatro tablas
+  compartidas ya lo traen con `[rowHover]="true"`; un `p-table` propio tiene que llevarlo también.
+  El color sale del token `--mis-table-row-hover-bg` (conectado en `theme/mis-theme.ts`); para
+  ajustar la intensidad se toca el token, no cada tabla.
+
+### Alto y scroll interno
+
+- **16 filas visibles como máximo, y nunca más del 62 % del alto de la ventana** (lo que sea
+  menor). Pasado eso la tabla saca su propio scroll vertical y el encabezado queda fijo; el panel no
+  scrollea.
+- Lo resuelven las cuatro tablas compartidas con la directiva `appMaxFilas`
+  (`shared/ui/tablas/max-filas.directive.ts`): mide hasta el pie de la fila 16 —así un encabezado
+  de varias filas no corta una fila por la mitad— y aplica el tope `FRACCION_MAX_ALTO_VENTANA`. Se
+  recalcula al cambiar las filas, el ancho o el alto de la ventana. Los dos valores se ajustan en
+  `MAX_FILAS_VISIBLES` y `FRACCION_MAX_ALTO_VENTANA`, no por pantalla.
+- Un `p-table` propio lleva `appMaxFilas` y `[scrollable]="true"`. **No** se fija un
   `scrollHeight` en píxeles.
+
+### Carga: esqueleto por tabla y carga independiente
+
 - **Esqueleto mientras carga, siempre dentro de la tarjeta de la tabla.** Toda tabla recibe el
   estado de carga de SUS datos: `[cargando]` en `app-tabla-reporte`, `app-tabla-dinamica` y
   `app-editable-table`; `[loading]` en `app-data-table`. Mientras es `true` la tabla no pinta filas
   (ni las de la consulta anterior) y dibuja filas de esqueleto; sin columnas todavía, usa columnas
   de relleno. Nunca un `false` fijo, nunca "Sin datos" mientras carga, nunca un spinner local.
-  - Es la otra mitad de la **carga independiente**: el spinner global se corta con la primera
-    respuesta de la consulta, así que las tablas que siguen esperando se ven por su esqueleto.
-  - En un reporte de varias tablas, cada una lleva SU estado: el bloque pendiente
-    (`TABLA_PENDIENTE`, o `cargando` del bloque en `app-reporte-simple`), no uno general que
-    tape las que ya llegaron.
-  - Un `p-table` propio fuera de Reportes, si no puede usar una tabla compartida, cubre la carga con
-    `app-list-skeleton` o `p-skeleton` en el lugar de la tabla.
+- **Spinner global por consulta.** Cada consulta nueva (entrar, otro nivel, otro filtro, otra
+  página) muestra el overlay; se corta con la **primera respuesta de esa misma consulta**, y las
+  tablas que siguen esperando se ven por su esqueleto. Una respuesta de una consulta anterior no lo
+  corta. Lo resuelve `LoadingService` agrupando las peticiones en tandas (ver
+  `shared/ui/loading-overlay/README.md`); una pantalla no lo maneja a mano.
+- **Varias tablas: cada una con su estado.** `BloqueReporteService.regulares()` entrega los bloques
+  a medida que llegan (`TABLA_PENDIENTE` en los que faltan) y `app-reporte-simple` marca cada bloque
+  pendiente como cargando. Un servicio con consultas propias hace lo mismo (p. ej. *Agendamiento*:
+  `merge` + `scan`, `null` = pendiente): nunca un `cargando` general que tape las tablas que ya
+  llegaron.
+- Una consulta nueva **cancela** la anterior (`effect` con `onCleanup`, o `switchMap`): la
+  respuesta tardía de otro nivel no pisa la actual.
+- Un `p-table` propio que no puede ser una tabla compartida (fuera de Reportes) cubre la carga con
+  `app-list-skeleton` o `p-skeleton` en el lugar de la tabla.
+
+### Paginación
+
 - **El paginador es parte de la tabla**: va dentro de la misma tarjeta, pegado al pie de la tabla
   (como el `mat-paginator` del legado), nunca suelto debajo de ella.
+- Se pagina **como el legado**, sin inventar:
+
+| Legado | Host |
+|---|---|
+| `app-table-ajax` (`theme_tb3`/`cra-V10`/`cra-v11` Detalle): `pagen` + nodo completo, total en `additional.Total` | Paginación en el servidor: `ReportePaginadoBase` + `[totalFilas]`/`[(pagina)]` de `app-reporte-simple`, o un bloque con `paginado: true`. Consulta con `regularPaginado()` |
+| `app-table-multiheader` con `mat-paginator` (`theme_tb3` en `cra-v6`): trae todo y pagina en el cliente | `[paginacionLocal]="true"` de `app-reporte-simple` |
+| `stg-paginator` + `prepareDataForPagination(n)` | `[filasPorPagina]="n"` de `app-tabla-dinamica` |
+| `mat-paginator` en tablas planas | `app-data-table` (trae su paginador) |
+
+- Cambiar de página solo vuelve a pedir la tabla paginada; cambiar de nivel vuelve a la página 1.
+- Una tabla paginada en el servidor que se pide sin `pagen` o sin el nodo completo responde 500
+  ("Resultado vacio para: regularData"): no es "sin datos", es la consulta mal armada.
+
+### Rendimiento
+
+Una tabla no pinta miles de filas de una vez: se pagina (como el legado) y, si el reporte reparte
+tablas en pestañas, **solo la pestaña visible** renderiza la suya. Pintar todo junto congela la
+pantalla (*Agendamiento*).
+
+### Encabezados
+
+- Por defecto, el color del encabezado es el que manda el backend (`style.background`) o el
+  primario del tema; el texto va claro.
+- Si el backend le da fondo a una columna, el texto del encabezado va blanco (nunca verde sobre
+  verde) y una celda con `background_<columnDef>` lleva el color de texto que contrasta.
+- Las tablas paginadas del legado (`app-table-ajax`) ignoraban el color de columna:
+  `encabezadoUniforme` (o `paginado: true` en el bloque) pinta todos los encabezados con el color
+  único del tema, sin colores rojos o verdes de columna.
+
+### Notas de una tabla
+
+Además de los chips (sección 4): las aclaraciones que el legado pone **encima** de la tabla
+(`content.higher` con texto, no solo el título) van en el slot `[encabezado]` de
+`app-reporte-simple`; las notas al pie (`content.lower`) van en `nota` del bloque o en el slot
+`[nota]`. Se copian con el texto del legado.
 
 ### Formato de los números
 
@@ -96,8 +165,12 @@ las columnas **haciendo saltar de línea los encabezados, no los datos**:
   o `-18 pbs` en dos renglones no se leen, y el backend no siempre marca como `number` una columna
   numérica. Cada columna queda al menos tan ancha como su dato más largo.
 
+Además, con `[ajustarAncho]` la tabla usa un **modo compacto** (menos relleno y un punto menos de
+letra en celdas y encabezados), para que las columnas se angosten de forma proporcional: 14 columnas
+de montos de siete dígitos entran en 1366 px sin scroll horizontal (`e2e/tablas-anchas.spec.ts`).
+
 El contenedor conserva `overflow-x-auto` solo como respaldo para pantallas angostas. Ejemplos:
-*Captaciones por Canal* (18 columnas) y *Panel Operaciones*.
+*Captaciones por Canal* (18 columnas), *Panel Operaciones*, *Clientes* y *Proyección colocación*.
 
 ### Drill down (bajar de nivel desde la tabla)
 
@@ -108,7 +181,7 @@ descripción de cada fila es un enlace que baja a ese nivel, como en el legado.
 
 | Modo | Filtro de jerarquía | Cómo se sube | Ejemplos |
 |---|---|---|---|
-| **Navegación por la tabla** (preferido) | Oculto | Migas `<app-ruta-jerarquica>` | *Cartera Agrícola*, *Vinculación Cartera* |
+| **Navegación por la tabla** (preferido) | Oculto | Migas `<app-ruta-jerarquica>` | *Cartera Agrícola*, *Vinculación Cartera*, *Monitor Salidas y Retenciones*, *Gestión Comercial*, *Seguros Optativos*, *Banca Solidaria* |
 | Drill down como atajo | Visible | Los desplegables o "Limpiar" | *Gestión Pasivo Comercial* |
 
 #### Cómo se integra (modo navegación por la tabla)
@@ -160,6 +233,16 @@ descripción de cada fila es un enlace que baja a ese nivel, como en el legado.
 5. **Pruebas**: clicable solo con nodo hijo, baja al hacer clic, ignora la fila de totales y las
    otras columnas, baja por nombre cuando la fila no trae claves, y una miga vuelve y recorta la
    ruta (ver `vinculacion-cartera.component.spec.ts`).
+
+#### Qué columna baja, según el legado
+
+La columna y las claves del nodo salen del `ddHier`/`ddEvent` del legado, no se deducen:
+
+| Reporte | Columna | Nodo | No baja |
+|---|---|---|---|
+| *Gestión Comercial*, *Banca Solidaria* | `descripcion` | `htipcod` + `hcodrel` | la fila del nivel actual |
+| *Monitor Salidas y Retenciones* | `desc` | `tip_cod` + `cod_rel` | el asesor (`tip_cod` 1); `sali1`/`sali3`/`clive` abren el listado de SU métrica |
+| *Seguros Optativos* | `RNOMSUB` | `htipcod`/`hcodrel` (o mayúsculas, o `tip_cod`/`cod_rel`) | `tip_cod` 999, 2 y 7 |
 
 #### Reglas
 
@@ -227,8 +310,17 @@ CI) falla si un reporte las rompe.
 | `nota-de-unidad-en-chip` | Ningún "Expresado en…" como texto suelto: va en `<app-chip-informativo>` |
 | `drill-down-con-migas` | Un reporte con el selector de jerarquía oculto usa `<app-ruta-jerarquica>`, no migas armadas a mano |
 
-El formato de números (`mode` / `unit`) lo cubren las pruebas de `tabla-reporte.component.spec.ts`
-con valores reales de *Captaciones por Canal*. Las reglas viven en
+Lo que no es texto de plantilla lo cubren pruebas:
+
+| Comportamiento | Pruebas |
+|---|---|
+| Formato de números (`mode` / `unit`) | `tabla-reporte.component.spec.ts`, con valores reales de *Captaciones por Canal* |
+| Alto: 16 filas y tope de la ventana | `max-filas.directive.spec.ts`; E2E `cartera.spec.ts` ("16 filas visibles…", ventana baja) |
+| Esqueleto mientras carga | `esqueleto-tabla.spec.ts` (las cuatro tablas); E2E `cartera.spec.ts` ("Carga independiente…") |
+| Spinner por consulta | `loading.service.spec.ts` |
+| Bloques progresivos | `bloque-reporte.regulares.spec.ts` |
+| Sin scroll horizontal | E2E `tablas-anchas.spec.ts` |
+| Paginación en el servidor | `desembolsos-pdm.component.spec.ts`, `proyeccion-colocacion.component.spec.ts`; E2E `actividad-diaria-lote-02.spec.ts` | Las reglas viven en
 `governance/scripts/validar-gobernanza.mjs`; una regla nueva de este estándar se agrega ahí, no
 solo en este documento.
 

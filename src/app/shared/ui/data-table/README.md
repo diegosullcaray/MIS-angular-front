@@ -53,7 +53,7 @@ Un `<ng-template appDataTableCell="<field>" let-row>` proyectado dentro reemplaz
 columna. `row` es la fila completa:
 
 ```html
-<app-data-table [columns]="columnas" [data]="filas()">
+<app-data-table [columns]="columnas" [data]="filas()" [loading]="cargando()">
   <ng-template appDataTableCell="HDESCLI" let-row>
     <span class="font-medium text-[var(--mis-text-primary)]">{{ row.HDESCLI }}</span>
   </ng-template>
@@ -76,7 +76,7 @@ Sirve también para columnas que no son un dato: definí la columna con un `fiel
 | `loading` | `boolean` | `false` | Estado de carga: mientras es `true` pinta filas de esqueleto en vez de las filas. Obligatorio enlazarlo (regla `tabla-con-esqueleto`) |
 | `rows` | `number` | `10` | Filas por página |
 | `rowsPerPageOptions` | `number[]` | `[10, 25, 50]` | Opciones del paginador |
-| `scrollHeight` | `string` | — | Alto con scroll interno (ej. `'60vh'`) |
+| `scrollHeight` | `string` | — | Solo compatibilidad: el alto lo limita `appMaxFilas` (16 filas / 62 % de la ventana) en todas las tablas; no usarlo en pantallas nuevas |
 | `emptyMessage` | `string` | `'No se encontraron registros.'` | Sin resultados |
 | `emptyHint` | `string` | `'Ajusta la búsqueda…'` | Segunda línea del estado vacío |
 | `searchFields` | `string[]` | `[]` | Campos donde busca; **vacío oculta el buscador** |
