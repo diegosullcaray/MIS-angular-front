@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TableModule } from 'primeng/table';
-import { MAX_FILAS_VISIBLES, MaxFilasDirective } from './max-filas.directive';
+import { FRACCION_MAX_ALTO_VENTANA, MAX_FILAS_VISIBLES, MaxFilasDirective } from './max-filas.directive';
 
 const ALTO_ENCABEZADO = 30;
 const ALTO_FILA = 25;
@@ -38,16 +38,16 @@ describe('MaxFilasDirective', () => {
     simularLayout(contenedor);
     const directiva = fixture.debugElement.children[0].injector.get(MaxFilasDirective);
     directiva.ajustar();
-    return { contenedor, el };
+    return { contenedor, el, directiva };
   }
 
-  it('con más de 18 filas limita el alto al pie de la fila 18 y saca scroll interno', () => {
+  it('con más de 12 filas limita el alto al pie de la fila 12 y saca scroll interno', () => {
     const { contenedor } = crear(40);
     expect(contenedor.style.maxHeight).toBe(`${ALTO_ENCABEZADO + MAX_FILAS_VISIBLES * ALTO_FILA}px`);
     expect(contenedor.style.overflowY).toBe('auto');
   });
 
-  it('con 18 filas o menos deja la tabla con su alto natural', () => {
+  it('con 12 filas o menos deja la tabla con su alto natural', () => {
     const { contenedor } = crear(MAX_FILAS_VISIBLES);
     expect(contenedor.style.maxHeight).toBe('');
   });
@@ -55,4 +55,13 @@ describe('MaxFilasDirective', () => {
   it('marca la tabla para fijar el encabezado al hacer scroll', () => {
     expect(crear(5).el.querySelector('p-table')?.classList).toContain('mis-max-filas');
   });
+
+  it('nunca pasa del tope de alto de la ventana, aunque haya menos de 12 filas', () => {
+    const { contenedor, directiva } = crear(5);
+    const tope = Math.round(window.innerHeight * FRACCION_MAX_ALTO_VENTANA);
+    Object.defineProperty(contenedor, 'scrollHeight', { configurable: true, value: tope + 200 });
+    directiva.ajustar();
+    expect(contenedor.style.maxHeight).toBe(`${tope}px`);
+  });
 });
+

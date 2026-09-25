@@ -47,10 +47,11 @@ con controles sueltos.
   `--mis-hover-bg` a propósito: ese es el de menús y listas, y en una tabla no se notaba. Para
   ajustar la intensidad se toca el token, no cada tabla.
 - La tabla va en su tarjeta: `<div class="mis-card p-3 overflow-x-auto">`.
-- **18 filas visibles como máximo.** Con más filas la tabla saca su propio scroll vertical y el
-  encabezado queda fijo; la página no se estira. Lo resuelven las cuatro tablas compartidas con la
-  directiva `appMaxFilas` (`shared/ui/tablas/max-filas.directive.ts`), que mide hasta el pie de la
-  fila 18. Un `p-table` propio lleva `appMaxFilas` y `[scrollable]="true"`; no se fija un
+- **12 filas visibles como máximo, y nunca más del 55 % del alto de la ventana.** Pasado eso la
+  tabla saca su propio scroll vertical y el encabezado queda fijo; el panel no scrollea. Lo
+  resuelven las cuatro tablas compartidas con la directiva `appMaxFilas`
+  (`shared/ui/tablas/max-filas.directive.ts`), que mide hasta el pie de la fila 12 y aplica el tope
+  `FRACCION_MAX_ALTO_VENTANA`. Un `p-table` propio lleva `appMaxFilas` y `[scrollable]="true"`; no se fija un
   `scrollHeight` en píxeles.
 - **El paginador es parte de la tabla**: va dentro de la misma tarjeta, pegado al pie de la tabla
   (como el `mat-paginator` del legado), nunca suelto debajo de ella.
