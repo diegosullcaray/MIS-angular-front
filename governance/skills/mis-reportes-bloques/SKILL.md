@@ -26,7 +26,9 @@ Esta skill no replica esas tablas.
    propios en `<app-grupo-filtros>` a todo el ancho, tablas con resaltado de fila, formato de
    números desde `format.mode`/`unit` del backend (nunca redondear en el reporte), notas como
    "Expresado en…" en `<app-chip-informativo>` y `[ajustarAncho]="true"` en tablas anchas.
-   `npm run audit:governance` falla si se rompen.
+   Si las filas son niveles de la jerarquía, drill down según el estándar: selector oculto,
+   `<app-ruta-jerarquica>` como migas (sin botón "Volver") y primera columna clicable solo si hay
+   a dónde bajar. `npm run audit:governance` falla si se rompen.
 6. Consultas fuera de la base: cancelación anterior + destrucción, limpieza de
    resultados obsoletos, error persistente y reintento.
 7. Pruebas focalizadas para datos, vacío, payload inválido/error y respuestas fuera

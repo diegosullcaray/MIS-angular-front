@@ -63,9 +63,14 @@ export class GestionPasivoComercialComponent {
     if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) this.onNivelSeleccionado(nodo);
   }
 
-  /** Nodo de la fila, salvo que sea el nivel que ya se está viendo (p. ej. la fila de totales). */
+  /**
+   * Nodo de la fila, salvo que sea el nivel que ya se está viendo (p. ej. la fila de totales). Si la
+   * fila no trae su `htipcod`/`cod_rel`, se busca por nombre entre las opciones que el selector ya
+   * cargó para el nivel siguiente.
+   */
   private nodoHijo(fila: Record<string, unknown>): HierarquiaNodo | null {
-    const nodo = nodoDeFila(fila);
+    const nodo =
+      nodoDeFila(fila) ?? this.selectorJerarquia()?.opcionPorDescripcion(String(fila['descripcion'] ?? '')) ?? null;
     const actual = this.nivelActual();
     if (!nodo || (actual && nodo.tip_cod === actual.tip_cod && nodo.cod_rel === actual.cod_rel)) return null;
     return nodo;

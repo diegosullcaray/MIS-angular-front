@@ -12,7 +12,7 @@
             [attr.colspan]="columna.cols || 1"
             [attr.rowspan]="columna.rows || 1"
             class="text-[12px] uppercase text-center border border-[var(--mis-text-on-primary)]/25"
-            [class]="claseEncabezado()"
+            [class]="claseEncabezado(columna)"
             [style.background-color]="fondoEncabezado(columna)"
             [style.width]="anchoEncabezado(columna)"
             [style.color]="colorEncabezado(columna)"

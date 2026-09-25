@@ -8,6 +8,7 @@ La libreria compartida debe permanecer agnostica del dominio. Los componentes re
 | Reportes | `app-tabla-reporte` | headers multi-fila y filas | hidden, colspan, semaforo, estilos backend |
 | Reportes | `app-tabla-dinamica` | columnas anidadas y filas | formato numerico, variaciones, semaforo, celdas clicables |
 | Formularios | `app-select-filtro`, `app-input-filtro`, `app-grupo-filtros` | opciones/valor/eventos; la baldosa agrupa los filtros propios | filtros dependientes del modulo; baldosa vacia se oculta |
+| Reportes | `app-tarjeta-meta`, `app-ruta-jerarquica` (módulo reportes) | tarjeta KPI contra meta con aro o variación; migas del drill down | aro animado por el contenedor; sin botón "Volver" |
 | Estados | `app-chip-informativo` | `texto`, `severidad`, `icono` | notas cortas sobre una tabla (unidad, indicador de pestaña) |
 | Jerarquia | `app-hier-selector` | `ParamsJerarquia`, nodo/ruta/error | cache, fecha de corte, fallback, reset |
 | Visualizacion | `app-grafico-base`, `app-grafico-mixto`, `app-grafico-pie` | opciones o modelos graficos | destruir instancia, tema, click de punto |

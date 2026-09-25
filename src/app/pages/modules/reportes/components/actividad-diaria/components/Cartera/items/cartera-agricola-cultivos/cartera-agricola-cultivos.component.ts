@@ -30,6 +30,7 @@ import {
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
 
 /** "Cartera Agrícola - Cultivos" (`repositorio/actividad-diaria/cartera/agro-mix`). */
 @Component({
@@ -50,6 +51,7 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
     EmptyStateComponent,
     WindowPanelComponent,
     GrupoFiltrosComponent,
+    RutaJerarquicaComponent,
   ],
   templateUrl: './cartera-agricola-cultivos.component.html',
   styleUrl: './cartera-agricola-cultivos.component.css',
@@ -166,9 +168,6 @@ export class CarteraAgricolaCultivosComponent {
     }
   }
 
-  protected volverAlNivelPadre(): void {
-    this.volverANivel(this.rutaJerarquica().length - 2);
-  }
 
   /** El legado baja al detalle con el `htipcod`/`cod_rel` de la propia fila, no con el nodo elegido. */
   protected onFilaSeleccionada(fila: Record<string, unknown>): void {

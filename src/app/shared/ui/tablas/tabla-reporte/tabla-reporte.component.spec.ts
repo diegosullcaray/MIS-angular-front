@@ -495,19 +495,26 @@ describe('TablaReporteComponent', () => {
       return fixture;
     }
 
-    it('por defecto mantiene el `nowrap`: en los reportes anchos el scroll es lo correcto', () => {
-      const componente = crearCon(false).componentInstance;
+    const [ETIQUETA, MONTO] = ENCABEZADOS[0].columns;
 
-      expect(componente['claseEncabezado']()).toContain('whitespace-nowrap');
+    it('por defecto mantiene el `nowrap`: en los reportes anchos el scroll es lo correcto', () => {
+      const componente = crearCon(false, ENCABEZADOS).componentInstance;
+
+      expect(componente['claseEncabezado'](MONTO)).toContain('whitespace-nowrap');
       expect(componente['claseCelda']()).toContain('whitespace-nowrap');
     });
 
-    it('activado deja que el texto salte de línea', () => {
-      const componente = crearCon(true).componentInstance;
+    it('activado hace saltar de línea los encabezados, nunca las filas', () => {
+      const componente = crearCon(true, ENCABEZADOS).componentInstance;
 
-      expect(componente['claseEncabezado']()).toContain('whitespace-normal');
-      expect(componente['claseCelda']()).toContain('whitespace-normal');
-      expect(componente['claseCelda']()).not.toContain('whitespace-nowrap');
+      expect(componente['claseEncabezado'](MONTO)).toContain('whitespace-normal');
+      // Ni números (`-1,083,623`, `-18 pbs`) ni texto: una fila en dos renglones no se lee.
+      expect(componente['claseCelda']()).toContain('whitespace-nowrap');
+    });
+
+    it('activado no parte el encabezado de la primera columna (la descripción de la fila)', () => {
+      const componente = crearCon(true, ENCABEZADOS).componentInstance;
+      expect(componente['claseEncabezado'](ETIQUETA)).toContain('whitespace-nowrap');
     });
 
     /** El ancho fijo del backend es justamente lo que fuerza el scroll. */

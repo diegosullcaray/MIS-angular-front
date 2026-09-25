@@ -10,6 +10,11 @@ import { fechaCorteJerarquia } from './fecha-corte.util';
 import { JerarquiaCacheService } from './jerarquia-cache.service';
 import type { HierarquiaNodo, JerarquiaResponseBody, NivelJerarquiaDropdown, ParamsJerarquia } from './jerarquia.model';
 
+/** Nombre de un nivel comparable: sin tildes, en mayúsculas y con los espacios colapsados. */
+function normalizarDescripcion(texto: string): string {
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ').toUpperCase();
+}
+
 /** Selector de jerarquía organizativa en cascada horizontal. */
 @Component({
   selector: 'app-hier-selector',
@@ -88,6 +93,23 @@ export class HierSelectorComponent implements OnInit {
     this.nodosNivel.set([]);
     this.valoresSeleccionados.set([]);
     this.cargarRaiz();
+  }
+
+  /**
+   * Opción ya cargada cuyo nombre coincide con `texto` (sin distinguir mayúsculas, tildes ni
+   * espacios de más), buscando del nivel más profundo al más alto. Sirve para el drill down de una
+   * tabla cuyas filas traen el nombre del nivel pero no su `tip_cod`/`cod_rel`. Lee el estado como
+   * signal, así un `computed` del contenedor se actualiza cuando llega el nivel siguiente.
+   */
+  public opcionPorDescripcion(texto: string): HierarquiaNodo | null {
+    const buscado = normalizarDescripcion(texto);
+    if (!buscado) return null;
+    const niveles = this.nodosNivel();
+    for (let i = niveles.length - 1; i >= 0; i--) {
+      const opcion = niveles[i].data.find((o) => normalizarDescripcion(String(o.desc_rel ?? o.des_rel ?? '')) === buscado);
+      if (opcion) return opcion;
+    }
+    return null;
   }
 
   /**

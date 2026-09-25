@@ -1,7 +1,5 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { KnobModule } from 'primeng/knob';
+import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
@@ -20,21 +18,21 @@ import {
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { ActividadMensualRepoService } from '../../../../services/actividad-mensual-repo.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { TarjetaMetaComponent } from '../../../../../../ui/tarjeta-meta/tarjeta-meta.component';
 
 /** "CMG Cartera" (`repositorio/actividad-mensual/cartera/cmg-cartera-m`). */
 @Component({
   selector: 'app-mensual-cmg-cartera',
   standalone: true,
   imports: [
-    DecimalPipe,
-    FormsModule,
-    KnobModule,
+    TabsModule,
     HierSelectorComponent,
     TablaDinamicaComponent,
     SelectFiltroComponent,
     EmptyStateComponent,
     WindowPanelComponent,
     GrupoFiltrosComponent,
+    TarjetaMetaComponent,
   ],
   templateUrl: './cmg-cartera.component.html',
   styleUrl: './cmg-cartera.component.css',
@@ -74,8 +72,9 @@ export class CmgCarteraComponent {
     });
   }
 
-  protected isNumeroFinito(valor: number | string): boolean {
-    return valor !== '' && Number.isFinite(Number(valor));
+  /** Pestaña de fase elegida (Total / Programas del Gobierno / Sin Programas de Gobierno). */
+  protected cambiarFase(valor: string | number | undefined): void {
+    if (valor !== undefined) this.fase.set(Number(valor));
   }
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
@@ -84,13 +83,6 @@ export class CmgCarteraComponent {
 
   protected valorAnillo(tarjeta: TarjetaCmgCartera): number {
     return this.progresoAnillos()[tarjeta.etiqueta] ?? 0;
-  }
-
-  protected colorAnillo(valor: number): string {
-    if (valor <= 0) return 'transparent';
-    if (valor < 95) return 'var(--mis-danger)';
-    if (valor <= 100) return 'var(--mis-warning)';
-    return 'var(--mis-success)';
   }
 
   private cargar(nodo: HierarquiaNodo, fase: number, periodo: string): void {

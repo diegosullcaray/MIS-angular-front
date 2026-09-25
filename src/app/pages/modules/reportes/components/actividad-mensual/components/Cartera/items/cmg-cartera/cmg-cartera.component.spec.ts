@@ -8,6 +8,13 @@ import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 1, cod_rel: '100', desc_rel: 'Unidad 100', lvl: 1 };
 
+// jsdom no implementa ResizeObserver — lo usa `p-tabs` (las pestañas de fase) internamente.
+class ResizeObserverFalso {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+}
+
 describe('CmgCarteraComponent', () => {
   let servicioSpy: {
     periodos: ReturnType<typeof vi.fn>;
@@ -15,6 +22,7 @@ describe('CmgCarteraComponent', () => {
   };
 
   beforeEach(() => {
+    (globalThis as unknown as { ResizeObserver: typeof ResizeObserverFalso }).ResizeObserver = ResizeObserverFalso;
     servicioSpy = {
       periodos: vi.fn().mockReturnValue(of([{ id: '2026-08', desc: 'Agosto 2026' }])),
       cmgCartera: vi.fn().mockReturnValue(of(CMG_CARTERA_VACIO)),
@@ -44,5 +52,16 @@ describe('CmgCarteraComponent', () => {
       1,
       expect.any(String),
     );
+  });
+
+  it('la pestaña de fase vuelve a consultar con esa fase', () => {
+    const fixture = TestBed.createComponent(CmgCarteraComponent);
+    fixture.detectChanges();
+    fixture.componentInstance['onNivelSeleccionado'](NODO);
+    fixture.detectChanges();
+
+    fixture.componentInstance['cambiarFase'](2);
+    fixture.detectChanges();
+    expect(servicioSpy.cmgCartera).toHaveBeenLastCalledWith(expect.anything(), 2, expect.anything());
   });
 });

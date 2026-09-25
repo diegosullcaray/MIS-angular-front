@@ -68,24 +68,87 @@ con controles sueltos.
 ### Tablas anchas
 
 Una tabla de muchas columnas no debe sacar scroll horizontal en escritorio: se usa
-`[ajustarAncho]="true"` en `app-tabla-reporte`, que deja hacer salto de línea a los encabezados e
-ignora los anchos fijos del backend. El contenedor conserva `overflow-x-auto` solo como respaldo
-para pantallas angostas. Ejemplo: *Captaciones por Canal* (18 columnas).
+`[ajustarAncho]="true"` en `app-tabla-reporte`, que ignora los anchos fijos del backend y angosta
+las columnas **haciendo saltar de línea los encabezados, no los datos**:
+
+- **Encabezados**: saltan de línea, salvo el de la primera columna (*Descripción*).
+- **Filas**: ninguna celda de datos salta de línea, sea número, porcentaje o texto. `-1,083,623`
+  o `-18 pbs` en dos renglones no se leen, y el backend no siempre marca como `number` una columna
+  numérica. Cada columna queda al menos tan ancha como su dato más largo.
+
+El contenedor conserva `overflow-x-auto` solo como respaldo para pantallas angostas. Ejemplos:
+*Captaciones por Canal* (18 columnas) y *Panel Operaciones*.
 
 ### Drill down (bajar de nivel desde la tabla)
 
-Si las filas son niveles de la jerarquía, la descripción es un enlace que baja a ese nivel:
+Cuando las filas de la tabla son niveles de la jerarquía (territorios, agencias…), la
+descripción de cada fila es un enlace que baja a ese nivel, como en el legado.
 
-- El nodo sale de la fila con `nodoDeFila(fila)` (`reportes/utils/nodo-fila.util.ts`), que acepta
-  las dos formas del motor: `htipcod` + `cod_rel` o `htipcod` + `hcodrel`.
-- La columna se vuelve clicable (`[columnasClicables]` de `app-tabla-dinamica`) **solo si alguna
-  fila trae su nodo**. Si el backend no lo manda, no se ofrece un enlace que no hace nada.
-- La fila del nivel actual (la de totales) no baja.
-- Se baja **por el selector** (`HierSelectorComponent.seleccionarNodo`), así los desplegables quedan
-  en el nivel nuevo y "Limpiar" sirve para volver. Si el nodo no está entre sus opciones, se consulta
-  igual.
+**Dos modos**, según lo que pida el reporte:
 
-Ejemplo: *Gestión Pasivo Comercial* (`gestion-pasivo-comercial.component.ts`).
+| Modo | Filtro de jerarquía | Cómo se sube | Ejemplos |
+|---|---|---|---|
+| **Navegación por la tabla** (preferido) | Oculto | Migas `<app-ruta-jerarquica>` | *Cartera Agrícola*, *Vinculación Cartera* |
+| Drill down como atajo | Visible | Los desplegables o "Limpiar" | *Gestión Pasivo Comercial* |
+
+#### Cómo se integra (modo navegación por la tabla)
+
+1. **Selector oculto en el cuerpo**, no en `ventana-filtros`: sin filtros visibles la ventana no
+   pinta ese slot y el selector no existiría. Solo resuelve el nodo inicial autorizado, carga las
+   opciones del nivel siguiente y emite la ruta.
+
+   ```html
+   <app-window-panel titulo="…" [permitirActualizar]="false">
+     <app-hier-selector
+       class="hidden"
+       [paramsHier]="paramsHier"
+       (nodoSeleccionado)="onNivelSeleccionado($event)"
+       (rutaSeleccionada)="onRutaSeleccionada($event)"
+       (error)="onErrorJerarquia()"
+     />
+   ```
+
+2. **Migas sobre la tabla** con el componente compartido — nunca armadas a mano:
+
+   ```html
+   <app-ruta-jerarquica [ruta]="rutaJerarquica()" etiqueta="Ruta de …" (irANivel)="volverANivel($event)" />
+   ```
+
+   Se ven en todos los tamaños (saltan de línea si la ruta es larga). **No hay botón "Volver"**:
+   las migas ya son la forma de subir.
+
+3. **La tabla con la primera columna clicable**:
+
+   ```html
+   <app-tabla-dinamica … [columnasClicables]="columnasDrillDown()" (celdaSeleccionada)="onCeldaSeleccionada($event)" />
+   ```
+
+4. **En el componente** (ver `vinculacion-cartera.component.ts`):
+   - `selectorJerarquia = viewChild(HierSelectorComponent)` y `rutaJerarquica = signal<HierarquiaNodo[]>([])`.
+   - La columna clicable es la **primera hoja** de las columnas del payload (la etiqueta de la fila).
+   - `columnasDrillDown` es un `computed` que devuelve esa columna **solo si alguna fila tiene un
+     nodo hijo**: si no, no se ofrece un enlace que no hace nada.
+   - `nodoHijo(fila)`: primero `nodoDeFila(fila, claveEtiqueta)` (`reportes/utils/nodo-fila.util.ts`,
+     acepta `htipcod` + `cod_rel` o `htipcod` + `hcodrel`); si la fila no trae esas claves, **por
+     nombre** con `selectorJerarquia()?.opcionPorDescripcion(texto)`, que busca entre las opciones
+     ya cargadas sin distinguir mayúsculas, tildes ni espacios. Descarta el nivel actual (la fila de
+     totales).
+   - Al hacer clic: `seleccionarNodo(nodo)` del selector, que emite el nodo y la ruta nueva. Si el
+     nodo no está entre sus opciones, se agrega a la ruta y se consulta igual.
+   - `volverANivel(i)`: `seleccionarNodo(ruta[i])`, o si no está, recortar la ruta y consultar.
+
+5. **Pruebas**: clicable solo con nodo hijo, baja al hacer clic, ignora la fila de totales y las
+   otras columnas, baja por nombre cuando la fila no trae claves, y una miga vuelve y recorta la
+   ruta (ver `vinculacion-cartera.component.spec.ts`).
+
+#### Reglas
+
+- Nada de enlaces muertos: la columna solo es clicable si hay a dónde bajar.
+- La fila de totales (el nivel actual) no baja.
+- Se baja y se sube **siempre por el selector** (`seleccionarNodo`), para que la jerarquía cargada
+  y la ruta queden en sincronía.
+- En el modo con filtro visible no hacen falta migas: los desplegables muestran el nivel y
+  "Limpiar" vuelve a la raíz.
 
 ## 3. Semáforo de indicadores
 
@@ -114,6 +177,23 @@ Toda nota corta que acompaña a una tabla va como **chip** (`<app-chip-informati
 Lo que **no** es chip: el título de una tabla ("Cero Cuota", "Ahorro Programado") y las notas al
 pie o leyendas (`nota` de los bloques, `content.lower` del legado), que van debajo de la tabla.
 
+## 5. Tarjetas KPI contra meta
+
+Los KPIs de encabezado que se comparan contra una meta o un período anterior (p. ej. *CMG
+Cartera*, diaria y mensual) usan `<app-tarjeta-meta>` (`reportes/ui/tarjeta-meta`), con la
+disposición del legado:
+
+- **Izquierda**: el valor grande; debajo, la referencia en color primario (meta, TAPP mínima, mes
+  anterior); al pie, el nombre del indicador.
+- **Derecha**: el aro de cumplimiento (rojo bajo 95 %, ámbar hasta 100 %, verde al superar la
+  meta) o, si no hay cumplimiento, la variación con su flecha (verde si sube, rojo si baja).
+- Los textos de la referencia son los del legado tal cual (p. ej. en *Ope. Desembolsada* solo la
+  meta, sin "Meta").
+
+Un selector que cambia **qué se mira** en todo el reporte (la fase *Total / Programas del
+Gobierno / Sin Programas de Gobierno*) va como **pestañas bajo las tarjetas**, como en el legado,
+no como desplegable en la franja de filtros.
+
 ## Cómo se hace cumplir
 
 Estas reglas no dependen de acordarse: `npm run audit:governance` (y `npm run verify`, que corre en
@@ -124,6 +204,7 @@ CI) falla si un reporte las rompe.
 | `tabla-con-hover` | Todo `<p-table>` de reportes y de las tablas compartidas lleva `[rowHover]="true"` |
 | `filtros-en-baldosa` | Un reporte con filtros propios los pone en `<app-grupo-filtros>` (o usa un armazón que ya lo hace) |
 | `nota-de-unidad-en-chip` | Ningún "Expresado en…" como texto suelto: va en `<app-chip-informativo>` |
+| `drill-down-con-migas` | Un reporte con el selector de jerarquía oculto usa `<app-ruta-jerarquica>`, no migas armadas a mano |
 
 El formato de números (`mode` / `unit`) lo cubren las pruebas de `tabla-reporte.component.spec.ts`
 con valores reales de *Captaciones por Canal*. Las reglas viven en

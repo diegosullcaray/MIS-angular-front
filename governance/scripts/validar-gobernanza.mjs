@@ -401,6 +401,37 @@ const REGLAS = [
         ),
   },
   {
+    id: 'drill-down-con-migas',
+    nivel: 'error',
+    titulo: 'un reporte navegado por drill down usa `<app-ruta-jerarquica>`',
+    doc: 'docs/components/estandar-reportes.md',
+    porque:
+      'con el selector de jerarquía oculto, las migas son la única forma de subir de nivel; armadas a mano cada reporte las dibuja distinto (y volvían a aparecer botones "Volver").',
+    evaluar: (archivos) =>
+      archivos
+        .filter((a) => a.esPlantilla && a.modulo === 'reportes')
+        .flatMap((a) => {
+          const oculto = coincidencias(a.contenido, /<app-hier-selector\b[^>]*\bclass="[^"]*\bhidden\b[^"]*"[^>]*>/g);
+          if (oculto.length === 0) return [];
+          const hallazgos = [];
+          if (!a.contenido.includes('<app-ruta-jerarquica')) {
+            hallazgos.push({
+              ruta: a.ruta,
+              linea: oculto[0].linea,
+              detalle: 'selector de jerarquía oculto sin `<app-ruta-jerarquica>` — no hay forma de subir de nivel',
+            });
+          }
+          for (const c of coincidencias(a.contenido, /@for\s*\(\s*\w+\s+of\s+rutaJerarquica\(\)/g)) {
+            hallazgos.push({
+              ruta: a.ruta,
+              linea: c.linea,
+              detalle: 'migas armadas a mano — usar `<app-ruta-jerarquica>`',
+            });
+          }
+          return hallazgos;
+        }),
+  },
+  {
     id: 'tablas-sin-columnas-ocultas',
     nivel: 'error',
     titulo: 'en móvil una tabla muestra las mismas columnas que en escritorio',

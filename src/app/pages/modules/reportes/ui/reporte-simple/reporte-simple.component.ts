@@ -77,7 +77,7 @@ export interface PestanaReporte {
                       @if (bloque.titulo) {
                         <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
                       }
-                      <div class="mis-card p-3" [class.overflow-x-auto]="!ajustarAncho()">
+                      <div class="mis-card p-3 overflow-x-auto">
                         <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
                       </div>
                       @if (bloque.nota) {
@@ -97,7 +97,7 @@ export interface PestanaReporte {
               @if (bloque.titulo) {
                 <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
               }
-              <div class="mis-card p-3" [class.overflow-x-auto]="!ajustarAncho()">
+              <div class="mis-card p-3 overflow-x-auto">
                 <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
               </div>
               @if (bloque.nota) {
@@ -134,8 +134,9 @@ export class ReporteSimpleComponent {
   /** El contenedor conserva el fallo; las tablas solo gestionan carga y vacío. */
   readonly error = input<string | null>(null);
   /**
-   * Deja que las tablas hagan salto de línea para entrar en el ancho de la
-   * pantalla, en vez de sacar scroll horizontal. Ver `<app-tabla-reporte>`.
+   * Angosta las columnas haciendo saltar de línea los encabezados (nunca las filas) para que la
+   * tabla entre en el ancho de la pantalla. El scroll horizontal queda solo como respaldo en
+   * pantallas angostas. Ver `<app-tabla-reporte>`.
    */
   readonly ajustarAncho = input(false);
 

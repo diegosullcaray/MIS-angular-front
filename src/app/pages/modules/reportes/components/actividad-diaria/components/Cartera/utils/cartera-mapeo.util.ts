@@ -57,7 +57,8 @@ export function tarjetasCmgCartera(
     {
       etiqueta: 'Ope. Desembolsada (Nro)',
       valor: num(kpis['ope_acum_']),
-      comparativo: `Meta ${num(kpis['meta_ope_acum_']).toLocaleString('es-PE')}`,
+      // El legado muestra aquí solo la meta, sin rótulo (a diferencia del monto desembolsado).
+      comparativo: num(kpis['meta_ope_acum_']).toLocaleString('es-PE'),
       senal: 0,
       cumplimiento: kpis['cumpl_ope_acum'] == null ? undefined : num(kpis['cumpl_ope_acum']),
     },
@@ -71,7 +72,7 @@ export function tarjetasCmgCartera(
     {
       etiqueta: 'Saldo Medio Vigente (miles PEN)',
       valor: saldoMedio,
-      comparativo: `Mes anterior ${saldoMedioAnterior.toLocaleString('es-PE', { maximumFractionDigits: 0 })}`,
+      comparativo: `Mes Anterior ${saldoMedioAnterior.toLocaleString('es-PE', { maximumFractionDigits: 0 })}`,
       senal: Math.sign(deltaSaldo),
       delta: Math.round(deltaSaldo).toLocaleString('es-PE'),
     },

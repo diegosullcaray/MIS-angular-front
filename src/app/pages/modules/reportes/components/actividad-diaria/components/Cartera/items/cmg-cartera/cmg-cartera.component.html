@@ -2,56 +2,27 @@
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel"
       (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
-    <app-grupo-filtros>
-      <app-select-filtro etiqueta="Fase" [opciones]="opcionesFase" [(valor)]="fase" ancho="w-60" />
-    </app-grupo-filtros>
   </div>
 
   @if (!nivelActual()) {
   <app-empty-state titulo="Elige un nivel"
     descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte." />
   } @else {
-  <!-- Tres por fila en vez de cuatro: la tarjeta necesita ancho para que el valor respire. -->
+  <!-- Tarjetas con la disposición del legado: valor, referencia y nombre a la izquierda; aro o variación a la derecha. -->
   <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
     @for (t of tarjetas(); track t.etiqueta) {
-    <div class="kpi-card p-4 sm:p-5 rounded-2xl flex flex-col justify-between gap-3">
-      <!-- La etiqueta va arriba: es lo que dice QUÉ se está mirando. -->
-      <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--mis-text-tertiary)] truncate">
-        {{ t.etiqueta }}
-      </span>
-
-      <span class="text-[22px] sm:text-[26px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums truncate">
-        @if (t.valor === '' || t.valor === null) {
-        —
-        } @else if (isNumeroFinito(t.valor)) {
-        {{ +t.valor | number: '1.0-0' }}
-        } @else {
-        {{ t.valor }}
-        }
-      </span>
-
-        <span class="flex items-center gap-1.5 text-[12px] min-w-0">
-          @if (t.senal !== 0 && t.delta && t.cumplimiento === undefined) {
-          <span
-            class="flex items-center gap-1 text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full shrink-0"
-            [class.trend-badge-positive]="t.senal > 0"
-            [class.trend-badge-negative]="t.senal < 0"
-          >
-            <i class="pi text-[10px]" [class.pi-arrow-up]="t.senal > 0" [class.pi-arrow-down]="t.senal < 0"></i>
-            {{ t.delta }}
-          </span>
-          }
-          <span class="text-[var(--mis-text-tertiary)] truncate">{{ t.comparativo }}</span>
-        </span>
-
-        @if (t.cumplimiento !== undefined) {
-        <p-knob [ngModel]="valorAnillo(t)" readonly [size]="54" [strokeWidth]="6" valueTemplate="{value}%"
-          [valueColor]="colorAnillo(valorAnillo(t))" rangeColor="var(--mis-border)"
-          textColor="var(--mis-text-primary)" />
-        }
-    </div>
+    <app-tarjeta-meta [tarjeta]="t" [progreso]="valorAnillo(t)" />
     }
   </section>
+
+  <!-- La fase va en pestañas bajo las tarjetas, como en el legado (antes era un desplegable en los filtros). -->
+  <p-tabs [value]="fase()" (valueChange)="cambiarFase($event)">
+    <p-tablist>
+      @for (opcion of opcionesFase; track opcion.id) {
+      <p-tab [value]="opcion.id" class="!py-2 !px-3">{{ opcion.desc }}</p-tab>
+      }
+    </p-tablist>
+  </p-tabs>
 
   <div class="mis-card p-3 overflow-x-auto">
     <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />

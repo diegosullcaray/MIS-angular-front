@@ -27,7 +27,7 @@
         @for (tab of tabs; track tab.id) {
           <p-tabpanel [value]="tab.id">
             <div class="mis-card p-3 overflow-x-auto">
-              <app-tabla-reporte [encabezados]="tab.tabla().headers" [filas]="tab.tabla().body" [cargando]="cargando()" />
+              <app-tabla-reporte [encabezados]="tab.tabla().headers" [filas]="tab.tabla().body" [cargando]="cargando()" [ajustarAncho]="true" />
             </div>
           </p-tabpanel>
         }

@@ -75,12 +75,24 @@ export class TablaReporteComponent {
   /** Ajustar ancho de columnas al contenido. */
   readonly ajustarAncho = input(false);
 
+  /**
+   * Las celdas de datos nunca hacen salto de línea, tampoco con `ajustarAncho`: ahí lo que salta de
+   * línea son los **encabezados** (ver `claseEncabezado`), así las columnas se angostan sin partir
+   * las filas. Un dato en dos renglones (`-1,083,623`, `-18 pbs`, un código) no se lee, y el
+   * backend no siempre marca como `number` las columnas numéricas.
+   */
   protected claseCelda(): string {
-    return this.ajustarAncho() ? 'whitespace-normal break-words text-center' : 'whitespace-nowrap';
+    return 'whitespace-nowrap';
   }
 
-  protected claseEncabezado(): string {
-    return this.ajustarAncho() ? 'whitespace-normal break-words' : 'whitespace-nowrap';
+  /** Con `ajustarAncho`, el encabezado salta de línea para que la columna no sea más ancha que su dato; el de la etiqueta de la fila no. */
+  protected claseEncabezado(columna: ColumnaReporte): string {
+    return this.ajustarAncho() && !this.esEtiqueta(columna) ? 'whitespace-normal break-words' : 'whitespace-nowrap';
+  }
+
+  /** Primera columna de datos: la etiqueta de la fila. */
+  private esEtiqueta(columna: ColumnaReporte): boolean {
+    return columna.columnDef === this.columnasDato()[0]?.columnDef;
   }
 
   /** Extrae las columnas de una fila de encabezado. */

@@ -1,10 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { KnobModule } from 'primeng/knob';
+import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
-import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -18,23 +15,13 @@ import {
   type TarjetaCmgCartera,
 } from '../../models/cmg-cartera.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
-import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { TarjetaMetaComponent } from '../../../../../../ui/tarjeta-meta/tarjeta-meta.component';
 
 /** "CMG Cartera" (`repositorio/actividad-diaria/cartera/cmg-cartera`). */
 @Component({
   selector: 'app-cartera-cmg-cartera',
   standalone: true,
-  imports: [
-    DecimalPipe,
-    FormsModule,
-    KnobModule,
-    HierSelectorComponent,
-    TablaDinamicaComponent,
-    SelectFiltroComponent,
-    EmptyStateComponent,
-    WindowPanelComponent,
-    GrupoFiltrosComponent,
-  ],
+  imports: [TabsModule, HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent, TarjetaMetaComponent],
   templateUrl: './cmg-cartera.component.html',
 })
 export class CmgCarteraComponent {
@@ -64,9 +51,9 @@ export class CmgCarteraComponent {
     });
   }
 
-  /** Distingue la tarjeta numérica de la de texto (TAPP llega ya formateada). */
-  protected isNumeroFinito(valor: number | string): boolean {
-    return valor !== '' && Number.isFinite(Number(valor));
+  /** Pestaña de fase elegida (Total / Programas del Gobierno / Sin Programas de Gobierno). */
+  protected cambiarFase(valor: string | number | undefined): void {
+    if (valor !== undefined) this.fase.set(Number(valor));
   }
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
@@ -76,14 +63,6 @@ export class CmgCarteraComponent {
   /** Valor animado del aro de cumplimiento de una tarjeta (0 mientras no ha animado). */
   protected valorAnillo(tarjeta: TarjetaCmgCartera): number {
     return this.progresoAnillos()[tarjeta.etiqueta] ?? 0;
-  }
-
-  /** Mismos cortes de color que el legado: rojo por debajo de meta, ámbar cerca, verde al superarla. */
-  protected colorAnillo(valor: number): string {
-    if (valor <= 0) return 'transparent';
-    if (valor < 95) return 'var(--mis-danger)';
-    if (valor <= 100) return 'var(--mis-warning)';
-    return 'var(--mis-success)';
   }
 
   private cargar(nodo: HierarquiaNodo, fase: number): void {

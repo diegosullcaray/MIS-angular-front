@@ -22,4 +22,8 @@ describe('nodoDeFila', () => {
     expect(nodoDeFila({ htipcod: 18, cod_rel: '' })).toBeNull();
     expect(nodoDeFila({ cod_rel: 'AG-1' })).toBeNull();
   });
+
+  it('toma el nombre de la columna de etiqueta indicada', () => {
+    expect(nodoDeFila({ htipcod: 18, cod_rel: 'AG-1', DESUNI: 'Agencia Norte' }, 'DESUNI')?.des_rel).toBe('Agencia Norte');
+  });
 });

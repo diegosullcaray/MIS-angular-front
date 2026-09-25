@@ -81,6 +81,19 @@ describe('HierSelectorComponent', () => {
     expect(emitido).toHaveBeenCalledWith(siguiente);
   });
 
+  it('opcionPorDescripcion() encuentra una opción cargada por su nombre, sin distinguir tildes ni mayúsculas', () => {
+    const agencia: HierarquiaNodo = { tip_cod: 18, cod_rel: 'AG-1', desc_rel: 'Agencia Pucallpa Centro', lvl: 2 };
+    const componente = crear().componentInstance;
+    componente['nodosNivel'].set([
+      { label: 'Empresa', level: 1, data: [RAIZ] },
+      { label: 'Agencia', level: 2, data: [agencia] },
+    ]);
+
+    expect(componente.opcionPorDescripcion('  AGENCIA  pucallpa céntro ')).toEqual(agencia);
+    expect(componente.opcionPorDescripcion('Otra agencia')).toBeNull();
+    expect(componente.opcionPorDescripcion('')).toBeNull();
+  });
+
   it('sin reintentarSinFecha, un nivel vacío no dispara una segunda llamada', () => {
     antAdmin.getLevelHierarchy.mockReturnValue(respuesta('level_hierarchy', []));
     crear();
