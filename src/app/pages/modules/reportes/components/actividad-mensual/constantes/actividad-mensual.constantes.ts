@@ -133,16 +133,16 @@ export const MENSAJES_CUENTA_RESULTADOS = {
 
 /**
  * Escala de la fila de distribución porcentual de Estructura de Desembolsos:
- * del menor valor (verde) al mayor (rojo). Con solo tres columnas se usan los
- * extremos y el centro.
+ * del menor valor (verde) al mayor (rojo). Es la `chronologicalColors` del
+ * legado, asignada por puesto: con tres columnas se usan los tres primeros
+ * tonos, igual que en `desembolsos.component.ts`. Los colores son tokens de
+ * `theme/tokens.css` (`--mis-escala-*`).
  */
-export const ESCALA_ESTRUCTURA_DESEMBOLSOS = [
-  { bg: '#22c55e', text: '#ffffff' },
-  { bg: '#84cc16', text: '#ffffff' },
-  { bg: '#eab308', text: '#000000' },
-  { bg: '#f97316', text: '#ffffff' },
-  { bg: '#ef4444', text: '#ffffff' },
-] as const;
+export const ESCALA_ESTRUCTURA_DESEMBOLSOS = [1, 2, 3, 4, 5].map((n) => ({
+  bg: `var(--mis-escala-${n})`,
+  borde: `var(--mis-escala-${n}-borde)`,
+  text: `var(--mis-escala-${n}-texto)`,
+}));
 
 /** La fila a colorear es la de distribución porcentual (`IDRango` 12 en el legado). */
 export const ID_RANGO_DISTRIBUCION = 12;

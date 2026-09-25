@@ -59,4 +59,50 @@ describe('DesembolsosPdmComponent', () => {
     }
     expect(fixture.componentInstance).toBeTruthy();
   });
+
+  describe('paginación en el servidor (legado `app-table-ajax`)', () => {
+    const tablaCon = (total: number) => ({
+      tabla1: { headers: [], body: [{ a: 1 }], additional: { Total: total } },
+    });
+
+    function crearConNivel() {
+      servicioSpy['desembolsosPdm'].mockReturnValue(of(tablaCon(95)));
+      const fixture = TestBed.createComponent(DesembolsosPdmComponent);
+      const inst = fixture.componentInstance as unknown as {
+        onNivelSeleccionado(n: HierarquiaNodo): void;
+        pagina: { (): number; set(v: number): void };
+        totalFilas(): number | null;
+      };
+      inst.onNivelSeleccionado(NODO);
+      TestBed.tick();
+      return { fixture, inst };
+    }
+
+    it('pide la primera página y toma el total de `additional.Total`', () => {
+      const { fixture, inst } = crearConNivel();
+      expect(servicioSpy['desembolsosPdm']).toHaveBeenLastCalledWith(NODO, 1);
+      expect(inst.totalFilas()).toBe(95);
+
+      fixture.detectChanges();
+      expect((fixture.nativeElement as HTMLElement).querySelector('p-paginator')).not.toBeNull();
+    });
+
+    it('un cambio de página vuelve a consultar con esa página', () => {
+      const { inst } = crearConNivel();
+      inst.pagina.set(3);
+      TestBed.tick();
+      expect(servicioSpy['desembolsosPdm']).toHaveBeenLastCalledWith(NODO, 3);
+    });
+
+    it('elegir otro nivel vuelve a la primera página', () => {
+      const { inst } = crearConNivel();
+      inst.pagina.set(2);
+      TestBed.tick();
+      const otro: HierarquiaNodo = { tip_cod: 10, cod_rel: 'T1' };
+      inst.onNivelSeleccionado(otro);
+      TestBed.tick();
+      expect(inst.pagina()).toBe(1);
+      expect(servicioSpy['desembolsosPdm']).toHaveBeenLastCalledWith(otro, 1);
+    });
+  });
 });

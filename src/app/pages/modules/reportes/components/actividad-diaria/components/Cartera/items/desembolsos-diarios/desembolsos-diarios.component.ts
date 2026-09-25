@@ -21,11 +21,14 @@ export class DesembolsosDiariosComponent extends ReporteBloquesBase {
 
   protected readonly titulos = [
     'Desembolsos diarios',
-    'Desembolsos habilitados para posible contratación electrónica',
+    'Desembolsos habilitados para posible contratación electrónica*',
     'Desembolsos por contratación electrónica',
     'Participación de contratación electrónica en desembolsos habilitados',
     'Participación de contratación electrónica en desembolsos totales',
   ];
+
+  /** `content.lower` de `DesemDiario_02` en `cra-map.ts` del legado. */
+  protected override readonly notas = [undefined, '<b>* Créditos individuales hasta S/. 20 mil</b>'];
 
   /** El host `cra-v1p2` deja el primer bloque en su propia pestaña y agrupa los otros cuatro. */
   protected readonly tabs = computed<PestanaReporte[]>(() => {

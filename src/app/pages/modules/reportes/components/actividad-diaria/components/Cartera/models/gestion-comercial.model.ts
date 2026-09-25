@@ -50,6 +50,9 @@ export const colorPosNegStyleFn = (val: unknown): Record<string, string> | undef
   return { color: '#22c55e', 'font-weight': 'bold' };
 };
 
+/** Columna que baja de nivel (`ddHier` del legado solo responde a `descripcion`). */
+export const CLAVE_DRILL_DOWN_GESTION = 'descripcion';
+
 /** Columnas para tabla de Gestión Producción. */
 export const COLUMNAS_GESTION_PRODUCCION: ColumnaDinamica[] = [
   { key: 'descripcion', label: 'Descripción' },

@@ -1,5 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { TableModule } from 'primeng/table';
+import { normalizarHex, textoSobre } from '../../../../theme/color.util';
 import type { ColumnaReporte, FilaEncabezadoReporte, FilaReporte } from '../models/tabla-reporte.model';
 
 function numeroColumnas(cols: ColumnaReporte['cols']): number {
@@ -76,6 +77,12 @@ export class TablaReporteComponent {
   readonly ajustarAncho = input(false);
 
   /**
+   * Todos los encabezados con el color del tema, ignorando el `style.background`/`color` del backend,
+   * como la tabla paginada del legado (`app-table-ajax`, que no aplica el `style` de la columna).
+   */
+  readonly encabezadoUniforme = input(false);
+
+  /**
    * Las celdas de datos nunca hacen salto de línea, tampoco con `ajustarAncho`: ahí lo que salta de
    * línea son los **encabezados** (ver `claseEncabezado`), así las columnas se angostan sin partir
    * las filas. Un dato en dos renglones (`-1,083,623`, `-18 pbs`, un código) no se lee, y el
@@ -119,11 +126,13 @@ export class TablaReporteComponent {
 
   /** Fondo del encabezado. */
   protected fondoEncabezado(columna: ColumnaReporte): string {
+    if (this.encabezadoUniforme()) return 'var(--mis-primary)';
     return columna.style?.background ?? 'var(--mis-primary)';
   }
 
   /** Color del texto del encabezado. */
   protected colorEncabezado(columna: ColumnaReporte): string {
+    if (this.encabezadoUniforme()) return 'var(--mis-text-on-primary)';
     const styleColor = columna.style ? (columna.style['color'] as string | undefined) : undefined;
     if (styleColor) return styleColor;
     return 'var(--mis-text-on-primary)';
@@ -142,9 +151,15 @@ export class TablaReporteComponent {
     return (fila[`background_${columna.columnDef}`] as string | undefined) ?? null;
   }
 
-  /** Color del texto de celda. */
+  /**
+   * Color del texto de celda: el `color_<columnDef>` del backend o, si la celda trae fondo propio
+   * (`background_<columnDef>`, p. ej. el verde de *Destino de Crédito*), el que contrasta con él.
+   */
   protected colorCelda(fila: FilaReporte, columna: ColumnaReporte): string | null {
-    return (fila[`color_${columna.columnDef}`] as string | undefined) ?? null;
+    const propio = fila[`color_${columna.columnDef}`] as string | undefined;
+    if (propio) return propio;
+    const fondo = this.fondoCelda(fila, columna);
+    return fondo && normalizarHex(fondo) ? textoSobre(fondo) : null;
   }
 
   /** Clase de texto para celda. */

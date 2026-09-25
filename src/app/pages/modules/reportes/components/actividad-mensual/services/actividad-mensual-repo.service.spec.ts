@@ -128,14 +128,17 @@ describe('ActividadMensualRepoService', () => {
     // Fila regular no se colorea
     expect(colOpe1?.cellStyleFn?.(10, tablaMock.filas[0])).toBeUndefined();
 
-    // Fila 12: 1_Ope (25%) menor -> verde (#22c55e), 3_Ope (30%) medio -> amarillo (#eab308), 2_Ope (45%) mayor -> rojo (#ef4444)
+    // Fila 12, como el legado (`chronologicalColors` por puesto): 1_Ope (25%) menor -> verde,
+    // 3_Ope (30%) medio -> verde limón, 2_Ope (45%) mayor -> amarillo.
     const estilo1 = colOpe1?.cellStyleFn?.('25%', tablaMock.filas[1]);
     const estilo2 = colOpe2?.cellStyleFn?.('45%', tablaMock.filas[1]);
     const estilo3 = colOpe3?.cellStyleFn?.('30%', tablaMock.filas[1]);
 
-    expect(estilo1?.['background-color']).toBe('#22c55e');
-    expect(estilo2?.['background-color']).toBe('#ef4444');
-    expect(estilo3?.['background-color']).toBe('#eab308');
+    expect(estilo1?.['background-color']).toBe('var(--mis-escala-1)');
+    expect(estilo3?.['background-color']).toBe('var(--mis-escala-2)');
+    expect(estilo2?.['background-color']).toBe('var(--mis-escala-3)');
+    expect(estilo2?.['color']).toBe('var(--mis-escala-3-texto)');
+    expect(estilo2?.['border']).toBe('1px solid var(--mis-escala-3-borde)');
   });
 
   describe('cuentaResultados', () => {

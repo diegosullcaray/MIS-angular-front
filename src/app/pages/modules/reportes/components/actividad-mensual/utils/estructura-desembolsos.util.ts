@@ -63,20 +63,16 @@ function estiloCelda(
   const puesto = ordenadas.findIndex((x) => x.k.toLowerCase() === clave.toLowerCase());
   if (puesto === -1) return undefined;
 
-  // Con tres columnas se saltean los intermedios para que la escala llegue igual
-  // de verde a rojo en vez de quedarse en el tramo bajo.
-  const escala =
-    grupo.length === 3
-      ? [ESCALA_ESTRUCTURA_DESEMBOLSOS[0], ESCALA_ESTRUCTURA_DESEMBOLSOS[2], ESCALA_ESTRUCTURA_DESEMBOLSOS[4]]
-      : ESCALA_ESTRUCTURA_DESEMBOLSOS;
-  const color = escala[puesto] ?? escala[0];
+  // Como el legado: cada puesto toma su tono en orden, sin saltear intermedios.
+  const color = ESCALA_ESTRUCTURA_DESEMBOLSOS[puesto] ?? ESCALA_ESTRUCTURA_DESEMBOLSOS[0];
 
   return {
     'background-color': color.bg,
     color: color.text,
+    border: `1px solid ${color.borde}`,
     'font-weight': 'bold',
     'text-align': 'center',
-    'border-radius': '4px',
+    'border-radius': '3px',
   };
 }
 

@@ -33,6 +33,12 @@ export class AutonomiaTasasComponent extends ReporteBloquesBase {
     'Número de operaciones desembolsadas por producto y nivel de tasas (días hábiles)',
   ];
 
+  /** `content.lower` del legado (`cra-map.ts`, `GST_ACTIVAS`): la misma leyenda bajo cada una de las diez tablas. */
+  protected override readonly notas = this.titulos.map(
+    () =>
+      '<b>Tasa Mínima: Tasa Base en función de Mercado +/- Segmentación Comercial (en pbs) + Factores de Riesgo (en pbs).</b>',
+  );
+
   /** El host `cra-aut-tasa` reparte los bloques por índice, no por orden. */
   protected readonly tabs = computed<PestanaReporte[]>(() => {
     const b = this.bloques();

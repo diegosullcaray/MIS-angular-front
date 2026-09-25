@@ -1,10 +1,12 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, model, output } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
+import { PaginatorModule, type PaginatorState } from 'primeng/paginator';
 import { HierSelectorComponent } from '../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
+import { ChipInformativoComponent } from '../../../../../shared/ui/chip-informativo/chip-informativo.component';
 import { GrupoFiltrosComponent } from '../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 import type { HierarquiaNodo, ParamsJerarquia } from '../../models/jerarquia.model';
 import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
@@ -15,6 +17,8 @@ export interface BloqueReporte {
   tabla: TablaReporteResultado;
   /** Nota al pie de este bloque — `content.lower` del legado, por tabla. */
   nota?: string;
+  /** Unidad de la tabla ("Expresado en PEN y %") — `content.higher` del legado; va como chip encima. */
+  chip?: string;
 }
 
 /** Una pestaña, para los reportes cuyo host del legado reparte los bloques en `mat-tab`s. */
@@ -27,12 +31,12 @@ export interface PestanaReporte {
 /**
  * Armazón de reporte: ventana + selector de jerarquía + bloques de tabla.
  * Un bloque: `[tabla]`; varios: `[bloques]`; en pestañas: `[pestanas]`.
- * Filtros propios: slot `[filtros]`. Leyenda al pie: slot `[nota]`.
+ * Filtros propios: slot `[filtros]`. Leyenda al pie: slot `[nota]`. Unidad: `chip` (o el del bloque).
  */
 @Component({
   selector: 'app-reporte-simple',
   standalone: true,
-  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, InlineErrorComponent, WindowPanelComponent, GrupoFiltrosComponent, TabsModule],
+  imports: [HierSelectorComponent, TablaReporteComponent, EmptyStateComponent, InlineErrorComponent, WindowPanelComponent, GrupoFiltrosComponent, ChipInformativoComponent, TabsModule, PaginatorModule],
   template: `
     <app-window-panel
       [titulo]="titulo()"
@@ -77,8 +81,11 @@ export interface PestanaReporte {
                       @if (bloque.titulo) {
                         <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
                       }
+                      @if (bloque.chip) {
+                        <app-chip-informativo [texto]="bloque.chip" />
+                      }
                       <div class="mis-card p-3 overflow-x-auto">
-                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
+                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
                       </div>
                       @if (bloque.nota) {
                         <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
@@ -97,13 +104,26 @@ export interface PestanaReporte {
               @if (bloque.titulo) {
                 <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
               }
+              @if (bloque.chip) {
+                <app-chip-informativo [texto]="bloque.chip" />
+              }
               <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
+                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
               </div>
               @if (bloque.nota) {
                 <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
               }
             </section>
+          }
+          @if (totalFilas() !== null) {
+            <p-paginator
+              [first]="(pagina() - 1) * filasPorPagina()"
+              [rows]="filasPorPagina()"
+              [totalRecords]="totalFilas() ?? 0"
+              [showFirstLastIcon]="true"
+              (onPageChange)="onPagina($event)"
+              styleClass="text-[12px]"
+            />
           }
         </div>
       }
@@ -126,6 +146,8 @@ export class ReporteSimpleComponent {
   readonly nivel = input.required<HierarquiaNodo | null>();
   /** Reporte de un solo bloque. Para varios, usar `bloques`. */
   readonly tabla = input<TablaReporteResultado>();
+  /** Unidad del reporte de un solo bloque, como chip sobre la tabla (p. ej. "Expresado en PEN y %"). */
+  readonly chip = input<string>();
   /** Bloques del reporte, en el orden en que los apila el legado. */
   readonly bloques = input<BloqueReporte[]>();
   /** Reparte los bloques en pestañas, como hacen los hosts `cra-v1p2` / `cra-aut-tasa`. */
@@ -139,12 +161,23 @@ export class ReporteSimpleComponent {
    * pantallas angostas. Ver `<app-tabla-reporte>`.
    */
   readonly ajustarAncho = input(false);
+  /** Encabezados con el color único del tema (ver `<app-tabla-reporte>`). */
+  readonly encabezadoUniforme = input(false);
+
+  /**
+   * Paginación en el servidor, como `app-table-ajax` del legado: con un total (`additional.Total`)
+   * se muestra el paginador bajo la tabla y cada cambio de página actualiza `pagina` (desde 1),
+   * que el reporte manda como `pagen`. `null` = sin paginador.
+   */
+  readonly totalFilas = input<number | null>(null);
+  readonly filasPorPagina = input(30);
+  readonly pagina = model(1);
 
   protected readonly lista = computed<BloqueReporte[]>(() => {
     const varios = this.bloques();
     if (varios) return varios;
     const una = this.tabla();
-    return una ? [{ tabla: una }] : [];
+    return una ? [{ tabla: una, chip: this.chip() }] : [];
   });
 
   readonly tituloVacio = input('Elige un nivel');
@@ -152,6 +185,10 @@ export class ReporteSimpleComponent {
 
   readonly nivelSeleccionado = output<HierarquiaNodo>();
   readonly errorJerarquia = output<void>();
+
+  protected onPagina(evento: PaginatorState): void {
+    this.pagina.set((evento.page ?? 0) + 1);
+  }
 
   /** Reemite el nodo actual como copia nueva para forzar el efecto en el componente contenedor. */
   protected refrescar(): void {

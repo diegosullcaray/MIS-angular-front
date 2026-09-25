@@ -1,37 +1,39 @@
 <app-window-panel titulo="Gestión Comercial" subtitulo="Cartera" [permitirActualizar]="false" [conFiltros]="true">
-  <div ventana-filtros class="flex flex-wrap items-end gap-3">
-    <app-hier-selector
-      [paramsHier]="paramsHier"
-      placeholder="Elegir nivel"
-      (nodoSeleccionado)="onNivelSeleccionado($event)"
-      (error)="onErrorJerarquia()"
-    />
-    <!--
-      El "filtro de fecha" del legado no es un calendario libre: es la lista de
-      cortes que devuelve `RS_FECH02`. Solo se pinta cuando el backend la manda;
-      si viene vacía el reporte se queda con la fecha de corte del usuario.
-    -->
-    <app-grupo-filtros>
-      @if (periodos().length) {
-        <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
-      } @else {
-        <div class="flex flex-col gap-1">
-          <label class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Fecha</label>
-          <p-datepicker
-            [(ngModel)]="fechaCalendario"
-            (ngModelChange)="onFechaCalendarioChange($event)"
-            dateFormat="yy-mm-dd"
-            [showIcon]="true"
-            placeholder="Seleccionar fecha"
-            class="p-inputtext-sm"
-          />
-        </div>
-      }
-    </app-grupo-filtros>
-  </div>
+  <!-- Como el legado, la jerarquía no se elige en un desplegable: el selector oculto solo resuelve
+       el nodo autorizado y lleva la ruta; se navega con el drill down de la tabla y las migas. -->
+  <app-hier-selector
+    class="hidden"
+    [paramsHier]="paramsHier"
+    (nodoSeleccionado)="onNivelSeleccionado($event)"
+    (rutaSeleccionada)="onRutaSeleccionada($event)"
+    (error)="onErrorJerarquia()"
+  />
+
+  <!--
+    El "filtro de fecha" del legado no es un calendario libre: es la lista de
+    cortes que devuelve `RS_FECH02`. Solo se pinta cuando el backend la manda;
+    si viene vacía el reporte se queda con la fecha de corte del usuario.
+  -->
+  <app-grupo-filtros ventana-filtros>
+    @if (periodos().length) {
+      <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
+    } @else {
+      <div class="flex flex-col gap-1">
+        <label class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Fecha</label>
+        <p-datepicker
+          [(ngModel)]="fechaCalendario"
+          (ngModelChange)="onFechaCalendarioChange($event)"
+          dateFormat="yy-mm-dd"
+          [showIcon]="true"
+          placeholder="Seleccionar fecha"
+          class="p-inputtext-sm"
+        />
+      </div>
+    }
+  </app-grupo-filtros>
 
   @if (!nivelActual()) {
-    <app-empty-state titulo="Elige un nivel" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte." />
+    <app-empty-state titulo="Cargando el reporte" descripcion="Resolviendo tu nivel de la jerarquía." />
   } @else {
     <div class="flex flex-col gap-5">
       <!--
@@ -271,6 +273,8 @@
            "Saldo Cartera" primero, "Clientes" segundo. Las dos son el mismo `RS_GEST_COM_01` con
            distintas columnas — ninguna de las dos tablas "Var." va acá: en el legado no cuelgan de
            ninguna pestaña, van intercaladas más abajo, en "Análisis Gráfico". -->
+      <app-ruta-jerarquica [ruta]="rutaJerarquica()" etiqueta="Ruta de gestión comercial" (irANivel)="volverANivel($event)" />
+
       <p-tabs value="saldo">
         <p-tablist>
           <p-tab value="saldo" class="!py-2 !px-3">Saldo Cartera</p-tab>
@@ -280,13 +284,25 @@
         <p-tabpanels>
           <p-tabpanel value="saldo">
             <div class="mis-card p-3 overflow-x-auto">
-              <app-tabla-dinamica [columnas]="columnasProduccion" [filas]="filas()" [cargando]="cargando()" />
+              <app-tabla-dinamica
+                [columnas]="columnasProduccion"
+                [filas]="filas()"
+                [cargando]="cargando()"
+                [columnasClicables]="columnasDrillDown()"
+                (celdaSeleccionada)="onCeldaSeleccionada($event)"
+              />
             </div>
           </p-tabpanel>
 
           <p-tabpanel value="clientes">
             <div class="mis-card p-3 overflow-x-auto">
-              <app-tabla-dinamica [columnas]="columnasClientes" [filas]="filas()" [cargando]="cargando()" />
+              <app-tabla-dinamica
+                [columnas]="columnasClientes"
+                [filas]="filas()"
+                [cargando]="cargando()"
+                [columnasClicables]="columnasDrillDown()"
+                (celdaSeleccionada)="onCeldaSeleccionada($event)"
+              />
             </div>
           </p-tabpanel>
         </p-tabpanels>

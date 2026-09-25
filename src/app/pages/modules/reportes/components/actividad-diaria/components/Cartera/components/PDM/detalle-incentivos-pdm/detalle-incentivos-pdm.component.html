@@ -5,6 +5,9 @@
   [nivel]="nivelActual()"
   [tabla]="tabla()"
   [cargando]="cargando()" [error]="error()"
+  [encabezadoUniforme]="true"
+  [totalFilas]="totalFilas()"
+  [(pagina)]="pagina"
   (nivelSeleccionado)="onNivelSeleccionado($event)"
   (errorJerarquia)="onErrorJerarquia()"
 />

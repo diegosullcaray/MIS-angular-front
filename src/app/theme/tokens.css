@@ -173,6 +173,26 @@
   --mis-danger: #d32424;
   --mis-danger-light: #fdecec;
 
+  /* Escala de distribución del legado STG (`desembolsos.component.ts`,
+     `chronologicalColors`): del menor valor (1, verde) al mayor (5, rojo), con
+     su borde (`darkenColor`) y su texto. Igual en los dos temas, como en el
+     legado: la celda es un fondo sólido con su propio texto. */
+  --mis-escala-1: #22c55e;
+  --mis-escala-1-borde: #16a34a;
+  --mis-escala-1-texto: #ffffff;
+  --mis-escala-2: #84cc16;
+  --mis-escala-2-borde: #65a30d;
+  --mis-escala-2-texto: #ffffff;
+  --mis-escala-3: #eab308;
+  --mis-escala-3-borde: #ca8a04;
+  --mis-escala-3-texto: #000000;
+  --mis-escala-4: #f97316;
+  --mis-escala-4-borde: #ea580c;
+  --mis-escala-4-texto: #ffffff;
+  --mis-escala-5: #ef4444;
+  --mis-escala-5-borde: #dc2626;
+  --mis-escala-5-texto: #ffffff;
+
   /* Textos (color de cuerpo real del sistema: #304156, no el navy de marca) */
   --mis-text-primary: #304156;
   --mis-text-secondary: #5a6a85;
