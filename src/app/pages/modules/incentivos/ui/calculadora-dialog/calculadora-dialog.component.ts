@@ -53,7 +53,7 @@ export class CalculadoraDialogComponent {
 
   protected readonly comisionTexto = computed(() => (this.incentivos.calculadora().activo === 0 ? '(No Comisiona)' : '(Comisiona)'));
   protected readonly comisionClase = computed(() =>
-    this.incentivos.calculadora().activo === 0 ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-success)]'
+    this.incentivos.calculadora().activo === 0 ? 'text-[var(--mis-inc-negativo)]' : 'text-[var(--mis-inc-avance-meta)]'
   );
 
   constructor() {

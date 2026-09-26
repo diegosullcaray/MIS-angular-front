@@ -28,11 +28,13 @@ export class AvancesGridComponent {
     this.solicitarDetalle(item);
   }
 
-  /** Color del arco según el avance — mismos cortes que `pieStyle()` del legado: ámbar entre 65% y 100%, rojo por debajo de 65% y verde al llegar a la meta (el 0 también cae en verde, igual que en el legado, porque ahí todavía no hay avance que calificar). */
+  /** Color del arco según el avance — `pieStyle()` del legado, con sus mismos colores: ámbar
+   * `#efb45f` entre 65% y 100%, magenta `#E3005B` por debajo de 65% y verde `#3fe91e` al llegar
+   * a la meta (el 0 también cae en verde, igual que en el legado: ahí todavía no hay avance). */
   protected colorAvance(item: ItemAvance): string {
-    if (item.val >= 0.65 && item.val < 1) return 'var(--mis-warning)';
-    if (item.val > 0 && item.val < 0.65) return 'var(--mis-danger)';
-    return 'var(--mis-success)';
+    if (item.val >= 0.65 && item.val < 1) return 'var(--mis-inc-avance-medio)';
+    if (item.val > 0 && item.val < 0.65) return 'var(--mis-inc-avance-bajo)';
+    return 'var(--mis-inc-avance-meta)';
   }
 
   /** Relleno del anillo (`per` = `${id}_avan_floor`), tope 100 para avances por encima de la meta. */
@@ -41,6 +43,6 @@ export class AvancesGridComponent {
   }
 
   protected fondoAnillo(item: ItemAvance): string {
-    return `conic-gradient(${this.colorAvance(item)} ${this.porcentajeAnillo(item)}%, var(--mis-border-strong) 0)`;
+    return `conic-gradient(${this.colorAvance(item)} ${this.porcentajeAnillo(item)}%, var(--mis-inc-avance-resto) 0)`;
   }
 }

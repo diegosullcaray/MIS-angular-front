@@ -35,7 +35,17 @@
 }
 
 .monetizado-cifra--total {
-  color: var(--mis-primary-text);
+  color: var(--mis-inc-monto);
+}
+
+/* Colores del legado (`monetizado.component.scss`): montos en celeste `.m`/`.mt`,
+   comisión activa en verde `.cp` y negativa en magenta `.cn`. */
+.monetizado-positivo {
+  color: var(--mis-inc-positivo);
+}
+
+.monetizado-negativo {
+  color: var(--mis-inc-negativo) !important;
 }
 
 .monetizado-referencial {
@@ -96,7 +106,7 @@
   font-size: 15px;
   font-weight: var(--mis-font-semibold);
   font-variant-numeric: tabular-nums;
-  color: var(--mis-text-primary);
+  color: var(--mis-inc-monto);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -117,8 +127,8 @@
   padding: 4px 10px;
   font-size: 12px;
   font-weight: var(--mis-font-semibold);
-  color: var(--mis-warning);
-  background: var(--mis-warning-light);
+  color: var(--mis-inc-modelo);
+  background: color-mix(in srgb, var(--mis-inc-modelo) 12%, transparent);
   border-radius: var(--mis-radius-full);
 }
 

@@ -236,6 +236,20 @@ export class DetalleVariableContentComponent {
     return this.numero(val, 0, 0);
   }
 
+  /** Color de la franja de la tarjeta de meta — `semfCls()` del legado: verde ≥ 100%, ámbar ≥ 65%, magenta debajo. */
+  protected colorAvance(avance: number): string {
+    if (avance >= 1) return 'var(--mis-inc-avance-meta)';
+    if (avance >= 0.65) return 'var(--mis-inc-avance-medio)';
+    return 'var(--mis-inc-avance-bajo)';
+  }
+
+  /** Color del porcentaje de avance — `semfCls2()` del legado (`.fa1`/`.fa2`/`.fa3`). */
+  protected colorTextoAvance(avance: number): string {
+    if (avance >= 1) return 'var(--mis-inc-avance-meta-texto)';
+    if (avance >= 0.65) return 'var(--mis-inc-avance-medio-texto)';
+    return 'var(--mis-inc-avance-bajo-texto)';
+  }
+
   /** Avance de la tarjeta de meta, en porcentaje — `card.avan * 100` del legado. */
   protected formatearAvance(avan: number | undefined): string {
     return `${this.numero((avan ?? 0) * 100, 0, 1)}%`;

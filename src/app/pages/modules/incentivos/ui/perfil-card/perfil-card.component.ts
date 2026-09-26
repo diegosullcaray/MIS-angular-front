@@ -17,9 +17,17 @@ export class PerfilCardComponent {
 
   protected readonly semaforoVisible = computed(() => this.incentivos.semaforo().filter((s) => s.show));
 
-  protected claseIcono(valor: number): string {
-    if (valor === 0) return 'text-[var(--mis-danger)]';
-    if (valor === 1) return 'text-[var(--mis-warning)]';
-    return 'text-[var(--mis-success)]';
+  /** Color del ícono — `getIconCls()` del legado: 0 rojo (`.dm`), 1 verde (`.am`), otro gris (`.nm`). */
+  protected colorEstado(valor: number): string {
+    if (valor === 0) return 'var(--mis-inc-semaforo-mal)';
+    if (valor === 1) return 'var(--mis-inc-semaforo-bien)';
+    return 'var(--mis-inc-semaforo-neutro)';
+  }
+
+  /** Estado en palabras, para el tooltip y los lectores de pantalla (el color solo no basta). */
+  protected estadoTexto(valor: number): string {
+    if (valor === 0) return 'no cumple';
+    if (valor === 1) return 'cumple';
+    return 'sin evaluar';
   }
 }

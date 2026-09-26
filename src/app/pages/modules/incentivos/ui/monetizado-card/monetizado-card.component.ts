@@ -65,10 +65,10 @@ export class MonetizadoCardComponent {
   }
 
   protected claseBonoSuperPlus(): string {
-    return this.incentivos.monetizado().bonoSuperPlus < 0 ? 'text-[var(--mis-danger)]' : '';
+    return this.incentivos.monetizado().bonoSuperPlus < 0 ? 'monetizado-negativo' : '';
   }
 
   protected claseSituacion(): string {
-    return this.incentivos.monetizado().codigoSituacion === 1 ? 'text-[var(--mis-success)]' : 'text-[var(--mis-danger)]';
+    return this.incentivos.monetizado().codigoSituacion === 1 ? 'monetizado-positivo' : 'monetizado-negativo';
   }
 }

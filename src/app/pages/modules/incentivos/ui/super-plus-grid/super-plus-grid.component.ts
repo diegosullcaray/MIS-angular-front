@@ -28,10 +28,10 @@ export class SuperPlusGridComponent {
     this.solicitarDetalle(item);
   }
 
-  /** Fondo de la caja — `getBoxCls()` del legado (`bg3` inactivo, `bg2` en negativo, `bg1` normal). */
+  /** Fondo de la caja — `getBoxCls()` del legado, con sus colores: gris `bg3` inactivo, magenta `bg2` en negativo y celeste `bg1` normal, siempre con texto blanco. */
   protected claseCaja(item: ItemSuperPlus): string {
-    if (item.estado === 0) return 'bg-[var(--mis-panel-bg)] text-[var(--mis-text-tertiary)]';
-    if (item.val < 0) return 'bg-[var(--mis-danger-light)] text-[var(--mis-danger)]';
-    return 'bg-[var(--mis-secondary-light)] text-[var(--mis-text-primary)]';
+    if (item.estado === 0) return 'super-plus-item--inactivo';
+    if (item.val < 0) return 'super-plus-item--negativo';
+    return 'super-plus-item--normal';
   }
 }

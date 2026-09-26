@@ -30,10 +30,10 @@ describe('AvancesGridComponent', () => {
   // legado (`#3fe91e`/`#efb45f`/`#E3005B`): esos no se adaptan al tema oscuro.
   it('colorAvance() distingue meta cumplida / en camino / atrasado', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['colorAvance'](item({ val: 1 }))).toBe('var(--mis-success)');
-    expect(fixture.componentInstance['colorAvance'](item({ val: 1.2 }))).toBe('var(--mis-success)');
-    expect(fixture.componentInstance['colorAvance'](item({ val: 0.7 }))).toBe('var(--mis-warning)');
-    expect(fixture.componentInstance['colorAvance'](item({ val: 0.3 }))).toBe('var(--mis-danger)');
+    expect(fixture.componentInstance['colorAvance'](item({ val: 1 }))).toBe('var(--mis-inc-avance-meta)');
+    expect(fixture.componentInstance['colorAvance'](item({ val: 1.2 }))).toBe('var(--mis-inc-avance-meta)');
+    expect(fixture.componentInstance['colorAvance'](item({ val: 0.7 }))).toBe('var(--mis-inc-avance-medio)');
+    expect(fixture.componentInstance['colorAvance'](item({ val: 0.3 }))).toBe('var(--mis-inc-avance-bajo)');
   });
 
   it('porcentajeAnillo() usa `per` y lo topa en 100 cuando el avance supera la meta', () => {

@@ -91,7 +91,7 @@ describe('MonetizadoCardComponent', () => {
   it('claseBonoSuperPlus() marca en rojo cuando el bono es negativo', () => {
     incentivosFalso.monetizado.set(monetizado({ bonoSuperPlus: -10 }));
     const fixture = crear();
-    expect(fixture.componentInstance['claseBonoSuperPlus']()).toContain('danger');
+    expect(fixture.componentInstance['claseBonoSuperPlus']()).toBe('monetizado-negativo');
   });
 
   it('claseBonoSuperPlus() no marca nada cuando el bono es positivo', () => {
@@ -101,10 +101,10 @@ describe('MonetizadoCardComponent', () => {
 
   it('claseSituacion() usa color de éxito cuando codigoSituacion=1 y de error en cualquier otro caso', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['claseSituacion']()).toContain('success');
+    expect(fixture.componentInstance['claseSituacion']()).toBe('monetizado-positivo');
 
     incentivosFalso.monetizado.set(monetizado({ codigoSituacion: 0 }));
-    expect(fixture.componentInstance['claseSituacion']()).toContain('danger');
+    expect(fixture.componentInstance['claseSituacion']()).toBe('monetizado-negativo');
   });
 
   it('abrirCalculadora emite al hacer clic en el botón de calculadora', () => {

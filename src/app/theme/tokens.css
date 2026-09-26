@@ -193,6 +193,44 @@
   --mis-escala-5-borde: #dc2626;
   --mis-escala-5-texto: #ffffff;
 
+  /* Incentivos: paleta del legado STG (`modules/incentivos3/*.scss`). Mismos
+     valores en los dos temas salvo el resto del anillo (ver `.dark`), como en
+     el legado: son fondos sólidos o íconos de estado con su propio contraste. */
+  /* Semáforo del perfil (`perfil.component.scss`: .dm / .am / .nm). */
+  --mis-inc-semaforo-mal: #e91e2f;
+  --mis-inc-semaforo-bien: #3bd136;
+  --mis-inc-semaforo-neutro: #d3d3d3;
+  /* Anillo de avance (`avances.component.ts` pieStyle + `circle-pie.scss`). */
+  --mis-inc-avance-meta: #3fe91e;
+  --mis-inc-avance-medio: #efb45f;
+  --mis-inc-avance-bajo: #e3005b;
+  --mis-inc-avance-resto: #cccccc;
+  /* Texto del avance en el detalle (`detalle.component.scss` .fa1/.fa2/.fa3). */
+  --mis-inc-avance-meta-texto: #38cb1b;
+  --mis-inc-avance-medio-texto: #c38c3d;
+  --mis-inc-avance-bajo-texto: #e3005b;
+  /* Montos y estados del monetizado (`monetizado.component.scss`). */
+  --mis-inc-monto: #009fe3;
+  --mis-inc-positivo: #3bd136;
+  --mis-inc-negativo: #e3005b;
+  --mis-inc-modelo: #ff4500;
+  /* Cajas Super Plus (`super-plus.component.scss` .bg1 / .bg2 / .bg3). */
+  --mis-inc-sp-activo: #009fe3;
+  --mis-inc-sp-negativo: #e3005b;
+  --mis-inc-sp-inactivo: #a9a9a9;
+  --mis-inc-sp-texto: #ffffff;
+  /* Chips de la tabla de variables (`tabla.util.ts` chipFn1 / chipFn2). */
+  --mis-inc-chip-neutro: #bdbdbd;
+  --mis-inc-chip-real: #a0d2fa;
+  --mis-inc-chip-mon: #125386;
+  --mis-inc-chip-mon-texto: #ffffff;
+  --mis-inc-chip-meta-baja: #e4858d;
+  --mis-inc-chip-meta-ok: #64ef5f;
+  --mis-inc-chip-texto: #304156;
+  --mis-inc-chip-borde: #125386;
+  /* Aro del avatar del perfil (`.portrait`). */
+  --mis-inc-avatar: #045394;
+
   /* Textos (color de cuerpo real del sistema: #304156, no el navy de marca) */
   --mis-text-primary: #304156;
   --mis-text-secondary: #5a6a85;
@@ -338,6 +376,9 @@
   --mis-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
   --mis-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.3);
   --mis-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.55), 0 4px 8px rgba(0, 0, 0, 0.35);
+
+  /* Incentivos: el resto gris claro del anillo encandila sobre fondo oscuro. */
+  --mis-inc-avance-resto: #3d4b60;
 
   /* Paleta del Ranking — la versión clara es ilegible sobre fondo oscuro. */
   --mis-ranking-header-bg: #0a2c4d;

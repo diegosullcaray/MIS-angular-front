@@ -1,38 +1,26 @@
-/* "Chips" de las celdas numéricas — port de `chipFn1`/`chipFn2` de
-   `tabla.util.ts` (legado), donde cada valor va sobre un fondo de color con
-   el número alineado a la derecha. La versión anterior aplicaba esos colores
-   como color de TEXTO, así que las cifras quedaban del color del fondo de la
-   página (invisibles). Acá vuelven a ser fondos, con un texto de contraste
-   propio para cada uno.
-
-   Los cinco chips salen de los tokens `--mis-*` y NO de hexes propios: antes
-   había dos paletas paralelas —una para claro y otra para oscuro— que había
-   que mantener a mano y que no seguían al acento que elige el usuario. Cada
-   par `-light` de `tokens.css` ya está pensado como fondo + texto y cambia
-   solo con el tema, así que acá no hace falta un bloque `.dark`. */
+/* "Chips" de las celdas numéricas — `chipFn1`/`chipFn2` de `tabla.util.ts` (legado): cada valor
+   va sobre un fondo sólido con el número a la derecha, texto oscuro y borde navy.
+   Los colores son los del legado (tokens `--mis-inc-chip-*` en `tokens.css`): gris sin señal,
+   celeste real, navy monetizado, verde/rojo según la meta. */
 :host {
-  /* Sin señal: el mismo par azul apagado que usa el resto de la interfaz. */
-  --chip-neutro-bg: var(--mis-primary-light);
-  --chip-neutro-fg: var(--mis-text-primary);
-  /* Valor real: celeste de marca. */
-  --chip-real-bg: var(--mis-secondary-light);
-  --chip-real-fg: var(--mis-primary-text);
-  /* Meta cumplida / no cumplida: los semánticos de estado. */
-  --chip-meta-ok-bg: var(--mis-success-light);
-  --chip-meta-ok-fg: var(--mis-success);
-  --chip-meta-baja-bg: var(--mis-danger-light);
-  --chip-meta-baja-fg: var(--mis-danger);
-  /* Monetizado: el único chip sólido, como en el legado. */
-  --chip-mon-bg: var(--mis-primary);
-  --chip-mon-fg: var(--mis-text-on-primary);
-  --chip-borde: var(--mis-border);
+  --chip-neutro-bg: var(--mis-inc-chip-neutro);
+  --chip-neutro-fg: var(--mis-inc-chip-texto);
+  --chip-real-bg: var(--mis-inc-chip-real);
+  --chip-real-fg: var(--mis-inc-chip-texto);
+  --chip-meta-ok-bg: var(--mis-inc-chip-meta-ok);
+  --chip-meta-ok-fg: var(--mis-inc-chip-texto);
+  --chip-meta-baja-bg: var(--mis-inc-chip-meta-baja);
+  --chip-meta-baja-fg: var(--mis-inc-chip-texto);
+  --chip-mon-bg: var(--mis-inc-chip-mon);
+  --chip-mon-fg: var(--mis-inc-chip-mon-texto);
+  --chip-borde: var(--mis-inc-chip-borde);
 }
 
 .chip {
   display: block;
   text-align: right;
   padding: 3px 8px;
-  border: 1px solid transparent;
+  border: 1px solid var(--chip-borde);
   border-radius: var(--mis-radius-sm);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
