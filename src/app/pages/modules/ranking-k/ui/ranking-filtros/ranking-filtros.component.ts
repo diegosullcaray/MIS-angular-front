@@ -9,7 +9,6 @@ import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import type { RankingFiltros, FiltrosFormModel } from '../../models/ranking-filtros.model';
 
-/** Panel de filtros del ranking. */
 @Component({
   selector: 'app-ranking-filtros',
   standalone: true,

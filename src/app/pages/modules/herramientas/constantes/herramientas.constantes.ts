@@ -1,5 +1,3 @@
-/** Constantes del módulo Herramientas. */
-
 /**
  * SP de "Consulta Base Negativa" (legado `basenegativa.component.ts` /
  * `buscador.component.ts`).

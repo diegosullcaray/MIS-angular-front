@@ -30,23 +30,6 @@ function centroDePantalla(): Element {
 }
 
 /**
- * Única puerta a driver.js. Pone la configuración por defecto del sistema, el
- * cierre limpio y —lo que más importa en un teléfono— el reacomodo de los
- * globos.
- *
- * **El reacomodo se mide, no se tabula.** En pantallas angostas el lado del
- * globo sale de dónde está el elemento: si vive en la mitad de abajo del
- * viewport, el globo va arriba, y al revés. Antes había una tabla con un caso
- * especial para el rail de sistemas (`#tour-sidebar-icons`), que es el que en
- * móvil se va al borde inferior; eso dejaba a este servicio compartido sabiendo
- * dónde vive un elemento del layout, y no cubría ningún otro.
- *
- * Y se recalcula al cambiar el tamaño. Antes el ancho se leía una sola vez, al
- * arrancar: girar el teléfono a mitad del recorrido dejaba los globos contra el
- * borde equivocado, porque driver.js reposiciona pero nunca vuelve a pasar por
- * acá.
- */
-/**
  * Etiqueta "👆 Pulsa aquí" pegada al elemento que el paso espera que se pulse. Sigue al
  * elemento (scroll, animaciones) mientras dura el paso; devuelve la función que la quita.
  */
@@ -74,6 +57,23 @@ function indicadorPulsaAqui(elemento: Element): () => void {
   };
 }
 
+/**
+ * Única puerta a driver.js. Pone la configuración por defecto del sistema, el
+ * cierre limpio y —lo que más importa en un teléfono— el reacomodo de los
+ * globos.
+ *
+ * **El reacomodo se mide, no se tabula.** En pantallas angostas el lado del
+ * globo sale de dónde está el elemento: si vive en la mitad de abajo del
+ * viewport, el globo va arriba, y al revés. Antes había una tabla con un caso
+ * especial para el rail de sistemas (`#tour-sidebar-icons`), que es el que en
+ * móvil se va al borde inferior; eso dejaba a este servicio compartido sabiendo
+ * dónde vive un elemento del layout, y no cubría ningún otro.
+ *
+ * Y se recalcula al cambiar el tamaño. Antes el ancho se leía una sola vez, al
+ * arrancar: girar el teléfono a mitad del recorrido dejaba los globos contra el
+ * borde equivocado, porque driver.js reposiciona pero nunca vuelve a pasar por
+ * acá.
+ */
 @Injectable({ providedIn: 'root' })
 export class DriverTourService {
   private instancia: Driver | null = null;

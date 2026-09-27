@@ -6,7 +6,6 @@ import type { RankingTableFila } from '../../models/ranking-table.model';
 
 const LIMITE_DEFECTO = 10;
 
-/** Tabla de posiciones por grupo de ranking. */
 @Component({
   selector: 'app-ranking-table',
   standalone: true,

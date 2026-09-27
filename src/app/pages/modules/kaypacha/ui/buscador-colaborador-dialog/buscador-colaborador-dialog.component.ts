@@ -15,7 +15,6 @@ const COLUMNAS: DataTableColumn[] = [
   { field: 'RCODCOL', header: 'Tipo', align: 'center', width: '7rem', filterType: 'text' },
 ];
 
-/** Diálogo modal para buscar y seleccionar colaboradores. */
 @Component({
   selector: 'app-buscador-colaborador-dialog',
   standalone: true,

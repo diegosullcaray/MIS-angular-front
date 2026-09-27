@@ -25,7 +25,21 @@ export function campoSugerenciaFen(columna: ColumnaTextoFen): 'des_dep' | 'des_p
 
 const NIVELES_RIESGO = ['Muy Alto', 'Alto', 'Medio', 'Bajo', 'Muy Bajo'];
 
-export const COLUMNAS_FEN: DataTableColumn[] = ([
+function conOpcionesRiesgo(columnas: readonly DataTableColumn[]): DataTableColumn[] {
+  return columnas.map((columna): DataTableColumn =>
+    columna.filterType === 'dropdown'
+      ? {
+          ...columna,
+          dropdownOptions: NIVELES_RIESGO.map((nivel) => ({
+            label: nivel,
+            value: nivel,
+          })),
+        }
+      : columna
+  );
+}
+
+export const COLUMNAS_FEN: DataTableColumn[] = conOpcionesRiesgo([
   { field: 'cod_ubi', header: 'UBIGEO', width: '5.5rem', filterType: 'text' },
   { field: 'des_dist', header: 'Distrito', width: '7rem', filterType: 'text' },
   { field: 'des_prov', header: 'Provincia', filterType: 'text' },
@@ -35,19 +49,9 @@ export const COLUMNAS_FEN: DataTableColumn[] = ([
   { field: 'exp_seq', header: 'Sequía', width: '3.5rem', align: 'center', filterType: 'dropdown' },
   { field: 'exp_pre', header: 'Predom.', width: '3.5rem', align: 'center', filterType: 'dropdown' },
   { field: 'observacion', header: 'Observación', width: '25rem', sortable: false },
- ] satisfies DataTableColumn[]).map((columna): DataTableColumn =>
-  columna.filterType === 'dropdown'
-    ? {
-        ...columna,
-        dropdownOptions: NIVELES_RIESGO.map((nivel) => ({
-          label: nivel,
-          value: nivel,
-        })),
-      }
-    : columna
-);
+] satisfies DataTableColumn[]);
 
-export const COLUMNAS_FEN_MOVIL: DataTableColumn[] = ([
+export const COLUMNAS_FEN_MOVIL: DataTableColumn[] = conOpcionesRiesgo([
   { field: 'des_dist', header: 'Distrito', width: '7rem', filterType: 'text' },
   { field: 'exp_mas', header: 'Huayco', width: '3.5rem', align: 'center', filterType: 'dropdown' },
   { field: 'exp_inu', header: 'Inund.', width: '3.5rem', align: 'center', filterType: 'dropdown' },
@@ -57,14 +61,4 @@ export const COLUMNAS_FEN_MOVIL: DataTableColumn[] = ([
   { field: 'des_dep', header: 'Departamento', filterType: 'text' },
   { field: 'des_prov', header: 'Provincia', filterType: 'text' },
   { field: 'cod_ubi', header: 'UBIGEO', width: '5.5rem', filterType: 'text' },
-] satisfies DataTableColumn[]).map((columna): DataTableColumn =>
-  columna.filterType === 'dropdown'
-    ? {
-        ...columna,
-        dropdownOptions: NIVELES_RIESGO.map((nivel) => ({
-          label: nivel,
-          value: nivel,
-        })),
-      }
-    : columna
-);
+] satisfies DataTableColumn[]);

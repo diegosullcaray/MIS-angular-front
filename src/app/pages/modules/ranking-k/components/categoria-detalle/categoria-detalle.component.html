@@ -5,7 +5,6 @@
   etiquetaActualizar="Actualizar ranking"
   (actualizar)="cargarDetalle()"
 >
-  <!-- Acciones de la pantalla en la barra. -->
   <span ventana-acciones class="inline-flex items-center">
     <app-ranking-info-dialog />
   </span>
@@ -66,7 +65,6 @@
   } @else if (grupos().length === 1) {
     <!-- Caso especial: Tabla única destacada con ceremonia/premiación y personajes laterales -->
     <div class="relative py-4 flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-10 w-full flex-1">
-      <!-- Personaje izquierdo (Puma Productivo 1) -->
       <div class="hidden md:flex flex-col items-center justify-end shrink-0 w-44 lg:w-56 select-none pointer-events-none">
         <img
           src="/assets/images/fc/modules/kaypacha/pumas-productivos1.png"
@@ -102,7 +100,6 @@
         </div>
       </div>
 
-      <!-- Personaje derecho (Puma Productivo) -->
       <div class="hidden md:flex flex-col items-center justify-end shrink-0 w-44 lg:w-56 select-none pointer-events-none">
         <img
           src="/assets/images/fc/modules/kaypacha/pumas-productivos.png"

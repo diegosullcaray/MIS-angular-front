@@ -5,7 +5,6 @@ import { TooltipModule } from 'primeng/tooltip';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideInfo } from '@ng-icons/lucide';
 
-/** Diálogo informativo con los criterios de monitoreo de Destino de Crédito. */
 @Component({
   selector: 'app-destino-credito-info-dialog',
   standalone: true,

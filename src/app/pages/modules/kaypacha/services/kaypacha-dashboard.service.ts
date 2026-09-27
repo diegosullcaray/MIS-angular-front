@@ -5,7 +5,6 @@ import type { TableHeaderDef } from '../models/kaypacha-table-header.model';
 import type { KaypachaColaboradorItem } from '../models/kaypacha-colaborador.model';
 import type { KaypachaResultadoRaw, KaypachaResponseBody } from '../models/kaypacha-dashboard-response.model';
 
-/** Servicio de gestión del tablero Kaypacha y búsqueda de colaboradores. */
 @Injectable({ providedIn: 'root' })
 export class KaypachaDashboardService {
   private readonly ant = inject(ModKaypachaService);
@@ -44,7 +43,6 @@ export class KaypachaDashboardService {
     }
   }
 
-  /** Restablece el estado de las tablas y métricas del usuario. */
   private resetEstadoTablas(): void {
     this.headers1.set([]);
     this.headers1_1.set([]);
@@ -59,7 +57,6 @@ export class KaypachaDashboardService {
     this.permitirBusqueda.set(false);
   }
 
-  /** Limpia todo el estado en memoria del módulo. */
   limpiar(): void {
     this.loading.set(true);
     this.error.set(null);
@@ -69,7 +66,6 @@ export class KaypachaDashboardService {
     this.errorColaboradores.set(null);
   }
 
-  /** Carga los datos del tablero para un colaborador o el usuario activo. */
   cargarDatos(codBT?: string): void {
     this.loading.set(true);
     this.error.set(null);
@@ -128,7 +124,6 @@ export class KaypachaDashboardService {
     });
   }
 
-  /** Carga la lista de colaboradores para el modal de búsqueda. */
   cargarListaColaboradores(): void {
     if (this.colaboradores().length > 0 && !this.errorColaboradores()) {
       return;

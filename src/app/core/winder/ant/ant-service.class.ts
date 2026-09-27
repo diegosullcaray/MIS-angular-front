@@ -15,6 +15,10 @@ export abstract class AntService {
     this.connectionConf = conn;
   }
 
+  private pushParams(s: Strand, params: Record<string, unknown>): void {
+    Object.keys(params).forEach((v) => s.pushToPayload(v, params[v]));
+  }
+
   protected get(requestConf: IWinderRequestConfig): Observable<IWinderResponse> {
     return this.winderService.prepare(this.connectionConf, requestConf).get().pipe(first());
   }
@@ -35,7 +39,7 @@ export abstract class AntService {
     context?: HttpContext
   ): Observable<IWinderResponse> {
     const s = new Strand(strandName, responseName);
-    Object.keys(params).forEach((v) => s.pushToPayload(v, params[v]));
+    this.pushParams(s, params);
     return this.getResponseString(s, context ? { context } : undefined);
   }
 
@@ -55,7 +59,7 @@ export abstract class AntService {
     responseName = 'response'
   ): Observable<IWinderResponse> {
     const s = new Strand(strandName, responseName);
-    Object.keys(params).forEach((v) => s.pushToPayload(v, params[v]));
+    this.pushParams(s, params);
     return this.getResponseResource(s);
   }
 
@@ -73,7 +77,7 @@ export abstract class AntService {
     params: Record<string, unknown>
   ): Observable<unknown> {
     const s = new Strand(strandName);
-    Object.keys(params).forEach((v) => s.pushToPayload(v, params[v]));
+    this.pushParams(s, params);
     return this.postResponseString(s);
   }
 
@@ -85,7 +89,7 @@ export abstract class AntService {
     file: File
   ): Observable<unknown> {
     const s = new Strand(strandName);
-    Object.keys(params).forEach((v) => s.pushToPayload(v, params[v]));
+    this.pushParams(s, params);
     s.setFile(file, fileId);
     return this.postResponseString(s);
   }

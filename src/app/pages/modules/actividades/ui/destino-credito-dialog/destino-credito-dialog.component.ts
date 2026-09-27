@@ -30,7 +30,6 @@ export class DestinoCreditoDialogComponent implements OnChanges {
   readonly visibleChange = output<boolean>();
   readonly onGuardar = output<{ cod_ope: string; fec_vis: string; is_valid: string }>();
 
-  /** Fecha máxima para DatePicker */
   protected readonly today = new Date();
   protected codAsesor = '';
   protected asesor = '';

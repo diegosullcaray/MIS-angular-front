@@ -22,7 +22,6 @@ export class InicioComponent {
   private readonly preferencias = inject(PreferenciasService);
   private readonly novedadesTour = inject(NovedadesTourService);
 
-  /** Los últimos reportes abiertos, del más reciente al más antiguo. */
   protected readonly recientes = this.preferencias.recientes;
   protected readonly ejemploNovedad = this.novedadesTour.ejemploActivo;
 

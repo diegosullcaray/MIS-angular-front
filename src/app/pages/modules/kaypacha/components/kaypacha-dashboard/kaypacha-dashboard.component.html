@@ -33,12 +33,10 @@
       (reintentar)="service.cargarDatos()" />
   </div>
   } @else {
-  <!-- Ficha Asesor, Cargo, Medalla al costado y Tarjetas KPI compactas con PrimeNG -->
   <section class="mis-superficie rounded-2xl p-4 sm:p-5 shadow-sm">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
       <!-- Bloque Izquierdo: Asesor y Cargo (Col 1-5) -->
       <div class="lg:col-span-5 flex flex-col gap-3">
-        <!-- Etiqueta Asesor con Botón Cambiar Colaborador al costado -->
         <div class="flex items-center gap-2">
           <span
             class="inline-flex items-center justify-center px-3 py-1 rounded bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] font-bold text-xs sm:text-sm tracking-wide shrink-0 w-24 text-center border border-[var(--mis-primary)]">
@@ -54,7 +52,6 @@
           />
         </div>
 
-        <!-- Etiqueta Cargo -->
         <div class="flex items-center gap-2">
           <span
             class="inline-flex items-center justify-center px-3 py-1 rounded bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] font-bold text-xs sm:text-sm tracking-wide shrink-0 w-24 text-center border border-[var(--mis-primary)]">
@@ -79,7 +76,6 @@
 
       <!-- Bloque Derecho: Tarjetas KPI con PrimeNG p-card (Col 8-12) -->
       <div class="lg:col-span-5 grid grid-cols-2 gap-3">
-        <!-- Tarjeta Puntaje Promedio Final con PrimeNG p-card -->
         <p-card
           styleClass="bg-[var(--mis-kaypacha-oro)] text-[var(--mis-kaypacha-oro-texto)] rounded-xl p-0 shadow-xs border border-[var(--mis-kaypacha-oro-texto)]/20 h-24 flex flex-col justify-center items-center text-center overflow-hidden">
           <div class="flex flex-col justify-center items-center text-center w-full">
@@ -92,7 +88,6 @@
           </div>
         </p-card>
 
-        <!-- Tarjeta Posición con PrimeNG p-card -->
         <p-card
           styleClass="bg-gradient-to-br from-[var(--mis-primary)] to-[var(--mis-primary-hover)] text-[var(--mis-text-on-primary)] rounded-xl p-0 shadow-xs border border-[var(--mis-text-on-primary)]/20 h-24 flex flex-col justify-center items-center text-center overflow-hidden">
           <div class="flex flex-col justify-center items-center text-center w-full">
@@ -108,7 +103,6 @@
     </div>
   </section>
 
-  <!-- Bloque 1: Puntos Acumulados -->
   <section
     class="mis-superficie rounded-2xl shadow-sm overflow-hidden">
     <!-- Window Header Bar (Legacy rgb(3, 80, 150)) -->
@@ -121,77 +115,19 @@
         styleClass="bg-[var(--mis-text-on-primary)]/20 text-[var(--mis-text-on-primary)] font-medium border-0 text-[11px]"></p-tag>
     </div>
 
-    <!-- Content Grid: 2 tablas gemelas lado a lado con PrimeNG p-table -->
     <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-[var(--mis-panel-bg)]/60">
       <!-- Tabla 1 Izquierda -->
       <div class="mis-baldosa kaypacha-table-wrapper rounded-xl">
-        <p-table [value]="service.dataSources1()"
-          styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
-          responsiveLayout="scroll">
-          <ng-template pTemplate="header">
-            <tr>
-              @for (col of service.headers1(); track col.key) {
-              <th [ngStyle]="col.style || {}">
-                {{ col.label }}
-              </th>
-              }
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-row>
-            <tr>
-              @for (col of service.headers1(); track col.key) {
-              <td>
-                {{ row[col.key] }}
-              </td>
-              }
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td [attr.colspan]="service.headers1().length || 1" class="text-center py-6 text-[var(--mis-text-tertiary)] text-xs">
-                Sin datos registrados en esta sección
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+        <app-kaypacha-tabla [dataSource]="service.dataSources1()" [headers]="service.headers1()" />
       </div>
 
       <!-- Tabla 1 Derecha -->
       <div class="mis-baldosa kaypacha-table-wrapper rounded-xl">
-        <p-table [value]="service.dataSources1()"
-          styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
-          responsiveLayout="scroll">
-          <ng-template pTemplate="header">
-            <tr>
-              @for (col of service.headers1_1(); track col.key) {
-              <th [ngStyle]="col.style || {}">
-                {{ col.label }}
-              </th>
-              }
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-row>
-            <tr>
-              @for (col of service.headers1_1(); track col.key) {
-              <td>
-                {{ row[col.key] }}
-              </td>
-              }
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td [attr.colspan]="service.headers1_1().length || 1" class="text-center py-6 text-[var(--mis-text-tertiary)] text-xs">
-                Sin datos registrados en esta sección
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+        <app-kaypacha-tabla [dataSource]="service.dataSources1()" [headers]="service.headers1_1()" />
       </div>
     </div>
   </section>
 
-  <!-- Bloque 2: Variables Históricas -->
   <section
     class="mis-superficie rounded-2xl shadow-sm overflow-hidden">
     <!-- Window Header Bar (Legacy rgb(3, 80, 150)) -->
@@ -204,78 +140,22 @@
         styleClass="bg-[var(--mis-text-on-primary)]/20 text-[var(--mis-text-on-primary)] font-medium border-0 text-[11px]"></p-tag>
     </div>
 
-    <!-- Content Grid: 2 tablas gemelas lado a lado con PrimeNG p-table -->
     <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-[var(--mis-panel-bg)]/60">
       <!-- Tabla 2 Izquierda -->
       <div class="mis-baldosa kaypacha-table-wrapper rounded-xl">
-        <p-table [value]="service.dataSources2()" [scrollable]="true" scrollHeight="200px"
-          styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
-          responsiveLayout="scroll">
-          <ng-template pTemplate="header">
-            <tr>
-              @for (col of service.headers2(); track col.key) {
-              <th [ngStyle]="col.style || {}">
-                {{ col.label }}
-              </th>
-              }
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-row>
-            <tr>
-              @for (col of service.headers2(); track col.key) {
-              <td>
-                {{ row[col.key] }}
-              </td>
-              }
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td [attr.colspan]="service.headers2().length || 1" class="text-center py-6 text-[var(--mis-text-tertiary)] text-xs">
-                Sin datos históricos disponibles
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+        <app-kaypacha-tabla [dataSource]="service.dataSources2()" [headers]="service.headers2()"
+          [scrollable]="true" scrollHeight="200px" mensajeVacio="Sin datos históricos disponibles" />
       </div>
 
       <!-- Tabla 2 Derecha -->
       <div class="mis-baldosa kaypacha-table-wrapper rounded-xl">
-        <p-table [value]="service.dataSources2()" [scrollable]="true" scrollHeight="200px"
-          styleClass="kaypacha-table p-datatable-sm p-datatable-gridlines p-datatable-striped"
-          responsiveLayout="scroll">
-          <ng-template pTemplate="header">
-            <tr>
-              @for (col of service.headers2_2(); track col.key) {
-              <th [ngStyle]="col.style || {}">
-                {{ col.label }}
-              </th>
-              }
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-row>
-            <tr>
-              @for (col of service.headers2_2(); track col.key) {
-              <td>
-                {{ row[col.key] }}
-              </td>
-              }
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td [attr.colspan]="service.headers2_2().length || 1" class="text-center py-6 text-[var(--mis-text-tertiary)] text-xs">
-                Sin datos históricos disponibles
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+        <app-kaypacha-tabla [dataSource]="service.dataSources2()" [headers]="service.headers2_2()"
+          [scrollable]="true" scrollHeight="200px" mensajeVacio="Sin datos históricos disponibles" />
       </div>
     </div>
   </section>
   }
 
-  <!-- Modal Dialog Buscador Colaborador -->
   <app-buscador-colaborador-dialog [(visible)]="mostrarDialogBuscador"
     (colaboradorSeleccionado)="onColaboradorSeleccionado($event)" />
 </app-window-panel>

@@ -2,9 +2,6 @@ import { Routes } from '@angular/router';
 
 export const CAPTACIONES_ROUTES: Routes = [
   {
-
-    // items 
-
     /** Legado `cmg-capta01` (`GCMGCAP`). */
     path: 'leg/com/rda/adm/cmg-capta01',
     loadComponent: () =>
@@ -54,7 +51,6 @@ export const CAPTACIONES_ROUTES: Routes = [
         .then((c) => c.RecaudosServiciosComponent)
   },
 
-  // componentes 
   {
     path: 'leg/com/rda/adm/capta-caract-canal-comercial',
     loadComponent: () =>

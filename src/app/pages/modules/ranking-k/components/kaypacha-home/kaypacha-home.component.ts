@@ -6,7 +6,6 @@ import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-
 import { KaypachaService } from '../../services/kaypacha.service';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 
-/** Vista principal de redirección del ranking Kaypacha. */
 @Component({
   selector: 'app-kaypacha-home',
   standalone: true,

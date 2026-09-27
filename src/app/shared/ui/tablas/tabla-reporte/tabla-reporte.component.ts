@@ -4,6 +4,7 @@ import { normalizarHex, textoSobre } from '../../../../theme/color.util';
 import type { ColumnaReporte, FilaEncabezadoReporte, FilaReporte } from '../models/tabla-reporte.model';
 import { MaxFilasDirective } from '../max-filas.directive';
 import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO, columnasEsqueleto } from '../esqueleto-tabla';
+import { colorSemaforo } from '../semaforo.util';
 
 function numeroColumnas(cols: ColumnaReporte['cols']): number {
   return cols ? Number(cols) : 1;
@@ -114,12 +115,10 @@ export class TablaReporteComponent {
     return columna.columnDef === this.columnasDato()[0]?.columnDef;
   }
 
-  /** Extrae las columnas de una fila de encabezado. */
   private columnasDe(fila: FilaEncabezadoReporte | undefined): ColumnaReporte[] {
     return (fila?.columns ?? []).filter((columna): columna is ColumnaReporte => columna != null);
   }
 
-  /** Columnas hoja con datos. */
   protected readonly columnasDato = computed(() => {
     const todas = this.encabezados().flatMap((fila) => this.columnasDe(fila));
     return todas.filter((c) => c.isdata != null).sort(
@@ -127,7 +126,6 @@ export class TablaReporteComponent {
     );
   });
 
-  /** Filas de encabezado visibles. */
   protected readonly filasEncabezado = computed(() =>
     this.encabezados().map((filaEnc) => filaEncabezadoVisible(this.columnasDe(filaEnc)))
   );
@@ -136,13 +134,11 @@ export class TablaReporteComponent {
     return fila[columna.columnDef];
   }
 
-  /** Fondo del encabezado. */
   protected fondoEncabezado(columna: ColumnaReporte): string {
     if (this.encabezadoUniforme()) return 'var(--mis-primary)';
     return columna.style?.background ?? 'var(--mis-primary)';
   }
 
-  /** Color del texto del encabezado. */
   protected colorEncabezado(columna: ColumnaReporte): string {
     if (this.encabezadoUniforme()) return 'var(--mis-text-on-primary)';
     const styleColor = columna.style ? (columna.style['color'] as string | undefined) : undefined;
@@ -150,7 +146,6 @@ export class TablaReporteComponent {
     return 'var(--mis-text-on-primary)';
   }
 
-  /** Ancho del encabezado. */
   protected anchoEncabezado(columna: ColumnaReporte): string | null {
     // En modo ajustado no se respeta el ancho fijo del backend: es justamente lo
     // que fuerza el scroll horizontal que este modo viene a evitar.
@@ -158,7 +153,6 @@ export class TablaReporteComponent {
     return columna.style?.desktop?.width ?? null;
   }
 
-  /** Fondo de celda. */
   protected fondoCelda(fila: FilaReporte, columna: ColumnaReporte): string | null {
     return (fila[`background_${columna.columnDef}`] as string | undefined) ?? null;
   }
@@ -174,18 +168,13 @@ export class TablaReporteComponent {
     return fondo && normalizarHex(fondo) ? textoSobre(fondo) : null;
   }
 
-  /** Clase de texto para celda. */
   protected claseTextoCelda(fila: FilaReporte, columna: ColumnaReporte): string {
     const estilo = fila[`style_${columna.columnDef}`];
     if (estilo === null || estilo === undefined || estilo === '') return '';
     const num = Number(estilo);
-    if (num === 1) return 'text-[var(--mis-success)] font-semibold';
-    if (num === 0) return 'text-orange-500 font-semibold';
-    if (num === -1) return 'text-[var(--mis-danger)] font-semibold';
-    return '';
+    return num === 1 || num === 0 || num === -1 ? `${colorSemaforo(num)} font-semibold` : '';
   }
 
-  /** Fondo de la fila completa. */
   protected fondoFila(fila: FilaReporte): string | null {
     return (fila['background'] as string | undefined) ?? null;
   }
@@ -198,21 +187,18 @@ export class TablaReporteComponent {
     return columna.format?.['type'] === 'traffic-light';
   }
 
-  /** Determina si se dibuja el semáforo. */
   protected mostrarSemaforo(fila: FilaReporte, columna: ColumnaReporte): boolean {
     if (!this.esSemaforo(columna)) return false;
     const valor = this.valor(fila, columna);
     return valor !== null && valor !== undefined && valor !== '';
   }
 
-  /** Alineación de la celda de datos. */
   protected alineacion(columna: ColumnaReporte): string {
     if (this.esSemaforo(columna)) return 'text-center w-8 px-1';
     const tipo = columna.format?.['type'];
     return tipo === 'number' || tipo === 'percent' ? 'text-right' : 'text-left';
   }
 
-  /** Estilos de la fila completa. */
   protected claseFila(fila: FilaReporte): string {
     return fila['style'] === 1 ? 'font-bold bg-[var(--mis-primary-light)]' : '';
   }
@@ -239,13 +225,7 @@ export class TablaReporteComponent {
     return typeof unidad === 'string' && unidad ? `${texto} ${unidad}` : texto;
   }
 
-  /** Color del ícono de semáforo. */
   protected colorSemaforo(valor: unknown): string {
-    if (valor === null || valor === undefined || valor === '') return 'text-[var(--mis-text-tertiary)]';
-    const num = Number(valor);
-    if (num === 1) return 'text-[var(--mis-success)]';
-    if (num === 0) return 'text-orange-500';
-    if (num === -1) return 'text-[var(--mis-danger)]';
-    return 'text-[var(--mis-text-tertiary)]';
+    return colorSemaforo(valor);
   }
 }

@@ -1,34 +1,31 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TagModule } from 'primeng/tag';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
-import { NgStyle } from '@angular/common';
 import { KaypachaDashboardService } from '../../services/kaypacha-dashboard.service';
 import { BuscadorColaboradorDialogComponent } from '../../ui/buscador-colaborador-dialog/buscador-colaborador-dialog.component';
+import { KaypachaTablaComponent } from '../../ui/kaypacha-tabla/kaypacha-tabla.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import type { KaypachaColaboradorItem } from '../../models/kaypacha-colaborador.model';
 
-/** Componente principal del tablero Kaypacha. */
 @Component({
   selector: 'app-kaypacha-dashboard',
   standalone: true,
   imports: [
-    TableModule,
     ButtonModule,
     TooltipModule,
     TagModule,
     CardModule,
     InputTextModule,
-    NgStyle,
     ListSkeletonComponent,
     InlineErrorComponent,
     WindowPanelComponent,
     BuscadorColaboradorDialogComponent,
+    KaypachaTablaComponent,
   ],
   templateUrl: './kaypacha-dashboard.component.html',
   styleUrl: './kaypacha-dashboard.component.css',

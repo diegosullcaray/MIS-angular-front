@@ -19,16 +19,10 @@ export class RedirectOverlayService {
     mascotaUrl: '/assets/images/fc/modules/kaypacha/pumas-productivos.png',
   });
 
-  /**
-   * Dispara el flujo de redirección con loader, avatar de mascota y fallback a environment.
-   * @param destino Nombre o identificador del destino (ej. 'imparables', 'jira')
-   * @param urlDirecta URL opcional proveniente del backend (si no existe, usa environment)
-   */
   redirigir(destino: string, urlDirecta?: string): void {
     const key = destino.toLowerCase().trim();
     const externalMap = (environment.externalLinks || {}) as Record<string, string>;
 
-    // 1. Resolver URL: prioridad a urlDirecta del backend -> fallback a environment -> fallback default imparables
     let targetUrl = urlDirecta || externalMap[key];
 
     if (!targetUrl) {
@@ -43,7 +37,6 @@ export class RedirectOverlayService {
       }
     }
 
-    // Nombre amigable para mostrar en el subtítulo del loader
     const nombre = key.includes('jira')
       ? 'Mesa de Ayuda Jira'
       : key.includes('helpdesk')
@@ -60,7 +53,6 @@ export class RedirectOverlayService {
       mascotaUrl: '/assets/images/fc/modules/kaypacha/pumas-productivos.png',
     });
 
-    // Mostrar loader 1.5s para feedback visual con la mascota antes de redirigir
     setTimeout(() => {
       window.open(targetUrl, '_blank', 'noopener,noreferrer');
       setTimeout(() => {

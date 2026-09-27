@@ -8,7 +8,6 @@
   max-width: 100%;
 }
 
-/* Estilos exactos del legado Kaypacha3 para cabecera de ventana y tablas */
 /* Tokens y no valores fijos: el azul de marca cambia de tono en tema oscuro
    entre los dos temas y el texto encima tiene que seguirlo. */
 :host ::ng-deep .kaypacha-window-bar {

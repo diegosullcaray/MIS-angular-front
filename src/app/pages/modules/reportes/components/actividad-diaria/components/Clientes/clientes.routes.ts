@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 export const CLIENTES_ROUTES: Routes = [
-      // items 
  {
     path: 'leg/com/rda/adm/cli-nue-rec',
     loadComponent: () =>
@@ -21,7 +20,6 @@ export const CLIENTES_ROUTES: Routes = [
         .then((c) => c.MovimientoClientesComponent)
   },
 
-  // components
        {
     path: 'leg/com/rda/adm/cmg_cliente_flujo',
     loadComponent: () =>

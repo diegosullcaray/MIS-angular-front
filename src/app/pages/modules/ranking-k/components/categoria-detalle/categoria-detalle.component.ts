@@ -16,7 +16,6 @@ import type { RankingFiltros } from '../../models/ranking-filtros.model';
 
 const DURACION_TRANSICION_FILTROS_MS = 350;
 
-/** Vista de detalle de categoría de ranking Kaypacha. */
 @Component({
   selector: 'app-categoria-detalle',
   standalone: true,

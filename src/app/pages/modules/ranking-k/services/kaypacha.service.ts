@@ -7,7 +7,6 @@ import type { SidebarNavPanelConfig } from '../../../full-pages/layout/interface
 import type { CategoriaRanking, DetalleRanking, FilaDetalleRanking } from '../models/categoria-ranking.model';
 import type { KaypachaResponseBody } from '../models/kaypacha-response.model';
 
-/** Servicio fachada para el módulo de ranking Kaypacha. */
 @Injectable({ providedIn: 'root' })
 export class KaypachaService {
   private readonly ant = inject(ModKaypachaService);
@@ -102,18 +101,15 @@ export class KaypachaService {
     });
   }
 
-  /** Recarga la lista de categorías. */
   recargarCategorias(): void {
     this.cargado = false;
     this.cargarCategorias();
   }
 
-  /** Busca una categoría cargada por su ID. */
   buscarCategoria(rdestip: string): CategoriaRanking | undefined {
     return this.categorias().find((c) => String(c.rdestip) === rdestip);
   }
 
-  /** Obtiene el detalle de posiciones para una categoría. */
   obtenerDetalle(rdestip: string): Observable<DetalleRanking> {
     return this.ant.getDetalleRanking(rdestip).pipe(
       map((response) => {

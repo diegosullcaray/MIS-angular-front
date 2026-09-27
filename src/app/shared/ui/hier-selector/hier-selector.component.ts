@@ -182,24 +182,25 @@ export class HierSelectorComponent implements OnInit {
       next: (lh) => {
         // Un nivel vacío con filtro de fecha se reintenta sin él, si la pantalla lo pidió.
         if ((!lh || lh.length === 0) && this.reintentarSinFecha()) {
-          this.pedirNivel(tip_cod, cod_rels, lvl).subscribe({
-            next: (sinFec) => this.recibirNivel(sinFec, lvl, esCargaInicial),
-            error: () => this.fallarNivel(esCargaInicial),
-          });
+          this.reintentarNivelSinFecha(tip_cod, cod_rels, lvl, esCargaInicial);
           return;
         }
         this.recibirNivel(lh, lvl, esCargaInicial);
       },
       error: () => {
         if (this.reintentarSinFecha()) {
-          this.pedirNivel(tip_cod, cod_rels, lvl).subscribe({
-            next: (sinFec) => this.recibirNivel(sinFec, lvl, esCargaInicial),
-            error: () => this.fallarNivel(esCargaInicial),
-          });
+          this.reintentarNivelSinFecha(tip_cod, cod_rels, lvl, esCargaInicial);
           return;
         }
         this.fallarNivel(esCargaInicial);
       },
+    });
+  }
+
+  private reintentarNivelSinFecha(tip_cod: number, cod_rels: string[], lvl: number, esCargaInicial: boolean): void {
+    this.pedirNivel(tip_cod, cod_rels, lvl).subscribe({
+      next: (sinFec) => this.recibirNivel(sinFec, lvl, esCargaInicial),
+      error: () => this.fallarNivel(esCargaInicial),
     });
   }
 

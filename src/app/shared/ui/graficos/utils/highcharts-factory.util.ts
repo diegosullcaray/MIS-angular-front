@@ -22,6 +22,14 @@ import {
   tokensTema,
 } from './paleta-colores.util';
 
+/** Abrevia un monto a "k"/"M" a partir de mil/millón; por debajo, formato numérico plano. */
+function abreviarMonto(valor: number, decimales: number): string {
+  const abs = Math.abs(valor);
+  if (abs >= 1_000_000) return `${(valor / 1_000_000).toFixed(decimales)} M`;
+  if (abs >= 1_000) return `${(valor / 1_000).toFixed(0)} k`;
+  return Highcharts.numberFormat(valor, 0, '.', ',');
+}
+
 /** Infiere la forma del gráfico a partir de las series. */
 function inferirTipo(series: readonly SerieGrafico[]): 'barra' | 'columna' {
   if (series.length === 1) return 'barra';
@@ -114,11 +122,7 @@ export function opcionesMixto(
               return `${valor.toFixed(1)}%`;
             }
             if (formato === 'soles') {
-              return Math.abs(valor) >= 1_000_000
-                ? `${(valor / 1_000_000).toFixed(decimales)} M`
-                : Math.abs(valor) >= 1_000
-                  ? `${(valor / 1_000).toFixed(0)} k`
-                  : Highcharts.numberFormat(valor, 0, '.', ',');
+              return abreviarMonto(valor, decimales);
             }
             return Highcharts.numberFormat(valor, 0, '.', ',');
           },
@@ -143,18 +147,10 @@ export function opcionesMixto(
             return `${valor.toFixed(1)}%`;
           }
           if (esApilado) {
-            return Math.abs(valor) >= 1_000_000
-              ? `${(Math.abs(valor) / 1_000_000).toFixed(decimales)} M`
-              : Math.abs(valor) >= 1_000
-                ? `${(Math.abs(valor) / 1_000).toFixed(0)} k`
-                : Highcharts.numberFormat(Math.abs(valor), 0, '.', ',');
+            return abreviarMonto(Math.abs(valor), decimales);
           }
           if (formato === 'soles') {
-            return Math.abs(valor) >= 1_000_000
-              ? `${(valor / 1_000_000).toFixed(decimales)} M`
-              : Math.abs(valor) >= 1_000
-                ? `${(valor / 1_000).toFixed(0)} k`
-                : Highcharts.numberFormat(valor, 0, '.', ',');
+            return abreviarMonto(valor, decimales);
           }
           return Highcharts.numberFormat(valor, 0, '.', ',');
         },

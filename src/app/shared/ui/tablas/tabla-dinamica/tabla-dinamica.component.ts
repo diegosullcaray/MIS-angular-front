@@ -6,11 +6,12 @@ import { aplanarEncabezados } from './tabla-dinamica.util';
 import type { ColumnaDinamica } from '../models/tabla-dinamica.model';
 import { MaxFilasDirective } from '../max-filas.directive';
 import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO, columnasEsqueleto } from '../esqueleto-tabla';
+import { colorSemaforo as colorSemaforoTexto } from '../semaforo.util';
 
-/** Tabla dinámica (reemplaza a `stg-table2`). */
 /** Propiedades de ancho del `style` de una columna que `ajustarAncho` deja de aplicar. */
 const ANCHOS_FIJOS = new Set(['width', 'min-width', 'minWidth']);
 
+/** Tabla dinámica (reemplaza a `stg-table2`). */
 @Component({
   selector: 'app-tabla-dinamica',
   standalone: true,
@@ -124,7 +125,6 @@ export class TablaDinamicaComponent {
     return signo > 0 ? 'var(--mis-success)' : 'var(--mis-danger)';
   }
 
-  /** Estilo de celda dinámico: combina `cellStyle`, `cellStyleFn`, `fondoDinamico`, `destacada` y color sin colisiones. */
   /** Estilo del encabezado; con `ajustarAncho` se ignoran sus anchos fijos. */
   protected estiloEncabezado(columna: ColumnaDinamica): Record<string, string> | null {
     const estilo = columna.style ?? null;
@@ -132,6 +132,7 @@ export class TablaDinamicaComponent {
     return Object.fromEntries(Object.entries(estilo).filter(([prop]) => !ANCHOS_FIJOS.has(prop)));
   }
 
+  /** Estilo de celda dinámico: combina `cellStyle`, `cellStyleFn`, `fondoDinamico`, `destacada` y color sin colisiones. */
   protected estiloCelda(fila: Record<string, unknown>, columna: ColumnaDinamica): Record<string, string> | null {
     const res: Record<string, string> = {};
     if (columna.cellStyle) {
@@ -177,7 +178,6 @@ export class TablaDinamicaComponent {
     return numero === null ? null : (columna.colorVariacion?.(numero, fila) ?? null);
   }
 
-  /** Fila destacada. */
   protected destacada(fila: Record<string, unknown>): boolean {
     return !!fila && this.destacarFila()(fila);
   }
@@ -189,14 +189,9 @@ export class TablaDinamicaComponent {
     return valor !== null && valor !== undefined && valor !== '';
   }
 
-  /** Colores del semáforo. */
   protected colorSemaforo(fila: Record<string, unknown>, columna: ColumnaDinamica): string {
     const valor = columna.semaforoKey ? fila[columna.semaforoKey] : undefined;
-    const num = Number(valor);
-    if (num === 1) return 'text-[var(--mis-success)]';
-    if (num === 0) return 'text-orange-500';
-    if (num === -1) return 'text-[var(--mis-danger)]';
-    return 'text-[var(--mis-text-tertiary)]';
+    return colorSemaforoTexto(valor);
   }
 
   /** Color de fondo para el punto de semáforo Tailwind (ej. Churn rate). */
@@ -209,7 +204,6 @@ export class TablaDinamicaComponent {
     return 'bg-gray-400';
   }
 
-  /** Alineación de la celda. */
   protected alineacion(columna: ColumnaDinamica): string {
     const tipo = columna.format?.type;
     return tipo === 'integer' || tipo === 'decimal' || tipo === 'percent' ? 'text-right' : 'text-left';
