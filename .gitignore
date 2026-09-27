@@ -49,5 +49,7 @@ __screenshots__/
 Thumbs.db
 
 
-#claude
-.claude
+# Herramientas de IA locales: configuración personal, no del proyecto.
+/.claude/
+/.impeccable/
+/.agents/

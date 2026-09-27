@@ -47,7 +47,7 @@ Cada archivo trae frontmatter YAML (`name`, `description`, `tools`) y una secci�
 2. **Como prompt directo**: pegar el bloque *Prompt de sistema* en cualquier asistente.
 3. **Como checklist humano**: el cuerpo del documento es la guía de revisión, sin IA de por medio.
 
-Las skills de `governance/skills/` están registradas en [`.agents/skills.json`](../../.agents/skills.json) y las consumen tanto los agentes como las personas. Ese archivo refleja el frontmatter de cada `SKILL.md`: al agregar o renombrar una skill hay que actualizarlo.
+Las skills viven en `governance/skills/`, una carpeta por skill con su `SKILL.md`; las consumen tanto los agentes como las personas. El frontmatter de cada `SKILL.md` es su registro: al agregar o renombrar una skill basta con su carpeta.
 
 ---
 

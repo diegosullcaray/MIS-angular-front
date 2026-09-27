@@ -45,7 +45,7 @@ Manual completo: [`scripts/README.md`](./scripts/README.md).
 
 ## 3. Skills (`governance/skills/`)
 
-Guías aplicadas, para usar mientras se escribe código. Registradas en `.agents/skills.json`.
+Guías aplicadas, para usar mientras se escribe código. Cada una es una carpeta con su `SKILL.md`.
 
 | Skill | Qué resuelve |
 |---|---|
