@@ -16,19 +16,11 @@ import { BANCA_SOLIDARIA_VACIA, CLAVE_DRILL_DOWN_BANCA_SOLIDARIA, type BancaSoli
 import { ReportesPdmService } from '../../services/reportes-pdm.service';
 
 /**
- * "Gestión de Banca Solidaria"
- * (`repositorio/actividad-diaria/cartera/banca-solidaria`) — legado
- * `repositorio/banca-solidaria` (`GRBSOLI_01`).
- *
- * Va por el motor `table.regular`, así que las columnas las manda el backend y
- * se pinta con `<app-tabla-dinamica>` en vez de con `<app-reporte-simple>`.
- *
- * Las cinco tarjetas y las dos gráficas salen de la PRIMERA FILA de esa misma
- * tabla (la de totales), como en el legado: no hay bloques aparte.
- *
- * Se navega por drill down, como el legado: la jerarquía arranca en el nodo autorizado, la
- * descripción de cada fila baja a ese nivel (`ddHier`, con `htipcod` + `hcodrel`) y las migas
- * vuelven atrás (`changeHier` sobre `hierBuffer`). El selector de jerarquía queda oculto.
+ * "Gestión de Banca Solidaria" — legado `repositorio/banca-solidaria` (`GRBSOLI_01`), motor
+ * `table.regular`: las columnas las manda el backend (`<app-tabla-dinamica>`). Las tarjetas y las
+ * gráficas salen de su primera fila, la de totales.
+ * Navega por drill down, como el legado (`ddHier` baja, las migas vuelven con `changeHier`); el
+ * selector de jerarquía queda oculto.
  */
 @Component({
   selector: 'app-banca-solidaria',

@@ -4,9 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { TableroDigitalComercialComponent } from './tablero-digital-comercial.component';
 import { TableroDigitalService } from '../../services/tablero-digital.service';
-import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
-const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
 
 describe('TableroDigitalComercialComponent', () => {

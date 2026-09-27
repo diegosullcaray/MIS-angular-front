@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { MonitorMetasDesembolsoService } from '../../services/monitor-metas-desembolso.service';
@@ -10,12 +8,13 @@ import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { KpiMontoDesembolsado, KpiOperacionesDesembolsadas, ReporteMonitorMetasDesembolso } from '../../models/monitor-metas-desembolso.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { FiltroAsesorComponent } from '../../ui/filtro-asesor/filtro-asesor.component';
 
 /** "Monitor de Desembolsos" — migrado de la ruta `leg/com/rda/sec/mon-desem` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/monitor_metas_desembolsos/monitor_metas_desem_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-monitor-metas-desembolso-analista',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
+  imports: [FiltroAsesorComponent, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './monitor-metas-desembolso.component.html',
 })
 export class MonitorMetasDesembolsoAnalistaComponent extends ReporteAsesorBase<ReporteMonitorMetasDesembolso> {

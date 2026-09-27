@@ -47,8 +47,6 @@
     "tokens-de-color|src/app/pages/modules/ranking-k/ui/ranking-table/ranking-table.component.html|color fijo #ffffff — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",
     "tokens-de-color|src/app/pages/modules/reportes/components/actividad-diaria/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component.css|color fijo #15803d — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",
     "tokens-de-color|src/app/pages/modules/reportes/components/actividad-diaria/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component.css|color fijo #166534 — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",
-    "tokens-de-color|src/app/pages/modules/reportes/components/actividad-mensual/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component.css|color fijo #15803d — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",
-    "tokens-de-color|src/app/pages/modules/reportes/components/actividad-mensual/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component.css|color fijo #166534 — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",
     "tokens-de-color|src/app/shared/ui/redirect-overlay/redirect-overlay.component.css|color fijo #050B18 — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",
     "tokens-de-color|src/app/shared/ui/redirect-overlay/redirect-overlay.component.css|color fijo #0A1630 — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",
     "tokens-de-color|src/app/shared/ui/redirect-overlay/redirect-overlay.component.css|color fijo #1D396E — usar var(--mis-*) o una utilidad text-[var(--mis-*)]"

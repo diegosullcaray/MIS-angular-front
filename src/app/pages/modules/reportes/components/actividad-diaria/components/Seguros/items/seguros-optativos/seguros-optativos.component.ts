@@ -17,20 +17,12 @@ import { SegurosService } from '../../services/seguros.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /**
- * "Reporte Seguros Optativos" (`repositorio/actividad-diaria/seguro/seguro-com`)
- * — legado `repositorio/seguro-com` (`GRSCMISREP_01`), motor `table.regular`.
+ * "Reporte Seguros Optativos" — legado `repositorio/seguro-com` (`GRSCMISREP_01`), motor `table.regular`.
  *
- * Los KPIs de arriba y las mini-tarjetas de "Rendimiento por Tipo de Seguro
- * Optativo" NO son un bloque aparte: el legado los saca de la PRIMERA FILA de
- * la misma tabla (`kpiTotales` ← `dataSource[0]`).
- *
- * El selector de periodo sale de `RS_FECH` (`meta1[0].json_result`) y su valor
- * reemplaza a la fecha de corte del usuario en la consulta. No es un calendario
- * libre: son los cortes que el backend declara disponibles.
- *
- * Se navega por drill down, como el legado: la jerarquía arranca en el nodo autorizado, la columna
- * `RNOMSUB` de cada fila baja a ese nivel (`ddHier`) y las migas vuelven atrás (`changeHier` sobre
- * `hierBuffer`). El selector de jerarquía queda oculto; el único filtro visible es el periodo.
+ * Los KPI y las mini-tarjetas salen de la primera fila de la misma tabla (`dataSource[0]` en el
+ * legado), no de otro bloque. El periodo sale de `RS_FECH`: son los cortes que declara el backend.
+ * Navega por drill down, como el legado (`ddHier` baja, las migas vuelven con `changeHier`); el
+ * selector de jerarquía queda oculto.
  */
 @Component({
   selector: 'app-seguros-optativos',

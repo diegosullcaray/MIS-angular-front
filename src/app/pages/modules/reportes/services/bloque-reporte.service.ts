@@ -93,14 +93,8 @@ export class BloqueReporteService {
   }
 
   /**
-   * Reportes de data masiva ("Seguimiento Reprogramados", "Seguimiento de
-   * Portafolio", proyecciones). Tolera el bloque vacío igual que
-   * `regularTolerante()`: todos sus llamadores van dentro de un `forkJoin`.
-   *
-   * Ya no se distingue por el timeout —no hay ninguno, igual que en el STG—,
-   * pero se conserva como nombre propio: marca en el código cuáles son los
-   * bloques que tardan de verdad, que es justo lo que hay que saber antes de
-   * meterlos en un `forkJoin` con otros.
+   * Reportes de data masiva (seguimientos, proyecciones). Tolera el bloque vacío como
+   * `regularTolerante()`; el nombre propio marca los bloques lentos antes de meterlos en un `forkJoin`.
    */
   regularLento(
     codRep: string,

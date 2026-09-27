@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
@@ -12,12 +10,13 @@ import type { AsesorSec } from '../../models/asesor-sec.model';
 import { SelectorAsesorBase } from '../../ui/selector-asesor.base';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { FiltroAsesorComponent } from '../../ui/filtro-asesor/filtro-asesor.component';
 
 /** "Prospecto Corresponsal" — migrado de la ruta `leg/com/rda/sec/sec-prosp` (legado STG, `reportes/legacy/comercial/rda/sectorista/crs-prospe`, título real "Prospectos Corresponsales", `cod_rep: 'LIS_PROSPE'`). */
 @Component({
   selector: 'app-prospecto-corresponsal',
   standalone: true,
-  imports: [FormsModule, SelectModule, ButtonModule, SkeletonModule, TablaReporteComponent, AgregarProspectoDialogComponent, TooltipModule, WindowPanelComponent, GrupoFiltrosComponent],
+  imports: [FiltroAsesorComponent, ButtonModule, SkeletonModule, TablaReporteComponent, AgregarProspectoDialogComponent, TooltipModule, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './prospecto-corresponsal.component.html',
 })
 export class ProspectoCorresponsalComponent extends SelectorAsesorBase {

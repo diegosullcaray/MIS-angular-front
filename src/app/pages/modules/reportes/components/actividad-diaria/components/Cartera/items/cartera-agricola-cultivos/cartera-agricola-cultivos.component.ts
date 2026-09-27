@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -30,6 +31,8 @@ import {
 } from '../../models/cartera-agricola.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
+import { ActividadMensualRepoService } from '../../../../../actividad-mensual/services/actividad-mensual-repo.service';
+import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
 
@@ -59,7 +62,10 @@ import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ru
   styleUrl: './cartera-agricola-cultivos.component.css',
 })
 export class CarteraAgricolaCultivosComponent {
-  private readonly servicio = inject(CarteraRepositorioService);
+  /** Diaria (`agro-mix`) y mensual (`agro-mix-m`, `data.mensual`) comparten pantalla: cambia el repositorio. */
+  protected readonly mensual = inject(ActivatedRoute, { optional: true })?.snapshot.data['mensual'] === true;
+  private readonly servicio: Pick<CarteraRepositorioService, 'carteraAgricola' | 'detalleGraficosAgricola' | 'periodosAgricola'> =
+    this.mensual ? repositorioMensual(inject(ActividadMensualRepoService)) : inject(CarteraRepositorioService);
   private readonly toast = inject(ToastService);
   private readonly selectorJerarquia = viewChild(HierSelectorComponent);
 
@@ -97,6 +103,7 @@ export class CarteraAgricolaCultivosComponent {
   protected readonly cargandoGraficos = signal(false);
   /** Un esqueleto por bloque de `GRAFICOS_AGRICOLA` mientras cargan los gráficos de detalle. */
   protected readonly esqueletosGraficos = GRAFICOS_AGRICOLA.map((_, i) => i);
+  protected readonly esqueletosKpi = [0, 1, 2, 3] as const;
 
   /** Detalle del cultivo elegido en un gráfico; `null` mantiene el modal cerrado. */
   protected readonly detalle = signal<DetalleCultivo | null>(null);
@@ -263,4 +270,13 @@ export class CarteraAgricolaCultivosComponent {
 /** El legado solo descartaba `NaN`; además se acotan al rango real para no centrar el mapa en un `0,0` falso. */
 function coordenadaValida(valor: number, min: number, max: number): boolean {
   return Number.isFinite(valor) && valor !== 0 && valor >= min && valor <= max;
+}
+
+/** El repositorio mensual con la forma del diario; sus periodos salen de `RS_FECH`. */
+function repositorioMensual(m: ActividadMensualRepoService) {
+  return {
+    carteraAgricola: (nodo: NodoConsulta, fecha?: string) => m.carteraAgricola(nodo, fecha),
+    detalleGraficosAgricola: (nodo: NodoConsulta, fecha?: string) => m.detalleGraficosAgricola(nodo, fecha),
+    periodosAgricola: () => m.periodos('RS_FECH'),
+  };
 }

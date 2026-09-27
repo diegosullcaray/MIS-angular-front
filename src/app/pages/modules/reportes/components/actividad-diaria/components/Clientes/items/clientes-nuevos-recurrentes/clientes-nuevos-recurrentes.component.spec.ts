@@ -11,9 +11,6 @@ const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 describe('ClientesNuevosRecurrentesComponent', () => {
   let servicioSpy: Record<string, ReturnType<typeof vi.fn>>;
 
-  beforeAll(() => {
-  });
-
   beforeEach(() => {
     servicioSpy = {
       nuevosRecurrentes: vi.fn().mockReturnValue(of({ headers: [], body: [], rows: [], items: [], total: 0, kpis: {}, estadoRenovacion: { categorias: [], series: [] }, antiguedadCliente: { categorias: [], series: [] }, cards: [], table: [] })),

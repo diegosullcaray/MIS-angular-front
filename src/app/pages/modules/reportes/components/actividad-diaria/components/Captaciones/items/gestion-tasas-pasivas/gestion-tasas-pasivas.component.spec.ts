@@ -4,15 +4,10 @@ import { MessageService } from 'primeng/api';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { GestionTasasPasivasComponent } from './gestion-tasas-pasivas.component';
 import { GestionTasasPasivasService } from '../../services/gestion-tasas-pasivas.service';
-import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
-const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
 describe('GestionTasasPasivasComponent', () => {
   let servicioSpy: Record<string, ReturnType<typeof vi.fn>>;
-
-  beforeAll(() => {
-  });
 
   beforeEach(() => {
     servicioSpy = {

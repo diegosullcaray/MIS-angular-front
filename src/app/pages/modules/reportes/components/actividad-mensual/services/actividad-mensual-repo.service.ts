@@ -12,13 +12,13 @@ import {
 import type { CuentaResultadosResultado } from '../models/cuenta-resultados.model';
 import { aplicarEstilosEstructuraDesembolsos } from '../utils/estructura-desembolsos.util';
 import { tarjetasCmgCarteraMensual } from '../utils/actividad-mensual-mapeo.util';
-import { seriesDeGraficoConColor } from '../../../../../../shared/ui/graficos/utils/series-grafico.util';
 import {
   columnasVisibles,
   conColumnasSemaforo,
   totalesAgro,
 } from '../../actividad-diaria/components/Cartera/utils/cartera-mapeo.util';
 import { GRAFICOS_AGRICOLA } from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
+import { detalleAgricolaDe } from '../../actividad-diaria/components/Cartera/utils/cartera-mapeo.util';
 import { COLUMNAS_TABLERO_COMERCIAL } from '../../actividad-diaria/components/Tablero Digital/models/tablero-comercial.model';
 import { semaforosTableroComercial } from '../../actividad-diaria/components/Tablero Digital/utils/tablero-comercial.util';
 import type { TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../models/tabla-dinamica.model';
@@ -87,16 +87,7 @@ export class ActividadMensualRepoService {
     const bloques = GRAFICOS_AGRICOLA.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
 
     return forkJoin(bloques).pipe(
-      map((respuestas) => {
-        const filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
-        const graficos = respuestas.map((r, i) => {
-          const { titulo, id } = GRAFICOS_AGRICOLA[i];
-          const resultado = resultadoCrudo(r);
-          if (id) filasPorGrafico[id] = filasDeResultado(resultado);
-          return { titulo, ...seriesDeGraficoConColor(resultado?.headers) };
-        });
-        return { graficos, filasPorGrafico };
-      }),
+      map(detalleAgricolaDe),
     );
   }
 

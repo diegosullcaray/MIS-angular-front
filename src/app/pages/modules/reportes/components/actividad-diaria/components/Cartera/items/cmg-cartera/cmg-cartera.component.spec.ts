@@ -4,9 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { CmgCarteraComponent } from './cmg-cartera.component';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
-import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
-const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
 
 describe('CmgCarteraComponent', () => {

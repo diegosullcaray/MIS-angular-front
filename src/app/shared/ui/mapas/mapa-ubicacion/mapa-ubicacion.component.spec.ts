@@ -26,9 +26,6 @@ vi.mock('maplibre-gl', () => {
 describe('MapaUbicacionComponent', () => {
   let mockThemeService: { oscuro: ReturnType<typeof signal<boolean>> };
 
-  beforeAll(() => {
-  });
-
   beforeEach(() => {
     mockThemeService = {
       oscuro: signal(false),

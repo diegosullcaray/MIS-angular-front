@@ -4,6 +4,8 @@ import { MessageService } from 'primeng/api';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { CarteraAgricolaCultivosComponent } from './cartera-agricola-cultivos.component';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
+import { ActivatedRoute } from '@angular/router';
+import { ActividadMensualRepoService } from '../../../../../actividad-mensual/services/actividad-mensual-repo.service';
 import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
@@ -38,6 +40,20 @@ describe('CarteraAgricolaCultivosComponent', () => {
         { provide: CarteraRepositorioService, useValue: servicioSpy },
       ],
     });
+  });
+
+  it('en la ruta mensual usa el repositorio mensual y sus periodos RS_FECH', () => {
+    const mensual = {
+      carteraAgricola: vi.fn().mockReturnValue(of(REPORTE_VACIO)),
+      detalleGraficosAgricola: vi.fn().mockReturnValue(of({ graficos: [], filasPorGrafico: {} })),
+      periodos: vi.fn().mockReturnValue(of([{ id: '202608', desc: 'Agosto 2026' }])),
+    };
+    TestBed.overrideProvider(ActividadMensualRepoService, { useValue: mensual });
+    TestBed.overrideProvider(ActivatedRoute, { useValue: { snapshot: { data: { mensual: true } } } });
+    const fixture = TestBed.createComponent(CarteraAgricolaCultivosComponent);
+    fixture.detectChanges();
+    expect(mensual.periodos).toHaveBeenCalledWith('RS_FECH');
+    expect(servicioSpy['periodosAgricola']).not.toHaveBeenCalled();
   });
 
   it('se crea correctamente', () => {

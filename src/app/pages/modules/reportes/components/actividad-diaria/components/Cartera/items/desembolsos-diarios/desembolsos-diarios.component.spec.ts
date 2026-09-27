@@ -11,9 +11,6 @@ const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 describe('DesembolsosDiariosComponent', () => {
   let servicioSpy: Record<string, ReturnType<typeof vi.fn>>;
 
-  beforeAll(() => {
-  });
-
   beforeEach(() => {
     servicioSpy = {
       desembolsosDiarios: vi.fn().mockReturnValue(of([])),

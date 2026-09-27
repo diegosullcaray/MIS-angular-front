@@ -1,26 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { MonitorEfectividadesReasignadosComponent } from './monitor-efectividades-reasignados.component';
 
-import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
-const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
 describe('MonitorEfectividadesReasignadosComponent', () => {
-  let servicioSpy: Record<string, ReturnType<typeof vi.fn>>;
-
-  beforeAll(() => {
-  });
 
   beforeEach(() => {
-    servicioSpy = {
-      monitorResumen: vi.fn().mockReturnValue(of({ headers: [], body: [], additional: {} })),
-      monitorDetalle: vi.fn().mockReturnValue(of({ headers: [], body: [], additional: {} })),
-      opcionesUltimaGestion: vi.fn().mockReturnValue(of([])),
-    };
-
     TestBed.configureTestingModule({
       imports: [MonitorEfectividadesReasignadosComponent],
       providers: [

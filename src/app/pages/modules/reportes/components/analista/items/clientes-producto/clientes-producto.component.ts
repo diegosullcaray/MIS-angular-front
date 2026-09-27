@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { ClientesProductoService } from '../../services/clientes-producto.service';
@@ -10,12 +8,13 @@ import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteClientesProducto } from '../../models/clientes-producto.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { FiltroAsesorComponent } from '../../ui/filtro-asesor/filtro-asesor.component';
 
 /** "Clientes Producto" — migrado de la ruta `leg/com/rda/sec/cli-prod` (legado STG, `ReportCrsV1Component`, config `rda/sectorista/cliente_producto/cliente_producto_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-clientes-producto',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
+  imports: [FiltroAsesorComponent, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './clientes-producto.component.html',
 })
 export class ClientesProductoComponent extends ReporteAsesorBase<ReporteClientesProducto> {

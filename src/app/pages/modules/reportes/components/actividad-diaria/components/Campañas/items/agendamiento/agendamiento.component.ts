@@ -21,21 +21,11 @@ import { CampanasService } from '../../services/campanas.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /**
- * Agendamiento — legado `repositorio/agenda-comercial`.
+ * Agendamiento — legado `repositorio/agenda-comercial`. Cuatro tablas, una por pestaña.
  *
- * Cuatro tablas, una por pestaña. Los filtros no son los mismos en todas: el
- * legado oculta "Nivel de Fuga" en "Detalle Bases Vivas" y solo ahí muestra el
- * rango de fechas; "Nivel de propensión" está en las cuatro. Por eso cada
- * pestaña pone los suyos en vez de compartir una franja fija.
- *
- * Las cuatro se piden siempre juntas —cualquier filtro dispara las cuatro
- * consultas—, así que el rango elegido en "Detalle Bases Vivas" también llega
- * al bloque de la última pestaña aunque ahí ese filtro no se vea.
- *
- * Rendimiento: la pantalla se congelaba porque las cuatro tablas (las "Detalle" traen miles de
- * filas) se pintaban enteras y a la vez. Ahora, como el legado, las dos "Detalle" van paginadas de
- * a 10 en el cliente; solo se renderiza la tabla de la pestaña visible; cada tabla se muestra
- * apenas responde (carga independiente) y un cambio de filtro cancela las consultas anteriores.
+ * Cada pestaña pone sus filtros: "Nivel de Fuga" no va en "Detalle Bases Vivas", que es la única con
+ * rango de fechas. Las cuatro consultas salen juntas, así que ese rango también llega a la última.
+ * Las "Detalle" traen miles de filas: se paginan de a 10 y solo se pinta la pestaña visible.
  */
 @Component({
   selector: 'app-agendamiento',

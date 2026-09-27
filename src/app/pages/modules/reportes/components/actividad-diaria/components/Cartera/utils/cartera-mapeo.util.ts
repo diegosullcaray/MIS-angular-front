@@ -1,9 +1,10 @@
-import { filasDeResultado } from '../../../../../utils/reportes-mapeo.util';
+import { filasDeResultado, resultadoCrudo } from '../../../../../utils/reportes-mapeo.util';
 import type { ColumnaDinamica, TablaRegularResultadoRaw } from '../../../../../models/tabla-dinamica.model';
 import type { BloqueGrafico, FormatoValor } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
+import { seriesDeGraficoConColor } from '../../../../../../../../shared/ui/graficos/utils/series-grafico.util';
 import type { TarjetaCmgCartera } from '../models/cmg-cartera.model';
 import type { GraficoGestionComercial } from '../models/gestion-comercial.model';
-import { TOTALES_AGRO, type TotalAgro } from '../models/cartera-agricola.model';
+import { GRAFICOS_AGRICOLA, TOTALES_AGRO, type DetalleAgricolaResultado, type TotalAgro } from '../models/cartera-agricola.model';
 import {
   AVANCES_RANKING_COMERCIAL,
   FILAS_TARJETAS_CMG,
@@ -175,4 +176,16 @@ function parseGrafico(carga: unknown): DatosGraficoCrudo | undefined {
   } catch {
     return undefined;
   }
+}
+
+/** Los gráficos del detalle por cultivo (uno por `GRAFICOS_AGRICOLA`) y las filas que abre cada uno. Lo usan la diaria y la mensual. */
+export function detalleAgricolaDe(respuestas: { body?: unknown }[]): DetalleAgricolaResultado {
+  const filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
+  const graficos = respuestas.map((r, i) => {
+    const { titulo, id } = GRAFICOS_AGRICOLA[i];
+    const resultado = resultadoCrudo(r);
+    if (id) filasPorGrafico[id] = filasDeResultado(resultado);
+    return { titulo, ...seriesDeGraficoConColor(resultado?.headers) };
+  });
+  return { graficos, filasPorGrafico };
 }

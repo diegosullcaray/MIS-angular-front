@@ -13,9 +13,9 @@ import {
   tarjetasCmgCartera,
   totalesAgro,
 } from '../utils/cartera-mapeo.util';
-import { seriesDeGraficoConColor } from '../../../../../../../../shared/ui/graficos/utils/series-grafico.util';
 import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas';
 import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
+import { detalleAgricolaDe } from '../utils/cartera-mapeo.util';
 import { GRAFICOS_GESTION_COMERCIAL, kpisDeFilaTotal } from '../models/gestion-comercial.model';
 import type { TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../../../models/tabla-dinamica.model';
 import type { ColumnaMonitor } from '../models/monitor-inteligencia.model';
@@ -67,16 +67,7 @@ export class CarteraRepositorioService {
     const bloques = GRAFICOS_AGRICOLA.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
 
     return forkJoin(bloques).pipe(
-      map((respuestas) => {
-        const filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
-        const graficos = respuestas.map((r, i) => {
-          const { titulo, id } = GRAFICOS_AGRICOLA[i];
-          const resultado = resultadoCrudo(r);
-          if (id) filasPorGrafico[id] = filasDeResultado(resultado);
-          return { titulo, ...seriesDeGraficoConColor(resultado?.headers) };
-        });
-        return { graficos, filasPorGrafico };
-      }),
+      map(detalleAgricolaDe),
     );
   }
 

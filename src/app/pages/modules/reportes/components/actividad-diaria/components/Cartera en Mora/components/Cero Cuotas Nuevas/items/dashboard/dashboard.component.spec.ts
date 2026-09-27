@@ -4,9 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ToastService } from '../../../../../../../../../../../shared/services/toast.service';
 import { CeroCuotasDashboardComponent } from './dashboard.component';
 import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas.service';
-import type { HierarquiaNodo } from '../../../../../../../../models/jerarquia.model';
 
-const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
 
 describe('CeroCuotasDashboardComponent', () => {

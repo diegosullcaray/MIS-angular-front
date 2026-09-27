@@ -1,15 +1,7 @@
-/**
- * Verde para todo el panel, por pedido de la división — solo en este reporte.
- *
- * Se hace redefiniendo los tokens de marca en el host en vez de tocar
- * `app-window-panel`, `app-tabla-dinamica` o `app-data-table`: las variables CSS se
- * heredan por DOM, así que la barra de la ventana, los encabezados de tabla, los
- * textos de las tarjetas y el diálogo de detalle (que PrimeNG monta dentro del
- * mismo host — no usa `appendTo="body"`) quedan en verde sin que ninguno de esos
- * componentes se entere.
- *
- * El verde es oscuro a propósito: `--mis-text-on-primary` es blanco, y sobre un
- * verde claro no llega al contraste mínimo.
+/*
+ * Verde para todo el panel, por pedido de la división — solo en este reporte. Se redefinen los
+ * tokens de marca en el host: se heredan por DOM a la ventana, las tablas y el diálogo (que PrimeNG
+ * monta dentro del host). Verde oscuro a propósito: con texto blanco, uno claro no llega al contraste.
  */
 :host {
   display: block;

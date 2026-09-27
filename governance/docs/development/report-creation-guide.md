@@ -54,9 +54,9 @@ mensual:
 Usar `HierSelectorComponent.seleccionarNodo()` para sincronizar un salto hecho
 desde la tabla antes de consultar. Si el nodo no está en la cascada devuelta por
 el backend, mantener el fallback explícito: actualizar la ruta y consultar el
-nodo sin alterar el contrato. Las referencias de implementación son
-`src/app/pages/modules/reportes/components/actividad-diaria/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component.ts` y
-`src/app/pages/modules/reportes/components/actividad-mensual/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component.ts`.
+nodo sin alterar el contrato. La referencia de implementación es
+`src/app/pages/modules/reportes/components/actividad-diaria/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component.ts`,
+que sirve a la diaria y a la mensual (`data.mensual` en la ruta).
 
 ## 3. Elegir la estructura de datos
 

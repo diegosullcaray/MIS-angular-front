@@ -53,10 +53,12 @@ export const CARTERA_ROUTES: Routes = [
   },
   {
     path: 'repositorio/actividad-mensual/cartera/agro-mix-m',
+    // Misma pantalla que la diaria; `mensual` cambia el repositorio y los periodos.
     loadComponent: () =>
-      import('./items/cartera-agricola-cultivos/cartera-agricola-cultivos.component').then(
+      import('../../../actividad-diaria/components/Cartera/items/cartera-agricola-cultivos/cartera-agricola-cultivos.component').then(
         (c) => c.CarteraAgricolaCultivosComponent,
       ),
+    data: { mensual: true },
   },
   {
     // Alias para tolerancia de ruta

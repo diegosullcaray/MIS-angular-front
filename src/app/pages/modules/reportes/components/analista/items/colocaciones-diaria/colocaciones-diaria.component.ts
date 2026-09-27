@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { ColocacionesDiariaService } from '../../services/colocaciones-diaria.service';
@@ -10,12 +8,13 @@ import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteColocacionesDiaria } from '../../models/colocaciones-diaria.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { FiltroAsesorComponent } from '../../ui/filtro-asesor/filtro-asesor.component';
 
 /** "Colocaciones diaria Operación, Monto y Recuperación" — migrado de la ruta `leg/com/rda/sec/proy_M6` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `PROYEC_DIACOLREC_AS` en `crs-map.ts`). */
 @Component({
   selector: 'app-colocaciones-diaria',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
+  imports: [FiltroAsesorComponent, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './colocaciones-diaria.component.html',
 })
 export class ColocacionesDiariaComponent extends ReporteAsesorBase<ReporteColocacionesDiaria> {

@@ -11,9 +11,6 @@ const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 describe('ProductosMisionalesComponent', () => {
   let servicioSpy: { obtenerProductosMisionales: ReturnType<typeof vi.fn> };
 
-  beforeAll(() => {
-  });
-
   beforeEach(() => {
     servicioSpy = {
       obtenerProductosMisionales: vi.fn().mockReturnValue(

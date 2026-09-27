@@ -4,9 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { ResumenMovilidadRecuperacionesComponent } from './resumen-movilidad-recuperaciones.component';
 import { ResumenMovilidadService } from '../../services/resumen-movilidad.service';
-import type { HierarquiaNodo } from '../../../../models/jerarquia.model';
 
-const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
 
 describe('ResumenMovilidadRecuperacionesComponent', () => {

@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { RecuperacionPreventivaService } from '../../services/recuperacion-preventiva.service';
@@ -10,12 +8,13 @@ import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteRecuperacionPreventiva } from '../../models/recuperacion-preventiva.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { FiltroAsesorComponent } from '../../ui/filtro-asesor/filtro-asesor.component';
 
 /** "Recuperación Preventiva" — migrado de la ruta `leg/com/rda/sec/rec-prev` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/recuperacion_preventiva/recuperacion_preventiva` en `crs-map.ts`). */
 @Component({
   selector: 'app-recuperacion-preventiva',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
+  imports: [FiltroAsesorComponent, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './recuperacion-preventiva.component.html',
 })
 export class RecuperacionPreventivaComponent extends ReporteAsesorBase<ReporteRecuperacionPreventiva> {

@@ -8,14 +8,9 @@ import type { ReporteBloqueUnico } from '../../components/Captaciones/models/cap
 import { ResumenMovilidadService } from '../../services/resumen-movilidad.service';
 
 /**
- * "Resumen de Movilidad Comercial" (`leg/com/rda/adm/res-mov`) — legado
- * `RESNMOV_01`, host PAGINADO `cra-V10`, jerarquía `UNI_1`.
- *
- * Paginado en el servidor de a 30 filas, con encabezados del color del tema, como el
- * `app-table-ajax` del legado.
- *
- * No cuelga de ningún sub-nodo del menú, así que vive como item directo de
- * "Actividad Diaria".
+ * "Resumen de Movilidad Comercial" — legado `RESNMOV_01`, host paginado `cra-V10`, jerarquía `UNI_1`.
+ * Paginado en el servidor de a 30 filas, como el `app-table-ajax` del legado. Cuelga directo de
+ * "Actividad Diaria", sin sub-nodo en el menú.
  */
 @Component({
   selector: 'app-resumen-movilidad-comercial',

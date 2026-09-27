@@ -4,25 +4,7 @@
   [permitirActualizar]="false"
 >
   <app-grupo-filtros ventana-filtros>
-    <div class="flex flex-col gap-1">
-      <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
-      @if (mostrarSelector()) {
-            <p-select appendTo="body"
-        [options]="asesores()"
-        [ngModel]="asesorSeleccionado()"
-        (ngModelChange)="onAsesorSeleccionado($event)"
-        optionLabel="nombre"
-        dataKey="dni"
-        [filter]="true"
-        filterBy="nombre"
-        placeholder="Buscar asesor"
-        styleClass="w-72 text-[11.5px]"
-        ariaLabel="Asesor"
-      />
-      } @else {
-        <span class="text-[11.5px] text-[var(--mis-text-secondary)]">{{ asesorSeleccionado()?.nombre }}</span>
-      }
-    </div>
+    <app-filtro-asesor [asesores]="asesores()" [seleccionado]="asesorSeleccionado()" [editable]="mostrarSelector()" (cambio)="onAsesorSeleccionado($event)" />
   </app-grupo-filtros>
 
   @if (!asesorSeleccionado()) {

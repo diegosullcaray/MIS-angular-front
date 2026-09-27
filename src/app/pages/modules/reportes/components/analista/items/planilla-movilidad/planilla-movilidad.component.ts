@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabsModule } from 'primeng/tabs';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
@@ -12,12 +10,13 @@ import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import { CRITERIOS_MOVILIDAD, type ReportePlanillaMovilidad } from '../../models/planilla-movilidad.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { FiltroAsesorComponent } from '../../ui/filtro-asesor/filtro-asesor.component';
 
 /** "Planilla de Movilidad" — migrado de la ruta `leg/com/rda/sec/plan-mov-sec` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v5`, config `PLANMOV` en `crs-map.ts`). */
 @Component({
   selector: 'app-planilla-movilidad',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TabsModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
+  imports: [FiltroAsesorComponent, SkeletonModule, TabsModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './planilla-movilidad.component.html',
 })
 export class PlanillaMovilidadComponent extends ReporteAsesorBase<ReportePlanillaMovilidad> {

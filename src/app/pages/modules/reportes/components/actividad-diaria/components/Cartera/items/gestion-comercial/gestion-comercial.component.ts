@@ -30,13 +30,10 @@ import { CarteraRepositorioService } from '../../services/cartera-repositorio.se
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /**
- * "Gestión Comercial" (`repositorio/actividad-diaria/cartera/gest-comercial`) — legado
- * `repositorio/gestion-comercial`.
- *
- * Se navega por drill down, como el legado: la jerarquía arranca en el nodo autorizado
- * (`getBaseHierAsync`), la descripción de cada fila baja a ese nivel (`ddHier`, con `htipcod` +
- * `hcodrel`) y las migas vuelven atrás (`changeHier` sobre `hierBuffer`). El selector de jerarquía
- * queda oculto; el único filtro visible es el periodo (`RS_FECH02`).
+ * "Gestión Comercial" — legado `repositorio/gestion-comercial`. El único filtro visible es el
+ * periodo (`RS_FECH02`).
+ * Navega por drill down, como el legado (`ddHier` baja, las migas vuelven con `changeHier`); el
+ * selector de jerarquía queda oculto.
  */
 @Component({
   selector: 'app-gestion-comercial',

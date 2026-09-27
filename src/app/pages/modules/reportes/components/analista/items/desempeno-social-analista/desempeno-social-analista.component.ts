@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { DesempenoSocialAnalistaService } from '../../services/desempeno-social-analista.service';
@@ -10,12 +8,13 @@ import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteDesempenoSocialAnalista } from '../../models/desempeno-social-analista.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { FiltroAsesorComponent } from '../../ui/filtro-asesor/filtro-asesor.component';
 
 /** "Desempeño Social" (analista/sectorista) — migrado de la ruta `leg/com/rda/sec/desempeno-social-as` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `DESE_SOC_AS` en `crs-map.ts`). */
 @Component({
   selector: 'app-desempeno-social-analista',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
+  imports: [FiltroAsesorComponent, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './desempeno-social-analista.component.html',
 })
 export class DesempenoSocialAnalistaComponent extends ReporteAsesorBase<ReporteDesempenoSocialAnalista> {

@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { AutonomiaTasasService } from '../../services/autonomia-tasas.service';
@@ -10,12 +8,13 @@ import { ReporteAsesorBase } from '../../ui/reporte-asesor.base';
 import type { ReporteAutonomiaTasas } from '../../models/autonomia-tasas.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { FiltroAsesorComponent } from '../../ui/filtro-asesor/filtro-asesor.component';
 
 /** "Reporte de Autonomía de Tasas" — migrado de la ruta `leg/com/rda/sec/aut-tasa` (legado STG, `reportes/legacy/support/components/template/crs/report-crs-v1`, config `rda/sectorista/Reporte_Autonomia_Tasas/reporte_autonomia_tasa_sec` en `crs-map.ts`). */
 @Component({
   selector: 'app-autonomia-tasas',
   standalone: true,
-  imports: [FormsModule, SelectModule, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
+  imports: [FiltroAsesorComponent, SkeletonModule, TablaReporteComponent, WindowPanelComponent, GrupoFiltrosComponent],
   templateUrl: './autonomia-tasas.component.html',
 })
 export class AutonomiaTasasComponent extends ReporteAsesorBase<ReporteAutonomiaTasas> {

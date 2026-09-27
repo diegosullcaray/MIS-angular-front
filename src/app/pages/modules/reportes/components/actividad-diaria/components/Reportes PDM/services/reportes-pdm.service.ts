@@ -23,14 +23,8 @@ export class ReportesPdmService {
   }
 
   /**
-   * "Gestión de Banca Solidaria" — legado `repositorio/banca-solidaria`
-   * (`GRBSOLI_01`).
-   *
-   * Ojo con el nombre del parámetro: este bloque pide `fec`, pero con el formato
-   * con guiones de `fecha()` — no es el `fec` compacto del motor mixto.
-   *
-   * Las tarjetas y las dos gráficas NO son bloques aparte: el legado las saca de
-   * la primera fila de esta misma tabla, la de totales.
+   * "Gestión de Banca Solidaria" (`GRBSOLI_01`). Pide `fec` pero con el formato con guiones de
+   * `fecha()`, no el `fec` compacto del motor mixto.
    */
   bancaSolidaria(nodo: NodoConsulta): Observable<BancaSolidariaResultado> {
     return this.bloques
