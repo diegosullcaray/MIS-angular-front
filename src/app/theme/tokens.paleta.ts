@@ -129,6 +129,7 @@ export const TOKENS_CLARO = {
   'mis-text-tertiary': '#8390a2',
   'mis-text-on-primary': '#ffffff',
   'mis-text-on-secondary': '#0f1e2e',
+  'mis-glass-specular-top': 'rgba(255, 255, 255, 0.85)',
 } as const;
 
 /** Tokens de color del tema oscuro: los de `:root` con las sobrescrituras de `.dark`. */
@@ -255,6 +256,7 @@ export const TOKENS_OSCURO: Record<TokenColor, string> = {
   'mis-text-tertiary': '#6f819c',
   'mis-text-on-primary': '#ffffff',
   'mis-text-on-secondary': '#0f1e2e',
+  'mis-glass-specular-top': 'rgba(255, 255, 255, 0.16)',
 };
 
 /** Los dos temas, para recorrerlos en los tests. */

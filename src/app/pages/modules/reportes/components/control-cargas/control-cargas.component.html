@@ -3,17 +3,21 @@
   [subtitulo]="'Actualizado al ' + actualizadoAl()"
   [permitirActualizar]="false"
 >
-  <div class="flex flex-col gap-2">
-    <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)] uppercase">Carga de Fuentes Producción</h3>
-    <div class="mis-card p-3 overflow-x-auto">
-      <app-tabla-reporte [encabezados]="tablaProduccion().headers" [filas]="tablaProduccion().body" [cargando]="cargando()" />
-    </div>
-  </div>
+  <p-tabs value="produccion">
+    <p-tablist>
+      @for (tab of tabs; track tab.id) {
+      <p-tab [value]="tab.id" class="!py-2 !px-3">{{ tab.titulo }}</p-tab>
+      }
+    </p-tablist>
 
-  <div class="flex flex-col gap-2">
-    <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)] uppercase">Procesos Diarios MIS</h3>
-    <div class="mis-card p-3 overflow-x-auto">
-      <app-tabla-reporte [encabezados]="tablaProcesos().headers" [filas]="tablaProcesos().body" [cargando]="cargando()" />
-    </div>
-  </div>
+    <p-tabpanels>
+      @for (tab of tabs; track tab.id) {
+      <p-tabpanel [value]="tab.id">
+        <div class="mis-card p-3 overflow-x-auto">
+          <app-tabla-reporte [encabezados]="tab.tabla().headers" [filas]="tab.tabla().body" [cargando]="cargando()" />
+        </div>
+      </p-tabpanel>
+      }
+    </p-tabpanels>
+  </p-tabs>
 </app-window-panel>

@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval, startWith, switchMap } from 'rxjs';
+import { TabsModule } from 'primeng/tabs';
 import { TablaReporteComponent } from '../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { ControlCargasService } from './control-cargas.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
@@ -13,7 +14,7 @@ const INTERVALO_REFRESCO_MS = 30 * 1000;
 @Component({
   selector: 'app-control-cargas',
   standalone: true,
-  imports: [TablaReporteComponent, WindowPanelComponent],
+  imports: [TablaReporteComponent, WindowPanelComponent, TabsModule],
   templateUrl: './control-cargas.component.html',
 })
 export class ControlCargasComponent {
@@ -24,6 +25,11 @@ export class ControlCargasComponent {
   protected readonly actualizadoAl = signal(this.formatearFecha(new Date()));
   protected readonly tablaProduccion = signal<TablaReporteResultado>(TABLA_VACIA);
   protected readonly tablaProcesos = signal<TablaReporteResultado>(TABLA_VACIA);
+
+  protected readonly tabs = [
+    { id: 'produccion', titulo: 'Carga de Fuentes Producción', tabla: () => this.tablaProduccion() },
+    { id: 'procesos', titulo: 'Procesos Diarios MIS', tabla: () => this.tablaProcesos() },
+  ];
 
   constructor() {
     interval(INTERVALO_REFRESCO_MS)

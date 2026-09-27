@@ -269,16 +269,26 @@
   --mis-space-8: 32px;
   --mis-space-12: 48px;
 
-  --mis-radius-sm: 6px;
-  --mis-radius-md: 10px;
-  --mis-radius-lg: 14px;
-  --mis-radius-xl: 20px;
+  /* Escala de radios subida un grado (dirección Liquid Glass de
+     design-system.md: esquinas más amplias, coherentes en todo el sistema —
+     controles compactos suben poco, ventanas/tarjetas/diálogos suben más). */
+  --mis-radius-sm: 8px;
+  --mis-radius-md: 12px;
+  --mis-radius-lg: 20px;
+  --mis-radius-xl: 28px;
   --mis-radius-full: 9999px;
 
-  /* Sombras muy sutiles (estilo macOS) */
+  /* Reflejo especular del vidrio: el borde superior más claro que el resto,
+     como si la luz entrara por arriba. Sustituye a `--mis-glass-border` en el
+     inset-shadow superior de tarjetas, ventana y diálogo — un grado más de
+     relieve que el borde parejo anterior. */
+  --mis-glass-specular-top: rgba(255, 255, 255, 0.85);
+
+  /* Sombras estilo macOS, un grado más profundas para que el panel flote
+     sobre el wallpaper en vez de quedar pegado a él. */
   --mis-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --mis-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-  --mis-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.06);
+  --mis-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05);
+  --mis-shadow-lg: 0 14px 40px rgba(0, 0, 0, 0.13), 0 4px 10px rgba(0, 0, 0, 0.07);
   --mis-shadow-focus: 0 0 0 3px rgba(0, 148, 234, 0.35);
 
   --mis-transition-fast: 0.15s ease-in-out;
@@ -341,6 +351,9 @@
   --mis-surface-elevado: rgba(26, 40, 66, 0.95);
   --mis-glass-bg: rgba(22, 32, 52, 0.72);
   --mis-glass-border: rgba(255, 255, 255, 0.08);
+  /* En oscuro el reflejo es más discreto: el vidrio ya contrasta con el
+     fondo, así que una línea muy brillante se vería como un borde postizo. */
+  --mis-glass-specular-top: rgba(255, 255, 255, 0.16);
   /* En oscuro el vidrio original ya contrasta: se conserva. */
   --mis-card-bg: var(--mis-glass-bg);
   --mis-card-border: color-mix(in srgb, var(--mis-border) 55%, var(--mis-glass-border));
@@ -391,8 +404,8 @@
 
   /* Sombras: sobre fondo oscuro el negro no se ve — más opacidad y difusión. */
   --mis-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --mis-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.3);
-  --mis-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.55), 0 4px 8px rgba(0, 0, 0, 0.35);
+  --mis-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.32);
+  --mis-shadow-lg: 0 14px 40px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.38);
 
   /* Incentivos: el resto gris claro del anillo encandila sobre fondo oscuro. */
   --mis-inc-avance-resto: #3d4b60;
