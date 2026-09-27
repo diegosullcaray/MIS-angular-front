@@ -24,7 +24,9 @@ export function semaforoCumplimiento(valor: unknown): Semaforo {
 }
 
 /** Agrega a cada fila los semáforos que el legado calcula en el cliente. */
-export function semaforosTableroComercial(filas: readonly Record<string, unknown>[]): Record<string, unknown>[] {
+export function semaforosTableroComercial(
+  filas: readonly Record<string, unknown>[],
+): Record<string, unknown>[] {
   return filas.map((fila) => ({
     ...fila,
     [SEMAFOROS_TABLERO_COMERCIAL.var_enro]: semaforoVariacion(fila['var_enro']),

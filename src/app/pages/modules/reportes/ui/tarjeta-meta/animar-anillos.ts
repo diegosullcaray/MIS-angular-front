@@ -1,10 +1,11 @@
 import type { WritableSignal } from '@angular/core';
-import type { TarjetaCmgCartera } from '../../components/actividad-diaria/components/Cartera/models/cmg-cartera.model';
+import type { TarjetaCmgCartera } from '../../models/cmg-cartera.model';
 
 export function animarAnillos(
   tarjetas: readonly TarjetaCmgCartera[],
   progresoAnillos: WritableSignal<Record<string, number>>,
-): void {
+): () => void {
+  let activo = true;
   progresoAnillos.set({});
   const duracionMs = 900;
   for (const tarjeta of tarjetas) {
@@ -13,6 +14,7 @@ export function animarAnillos(
     const etiqueta = tarjeta.etiqueta;
     const inicio = performance.now();
     const paso = (ahora: number) => {
+      if (!activo) return;
       const progreso = Math.min((ahora - inicio) / duracionMs, 1);
       progresoAnillos.update((valores) => ({
         ...valores,
@@ -22,4 +24,7 @@ export function animarAnillos(
     };
     requestAnimationFrame(paso);
   }
+  return () => {
+    activo = false;
+  };
 }

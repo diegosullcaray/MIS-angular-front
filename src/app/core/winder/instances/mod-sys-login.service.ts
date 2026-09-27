@@ -19,7 +19,7 @@ export class ModSysLoginService extends AntService {
   /**
    * Login principal: valida el email del usuario contra el backend Ant.
    *
-   * @param email Email corporativo del usuario (ej: `oscar.sanchez@confianza.pe`).
+   * @param email Email corporativo del usuario.
    */
   public login(email: string): Observable<IWinderResponse> {
     const s = new Strand('login', 'login_response');

@@ -17,24 +17,24 @@ import {
   mapearCuentaResultados,
 } from '../utils/cuenta-resultados.util';
 import type { CuentaResultadosResultado } from '../models/cuenta-resultados.model';
-import { aplicarEstilosEstructuraDesembolsos } from '../utils/estructura-desembolsos.util';
+import { aplicarEstilosEstructuraDesembolsos } from '../../../utils/estructura-desembolsos.util';
 import { tarjetasCmgCarteraMensual } from '../utils/actividad-mensual-mapeo.util';
 import {
   columnasVisibles,
   conColumnasSemaforo,
   metaAgricolaDe,
   totalesAgro,
-} from '../../actividad-diaria/components/Cartera/utils/cartera-mapeo.util';
-import { GRAFICOS_AGRICOLA } from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
-import { detalleAgricolaDe } from '../../actividad-diaria/components/Cartera/utils/cartera-mapeo.util';
-import { COLUMNAS_TABLERO_COMERCIAL } from '../../actividad-diaria/components/Tablero Digital/models/tablero-comercial.model';
-import { semaforosTableroComercial } from '../../actividad-diaria/components/Tablero Digital/utils/tablero-comercial.util';
+  detalleAgricolaDe,
+} from '../../../utils/cartera-compartida.util';
+import { GRAFICOS_AGRICOLA } from '../../../models/cartera-agricola.model';
+import { COLUMNAS_TABLERO_COMERCIAL } from '../../../models/tablero-comercial.model';
+import { semaforosTableroComercial } from '../../../utils/tablero-comercial.util';
 import type { TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
-import type { CmgCarteraResultado } from '../../actividad-diaria/components/Cartera/models/cmg-cartera.model';
+import type { CmgCarteraResultado } from '../../../models/cmg-cartera.model';
 import type {
   CarteraAgricolaResultado,
   DetalleAgricolaResultado,
-} from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
+} from '../../../models/cartera-agricola.model';
 import type { OpcionFiltro } from '../../../../../../shared/ui/formularios/opcion-filtro.model';
 
 /**

@@ -69,10 +69,13 @@ describe('NovedadesTourService', () => {
 
     expect(driverFalso.forceClose).toHaveBeenCalled();
     expect(driverFalso.createQuickTour).toHaveBeenCalledTimes(1);
-    const esperados = primera.pasos.map((p) =>
-      p.advanceOnClick ? { ...p, disableActiveInteraction: false } : p
+    const pasos = driverFalso.createQuickTour.mock.calls[0][0] as typeof primera.pasos;
+    expect(pasos).toHaveLength(primera.pasos.length);
+    // Cada título lleva su número real, detrás del emoji: "🔎 Paso 1 · …".
+    pasos.forEach((p, i) => expect(p.popover?.title).toMatch(new RegExp(`^\\S+ Paso ${i + 1} · `)));
+    expect(pasos.map((p) => p.disableActiveInteraction)).toEqual(
+      primera.pasos.map((p) => (p.advanceOnClick ? false : undefined)),
     );
-    expect(driverFalso.createQuickTour.mock.calls[0][0]).toEqual(esperados);
     // Espera corta: con 2,5 s un ancla ausente dejaba "Siguiente" sin respuesta.
     expect(driverFalso.createQuickTour.mock.calls[0][1].waitForElement).toBeLessThanOrEqual(1_500);
   });

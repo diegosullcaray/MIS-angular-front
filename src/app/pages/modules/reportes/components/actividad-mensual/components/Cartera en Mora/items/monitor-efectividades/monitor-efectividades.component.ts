@@ -8,10 +8,12 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
-import { TABLA_PENDIENTE, type TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
-import { TODO } from '../../../../../actividad-diaria/components/Portafolio Reasignado/models/portafolio-reasignado.model';
-import { OPCIONES_PRECOSECHA } from '../../../../../actividad-diaria/components/Cartera en Mora/models/cartera-en-mora.model';
-import { DetalleReasignadoComponent } from '../../../../../actividad-diaria/components/Portafolio Reasignado/ui/detalle-reasignado/detalle-reasignado.component';
+import {
+  TABLA_PENDIENTE,
+  type TablaReporteResultado,
+} from '../../../../../../models/tabla-reporte.model';
+import { TODO, OPCIONES_PRECOSECHA } from '../../../../../../models/filtros.model';
+import { DetalleReasignadoComponent } from '../../../../../../ui/detalle-reasignado/detalle-reasignado.component';
 import { MonitorEfectividadesMensualBase } from '../../ui/monitor-efectividades-mensual.base';
 
 /**

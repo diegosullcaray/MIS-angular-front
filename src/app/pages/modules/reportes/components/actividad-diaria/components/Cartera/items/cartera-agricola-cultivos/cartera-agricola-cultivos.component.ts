@@ -28,7 +28,7 @@ import {
   type CarteraAgricolaResultado,
   type DetalleCultivo,
   type UbicacionCliente,
-} from '../../models/cartera-agricola.model';
+} from '../../../../../../models/cartera-agricola.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
 import { ActividadMensualRepoService } from '../../../../../actividad-mensual/services/actividad-mensual-repo.service';

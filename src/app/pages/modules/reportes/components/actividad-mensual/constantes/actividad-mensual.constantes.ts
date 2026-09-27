@@ -64,7 +64,12 @@ export const COD_MENSUAL_MULTIBLOQUE = {
    * `cont-elect-m` (`CONT_ELECT_M`), host `cra-v1p1`. Ese host lee el mapa de **rda**
    * (`rda/administracion/cra-map.ts`), que declara cuatro tablas; la de rma solo tres.
    */
-  contratacionElectronica: ['CONT_ELECT_M_01', 'CONT_ELECT_M_02', 'CONT_ELECT_M_03', 'CONT_ELECT_M_04'],
+  contratacionElectronica: [
+    'CONT_ELECT_M_01',
+    'CONT_ELECT_M_02',
+    'CONT_ELECT_M_03',
+    'CONT_ELECT_M_04',
+  ],
 } as const;
 
 /** `mon-efec-reasig` (`RS_MON_EFECREASIGM`), host `cra-v12`: el resumen; el `_02` es su detalle. */
@@ -110,7 +115,8 @@ export const REPORTES_GESTION_CARTERA_REASIGNADA_MENSUAL = {
   RS_AGE_COM_CRM_F: 'Gestión de Cartera Reasignada Base Flujo',
 } as const;
 
-export type ReporteGestionCarteraReasignadaMensual = keyof typeof REPORTES_GESTION_CARTERA_REASIGNADA_MENSUAL;
+export type ReporteGestionCarteraReasignadaMensual =
+  keyof typeof REPORTES_GESTION_CARTERA_REASIGNADA_MENSUAL;
 
 /** Reportes del motor `table.regular` (columnas dinámicas), legado `repositorio/*`. */
 export const COD_MENSUAL_REPO = {
@@ -142,8 +148,19 @@ export const COD_MENSUAL_REPO = {
  * es favorable). Legado `cuenta-resultados.util.ts` (`expenseAccountCodes`).
  */
 export const CUENTAS_GASTO_CUENTA_RESULTADOS: readonly string[] = [
-  'CR018', 'CR019', 'CR020', 'CR026', 'CR035', 'CR036', 'CR049',
-  'CR062', 'CR068', 'CR069', 'CR074', 'CR075', 'CR076',
+  'CR018',
+  'CR019',
+  'CR020',
+  'CR026',
+  'CR035',
+  'CR036',
+  'CR049',
+  'CR062',
+  'CR068',
+  'CR069',
+  'CR074',
+  'CR075',
+  'CR076',
 ];
 
 /** Mensajes de error de Cuenta de Resultados, textuales del legado. */
@@ -153,19 +170,3 @@ export const MENSAJES_CUENTA_RESULTADOS = {
   respuestaInvalida: 'El reporte devolvió una respuesta inválida.',
   periodoInvalido: 'El período seleccionado tiene un formato inválido.',
 } as const;
-
-/**
- * Escala de la fila de distribución porcentual de Estructura de Desembolsos:
- * del menor valor (verde) al mayor (rojo). Es la `chronologicalColors` del
- * legado, asignada por puesto: con tres columnas se usan los tres primeros
- * tonos, igual que en `desembolsos.component.ts`. Los colores son tokens de
- * `theme/tokens.css` (`--mis-escala-*`).
- */
-export const ESCALA_ESTRUCTURA_DESEMBOLSOS = [1, 2, 3, 4, 5].map((n) => ({
-  bg: `var(--mis-escala-${n})`,
-  borde: `var(--mis-escala-${n}-borde)`,
-  text: `var(--mis-escala-${n}-texto)`,
-}));
-
-/** La fila a colorear es la de distribución porcentual (`IDRango` 12 en el legado). */
-export const ID_RANGO_DISTRIBUCION = 12;

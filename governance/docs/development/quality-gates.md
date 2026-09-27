@@ -104,6 +104,6 @@ npm run inventario:check   # falla si quedaron viejos
 Nombrarlo evita afirmar una cobertura que no existe:
 
 - **No hay ESLint** configurado en el proyecto. El auditor de gobernanza cubre reglas de arquitectura, no de estilo de código.
-- **`tsconfig.json` no tiene `strict: true`.** Están activadas `noImplicitOverride`, `noPropertyAccessFromIndexSignature`, `noImplicitReturns` y `noFallthroughCasesInSwitch`, pero no el modo estricto completo.
+- **`tsconfig.json` activa `strict` y `strictTemplates`.** El build de producción valida tipos y plantillas; los diagnósticos extendidos de Angular pueden seguir emitiendo avisos.
 - **No hay verificación automatizada de rutas contra menú.** El catálogo enumera los `cod_rep` declarados, pero no verifica que cada uno esté efectivamente en uso ni que no haya duplicados entre dominios.
 - **La autorización real no se prueba**: el E2E mockea el backend por diseño.

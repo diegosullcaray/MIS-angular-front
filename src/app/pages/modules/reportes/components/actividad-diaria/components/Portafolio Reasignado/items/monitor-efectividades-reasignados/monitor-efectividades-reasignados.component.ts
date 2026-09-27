@@ -16,7 +16,7 @@ import {
   OPCIONES_TRAMO_DIAS_GESTION,
   TODO,
 } from '../../models/portafolio-reasignado.model';
-import { DetalleReasignadoComponent } from '../../ui/detalle-reasignado/detalle-reasignado.component';
+import { DetalleReasignadoComponent } from '../../../../../../ui/detalle-reasignado/detalle-reasignado.component';
 import { ReporteReasignadoTabsBase } from '../../ui/reporte-reasignado.base';
 
 /** "Monitor Efectividades Reasignados" (`leg/com/rda/adm/mon-efec-reasig`) — legado `RS_MON_EFECREASIG` sobre el host `cra-v12`. */
@@ -54,7 +54,10 @@ export class MonitorEfectividadesReasignadosComponent extends ReporteReasignadoT
     return this.servicio.monitorResumen(nodo);
   }
 
-  protected consultarDetalle(nodo: NodoConsulta, extra: Record<string, unknown>): Observable<TablaReporteResultado> {
+  protected consultarDetalle(
+    nodo: NodoConsulta,
+    extra: Record<string, unknown>,
+  ): Observable<TablaReporteResultado> {
     return this.servicio.monitorDetalle(nodo, {
       ...extra,
       tramof: this.tramo(),

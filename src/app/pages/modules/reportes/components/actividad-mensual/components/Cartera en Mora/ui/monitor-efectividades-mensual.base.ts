@@ -4,17 +4,20 @@ import { ToastService } from '../../../../../../../../shared/services/toast.serv
 import { crearManejadorErrorJerarquia } from '../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../models/jerarquia.model';
 import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
-import type { OpcionFiltro } from '../../../../../models/filtros.model';
-import type { NodoConsulta } from '../../../../../services/bloque-reporte.service';
 import {
-  OPCIONES_PRODUCTO_REASIGNADO,
+  TODO,
+  OPCIONES_PRODUCTO_EFECTIVIDADES as OPCIONES_PRODUCTO_REASIGNADO,
   OPCIONES_SI_NO,
   OPCIONES_TRAMO,
   OPCIONES_TRAMO_DIAS_GESTION,
-  TODO,
-  paramsDetalleComunes,
-} from '../../../../actividad-diaria/components/Portafolio Reasignado/models/portafolio-reasignado.model';
-import { fechaBasePorDefecto, generarOpcionesFechaBase } from '../../../models/actividad-mensual-filtros.model';
+  type OpcionFiltro,
+} from '../../../../../models/filtros.model';
+import { paramsDetalleComunes } from '../../../../../utils/detalle-efectividades.util';
+import type { NodoConsulta } from '../../../../../services/bloque-reporte.service';
+import {
+  fechaBasePorDefecto,
+  generarOpcionesFechaBase,
+} from '../../../models/actividad-mensual-filtros.model';
 import { ActividadMensualCraService } from '../../../services/actividad-mensual-cra.service';
 
 /**
@@ -37,7 +40,10 @@ export abstract class MonitorEfectividadesMensualBase {
 
   // ── Pestaña 1: resumen ─────────────────────────────────────────────────────
   protected readonly cargandoResumen = signal(false);
-  protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargandoResumen);
+  protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(
+    this.toast,
+    this.cargandoResumen,
+  );
 
   // ── Pestaña 2: detalle ─────────────────────────────────────────────────────
   protected readonly opcionesTramo = OPCIONES_TRAMO;
@@ -61,7 +67,9 @@ export abstract class MonitorEfectividadesMensualBase {
 
   protected readonly cargandoDetalle = signal(false);
   protected readonly detalle = signal<TablaReporteResultado>(TABLA_VACIA);
-  protected readonly totalDetalle = computed(() => Number(this.detalle().additional?.['Total'] ?? this.detalle().body.length));
+  protected readonly totalDetalle = computed(() =>
+    Number(this.detalle().additional?.['Total'] ?? this.detalle().body.length),
+  );
 
   /** Consulta del resumen; corre dentro de un `effect`, así la Fecha Cierre queda como dependencia. */
   protected abstract cargarResumen(nodo: NodoConsulta, fecha: string): Subscription;

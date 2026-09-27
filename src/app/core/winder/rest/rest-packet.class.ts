@@ -1,8 +1,8 @@
-import { environment } from '../../../../environments/environment';
+import { ANT_ROOT_URL } from './ant-endpoint.constantes';
 
 /** RESTPacket — Construye la URL y opciones para una petición al backend Ant. */
 export class RESTPacket {
-  private readonly rootUrl: string = environment.requestConfigRootURL;
+  private readonly rootUrl: string = ANT_ROOT_URL;
 
   public baseRoute: string = '';
   private routeParams: Array<Record<string, string>> = [];

@@ -190,11 +190,6 @@
     animation: mis-tour-pachi-asoma 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
 
-  .mis-tour-mascota--celebra {
-    width: 132px !important;
-    left: -62px !important;
-  }
-
   /* La flecha apunta a la izquierda ⇒ el globo está a la DERECHA del elemento,
      o sea pegado al borde izquierdo de la pantalla. Ahí asomarse vuelve a
      cortar a Pachi, así que entra al globo. Es un refuerzo: la regla de arriba
@@ -226,5 +221,64 @@
   .mis-tour-mascota {
     animation: none !important;
     opacity: 1;
+  }
+}
+
+/* ── Pasos que esperan un clic ─────────────────────────────────
+   El elemento a pulsar late y lleva una etiqueta "👆 Pulsa aquí"
+   (la pone DriverTourService); "Siguiente" queda deshabilitado. */
+.mis-tour-pulsar {
+  animation: mis-tour-anillo 1.4s ease-out infinite;
+}
+
+.mis-tour-pulsa-aqui {
+  position: fixed;
+  z-index: 1000000005;
+  transform: translate(-50%, -100%);
+  padding: 5px 12px;
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-accent);
+  color: var(--mis-text-on-secondary);
+  font-family: var(--mis-font-family);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  animation: mis-tour-rebote 1s ease-in-out infinite;
+}
+
+.mis-tour-pulsa-aqui--abajo {
+  transform: translate(-50%, 0);
+}
+
+.driver-popover .driver-popover-next-btn.driver-popover-btn-disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+}
+
+@keyframes mis-tour-anillo {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--mis-accent) 70%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 12px transparent;
+  }
+}
+
+@keyframes mis-tour-rebote {
+  50% {
+    translate: 0 -4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mis-tour-pulsar {
+    animation: none;
+    box-shadow: 0 0 0 3px var(--mis-accent);
+  }
+
+  .mis-tour-pulsa-aqui {
+    animation: none;
   }
 }

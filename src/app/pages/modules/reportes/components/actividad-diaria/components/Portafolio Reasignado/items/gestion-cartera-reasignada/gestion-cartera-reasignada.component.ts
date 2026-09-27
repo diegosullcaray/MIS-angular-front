@@ -9,8 +9,11 @@ import { WindowPanelComponent } from '../../../../../../../../../shared/ui/windo
 import { PARAMS_HIER_UNIDAD } from '../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
 import type { TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
-import { MOSTRAR_POR_POR_DEFECTO, OPCIONES_MOSTRAR_POR } from '../../models/portafolio-reasignado.model';
-import { DetalleReasignadoComponent } from '../../ui/detalle-reasignado/detalle-reasignado.component';
+import {
+  MOSTRAR_POR_POR_DEFECTO,
+  OPCIONES_MOSTRAR_POR,
+} from '../../models/portafolio-reasignado.model';
+import { DetalleReasignadoComponent } from '../../../../../../ui/detalle-reasignado/detalle-reasignado.component';
 import { ReporteReasignadoTabsBase } from '../../ui/reporte-reasignado.base';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
@@ -41,7 +44,10 @@ export class GestionCarteraReasignadaComponent extends ReporteReasignadoTabsBase
     return this.servicio.gestionResumen(nodo, this.mostrarPor());
   }
 
-  protected consultarDetalle(nodo: NodoConsulta, extra: Record<string, unknown>): Observable<TablaReporteResultado> {
+  protected consultarDetalle(
+    nodo: NodoConsulta,
+    extra: Record<string, unknown>,
+  ): Observable<TablaReporteResultado> {
     // `cra-v11` no manda los filtros comunes del detalle (Última Gestión, Fecha Compromiso, Asesor): solo la página.
     return this.servicio.gestionDetalle(nodo, this.mostrarPor(), Number(extra['pagen'] ?? 1));
   }

@@ -50,7 +50,7 @@ test('el comunicado publicado tiene dos láminas y se recorre con sus controles'
   await expect(visor(page)).toContainText('Lámina 1 de 2');
 
   await visor(page).getByRole('button', { name: 'Lámina siguiente' }).click();
-  await expect(imagen(page)).toHaveAttribute('src', 'assets/images/fc/ads/Comunicado2.png');
+  await expect(imagen(page)).toHaveAttribute('src', 'assets/images/fc/ads/Comunicado2.webp');
   await expect(visor(page)).toContainText('Lámina 2 de 2');
 
   await visor(page).getByRole('button', { name: 'Lámina 1 de 2' }).click();

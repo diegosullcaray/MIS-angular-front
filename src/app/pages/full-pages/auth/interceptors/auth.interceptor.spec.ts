@@ -1,15 +1,24 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpRequest, HttpHandlerFn, HttpErrorResponse, HttpResponse, HttpEvent } from '@angular/common/http';
+import {
+  HttpRequest,
+  HttpHandlerFn,
+  HttpErrorResponse,
+  HttpResponse,
+  HttpEvent,
+} from '@angular/common/http';
 import { firstValueFrom, Observable, of, throwError } from 'rxjs';
 import { signal } from '@angular/core';
 import { authInterceptor } from './auth.interceptor';
-import { AuthService } from '../../pages/full-pages/auth/service/auth.service';
-import { ShellStateService } from '../services/shell-state.service';
-import { environment } from '../../../environments/environment';
-import type { UsuarioActivo } from '../interfaces/shell-state.model';
+import { AuthService } from '../service/auth.service';
+import { ShellStateService } from '../../../../core/services/shell-state.service';
+import { ANT_ROOT_URL } from '../../../../core/winder/rest/ant-endpoint.constantes';
+import type { UsuarioActivo } from '../../../../core/interfaces/shell-state.model';
 
 describe('authInterceptor', () => {
-  let authFalso: { token: ReturnType<typeof signal<string | null>>; cerrarSesion: ReturnType<typeof vi.fn> };
+  let authFalso: {
+    token: ReturnType<typeof signal<string | null>>;
+    cerrarSesion: ReturnType<typeof vi.fn>;
+  };
   let shell: ShellStateService;
 
   function usuario(): UsuarioActivo {
@@ -46,7 +55,7 @@ describe('authInterceptor', () => {
       return of(new HttpResponse({ status: 200 }));
     };
 
-    await firstValueFrom(ejecutar(`${environment.requestConfigRootURL}/v1/g?w=abc`, next));
+    await firstValueFrom(ejecutar(`${ANT_ROOT_URL}/v1/g?w=abc`, next));
 
     expect(reqRecibido.headers.has('Authorization')).toBe(false);
   });
@@ -61,7 +70,9 @@ describe('authInterceptor', () => {
       return of(new HttpResponse({ status: 200 }));
     };
 
-    await firstValueFrom(ejecutar('https://accounts.google.com/.well-known/openid-configuration', next));
+    await firstValueFrom(
+      ejecutar('https://accounts.google.com/.well-known/openid-configuration', next),
+    );
 
     expect(reqRecibido.headers.has('Authorization')).toBe(false);
   });

@@ -1,51 +1,15 @@
-import { filasDeResultado, resultadoCrudo } from '../../../../../utils/reportes-mapeo.util';
-import type {
-  ColumnaDinamica,
-  TablaRegularResultadoRaw,
-} from '../../../../../models/tabla-dinamica.model';
+import { filasDeResultado } from '../../../../../utils/reportes-mapeo.util';
+import type { TablaRegularResultadoRaw } from '../../../../../models/tabla-dinamica.model';
 import type {
   BloqueGrafico,
   FormatoValor,
 } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
-import { seriesDeGraficoConColor } from '../../../../../../../../shared/ui/graficos/utils/series-grafico.util';
-import type { TarjetaCmgCartera } from '../models/cmg-cartera.model';
+import type { TarjetaCmgCartera } from '../../../../../models/cmg-cartera.model';
 import type { GraficoGestionComercial } from '../models/gestion-comercial.model';
-import {
-  GRAFICOS_AGRICOLA,
-  TOTALES_AGRO,
-  type DetalleAgricolaResultado,
-  type TotalAgro,
-} from '../models/cartera-agricola.model';
-import {
-  AVANCES_RANKING_COMERCIAL,
-  FILAS_TARJETAS_CMG,
-  SEMAFOROS_CMG_CARTERA,
-} from '../constantes/cartera.constantes';
+import { AVANCES_RANKING_COMERCIAL } from '../constantes/cartera.constantes';
+import { FILAS_TARJETAS_CMG } from '../../../../../constantes/cmg-cartera.constantes';
 
 /** Mapeo de los payloads de Cartera. Son funciones puras: el service solo pide. */
-
-/** `meta1` agrícola puede llegar como JSON o como arreglo. */
-export function metaAgricolaDe(
-  resultado: TablaRegularResultadoRaw | undefined,
-): Record<string, unknown>[] | undefined {
-  const meta = resultado?.meta1;
-  return (typeof meta === 'string' ? JSON.parse(meta) : meta) as
-    Record<string, unknown>[] | undefined;
-}
-
-/** El legado descarta las columnas que el backend marca como ocultas. */
-export function columnasVisibles(headers: string | undefined): ColumnaDinamica[] {
-  if (!headers) return [];
-  const todas = JSON.parse(headers) as (ColumnaDinamica & { cellStyle?: { display?: string } })[];
-  return todas.filter((h) => h.cellStyle?.display?.toLowerCase() !== 'none');
-}
-
-/** Marca las columnas de CMG Cartera con su columna de control, para que la tabla dibuje el punto. */
-export function conColumnasSemaforo(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
-  return columnas.map((c) =>
-    SEMAFOROS_CMG_CARTERA[c.key] ? { ...c, semaforoKey: SEMAFOROS_CMG_CARTERA[c.key] } : c,
-  );
-}
 
 /**
  * Tarjetas del encabezado de CMG Cartera. Los saldos salen de filas de índice
@@ -126,18 +90,6 @@ export function conSemaforos(fila: Record<string, unknown>): Record<string, unkn
   return { ...fila, ...calculadas };
 }
 
-/** Cada total del encabezado agrícola: valor de hoy contra el del mes anterior (`meta1`). */
-export function totalesAgro(
-  primeraFila: Record<string, unknown>,
-  mesAnterior: Record<string, unknown>,
-): TotalAgro[] {
-  return TOTALES_AGRO.map(({ clave, etiqueta, formato }) => {
-    const actual = Number(primeraFila[clave] ?? 0);
-    const anterior = Number(mesAnterior[clave] ?? 0);
-    return { etiqueta, formato, actual, anterior, senal: Math.sign(actual - anterior) };
-  });
-}
-
 /**
  * Un gráfico de Gestión Comercial.
  *
@@ -201,16 +153,4 @@ function parseGrafico(carga: unknown): DatosGraficoCrudo | undefined {
   } catch {
     return undefined;
   }
-}
-
-/** Los gráficos del detalle por cultivo (uno por `GRAFICOS_AGRICOLA`) y las filas que abre cada uno. Lo usan la diaria y la mensual. */
-export function detalleAgricolaDe(respuestas: { body?: unknown }[]): DetalleAgricolaResultado {
-  const filasPorGrafico: Record<string, Record<string, unknown>[]> = {};
-  const graficos = respuestas.map((r, i) => {
-    const { titulo, id } = GRAFICOS_AGRICOLA[i];
-    const resultado = resultadoCrudo(r);
-    if (id) filasPorGrafico[id] = filasDeResultado(resultado);
-    return { titulo, ...seriesDeGraficoConColor(resultado?.headers) };
-  });
-  return { graficos, filasPorGrafico };
 }

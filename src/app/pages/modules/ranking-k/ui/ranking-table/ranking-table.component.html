@@ -20,9 +20,9 @@
     <p-table [value]="filasVisibles()" [scrollable]="true" [scrollHeight]="scrollHeight()" styleClass="p-datatable-sm ranking-custom-table">
       <ng-template pTemplate="header">
         <tr>
-          <th class="w-12 text-center text-[12px] font-bold uppercase whitespace-nowrap border-r border-white/30" style="background-color: var(--mis-ranking-subheader-bg); color: #ffffff;">N°</th>
-          <th class="text-center text-[12px] font-bold uppercase whitespace-nowrap border-r border-white/30" style="background-color: var(--mis-ranking-subheader-bg); color: #ffffff;">Usuario</th>
-          <th class="text-center text-[12px] font-bold uppercase whitespace-nowrap" style="background-color: var(--mis-ranking-subheader-bg); color: #ffffff;">{{ valorLabel() }}</th>
+          <th class="w-12 text-center text-[12px] font-bold uppercase whitespace-nowrap border-r border-white/30" style="background-color: var(--mis-ranking-subheader-bg); color: var(--mis-text-on-primary);">N°</th>
+          <th class="text-center text-[12px] font-bold uppercase whitespace-nowrap border-r border-white/30" style="background-color: var(--mis-ranking-subheader-bg); color: var(--mis-text-on-primary);">Usuario</th>
+          <th class="text-center text-[12px] font-bold uppercase whitespace-nowrap" style="background-color: var(--mis-ranking-subheader-bg); color: var(--mis-text-on-primary);">{{ valorLabel() }}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-fila>

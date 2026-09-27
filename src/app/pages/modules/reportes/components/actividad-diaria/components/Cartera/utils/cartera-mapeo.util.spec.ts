@@ -1,46 +1,11 @@
-import {
-  columnasVisibles,
-  conColumnasSemaforo,
-  conSemaforos,
-  graficoGestionComercial,
-  metaAgricolaDe,
-  tarjetasCmgCartera,
-  totalesAgro,
-} from './cartera-mapeo.util';
+import { conSemaforos, graficoGestionComercial, tarjetasCmgCartera } from './cartera-mapeo.util';
 
 describe('mapeos de Cartera', () => {
-  it('lee meta1 agrícola serializado o ya parseado', () => {
-    const meta = [{ saldo: 12 }];
-    expect(metaAgricolaDe({ meta1: JSON.stringify(meta) })).toEqual(meta);
-    expect(metaAgricolaDe({ meta1: meta })).toEqual(meta);
-    expect(metaAgricolaDe(undefined)).toBeUndefined();
-  });
-
-  it('oculta las columnas que el contrato marca como no visibles y agrega semáforos CMG', () => {
-    const visibles = columnasVisibles(
-      JSON.stringify([
-        { key: 'a', label: 'A' },
-        { key: 'b', label: 'B', cellStyle: { display: 'none' } },
-      ]),
-    );
-
-    expect(visibles.map((columna) => columna.key)).toEqual(['a']);
-    expect(conColumnasSemaforo([{ key: 'AVANCE', label: 'Avance' }])[0]).toMatchObject({
-      key: 'AVANCE',
-    });
-  });
-
   it('calcula semáforos por avance frente al timing', () => {
     expect(conSemaforos({ Timing: 50, AVANCE_DES: 0.5 })).toMatchObject({
       Timing: 50,
       AVANCE_DES: 0.5,
     });
-  });
-
-  it('calcula totales agrícolas sin romper ante valores ausentes', () => {
-    const totales = totalesAgro({}, {});
-    expect(totales).not.toHaveLength(0);
-    expect(totales.every((total) => total.actual === 0 && total.anterior === 0)).toBe(true);
   });
 
   it('prioriza data para el gráfico de gestión comercial y convierte porcentajes', () => {

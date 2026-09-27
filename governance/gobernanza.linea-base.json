@@ -2,7 +2,6 @@
   "generado": "2026-09-08",
   "nota": "Deuda conocida al momento de congelar. Regenerar a propósito, nunca en automático. Ver ADR-0003.",
   "claves": [
-    "core-aislado|src/app/core/interceptors/auth.interceptor.ts|import prohibido: from '../../pages/full-pages/auth/service/auth.service'",
     "entorno-fuera-de-core|src/app/pages/full-pages/auth/service/auth.service.ts|lectura directa de environment fuera de core (pages)",
     "entorno-fuera-de-core|src/app/pages/full-pages/auth/service/google-auth.config.ts|lectura directa de environment fuera de core (pages)",
     "entorno-fuera-de-core|src/app/pages/modules/actividades/services/actividades.service.ts|lectura directa de environment fuera de core (pages)",
@@ -27,7 +26,6 @@
     "prueba-vecina|src/app/pages/modules/reportes/components/avance-comercial/services/avance-comercial.service.ts|sin archivo .spec.ts hermano",
     "prueba-vecina|src/app/pages/modules/reportes/components/control-cargas/control-cargas.service.ts|sin archivo .spec.ts hermano",
     "prueba-vecina|src/app/pages/modules/reportes/services/bloque-reporte.service.ts|sin archivo .spec.ts hermano",
-    "sin-secretos|src/app/core/winder/instances/mod-sys-login.service.ts|dato de entorno embebido: oscar.sanchez@confianza.pe",
     "tokens-de-color|src/app/pages/full-pages/auth/components/login/login.component.html|color fijo #34A853 — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",
     "tokens-de-color|src/app/pages/full-pages/auth/components/login/login.component.html|color fijo #4285F4 — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",
     "tokens-de-color|src/app/pages/full-pages/auth/components/login/login.component.html|color fijo #FBBC05 — usar var(--mis-*) o una utilidad text-[var(--mis-*)]",

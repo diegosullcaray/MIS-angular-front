@@ -51,7 +51,7 @@ export class PrincipalComponent {
 
   protected readonly cargandoConfiguracion = signal(true);
   protected readonly cargandoPortada = signal(true);
-  protected readonly cargandoCategorias = signal<Record<number, boolean>>({ 1: true, 2: true, 3: true, 4: true });
+  protected readonly cargandoCategorias = signal<Partial<Record<number, boolean>>>({ 1: true, 2: true, 3: true, 4: true });
 
   protected readonly configuracion = signal<EsgConfiguracionModulo | null>(null);
   protected readonly portada = signal<EsgResumenPortadaFila[]>([]);

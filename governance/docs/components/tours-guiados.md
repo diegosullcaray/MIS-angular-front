@@ -11,7 +11,7 @@ El sistema explica sus propias pantallas con recorridos sobre la interfaz real: 
 | `NovedadesTourService` | `src/app/pages/modules/home/services/novedades-tour.service.ts` | catálogo de novedades del Home; cada una es un recorrido                                                            |
 | `app-panel-novedades`  | `src/app/pages/modules/home/ui/panel-novedades/`                | el panel lateral desde donde se lanzan                                                                              |
 | Tema del globo         | `src/assets/styles/vendor/driver.css`                           | paleta del sistema y el personaje                                                                                   |
-| Pachi                  | `src/assets/images/fc/tours/`                                   | recortes del personaje oficial de la marca, una imagen por pose                                                     |
+| Pachi                  | `src/assets/images/fc/tours/`                                   | recortes del personaje oficial (Baby Pachi), una imagen por pose y **siempre el mismo personaje**                                                     |
 | Bienvenida             | `src/app/pages/modules/home/ui/bienvenida-dialog/`              | el saludo de Pachi al entrar, una sola vez                                                                          |
 
 `DriverTourService` es el único lugar que importa `driver.js`. Un módulo que lo importe por su cuenta se saltea el cierre limpio (`forceClose()` elimina popovers residuales) y el reacomodo de abajo.
@@ -136,6 +136,8 @@ uso". No lo están: borrarlas rompe el recorrido.
 3. Correr `npm run audit:anclas`.
 
 El panel ordena por `fecha`, agrupa dinámicamente las categorías del catálogo y `esNueva()` decide la etiqueta "Nuevo" con una ventana de 30 días. Al elegir un tema, Baby Pachi cambia su pose y explica qué se puede aprender en ese recorrido. La guía de Configuración es secuencial: resalta el perfil, espera su clic, resalta la acción Configuración y después el buscador del diálogo.
+
+La demo de navegación replica el shell real: el rail abre el **explorador del sistema** (carpetas y reportes, con las clases de `explorador.css`), no un panel lateral; en el celular el rail va abajo y no hay breadcrumb, así que ese paso se omite (`SOLO_ESCRITORIO`). El "Paso N" del título lo pone `NovedadesTourService` sobre los pasos que se muestran: en el catálogo los títulos van sin número.
 
 Filtros y navegación no abren un reporte ni un sistema de negocio. `app-demo-navegacion` aparece dentro del Home como laboratorio local sin consultas ni permisos: el usuario pulsa el sistema de ejemplo o el embudo y `advanceOnClick` continúa el recorrido sobre el control que acaba de revelar. La búsqueda global se abre y enfoca antes de su guía porque es una acción reversible del propio shell.
 

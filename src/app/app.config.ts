@@ -19,7 +19,7 @@ import { provideOAuthClient } from 'angular-oauth2-oidc';
 
 import { APP_ROUTES } from './app.routes';
 import { MisTheme } from './theme/mis-theme';
-import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { authInterceptor } from './pages/full-pages/auth/interceptors/auth.interceptor';
 import { httpErrorInterceptor } from './pages/full-pages/error/interceptors/http-error.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';

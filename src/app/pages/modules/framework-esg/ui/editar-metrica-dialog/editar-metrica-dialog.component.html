@@ -17,7 +17,7 @@
         <div class="text-[12px] font-medium text-[var(--mis-text-secondary)]">Medida</div>
         <div class="text-[14px] text-[var(--mis-text-primary)]">{{ f.des_med }}</div>
 
-        <label class="text-[12px] font-medium" style="color: #4472c4;">¿Está Disponible?</label>
+        <label class="text-[12px] font-medium" style="color: var(--mis-esg-historico);">¿Está Disponible?</label>
         <input
           pInputText
           type="text"
@@ -27,7 +27,7 @@
           [disabled]="!modoEdicion()"
         />
 
-        <label class="text-[12px] font-medium" style="color: #4472c4;">Situación</label>
+        <label class="text-[12px] font-medium" style="color: var(--mis-esg-historico);">Situación</label>
         <p-select appendTo="body"
           [options]="situaciones()"
           optionLabel="des"

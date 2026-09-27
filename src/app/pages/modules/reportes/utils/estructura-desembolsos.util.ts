@@ -1,5 +1,8 @@
-import { ESCALA_ESTRUCTURA_DESEMBOLSOS, ID_RANGO_DISTRIBUCION } from '../constantes/actividad-mensual.constantes';
-import type { ColumnaDinamica, TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
+import {
+  ESCALA_ESTRUCTURA_DESEMBOLSOS,
+  ID_RANGO_DISTRIBUCION,
+} from '../constantes/estructura-desembolsos.constantes';
+import type { ColumnaDinamica, TablaDinamicaResultado } from '../models/tabla-dinamica.model';
 
 /**
  * Coloración condicional de Estructura de Desembolsos.
@@ -9,7 +12,9 @@ import type { ColumnaDinamica, TablaDinamicaResultado } from '../../../models/ta
  * (`_Ope` o `_MON`), de menor a mayor. Los grupos se detectan de las cabeceras
  * porque la versión diaria trae tres columnas y la mensual, cinco.
  */
-export function aplicarEstilosEstructuraDesembolsos(tabla: TablaDinamicaResultado): TablaDinamicaResultado {
+export function aplicarEstilosEstructuraDesembolsos(
+  tabla: TablaDinamicaResultado,
+): TablaDinamicaResultado {
   if (!tabla?.columnas) return tabla;
 
   const claves = aplanar(tabla.columnas)
@@ -32,7 +37,11 @@ function aplanar(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
   return columnas.flatMap((c) => [c, ...(c.subs ? aplanar(c.subs) : [])]);
 }
 
-function conEstilos(columnas: ColumnaDinamica[], grupoOpe: string[], grupoMon: string[]): ColumnaDinamica[] {
+function conEstilos(
+  columnas: ColumnaDinamica[],
+  grupoOpe: string[],
+  grupoMon: string[],
+): ColumnaDinamica[] {
   return columnas.map((col) => {
     const nueva = { ...col };
     const clave = col.key?.toLowerCase() ?? '';
@@ -79,8 +88,12 @@ function estiloCelda(
 /** El nombre de la columna de rango cambia entre versiones del reporte. */
 function esFilaDistribucion(fila: Record<string, unknown>): boolean {
   const idRango = Number(fila['IDRango'] ?? fila['idrango'] ?? fila['ID_RANGO']);
-  const descripcion = String(fila['DES_RANGO'] ?? fila['des_rango'] ?? fila['RangoDesembolso'] ?? '').toLowerCase();
-  return idRango === ID_RANGO_DISTRIBUCION || descripcion.includes('%') || descripcion.includes('part');
+  const descripcion = String(
+    fila['DES_RANGO'] ?? fila['des_rango'] ?? fila['RangoDesembolso'] ?? '',
+  ).toLowerCase();
+  return (
+    idRango === ID_RANGO_DISTRIBUCION || descripcion.includes('%') || descripcion.includes('part')
+  );
 }
 
 function aNumero(valor: unknown): number {

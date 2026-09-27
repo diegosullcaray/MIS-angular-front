@@ -1,6 +1,6 @@
-import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
-import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
-import type { DataTableColumn } from '../../../../../../../../shared/ui/data-table/data-table.model';
+import type { BloqueGrafico } from '../../../../shared/ui/graficos/models/grafico-comun.model';
+import type { TablaDinamicaResultado } from './tabla-dinamica.model';
+import type { DataTableColumn } from '../../../../shared/ui/data-table/data-table.model';
 
 export interface TotalAgro {
   etiqueta: string;
@@ -17,7 +17,10 @@ export interface CarteraAgricolaResultado {
   totales: TotalAgro[];
 }
 
-export const CARTERA_AGRICOLA_VACIA: CarteraAgricolaResultado = { tabla: { columnas: [], filas: [] }, totales: [] };
+export const CARTERA_AGRICOLA_VACIA: CarteraAgricolaResultado = {
+  tabla: { columnas: [], filas: [] },
+  totales: [],
+};
 
 /** Resultado de Detalle Agrícola. */
 export interface DetalleAgricolaResultado {
@@ -92,6 +95,9 @@ export function totalesDeCultivo(filas: Record<string, unknown>[]): TotalesCulti
 }
 
 /** Filtra filas por cultivo. */
-export function filasDeCultivo(filas: Record<string, unknown>[], cultivo: string): Record<string, unknown>[] {
+export function filasDeCultivo(
+  filas: Record<string, unknown>[],
+  cultivo: string,
+): Record<string, unknown>[] {
   return filas.filter((f) => (f['HDESCUL_Agrupado'] || f['HDESCUL']) === cultivo);
 }

@@ -3,11 +3,7 @@ import type { OpcionFiltro } from '../../../../../models/filtros.model';
 /** Catálogos de filtro de Cartera en Mora. */
 
 /** Opciones de precosecha. */
-export const OPCIONES_PRECOSECHA: OpcionFiltro[] = [
-  { id: 'TODO', desc: 'TODO' },
-  { id: '3', desc: '3 Meses' },
-  { id: '6', desc: '6 Meses' },
-];
+export { OPCIONES_PRECOSECHA } from '../../../../../models/filtros.model';
 
 /** Opciones de tipo de cuota. */
 export const OPCIONES_TIPO_CUOTA: OpcionFiltro[] = [

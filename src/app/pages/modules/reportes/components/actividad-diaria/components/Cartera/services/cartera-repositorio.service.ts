@@ -10,32 +10,34 @@ import {
   resultadoCrudo,
   tablaDeResultado,
 } from '../../../../../utils/reportes-mapeo.util';
-import { aplicarEstilosEstructuraDesembolsos } from '../../../../actividad-mensual/utils/estructura-desembolsos.util';
+import { aplicarEstilosEstructuraDesembolsos } from '../../../../../utils/estructura-desembolsos.util';
 import {
   COD_CARTERA_REPO,
   PARAMS_RANKING_COMERCIAL,
   TABLAS_GESTION_COMERCIAL,
 } from '../constantes/cartera.constantes';
 import {
-  columnasVisibles,
-  conColumnasSemaforo,
   conSemaforos,
   graficoGestionComercial,
-  metaAgricolaDe,
   tarjetasCmgCartera,
-  totalesAgro,
 } from '../utils/cartera-mapeo.util';
+import {
+  columnasVisibles,
+  conColumnasSemaforo,
+  detalleAgricolaDe,
+  metaAgricolaDe,
+  totalesAgro,
+} from '../../../../../utils/cartera-compartida.util';
 import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas';
-import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
-import { detalleAgricolaDe } from '../utils/cartera-mapeo.util';
+import { GRAFICOS_AGRICOLA } from '../../../../../models/cartera-agricola.model';
 import { GRAFICOS_GESTION_COMERCIAL, kpisDeFilaTotal } from '../models/gestion-comercial.model';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { ColumnaMonitor } from '../models/monitor-inteligencia.model';
-import type { CmgCarteraResultado } from '../models/cmg-cartera.model';
+import type { CmgCarteraResultado } from '../../../../../models/cmg-cartera.model';
 import type {
   CarteraAgricolaResultado,
   DetalleAgricolaResultado,
-} from '../models/cartera-agricola.model';
+} from '../../../../../models/cartera-agricola.model';
 import type { GestionComercialResultado } from '../models/gestion-comercial.model';
 import type { OpcionFiltro } from '../../../../../../../../shared/ui/formularios/opcion-filtro.model';
 
@@ -180,14 +182,12 @@ export class CarteraRepositorioService {
    */
   rankingComercial(): Observable<TablaDinamicaResultado> {
     const params = { ...PARAMS_RANKING_COMERCIAL, fecha: this.bloques.fecha() };
-    return this.bloques
-      .tablaRegularCon(COD_CARTERA_REPO.rankingComercial, params)
-      .pipe(
-        map(({ filas }) => ({
-          columnas: COLUMNAS_RANKING_COMERCIAL,
-          filas: filas.map(conSemaforos),
-        })),
-      );
+    return this.bloques.tablaRegularCon(COD_CARTERA_REPO.rankingComercial, params).pipe(
+      map(({ filas }) => ({
+        columnas: COLUMNAS_RANKING_COMERCIAL,
+        filas: filas.map(conSemaforos),
+      })),
+    );
   }
 
   /**

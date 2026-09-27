@@ -2,14 +2,17 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
-import { DetalleReasignadoComponent } from '../../../Portafolio Reasignado/ui/detalle-reasignado/detalle-reasignado.component';
+import { DetalleReasignadoComponent } from '../../../../../../ui/detalle-reasignado/detalle-reasignado.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
-import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
+import {
+  TABLA_VACIA,
+  type TablaReporteResultado,
+} from '../../../../../../models/tabla-reporte.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import {
   OPCIONES_PRODUCTO_REASIGNADO,
@@ -61,7 +64,10 @@ export class MonitorEfectividadesComponent {
 
   // ── Pestaña 1: resumen ───────────────────────────────────────────────────────
   protected readonly cargandoResumen = signal(false);
-  protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargandoResumen);
+  protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(
+    this.toast,
+    this.cargandoResumen,
+  );
   protected readonly tablasResumen = signal<TablaReporteResultado[]>([]);
 
   /** Bloques de resumen. */
@@ -150,16 +156,18 @@ export class MonitorEfectividadesComponent {
 
   private cargarResumen(nodo: HierarquiaNodo): void {
     this.cargandoResumen.set(true);
-    this.servicio.monitorEfectividadesResumen({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
-      next: (tablas) => {
-        this.tablasResumen.set(tablas);
-        this.cargandoResumen.set(false);
-      },
-      error: () => {
-        this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
-        this.cargandoResumen.set(false);
-      },
-    });
+    this.servicio
+      .monitorEfectividadesResumen({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel })
+      .subscribe({
+        next: (tablas) => {
+          this.tablasResumen.set(tablas);
+          this.cargandoResumen.set(false);
+        },
+        error: () => {
+          this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+          this.cargandoResumen.set(false);
+        },
+      });
   }
 
   /** Handler de búsqueda de asesor. */
@@ -168,19 +176,27 @@ export class MonitorEfectividadesComponent {
     this.asesorBuscado.set(this.asesor());
   }
 
-  private cargarDetalle(nodo: HierarquiaNodo, filtros: Record<string, unknown>, pagina: number): void {
+  private cargarDetalle(
+    nodo: HierarquiaNodo,
+    filtros: Record<string, unknown>,
+    pagina: number,
+  ): void {
     this.cargandoDetalle.set(true);
     this.servicio
-      .monitorEfectividadesDetalle({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, filtros, pagina)
+      .monitorEfectividadesDetalle(
+        { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel },
+        filtros,
+        pagina,
+      )
       .subscribe({
-      next: (tabla) => {
-        this.tablaDetalle.set(tabla);
-        this.cargandoDetalle.set(false);
-      },
-      error: () => {
-        this.toast.error('No se pudo cargar el detalle', 'Inténtalo de nuevo en unos segundos.');
-        this.cargandoDetalle.set(false);
-      },
-    });
+        next: (tabla) => {
+          this.tablaDetalle.set(tabla);
+          this.cargandoDetalle.set(false);
+        },
+        error: () => {
+          this.toast.error('No se pudo cargar el detalle', 'Inténtalo de nuevo en unos segundos.');
+          this.cargandoDetalle.set(false);
+        },
+      });
   }
 }

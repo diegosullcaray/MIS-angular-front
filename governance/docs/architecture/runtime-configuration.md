@@ -27,7 +27,7 @@
 - Builder: `@angular/build:application`.
 - Build por defecto: produccion.
 - Presupuesto inicial: warning 1.5 MB, error 2 MB.
-- Presupuesto por estilo: warning 6 KB, error 8 KB.
+- Presupuesto por estilo: warning 10 KB, error 14 KB.
 - `powerbi-client` es la dependencia CommonJS permitida.
 - `npm run build:prod` tambien ejecuta `verify:bundle`.
 

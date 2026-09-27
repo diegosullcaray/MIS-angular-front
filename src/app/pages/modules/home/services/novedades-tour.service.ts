@@ -56,17 +56,24 @@ const ANCLA = {
 
   // ── Demo: navegación ────────────────────────────────────────────────
   demoSidebarRail: '.demo-navegacion--navegacion .demo-sidebar-rail',
-  ejemploNavegacion: '.demo-navegacion--navegacion [aria-label="Abrir panel de ejemplo"]',
-  panelEjemplo: '.demo-navegacion--navegacion .demo-navegacion-panel',
-  seccionEjemplo: '.demo-navegacion--navegacion .demo-navegacion-opcion:not(.demo-navegacion-opcion--activa)',
+  demoSistema: '.demo-navegacion--navegacion [aria-label="Abrir el sistema Reportes"]',
+  demoExplorador: '.demo-navegacion--navegacion .demo-explorador',
+  demoCarpeta: '.demo-navegacion--navegacion [data-demo-nodo="Cartera"]',
+  demoReporte: '.demo-navegacion--navegacion [data-demo-nodo="Saldo de cartera"]',
   demoBreadcrumb: '.demo-navegacion--navegacion .demo-breadcrumb',
-  demoHeader: '.demo-navegacion--navegacion .demo-header',
-  demoBarra: '.demo-navegacion--navegacion .demo-navegacion-barra',
   demoSemaforo: '.demo-navegacion--navegacion .demo-semaforo',
   demoAcciones: '.demo-navegacion--navegacion .demo-navegacion-acciones',
   demoKpis: '.demo-navegacion--navegacion .demo-kpis-fila',
-  demoVentana: '.demo-navegacion--navegacion .demo-ventana',
 } as const;
+
+/** "🔎 Abre la búsqueda" → "🔎 Paso 1 · Abre la búsqueda": el emoji queda adelante. */
+function numerarPaso(titulo: string, numero: number): string {
+  const espacio = titulo.indexOf(' ');
+  return `${titulo.slice(0, espacio + 1)}Paso ${numero} · ${titulo.slice(espacio + 1)}`;
+}
+
+/** Anclas que el shell oculta en el celular: sus pasos no se muestran ahí. */
+const SOLO_ESCRITORIO: ReadonlySet<string> = new Set([ANCLA.demoBreadcrumb]);
 
 /** Catálogo de novedades del sistema, de la más reciente a la más antigua. */
 const NOVEDADES: Novedad[] = [
@@ -87,7 +94,7 @@ const NOVEDADES: Novedad[] = [
         element: ANCLA.buscadorBoton,
         advanceOnClick: true,
         popover: {
-          title: '🔎 Paso 1 · Abre la búsqueda global',
+          title: '🔎 Abre la búsqueda global',
           description: conPachi(
             '¡Hola! Soy <b>Baby Pachi</b>. Pulsa este botón de lupa para abrir la barra de búsqueda. Funciona desde cualquier pantalla del sistema sin importar en qué reporte estés.',
             'saluda',
@@ -99,7 +106,7 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.buscador,
         popover: {
-          title: '⌨️ Paso 2 · Escribe para buscar',
+          title: '⌨️ Escribe para buscar',
           description: conPachi(
             'Empieza a escribir una palabra clave. Por ejemplo: <b>indicador</b>, <b>desembolso</b> o <b>resumen</b>. Los resultados aparecen mientras escribes, sin necesidad de presionar Enter.',
             'escribe',
@@ -111,7 +118,7 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.buscadorCaja,
         popover: {
-          title: '📋 Paso 3 · Resultados agrupados',
+          title: '📋 Resultados agrupados',
           description: conPachi(
             'Los resultados se agrupan por <b>tipo</b>: reportes, carpetas y sistemas. Si tienes muchos resultados, las etiquetas de tipo te ayudan a ubicar lo que buscas más rápido.',
             'piensa',
@@ -123,7 +130,7 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.buscadorCaja,
         popover: {
-          title: '🎯 Paso 4 · Navega con el teclado',
+          title: '🎯 Navega con el teclado',
           description: conPachi(
             'Usa las flechas <b>↑ ↓</b> para moverte entre resultados y <b>Enter</b> para abrir el seleccionado. También puedes hacer clic directamente en cualquier resultado de la lista.',
             'guia',
@@ -135,10 +142,10 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.buscadorBoton,
         popover: {
-          title: '✅ Paso 5 · Cierra cuando termines',
+          title: '✅ Cierra cuando termines',
           description: conPachi(
             'Para cerrar la búsqueda sin abrir un resultado, pulsa de nuevo este botón, presiona <b>Escape</b>, o haz clic fuera del campo. Tu navegación actual no se pierde.',
-            'celebra',
+            'feliz',
           ),
           side: 'bottom',
           align: 'end',
@@ -148,12 +155,12 @@ const NOVEDADES: Novedad[] = [
   },
 
   // ═══════════════════════════════════════════════════════════════════════
-  // 2. Sistemas y paneles — 8 pasos
+  // 2. Sistemas y paneles — 9 pasos (8 en el celular: sin breadcrumb)
   // ═══════════════════════════════════════════════════════════════════════
   {
     id: 'sistemas-y-paneles',
     titulo: 'Navega por sistemas y sus paneles',
-    resumen: 'El sidebar cambia de sistema y muestra sus opciones antes de abrir un reporte.',
+    resumen: 'Abre un sistema desde el rail y recorre sus carpetas y reportes como en un explorador de archivos.',
     icono: 'pi pi-th-large',
     categoria: 'Navegar',
     posePachi: 'camina',
@@ -162,57 +169,59 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.demoSidebarRail,
         popover: {
-          title: '🏗️ Paso 1 · El rail de sistemas',
+          title: '🏗️ El rail de sistemas',
           description: conPachi(
-            'Este es el <b>rail de sistemas</b>. Cada ícono representa un módulo del MIS: Reportes, Clientes, Incentivos, etc. En el sistema real aparecen los que tu perfil tiene asignados.',
+            'Cada ícono es un <b>sistema</b> del MIS: Reportes, Clientes, Incentivos… Ves los que tu perfil tiene asignados. En escritorio está a la izquierda; en el celular, abajo.',
             'guia',
           ),
-          side: 'right',
-          align: 'start',
         },
       },
       {
-        element: ANCLA.ejemploNavegacion,
+        element: ANCLA.demoSistema,
+        advanceOnClick: true,
         popover: {
-          title: '👆 Paso 2 · Selecciona un sistema',
-          description: conPachi(
-            '<b>Reportes</b> está seleccionado y su panel ya está abierto. En el sistema real, al pulsar un ícono se despliega el panel de ese módulo con todas las secciones disponibles para tu perfil.',
-            'camina',
-          ),
-          side: 'right',
-          align: 'start',
+          title: '👆 Abre un sistema',
+          description: conPachi('<b>Toca Reportes</b> para abrirlo.', 'camina'),
         },
       },
       {
-        element: ANCLA.panelEjemplo,
+        element: ANCLA.demoExplorador,
         popover: {
-          title: '📂 Paso 3 · El panel de secciones',
+          title: '📂 El explorador del sistema',
           description: conPachi(
-            'Este panel muestra las <b>secciones</b> del sistema: Resumen, Indicadores, Detalle, Monitor. En el MIS real estas se configuran por perfil y pueden incluir carpetas anidadas con sub-reportes.',
+            'El sistema se abre como un <b>explorador de archivos</b>: carpetas y reportes, igual que en tu computadora. No hay un menú lateral aparte: todo se navega desde aquí.',
             'feliz',
           ),
-          side: 'right',
+          side: 'bottom',
+          align: 'center',
+        },
+      },
+      {
+        element: ANCLA.demoCarpeta,
+        advanceOnClick: true,
+        popover: {
+          title: '📁 Entra a una carpeta',
+          description: conPachi('Las carpetas agrupan reportes. <b>Toca Cartera</b> para ver lo que tiene.', 'piensa'),
+          side: 'bottom',
           align: 'start',
         },
       },
       {
-        element: ANCLA.seccionEjemplo,
+        element: ANCLA.demoReporte,
+        advanceOnClick: true,
         popover: {
-          title: '🖱️ Paso 4 · Elige una sección',
-          description: conPachi(
-            'Cada botón es una sección del módulo. Al elegirla, el panel la marca como activa, la barra de título se actualiza y el breadcrumb refleja tu nueva ubicación.',
-            'piensa',
-          ),
-          side: 'right',
+          title: '📊 Abre un reporte',
+          description: conPachi('Ahora <b>toca Saldo de cartera</b>: los reportes se abren en su propia ventana.', 'buscar'),
+          side: 'bottom',
           align: 'start',
         },
       },
       {
         element: ANCLA.demoBreadcrumb,
         popover: {
-          title: '🧭 Paso 5 · El breadcrumb',
+          title: '🧭 Dónde estás',
           description: conPachi(
-            'Observa el breadcrumb: muestra <b>Inicio › Reportes › Sección</b>. En el sistema real cada nivel es un enlace que te permite volver a ese punto sin usar el botón de retroceso del navegador.',
+            'El breadcrumb muestra el camino: <b>Inicio › Reportes › Cartera › Saldo de cartera</b>. En el celular no se muestra, para dejar espacio.',
             'guia',
           ),
           side: 'bottom',
@@ -222,9 +231,9 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.demoSemaforo,
         popover: {
-          title: '🚦 Paso 6 · Controles de ventana',
+          title: '🚦 Volver un nivel',
           description: conPachi(
-            'Las luces tipo <b>semáforo</b> son los controles de la ventana del reporte. En el MIS real: la <b>roja</b> cierra el reporte, la <b>amarilla</b> vuelve al panel del sistema, y la <b>verde</b> alterna pantalla completa.',
+            'La luz <b>amarilla</b> sube un nivel: del reporte a su carpeta, y de la carpeta al explorador. La <b>roja</b> cierra y la <b>verde</b> pasa a pantalla completa.',
             'idea',
           ),
           side: 'bottom',
@@ -234,9 +243,9 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.demoAcciones,
         popover: {
-          title: '⚡ Paso 7 · Acciones rápidas',
+          title: '⚡ Filtros y actualizar',
           description: conPachi(
-            'Estos botones controlan <b>filtros</b> y <b>actualización</b>. El embudo abre/cierra la franja de filtros; la flecha circular recarga los datos sin perder tus filtros activos ni la sección seleccionada.',
+            'El <b>embudo</b> abre o cierra los filtros del reporte; la <b>flecha circular</b> recarga los datos sin perder lo que elegiste.',
             'trabaja',
           ),
           side: 'bottom',
@@ -246,10 +255,10 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.demoKpis,
         popover: {
-          title: '📊 Paso 8 · Indicadores del reporte',
+          title: '🎉 Los datos del reporte',
           description: conPachi(
-            'Aquí se muestran los <b>KPIs</b> y datos principales de tu consulta. Cada reporte real muestra sus propios indicadores, tablas y gráficos según el sistema y la sección que elegiste. ¡Ya dominas la navegación!',
-            'celebra',
+            'Aquí van los indicadores, tablas y gráficos de cada reporte. ¡Ya sabes navegar por sistemas, carpetas y reportes!',
+            'feliz',
           ),
           side: 'top',
           align: 'center',
@@ -277,7 +286,7 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.temaBoton,
         popover: {
-          title: '🌗 Paso 1 · Cambia el tema',
+          title: '🌗 Cambia el tema',
           description: conPachi(
             '¡Hola! Soy <b>Baby Pachi</b>. Este botón alterna entre <b>modo claro</b> y <b>modo oscuro</b>. El cambio se aplica de inmediato y queda guardado en tus preferencias.',
             'saluda',
@@ -290,7 +299,7 @@ const NOVEDADES: Novedad[] = [
         element: ANCLA.perfil,
         advanceOnClick: true,
         popover: {
-          title: '👤 Paso 2 · Abre tu perfil',
+          title: '👤 Abre tu perfil',
           description: conPachi(
             'El resto de ajustes vive en tu perfil. <b>Púlsalo</b> y te muestro dónde está Configuración.',
             'guia',
@@ -303,7 +312,7 @@ const NOVEDADES: Novedad[] = [
         element: ANCLA.abrirConfiguracion,
         advanceOnClick: true,
         popover: {
-          title: '⚙️ Paso 3 · Entra a Configuración',
+          title: '⚙️ Entra a Configuración',
           description: conPachi('Pulsa <b>Configuración</b> para abrir el panel de ajustes.', 'idea'),
           side: 'left',
           align: 'start',
@@ -312,7 +321,7 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.buscarAjuste,
         popover: {
-          title: '🔍 Paso 4 · Busca un ajuste',
+          title: '🔍 Busca un ajuste',
           description: conPachi(
             'Escribe aquí para filtrar ajustes. Por ejemplo: <b>apariencia</b>, <b>tema</b> o <b>comunicados</b>. El buscador filtra las secciones e ítems que coincidan con tu texto.',
             'buscar',
@@ -324,7 +333,7 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.configSecciones,
         popover: {
-          title: '📑 Paso 5 · Secciones de configuración',
+          title: '📑 Secciones de configuración',
           description: conPachi(
             'La columna de <b>secciones</b> agrupa los ajustes por tema: Apariencia, Estructura de menú, Comunicados y más. Al elegir una sección, sus ítems aparecen al lado.',
             'piensa',
@@ -336,10 +345,10 @@ const NOVEDADES: Novedad[] = [
       {
         element: ANCLA.configContenido,
         popover: {
-          title: '✅ Paso 6 · Ajusta y listo',
+          title: '✅ Ajusta y listo',
           description: conPachi(
             'Aquí aparecen los <b>controles</b> del ítem elegido. Los cambios son <b>por usuario</b> y no afectan a otros compañeros. ¡Explora y hazlo tuyo!',
-            'celebra',
+            'feliz',
           ),
           side: 'left',
           align: 'start',
@@ -386,9 +395,15 @@ export class NovedadesTourService {
     // Doble clic, u otra guía elegida mientras esta se preparaba: gana la última.
     if (turno !== this.turno) return;
 
-    const pasos = novedad.pasos.map((p) =>
-      p.advanceOnClick ? { ...p, disableActiveInteraction: false } : p,
-    );
+    const movil = typeof matchMedia === 'function' && matchMedia('(max-width: 640px)').matches;
+    // El número de paso se pone acá, sobre los pasos que de verdad se muestran (en el celular hay menos).
+    const pasos = novedad.pasos
+      .filter((p) => !(movil && SOLO_ESCRITORIO.has(String(p.element))))
+      .map((p, i) => ({
+        ...p,
+        ...(p.advanceOnClick ? { disableActiveInteraction: false } : {}),
+        popover: { ...p.popover, title: numerarPaso(String(p.popover?.title ?? ''), i + 1) },
+      }));
 
     this.driverTour.createQuickTour(pasos, {
       popoverClass: 'mis-tour-popover',
@@ -405,11 +420,6 @@ export class NovedadesTourService {
 
     if (id === 'sistemas-y-paneles') {
       this.ejemploActivo.set('navegacion');
-      await this.esperarPintado();
-      // El panel del ejemplo se abre antes: los pasos 3 a 5 hablan de él.
-      document
-        .querySelector<HTMLElement>('.demo-navegacion--navegacion [aria-label="Abrir panel de ejemplo"]')
-        ?.click();
       await this.esperarPintado();
     }
   }

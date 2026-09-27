@@ -1,20 +1,20 @@
 @if (modo() === 'navegacion') {
   <section
     class="demo-navegacion demo-navegacion--navegacion"
-    aria-label="Ejemplo de navegación por paneles"
+    aria-label="Ejemplo de navegación por sistemas"
   >
-    <!-- Encabezado de la práctica -->
     <div class="demo-navegacion-encabezado">
       <p class="demo-navegacion-etiqueta">Práctica guiada</p>
-      <h2>Explora un panel sin abrir un sistema real</h2>
+      <h2>Explora un sistema sin abrir datos reales</h2>
       <p class="demo-navegacion-descripcion">
         Los controles de este ejemplo no consultan datos ni cambian tu navegación.
       </p>
     </div>
 
-    <!-- Simulación de la interfaz real: shell completo -->
+    <!-- Réplica del shell real: rail de sistemas + área de contenido. No hay un panel
+         lateral aparte: el sistema elegido se abre como explorador de carpetas y reportes. -->
     <div class="demo-shell">
-      <!-- Col 1: Rail de sistemas (replica el sidebar real con estilo navy) -->
+      <!-- Rail de sistemas: a la izquierda en escritorio, abajo en el celular (como el real). -->
       <aside class="demo-sidebar-rail" aria-label="Sistemas de ejemplo">
         <div class="demo-sidebar-wordmark" aria-hidden="true">
           <span class="demo-sidebar-wordmark-text">MIS</span>
@@ -22,34 +22,23 @@
         <div class="demo-sidebar-separador" aria-hidden="true"></div>
         <button
           type="button"
-          class="demo-sidebar-icon demo-sidebar-icon--activo"
-          (click)="abrirPanel()"
-          aria-label="Abrir panel de ejemplo"
+          class="demo-sidebar-icon"
+          [class.demo-sidebar-icon--activo]="sistemaAbierto()"
+          (click)="abrirSistema()"
+          aria-label="Abrir el sistema Reportes"
         >
           <i class="pi pi-chart-bar" aria-hidden="true"></i>
           <span class="demo-sidebar-icon-label">Reportes</span>
         </button>
-        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
-          <i class="pi pi-users"></i>
-          <span class="demo-sidebar-icon-label">Clientes</span>
-        </button>
-        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
-          <i class="pi pi-wallet"></i>
-          <span class="demo-sidebar-icon-label">Incentivos</span>
-        </button>
-        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
-          <i class="pi pi-box"></i>
-          <span class="demo-sidebar-icon-label">Productos</span>
-        </button>
-        <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
-          <i class="pi pi-building"></i>
-          <span class="demo-sidebar-icon-label">Oficinas</span>
-        </button>
+        @for (s of [['pi-users', 'Clientes'], ['pi-wallet', 'Incentivos'], ['pi-box', 'Productos']]; track s[1]) {
+          <button type="button" class="demo-sidebar-icon" disabled aria-hidden="true">
+            <i [class]="'pi ' + s[0]"></i>
+            <span class="demo-sidebar-icon-label">{{ s[1] }}</span>
+          </button>
+        }
       </aside>
 
-      <!-- Zona principal: header + contenido -->
       <div class="demo-main-area">
-        <!-- Header simulado con breadcrumb -->
         <header class="demo-header">
           <nav class="demo-breadcrumb" aria-label="Breadcrumb de ejemplo">
             <ol>
@@ -57,16 +46,20 @@
                 <i class="pi pi-home" aria-hidden="true"></i>
                 <span>Inicio</span>
               </li>
-              @if (panelAbierto()) {
+              @if (sistemaAbierto()) {
                 <li><span>Reportes</span></li>
-                <li aria-current="page"><span>{{ seccion() }}</span></li>
+              }
+              @if (carpeta(); as c) {
+                <li><span>{{ c.etiqueta }}</span></li>
+              }
+              @if (reporte(); as r) {
+                <li aria-current="page"><span>{{ r.etiqueta }}</span></li>
               }
             </ol>
           </nav>
           <div class="demo-header-acciones">
             <span class="demo-header-btn" aria-hidden="true"><i class="pi pi-search"></i></span>
             <span class="demo-header-btn" aria-hidden="true"><i class="pi pi-sun"></i></span>
-            <span class="demo-header-btn" aria-hidden="true"><i class="pi pi-megaphone"></i></span>
             <span class="demo-header-pill" aria-hidden="true">
               <span class="demo-header-avatar">JP</span>
               <span class="demo-header-nombre">J. Pérez</span>
@@ -74,58 +67,42 @@
           </div>
         </header>
 
-        <!-- Contenido: panel lateral + ventana del reporte -->
         <div class="demo-contenido">
-          <!-- Col 2: Panel de secciones (aparece al abrir un sistema) -->
-          @if (panelAbierto()) {
-            <nav class="demo-navegacion-panel" aria-label="Panel de ejemplo">
-              <p class="demo-panel-titulo">Reportes</p>
-              @for (item of ['Resumen', 'Indicadores', 'Detalle', 'Monitor']; track item) {
-                <button
-                  type="button"
-                  class="demo-navegacion-opcion"
-                  [class.demo-navegacion-opcion--activa]="seccion() === item"
-                  (click)="elegirSeccion(item)"
-                >
-                  {{ item }}
-                </button>
-              }
-            </nav>
-          }
-
-          <!-- Col 3: Ventana del reporte -->
           <div class="demo-ventana">
-            <!-- Barra de título estilo macOS -->
             <div class="demo-navegacion-barra">
               <div class="demo-barra-izquierda">
                 <div class="demo-semaforo">
                   <span class="demo-luz demo-luz--rojo"><i class="pi pi-times"></i></span>
-                  <span class="demo-luz demo-luz--amarillo"><i class="pi pi-minus"></i></span>
-                  <span class="demo-luz demo-luz--verde"><i class="pi pi-expand" style="font-size: 6px"></i></span>
+                  <button
+                    type="button"
+                    class="demo-luz demo-luz--amarillo"
+                    [disabled]="!carpeta() && !reporte()"
+                    (click)="volver()"
+                    aria-label="Volver un nivel"
+                  >
+                    <i class="pi pi-angle-left"></i>
+                  </button>
+                  <span class="demo-luz demo-luz--verde"><i class="pi pi-expand"></i></span>
                 </div>
-                <span class="demo-barra-titulo">{{ panelAbierto() ? seccion() : 'Sin reporte abierto' }}</span>
+                <span class="demo-barra-titulo">{{ titulo() }}</span>
               </div>
-              <div class="demo-navegacion-acciones">
-                <button
-                  type="button"
-                  (click)="alternarFiltros()"
-                  [attr.aria-label]="
-                    filtrosAbiertos() ? 'Ocultar filtros de ejemplo' : 'Mostrar filtros de ejemplo'
-                  "
-                >
-                  <i
-                    [class]="filtrosAbiertos() ? 'pi pi-filter-slash' : 'pi pi-filter'"
-                    aria-hidden="true"
-                  ></i>
-                </button>
-                <button type="button" aria-label="Actualizar datos de ejemplo" (click)="actualizar()">
-                  <i class="pi pi-refresh" aria-hidden="true"></i>
-                </button>
-              </div>
+              @if (reporte()) {
+                <div class="demo-navegacion-acciones">
+                  <button
+                    type="button"
+                    (click)="alternarFiltros()"
+                    [attr.aria-label]="filtrosAbiertos() ? 'Ocultar filtros de ejemplo' : 'Mostrar filtros de ejemplo'"
+                  >
+                    <i [class]="filtrosAbiertos() ? 'pi pi-filter-slash' : 'pi pi-filter'" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" aria-label="Actualizar datos de ejemplo" (click)="actualizar()">
+                    <i class="pi pi-refresh" aria-hidden="true"></i>
+                  </button>
+                </div>
+              }
             </div>
 
-            <!-- Franja de filtros -->
-            @if (filtrosAbiertos()) {
+            @if (reporte() && filtrosAbiertos()) {
               <div class="demo-navegacion-filtros">
                 <label>
                   Nivel
@@ -141,15 +118,41 @@
                     <option>Anterior</option>
                   </select>
                 </label>
-                <button type="button" class="demo-navegacion-filtros-limpiar">Limpiar</button>
               </div>
             }
 
-            <!-- Cuerpo del reporte simulado -->
             <div class="demo-cuerpo">
-              @if (panelAbierto()) {
+              @if (!sistemaAbierto()) {
+                <p class="demo-navegacion-estado">Toca <b>Reportes</b> en el rail para abrir su explorador.</p>
+              } @else if (!reporte()) {
+                <!-- Mismas clases que el explorador real (explorador.css). -->
+                <div class="mis-explorador demo-explorador">
+                  <div class="mis-explorador-cuadricula">
+                    @for (nodo of nodos(); track nodo.etiqueta) {
+                      <button type="button" class="mis-explorador-item" [attr.data-demo-nodo]="nodo.etiqueta" (click)="abrir(nodo)">
+                        @if (nodo.hijos) {
+                          <svg class="mis-explorador-icono mis-explorador-icono--carpeta" viewBox="0 0 64 52" aria-hidden="true">
+                            <path d="M0 8a8 8 0 0 1 8-8h13.4a8 8 0 0 1 5.66 2.34L31.3 6.6H56a8 8 0 0 1 8 8v29.4a8 8 0 0 1-8 8H8a8 8 0 0 1-8-8V8Z" fill="currentColor" />
+                          </svg>
+                        } @else {
+                          <svg class="mis-explorador-icono mis-explorador-icono--reporte" viewBox="0 0 52 64" aria-hidden="true">
+                            <path d="M6 0h26l14 14v44a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6V6a6 6 0 0 1 6-6Z" fill="currentColor" />
+                            <path d="M32 0l14 14H36a4 4 0 0 1-4-4V0Z" fill="currentColor" fill-opacity="0.2" />
+                            <g fill="var(--mis-text-on-primary)" fill-opacity="0.92">
+                              <rect x="13" y="38" width="6" height="12" rx="1.5" />
+                              <rect x="23" y="29" width="6" height="21" rx="1.5" />
+                              <rect x="33" y="34" width="6" height="16" rx="1.5" />
+                            </g>
+                          </svg>
+                        }
+                        <span class="mis-explorador-nombre">{{ nodo.etiqueta }}</span>
+                      </button>
+                    }
+                  </div>
+                </div>
+              } @else {
                 <p class="demo-navegacion-estado">
-                  {{ actualizado() ? '✅ Datos de ejemplo actualizados.' : 'Sección seleccionada: ' + seccion() }}
+                  {{ actualizado() ? '✅ Datos de ejemplo actualizados.' : 'Datos de ejemplo de ' + titulo() + '.' }}
                 </p>
                 <div class="demo-kpis-fila">
                   <div class="demo-kpi">
@@ -165,8 +168,6 @@
                     <span class="demo-kpi-valor">S/ 1.2M</span>
                   </div>
                 </div>
-              } @else {
-                <p class="demo-navegacion-estado">Selecciona <b>Reportes</b> en el rail para abrir su panel.</p>
               }
             </div>
           </div>

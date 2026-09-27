@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { KnobModule } from 'primeng/knob';
-import type { TarjetaCmgCartera } from '../../components/actividad-diaria/components/Cartera/models/cmg-cartera.model';
+import type { TarjetaCmgCartera } from '../../models/cmg-cartera.model';
 
 const ENTERO = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 0 });
 

@@ -29,11 +29,23 @@ export const COD_CARTERA_CRA = {
 /** Reportes de varios bloques, en el orden en que el legado los pinta. */
 export const COD_CARTERA_CRA_MULTIBLOQUE = {
   /** `sal-car` — el `_04` y el `_05` van primero. Todos piden `fecha`. */
-  saldoCartera: ['RS_SAL_CAR_04', 'RS_SAL_CAR_05', 'RS_SAL_CAR_01', 'RS_SAL_CAR_02', 'RS_SAL_CAR_03'],
+  saldoCartera: [
+    'RS_SAL_CAR_04',
+    'RS_SAL_CAR_05',
+    'RS_SAL_CAR_01',
+    'RS_SAL_CAR_02',
+    'RS_SAL_CAR_03',
+  ],
   /** `dat-pro` — todos piden `fecha`. */
   datosProducto: ['RS_DAT_PRO_01', 'RS_DAT_PRO_02', 'RS_DAT_PRO_03', 'RS_DAT_PRO_04'],
   /** `desem-diario` — cinco bloques sin filtros propios. */
-  desembolsosDiarios: ['DesemDiario_01', 'DesemDiario_02', 'DesemDiario_03', 'DesemDiario_04', 'DesemDiario_05'],
+  desembolsosDiarios: [
+    'DesemDiario_01',
+    'DesemDiario_02',
+    'DesemDiario_03',
+    'DesemDiario_04',
+    'DesemDiario_05',
+  ],
 } as const;
 
 /**
@@ -80,24 +92,9 @@ export const TABLAS_GESTION_COMERCIAL = [
  */
 export const PARAMS_RANKING_COMERCIAL = { territorio: '0', corredor: '0' } as const;
 
-/**
- * Semáforos de CMG Cartera: columna visible → columna de control.
- *
- * El legado antepone un ícono coloreado a las columnas 9/11/13 según el signo
- * de las columnas 8/10/12, que llegan ocultas (`cellStyle.display: 'none'`).
- */
-export const SEMAFOROS_CMG_CARTERA: Readonly<Record<string, string>> = {
-  '9': '8',
-  '11': '10',
-  '13': '12',
-};
-
 /** Ranking Comercial: clave de avance del legado → columna de semáforo calculada. */
 export const AVANCES_RANKING_COMERCIAL: readonly (readonly [origen: string, destino: string])[] = [
   ['Percent_Cumpl', 'Percent_Cumpl_Semaforo'],
   ['percent_cumpl_desemb', 'percent_cumpl_desemb_Semaforo'],
   ['percent_cumpl_varsalv', 'percent_cumpl_varsalv_Semaforo'],
 ] as const;
-
-/** Filas de índice fijo de las que CMG Cartera saca sus tarjetas, igual que el legado. */
-export const FILAS_TARJETAS_CMG = { tapp: 16, saldoMedio: 18 } as const;

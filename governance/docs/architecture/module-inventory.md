@@ -21,7 +21,7 @@ La tabla se deriva de `src/app/app.routes.ts` y de los `*.routes.ts` de cada mó
 | `incentivos` | `/app/incentivos3` | 1 | 1 | 11 | 1 | 15 |
 | `kaypacha` | `/app/Kaypacha__` | 1 | 1 | 2 | 1 | 3 |
 | `ranking-k` | `/app/ranking-k` | 1 | 2 | 5 | 1 | 6 |
-| `reportes` | `/app/reportes` | 30 | 133 | 137 | 53 | 195 |
+| `reportes` | `/app/reportes` | 30 | 133 | 137 | 53 | 198 |
 
 _Total: 11 módulos enlazados desde `app.routes.ts`._
 <!-- generado:fin -->

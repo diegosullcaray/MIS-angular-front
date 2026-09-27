@@ -14,7 +14,8 @@ import { inyectarSesionVigente } from './fixtures/session';
  */
 const GUIAS = [
   { titulo: 'Encuentra un reporte sin recorrer menús', pasos: 5, conClic: /Abre la búsqueda/ },
-  { titulo: 'Navega por sistemas y sus paneles', pasos: 8, conClic: null },
+  // En el celular son 8: el paso del breadcrumb no aplica (el shell lo oculta).
+  { titulo: 'Navega por sistemas y sus paneles', pasos: 9, conClic: /Abre un sistema|Entra a una carpeta|Abre un reporte/ },
   { titulo: 'Personaliza tu espacio de trabajo', pasos: 6, conClic: /Abre tu perfil|Entra a Configuración/ },
 ] as const;
 
@@ -32,9 +33,11 @@ async function abrirGuia(page: Page, titulo: string): Promise<void> {
 for (const guia of GUIAS) {
   test(`"${guia.titulo}" llega al final sin trabarse y deja la pantalla limpia`, async ({ page }) => {
     await abrirGuia(page, guia.titulo);
+    const movil = (page.viewportSize()?.width ?? 1280) <= 640;
+    const total = guia.titulo.startsWith('Navega') && movil ? guia.pasos - 1 : guia.pasos;
 
     const titulos: string[] = [];
-    for (let i = 0; i < guia.pasos; i++) {
+    for (let i = 0; i < total; i++) {
       const titulo = page.locator('.driver-popover-title');
       await expect(titulo).toHaveText(/Paso \d/);
       const texto = await titulo.innerText();
@@ -45,12 +48,12 @@ for (const guia of GUIAS) {
       else await page.locator('.driver-popover-next-btn').click();
 
       // Cada clic avanza (o cierra en el último): nunca se queda en el mismo paso.
-      if (i === guia.pasos - 1) await expect(page.locator('.driver-popover')).toHaveCount(0, { timeout: 3_000 });
+      if (i === total - 1) await expect(page.locator('.driver-popover')).toHaveCount(0, { timeout: 3_000 });
       else await expect(page.locator('.driver-popover-title')).not.toHaveText(texto, { timeout: 3_000 });
     }
 
     expect(titulos.map((t) => Number(/Paso (\d)/.exec(t)?.[1]))).toEqual(
-      Array.from({ length: guia.pasos }, (_, i) => i + 1),
+      Array.from({ length: total }, (_, i) => i + 1),
     );
     await expect(page.locator('.driver-overlay, .driver-popover')).toHaveCount(0);
     await expect(page.locator('.driver-active-element')).toHaveCount(0);
@@ -71,8 +74,11 @@ test('la guía de búsqueda deja la lupa diciendo la verdad: buscador abierto, a
 
 test('Esc cierra la guía en cualquier paso y no deja nada encima', async ({ page }) => {
   await abrirGuia(page, GUIAS[1].titulo);
+  // Paso 1 → 2; el 2 espera el clic en "Reportes": "Siguiente" está deshabilitado y se pulsa el elemento.
   await page.locator('.driver-popover-next-btn').click();
-  await page.locator('.driver-popover-next-btn').click();
+  await expect(page.locator('.driver-popover-next-btn')).toBeDisabled();
+  await page.locator('.driver-active-element').click();
+  await expect(page.locator('.driver-popover-title')).toContainText('explorador');
 
   await page.keyboard.press('Escape');
 

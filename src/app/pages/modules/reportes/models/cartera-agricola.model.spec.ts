@@ -8,11 +8,21 @@ const CLIENTES = [
 
 describe('GRAFICOS_AGRICOLA', () => {
   it('pide los cuatro bloques en el orden en que el legado los pinta', () => {
-    expect(GRAFICOS_AGRICOLA.map((g) => g.codRep)).toEqual(['RS_AGROMIX_03', 'RS_AGROMIX_02', 'RS_AGROMIX_04', 'RS_AGROMIX_05']);
+    expect(GRAFICOS_AGRICOLA.map((g) => g.codRep)).toEqual([
+      'RS_AGROMIX_03',
+      'RS_AGROMIX_02',
+      'RS_AGROMIX_04',
+      'RS_AGROMIX_05',
+    ]);
   });
 
   it('solo los dos primeros abren detalle: son los únicos con `events.click` en el legado', () => {
-    expect(GRAFICOS_AGRICOLA.map((g) => g.id)).toEqual(['saldoCartera', 'saldoVencido', undefined, undefined]);
+    expect(GRAFICOS_AGRICOLA.map((g) => g.id)).toEqual([
+      'saldoCartera',
+      'saldoVencido',
+      undefined,
+      undefined,
+    ]);
   });
 });
 
@@ -45,6 +55,11 @@ describe('totalesDeCultivo', () => {
   });
 
   it('un cultivo sin filas no rompe', () => {
-    expect(totalesDeCultivo([])).toEqual({ saldoCartera: 0, saldoVencido: 0, extension: 0, porcentajeVencido: 0 });
+    expect(totalesDeCultivo([])).toEqual({
+      saldoCartera: 0,
+      saldoVencido: 0,
+      extension: 0,
+      porcentajeVencido: 0,
+    });
   });
 });

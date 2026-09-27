@@ -21,6 +21,7 @@ Los sufijos son verificados por `validar-gobernanza.mjs`. Detalle y excepciones 
 
 - **`constantes/`** — `cod_rep` reales del backend, tamaños de página. Nunca URLs absolutas ni credenciales.
 - **`models/`** — DTO con los nombres del backend, separado del modelo que consume la vista.
+- **`models/navegacion-jerarquica.model.ts`** — modelo de vista local de reportes: mantiene la ruta de migas por instancia y recibe callbacks del contenedor; no conoce componentes ni transporte.
 - **`utils/`** — funciones puras, sin `inject()` ni HTTP. Cada archivo con su `.spec.ts`.
 - **`services/`** — señales privadas expuestas como `asReadonly()`, y el borde de transporte contra un `Mod*Service`.
 - **`ui/`** — reciben por `input()`, emiten por `output()`, no conocen `cod_rep`.

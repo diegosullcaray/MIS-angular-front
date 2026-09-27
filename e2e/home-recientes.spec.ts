@@ -35,7 +35,8 @@ test.describe('Home · reportes recientes', () => {
 
     const inicio = page.getByRole('region', { name: 'Inicio' });
     await expect(inicio).toBeVisible();
-    await expect(inicio.locator('app-demo-navegacion')).toBeAttached();
+    // La demo se monta en <body> para tapar el shell con fondo sólido mientras dura el tutorial.
+    await expect(page.locator('body > app-demo-navegacion')).toBeAttached();
     await expect(page.getByRole('region', { name: 'Reportes recientes' })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Accesos recientes' })).toHaveCount(0);
     await expect(page.locator('a.reciente-fila')).toHaveCount(0);

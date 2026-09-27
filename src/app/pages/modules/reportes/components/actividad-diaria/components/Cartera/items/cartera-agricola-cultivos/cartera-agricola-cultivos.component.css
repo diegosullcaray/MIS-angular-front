@@ -6,10 +6,10 @@
 :host {
   display: block;
   width: 100%;
-  --mis-primary: #15803d;
-  --mis-primary-hover: #166534;
+  --mis-primary: var(--mis-agro-primary);
+  --mis-primary-hover: var(--mis-agro-primary-hover);
   --mis-primary-light: rgba(22, 163, 74, 0.12);
-  --mis-primary-text: #15803d;
+  --mis-primary-text: var(--mis-agro-primary);
   --mis-window-bar-bg: linear-gradient(
     180deg,
     rgba(240, 253, 244, 0.94) 0%,
@@ -19,10 +19,10 @@
 }
 
 :host-context(.dark) {
-  --mis-primary: #15803d;
-  --mis-primary-hover: #14532d;
+  --mis-primary: var(--mis-agro-primary);
+  --mis-primary-hover: var(--mis-agro-primary-dark-hover);
   --mis-primary-light: rgba(74, 222, 128, 0.16);
-  --mis-primary-text: #4ade80;
+  --mis-primary-text: var(--mis-agro-primary-dark-text);
   --mis-window-bar-bg: linear-gradient(
     180deg,
     rgba(20, 83, 45, 0.92) 0%,

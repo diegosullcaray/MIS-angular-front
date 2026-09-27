@@ -28,3 +28,23 @@ it('anima el cumplimiento y omite tarjetas sin aro', () => {
     vi.restoreAllMocks();
   }
 });
+
+it('detiene los cuadros pendientes al salir de la pantalla', () => {
+  const cuadros: FrameRequestCallback[] = [];
+  vi.spyOn(performance, 'now').mockReturnValue(100);
+  vi.stubGlobal('requestAnimationFrame', (cuadro: FrameRequestCallback) => cuadros.push(cuadro));
+  try {
+    const progreso = signal<Record<string, number>>({});
+    const detener = animarAnillos(
+      [{ etiqueta: 'Monto', valor: 1, comparativo: '', senal: 0, cumplimiento: 87.5 }],
+      progreso,
+    );
+    detener();
+    cuadros.shift()!(550);
+    expect(progreso()).toEqual({});
+    expect(cuadros).toHaveLength(0);
+  } finally {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  }
+});

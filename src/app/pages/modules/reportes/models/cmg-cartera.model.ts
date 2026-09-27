@@ -1,4 +1,4 @@
-import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
+import type { TablaDinamicaResultado } from './tabla-dinamica.model';
 
 /** Una tarjeta del encabezado de "CMG Cartera". */
 export interface TarjetaCmgCartera {
@@ -19,7 +19,10 @@ export interface CmgCarteraResultado {
   tarjetas: TarjetaCmgCartera[];
 }
 
-export const CMG_CARTERA_VACIO: CmgCarteraResultado = { tabla: { columnas: [], filas: [] }, tarjetas: [] };
+export const CMG_CARTERA_VACIO: CmgCarteraResultado = {
+  tabla: { columnas: [], filas: [] },
+  tarjetas: [],
+};
 
 /** `filter1` del legado (`cmg-cartera.util.ts`) — variable `prod` de las dos consultas. */
 export const OPCIONES_FASE_CMG_CARTERA = [

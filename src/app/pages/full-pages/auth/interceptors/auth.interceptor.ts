@@ -7,13 +7,13 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError, Observable } from 'rxjs';
-import { ShellStateService } from '../services/shell-state.service';
-import { AuthService } from '../../pages/full-pages/auth/service/auth.service';
-import { environment } from '../../../environments/environment';
+import { ShellStateService } from '../../../../core/services/shell-state.service';
+import { AuthService } from '../service/auth.service';
+import { ANT_ROOT_URL } from '../../../../core/winder/rest/ant-endpoint.constantes';
 
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
-  next: HttpHandlerFn
+  next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> => {
   const auth = inject(AuthService);
   const shell = inject(ShellStateService);
@@ -24,7 +24,7 @@ export const authInterceptor: HttpInterceptorFn = (
   // reportes de data masiva tardan legítimamente más que cualquier límite que
   // se elija: recortarlos convertía una consulta lenta en una pantalla vacía.
   // Quien manda es el backend; si la consulta muere, muere con su error.
-  if (req.url.startsWith(environment.requestConfigRootURL)) {
+  if (req.url.startsWith(ANT_ROOT_URL)) {
     return next(req);
   }
 
@@ -53,6 +53,6 @@ export const authInterceptor: HttpInterceptorFn = (
         void auth.cerrarSesion();
       }
       return throwError(() => error);
-    })
+    }),
   );
 };

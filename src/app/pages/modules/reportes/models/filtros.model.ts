@@ -59,6 +59,14 @@ export const VARIABLE_CMG_POR_DEFECTO = 'Clientes';
 
 /** Valor "sin filtrar" de `SPRODUCTO*()`. */
 export const TODOS = 'TODOS';
+/** Valor sin filtro de los reportes de efectividades y detalle reasignado. */
+export const TODO = 'TODO';
+
+export const OPCIONES_PRECOSECHA: OpcionFiltro[] = [
+  { id: TODO, desc: TODO },
+  { id: '3', desc: '3 Meses' },
+  { id: '6', desc: '6 Meses' },
+];
 
 /* Filtros de efectividades del legado: los usan el monitor del asesor y el portafolio reasignado. */
 /** `Tramo01()` del legado — variable `tramof`. */

@@ -1,4 +1,4 @@
-import type { ColumnaDinamica } from '../../../../../models/tabla-dinamica.model';
+import type { ColumnaDinamica } from './tabla-dinamica.model';
 
 /**
  * Semáforos que el legado calcula en el cliente (`trafficFn` de `usa_come.util.ts`): columna
@@ -44,7 +44,10 @@ export const COLUMNAS_TABLERO_COMERCIAL: ColumnaDinamica[] = [
       {
         label: 'N° Enrolado',
         key: 'n_enrolado',
-        subs: [cifra('Mes', 'num_enro_2'), cifra('Var. TMF-1', 'var_enro', SEMAFOROS_TABLERO_COMERCIAL.var_enro)],
+        subs: [
+          cifra('Mes', 'num_enro_2'),
+          cifra('Var. TMF-1', 'var_enro', SEMAFOROS_TABLERO_COMERCIAL.var_enro),
+        ],
       },
       {
         label: '% Enrolado',
@@ -64,12 +67,18 @@ export const COLUMNAS_TABLERO_COMERCIAL: ColumnaDinamica[] = [
       {
         label: '% Usabilidad Meta',
         key: 'p_usabilidad_meta',
-        subs: [porcentaje('Mes', 'met_usa'), porcentaje('Cumplimiento', 'cumplUsa', SEMAFOROS_TABLERO_COMERCIAL.cumplUsa)],
+        subs: [
+          porcentaje('Mes', 'met_usa'),
+          porcentaje('Cumplimiento', 'cumplUsa', SEMAFOROS_TABLERO_COMERCIAL.cumplUsa),
+        ],
       },
       {
         label: '% Usabilidad Cartera',
         key: 'p_usabilidad_cartera',
-        subs: [porcentaje('Mes', 'percen_usa_cart'), porcentaje('Var.TMF-1', 'var_perce_usa_carte')],
+        subs: [
+          porcentaje('Mes', 'percen_usa_cart'),
+          porcentaje('Var.TMF-1', 'var_perce_usa_carte'),
+        ],
       },
       {
         label: '% Usabilidad Cartera Meta',

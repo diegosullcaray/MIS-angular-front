@@ -1,4 +1,8 @@
-import { semaforoCumplimiento, semaforoVariacion, semaforosTableroComercial } from './tablero-comercial.util';
+import {
+  semaforoCumplimiento,
+  semaforoVariacion,
+  semaforosTableroComercial,
+} from './tablero-comercial.util';
 
 describe('semáforos de Tablero Digital Comercial (trafficFn del legado)', () => {
   it('variación: verde si no baja, rojo si baja o no hay dato', () => {
@@ -17,7 +21,14 @@ describe('semáforos de Tablero Digital Comercial (trafficFn del legado)', () =>
   });
 
   it('agrega los tres semáforos a cada fila sin tocar sus datos', () => {
-    const [fila] = semaforosTableroComercial([{ descripcion: 'FC', var_enro: -2, cumplUsa: 0.9, cumplUsaCar: 1.2 }]);
-    expect(fila).toMatchObject({ descripcion: 'FC', sem_var_enro: -1, sem_cumplUsa: 0, sem_cumplUsaCar: 1 });
+    const [fila] = semaforosTableroComercial([
+      { descripcion: 'FC', var_enro: -2, cumplUsa: 0.9, cumplUsaCar: 1.2 },
+    ]);
+    expect(fila).toMatchObject({
+      descripcion: 'FC',
+      sem_var_enro: -1,
+      sem_cumplUsa: 0,
+      sem_cumplUsaCar: 1,
+    });
   });
 });

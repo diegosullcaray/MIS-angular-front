@@ -33,8 +33,8 @@
                 <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
                 <div class="mis-card p-3 overflow-x-auto">
                   <app-tabla-reporte
-                    [encabezados]="tablasResumen()[i]?.headers ?? []"
-                    [filas]="tablasResumen()[i]?.body ?? []"
+                    [encabezados]="tablasResumen().at(i)?.headers ?? []"
+                    [filas]="tablasResumen().at(i)?.body ?? []"
                     [cargando]="cargandoResumen()"
                   />
                 </div>

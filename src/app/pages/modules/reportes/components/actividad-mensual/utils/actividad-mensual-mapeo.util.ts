@@ -1,5 +1,5 @@
-import { FILAS_TARJETAS_CMG } from '../../actividad-diaria/components/Cartera/constantes/cartera.constantes';
-import type { TarjetaCmgCartera } from '../../actividad-diaria/components/Cartera/models/cmg-cartera.model';
+import { FILAS_TARJETAS_CMG } from '../../../constantes/cmg-cartera.constantes';
+import type { TarjetaCmgCartera } from '../../../models/cmg-cartera.model';
 
 /** Mapeo de los payloads de Actividad Mensual. Son funciones puras: el service solo pide. */
 
@@ -16,7 +16,8 @@ export function tarjetasCmgCarteraMensual(
   filasTabla: Record<string, unknown>[],
   kpis: Record<string, unknown>,
 ): TarjetaCmgCartera[] {
-  const filaSaldo = filasTabla[FILAS_TARJETAS_CMG.saldoMedio] as Record<string, unknown> | undefined;
+  const filaSaldo = filasTabla[FILAS_TARJETAS_CMG.saldoMedio] as
+    Record<string, unknown> | undefined;
   const filaTapp = filasTabla[FILAS_TARJETAS_CMG.tapp] as Record<string, unknown> | undefined;
 
   const saldoMedio = aNumero(filaSaldo?.[6]);

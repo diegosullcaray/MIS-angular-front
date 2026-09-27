@@ -46,6 +46,34 @@ function centroDePantalla(): Element {
  * borde equivocado, porque driver.js reposiciona pero nunca vuelve a pasar por
  * acá.
  */
+/**
+ * Etiqueta "👆 Pulsa aquí" pegada al elemento que el paso espera que se pulse. Sigue al
+ * elemento (scroll, animaciones) mientras dura el paso; devuelve la función que la quita.
+ */
+function indicadorPulsaAqui(elemento: Element): () => void {
+  const etiqueta = document.createElement('div');
+  etiqueta.className = 'mis-tour-pulsa-aqui';
+  etiqueta.setAttribute('aria-hidden', 'true'); // El globo ya lo dice en texto.
+  etiqueta.textContent = '👆 Pulsa aquí';
+  document.body.appendChild(etiqueta);
+
+  let cuadro = 0;
+  const ubicar = (): void => {
+    const r = elemento.getBoundingClientRect();
+    // Arriba del elemento; si no entra (pegado al borde superior), debajo.
+    const arriba = r.top > 48;
+    etiqueta.style.left = `${r.left + r.width / 2}px`;
+    etiqueta.style.top = `${arriba ? r.top - 10 : r.bottom + 10}px`;
+    etiqueta.classList.toggle('mis-tour-pulsa-aqui--abajo', !arriba);
+    cuadro = requestAnimationFrame(ubicar);
+  };
+  ubicar();
+  return () => {
+    cancelAnimationFrame(cuadro);
+    etiqueta.remove();
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class DriverTourService {
   private instancia: Driver | null = null;
@@ -159,6 +187,19 @@ export class DriverTourService {
     return {
       ...paso,
       advanceOnClick: false,
+      // Un paso que espera un clic no se saltea: "Siguiente" queda deshabilitado y
+      // la flecha del teclado no avanza. Lo que avanza es el clic sobre el elemento.
+      ...(avanzaConClic && {
+        popover: {
+          ...paso.popover,
+          onNextClick: () => undefined,
+          onPopoverRender: (popover) => {
+            popover.nextButton.disabled = true;
+            popover.nextButton.classList.add('driver-popover-btn-disabled');
+            popover.nextButton.title = 'Pulsa el elemento resaltado para continuar';
+          },
+        },
+      }),
       onHighlightStarted: (elemento, step, opts) => {
         propio?.(elemento, step, opts);
         this.alResaltar(elemento, avanzaConClic);
@@ -190,7 +231,13 @@ export class DriverTourService {
         this.instancia?.moveNext();
       };
       elemento.addEventListener('click', alClic);
-      this.quitarClic = () => elemento.removeEventListener('click', alClic);
+      elemento.classList.add('mis-tour-pulsar');
+      const quitarIndicador = indicadorPulsaAqui(elemento);
+      this.quitarClic = () => {
+        elemento.removeEventListener('click', alClic);
+        elemento.classList.remove('mis-tour-pulsar');
+        quitarIndicador();
+      };
     }
   }
 

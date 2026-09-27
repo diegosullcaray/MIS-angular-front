@@ -1,12 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
+import {
+  BloqueReporteService,
+  type NodoConsulta,
+} from '../../../../../services/bloque-reporte.service';
 import type { TablaReporteResultado } from '../../../../../models/tabla-reporte.model';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { ReporteBloqueUnico } from '../../../../../models/tabla-reporte.model';
 import { COD_TABLERO_DIGITAL } from '../constantes/tablero-digital.constantes';
-import { COLUMNAS_TABLERO_COMERCIAL } from '../models/tablero-comercial.model';
-import { semaforosTableroComercial } from '../utils/tablero-comercial.util';
+import { COLUMNAS_TABLERO_COMERCIAL } from '../../../../../models/tablero-comercial.model';
+import { semaforosTableroComercial } from '../../../../../utils/tablero-comercial.util';
 
 /** Servicios para reportes de Tablero Digital. */
 @Injectable({ providedIn: 'root' })
@@ -45,8 +48,17 @@ export class TableroDigitalService {
    */
   tableroComercial(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
     return this.bloques
-      .tablaRegularCon(COD_TABLERO_DIGITAL.tableroComercial, { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: this.bloques.fecha() })
-      .pipe(map((tabla) => ({ columnas: COLUMNAS_TABLERO_COMERCIAL, filas: semaforosTableroComercial(tabla.filas) })));
+      .tablaRegularCon(COD_TABLERO_DIGITAL.tableroComercial, {
+        tip_cod: nodo.tip_cod,
+        cod_rel: nodo.cod_rel,
+        fec: this.bloques.fecha(),
+      })
+      .pipe(
+        map((tabla) => ({
+          columnas: COLUMNAS_TABLERO_COMERCIAL,
+          filas: semaforosTableroComercial(tabla.filas),
+        })),
+      );
   }
 
   private unBloque(codRep: string, nodo: NodoConsulta): Observable<ReporteBloqueUnico> {

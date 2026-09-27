@@ -2,13 +2,7 @@
    tabla, no como una fila de datos más. !important porque p-stripedRows
    (PrimeNG) también fija su propio background por fila. */
 .esg-fila-nodo > td {
-  background-color: #f2f2f2 !important;
-  color: #008080 !important;
+  background-color: var(--mis-esg-nodo-bg) !important;
+  color: var(--mis-esg-nodo-text) !important;
   font-weight: 600;
-}
-
-/* El gris/teal del legado es ilegible sobre fondo oscuro. */
-:host-context(.dark) .esg-fila-nodo > td {
-  background-color: var(--mis-panel-bg) !important;
-  color: #5EEAD4 !important;
 }

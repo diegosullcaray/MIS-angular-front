@@ -8,8 +8,11 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
-import { TABLA_VACIA, type TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
-import { DetalleReasignadoComponent } from '../../../../../actividad-diaria/components/Portafolio Reasignado/ui/detalle-reasignado/detalle-reasignado.component';
+import {
+  TABLA_VACIA,
+  type TablaReporteResultado,
+} from '../../../../../../models/tabla-reporte.model';
+import { DetalleReasignadoComponent } from '../../../../../../ui/detalle-reasignado/detalle-reasignado.component';
 import { MonitorEfectividadesMensualBase } from '../../ui/monitor-efectividades-mensual.base';
 
 /**

@@ -1,40 +1,55 @@
-<app-window-panel titulo="CMG Cartera" subtitulo="Cartera" [permitirActualizar]="false" [conFiltros]="true">
+<app-window-panel
+  titulo="CMG Cartera"
+  subtitulo="Cartera"
+  [permitirActualizar]="false"
+  [conFiltros]="true"
+>
   <div ventana-filtros class="flex flex-col gap-3">
-    <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel"
-      (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
+    <app-hier-selector
+      [paramsHier]="paramsHier"
+      placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
   </div>
 
   @if (!nivelActual()) {
-  <app-empty-state titulo="Elige un nivel"
-    descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte." />
+    <app-empty-state
+      titulo="Elige un nivel"
+      descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte."
+    />
+  } @else if (error(); as detalleError) {
+    <app-inline-error [detalle]="detalleError" (reintentar)="reintentar()" />
   } @else {
-  <!-- Tarjetas con la disposición del legado: valor, referencia y nombre a la izquierda; aro o variación a la derecha. -->
-  <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-    @for (t of tarjetas(); track t.etiqueta) {
-    <app-tarjeta-meta [tarjeta]="t" [progreso]="valorAnillo(t)" />
-    }
-  </section>
-
-  <!-- La fase va en pestañas bajo las tarjetas, como en el legado (antes era un desplegable en los filtros). -->
-  <p-tabs [value]="fase()" (valueChange)="cambiarFase($event)">
-    <p-tablist>
-      @for (opcion of opcionesFase; track opcion.id) {
-      <p-tab [value]="opcion.id" class="!py-2 !px-3">{{ opcion.desc }}</p-tab>
+    <!-- Tarjetas con la disposición del legado: valor, referencia y nombre a la izquierda; aro o variación a la derecha. -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+      @for (t of tarjetas(); track t.etiqueta) {
+        <app-tarjeta-meta [tarjeta]="t" [progreso]="valorAnillo(t)" />
       }
-    </p-tablist>
-  </p-tabs>
+    </section>
 
-  <div class="mis-card p-3 overflow-x-auto">
-    <app-tabla-dinamica [columnas]="tabla().columnas" [filas]="tabla().filas" [cargando]="cargando()" />
-  </div>
+    <!-- La fase va en pestañas bajo las tarjetas, como en el legado (antes era un desplegable en los filtros). -->
+    <p-tabs [value]="fase()" (valueChange)="cambiarFase($event)">
+      <p-tablist>
+        @for (opcion of opcionesFase; track opcion.id) {
+          <p-tab [value]="opcion.id" class="!py-2 !px-3">{{ opcion.desc }}</p-tab>
+        }
+      </p-tablist>
+    </p-tabs>
 
+    <div class="mis-card p-3 overflow-x-auto">
+      <app-tabla-dinamica
+        [columnas]="tabla().columnas"
+        [filas]="tabla().filas"
+        [cargando]="cargando()"
+      />
+    </div>
 
-  <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
-    <b>Días Hábiles : </b> A partir del día 15 calendario se comparan días hábiles faltantes para el cierre.<br />
-    <b>TMM — Tasa Mensual Móvil: </b> Var. fecha actual vs. mismo día del mes anterior. <br />
-    <b>TAM — Tasa Anual Móvil:  </b>Var. fecha actual vs. mismo día del año anterior.<br />
-
-  </p>
-
+    <p nota class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
+      <b>Días Hábiles : </b> A partir del día 15 calendario se comparan días hábiles faltantes para
+      el cierre.<br />
+      <b>TMM — Tasa Mensual Móvil: </b> Var. fecha actual vs. mismo día del mes anterior. <br />
+      <b>TAM — Tasa Anual Móvil: </b>Var. fecha actual vs. mismo día del año anterior.<br />
+    </p>
   }
 </app-window-panel>

@@ -2,7 +2,6 @@ import type { DriveStep } from 'driver.js';
 
 export type PosePachi =
   | 'guia'
-  | 'celebra'
   | 'saluda'
   | 'piensa'
   | 'sorpresa'

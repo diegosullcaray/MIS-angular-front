@@ -40,7 +40,7 @@ export const ANUNCIOS_DEL_SISTEMA: readonly Anuncio[] = [
         alto: 815,
       },
       {
-        imagen: 'assets/images/fc/ads/Comunicado2.png',
+        imagen: 'assets/images/fc/ads/Comunicado2.webp',
         alt: 'Consulta FEN - CENEPRED para toda la red. Recuerda consultar el nivel de exposición territorial antes de completar la evaluación en la matriz de riesgos por distrito.',
         ancho: 2100,
         alto: 2016,

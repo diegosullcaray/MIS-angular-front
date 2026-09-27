@@ -5,10 +5,10 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { InputTextModule } from 'primeng/inputtext';
 import { PaginatorModule, type PaginatorState } from 'primeng/paginator';
 import { SelectModule } from 'primeng/select';
-import { TablaReporteComponent } from '../../../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
-import type { OpcionFiltro } from '../../../../../../models/filtros.model';
-import type { TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
-import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
+import { TablaReporteComponent } from '../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
+import type { OpcionFiltro } from '../../models/filtros.model';
+import type { TablaReporteResultado } from '../../models/tabla-reporte.model';
+import { GrupoFiltrosComponent } from '../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 /**
  * Filas por página del detalle: el `paginator_size` de `theme_tb3`, el tema de los bloques

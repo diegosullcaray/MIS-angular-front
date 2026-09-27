@@ -4,9 +4,14 @@ describe('aplicarEstilosEstructuraDesembolsos', () => {
   it('aplica la escala solo a la fila de distribución y marca los totales', () => {
     const resultado = aplicarEstilosEstructuraDesembolsos({
       columnas: [
-        { key: '1_ope', label: 'Uno' }, { key: '2_ope', label: 'Dos' }, { key: '3_ope', label: 'Tres' },
+        { key: '1_ope', label: 'Uno' },
+        { key: '2_ope', label: 'Dos' },
+        { key: '3_ope', label: 'Tres' },
       ],
-      filas: [{ DES_RANGO: '% participación', '1_ope': 30, '2_ope': 10, '3_ope': 20 }, { DES_RANGO: 'Total' }],
+      filas: [
+        { DES_RANGO: '% participación', '1_ope': 30, '2_ope': 10, '3_ope': 20 },
+        { DES_RANGO: 'Total' },
+      ],
     });
 
     const estilo = resultado.columnas[0].cellStyleFn?.(30, resultado.filas[0]);

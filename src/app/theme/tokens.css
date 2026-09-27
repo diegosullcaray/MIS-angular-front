@@ -15,6 +15,21 @@
   --mis-ranking-subheader-bg: #4a88d0;
   --mis-ranking-row1-bg: #a9effd;
 
+  /* Colores de marca y de reportes que conservan su paleta propia. */
+  --mis-google-blue: #4285f4;
+  --mis-google-green: #34a853;
+  --mis-google-yellow: #fbbc05;
+  --mis-google-red: #ea4335;
+  --mis-corresponsal-header: #9c3b47;
+  --mis-esg-header: #5b9bd5;
+  --mis-esg-historico: #4472c4;
+  --mis-esg-nodo-bg: #f2f2f2;
+  --mis-esg-nodo-text: #008080;
+  --mis-agro-primary: #15803d;
+  --mis-agro-primary-hover: #166534;
+  --mis-agro-primary-dark-hover: #14532d;
+  --mis-agro-primary-dark-text: #4ade80;
+
   /* Escala tipográfica */
   --mis-text-xs: 11px; /* Labels de íconos en Col 1 del sidebar */
   --mis-text-sm: 13px; /* Texto secundario, metadatos */
@@ -284,6 +299,8 @@
    `.dark` en <html> lo pone ThemeService; es el mismo selector que
    declara providePrimeNG({ theme: { options: { darkModeSelector } } }). */
 .dark {
+  --mis-esg-nodo-bg: var(--mis-panel-bg);
+  --mis-esg-nodo-text: #5eead4;
   --mis-bg: #0e1626;
   --mis-surface: #162034;
   /* Mismo criterio que en claro: translúcido pero sin perder el navy profundo

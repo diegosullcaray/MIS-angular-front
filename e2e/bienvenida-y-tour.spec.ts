@@ -100,7 +100,9 @@ test.describe('El recorrido guiado entra en un teléfono', () => {
 
       const siguiente = page.locator('.driver-popover-next-btn');
       if (!(await siguiente.isVisible())) break;
-      await siguiente.click();
+      // Los pasos que esperan un clic tienen "Siguiente" deshabilitado: se pulsa lo resaltado.
+      if (await siguiente.isDisabled()) await page.locator('.driver-active-element').click();
+      else await siguiente.click();
       await page.waitForTimeout(250);
     }
   });
