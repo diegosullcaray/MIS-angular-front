@@ -1,6 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { SelectModule } from 'primeng/select';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import { InlineErrorComponent } from '../../../../../../../shared/ui/inline-error/inline-error.component';
@@ -23,10 +22,8 @@ import {
   type FiltrosMonitorEfectividades,
 } from '../../models/monitor-efectividades.model';
 import type { GrupoPanelAsesor, KpiPanelAsesor, ReportePanelAsesor, ResultadoPanelAsesor } from '../../models/panel-asesor.model';
-import { bloquesDe, gruposOrdenados, kpisDeTotales, semaforoKpi, sinDatos } from '../../utils/panel-asesor.util';
+import { bloquesDe, gruposOrdenados, semaforoKpi, sinDatos } from '../../utils/panel-asesor.util';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
-
-type PestanaPanel = 'resumen' | GrupoPanelAsesor;
 
 interface FiltroEfectividades {
   campo: keyof FiltrosMonitorEfectividades;
@@ -45,15 +42,15 @@ const FILTROS_EFECTIVIDADES: readonly FiltroEfectividades[] = [
 ];
 
 /**
- * Panel unificado del asesor: vista 360 con KPI, gráficos y tablas reales de Ant,
- * y los 17 reportes de `rda/sectorista` agrupados por categoría y ordenados por uso.
+ * Panel unificado del asesor: los 17 reportes de `rda/sectorista` agrupados por
+ * categoría y ordenados por uso, con KPI, gráficos y tablas reales de Ant. Abre en
+ * el más consultado.
  */
 @Component({
   selector: 'app-panel-unificado',
   standalone: true,
   imports: [
     FormsModule,
-    RouterLink,
     SelectModule,
     WindowPanelComponent,
     InlineErrorComponent,
@@ -74,15 +71,17 @@ export class PanelAsesorComponent {
   protected readonly filtrosEfectividades = FILTROS_EFECTIVIDADES;
   protected readonly codigoEfectividades = CODIGO_EFECTIVIDADES;
 
+  /** Filtros de efectividades desplegados en móvil (en escritorio se ven siempre). */
+  protected readonly filtrosAbiertos = signal(false);
+
   /** Último reporte abierto en cada categoría, para volver donde se estaba. */
   private readonly ultimoPorGrupo = signal<Partial<Record<GrupoPanelAsesor, string>>>({});
 
   protected readonly reporteActivo = computed<ReportePanelAsesor | null>(() => {
-    const vista = this.panel.vista();
-    return vista === 'resumen' ? null : (REPORTES_ASESOR.find((r) => r.codigo === vista) ?? null);
+    return REPORTES_ASESOR.find((r) => r.codigo === this.panel.vista()) ?? null;
   });
 
-  protected readonly pestanaActiva = computed<PestanaPanel>(() => this.reporteActivo()?.grupo ?? 'resumen');
+  protected readonly pestanaActiva = computed<GrupoPanelAsesor | null>(() => this.reporteActivo()?.grupo ?? null);
 
   protected readonly reportesDelGrupo = computed(
     () => this.grupos.find((g) => g.grupo.id === this.pestanaActiva())?.reportes ?? [],
@@ -95,15 +94,8 @@ export class PanelAsesorComponent {
 
   protected readonly subtitulo = computed(() => this.panel.asesor()?.nombre ?? 'Reportes consolidados');
 
-  // --- Vista 360 ---
-  protected readonly estadoCartera = computed(() => this.panel.estado('L_CART_SEC'));
+  /** KPI del monitor de desembolsos, que se muestran arriba de su detalle. */
   protected readonly estadoDesembolso = computed(() => this.panel.estado('L_MONI_DESE_SEC'));
-  protected readonly estadoMora = computed(() => this.panel.estado('L_INVERS_STOCK_SEC'));
-
-  protected readonly kpisCartera = computed<KpiPanelAsesor[]>(() => {
-    const e = this.estadoCartera();
-    return e?.estado === 'listo' ? kpisDeTotales(e.resultado.tabla1) : [];
-  });
 
   protected readonly kpisDesembolso = computed<KpiPanelAsesor[]>(() => {
     const e = this.estadoDesembolso();
@@ -111,29 +103,19 @@ export class PanelAsesorComponent {
     const { kpiOperaciones, kpiMonto } = e.resultado;
     return [
       {
-        etiqueta: 'Operaciones desembolsadas · cumplimiento',
+        etiqueta: 'Operaciones · cumplimiento',
         valor: kpiOperaciones?.cumpl_des_acum || '--',
         semaforo: semaforoKpi(kpiOperaciones?.style_cumpl_des_acum),
       },
       {
-        etiqueta: 'Monto desembolsado · cumplimiento',
+        etiqueta: 'Monto · cumplimiento',
         valor: kpiMonto?.cumpl_ope_acum || '--',
         semaforo: semaforoKpi(kpiMonto?.style_cumpl_ope_acum),
       },
     ];
   });
 
-  protected readonly corteDesembolso = computed(() => {
-    const e = this.estadoDesembolso();
-    const kpi = e?.estado === 'listo' ? e.resultado.kpiOperaciones : null;
-    return kpi?.fecha ? `Actualizado al ${kpi.fecha}${kpi.hora ? ' ' + kpi.hora : ''}` : '';
-  });
-
-  protected abrirPestana(pestana: PestanaPanel): void {
-    if (pestana === 'resumen') {
-      this.panel.seleccionarVista('resumen');
-      return;
-    }
+  protected abrirPestana(pestana: GrupoPanelAsesor): void {
     const grupo = this.grupos.find((g) => g.grupo.id === pestana);
     const destino = this.ultimoPorGrupo()[pestana] ?? grupo?.reportes[0]?.codigo;
     if (destino) this.abrirReporte(destino);

@@ -12,9 +12,9 @@
 >
   <div class="bienvenida">
     <!-- Decorativa: el saludo lo lleva el texto, no el dibujo. -->
-    <img class="bienvenida-pachi" src="/assets/images/fc/tours/mascota-saluda.png" alt="" aria-hidden="true" />
+    <img class="bienvenida-pachi" appAnimar="aparecer" src="/assets/images/fc/tours/mascota-saluda.png" alt="" aria-hidden="true" />
 
-    <div class="bienvenida-texto">
+    <div class="bienvenida-texto" appAnimar="escalonado" [retraso]="0.1">
       <p class="bienvenida-saludo">
         ¡Hola! Soy <b>Pachi</b> y te acompaño en el sistema nuevo.
       </p>

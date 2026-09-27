@@ -8,17 +8,10 @@ import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
-class ResizeObserverMock {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
 describe('SeguimientoReprogramadosComponent', () => {
   let servicioSpy: Record<string, ReturnType<typeof vi.fn>>;
 
   beforeAll(() => {
-    (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = ResizeObserverMock;
   });
 
   beforeEach(() => {

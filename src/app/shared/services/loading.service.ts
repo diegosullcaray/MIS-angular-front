@@ -38,6 +38,12 @@ export class LoadingService {
   private tandaAbierta = false;
   /** Si ya respondió alguna petición de la tanda más reciente. */
   private respondioLaTanda = false;
+  /** Pantalla (ruta sin query) de la tanda más reciente. */
+  private pantallaDeLaTanda?: string;
+  /** Pantalla que ya recibió su primera respuesta: lo que se consulte después en ella no bloquea. */
+  private pantallaServida?: string;
+  /** La tanda actual es de una pantalla ya servida: la cuentan los esqueletos, no el overlay. */
+  private tandaSilenciosa = false;
 
   /** Muestra el spinner. */
   show(message?: string): void {
@@ -57,11 +63,16 @@ export class LoadingService {
    * Una petición HTTP arranca y devuelve su tanda. Las que arrancan en la misma tarea (los bloques
    * de un reporte, pedidos a la vez) forman una tanda; la primera de una tanda nueva vuelve a
    * mostrar el overlay aunque sigan en vuelo peticiones anteriores.
+   *
+   * Con `pantalla` (la ruta actual), el overlay sale solo en la primera carga de cada pantalla:
+   * cambiar de pestaña, filtro o nivel dentro de ella lo muestran los esqueletos de sus tablas.
    */
-  iniciarPeticion(): number {
+  iniciarPeticion(pantalla?: string): number {
     if (!this.tandaAbierta) {
       this.tanda++;
       this.respondioLaTanda = false;
+      this.pantallaDeLaTanda = pantalla;
+      this.tandaSilenciosa = pantalla !== undefined && pantalla === this.pantallaServida;
       this.tandaAbierta = true;
       queueMicrotask(() => (this.tandaAbierta = false));
     }
@@ -77,7 +88,10 @@ export class LoadingService {
    */
   terminarPeticion(tanda = this.tanda): void {
     this.peticiones = Math.max(0, this.peticiones - 1);
-    if (tanda === this.tanda) this.respondioLaTanda = true;
+    if (tanda === this.tanda) {
+      this.respondioLaTanda = true;
+      this.pantallaServida = this.pantallaDeLaTanda;
+    }
     this.publicar();
   }
 
@@ -91,7 +105,7 @@ export class LoadingService {
 
   private publicar(): void {
     const requestCount = this.manuales + this.peticiones;
-    const isLoading = this.manuales > 0 || (this.peticiones > 0 && !this.respondioLaTanda);
+    const isLoading = this.manuales > 0 || (this.peticiones > 0 && !this.respondioLaTanda && !this.tandaSilenciosa);
     this.estadoInterno.set(
       isLoading
         ? { isLoading, requestCount, ...(this.mensaje ? { message: this.mensaje } : {}) }

@@ -118,6 +118,34 @@ describe('LoadingService', () => {
       expect(service.cargando()).toBe(false);
     });
 
+    it('en una pantalla ya cargada, cambiar de pestaña o filtro no vuelve a mostrar el overlay', async () => {
+      service.terminarPeticion(service.iniciarPeticion('/app/panel'));
+      await otraTarea();
+
+      // Otra pestaña de la misma pantalla: la carga la cuenta el esqueleto de su tabla.
+      const pestana = service.iniciarPeticion('/app/panel');
+      expect(service.cargando()).toBe(false);
+      expect(service.estado().requestCount).toBe(1);
+      service.terminarPeticion(pestana);
+    });
+
+    it('al entrar a otra pantalla el overlay vuelve para su primera carga', async () => {
+      service.terminarPeticion(service.iniciarPeticion('/app/panel'));
+      await otraTarea();
+
+      const otra = service.iniciarPeticion('/app/reportes');
+      expect(service.cargando()).toBe(true);
+      service.terminarPeticion(otra);
+      expect(service.cargando()).toBe(false);
+    });
+
+    it('si la primera carga no respondió, la pantalla sigue mostrando el overlay', async () => {
+      service.iniciarPeticion('/app/panel');
+      await otraTarea();
+      service.iniciarPeticion('/app/panel');
+      expect(service.cargando()).toBe(true);
+    });
+
     it('un show() manual sigue bloqueando aunque las peticiones ya respondieran', () => {
       service.show('Guardando...');
       service.terminarPeticion(service.iniciarPeticion());

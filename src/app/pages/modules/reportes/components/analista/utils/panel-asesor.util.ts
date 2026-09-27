@@ -1,9 +1,8 @@
-import type { ColumnaReporte, FilaReporte, TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import type { ColumnaReporte, TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type {
   BloquePanelAsesor,
   ClaveTabla,
   GrupoPanelAsesorDef,
-  KpiPanelAsesor,
   ReportePanelAsesor,
   ResultadoPanelAsesor,
 } from '../models/panel-asesor.model';
@@ -27,8 +26,16 @@ export function gruposOrdenados(
 
 /** Bloques a pintar: los declarados que llegaron, o todas las tablas presentes en orden. */
 export function bloquesDe(reporte: ReportePanelAsesor, resultado: ResultadoPanelAsesor): BloquePanelAsesor[] {
-  const declarados = reporte.bloques ?? CLAVES_TABLA.map((tabla) => ({ tabla }));
-  return declarados.filter((b) => resultado[b.tabla] !== undefined);
+  const declarados: readonly BloquePanelAsesor[] = reporte.bloques ?? CLAVES_TABLA.map((tabla) => ({ tabla }));
+  const presentes = declarados.filter((b) => resultado[b.tabla] !== undefined);
+  // Toda tabla lleva nombre en su chip. El legado no titula muchas: sin título propio va el del
+  // reporte, numerado si hay varias sin nombre. No se inventa un nombre de negocio.
+  const sinTitulo = presentes.filter((b) => !b.titulo);
+  return presentes.map((b) => {
+    if (b.titulo) return b;
+    const orden = sinTitulo.indexOf(b) + 1;
+    return { ...b, titulo: sinTitulo.length > 1 ? `${reporte.nombre} · ${orden} de ${sinTitulo.length}` : reporte.nombre };
+  });
 }
 
 /** Vacío real: ni filas, ni series con datos, ni KPI. Un error nunca llega acá. */
@@ -48,40 +55,6 @@ export function columnasDato(tabla: TablaReporteResultado): ColumnaReporte[] {
     .sort((a, b) => (a.ordenPresentacion ?? a.isdata ?? 0) - (b.ordenPresentacion ?? b.isdata ?? 0));
 }
 
-/**
- * Encabezado de grupo de cada hoja en tablas de dos niveles ("Mes actual" › "Saldo").
- * Recorre la primera fila: una columna sin `isdata` agrupa las `cols` hojas siguientes.
- */
-function gruposDeHojas(tabla: TablaReporteResultado, hojas: ColumnaReporte[]): Map<string, string> {
-  const grupos = new Map<string, string>();
-  if (tabla.headers.length < 2) return grupos;
-  const primera = (tabla.headers[0]?.columns ?? []).filter((c): c is ColumnaReporte => c != null);
-  const enPrimera = new Set(primera.map((c) => c.columnDef));
-  const inferiores = hojas.filter((h) => !enPrimera.has(h.columnDef));
-  let cursor = 0;
-  for (const columna of primera) {
-    if (columna.isdata != null) continue;
-    const ancho = columna.cols ? Number(columna.cols) : 1;
-    for (let i = 0; i < ancho && cursor < inferiores.length; i++, cursor++) {
-      if (columna.header) grupos.set(inferiores[cursor].columnDef, columna.header);
-    }
-  }
-  return grupos;
-}
-
-function etiquetas(tabla: TablaReporteResultado, hojas: ColumnaReporte[]): Map<string, string> {
-  const grupos = gruposDeHojas(tabla, hojas);
-  return new Map(
-    hojas.map((h) => {
-      const propia = h.header?.trim() || h.columnDef;
-      const grupo = grupos.get(h.columnDef);
-      return [h.columnDef, grupo ? `${grupo} · ${propia}` : propia];
-    }),
-  );
-}
-
-const esSemaforo = (c: ColumnaReporte) => c.format?.['type'] === 'traffic-light';
-const esFilaTotal = (f: FilaReporte) => f['style'] === 1;
 
 /** Número del motor: `number` tal cual, o texto estrictamente numérico. Lo demás no es cifra. */
 export function aNumero(valor: unknown): number | null {
@@ -109,27 +82,6 @@ function semaforo(valor: unknown): 1 | 0 | -1 | null {
   if (valor === null || valor === undefined || valor === '') return null;
   const n = Number(valor);
   return n === 1 || n === 0 || n === -1 ? n : null;
-}
-
-/**
- * KPI de la fila de totales (`style === 1`), o de la única fila si el bloque trae una sola.
- * Sin una de esas dos, no hay total confiable y no se inventa uno sumando.
- */
-export function kpisDeTotales(tabla: TablaReporteResultado | undefined, maximo = 4): KpiPanelAsesor[] {
-  if (!tabla) return [];
-  const fila = tabla.body.find(esFilaTotal) ?? (tabla.body.length === 1 ? tabla.body[0] : undefined);
-  if (!fila) return [];
-  const hojas = columnasDato(tabla);
-  const nombres = etiquetas(tabla, hojas);
-  return hojas
-    .slice(1)
-    .filter((c) => !esSemaforo(c) && aNumero(fila[c.columnDef]) !== null)
-    .slice(0, maximo)
-    .map((c) => ({
-      etiqueta: nombres.get(c.columnDef) ?? c.columnDef,
-      valor: formatearValor(fila[c.columnDef], c),
-      semaforo: semaforo(fila[`style_${c.columnDef}`]),
-    }));
 }
 
 /** Semáforo de las tarjetas KPI del monitor de desembolsos (`style_cumpl_*`). */

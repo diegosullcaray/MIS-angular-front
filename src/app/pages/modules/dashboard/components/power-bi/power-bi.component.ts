@@ -7,12 +7,13 @@ import { models, type IReportEmbedConfiguration } from 'powerbi-client';
 import { DashboardService } from '../../services/dashboard.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
+import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 
 /** Visor de un reporte Power BI embebido (`/app/dashboards/power-bi`) — migrado de `PowerbiComponent` (legado STG, `pages/modules/reportes-e/powerbi`). */
 @Component({
   selector: 'app-dashboard-power-bi',
   standalone: true,
-  imports: [SkeletonModule, TooltipModule, PowerBIEmbedModule, WindowPanelComponent],
+  imports: [SkeletonModule, TooltipModule, PowerBIEmbedModule, WindowPanelComponent, InlineErrorComponent],
   templateUrl: './power-bi.component.html',
   styleUrl: './power-bi.component.css',
 })
@@ -24,16 +25,23 @@ export class PowerBiComponent {
 
   protected readonly reporte = this.dashboard.reporteSeleccionado;
   protected readonly cargando = signal(true);
+  protected readonly error = signal(false);
   protected readonly embedConfig = signal<IReportEmbedConfiguration | null>(null);
   protected readonly reportClass = 'w-full h-full';
 
   constructor() {
-    const reporte = this.reporte();
-    if (!reporte) {
+    if (!this.reporte()) {
       this.volver();
       return;
     }
+    this.cargar();
+  }
 
+  protected cargar(): void {
+    const reporte = this.reporte();
+    if (!reporte) return;
+    this.cargando.set(true);
+    this.error.set(false);
     this.dashboard.obtenerTokenReporte(reporte.id, reporte.datasetId ?? '').subscribe({
       next: (token) => {
         this.embedConfig.set({
@@ -55,6 +63,7 @@ export class PowerBiComponent {
       },
       error: () => {
         this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+        this.error.set(true);
         this.cargando.set(false);
       },
     });

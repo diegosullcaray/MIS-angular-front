@@ -9,9 +9,6 @@ export const GRUPOS_PANEL_ASESOR: readonly GrupoPanelAsesorDef[] = [
   { id: 'gestion', nombre: 'Movilidad y gestión', icono: 'pi pi-map' },
 ];
 
-/** Reportes que alimentan la vista 360: los dos más consultados y la evolución de mora. */
-export const CODIGOS_RESUMEN_ASESOR = ['L_CART_SEC', 'L_MONI_DESE_SEC', 'L_INVERS_STOCK_SEC'] as const;
-
 /** Reporte con filtros propios dentro del panel. */
 export const CODIGO_EFECTIVIDADES = 'L_MON_EFE_DET_SEC';
 

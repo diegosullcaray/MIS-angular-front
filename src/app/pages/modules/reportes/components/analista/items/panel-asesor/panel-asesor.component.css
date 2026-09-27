@@ -37,79 +37,70 @@ a:focus-visible {
   position: sticky;
   top: 0;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding: 6px;
-  border: 1px solid var(--mis-border);
-  border-radius: var(--mis-radius-lg);
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--mis-border);
   background: var(--mis-surface);
-  box-shadow: var(--mis-shadow-sm);
 }
-.pestanas {
+/* Pestañas lineales, como las de WhatsApp: una sola fila que se desliza de costado. */
+.pestanas,
+.chips {
   display: flex;
-  gap: 4px;
-  min-width: 0;
   overflow-x: auto;
-  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.pestanas::-webkit-scrollbar,
+.chips::-webkit-scrollbar {
+  display: none;
+}
+.pestanas > li,
+.chips > li {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
 }
 .pestana {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 12px;
+  min-height: 44px;
+  padding: 0 14px;
   border: 0;
-  border-radius: var(--mis-radius-md);
+  border-bottom: 2px solid transparent;
   background: transparent;
   color: var(--mis-text-secondary);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  transition: background var(--mis-transition-fast), color var(--mis-transition-fast);
+  transition: color var(--mis-transition-fast), border-color var(--mis-transition-fast);
 }
 .pestana:hover {
-  background: var(--mis-hover-bg);
   color: var(--mis-text-primary);
 }
 .pestana.activa {
-  background: var(--mis-primary);
-  color: var(--mis-text-on-primary);
-}
-.contador {
-  min-width: 18px;
-  padding: 1px 6px;
-  border-radius: var(--mis-radius-full);
-  background: var(--mis-panel-bg);
-  color: var(--mis-text-secondary);
-  font-size: var(--mis-text-xs);
-  text-align: center;
-}
-.pestana.activa .contador {
-  background: var(--mis-surface);
+  border-bottom-color: var(--mis-primary-text);
   color: var(--mis-primary-text);
 }
 
 .chips {
-  display: flex;
-  flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+  padding-bottom: 2px;
 }
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  min-height: 36px;
+  padding: 0 12px;
   border: 1px solid var(--mis-border-control);
   border-radius: var(--mis-radius-full);
   background: var(--mis-surface);
   color: var(--mis-text-secondary);
   font-size: 11.5px;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
 }
 .chip:hover {
@@ -124,62 +115,15 @@ a:focus-visible {
 
 /* ---------- Detalle de un reporte ---------- */
 .detalle,
-.contenido-reporte,
-.resumen {
+.contenido-reporte {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  min-width: 0;
-}
-.detalle-cabecera {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   gap: 12px;
-}
-.detalle-icono {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  flex-shrink: 0;
-  border-radius: var(--mis-radius-md);
-  background: var(--mis-primary-light);
-  color: var(--mis-primary-text);
-  font-size: 16px;
-}
-.detalle-texto {
-  flex: 1 1 200px;
   min-width: 0;
 }
-h2 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 700;
-}
-.detalle-texto p {
-  margin: 2px 0 0;
-  font-size: 11.5px;
-  color: var(--mis-text-secondary);
-}
-.enlace-completo,
-.enlace {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 6px;
-  border: 0;
-  border-radius: var(--mis-radius-sm);
-  background: transparent;
-  color: var(--mis-primary-text);
-  font-size: 11.5px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-}
-.enlace-completo:hover,
-.enlace:hover {
-  text-decoration: underline;
+
+.alternar-filtros {
+  display: none;
 }
 .filtros-reporte {
   display: grid;
@@ -204,28 +148,32 @@ h2 {
   gap: 6px;
   min-height: 104px;
   padding: 14px 16px;
+  /* Color del semáforo: lo fija cada clase `kpi-*` y lo pinta el punto de la etiqueta. */
+  --kpi-senal: var(--mis-primary);
   border: 1px solid var(--mis-border);
-  border-top: 3px solid var(--mis-primary);
   border-radius: var(--mis-radius-lg);
   background: var(--mis-surface);
   box-shadow: var(--mis-shadow-sm);
   color: var(--mis-text-primary);
   text-align: left;
 }
-.kpi-accion {
-  cursor: pointer;
-  transition: box-shadow var(--mis-transition-fast), transform var(--mis-transition-fast);
-}
-.kpi-accion:hover {
-  box-shadow: var(--mis-shadow-md);
-  transform: translateY(-1px);
-}
 .kpi-etiqueta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: var(--mis-text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--mis-text-tertiary);
+}
+.kpi-etiqueta::before {
+  content: '';
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--mis-radius-full);
+  background: var(--kpi-senal);
 }
 .kpi-valor {
   font-size: 26px;
@@ -240,78 +188,24 @@ h2 {
   color: var(--mis-text-secondary);
 }
 .kpi-ok {
-  border-top-color: var(--mis-success);
+  --kpi-senal: var(--mis-success);
 }
 .kpi-ok .kpi-pie i {
   color: var(--mis-success);
 }
 .kpi-alerta {
-  border-top-color: var(--mis-warning);
+  --kpi-senal: var(--mis-warning);
 }
 .kpi-alerta .kpi-pie i {
   color: var(--mis-warning);
 }
 .kpi-riesgo {
-  border-top-color: var(--mis-danger);
+  --kpi-senal: var(--mis-danger);
 }
 .kpi-riesgo .kpi-pie i {
   color: var(--mis-danger);
 }
-.kpi-error {
-  border-top-color: var(--mis-danger);
-  background: var(--mis-danger-light);
-}
-.kpi-cargando {
-  border-top-color: var(--mis-border);
-  background: linear-gradient(90deg, var(--mis-panel-bg), var(--mis-hover-bg), var(--mis-panel-bg));
-  background-size: 200% 100%;
-  animation: pulso 1.4s ease-in-out infinite;
-}
-@keyframes pulso {
-  to {
-    background-position: -200% 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .kpi-cargando {
-    animation: none;
-  }
-}
 
-/* ---------- Resumen ---------- */
-.resumen-grilla {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  align-items: start;
-}
-.tarjeta {
-  min-width: 0;
-  padding: 12px;
-  border: 1px solid var(--mis-border);
-  border-radius: var(--mis-radius-lg);
-  background: var(--mis-surface);
-}
-.tarjeta > header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-.tarjeta h2 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-}
-.tarjeta h2 i {
-  color: var(--mis-primary-text);
-}
-.tarjeta :is(app-bloque-panel) {
-  max-height: 420px;
-  overflow: auto;
-}
 .tarjeta-grafico {
   height: 340px;
   min-width: 0;
@@ -320,96 +214,47 @@ h2 {
   border-radius: var(--mis-radius-lg);
   background: var(--mis-surface);
 }
-.tarjeta .tarjeta-grafico {
-  border: 0;
-  padding: 0;
-}
 
-.mapa h2 {
-  margin-bottom: 10px;
-  font-size: 13px;
-}
-.mapa-grupos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
-}
-.mapa-grupo {
-  padding: 10px;
-  border: 1px solid var(--mis-border);
-  border-radius: var(--mis-radius-lg);
-  background: var(--mis-panel-bg);
-}
-.mapa-grupo h3 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 2px 4px 8px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--mis-text-secondary);
-}
-.mapa-grupo ul {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.acceso {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid transparent;
-  border-radius: var(--mis-radius-md);
-  background: var(--mis-surface);
-  color: var(--mis-text-primary);
-  text-align: left;
-  cursor: pointer;
-}
-.acceso:hover {
-  border-color: var(--mis-primary);
-}
-.acceso > i:first-child {
-  color: var(--mis-primary-text);
-}
-.acceso-texto {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-.acceso-texto strong {
-  font-size: 12px;
-}
-.acceso-texto small {
-  font-size: var(--mis-text-xs);
-  color: var(--mis-text-secondary);
-}
-.acceso-flecha {
-  color: var(--mis-text-tertiary);
-}
-.solo-lector {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-@media (max-width: 1000px) {
-  .resumen-grilla {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+/* Móvil: el asesor lo usa en el celular. Los filtros se pliegan para que los datos
+   entren en la primera pantalla y los KPI van de a dos. */
 @media (max-width: 640px) {
-  .navegacion {
-    position: static;
+  .alternar-filtros {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--mis-border-control);
+    border-radius: var(--mis-radius-full);
+    background: var(--mis-surface);
+    color: var(--mis-text-primary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .filtros-reporte:not(.abiertos) {
+    display: none;
+  }
+
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .kpi {
+    min-height: 0;
+    gap: 4px;
+    padding: 10px 12px;
   }
   .kpi-valor {
-    font-size: 22px;
+    font-size: 20px;
+  }
+  /* Se achica pero se queda: lleva el texto del semáforo, que no puede ser solo color. */
+  .kpi-pie {
+    font-size: var(--mis-text-xs);
+  }
+
+  .tarjeta-grafico {
+    height: 260px;
   }
 }

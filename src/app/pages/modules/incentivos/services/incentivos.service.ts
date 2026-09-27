@@ -7,7 +7,6 @@ import { ModSysAdminService } from '../../../../core/winder/instances/mod-sys-ad
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { LoadingService } from '../../../../shared/services/loading.service';
 import {
-  CFG_INDIVIDUAL_SECTORISTA,
   NIVELES_SELECTOR_JERARQUIA,
   crearAvancesDefault,
   crearCalculadoraDefault,

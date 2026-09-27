@@ -1,11 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
-import { ShellStateService } from '../../../../../../core/services/shell-state.service';
 import type { ReporteBloqueUnico } from '../components/Captaciones/models/captaciones.model';
-import { COD_RESUMEN_MOVILIDAD, TIP_COD_PERSONA } from '../constantes/resumen-movilidad.constantes';
+import { COD_RESUMEN_MOVILIDAD } from '../constantes/resumen-movilidad.constantes';
 
-/** `tip_cod` de la jerarquía de personas — el que usa `cra-v6` para consultar por documento. */
 /**
  * Los dos "Resumen de Movilidad".
  *
@@ -18,7 +16,6 @@ import { COD_RESUMEN_MOVILIDAD, TIP_COD_PERSONA } from '../constantes/resumen-mo
 @Injectable({ providedIn: 'root' })
 export class ResumenMovilidadService {
   private readonly bloques = inject(BloqueReporteService);
-  private readonly shell = inject(ShellStateService);
 
   /** Resumen de Movilidad Comercial. */
   comercial(nodo: NodoConsulta, pagina = 1): Observable<ReporteBloqueUnico> {

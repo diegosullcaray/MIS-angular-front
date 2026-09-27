@@ -182,10 +182,6 @@ export class CarteraRepositorioService {
   private paramsNodo(nodo: NodoConsulta): Record<string, unknown> {
     return { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel };
   }
-
-  private paramsConFecha(nodo: NodoConsulta): Record<string, unknown> {
-    return { ...this.paramsNodo(nodo), fec: this.bloques.fecha() };
-  }
 }
 
 /** `meta1` llega serializado en unos bloques y ya parseado en otros. */

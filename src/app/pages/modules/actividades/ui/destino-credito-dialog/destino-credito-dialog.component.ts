@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, input, OnChanges } from '@angular/core';
+import { Component, input, output, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
@@ -27,8 +27,8 @@ export class DestinoCreditoDialogComponent implements OnChanges {
   readonly itemData = input<DestinoCreditoItem | null>(null);
   readonly visible = input<boolean>(false);
 
-  @Output() readonly visibleChange = new EventEmitter<boolean>();
-  @Output() readonly onGuardar = new EventEmitter<{ cod_ope: string; fec_vis: string; is_valid: string }>();
+  readonly visibleChange = output<boolean>();
+  readonly onGuardar = output<{ cod_ope: string; fec_vis: string; is_valid: string }>();
 
   /** Fecha máxima para DatePicker */
   protected readonly today = new Date();

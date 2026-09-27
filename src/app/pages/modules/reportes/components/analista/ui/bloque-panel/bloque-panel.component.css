@@ -8,19 +8,11 @@
   background: var(--mis-surface);
   overflow: hidden;
 }
-.bloque-cabecera {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--mis-border);
-}
-h3 {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--mis-text-primary);
-}
-.bloque > app-chip-informativo {
-  display: block;
-  margin: 10px 14px 0;
+.bloque-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px 0;
 }
 .bloque-tabla {
   padding: 8px;

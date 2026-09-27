@@ -17,9 +17,7 @@ import type {
   SerieGrafico,
 } from '../models/grafico-comun.model';
 import {
-  AZUL,
   PALETA_SERIES,
-  colorSerieReporte,
   esPorcentaje,
   tokensTema,
 } from './paleta-colores.util';
@@ -63,10 +61,9 @@ export function opcionesMixto(
   const { tipo = 'auto', formato = 'soles', fondoTransparente = false, apilado = false, decimales = 1 } = config;
   const esApilado = apilado || Boolean(bloque.apilado);
   const base = opcionesBase(oscuro, fondoTransparente);
-  const { texto, textoFuerte, linea } = tokensTema(oscuro);
+  const { texto, linea } = tokensTema(oscuro);
   const forma = tipo === 'auto' ? inferirTipo(bloque.series) : tipo;
 
-  const unicaSerie = bloque.series.length === 1;
   const estiloTexto = { color: texto, fontSize: '11px' };
   // En modo `linea` no hay eje secundario: todas las series comparten el eje de valores.
   // Ahí van las de porcentaje y las que lo pidan explícitamente (`secundaria`).

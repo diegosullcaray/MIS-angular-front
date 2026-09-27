@@ -29,7 +29,7 @@ _Total: 11 módulos enlazados desde `app.routes.ts`._
 ## Enlaces fuera de la tabla
 
 <!-- generado:inicio enlaces -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-24 · commit a79566d. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-27 · commit 3b5f918c. No editar a mano. -->
 
 **Pantallas enlazadas directamente desde `app.routes.ts`** (no pasan por el `*.routes.ts` de su módulo):
 
@@ -37,7 +37,7 @@ _Total: 11 módulos enlazados desde `app.routes.ts`._
 
 **Módulos sin ruta** (la carpeta existe pero ninguna ruta la carga; regla `modulo-enrutado`):
 
-- `prospecto` — enlazarlo o retirarlo (ver [guía de retiro](../development/report-retirement-guide.md)).
+- Ninguno.
 <!-- generado:fin -->
 
 ## Qué significa cada columna
@@ -67,7 +67,7 @@ Ninguna de estas cifras mide paridad funcional ni cobertura de negocio.
 
 Concentra la mayor superficie funcional y compone rutas de subdominio desde archivos separados: Clientes, Cartera, Cartera en Mora, Captaciones, Portafolio Reasignado, Seguros, Campañas, Proyecciones, Tablero Digital, Reportes PDM, Actividad Mensual, Avance Comercial, Desarrollo Sostenible y Analista. Ver [`skills/mis-reportes-bloques`](../../skills/mis-reportes-bloques/SKILL.md).
 
-El subdominio Analista (`reportes/components/analista/`) aloja además el **panel unificado del asesor** (`items/panel-asesor/`): una vista 360 que reúne los 17 reportes `rda/sectorista` sin duplicar sus consultas. Se publica en `/app/analista/panel-unificado` directamente desde `app.routes.ts` ([ADR-0006](./adr/ADR-0006-panel-unificado-en-reportes.md)).
+El subdominio Analista (`reportes/components/analista/`) aloja además el **panel unificado del asesor** (`items/panel-asesor/`): un panel que reúne los 17 reportes `rda/sectorista` por categoría, sin duplicar sus consultas. Se publica en `/app/analista/panel-unificado` directamente desde `app.routes.ts` ([ADR-0006](./adr/ADR-0006-panel-unificado-en-reportes.md)).
 
 ## Restricciones de navegación
 

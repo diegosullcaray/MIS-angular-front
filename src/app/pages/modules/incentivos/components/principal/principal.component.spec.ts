@@ -6,13 +6,6 @@ import { IncentivosService } from '../../services/incentivos.service';
 import type { PerfilUsuarioIncentivo } from '../../models/incentivos-perfil.model';
 import type { ItemAvance, ItemSuperPlus } from '../../models/incentivos-tablas.model';
 
-// jsdom no implementa ResizeObserver — lo usan internamente varios componentes de PrimeNG.
-class ResizeObserverFalso {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
 // Ni IntersectionObserver, que es lo que mira `pAnimateOnScroll` (la plantilla
 // lo usa para el fundido de entrada). Sin este doble, `ngAfterViewInit` lanza y
 // se cae el archivo entero, no un caso.
@@ -52,7 +45,6 @@ describe('PrincipalComponent', () => {
   };
 
   beforeEach(() => {
-    (globalThis as unknown as { ResizeObserver: typeof ResizeObserverFalso }).ResizeObserver = ResizeObserverFalso;
     (globalThis as unknown as { IntersectionObserver: typeof IntersectionObserverFalso }).IntersectionObserver =
       IntersectionObserverFalso;
 

@@ -3,13 +3,15 @@
      foto no es oscura de origen. -->
 <div class="shell-wallpaper h-screen flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed">
   <!-- Sidebar: Col1 (íconos) + Col2 (panel) -->
-  <app-sidebar class="flex shrink-0 h-full" />
+  <app-sidebar class="flex shrink-0 h-full" appAnimar="fundido" />
 
   <!-- Zona principal: pb-16 en mobile para que todo el contenido y ventanas queden 100% arriba del sidebar rail fijo -->
   <div class="flex flex-col flex-1 min-w-0 overflow-hidden pb-16 sm:pb-0">
     <!-- Header minimalista translúcido con elevación ligera z-30 -->
     <header
       class="h-[44px] min-h-[44px] shrink-0 bg-[var(--mis-surface-translucido)] backdrop-blur-md border-b border-[var(--mis-border)] shadow-2xs z-30 flex items-center w-full relative"
+      appAnimar="fundido"
+      [retraso]="0.1"
     >
       <app-header class="w-full h-full block" />
     </header>

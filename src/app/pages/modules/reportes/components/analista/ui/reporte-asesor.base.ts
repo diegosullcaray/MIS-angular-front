@@ -1,4 +1,4 @@
-import { effect } from '@angular/core';
+import { effect, signal } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { SelectorAsesorBase } from './selector-asesor.base';
 import type { AsesorSec } from '../models/asesor-sec.model';
@@ -15,6 +15,10 @@ export abstract class ReporteAsesorBase<T> extends SelectorAsesorBase {
   protected abstract readonly avisoSinResultados: string;
   /** Título del toast de error, para los reportes que lo nombran distinto. */
   protected readonly errorDeCarga: string = 'No se pudo cargar el reporte';
+
+  /** Estados para la vista (AGENTS §3): la consulta falló, o respondió sin filas. */
+  protected readonly error = signal(false);
+  protected readonly vacio = signal(false);
 
   /** Replica la emisión automática de `app-auto-complete-sec` para `tip_use = 1`. */
   private readonly cargarAsesorPropio = effect(() => {
@@ -37,14 +41,17 @@ export abstract class ReporteAsesorBase<T> extends SelectorAsesorBase {
     if (!asesor) return;
 
     this.cargando.set(true);
+    this.error.set(false);
     this.consultar(asesor).subscribe({
       next: (resultado) => {
         const vacio = this.recibir(resultado);
+        this.vacio.set(vacio);
         this.cargando.set(false);
         if (vacio) this.toast.advertencia('Sin resultados', this.avisoSinResultados);
       },
       error: () => {
         this.toast.error(this.errorDeCarga, 'Inténtalo de nuevo en unos segundos.');
+        this.error.set(true);
         this.cargando.set(false);
       },
     });

@@ -39,11 +39,12 @@ describe('PanelAsesorService', () => {
     consultar = vi.fn().mockReturnValue(of(RESULTADO));
   });
 
-  it('al elegir asesor consulta solo los reportes del resumen 360', () => {
+  it('al elegir asesor consulta solo el reporte abierto, que arranca en el más usado', () => {
     const s = crear();
     s.seleccionarAsesor(ANA);
     TestBed.tick();
-    expect(consultar.mock.calls.map((c) => c[0])).toEqual(['L_CART_SEC', 'L_MONI_DESE_SEC', 'L_INVERS_STOCK_SEC']);
+    expect(s.vista()).toBe('L_CART_SEC');
+    expect(consultar.mock.calls.map((c) => c[0])).toEqual(['L_CART_SEC']);
     expect(consultar).toHaveBeenCalledWith('L_CART_SEC', ANA.dni, expect.any(Object));
     expect(s.estado('L_CART_SEC')).toEqual({ estado: 'listo', resultado: RESULTADO });
   });
@@ -53,7 +54,7 @@ describe('PanelAsesorService', () => {
     s.seleccionarAsesor(ANA);
     s.seleccionarVista('L_SEG_SEC');
     TestBed.tick();
-    s.seleccionarVista('resumen');
+    s.seleccionarVista('L_CART_SEC');
     TestBed.tick();
     s.seleccionarVista('L_SEG_SEC');
     TestBed.tick();
@@ -63,7 +64,7 @@ describe('PanelAsesorService', () => {
   it('ignora vistas que no son reportes del panel', () => {
     const s = crear();
     s.seleccionarVista('L_INEXISTENTE');
-    expect(s.vista()).toBe('resumen');
+    expect(s.vista()).toBe('L_CART_SEC');
   });
 
   it('un error queda como error (no como vacío) y se puede reintentar', () => {
@@ -107,7 +108,7 @@ describe('PanelAsesorService', () => {
     expect(llamadas[1][2]).toEqual(expect.objectContaining({ prod: 'CONSUMO' }));
   });
 
-  it('actualizar vuelve a consultar el resumen y el reporte abierto', () => {
+  it('actualizar vuelve a consultar el reporte abierto', () => {
     const s = crear();
     s.seleccionarAsesor(ANA);
     s.seleccionarVista('L_SEG_SEC');
@@ -115,7 +116,7 @@ describe('PanelAsesorService', () => {
     consultar.mockClear();
     s.actualizar();
     TestBed.tick();
-    expect(consultar.mock.calls.map((c) => c[0])).toEqual(['L_CART_SEC', 'L_MONI_DESE_SEC', 'L_INVERS_STOCK_SEC', 'L_SEG_SEC']);
+    expect(consultar.mock.calls.map((c) => c[0])).toEqual(['L_SEG_SEC']);
   });
 
   it('el asesor autenticado (tipoUsuario 1) se carga solo, sin selector', () => {

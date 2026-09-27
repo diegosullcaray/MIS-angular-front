@@ -156,14 +156,14 @@ export class ConsultaFenComponent implements OnInit {
   }
 
   protected colorRiesgo(nivel: NivelRiesgoFen): string {
-    if (nivel === 'Muy Alto') return '#ef4444';
-    if (nivel === 'Alto') return '#f97316';
-    if (nivel === 'Medio') return '#eab308';
-    return '#22c55e';
+    if (nivel === 'Muy Alto') return 'var(--mis-escala-5)';
+    if (nivel === 'Alto') return 'var(--mis-escala-4)';
+    if (nivel === 'Medio') return 'var(--mis-escala-3)';
+    return 'var(--mis-escala-1)';
   }
 
   protected colorTextoRiesgo(nivel: NivelRiesgoFen): string {
-    return nivel === 'Medio' ? '#0f172a' : '#ffffff';
+    return nivel === 'Medio' ? 'var(--mis-escala-3-texto)' : 'var(--mis-escala-1-texto)';
   }
 
   protected observacion(fila: FilaRiesgoFen): string | null {

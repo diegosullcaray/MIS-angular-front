@@ -30,16 +30,17 @@ describe('BloquePanelComponent', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('muestra la tabla con su título y nota, sin opción de gráfico', () => {
+  it('muestra la tabla con su título en un chip y su nota, sin opción de gráfico', () => {
     const el = crear('Resumen', ['(1) criterio']);
-    expect(el.querySelector('h3')?.textContent).toBe('Resumen');
+    expect(el.querySelector('.bloque-chips app-chip-informativo')?.textContent).toContain('Resumen');
+    expect(el.querySelector('h3, header')).toBeNull();
     expect(el.querySelector('app-tabla-reporte')).not.toBeNull();
     expect(el.querySelector('.bloque-nota')?.textContent).toContain('(1) criterio');
     expect(el.querySelector('app-grafico-mixto')).toBeNull();
   });
 
-  it('sin título no pinta cabecera', () => {
-    expect(crear().querySelector('header')).toBeNull();
+  it('sin título ni chip no pinta la fila de chips', () => {
+    expect(crear().querySelector('.bloque-chips')).toBeNull();
   });
 
   it('muestra la nota de unidad como chip, no como título', () => {
@@ -48,7 +49,8 @@ describe('BloquePanelComponent', () => {
     expect(el.querySelector('h3')).toBeNull();
   });
 
-  it('sin chip no pinta ninguno', () => {
-    expect(crear('Resumen').querySelector('app-chip-informativo')).toBeNull();
+  it('con título y chip muestra los dos, título primero', () => {
+    const chips = [...crear('Resumen', [], 'Expresado en PEN y %').querySelectorAll('app-chip-informativo')];
+    expect(chips.map((c) => c.textContent?.trim())).toEqual(['Resumen', 'Expresado en PEN y %']);
   });
 });

@@ -36,24 +36,12 @@
   } @else if (!panel.asesor()) {
     <app-empty-state
       titulo="Elegí un asesor"
-      descripcion="Selecciona un asesor en el filtro superior para ver su panel 360 y todos sus reportes."
+      descripcion="Selecciona un asesor en el filtro superior para ver sus reportes."
     />
   } @else {
-    <!-- Navegación: categorías + buscador -->
+    <!-- Categorías en una fila con scroll lateral (como las pestañas de WhatsApp) -->
     <nav class="navegacion" aria-label="Secciones del panel">
       <ul class="pestanas">
-        <li>
-          <button
-            type="button"
-            class="pestana"
-            [class.activa]="pestanaActiva() === 'resumen'"
-            [attr.aria-current]="pestanaActiva() === 'resumen' ? 'page' : null"
-            (click)="abrirPestana('resumen')"
-          >
-            <i class="pi pi-th-large" aria-hidden="true"></i>
-            <span>Resumen 360</span>
-          </button>
-        </li>
         @for (g of grupos; track g.grupo.id) {
           <li>
             <button
@@ -65,7 +53,6 @@
             >
               <i [class]="g.grupo.icono" aria-hidden="true"></i>
               <span>{{ g.grupo.nombre }}</span>
-              <span class="contador">{{ g.reportes.length }}<span class="solo-lector"> reportes</span></span>
             </button>
           </li>
         }
@@ -91,20 +78,29 @@
         }
       </ul>
 
-      <section class="detalle" [attr.aria-labelledby]="'titulo-' + reporte.codigo">
-        <header class="detalle-cabecera">
-          <span class="detalle-icono"><i [class]="reporte.icono" aria-hidden="true"></i></span>
-          <div class="detalle-texto">
-            <h2 [id]="'titulo-' + reporte.codigo">{{ reporte.nombre }}</h2>
-            <p>{{ reporte.descripcion }}</p>
-          </div>
-          <a class="enlace-completo" [routerLink]="reporte.ruta">
-            Abrir reporte completo <i class="pi pi-external-link" aria-hidden="true"></i>
-          </a>
-        </header>
+      <!-- Sin cabecera: el chip activo ya dice qué reporte es. -->
+      <section class="detalle" [attr.aria-label]="reporte.nombre">
 
         @if (reporte.codigo === codigoEfectividades) {
-          <div class="filtros-reporte" role="group" aria-label="Filtros de efectividades">
+          <!-- En móvil los filtros se pliegan: primero se ven los datos. En escritorio siempre están a la vista. -->
+          <button
+            type="button"
+            class="alternar-filtros"
+            [attr.aria-expanded]="filtrosAbiertos()"
+            aria-controls="filtros-efectividades"
+            (click)="filtrosAbiertos.set(!filtrosAbiertos())"
+          >
+            <i class="pi pi-sliders-h" aria-hidden="true"></i>
+            Filtros
+            <i class="pi" [class.pi-angle-down]="!filtrosAbiertos()" [class.pi-angle-up]="filtrosAbiertos()" aria-hidden="true"></i>
+          </button>
+          <div
+            id="filtros-efectividades"
+            class="filtros-reporte"
+            [class.abiertos]="filtrosAbiertos()"
+            role="group"
+            aria-label="Filtros de efectividades"
+          >
             @for (f of filtrosEfectividades; track f.campo) {
               <div class="filtro">
                 <label [for]="'filtro-' + f.campo">{{ f.etiqueta }}</label>
@@ -167,122 +163,6 @@
           }
         }
       </section>
-    } @else {
-      <!-- Resumen 360 -->
-      <div class="resumen">
-        <section class="kpis" aria-label="Indicadores principales">
-          @let d = estadoDesembolso();
-          @if (d?.estado === 'error') {
-            <div class="kpi kpi-error">
-              <span class="kpi-etiqueta">Metas de desembolso</span>
-              <button type="button" class="enlace" (click)="panel.reintentar('L_MONI_DESE_SEC')">No se pudo cargar · Reintentar</button>
-            </div>
-          } @else if (!d || d.estado === 'cargando') {
-            <div class="kpi kpi-cargando" aria-hidden="true"></div>
-            <div class="kpi kpi-cargando" aria-hidden="true"></div>
-          } @else {
-            @for (k of kpisDesembolso(); track k.etiqueta) {
-              <button type="button" class="kpi kpi-accion" [class]="claseSemaforo(k.semaforo)" (click)="abrirReporte('L_MONI_DESE_SEC')">
-                <span class="kpi-etiqueta">{{ k.etiqueta }}</span>
-                <span class="kpi-valor">{{ k.valor }}</span>
-                <span class="kpi-pie">
-                  @if (k.semaforo !== null) {
-                    <i [class]="iconoSemaforo(k.semaforo)" aria-hidden="true"></i> {{ textoSemaforo(k.semaforo) }} ·
-                  }
-                  {{ corteDesembolso() || 'Metas de desembolso' }}
-                </span>
-              </button>
-            }
-          }
-
-          @let c = estadoCartera();
-          @if (c?.estado === 'error') {
-            <div class="kpi kpi-error">
-              <span class="kpi-etiqueta">Cartera</span>
-              <button type="button" class="enlace" (click)="panel.reintentar('L_CART_SEC')">No se pudo cargar · Reintentar</button>
-            </div>
-          } @else if (!c || c.estado === 'cargando') {
-            <div class="kpi kpi-cargando" aria-hidden="true"></div>
-            <div class="kpi kpi-cargando" aria-hidden="true"></div>
-          } @else {
-            @for (k of kpisCartera(); track k.etiqueta) {
-              <button type="button" class="kpi kpi-accion" [class]="claseSemaforo(k.semaforo)" (click)="abrirReporte('L_CART_SEC')">
-                <span class="kpi-etiqueta">{{ k.etiqueta }}</span>
-                <span class="kpi-valor">{{ k.valor }}</span>
-                <span class="kpi-pie">Total de cartera</span>
-              </button>
-            }
-          }
-        </section>
-
-        <div class="resumen-grilla">
-          <section class="tarjeta" aria-labelledby="resumen-mora">
-            <header>
-              <h2 id="resumen-mora"><i class="pi pi-chart-bar" aria-hidden="true"></i> Inversión y Stock de Mora</h2>
-              <button type="button" class="enlace" (click)="abrirReporte('L_INVERS_STOCK_SEC')">Ver reporte</button>
-            </header>
-            @let m = estadoMora();
-            @if (m?.estado === 'error') {
-              <app-inline-error detalle="Reintenta la consulta en unos segundos." (reintentar)="panel.reintentar('L_INVERS_STOCK_SEC')" />
-            } @else if (!m || m.estado === 'cargando') {
-              <app-list-skeleton [rows]="[1, 2, 3, 4]" [cols]="[1, 2, 3]" />
-            } @else if (m.estado === 'listo') {
-              @if (vacio(m.resultado)) {
-                <app-empty-state titulo="Sin datos de mora" descripcion="Este asesor no registra inversión ni stock de mora." />
-              } @else {
-                @for (grafico of m.resultado.graficos ?? []; track $index) {
-                  <div class="tarjeta-grafico">
-                    <app-grafico-mixto [datos]="grafico" tipo="linea" [fondoTransparente]="true" />
-                  </div>
-                }
-              }
-            }
-          </section>
-
-          <section class="tarjeta" aria-labelledby="resumen-cartera">
-            <header>
-              <h2 id="resumen-cartera"><i class="pi pi-wallet" aria-hidden="true"></i> Cartera</h2>
-              <button type="button" class="enlace" (click)="abrirReporte('L_CART_SEC')">Ver reporte</button>
-            </header>
-            @if (c?.estado === 'error') {
-              <app-inline-error detalle="Reintenta la consulta en unos segundos." (reintentar)="panel.reintentar('L_CART_SEC')" />
-            } @else if (!c || c.estado === 'cargando') {
-              <app-list-skeleton [rows]="[1, 2, 3, 4]" />
-            } @else if (c.estado === 'listo') {
-              @if (vacio(c.resultado)) {
-                <app-empty-state titulo="Sin cartera" descripcion="Este asesor no tiene clientes en cartera, o los datos podrían seguir procesándose." />
-              } @else if (c.resultado.tabla1) {
-                <app-bloque-panel [tabla]="c.resultado.tabla1" />
-              }
-            }
-          </section>
-        </div>
-
-        <section class="mapa" aria-labelledby="resumen-mapa">
-          <h2 id="resumen-mapa">Todos tus reportes</h2>
-          <div class="mapa-grupos">
-            @for (g of grupos; track g.grupo.id) {
-              <div class="mapa-grupo">
-                <h3><i [class]="g.grupo.icono" aria-hidden="true"></i> {{ g.grupo.nombre }}</h3>
-                <ul>
-                  @for (r of g.reportes; track r.codigo) {
-                    <li>
-                      <button type="button" class="acceso" (click)="abrirReporte(r.codigo)">
-                        <i [class]="r.icono" aria-hidden="true"></i>
-                        <span class="acceso-texto">
-                          <strong>{{ r.nombre }}</strong>
-                          <small>{{ r.descripcion }}</small>
-                        </span>
-                        <i class="pi pi-angle-right acceso-flecha" aria-hidden="true"></i>
-                      </button>
-                    </li>
-                  }
-                </ul>
-              </div>
-            }
-          </div>
-        </section>
-      </div>
     }
   }
 </app-window-panel>

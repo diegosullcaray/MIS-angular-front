@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "src/app/pages/modules/home/ui/panel-novedades/panel-novedades.component.html"
+        ],
+        "createdAt": "2026-09-27T01:03:08.839Z",
+        "reason": "Claude verified: the <img> binds its source with Angular [src], which the static detector does not read"
+      }
+    ]
+  }
+}

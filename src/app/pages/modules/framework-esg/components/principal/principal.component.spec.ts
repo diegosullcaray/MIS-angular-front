@@ -9,16 +9,6 @@ import { ToastService } from '../../../../../shared/services/toast.service';
 import type { EsgConfiguracionModulo } from '../../models/configuracion.model';
 import type { EsgMetricaFila, EsgResumenCategoria } from '../../models/metrica.model';
 
-// jsdom no implementa ResizeObserver — lo usa internamente `p-tabs` (PrimeNG) al
-// inicializar (`TabList.bindResizeObserver`). Mismo gap que sufren los specs de
-// `CarteraCreditosComponent` (también `p-tabs`), sin stub — se acota acá para no
-// tocar la config de test compartida.
-class ResizeObserverFalso {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
 function configuracion(overrides: Partial<EsgConfiguracionModulo> = {}): EsgConfiguracionModulo {
   return {
     situaciones: [{ cod: 1, des: 'Activo' }],
@@ -53,7 +43,6 @@ describe('PrincipalComponent', () => {
   let driverFalso: { createQuickTour: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    (globalThis as unknown as { ResizeObserver: typeof ResizeObserverFalso }).ResizeObserver = ResizeObserverFalso;
 
     driverFalso = { createQuickTour: vi.fn() };
     esgFalso = {

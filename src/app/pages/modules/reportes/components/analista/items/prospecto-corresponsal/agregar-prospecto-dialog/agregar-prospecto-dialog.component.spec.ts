@@ -103,16 +103,18 @@ describe('AgregarProspectoDialogComponent', () => {
     const fixture = crear();
     const instancia = fixture.componentInstance;
     instancia['model'].set(FORMULARIO_VALIDO);
+    fixture.componentRef.setInput('visible', true);
 
     const emitidos: void[] = [];
     instancia.guardado.subscribe(() => emitidos.push(undefined));
-    const visibleChangeSpy = vi.spyOn(instancia.visibleChange, 'emit');
+    const visibles: boolean[] = [];
+    instancia.visible.subscribe((v) => visibles.push(v));
 
     instancia['onGuardar']();
 
     expect(servicioFalso.guardarProspecto).toHaveBeenCalledWith(FORMULARIO_VALIDO);
     expect(emitidos.length).toBe(1);
-    expect(visibleChangeSpy).toHaveBeenCalledWith(false);
+    expect(visibles).toEqual([false]);
     expect(instancia['model']()).toEqual(PROSPECTO_CORRESPONSAL_FORM_VACIO);
   });
 

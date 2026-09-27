@@ -1,12 +1,14 @@
 <section class="bloque" [attr.aria-label]="titulo() || null">
-  @if (titulo()) {
-    <header class="bloque-cabecera">
-      <h3>{{ titulo() }}</h3>
-    </header>
-  }
-
-  @if (chip()) {
-    <app-chip-informativo [texto]="chip()" />
+  <!-- El nombre de la tabla va en un chip, junto al de la unidad: sin cabecera aparte. -->
+  @if (titulo() || chip()) {
+    <div class="bloque-chips">
+      @if (titulo()) {
+        <app-chip-informativo [texto]="titulo()" severidad="secondary" icono="pi pi-table" />
+      }
+      @if (chip()) {
+        <app-chip-informativo [texto]="chip()" />
+      }
+    </div>
   }
 
   <div class="bloque-tabla">

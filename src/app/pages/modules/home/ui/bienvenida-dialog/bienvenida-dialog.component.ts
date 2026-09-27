@@ -3,6 +3,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { PreferenciasService } from '../../../../full-pages/layout/services/preferencias.service';
 import { NovedadesTourService } from '../../services/novedades-tour.service';
+import { AnimarDirective } from '../../../../../shared/ui/animaciones/animar.directive';
 
 /**
  * La bienvenida de Pachi: el saludo del sistema nuevo, con lo que cambió.
@@ -15,7 +16,7 @@ import { NovedadesTourService } from '../../services/novedades-tour.service';
 @Component({
   selector: 'app-bienvenida-dialog',
   standalone: true,
-  imports: [DialogModule, ButtonModule],
+  imports: [DialogModule, ButtonModule, AnimarDirective],
   templateUrl: './bienvenida-dialog.component.html',
   styleUrl: './bienvenida-dialog.component.css',
 })

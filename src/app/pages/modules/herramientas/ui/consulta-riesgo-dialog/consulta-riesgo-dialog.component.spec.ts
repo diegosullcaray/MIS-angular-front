@@ -55,15 +55,16 @@ describe('ConsultaRiesgoDialogComponent', () => {
     instancia['seleccionar'](fila());
 
     expect(emitido).toEqual(fila());
-    expect(instancia.visible).toBe(false);
+    expect(instancia.visible()).toBe(false);
   });
 
   it('cerrar() emite visibleChange(false)', () => {
     const fixture = crear();
     const instancia = fixture.componentInstance;
 
+    fixture.componentRef.setInput('visible', true);
     let visibleEmitido: boolean | undefined;
-    instancia.visibleChange.subscribe((v) => (visibleEmitido = v));
+    instancia.visible.subscribe((v) => (visibleEmitido = v));
 
     instancia['cerrar']();
 

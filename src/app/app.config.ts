@@ -5,7 +5,7 @@ import {
   provideAppInitializer,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withRouterConfig, withViewTransitions } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { providePrimeNG } from 'primeng/config';
@@ -34,7 +34,10 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
 
     // `onSameUrlNavigation: 'reload'` evita que volver a la misma ruta congele la pantalla.
-    provideRouter(APP_ROUTES, withComponentInputBinding(), withRouterConfig({ onSameUrlNavigation: 'reload' })),
+    provideRouter(APP_ROUTES, withComponentInputBinding(), withRouterConfig({ onSameUrlNavigation: 'reload' }),
+      // Transición al cambiar de módulo o reporte; el CSS vive en base/animations.css.
+      withViewTransitions({ skipInitialTransition: true })
+    ),
 
     // Fetch API nativa (compatible con Zoneless)
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, httpErrorInterceptor, loadingInterceptor])),

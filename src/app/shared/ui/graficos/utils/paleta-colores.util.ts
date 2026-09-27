@@ -6,10 +6,6 @@ export const MAGENTA = '#bc5090';
 export const NARANJA = '#ff7c43';
 export const AZUL = '#2f9bd8';
 
-/** Azul/navy del sistema — KPIs y series destacadas del dashboard. */
-export const COLOR_PRIMARY = '#1D396E';
-export const COLOR_SECONDARY = '#0094EA';
-
 /** Paleta de series genéricas con colores únicos y diferenciados. */
 export const PALETA_SERIES = [
   '#0284C7', // Azul cielo

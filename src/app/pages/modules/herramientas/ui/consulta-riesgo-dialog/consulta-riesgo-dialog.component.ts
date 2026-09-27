@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
+import { Component, inject, model, output, signal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
@@ -27,9 +27,9 @@ const COLUMNAS: DataTableColumn[] = [
 export class ConsultaRiesgoDialogComponent {
   private readonly service = inject(BaseNegativaService);
 
-  @Input() visible = false;
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() clienteSeleccionado = new EventEmitter<BaseNegativaBusquedaFila>();
+  /** Doble vía (`[(visible)]`): cerrar lo escribe y emite `visibleChange`. */
+  readonly visible = model(false);
+  readonly clienteSeleccionado = output<BaseNegativaBusquedaFila>();
 
   protected readonly columnas = COLUMNAS;
   protected readonly resultados = signal<BaseNegativaBusquedaFila[]>([]);
@@ -56,7 +56,6 @@ export class ConsultaRiesgoDialogComponent {
   }
 
   protected cerrar(): void {
-    this.visible = false;
-    this.visibleChange.emit(false);
+    this.visible.set(false);
   }
 }

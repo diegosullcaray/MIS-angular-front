@@ -23,17 +23,10 @@ vi.mock('maplibre-gl', () => {
   };
 });
 
-class ResizeObserverMock {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
 describe('MapaUbicacionComponent', () => {
   let mockThemeService: { oscuro: ReturnType<typeof signal<boolean>> };
 
   beforeAll(() => {
-    (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = ResizeObserverMock;
   });
 
   beforeEach(() => {

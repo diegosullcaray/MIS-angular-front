@@ -7,13 +7,6 @@ export const OPCIONES_MOSTRAR_POR: OpcionFiltro<number>[] = [
 ];
 export const MOSTRAR_POR_POR_DEFECTO = 0;
 
-/** `filter1` de `repositorio/reasignado` — variable `imp` de "Efectividad por tramos". */
-export const OPCIONES_IMPULSA: OpcionFiltro<number>[] = [
-  { id: 1, desc: 'Total' },
-  { id: 2, desc: 'Sin Impulsa' },
-];
-export const IMPULSA_POR_DEFECTO = 1;
-
 /** Valor "sin filtrar" que comparten los filtros del detalle. */
 export const TODO = 'TODO';
 

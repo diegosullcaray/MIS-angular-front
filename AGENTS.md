@@ -41,8 +41,8 @@ Siempre modela los cuatro estados (en este orden estricto):
 Usa los componentes compartidos de `src/app/shared/ui/` (`app-inline-error`, `app-empty-state`, `app-list-skeleton`).
 En tablas, el estado **Cargando** es el esqueleto de la propia tabla dentro de su tarjeta: enlaza
 `[cargando]` (o `[loading]` en `app-data-table`) a la carga real de sus datos, nunca un valor fijo.
-El spinner global se corta con la primera respuesta de la consulta; las tablas que siguen esperando
-se ven por su esqueleto (ver `governance/docs/components/estandar-reportes.md`).
+El spinner global sale solo en la primera carga de cada pantalla y se corta con su primera respuesta;
+las pestañas y filtros internos, y las tablas que siguen esperando, se ven por su esqueleto (ver `governance/docs/components/estandar-reportes.md`).
 
 ## 4. Agentes y Skills del Repositorio
 El repositorio cuenta con su propio pipeline de agentes y sus propias skills (guías operativas).

@@ -18,14 +18,23 @@ Si ese módulo hubiera importado los servicios de `reportes`, habría roto la re
 - Consume los servicios existentes a través de `PanelAsesorConsultasService`, que despacha por `SCODSEC` (`L_CART_SEC`, `L_MONI_DESE_SEC`…). No declara `cod_rep` propios ni cambia parámetros.
 - La URL `/app/analista/panel-unificado` se declara con `loadComponent` en `app.routes.ts`. La raíz de rutas no es un módulo, así que componer ahí no crea acoplamiento entre módulos.
 - El orden de categorías y reportes se deriva del tráfico histórico (`peticiones`), que no se muestra al asesor.
-- Los KPI de cartera salen solo de la fila de totales (`style === 1`) o de un bloque de una sola fila. El panel no suma ni infiere totales.
+- Los KPI de desembolso salen del propio monitor (`kpiOperaciones`/`kpiMonto`). El panel no suma ni infiere totales.
 
 ## Consecuencias
 
 - **A favor:** un único dueño de cada consulta. Corregir un reporte corrige también el panel.
 - **Costo:** el inventario de módulos no ve esta ruta, porque solo sigue `loadChildren`. Por eso el generador lista aparte las pantallas enlazadas directo desde `app.routes.ts`.
-- **Límite:** las acciones que el panel no replica (por ejemplo, "Nuevo prospecto") se abren desde "Abrir reporte completo" en la pantalla original.
+- **Límite:** las acciones que el panel no replica (por ejemplo, "Nuevo prospecto") se hacen en la pantalla original del reporte, desde Reportes › Analista. El panel no enlaza a ella (ver enmienda).
 - **Riesgo:** si un reporte cambia su forma de resultado, el panel lo muestra con las mismas tablas genéricas. Las pruebas de `panel-asesor-consultas.service.spec.ts` comprueban que los 17 códigos llegan a Ant con `tip_cod: 2` y el DNI del asesor.
+
+## Enmienda (2026-09-27): panel pensado para móvil
+
+A pedido de negocio, el panel se simplificó para el asesor en el celular:
+
+- Se retiró la portada "Resumen 360". Al elegir un asesor se abre el reporte más consultado (Cartera) y solo se consulta el reporte abierto, no tres por adelantado.
+- Categorías y reportes van en pestañas lineales con desplazamiento lateral, en todos los anchos.
+- Se quitó el enlace "Abrir reporte completo" y la cabecera de cada reporte: el chip activo ya lo nombra. El nombre de cada tabla va en un chip.
+- Consecuencia: las acciones que el panel no replica quedan solo en la pantalla original del reporte, dentro de Reportes › Analista.
 
 ## Evidencia
 

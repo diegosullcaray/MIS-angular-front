@@ -4,16 +4,21 @@ import type { BloqueGrafico, FormatoValor } from '../../../../../../../../shared
 const decimal = { type: 'decimal' } as const;
 const entero = { type: 'integer' } as const;
 const porcentaje = { type: 'percent' } as const;
+// Semáforo de celdas con tokens de estado: se adapta al tema oscuro (antes eran
+// fondos pastel fijos que quedaban claros sobre la tabla oscura).
+const SEMAFORO_VERDE = { 'background-color': 'var(--mis-success-light)', color: 'var(--mis-success)', 'font-weight': 'bold' };
+const SEMAFORO_AMBAR = { 'background-color': 'var(--mis-warning-light)', color: 'var(--mis-warning)', 'font-weight': 'bold' };
+const SEMAFORO_ROJO = { 'background-color': 'var(--mis-danger-light)', color: 'var(--mis-danger)', 'font-weight': 'bold' };
 
 export const bgTrafficLightStyleFn = (val: unknown): Record<string, string> | undefined => {
   const num = Number(val);
   if (isNaN(num)) return undefined;
   if (num >= 1 || num >= 100) {
-    return { 'background-color': '#dcfce7', color: '#166534', 'font-weight': 'bold' };
+    return SEMAFORO_VERDE;
   } else if (num >= 0.8 || num >= 80) {
-    return { 'background-color': '#fef08a', color: '#854d0e', 'font-weight': 'bold' };
+    return SEMAFORO_AMBAR;
   } else {
-    return { 'background-color': '#fee2e2', color: '#991b1b', 'font-weight': 'bold' };
+    return SEMAFORO_ROJO;
   }
 };
 
@@ -22,11 +27,11 @@ export const colorThresholdStyleFnSaldo = (val: unknown): Record<string, string>
   if (isNaN(num)) return undefined;
   const limiteAmbarRojo = -1500000;
   if (num > 0) {
-    return { 'background-color': '#dcfce7', color: '#166534', 'font-weight': 'bold' };
+    return SEMAFORO_VERDE;
   } else if (num <= 0 && num > limiteAmbarRojo) {
-    return { 'background-color': '#fef08a', color: '#854d0e', 'font-weight': 'bold' };
+    return SEMAFORO_AMBAR;
   } else {
-    return { 'background-color': '#fee2e2', color: '#991b1b', 'font-weight': 'bold' };
+    return SEMAFORO_ROJO;
   }
 };
 
@@ -35,19 +40,19 @@ export const colorThresholdStyleFnCliente = (val: unknown): Record<string, strin
   if (isNaN(num)) return undefined;
   const limiteAmbarRojo = -200;
   if (num > 0) {
-    return { 'background-color': '#dcfce7', color: '#166534', 'font-weight': 'bold' };
+    return SEMAFORO_VERDE;
   } else if (num <= 0 && num > limiteAmbarRojo) {
-    return { 'background-color': '#fef08a', color: '#854d0e', 'font-weight': 'bold' };
+    return SEMAFORO_AMBAR;
   } else {
-    return { 'background-color': '#fee2e2', color: '#991b1b', 'font-weight': 'bold' };
+    return SEMAFORO_ROJO;
   }
 };
 
 export const colorPosNegStyleFn = (val: unknown): Record<string, string> | undefined => {
   const num = Number(val);
   if (isNaN(num) || num === 0) return undefined;
-  if (num < 0) return { color: '#ef4444', 'font-weight': 'bold' };
-  return { color: '#22c55e', 'font-weight': 'bold' };
+  if (num < 0) return { color: 'var(--mis-danger)', 'font-weight': 'bold' };
+  return { color: 'var(--mis-success)', 'font-weight': 'bold' };
 };
 
 /** Columna que baja de nivel (`ddHier` del legado solo responde a `descripcion`). */

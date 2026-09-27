@@ -49,8 +49,8 @@ export interface GrupoPanelAsesorDef {
   icono: string;
 }
 
-/** `resumen` es la vista 360; el resto es el `codigo` del reporte abierto. */
-export type VistaPanelAsesor = 'resumen' | string;
+/** `codigo` del reporte abierto en el panel. */
+export type VistaPanelAsesor = string;
 
 export type EstadoConsultaPanel =
   | { estado: 'cargando' }

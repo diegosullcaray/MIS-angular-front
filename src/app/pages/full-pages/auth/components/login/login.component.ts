@@ -7,12 +7,13 @@ import { LoadSpinnerComponent } from '../load-spinner/load-spinner.component';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { ThemeService } from '../../../../../shared/services/theme.service';
 import { APP_VERSION } from '../../../../../app.global';
+import { AnimarDirective } from '../../../../../shared/ui/animaciones/animar.directive';
 
 /** Login del Host — Google Sign-In + Winder. */
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ButtonModule, LoadSpinnerComponent],
+  imports: [ButtonModule, LoadSpinnerComponent, AnimarDirective],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

@@ -5,6 +5,7 @@ import { HeaderComponent } from '../header/header.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { RedirectOverlayComponent } from '../../../../../shared/ui/redirect-overlay/redirect-overlay.component';
 import { LoadingOverlayComponent } from '../../../../../shared/ui/loading-overlay/loading-overlay.component';
+import { AnimarDirective } from '../../../../../shared/ui/animaciones/animar.directive';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
 
 import { ExploradorSistemaComponent } from '../explorador-sistema/explorador-sistema.component';
@@ -23,6 +24,7 @@ import { AnunciosService } from '../../services/anuncios.service';
     ProgressSpinnerModule,
     ExploradorSistemaComponent,
     AnunciosDialogComponent,
+    AnimarDirective,
   ],
   templateUrl: './shell-layout.component.html',
   styleUrl: './shell-layout.component.css',

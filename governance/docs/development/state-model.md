@@ -29,8 +29,8 @@ El estado `loading` no autoriza por si mismo, y `empty` no debe ocultar errores 
 
 `loading` se representa **por tabla**, no por pantalla: cada tabla tiene su propio estado de carga
 (`[cargando]`/`[loading]`) y pinta su esqueleto, y en un reporte de varias tablas cada una sale de
-`loading` apenas llega su respuesta. El spinner global (`LoadingService`) solo cubre desde que
-arranca una consulta hasta su primera respuesta. Una consulta nueva cancela la anterior. Ver
+`loading` apenas llega su respuesta. El spinner global (`LoadingService`) solo cubre la
+primera carga de cada pantalla, hasta su primera respuesta; dentro de ella, los esqueletos. Una consulta nueva cancela la anterior. Ver
 [estandar de reportes](../components/estandar-reportes.md#2-tablas).
 
 ## Regla de ownership

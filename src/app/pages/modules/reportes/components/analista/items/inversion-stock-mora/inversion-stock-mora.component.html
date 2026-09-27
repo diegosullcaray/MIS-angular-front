@@ -27,10 +27,14 @@
 
   @if (!asesorSeleccionado()) {
     <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">Elegí un asesor para ver su inversión y stock de mora.</p>
+  } @else if (error()) {
+    <app-inline-error [titulo]="errorDeCarga" detalle="Reintenta la consulta en unos segundos." (reintentar)="onAsesorSeleccionado(asesorSeleccionado())" />
   } @else if (cargando()) {
     <div class="flex flex-col gap-4">
       <p-skeleton height="320px" />
     </div>
+  } @else if (vacio()) {
+    <app-empty-state titulo="Sin datos de mora" descripcion="Este asesor no registra inversión ni stock de mora." />
   } @else {
     <div class="flex flex-col gap-5">
       @for (grafico of graficos(); track $index) {

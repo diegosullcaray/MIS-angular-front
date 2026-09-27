@@ -103,11 +103,11 @@
             </app-data-table>
           </div>
           <div class="flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--mis-border)] bg-[var(--mis-tile-bg)] p-4 text-xs sm:hidden">
-            <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#ef4444]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Muy Alto</strong></span></div>
-            <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#f97316]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Alto</strong></span></div>
-            <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#eab308]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Medio</strong></span></div>
-            <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#22c55e]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Bajo</strong></span></div>
-            <div class="flex w-full items-start gap-1.5 mt-1"><i class="pi pi-exclamation-triangle mt-0.5 text-[#ef4444]"></i><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Alerta:</strong> {{ mensajeRiesgoAlto }}</span></div>
+            <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[var(--mis-escala-5)]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Muy Alto</strong></span></div>
+            <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[var(--mis-escala-4)]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Alto</strong></span></div>
+            <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[var(--mis-escala-3)]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Medio</strong></span></div>
+            <div class="flex items-center gap-1.5"><span class="inline-flex h-2.5 w-2.5 rounded-full bg-[var(--mis-escala-1)]"></span><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Bajo</strong></span></div>
+            <div class="flex w-full items-start gap-1.5 mt-1"><i class="pi pi-exclamation-triangle mt-0.5 text-[var(--mis-escala-5)]"></i><span class="text-[var(--mis-text-secondary)]"><strong class="font-semibold text-[var(--mis-text-primary)]">Alerta:</strong> {{ mensajeRiesgoAlto }}</span></div>
           </div>
         } @else {
           <div class="grid min-h-60 place-items-center p-6 text-center text-sm text-[var(--mis-text-secondary)]">Selecciona un filtro e ingresa un valor para consultar.</div>

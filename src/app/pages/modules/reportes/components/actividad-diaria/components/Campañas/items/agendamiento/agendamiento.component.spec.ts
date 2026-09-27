@@ -5,13 +5,6 @@ import { AgendamientoComponent } from './agendamiento.component';
 import { CampanasService } from '../../services/campanas.service';
 import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
-// jsdom no implementa ResizeObserver — lo usa `p-tabs` internamente.
-class ResizeObserverFalso {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
 const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
 /**
@@ -26,10 +19,6 @@ const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
  * "Nivel de propensión" es el único sin ese `*ngIf` y está en las cuatro.
  */
 describe('AgendamientoComponent', () => {
-  beforeEach(() => {
-    (globalThis as unknown as { ResizeObserver: typeof ResizeObserverFalso }).ResizeObserver = ResizeObserverFalso;
-  });
-
   function crear() {
     TestBed.configureTestingModule({
       imports: [AgendamientoComponent],

@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, RouterOutlet } from '@angular/router';
 import { ShellLayoutComponent } from './shell-layout.component';
 import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import { AnimarDirective } from '../../../../../shared/ui/animaciones/animar.directive';
 
 /**
  * `ShellLayoutComponent` es puramente de composición (sin lógica propia):
@@ -44,6 +45,7 @@ describe('ShellLayoutComponent', () => {
           StubLoadingOverlayComponent,
           StubExploradorSistemaComponent,
           StubAnunciosDialogComponent,
+          AnimarDirective,
         ],
       },
     });

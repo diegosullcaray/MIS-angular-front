@@ -9,12 +9,53 @@
   100% { background-position: -200% center; }
 }
 
-/* ── Route Transitions ────────────────────────────────────── */
-.route-enter {
-  animation: routeFadeIn var(--mis-transition-base) forwards;
+/* ── Transiciones de panel ────────────────────────────────────
+   Todo cambio de panel del Host pasa por acá, no por cada pantalla:
+   - de ruta (módulo o reporte): View Transitions del navegador, activadas con
+     `withViewTransitions()` en app.config. Solo se mueve el área de contenido;
+     header y sidebar quedan quietos.
+   - de pestaña (`p-tabs`): PrimeNG oculta el panel con `hidden`, así que la
+     animación vuelve a correr cada vez que se muestra.
+   Arranca ya visible (0.4) y sube 6px: es un sistema de trabajo, el cambio se
+   nota sin hacer esperar. La salida es más corta que la entrada.
+   Las entradas de una sola vez (login, Pachi) van por `appAnimar`. */
+:root {
+  --mis-ease-salida: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes routeFadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+.shell-content-inner {
+  view-transition-name: mis-contenido;
+}
+
+/* La página entera no se funde: solo el contenido nombrado arriba. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-old(mis-contenido) {
+  animation: mis-panel-salida 120ms ease-in both;
+}
+
+::view-transition-new(mis-contenido) {
+  animation: mis-panel-entrada 240ms var(--mis-ease-salida) both;
+}
+
+.p-tabpanel:not([hidden]) {
+  animation: mis-panel-entrada 200ms var(--mis-ease-salida);
+}
+
+@keyframes mis-panel-entrada {
+  from { opacity: 0.4; transform: translateY(6px); }
+}
+
+@keyframes mis-panel-salida {
+  to { opacity: 0; }
+}
+
+/* Movimiento reducido: queda el fundido, que avisa del cambio, sin desplazamiento. */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes mis-panel-entrada {
+    from { opacity: 0.4; }
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, model, output, signal } from '@angular/core';
 import { form, hidden, required } from '@angular/forms/signals';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
@@ -26,9 +26,9 @@ export class AgregarProspectoDialogComponent {
   private readonly servicio = inject(ProspectoCorresponsalService);
   private readonly toast = inject(ToastService);
 
-  @Input() visible = false;
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() guardado = new EventEmitter<void>();
+  /** Doble vía (`[(visible)]`): cerrar lo escribe y emite `visibleChange`. */
+  readonly visible = model(false);
+  readonly guardado = output<void>();
 
   protected readonly opcionesTipoAgente = OPCIONES_TIPO_AGENTE;
   protected readonly opcionesCtaLicencia = OPCIONES_CTA_LICENCIA;
@@ -118,7 +118,6 @@ export class AgregarProspectoDialogComponent {
 
   protected cerrar(): void {
     this.model.set({ ...PROSPECTO_CORRESPONSAL_FORM_VACIO });
-    this.visible = false;
-    this.visibleChange.emit(false);
+    this.visible.set(false);
   }
 }

@@ -1,4 +1,4 @@
-import type { HttpErrorInfo, KnownHttpErrorCode } from './http-error.model';
+import type { HttpErrorInfo, KnownHttpErrorCode } from '../interfaces/http-error.model';
 
 /** Mapeo único de errores HTTP conocidos → cómo se muestran en el Host. Centralizado dentro del módulo de errores. */
 export const HTTP_ERROR_MESSAGES: Record<KnownHttpErrorCode, HttpErrorInfo> = {

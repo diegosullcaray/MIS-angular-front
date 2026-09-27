@@ -20,6 +20,7 @@ Se retiran del frontend, con su ruta, componente, métodos de servicio que solo 
 | Actividad Diaria | CMG Clientes Stock, CMG Clientes Flujo Detalle, Detalle Corresponsales, Efectividad de Cartera Reasignada, Gestión por Canal, Dashboard en Revisión, Evolutivo Pasivos, Ranking Clientes, Monitor IMR |
 | Actividad Mensual | Gestión de Cartera Stock, Seguimiento BP, Desempeño Social, Comité de Créditos, ~~Gestión de Cartera Reasignada Mes~~ (restituida, ver abajo) |
 | Desarrollo Sostenible | Poblaciones Misionales |
+| Módulo `prospecto` completo | Andamio de `crear-modulo.mjs` que nunca se enlazó a una ruta (aviso `modulo-enrutado`). Se conserva `ActividadesService.getRegResultadosListProsp`, que usan Actividades |
 
 Límites de la decisión:
 

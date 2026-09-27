@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { TooltipModule } from 'primeng/tooltip';
 import { NovedadesTourService } from '../../services/novedades-tour.service';
 import type { Novedad } from '../../models/novedad.model';
+import { AnimarDirective } from '../../../../../shared/ui/animaciones/animar.directive';
 
 /** Debajo de este ancho el panel taparía el contenido del Home, así que arranca cerrado. */
 const ANCHO_MINIMO_ABIERTO = 1280;
@@ -17,7 +18,7 @@ const ANCHO_MINIMO_ABIERTO = 1280;
 @Component({
   selector: 'app-panel-novedades',
   standalone: true,
-  imports: [TooltipModule],
+  imports: [TooltipModule, AnimarDirective],
   templateUrl: './panel-novedades.component.html',
   styleUrl: './panel-novedades.component.css',
 })

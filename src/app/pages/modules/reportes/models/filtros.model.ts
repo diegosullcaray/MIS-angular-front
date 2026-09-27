@@ -57,12 +57,5 @@ export const OPCIONES_VARIABLE_CMG: OpcionFiltro[] = [
 ];
 export const VARIABLE_CMG_POR_DEFECTO = 'Clientes';
 
-/** `TipoGrupo()` del legado — variable `grupo` de "CMG Clientes Pasivo Detalle". */
-export const OPCIONES_GRUPO_CMG: OpcionFiltro[] = [
-  { id: 'Nuevo', desc: 'Nuevos del Mes' },
-  { id: 'Anual', desc: 'Nuevos Año' },
-];
-export const GRUPO_CMG_POR_DEFECTO = 'Nuevo';
-
 /** Valor "sin filtrar" de `SPRODUCTO*()`. */
 export const TODOS = 'TODOS';

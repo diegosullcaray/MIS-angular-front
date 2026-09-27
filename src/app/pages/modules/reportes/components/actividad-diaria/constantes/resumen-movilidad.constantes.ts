@@ -9,6 +9,3 @@ export const COD_RESUMEN_MOVILIDAD = {
    */
   recuperaciones: 'RESNMOVR_01',
 } as const;
-
-/** `tip_cod` con el que el backend identifica a una persona por su documento. */
-export const TIP_COD_PERSONA = 2;

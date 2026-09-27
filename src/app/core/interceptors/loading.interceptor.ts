@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { LoadingService } from '../../shared/services/loading.service';
 
@@ -12,6 +13,8 @@ import { LoadingService } from '../../shared/services/loading.service';
  */
 export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loading = inject(LoadingService);
-  const tanda = loading.iniciarPeticion();
+  // La pantalla es la ruta sin query ni fragmento: pestañas y filtros no la cambian.
+  const pantalla = inject(Router).url.split(/[?#]/)[0];
+  const tanda = loading.iniciarPeticion(pantalla);
   return next(req).pipe(finalize(() => loading.terminarPeticion(tanda)));
 };

@@ -131,17 +131,18 @@
 }
 
 /* Táctil: la luz de 12px es imposible de acertar con el dedo. Crece un poco y
-   una capa invisible lleva el área a 44px de ancho por el alto de la barra (40px). */
+   una capa invisible lleva el área a 32×40px: mide más que el mínimo WCAG (24px) sin
+   separar demasiado las luces. */
 @media (pointer: coarse) {
   .mis-window-lights {
-    gap: 28px;
+    gap: 16px;
   }
   .mis-window-light {
     width: 16px;
     height: 16px;
   }
   .mis-window-light::after {
-    inset: -12px -14px;
+    inset: -12px -8px;
   }
 }
 

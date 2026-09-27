@@ -8,13 +8,6 @@ import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 9, cod_rel: 'FC' };
 
-// jsdom no implementa ResizeObserver — lo usa `p-tabs` internamente.
-class ResizeObserverFalso {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
 /**
  * Regresión de la tarea 2 de `incidencias-carteras-actualizado.md`: "saca del
  * tab de clientes Var. Clientes Stock que eso va en el tab de saldo cartera".
@@ -24,10 +17,6 @@ class ResizeObserverFalso {
  * Gráfico", fuera de las dos pestañas "Saldo Cartera"/"Clientes".
  */
 describe('GestionComercialComponent', () => {
-  beforeEach(() => {
-    (globalThis as unknown as { ResizeObserver: typeof ResizeObserverFalso }).ResizeObserver = ResizeObserverFalso;
-  });
-
   /**
    * El service siempre devuelve un elemento por cada entrada de
    * `GRAFICOS_GESTION_COMERCIAL` (6), aunque un gráfico puntual falle — por

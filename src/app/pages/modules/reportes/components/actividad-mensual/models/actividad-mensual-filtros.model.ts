@@ -74,14 +74,6 @@ export const OPCIONES_MOSTRAR_POR: OpcionFiltro<number>[] = [
 ];
 export const MOSTRAR_POR_POR_DEFECTO = 0;
 
-/** `Tipo_asesor()` del legado — variable `tipo_ase` de "Gestión de Cartera Stock". */
-export const OPCIONES_TIPO_ASESOR: OpcionFiltro<number>[] = [
-  { id: 0, desc: 'Todo' },
-  { id: 1, desc: 'Asesor Operativo' },
-  { id: 2, desc: 'Asesor virtual' },
-];
-export const TIPO_ASESOR_POR_DEFECTO = 0;
-
 /** `SPRODUCTO()` del legado — variable `prod` de "Captación por Canal Comercial" y "Operaciones". */
 export const OPCIONES_PRODUCTO_PASIVO: OpcionFiltro[] = [
   { id: 'TODOS', desc: 'TODOS' },
@@ -100,15 +92,6 @@ export const OPCIONES_SEGMENTO: OpcionFiltro[] = [
   { id: 'Migrantes', desc: 'Migrantes' },
 ];
 export const SEGMENTO_POR_DEFECTO = 'TODOS';
-
-/** `varProducto()` del legado — variable `prod` de "Seguimiento BP". */
-export const OPCIONES_PRODUCTO_BP: OpcionFiltro[] = [
-  { id: 'TODOS', desc: 'Todos' },
-  { id: 'Ahorros', desc: 'Ahorros' },
-  { id: 'Plazo Fijo', desc: 'Plazo Fijo' },
-  { id: 'Cts', desc: 'Cts' },
-];
-export const PRODUCTO_BP_POR_DEFECTO = 'TODOS';
 
 const MESES_ES = [
   'enero',

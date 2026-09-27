@@ -82,10 +82,11 @@ contrato de cada componente, en `src/app/shared/ui/tablas/README.md`.
   `app-editable-table`; `[loading]` en `app-data-table`. Mientras es `true` la tabla no pinta filas
   (ni las de la consulta anterior) y dibuja filas de esqueleto; sin columnas todavía, usa columnas
   de relleno. Nunca un `false` fijo, nunca "Sin datos" mientras carga, nunca un spinner local.
-- **Spinner global por consulta.** Cada consulta nueva (entrar, otro nivel, otro filtro, otra
-  página) muestra el overlay; se corta con la **primera respuesta de esa misma consulta**, y las
-  tablas que siguen esperando se ven por su esqueleto. Una respuesta de una consulta anterior no lo
-  corta. Lo resuelve `LoadingService` agrupando las peticiones en tandas (ver
+- **Spinner global solo en la primera carga de la pantalla.** Entrar a una pantalla (su ruta)
+  muestra el overlay; se corta con la **primera respuesta de esa carga**, y las tablas que siguen
+  esperando se ven por su esqueleto. Después, dentro de la misma pantalla (otra pestaña, nivel,
+  filtro o página) ya no sale: la carga la cuentan los esqueletos, para no saturar la navegación.
+  Una respuesta de una consulta anterior no lo corta. Lo resuelve `LoadingService` agrupando las peticiones en tandas (ver
   `shared/ui/loading-overlay/README.md`); una pantalla no lo maneja a mano.
 - **Varias tablas: cada una con su estado.** `BloqueReporteService.regulares()` entrega los bloques
   a medida que llegan (`TABLA_PENDIENTE` en los que faltan) y `app-reporte-simple` marca cada bloque

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, RouterOutlet } from '@angular/router';
 import { ShellLayoutComponent } from './shell-layout.component';
+import { AnimarDirective } from '../../../../../shared/ui/animaciones/animar.directive';
 
 @Component({ selector: 'app-sidebar', standalone: true, template: '' })
 class StubSidebarComponent {}
@@ -39,6 +40,7 @@ describe('ShellLayoutComponent — contrato responsive', () => {
           StubLoadingOverlayComponent,
           StubExploradorSistemaComponent,
           StubAnunciosDialogComponent,
+          AnimarDirective,
         ],
       },
     });

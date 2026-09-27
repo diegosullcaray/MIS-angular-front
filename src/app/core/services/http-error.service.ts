@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { HTTP_ERROR_FALLBACK, HTTP_ERROR_MESSAGES } from '../models/http-error.constants';
-import type { HttpErrorInfo, KnownHttpErrorCode } from '../models/http-error.model';
+import { HTTP_ERROR_FALLBACK, HTTP_ERROR_MESSAGES } from '../constantes/http-error.constantes';
+import type { HttpErrorInfo, KnownHttpErrorCode } from '../interfaces/http-error.model';
 
 /** Punto único de traducción de errores HTTP → `HttpErrorInfo` mapeado. Centralizado dentro del módulo de errores (`pages/full-pages/error`). */
 @Injectable({ providedIn: 'root' })

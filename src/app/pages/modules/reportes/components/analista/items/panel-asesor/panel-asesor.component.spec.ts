@@ -71,31 +71,36 @@ describe('PanelAsesorComponent', () => {
     expect(consultar).not.toHaveBeenCalled();
   });
 
-  it('el resumen 360 muestra los KPI reales del monitor y el total de cartera', () => {
+  it('abre directo en el reporte más consultado, sin portada de resumen', () => {
     const el: HTMLElement = crear().nativeElement;
-    const kpis = el.querySelector('.kpis')!.textContent!;
+    expect(el.querySelector('.chip.activa')?.textContent).toContain('Cartera');
+    expect(el.textContent).not.toContain('Resumen');
+    expect(el.querySelector('.enlace-completo, .detalle-cabecera')).toBeNull();
+  });
+
+  it('el monitor de desembolsos muestra sus KPI reales arriba del detalle', () => {
+    const fixture = crear();
+    fixture.componentInstance['abrirReporte']('L_MONI_DESE_SEC');
+    fixture.detectChanges();
+    TestBed.tick();
+    fixture.detectChanges();
+    const kpis = fixture.nativeElement.querySelector('.kpis')!.textContent!;
     expect(kpis).toContain('84.4%');
     expect(kpis).toContain('81.4%');
-    expect(kpis).toContain('Actualizado al 22/09/2026 18:00');
-    expect(kpis).toContain(new Intl.NumberFormat('es-PE').format(1150000));
-    expect(el.textContent).toContain('Todos tus reportes');
-    expect(el.querySelectorAll('.mapa .acceso')).toHaveLength(17);
   });
 
   it('las categorías se ordenan por uso y abren su reporte más consultado', () => {
     const fixture = crear();
     const el: HTMLElement = fixture.nativeElement;
     const pestanas = [...el.querySelectorAll('.pestana')].map((b) => b.textContent!.trim());
-    expect(pestanas[0]).toContain('Resumen 360');
-    expect(pestanas[1]).toContain('Cartera y clientes');
+    expect(pestanas[0]).toContain('Cartera y clientes');
 
-    (el.querySelectorAll('.pestana')[2] as HTMLButtonElement).click();
+    (el.querySelectorAll('.pestana')[1] as HTMLButtonElement).click();
     fixture.detectChanges();
     TestBed.tick();
     fixture.detectChanges();
-    expect(el.querySelector('.detalle h2')?.textContent).toBe('Monitor Metas Desembolso');
     expect(el.querySelector('.chip.activa')?.textContent).toContain('Monitor Metas Desembolso');
-    expect(el.querySelector('.enlace-completo')?.getAttribute('href')).toBe('/app/reportes/leg/com/rda/sec/mon-desem');
+    expect(el.querySelector('.detalle')?.getAttribute('aria-label')).toBe('Monitor Metas Desembolso');
   });
 
   it('un reporte que falla muestra el error con reintento, no un vacío', () => {

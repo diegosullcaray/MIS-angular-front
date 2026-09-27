@@ -13,6 +13,7 @@
           src="assets/images/fc/fondos/images.jpg"
           alt="Atención en oficina Financiera Confianza"
           class="absolute inset-0 w-full h-full object-cover block"
+          appAnimar="zoom-lento"
         />
         <div class="login-banner-velo absolute inset-0"></div>
         <div class="relative mt-auto p-8 md:p-12 flex flex-col items-center gap-2">
@@ -29,7 +30,7 @@
         class="login-right-panel relative flex flex-col justify-center items-center bg-[var(--mis-surface)] p-6 md:p-16"
       >
         <!-- Marca MIS, esquina superior izquierda del panel (hidden on mobile) -->
-        <div class="absolute top-6 left-6 hidden md:flex items-center gap-2">
+        <div class="absolute top-6 left-6 hidden md:flex items-center gap-2" appAnimar="entrada">
           <!-- El wordmark navy es ilegible en oscuro: se cambia por la versión blanca. -->
           <img [src]="logoMis()" alt="MIS" class="h-9 w-auto" />
           <span class="text-lg font-bold text-[var(--mis-primary-text)]"
@@ -37,7 +38,7 @@
           >
         </div>
 
-        <div class="login-card w-full max-w-[380px] flex flex-col gap-4">
+        <div class="login-card w-full max-w-[380px] flex flex-col gap-4" appAnimar="escalonado" [retraso]="0.1">
           <div class="flex flex-col items-center gap-1 mb-2">
             <h1 class="text-xl font-bold text-[var(--mis-primary-text)] m-0">Inicio de sesión</h1>
             <p class="text-sm text-[var(--mis-text-secondary)] text-center m-0">

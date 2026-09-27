@@ -29,6 +29,8 @@
   <header class="novedades-cabecera">
     <img
       class="novedades-mascota"
+      appAnimar="aparecer"
+      [retraso]="0.1"
       [src]="'/assets/images/fc/tours/mascota-' + posePachi() + '.png'"
       alt=""
       aria-hidden="true"
@@ -52,7 +54,7 @@
   </header>
 
 
-  <ul class="novedades-lista">
+  <ul class="novedades-lista" appAnimar="escalonado" [retraso]="0.15">
     @for (novedad of novedadesVisibles(); track novedad.id) {
       <li>
         <button type="button" class="novedad" (click)="verGuia(novedad)">

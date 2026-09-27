@@ -7,8 +7,8 @@ import {
   lucideCompass, lucideTimer, lucideServerCrash, lucideArrowLeft,
   lucideHome, lucideRefreshCw, lucideLogIn,
 } from '@ng-icons/lucide';
-import { HttpErrorService } from '../../services/http-error.service';
-import type { HttpErrorAction } from '../../models/http-error.model';
+import { HttpErrorService } from '../../../../../core/services/http-error.service';
+import type { HttpErrorAction } from '../../../../../core/interfaces/http-error.model';
 import { ButtonModule } from 'primeng/button';
 
 /** Página de error genérica. Resuelve y muestra información según el código HTTP recibido en la ruta (ej: /error/404). */

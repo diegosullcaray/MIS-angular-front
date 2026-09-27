@@ -182,7 +182,7 @@
 }
 
 /* Área de toque invisible, igual que el semáforo de la ventana (ventana.css):
-   24×24 con puntero fino (WCAG 2.5.8) y 44 de ancho en táctil. */
+   24×24 con puntero fino (WCAG 2.5.8) y 32×40 en táctil. */
 .p-dialog .p-dialog-header-actions button::after {
   content: '';
   position: absolute;
@@ -191,7 +191,7 @@
 
 @media (pointer: coarse) {
   .p-dialog .p-dialog-header-actions {
-    gap: 28px;
+    gap: 16px;
   }
   .p-dialog .p-dialog-close-button,
   .p-dialog .p-dialog-maximize-button,
@@ -201,7 +201,7 @@
     height: 16px;
   }
   .p-dialog .p-dialog-header-actions button::after {
-    inset: -12px -14px;
+    inset: -12px -8px;
   }
 }
 

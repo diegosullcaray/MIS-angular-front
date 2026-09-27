@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HttpErrorService } from './http-error.service';
-import { HTTP_ERROR_MESSAGES, HTTP_ERROR_FALLBACK } from '../models/http-error.constants';
+import { HTTP_ERROR_MESSAGES, HTTP_ERROR_FALLBACK } from '../constantes/http-error.constantes';
 
 describe('HttpErrorService', () => {
   let service: HttpErrorService;

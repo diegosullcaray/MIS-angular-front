@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
-import { HttpErrorService } from '../../pages/full-pages/error/services/http-error.service';
-import { HTTP_ERROR_IGNORED_URL_PATTERNS } from '../../pages/full-pages/error/models/http-error.constants';
+import { HttpErrorService } from '../services/http-error.service';
+import { HTTP_ERROR_IGNORED_URL_PATTERNS } from '../constantes/http-error.constantes';
 
 /** Interceptor global: redirige a `/error/:code` cuando el error resuelto es `esFatal`. */
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {

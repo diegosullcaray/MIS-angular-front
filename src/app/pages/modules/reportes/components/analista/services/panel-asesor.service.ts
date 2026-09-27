@@ -6,7 +6,7 @@ import { PanelAsesorConsultasService } from './panel-asesor-consultas.service';
 import { FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO, type FiltrosMonitorEfectividades } from '../models/monitor-efectividades.model';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { EstadoConsultaPanel, VistaPanelAsesor } from '../models/panel-asesor.model';
-import { CODIGO_EFECTIVIDADES, CODIGOS_RESUMEN_ASESOR, REPORTES_ASESOR } from '../constantes/panel-asesor.constantes';
+import { CODIGO_EFECTIVIDADES, REPORTES_ASESOR } from '../constantes/panel-asesor.constantes';
 
 const ERROR_CONSULTA = 'No se pudo cargar el reporte. Reintenta la consulta.';
 
@@ -27,7 +27,8 @@ export class PanelAsesorService {
   private readonly revisionLista = signal(0);
   private readonly _asesores = signal<AsesorSec[]>([]);
   private readonly _asesor = signal<AsesorSec | null>(null);
-  private readonly _vista = signal<VistaPanelAsesor>('resumen');
+  /** Arranca en el reporte más consultado (`REPORTES_ASESOR` va por tráfico). */
+  private readonly _vista = signal<VistaPanelAsesor>(REPORTES_ASESOR[0].codigo);
   private readonly _filtros = signal<FiltrosMonitorEfectividades>({ ...FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO });
   private readonly _estados = signal<Readonly<Record<string, EstadoConsultaPanel>>>({});
   private readonly _errorLista = signal<string | null>(null);
@@ -89,8 +90,7 @@ export class PanelAsesorService {
           this._estados.set({});
         }
         if (!this._asesor()) return;
-        for (const codigo of CODIGOS_RESUMEN_ASESOR) this.asegurar(codigo);
-        if (vista !== 'resumen') this.asegurar(vista);
+        this.asegurar(vista);
       });
     });
   }
@@ -106,7 +106,7 @@ export class PanelAsesorService {
   }
 
   seleccionarVista(vista: VistaPanelAsesor): void {
-    if (vista === 'resumen' || REPORTES_ASESOR.some((r) => r.codigo === vista)) this._vista.set(vista);
+    if (REPORTES_ASESOR.some((r) => r.codigo === vista)) this._vista.set(vista);
   }
 
   filtrar(campo: keyof FiltrosMonitorEfectividades, valor: string): void {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, effect, signal, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import { Component, computed, inject, effect, signal, viewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
@@ -19,7 +19,7 @@ import type { SidebarIcon } from '../../interfaces/sidebar.model';
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent implements AfterViewInit {
-  @ViewChild('scrollContainer') private scrollContainer?: ElementRef<HTMLDivElement>;
+  private readonly scrollContainer = viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
 
   protected readonly shell = inject(ShellStateService);
   private readonly menuStg = inject(MenuStgService);
@@ -153,19 +153,15 @@ export class SidebarComponent implements AfterViewInit {
   }
 
   protected desplazarIzquierda(): void {
-    if (this.scrollContainer?.nativeElement) {
-      this.scrollContainer.nativeElement.scrollBy({ left: -140, behavior: 'smooth' });
-    }
+    this.scrollContainer()?.nativeElement.scrollBy({ left: -140, behavior: 'smooth' });
   }
 
   protected desplazarDerecha(): void {
-    if (this.scrollContainer?.nativeElement) {
-      this.scrollContainer.nativeElement.scrollBy({ left: 140, behavior: 'smooth' });
-    }
+    this.scrollContainer()?.nativeElement.scrollBy({ left: 140, behavior: 'smooth' });
   }
 
   private verificarScroll(): void {
-    const el = this.scrollContainer?.nativeElement;
+    const el = this.scrollContainer()?.nativeElement;
     if (!el) return;
 
     const tieneScroll = el.scrollWidth > el.clientWidth + 2;
