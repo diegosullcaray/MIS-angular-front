@@ -12,7 +12,7 @@
 }
 .filtro-asesor label,
 .filtro label {
-  font-size: 9.5px;
+  font-size: var(--mis-text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -85,7 +85,7 @@ a:focus-visible {
   border-radius: var(--mis-radius-full);
   background: var(--mis-panel-bg);
   color: var(--mis-text-secondary);
-  font-size: 10px;
+  font-size: var(--mis-text-xs);
   text-align: center;
 }
 .pestana.activa .contador {
@@ -221,7 +221,7 @@ h2 {
   transform: translateY(-1px);
 }
 .kpi-etiqueta {
-  font-size: 10.5px;
+  font-size: var(--mis-text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -385,7 +385,7 @@ h2 {
   font-size: 12px;
 }
 .acceso-texto small {
-  font-size: 10.5px;
+  font-size: var(--mis-text-xs);
   color: var(--mis-text-secondary);
 }
 .acceso-flecha {

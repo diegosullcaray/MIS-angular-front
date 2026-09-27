@@ -236,7 +236,7 @@
   border-radius: var(--mis-radius-full);
   background: var(--mis-panel-bg);
   color: var(--mis-text-tertiary);
-  font-size: 10px;
+  font-size: var(--mis-text-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }

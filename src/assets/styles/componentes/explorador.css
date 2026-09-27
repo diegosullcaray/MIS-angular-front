@@ -115,9 +115,12 @@
   transition: background-color var(--mis-transition-fast), border-color var(--mis-transition-fast);
 }
 
-.mis-explorador-item:hover {
-  background: var(--mis-hover-bg);
-  border-color: var(--mis-border);
+/* En táctil el hover queda pegado tras el toque y el ítem parece seleccionado. */
+@media (hover: hover) {
+  .mis-explorador-item:hover {
+    background: var(--mis-hover-bg);
+    border-color: var(--mis-border);
+  }
 }
 
 .mis-explorador-item:focus-visible {
@@ -182,8 +185,10 @@
   transition: background-color var(--mis-transition-fast);
 }
 
-.mis-explorador-fila:hover {
-  background: var(--mis-hover-bg);
+@media (hover: hover) {
+  .mis-explorador-fila:hover {
+    background: var(--mis-hover-bg);
+  }
 }
 
 .mis-explorador-icono-mini {

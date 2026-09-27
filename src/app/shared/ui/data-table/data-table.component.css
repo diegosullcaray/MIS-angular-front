@@ -70,7 +70,7 @@
 
 :host ::ng-deep .p-datatable-thead th:hover .p-datatable-sort-icon,
 :host ::ng-deep .p-datatable-thead th.p-datatable-column-sorted .p-datatable-sort-icon {
-  color: #ffffff !important;
+  color: var(--mis-text-on-primary) !important;
 }
 
 /* Columnas marcadas `mobileVisible: false` — ocultas bajo el breakpoint `sm`
@@ -83,9 +83,15 @@
 
   /* Botones del caption (Buscar/Filtrar/Limpiar/Actualizar): en mobile solo
      el ícono, para que la fila del caption no se apriete — el texto vuelve
-     desde `sm:` (tablet/desktop) en adelante. */
+     desde `sm:` (tablet/desktop) en adelante. Se oculta solo a la vista: con
+     `display: none` el botón quedaba sin nombre para el lector de pantalla. */
   :host ::ng-deep .mis-btn-label-desktop .p-button-label {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 

@@ -73,11 +73,11 @@
 
       <ng-template appDataTableCell="HCUMPLDC" let-row>
         @if (row.HCUMPLDC === 'Si') {
-          <p-tag value="Si" severity="success" styleClass="text-[10px] px-2 py-0.5"></p-tag>
+          <p-tag value="Si" severity="success" styleClass="text-[11px] px-2 py-0.5"></p-tag>
         } @else if (row.HCUMPLDC === 'No') {
-          <p-tag value="No" severity="danger" styleClass="text-[10px] px-2 py-0.5"></p-tag>
+          <p-tag value="No" severity="danger" styleClass="text-[11px] px-2 py-0.5"></p-tag>
         } @else {
-          <p-tag value="Pendiente" severity="warn" styleClass="text-[10px] px-2 py-0.5"></p-tag>
+          <p-tag value="Pendiente" severity="warn" styleClass="text-[11px] px-2 py-0.5"></p-tag>
         }
       </ng-template>
 
@@ -85,7 +85,7 @@
         <p-button
           icon="pi pi-pencil"
           [rounded]="true"
-          
+          ariaLabel="Editar reporte de visita"
           severity="primary"
           size="small"
           pTooltip="Editar reporte de visita"

@@ -121,7 +121,7 @@
 .mis-buscador-faceta-titulo {
   flex-shrink: 0;
   min-width: 48px;
-  font-size: 10px;
+  font-size: var(--mis-text-xs);
   font-weight: var(--mis-font-semibold);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -234,7 +234,7 @@
 .mis-buscador-tipo {
   flex-shrink: 0;
   padding: 1px 8px;
-  font-size: 10px;
+  font-size: var(--mis-text-xs);
   color: var(--mis-text-tertiary);
   background: var(--mis-panel-bg);
   border-radius: var(--mis-radius-full);
@@ -279,7 +279,7 @@
 .mis-buscador-atajos kbd {
   padding: 1px 5px;
   font-family: inherit;
-  font-size: 10px;
+  font-size: var(--mis-text-xs);
   background: var(--mis-panel-bg);
   border: 1px solid var(--mis-border);
   border-radius: var(--mis-radius-sm);

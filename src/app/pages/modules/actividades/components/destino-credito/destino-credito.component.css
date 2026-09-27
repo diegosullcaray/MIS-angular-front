@@ -19,6 +19,6 @@
 
 /* Color marca para el header de la tabla */
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th.header-branded {
-  background-color: #035096 !important;
-  color: #fff !important;
+  background-color: var(--mis-primary) !important;
+  color: var(--mis-text-on-primary) !important;
 }

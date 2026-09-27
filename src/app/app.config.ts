@@ -67,6 +67,14 @@ export const appConfig: ApplicationConfig = {
         },
       },
       ripple: false,
+      // p-dialog no traduce su botón de cierre: sin esto, los ~23 diálogos
+      // anuncian un botón sin nombre (axe: button-name).
+      // El contenedor de la tabla desplaza en horizontal: con tabindex se puede
+      // recorrer con flechas desde el teclado (axe: scrollable-region-focusable).
+      pt: {
+        dialog: { pcCloseButton: { root: { 'aria-label': 'Cerrar' } } },
+        datatable: { tableContainer: { tabindex: '0' } },
+      },
     }),
     MessageService,
 

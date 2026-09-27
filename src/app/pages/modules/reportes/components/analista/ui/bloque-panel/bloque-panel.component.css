@@ -29,7 +29,7 @@ h3 {
 .bloque-nota {
   margin: 0;
   padding: 8px 14px 12px 28px;
-  font-size: 10.5px;
+  font-size: var(--mis-text-xs);
   line-height: 1.6;
   color: var(--mis-text-tertiary);
 }

@@ -84,7 +84,7 @@
   justify-self: start;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 /* Luces apagadas: amarilla (siempre, ningún diálogo minimiza) y verde
@@ -178,6 +178,31 @@
    no cuenta para el ancho y se centra igual. */
 .p-dialog .p-dialog-header-actions button {
   position: relative;
+  flex-shrink: 0;
+}
+
+/* Área de toque invisible, igual que el semáforo de la ventana (ventana.css):
+   24×24 con puntero fino (WCAG 2.5.8) y 44 de ancho en táctil. */
+.p-dialog .p-dialog-header-actions button::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+}
+
+@media (pointer: coarse) {
+  .p-dialog .p-dialog-header-actions {
+    gap: 28px;
+  }
+  .p-dialog .p-dialog-close-button,
+  .p-dialog .p-dialog-maximize-button,
+  .p-dialog .p-dialog-header-actions::before,
+  .p-dialog .p-dialog-header-actions::after {
+    width: 16px;
+    height: 16px;
+  }
+  .p-dialog .p-dialog-header-actions button::after {
+    inset: -12px -14px;
+  }
 }
 
 .p-dialog .p-dialog-header-actions svg,

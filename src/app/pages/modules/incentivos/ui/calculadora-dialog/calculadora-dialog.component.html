@@ -17,10 +17,10 @@
 
       <div class="flex items-start sm:items-center justify-between flex-row sm:flex-row gap-2 relative z-10 w-full">
         <div class="flex flex-col">
-          <span class="font-semibold text-[10px] sm:text-[11px] text-white/80 uppercase tracking-wider">Comisión Total Estimada</span>
+          <span class="font-semibold text-[11px] text-white/80 uppercase tracking-wider">Comisión Total Estimada</span>
           <span class="text-[22px] sm:text-[28px] font-extrabold leading-none tracking-tight text-white mt-1">S/. {{ incentivos.calculadora().bonoTotal | number: '.0-2' }}</span>
         </div>
-        <span class="text-[10px] sm:text-[11px] font-bold px-2.5 sm:px-3 py-1 rounded-full shadow-sm bg-white/10 border border-white/20 text-white text-center" 
+        <span class="text-[11px] font-bold px-2.5 sm:px-3 py-1 rounded-full shadow-sm bg-white/10 border border-white/20 text-white text-center" 
               [class]="incentivos.calculadora().activo === 0 ? 'bg-red-500/80 text-white border-red-400' : ''">
           {{ comisionTexto() }}
         </span>
@@ -28,15 +28,15 @@
 
       <div class="grid grid-cols-3 gap-2 text-[12px] relative z-10 mt-1">
         <div class="flex flex-col gap-0.5 bg-black/20 rounded-md p-1.5 sm:p-2 border border-white/10 transition-colors hover:bg-black/30 items-center sm:items-start text-center sm:text-left">
-          <span class="text-white/80 text-[8px] sm:text-[9px] uppercase font-bold tracking-wide">Base</span>
+          <span class="text-white/80 text-[11px] uppercase font-bold tracking-wide">Base</span>
           <span class="font-extrabold text-[12px] sm:text-[14px] text-white">S/. {{ incentivos.calculadora().bonoBase | number: '.0-2' }}</span>
         </div>
         <div class="flex flex-col gap-0.5 bg-black/20 rounded-md p-1.5 sm:p-2 border border-white/10 transition-colors hover:bg-black/30 items-center sm:items-start text-center sm:text-left">
-          <span class="text-white/80 text-[8px] sm:text-[9px] uppercase font-bold tracking-wide">Plus</span>
+          <span class="text-white/80 text-[11px] uppercase font-bold tracking-wide">Plus</span>
           <span class="font-extrabold text-[12px] sm:text-[14px] text-white">S/. {{ incentivos.calculadora().bonoPlus | number: '.0-2' }}</span>
         </div>
         <div class="flex flex-col gap-0.5 bg-black/20 rounded-md p-1.5 sm:p-2 border border-white/10 transition-colors hover:bg-black/30 items-center sm:items-start text-center sm:text-left">
-          <span class="text-white/80 text-[8px] sm:text-[9px] uppercase font-bold tracking-wide">S. Plus</span>
+          <span class="text-white/80 text-[11px] uppercase font-bold tracking-wide">S. Plus</span>
           <span class="font-extrabold text-[12px] sm:text-[14px] text-white">S/. {{ incentivos.calculadora().bonoSuperPlus | number: '.0-2' }}</span>
         </div>
       </div>
@@ -78,7 +78,7 @@
               
               <div class="grid grid-cols-2 gap-3">
                 <div class="flex flex-col gap-1">
-                  <span class="text-[10px] font-bold uppercase text-[var(--mis-text-primary)] tracking-wider">Cierre (Edit)</span>
+                  <span class="text-[11px] font-bold uppercase text-[var(--mis-text-primary)] tracking-wider">Cierre (Edit)</span>
                   <p-inputgroup>
                     <p-inputgroup-addon styleClass="calc-addon py-0">
                       <i class="pi pi-pencil text-[12px] transition-colors duration-300" [class.text-[var(--mis-primary)]]="focusedItem() === item.id" [class.text-[var(--mis-primary-text)]]="focusedItem() !== item.id"></i>
@@ -96,7 +96,7 @@
                   </p-inputgroup>
                 </div>
                 <div class="flex flex-col gap-1">
-                  <span class="text-[10px] font-bold uppercase text-[var(--mis-text-secondary)] tracking-wider">Meta Asig.</span>
+                  <span class="text-[11px] font-bold uppercase text-[var(--mis-text-secondary)] tracking-wider">Meta Asig.</span>
                   <div class="calc-lectura">
                     <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ formatear(item.met, item.formato) }}</span>
                   </div>
@@ -106,7 +106,7 @@
                   <!-- Tramo de Días Especial -->
                   <div class="mis-baldosa col-span-2 grid grid-cols-3 gap-2 p-2 rounded-md transition-colors duration-300">
                     <div class="flex flex-col gap-1">
-                      <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">Pago Puntual</span>
+                      <span class="text-[11px] font-bold uppercase text-[var(--mis-text-primary)] text-center">Pago Puntual</span>
                       <p-inputgroup>
                         <p-inputgroup-addon styleClass="calc-addon py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-primary-text)]"></i></p-inputgroup-addon>
                         <p-inputnumber
@@ -121,7 +121,7 @@
                       </p-inputgroup>
                     </div>
                     <div class="flex flex-col gap-1">
-                      <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">1 a 8 días</span>
+                      <span class="text-[11px] font-bold uppercase text-[var(--mis-text-primary)] text-center">1 a 8 días</span>
                       <p-inputgroup>
                         <p-inputgroup-addon styleClass="calc-addon py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-primary-text)]"></i></p-inputgroup-addon>
                         <p-inputnumber
@@ -136,7 +136,7 @@
                       </p-inputgroup>
                     </div>
                     <div class="flex flex-col gap-1">
-                      <span class="text-[9px] font-bold uppercase text-[var(--mis-text-primary)] text-center">9 a más días</span>
+                      <span class="text-[11px] font-bold uppercase text-[var(--mis-text-primary)] text-center">9 a más días</span>
                       <p-inputgroup>
                         <p-inputgroup-addon styleClass="calc-addon py-0"><i class="pi pi-pencil text-[9px] text-[var(--mis-primary-text)]"></i></p-inputgroup-addon>
                         <p-inputnumber
@@ -156,11 +156,11 @@
                 <!-- Sub-Totales de la variable -->
                 <div class="col-span-2 grid grid-cols-2 gap-3 mt-0.5 border-t border-[var(--mis-border)] pt-2 transition-colors duration-300">
                   <div class="flex flex-col">
-                    <span class="text-[9px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-[var(--mis-primary)]]="focusedItem() === item.id">Bono Base Est.</span>
+                    <span class="text-[11px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-[var(--mis-primary)]]="focusedItem() === item.id">Bono Base Est.</span>
                     <span class="text-[13px] font-extrabold text-[var(--mis-primary)]">S/. {{ item.bob | number: '.0-2' }}</span>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-[9px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-[var(--mis-secondary)]]="focusedItem() === item.id">Bono Plus Est.</span>
+                    <span class="text-[11px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-[var(--mis-secondary)]]="focusedItem() === item.id">Bono Plus Est.</span>
                     <span class="text-[13px] font-extrabold text-[var(--mis-secondary)]">S/. {{ item.bop | number: '.0-2' }}</span>
                   </div>
                 </div>
@@ -191,7 +191,7 @@
 
               <div class="grid grid-cols-2 gap-3">
                 <div class="flex flex-col gap-1">
-                  <span class="text-[10px] font-bold uppercase" [class]="(item.id === 'clib' || !item.enab) ? 'text-[var(--mis-text-secondary)] tracking-wider' : 'text-[var(--mis-text-primary)] tracking-wider'">{{ etiquetaValor(item) }} {{(item.id === 'clib' || !item.enab) ? '' : '(Edit)'}}</span>
+                  <span class="text-[11px] font-bold uppercase" [class]="(item.id === 'clib' || !item.enab) ? 'text-[var(--mis-text-secondary)] tracking-wider' : 'text-[var(--mis-text-primary)] tracking-wider'">{{ etiquetaValor(item) }} {{(item.id === 'clib' || !item.enab) ? '' : '(Edit)'}}</span>
                   @if (item.id === 'clib' || !item.enab) {
                     <div class="calc-lectura">
                       <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ formatear(item.val, item.formato) }}</span>
@@ -232,7 +232,7 @@
                 </div>
                 
                 <div class="flex flex-col gap-1">
-                  <span class="text-[10px] font-bold uppercase" [class]="item.id === 'tas' ? 'text-[var(--mis-text-primary)] tracking-wider' : 'text-[var(--mis-text-secondary)] tracking-wider'">{{ etiquetaMeta(item) || 'Meta' }} {{item.id === 'tas' ? '(Edit)' : ''}}</span>
+                  <span class="text-[11px] font-bold uppercase" [class]="item.id === 'tas' ? 'text-[var(--mis-text-primary)] tracking-wider' : 'text-[var(--mis-text-secondary)] tracking-wider'">{{ etiquetaMeta(item) || 'Meta' }} {{item.id === 'tas' ? '(Edit)' : ''}}</span>
                   @if (item.id === 'prod') {
                     <div class="calc-lectura">
                       <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ formatear(item.met, 'number') }}</span>
@@ -261,12 +261,12 @@
                 <!-- Sub-Total Super Plus -->
                 <div class="col-span-2 grid grid-cols-2 gap-3 mt-0.5 border-t border-[var(--mis-border)] pt-2 transition-colors duration-300" [class.border-amber-500]="focusedItem() === item.id">
                   <div class="flex flex-col">
-                    <span class="text-[9px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-amber-600]="focusedItem() === item.id" [class.opacity-50]="!item.suma">Bono Est.</span>
+                    <span class="text-[11px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-amber-600]="focusedItem() === item.id" [class.opacity-50]="!item.suma">Bono Est.</span>
                     <span class="text-[13px] font-extrabold text-amber-600" [class.opacity-50]="!item.suma">S/. {{ item.bos | number: '.0-2' }}</span>
                   </div>
                   @if (item.id === 'tas') {
                     <div class="flex flex-col">
-                      <span class="text-[9px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-amber-600]="focusedItem() === item.id">Dif. Tasa</span>
+                      <span class="text-[11px] uppercase font-bold text-[var(--mis-text-tertiary)] transition-colors duration-300" [class.text-amber-600]="focusedItem() === item.id">Dif. Tasa</span>
                       <span class="text-[13px] font-extrabold text-[var(--mis-text-primary)]">{{ diffTasaPbs() }} pbs</span>
                     </div>
                   }

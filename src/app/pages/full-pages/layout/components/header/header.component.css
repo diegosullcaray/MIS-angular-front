@@ -200,7 +200,7 @@
   border-radius: var(--mis-radius-full);
   background: var(--mis-secondary);
   color: var(--mis-text-on-secondary);
-  font-size: 10px;
+  font-size: var(--mis-text-xs);
   font-weight: var(--mis-font-semibold);
   flex-shrink: 0;
 }

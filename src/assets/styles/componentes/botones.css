@@ -30,8 +30,10 @@
     border-color var(--mis-transition-fast);
 }
 
-.p-button:not(.p-button-link, :disabled):hover {
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .p-button:not(.p-button-link, :disabled):hover {
+    transform: translateY(-1px);
+  }
 }
 
 .p-button:not(.p-button-link, :disabled):active {

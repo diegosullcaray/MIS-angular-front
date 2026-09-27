@@ -24,10 +24,22 @@
     border-color var(--mis-transition-base);
 }
 
-.kpi-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--mis-shadow-lg);
-  border-color: var(--mis-primary);
+/* Solo con puntero que realmente pasa por encima: en táctil el hover queda
+   pegado tras el toque y la tarjeta parece seleccionada. */
+@media (hover: hover) {
+  .kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--mis-shadow-lg);
+    border-color: var(--mis-primary);
+  }
+
+  .kpi-card:hover::before {
+    opacity: 1;
+  }
+
+  .kpi-card:hover::after {
+    opacity: 1;
+  }
 }
 
 /* Shimmer radial que captura el color primario del panel en la esquina
@@ -48,10 +60,6 @@
   transition: opacity var(--mis-transition-base);
 }
 
-.kpi-card:hover::before {
-  opacity: 1;
-}
-
 /* Línea de acento en la parte superior al hacer hover */
 .kpi-card::after {
   content: '';
@@ -63,10 +71,6 @@
   background: linear-gradient(90deg, var(--mis-primary), var(--mis-secondary, var(--mis-primary)), transparent);
   opacity: 0;
   transition: opacity var(--mis-transition-base);
-}
-
-.kpi-card:hover::after {
-  opacity: 1;
 }
 
 /* Badges de tendencia. El borde va con el color semántico a baja opacidad para

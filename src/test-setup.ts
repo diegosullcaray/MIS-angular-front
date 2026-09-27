@@ -110,3 +110,17 @@ for (const nombre of ['localStorage', 'sessionStorage'] as const) {
 beforeEach(() => {
   sessionStorage.clear();
 });
+
+/**
+ * 3) `ResizeObserver` mínimo: jsdom no lo implementa y PrimeNG lo usa por dentro
+ * (p. ej. `p-tabs` al montar la lista). Sin esto, cualquier spec que renderice
+ * pestañas revienta con `ResizeObserver is not defined`. Los specs que ya
+ * instalan su propio doble lo siguen pisando en su `beforeEach`.
+ */
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  globalThis.ResizeObserver = class {
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+  } as unknown as typeof ResizeObserver;
+}

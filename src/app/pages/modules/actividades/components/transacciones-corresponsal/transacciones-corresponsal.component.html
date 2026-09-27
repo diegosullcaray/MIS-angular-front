@@ -50,27 +50,27 @@
             <td class="text-center font-mono text-[var(--mis-text-primary)]">{{ item.HNUMDOC }}</td>
             <td class="text-center">
               @if (item.HCONSRUC) {
-                <p-tag [value]="item.HCONSRUC" severity="info" styleClass="text-[10px]"></p-tag>
+                <p-tag [value]="item.HCONSRUC" severity="info" styleClass="text-[11px]"></p-tag>
               } @else { <span class="text-[var(--mis-text-tertiary)]">-</span> }
             </td>
             <td class="text-center">
               @if (item.HCONSRCC) {
-                <p-tag [value]="item.HCONSRCC" severity="info" styleClass="text-[10px]"></p-tag>
+                <p-tag [value]="item.HCONSRCC" severity="info" styleClass="text-[11px]"></p-tag>
               } @else { <span class="text-[var(--mis-text-tertiary)]">-</span> }
             </td>
             <td class="text-center">
               @if (item.HCONSLNE) {
-                <p-tag [value]="item.HCONSLNE" [severity]="item.HCONSLNE === 'SI' ? 'danger' : 'success'" styleClass="text-[10px]"></p-tag>
+                <p-tag [value]="item.HCONSLNE" [severity]="item.HCONSLNE === 'SI' ? 'danger' : 'success'" styleClass="text-[11px]"></p-tag>
               } @else { <span class="text-[var(--mis-text-tertiary)]">-</span> }
             </td>
             <td class="text-center">
               @if (item.HFOTNEGO) {
-                <p-tag [value]="item.HFOTNEGO" severity="secondary" styleClass="text-[10px]"></p-tag>
+                <p-tag [value]="item.HFOTNEGO" severity="secondary" styleClass="text-[11px]"></p-tag>
               } @else { <span class="text-[var(--mis-text-tertiary)]">-</span> }
             </td>
             <td class="text-center">
               @if (item.HLICFUNCI) {
-                <p-tag [value]="item.HLICFUNCI" [severity]="item.HLICFUNCI === 'SI' ? 'success' : 'warn'" styleClass="text-[10px]"></p-tag>
+                <p-tag [value]="item.HLICFUNCI" [severity]="item.HLICFUNCI === 'SI' ? 'success' : 'warn'" styleClass="text-[11px]"></p-tag>
               } @else { <span class="text-[var(--mis-text-tertiary)]">-</span> }
             </td>
             <td class="text-center text-[var(--mis-text-primary)]">{{ item.HTAPERCC || '-' }}</td>

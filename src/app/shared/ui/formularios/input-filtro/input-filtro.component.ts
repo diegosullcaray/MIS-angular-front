@@ -18,7 +18,7 @@ import { InputTextModule } from 'primeng/inputtext';
   host: { '[attr.placeholder]': 'null' },
   template: `
     <div class="flex flex-col gap-0.5">
-      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">
+      <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">
         {{ etiqueta() }}
       </span>
       <input

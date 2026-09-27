@@ -60,7 +60,7 @@
 .mis-window-lights {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   min-width: 0;
 }
 
@@ -71,6 +71,8 @@
 }
 
 .mis-window-light {
+  position: relative;
+  flex-shrink: 0;
   width: 12px;
   height: 12px;
   padding: 0;
@@ -83,6 +85,13 @@
   /* Aro interior: separa la luz del fondo claro sin usar un borde real. */
   box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.18);
   transition: filter var(--mis-transition-fast);
+}
+
+/* Área de toque invisible de 24×24 (WCAG 2.5.8): la luz se ve de 12px. */
+.mis-window-light::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
 }
 
 .mis-window-light::before {
@@ -119,6 +128,21 @@
 }
 .mis-window-light--zoom {
   background: #28c840;
+}
+
+/* Táctil: la luz de 12px es imposible de acertar con el dedo. Crece un poco y
+   una capa invisible lleva el área a 44px de ancho por el alto de la barra (40px). */
+@media (pointer: coarse) {
+  .mis-window-lights {
+    gap: 28px;
+  }
+  .mis-window-light {
+    width: 16px;
+    height: 16px;
+  }
+  .mis-window-light::after {
+    inset: -12px -14px;
+  }
 }
 
 /* ── Título ───────────────────────────────────────────────── */

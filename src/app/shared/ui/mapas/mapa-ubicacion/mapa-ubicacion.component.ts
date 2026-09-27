@@ -63,7 +63,7 @@ const ESTILO_OSM = {
             {{ etiqueta() || 'Ubicación' }}
           </p>
           <span
-            class="mt-1.5 inline-flex items-center gap-1 rounded-md border border-[var(--mis-border)] bg-[var(--mis-hover-bg)] px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-[var(--mis-text-tertiary)]"
+            class="mt-1.5 inline-flex items-center gap-1 rounded-md border border-[var(--mis-border)] bg-[var(--mis-hover-bg)] px-1.5 py-0.5 font-mono text-[11px] tabular-nums text-[var(--mis-text-tertiary)]"
           >
             <i class="pi pi-map-marker text-[9px]"></i>{{ coordenadas() }}
           </span>
@@ -116,7 +116,7 @@ const ESTILO_OSM = {
     }
     :host ::ng-deep .maplibregl-ctrl-attrib,
     :host ::ng-deep .maplibregl-ctrl-attrib a {
-      font-size: 10px;
+      font-size: var(--mis-text-xs);
       color: var(--mis-text-tertiary);
     }
     :host ::ng-deep .maplibregl-ctrl-attrib-button { filter: invert(0.5); }

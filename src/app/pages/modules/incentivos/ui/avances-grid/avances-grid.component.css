@@ -70,7 +70,7 @@
 
 .avance-valor small {
   margin-left: 1px;
-  font-size: 10px;
+  font-size: var(--mis-text-xs);
   font-weight: var(--mis-font-semibold);
   color: var(--mis-text-secondary);
 }

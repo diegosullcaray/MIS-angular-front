@@ -5,7 +5,7 @@
 >
   <app-grupo-filtros ventana-filtros>
     <div class="flex flex-col gap-1">
-      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
+      <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Asesor</span>
       @if (mostrarSelector()) {
               <p-select appendTo="body"
       [options]="asesores()"
@@ -25,7 +25,7 @@
     </div>
 
     <div class="flex flex-col gap-1">
-      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Tramo</span>
+      <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Tramo</span>
       <p-select appendTo="body"
         [options]="opcionesTramo"
         [ngModel]="filtros().tramof"
@@ -38,7 +38,7 @@
     </div>
 
     <div class="flex flex-col gap-1">
-      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Producto</span>
+      <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Producto</span>
       <p-select appendTo="body"
         [options]="opcionesProducto"
         [ngModel]="filtros().prod"
@@ -53,7 +53,7 @@
     </div>
 
     <div class="flex flex-col gap-1">
-      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Compromiso Roto</span>
+      <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Compromiso Roto</span>
       <p-select appendTo="body"
         [options]="opcionesSiNo"
         [ngModel]="filtros().comp_r"
@@ -66,7 +66,7 @@
     </div>
 
     <div class="flex flex-col gap-1">
-      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">0 Cuota</span>
+      <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">0 Cuota</span>
       <p-select appendTo="body"
         [options]="opcionesSiNo"
         [ngModel]="filtros().zcuo"
@@ -79,7 +79,7 @@
     </div>
 
     <div class="flex flex-col gap-1">
-      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">1 Cuota</span>
+      <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">1 Cuota</span>
       <p-select appendTo="body"
         [options]="opcionesSiNo"
         [ngModel]="filtros().ucuo"
@@ -92,7 +92,7 @@
     </div>
 
     <div class="flex flex-col gap-1">
-      <span class="text-[9.5px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Tramo Días Gestión</span>
+      <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Tramo Días Gestión</span>
       <p-select appendTo="body"
         [options]="opcionesTramoDiasGestion"
         [ngModel]="filtros().tdcr"
