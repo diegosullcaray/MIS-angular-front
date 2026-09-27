@@ -1,18 +1,6 @@
 /** Códigos HTTP conocidos con una página/mensaje mapeado en el Host. */
 export type KnownHttpErrorCode =
-  | 400
-  | 401
-  | 403
-  | 404
-  | 408
-  | 409
-  | 422
-  | 429
-  | 500
-  | 502
-  | 503
-  | 504
-  | 0;
+  400 | 401 | 403 | 404 | 408 | 409 | 422 | 429 | 500 | 502 | 503 | 504 | 0;
 
 /** Acción principal que ofrece la página de error al usuario. */
 export type HttpErrorAction = 'retry' | 'login' | 'home' | 'back';

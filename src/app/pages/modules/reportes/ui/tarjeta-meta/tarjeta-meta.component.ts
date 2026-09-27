@@ -5,15 +5,7 @@ import type { TarjetaCmgCartera } from '../../components/actividad-diaria/compon
 
 const ENTERO = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 0 });
 
-/**
- * Tarjeta KPI contra meta, con la disposición del legado (*CMG Cartera*):
- *
- * - a la izquierda: el valor grande, debajo la referencia en color primario (meta, TAPP mínima, mes
- *   anterior) y al pie el nombre del indicador;
- * - a la derecha: el aro de cumplimiento, o la variación con su flecha (verde si sube, rojo si baja).
- *
- * El aro recibe su valor ya animado (`progreso`), así el contenedor decide la animación.
- */
+/** Tarjeta KPI de CMG Cartera; el contenedor entrega el valor animado del aro. */
 @Component({
   selector: 'app-tarjeta-meta',
   standalone: true,
@@ -22,13 +14,19 @@ const ENTERO = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 0 });
   template: `
     <div class="kpi-card h-full p-4 sm:p-5 rounded-2xl flex items-center justify-between gap-3">
       <div class="flex flex-col gap-1 min-w-0">
-        <span class="text-[24px] sm:text-[28px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums truncate">
+        <span
+          class="text-[24px] sm:text-[28px] font-extrabold tracking-tight text-[var(--mis-text-primary)] leading-tight tabular-nums truncate"
+        >
           {{ valorTexto() }}
         </span>
         @if (tarjeta().comparativo) {
-          <span class="text-[13px] font-medium text-[var(--mis-primary)] tabular-nums truncate">{{ tarjeta().comparativo }}</span>
+          <span class="text-[13px] font-medium text-[var(--mis-primary)] tabular-nums truncate">{{
+            tarjeta().comparativo
+          }}</span>
         }
-        <span class="mt-2 text-[12px] font-medium text-[var(--mis-text-secondary)] truncate">{{ tarjeta().etiqueta }}</span>
+        <span class="mt-2 text-[12px] font-medium text-[var(--mis-text-secondary)] truncate">{{
+          tarjeta().etiqueta
+        }}</span>
       </div>
 
       @if (tarjeta().cumplimiento !== undefined) {
@@ -44,9 +42,17 @@ const ENTERO = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 0 });
           textColor="var(--mis-text-primary)"
         />
       } @else if (tarjeta().delta && tarjeta().senal !== 0) {
-        <span class="shrink-0 flex items-center gap-1 text-[15px] font-bold tabular-nums" [class]="claseVariacion()">
+        <span
+          class="shrink-0 flex items-center gap-1 text-[15px] font-bold tabular-nums"
+          [class]="claseVariacion()"
+        >
           {{ tarjeta().delta }}
-          <i class="pi text-[14px]" [class.pi-arrow-up]="tarjeta().senal > 0" [class.pi-arrow-down]="tarjeta().senal < 0" aria-hidden="true"></i>
+          <i
+            class="pi text-[14px]"
+            [class.pi-arrow-up]="tarjeta().senal > 0"
+            [class.pi-arrow-down]="tarjeta().senal < 0"
+            aria-hidden="true"
+          ></i>
         </span>
       }
     </div>

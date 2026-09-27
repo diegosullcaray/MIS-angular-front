@@ -19,6 +19,7 @@ import type { OpcionFiltro } from '../../../../../../models/filtros.model';
 import { ActividadMensualRepoService } from '../../../../services/actividad-mensual-repo.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 import { TarjetaMetaComponent } from '../../../../../../ui/tarjeta-meta/tarjeta-meta.component';
+import { animarAnillos } from '../../../../../../ui/tarjeta-meta/animar-anillos';
 
 /** "CMG Cartera" (`repositorio/actividad-mensual/cartera/cmg-cartera-m`). */
 @Component({
@@ -87,33 +88,18 @@ export class CmgCarteraComponent {
 
   private cargar(nodo: HierarquiaNodo, fase: number, periodo: string): void {
     this.cargando.set(true);
-    this.servicio.cmgCartera({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, fase, periodo || undefined).subscribe({
-      next: (reporte) => {
-        this.reporte.set(reporte);
-        this.cargando.set(false);
-        this.animarAnillos(reporte.tarjetas);
-      },
-      error: () => {
-        this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
-        this.cargando.set(false);
-      },
-    });
-  }
-
-  private animarAnillos(tarjetas: TarjetaCmgCartera[]): void {
-    this.progresoAnillos.set({});
-    const duracionMs = 900;
-    for (const t of tarjetas) {
-      if (t.cumplimiento === undefined) continue;
-      const objetivo = t.cumplimiento;
-      const etiqueta = t.etiqueta;
-      const inicio = performance.now();
-      const paso = (ahora: number) => {
-        const progreso = Math.min((ahora - inicio) / duracionMs, 1);
-        this.progresoAnillos.update((m) => ({ ...m, [etiqueta]: Math.round(objetivo * progreso * 10) / 10 }));
-        if (progreso < 1) requestAnimationFrame(paso);
-      };
-      requestAnimationFrame(paso);
-    }
+    this.servicio
+      .cmgCartera({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, fase, periodo || undefined)
+      .subscribe({
+        next: (reporte) => {
+          this.reporte.set(reporte);
+          this.cargando.set(false);
+          animarAnillos(reporte.tarjetas, this.progresoAnillos);
+        },
+        error: () => {
+          this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+          this.cargando.set(false);
+        },
+      });
   }
 }

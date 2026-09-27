@@ -2,8 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map, throwError } from 'rxjs';
 import { BloqueReporteService, type NodoConsulta } from '../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
-import { filasDeResultado, resultadoCrudo, tablaDeResultado } from '../../../utils/reportes-mapeo.util';
-import { COD_MENSUAL_REPO, MENSAJES_CUENTA_RESULTADOS } from '../constantes/actividad-mensual.constantes';
+import {
+  filasDeResultado,
+  resultadoCrudo,
+  tablaDeResultado,
+} from '../../../utils/reportes-mapeo.util';
+import {
+  COD_MENSUAL_REPO,
+  MENSAJES_CUENTA_RESULTADOS,
+} from '../constantes/actividad-mensual.constantes';
 import {
   ContratoCuentaResultadosError,
   fechaCuentaParaBackend,
@@ -15,13 +22,14 @@ import { tarjetasCmgCarteraMensual } from '../utils/actividad-mensual-mapeo.util
 import {
   columnasVisibles,
   conColumnasSemaforo,
+  metaAgricolaDe,
   totalesAgro,
 } from '../../actividad-diaria/components/Cartera/utils/cartera-mapeo.util';
 import { GRAFICOS_AGRICOLA } from '../../actividad-diaria/components/Cartera/models/cartera-agricola.model';
 import { detalleAgricolaDe } from '../../actividad-diaria/components/Cartera/utils/cartera-mapeo.util';
 import { COLUMNAS_TABLERO_COMERCIAL } from '../../actividad-diaria/components/Tablero Digital/models/tablero-comercial.model';
 import { semaforosTableroComercial } from '../../actividad-diaria/components/Tablero Digital/utils/tablero-comercial.util';
-import type { TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../models/tabla-dinamica.model';
+import type { TablaDinamicaResultado } from '../../../models/tabla-dinamica.model';
 import type { CmgCarteraResultado } from '../../actividad-diaria/components/Cartera/models/cmg-cartera.model';
 import type {
   CarteraAgricolaResultado,
@@ -55,11 +63,19 @@ export class ActividadMensualRepoService {
   tableroDigitalComercial(nodo: NodoConsulta, fecha?: string): Observable<TablaDinamicaResultado> {
     return this.bloques
       .tablaRegularCon(COD_MENSUAL_REPO.tableroDigitalComercial, this.paramsConFecha(nodo, fecha))
-      .pipe(map((tabla) => ({ columnas: COLUMNAS_TABLERO_COMERCIAL, filas: semaforosTableroComercial(tabla.filas) })));
+      .pipe(
+        map((tabla) => ({
+          columnas: COLUMNAS_TABLERO_COMERCIAL,
+          filas: semaforosTableroComercial(tabla.filas),
+        })),
+      );
   }
 
   /** Estructura de Desembolsos mensual, con su coloración condicional. */
-  estructuraDesembolsosMensual(nodo: NodoConsulta, fec: string): Observable<TablaDinamicaResultado> {
+  estructuraDesembolsosMensual(
+    nodo: NodoConsulta,
+    fec: string,
+  ): Observable<TablaDinamicaResultado> {
     return this.bloques
       .tablaRegularCon(COD_MENSUAL_REPO.estructuraDesembolsos, this.paramsConFecha(nodo, fec))
       .pipe(map(aplicarEstilosEstructuraDesembolsos));
@@ -72,7 +88,7 @@ export class ActividadMensualRepoService {
       .pipe(
         map((r) => {
           const resultado = resultadoCrudo(r);
-          const meta = parseMeta(resultado);
+          const meta = metaAgricolaDe(resultado);
           return {
             tabla: tablaDeResultado(resultado),
             totales: totalesAgro(filasDeResultado(resultado)[0] ?? {}, meta?.[0] ?? {}),
@@ -82,13 +98,16 @@ export class ActividadMensualRepoService {
   }
 
   /** Los cuatro gráficos del detalle por cultivo. */
-  detalleGraficosAgricola(nodo: NodoConsulta, fecha?: string): Observable<DetalleAgricolaResultado> {
+  detalleGraficosAgricola(
+    nodo: NodoConsulta,
+    fecha?: string,
+  ): Observable<DetalleAgricolaResultado> {
     const params = this.paramsConFecha(nodo, fecha);
-    const bloques = GRAFICOS_AGRICOLA.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
-
-    return forkJoin(bloques).pipe(
-      map(detalleAgricolaDe),
+    const bloques = GRAFICOS_AGRICOLA.map((g) =>
+      this.reportes.getRegularTableResult(g.codRep, params),
     );
+
+    return forkJoin(bloques).pipe(map(detalleAgricolaDe));
   }
 
   /**
@@ -129,23 +148,26 @@ export class ActividadMensualRepoService {
    * Cuenta de Resultados. Sin periodo pide `NOW` y el backend responde con el
    * más reciente; los periodos elegibles vienen en la misma respuesta.
    */
-  cuentaResultados(nodo: NodoConsulta, periodo: string | null): Observable<CuentaResultadosResultado> {
+  cuentaResultados(
+    nodo: NodoConsulta,
+    periodo: string | null,
+  ): Observable<CuentaResultadosResultado> {
     const fecha = periodo === null ? 'NOW' : fechaCuentaParaBackend(periodo);
     if (!fecha) {
-      return throwError(() => new ContratoCuentaResultadosError(MENSAJES_CUENTA_RESULTADOS.periodoInvalido));
+      return throwError(
+        () => new ContratoCuentaResultadosError(MENSAJES_CUENTA_RESULTADOS.periodoInvalido),
+      );
     }
     return this.reportes
-      .getRegularTableResult(COD_MENSUAL_REPO.cuentaResultados, { fecha, tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel })
+      .getRegularTableResult(COD_MENSUAL_REPO.cuentaResultados, {
+        fecha,
+        tip_cod: nodo.tip_cod,
+        cod_rel: nodo.cod_rel,
+      })
       .pipe(map((r) => mapearCuentaResultados(resultadoCrudo(r), periodo)));
   }
 
   private paramsConFecha(nodo: NodoConsulta, fecha?: string): Record<string, unknown> {
     return { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: fecha || this.bloques.fecha() };
   }
-}
-
-/** `meta1` llega serializado en unos bloques y ya parseado en otros. */
-function parseMeta(resultado: TablaRegularResultadoRaw | undefined): Record<string, unknown>[] | undefined {
-  const meta = resultado?.meta1;
-  return (typeof meta === 'string' ? JSON.parse(meta) : meta) as Record<string, unknown>[] | undefined;
 }

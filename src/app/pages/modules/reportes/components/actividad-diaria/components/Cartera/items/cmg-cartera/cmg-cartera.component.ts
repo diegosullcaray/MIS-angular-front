@@ -16,12 +16,20 @@ import {
 } from '../../models/cmg-cartera.model';
 import { CarteraRepositorioService } from '../../services/cartera-repositorio.service';
 import { TarjetaMetaComponent } from '../../../../../../ui/tarjeta-meta/tarjeta-meta.component';
+import { animarAnillos } from '../../../../../../ui/tarjeta-meta/animar-anillos';
 
 /** "CMG Cartera" (`repositorio/actividad-diaria/cartera/cmg-cartera`). */
 @Component({
   selector: 'app-cartera-cmg-cartera',
   standalone: true,
-  imports: [TabsModule, HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent, TarjetaMetaComponent],
+  imports: [
+    TabsModule,
+    HierSelectorComponent,
+    TablaDinamicaComponent,
+    EmptyStateComponent,
+    WindowPanelComponent,
+    TarjetaMetaComponent,
+  ],
   templateUrl: './cmg-cartera.component.html',
 })
 export class CmgCarteraComponent {
@@ -71,30 +79,12 @@ export class CmgCarteraComponent {
       next: (reporte) => {
         this.reporte.set(reporte);
         this.cargando.set(false);
-        this.animarAnillos(reporte.tarjetas);
+        animarAnillos(reporte.tarjetas, this.progresoAnillos);
       },
       error: () => {
         this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
         this.cargando.set(false);
       },
     });
-  }
-
-  /** Anima cada aro desde 0 hasta su % de cumplimiento real. */
-  private animarAnillos(tarjetas: TarjetaCmgCartera[]): void {
-    this.progresoAnillos.set({});
-    const duracionMs = 900;
-    for (const t of tarjetas) {
-      if (t.cumplimiento === undefined) continue;
-      const objetivo = t.cumplimiento;
-      const etiqueta = t.etiqueta;
-      const inicio = performance.now();
-      const paso = (ahora: number) => {
-        const progreso = Math.min((ahora - inicio) / duracionMs, 1);
-        this.progresoAnillos.update((m) => ({ ...m, [etiqueta]: Math.round(objetivo * progreso * 10) / 10 }));
-        if (progreso < 1) requestAnimationFrame(paso);
-      };
-      requestAnimationFrame(paso);
-    }
   }
 }

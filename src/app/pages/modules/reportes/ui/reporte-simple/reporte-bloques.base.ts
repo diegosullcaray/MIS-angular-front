@@ -7,15 +7,7 @@ import type { HierarquiaNodo } from '../../models/jerarquia.model';
 import { TABLA_PENDIENTE, type TablaReporteResultado } from '../../models/tabla-reporte.model';
 import type { BloqueReporte } from './reporte-simple.component';
 
-/**
- * Igual que `ReporteSimpleBase` pero para los reportes de varios bloques, que
- * el legado apila uno debajo del otro (`report-cra-v1p1`: un
- * `app-table-multiheader` por cada `id` de su entrada en `cra-map.ts`).
- *
- * La subclase aporta los títulos de cada bloque y la consulta; como
- * `consultar()` corre dentro de un `effect`, las señales de filtro que lea
- * quedan registradas y un cambio de filtro vuelve a consultar solo.
- */
+/** Bloques de `report-cra-v1p1`; los filtros leídos por `consultar()` reactivan el efecto. */
 export abstract class ReporteBloquesBase {
   protected readonly toast = inject(ToastService);
 
@@ -66,8 +58,7 @@ export abstract class ReporteBloquesBase {
 
   private cargar(nodo: HierarquiaNodo): Subscription {
     this.cargando.set(true);
-    return this.consultar({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel })
-      .subscribe({
+    return this.consultar({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
       // Carga independiente: `consultar()` emite cada vez que responde un bloque; con el primero
       // ya se muestra el reporte y los que faltan quedan con su esqueleto.
       next: (tablas) => {

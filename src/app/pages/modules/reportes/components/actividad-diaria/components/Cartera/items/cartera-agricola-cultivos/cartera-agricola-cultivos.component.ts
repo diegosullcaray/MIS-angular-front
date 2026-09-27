@@ -35,6 +35,7 @@ import { ActividadMensualRepoService } from '../../../../../actividad-mensual/se
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
+import { NavegacionJerarquica } from '../../../../../../models/navegacion-jerarquica.model';
 
 /** "Cartera Agrícola - Cultivos" (`repositorio/actividad-diaria/cartera/agro-mix`). */
 @Component({
@@ -63,11 +64,20 @@ import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ru
 })
 export class CarteraAgricolaCultivosComponent {
   /** Diaria (`agro-mix`) y mensual (`agro-mix-m`, `data.mensual`) comparten pantalla: cambia el repositorio. */
-  protected readonly mensual = inject(ActivatedRoute, { optional: true })?.snapshot.data['mensual'] === true;
-  private readonly servicio: Pick<CarteraRepositorioService, 'carteraAgricola' | 'detalleGraficosAgricola' | 'periodosAgricola'> =
-    this.mensual ? repositorioMensual(inject(ActividadMensualRepoService)) : inject(CarteraRepositorioService);
+  protected readonly mensual =
+    inject(ActivatedRoute, { optional: true })?.snapshot.data['mensual'] === true;
+  private readonly servicio: Pick<
+    CarteraRepositorioService,
+    'carteraAgricola' | 'detalleGraficosAgricola' | 'periodosAgricola'
+  > = this.mensual
+    ? repositorioMensual(inject(ActividadMensualRepoService))
+    : inject(CarteraRepositorioService);
   private readonly toast = inject(ToastService);
   private readonly selectorJerarquia = viewChild(HierSelectorComponent);
+  private readonly navegacion = new NavegacionJerarquica(
+    (nodo) => this.selectorJerarquia()?.seleccionarNodo(nodo) ?? false,
+    (nodo) => this.onNivelSeleccionado(nodo),
+  );
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
   protected readonly columnasDetalle = COLUMNAS_DETALLE_CULTIVO;
@@ -76,7 +86,7 @@ export class CarteraAgricolaCultivosComponent {
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly cargando = signal(false);
   /** Ruta de la tabla: reemplaza el selector jerárquico visible. */
-  protected readonly rutaJerarquica = signal<HierarquiaNodo[]>([]);
+  protected readonly rutaJerarquica = this.navegacion.ruta;
   protected readonly reporte = signal<CarteraAgricolaResultado>(CARTERA_AGRICOLA_VACIA);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
@@ -90,10 +100,11 @@ export class CarteraAgricolaCultivosComponent {
   /** Conserva la fila total y resalta el nodo que coincide con el nivel activo. */
   protected readonly destacarNodoActivo = (fila: Record<string, unknown>): boolean => {
     const nodo = this.nivelActual();
-    return Number(fila['style']) === 1 || (
-      !!nodo &&
-      Number(fila['htipcod']) === nodo.tip_cod &&
-      String(fila['cod_rel'] ?? '') === nodo.cod_rel
+    return (
+      Number(fila['style']) === 1 ||
+      (!!nodo &&
+        Number(fila['htipcod']) === nodo.tip_cod &&
+        String(fila['cod_rel'] ?? '') === nodo.cod_rel)
     );
   };
 
@@ -161,24 +172,13 @@ export class CarteraAgricolaCultivosComponent {
     // Al estar disponible en el cascada, esta llamada también emite la ruta y
     // carga sus opciones hijas. El fallback conserva la consulta si el backend
     // no incluyó la fila en el selector.
-    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
-      this.rutaJerarquica.update((ruta) => [...ruta, nodo]);
-      this.onNivelSeleccionado(nodo);
-    }
+    this.navegacion.descender(nodo);
   }
 
   /** Clic en una miga: vuelve a ese nivel y vuelve a consultar su tabla. */
   protected volverANivel(indice: number): void {
-    const ruta = this.rutaJerarquica();
-    const nodo = ruta[indice];
-    if (!nodo || indice === ruta.length - 1) return;
-
-    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
-      this.rutaJerarquica.set(ruta.slice(0, indice + 1));
-      this.onNivelSeleccionado(nodo);
-    }
+    this.navegacion.volver(indice);
   }
-
 
   /** El legado baja al detalle con el `htipcod`/`cod_rel` de la propia fila, no con el nodo elegido. */
   protected onFilaSeleccionada(fila: Record<string, unknown>): void {
@@ -189,18 +189,23 @@ export class CarteraAgricolaCultivosComponent {
     this.filaSeleccionada.set(fila);
     this.cargandoGraficos.set(true);
 
-    this.servicio.detalleGraficosAgricola({ tip_cod, cod_rel }, this.periodo() || undefined).subscribe({
-      next: ({ graficos, filasPorGrafico }) => {
-        this.graficos.set(graficos);
-        this.filasPorGrafico = filasPorGrafico;
-        this.cargandoGraficos.set(false);
-      },
-      error: () => {
-        this.toast.error('No se pudieron cargar los gráficos de detalle', 'Inténtalo de nuevo en unos segundos.');
-        this.cargandoGraficos.set(false);
-        this.volverAlListado();
-      },
-    });
+    this.servicio
+      .detalleGraficosAgricola({ tip_cod, cod_rel }, this.periodo() || undefined)
+      .subscribe({
+        next: ({ graficos, filasPorGrafico }) => {
+          this.graficos.set(graficos);
+          this.filasPorGrafico = filasPorGrafico;
+          this.cargandoGraficos.set(false);
+        },
+        error: () => {
+          this.toast.error(
+            'No se pudieron cargar los gráficos de detalle',
+            'Inténtalo de nuevo en unos segundos.',
+          );
+          this.cargandoGraficos.set(false);
+          this.volverAlListado();
+        },
+      });
   }
 
   protected volverAlListado(): void {
@@ -254,16 +259,18 @@ export class CarteraAgricolaCultivosComponent {
   private cargar(nodo: HierarquiaNodo, periodo: string): void {
     this.cargando.set(true);
     this.volverAlListado();
-    this.servicio.carteraAgricola({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
-      next: (reporte) => {
-        this.reporte.set(reporte);
-        this.cargando.set(false);
-      },
-      error: () => {
-        this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
-        this.cargando.set(false);
-      },
-    });
+    this.servicio
+      .carteraAgricola({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined)
+      .subscribe({
+        next: (reporte) => {
+          this.reporte.set(reporte);
+          this.cargando.set(false);
+        },
+        error: () => {
+          this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+          this.cargando.set(false);
+        },
+      });
   }
 }
 
@@ -276,7 +283,8 @@ function coordenadaValida(valor: number, min: number, max: number): boolean {
 function repositorioMensual(m: ActividadMensualRepoService) {
   return {
     carteraAgricola: (nodo: NodoConsulta, fecha?: string) => m.carteraAgricola(nodo, fecha),
-    detalleGraficosAgricola: (nodo: NodoConsulta, fecha?: string) => m.detalleGraficosAgricola(nodo, fecha),
+    detalleGraficosAgricola: (nodo: NodoConsulta, fecha?: string) =>
+      m.detalleGraficosAgricola(nodo, fecha),
     periodosAgricola: () => m.periodos('RS_FECH'),
   };
 }

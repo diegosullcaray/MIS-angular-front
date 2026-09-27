@@ -21,8 +21,14 @@ import {
   OPCIONES_TRAMO_DIAS_GESTION,
   type FiltrosMonitorEfectividades,
 } from '../../models/monitor-efectividades.model';
-import type { GrupoPanelAsesor, KpiPanelAsesor, ReportePanelAsesor, ResultadoPanelAsesor } from '../../models/panel-asesor.model';
-import { bloquesDe, gruposOrdenados, semaforoKpi, sinDatos } from '../../utils/panel-asesor.util';
+import type {
+  GrupoPanelAsesor,
+  KpiPanelAsesor,
+  ReportePanelAsesor,
+  ResultadoPanelAsesor,
+} from '../../models/panel-asesor.model';
+import { bloquesDe, gruposOrdenados, sinDatos } from '../../utils/panel-asesor.util';
+import { semaforo } from '../../../../utils/semaforo.util';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 interface FiltroEfectividades {
@@ -81,7 +87,9 @@ export class PanelAsesorComponent {
     return REPORTES_ASESOR.find((r) => r.codigo === this.panel.vista()) ?? null;
   });
 
-  protected readonly pestanaActiva = computed<GrupoPanelAsesor | null>(() => this.reporteActivo()?.grupo ?? null);
+  protected readonly pestanaActiva = computed<GrupoPanelAsesor | null>(
+    () => this.reporteActivo()?.grupo ?? null,
+  );
 
   protected readonly reportesDelGrupo = computed(
     () => this.grupos.find((g) => g.grupo.id === this.pestanaActiva())?.reportes ?? [],
@@ -92,7 +100,9 @@ export class PanelAsesorComponent {
     return reporte ? this.panel.estado(reporte.codigo) : null;
   });
 
-  protected readonly subtitulo = computed(() => this.panel.asesor()?.nombre ?? 'Reportes consolidados');
+  protected readonly subtitulo = computed(
+    () => this.panel.asesor()?.nombre ?? 'Reportes consolidados',
+  );
 
   /** KPI del monitor de desembolsos, que se muestran arriba de su detalle. */
   protected readonly estadoDesembolso = computed(() => this.panel.estado('L_MONI_DESE_SEC'));
@@ -105,12 +115,12 @@ export class PanelAsesorComponent {
       {
         etiqueta: 'Operaciones · cumplimiento',
         valor: kpiOperaciones?.cumpl_des_acum || '--',
-        semaforo: semaforoKpi(kpiOperaciones?.style_cumpl_des_acum),
+        semaforo: semaforo(kpiOperaciones?.style_cumpl_des_acum),
       },
       {
         etiqueta: 'Monto · cumplimiento',
         valor: kpiMonto?.cumpl_ope_acum || '--',
-        semaforo: semaforoKpi(kpiMonto?.style_cumpl_ope_acum),
+        semaforo: semaforo(kpiMonto?.style_cumpl_ope_acum),
       },
     ];
   });
@@ -137,11 +147,21 @@ export class PanelAsesorComponent {
   }
 
   protected claseSemaforo(semaforo: KpiPanelAsesor['semaforo']): string {
-    return semaforo === 1 ? 'kpi-ok' : semaforo === 0 ? 'kpi-alerta' : semaforo === -1 ? 'kpi-riesgo' : '';
+    return semaforo === 1
+      ? 'kpi-ok'
+      : semaforo === 0
+        ? 'kpi-alerta'
+        : semaforo === -1
+          ? 'kpi-riesgo'
+          : '';
   }
 
   protected iconoSemaforo(semaforo: KpiPanelAsesor['semaforo']): string {
-    return semaforo === 1 ? 'pi pi-check-circle' : semaforo === 0 ? 'pi pi-minus-circle' : 'pi pi-times-circle';
+    return semaforo === 1
+      ? 'pi pi-check-circle'
+      : semaforo === 0
+        ? 'pi pi-minus-circle'
+        : 'pi pi-times-circle';
   }
 
   protected textoSemaforo(semaforo: KpiPanelAsesor['semaforo']): string {

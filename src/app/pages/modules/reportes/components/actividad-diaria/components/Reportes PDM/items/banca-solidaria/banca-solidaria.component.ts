@@ -11,8 +11,13 @@ import { ToastService } from '../../../../../../../../../shared/services/toast.s
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { nodoDeFila } from '../../../../../../utils/nodo-fila.util';
 import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
+import { NavegacionJerarquica } from '../../../../../../models/navegacion-jerarquica.model';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
-import { BANCA_SOLIDARIA_VACIA, CLAVE_DRILL_DOWN_BANCA_SOLIDARIA, type BancaSolidariaResultado } from '../../models/banca-solidaria.model';
+import {
+  BANCA_SOLIDARIA_VACIA,
+  CLAVE_DRILL_DOWN_BANCA_SOLIDARIA,
+  type BancaSolidariaResultado,
+} from '../../models/banca-solidaria.model';
 import { ReportesPdmService } from '../../services/reportes-pdm.service';
 
 /**
@@ -41,6 +46,10 @@ export class BancaSolidariaComponent {
   private readonly servicio = inject(ReportesPdmService);
   private readonly toast = inject(ToastService);
   private readonly selectorJerarquia = viewChild(HierSelectorComponent);
+  private readonly navegacion = new NavegacionJerarquica(
+    (nodo) => this.selectorJerarquia()?.seleccionarNodo(nodo) ?? false,
+    (nodo) => this.onNivelSeleccionado(nodo),
+  );
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
@@ -55,11 +64,13 @@ export class BancaSolidariaComponent {
   protected readonly antiguedadCliente = computed(() => this.reporte().antiguedadCliente);
 
   /** Ruta de la raíz al nivel actual, para las migas (`hierBuffer` del legado). */
-  protected readonly rutaJerarquica = signal<HierarquiaNodo[]>([]);
+  protected readonly rutaJerarquica = this.navegacion.ruta;
 
   /** La descripción solo es clicable si alguna fila tiene a dónde bajar. */
   protected readonly columnasDrillDown = computed(() =>
-    this.tabla().filas.some((fila) => this.nodoHijo(fila)) ? [CLAVE_DRILL_DOWN_BANCA_SOLIDARIA] : [],
+    this.tabla().filas.some((fila) => this.nodoHijo(fila))
+      ? [CLAVE_DRILL_DOWN_BANCA_SOLIDARIA]
+      : [],
   );
 
   constructor() {
@@ -82,50 +93,49 @@ export class BancaSolidariaComponent {
   }
 
   /** Clic en una celda: solo la descripción baja de nivel, como `ddHier` del legado. */
-  protected onCeldaSeleccionada({ clave, fila }: { clave: string; fila: Record<string, unknown> }): void {
+  protected onCeldaSeleccionada({
+    clave,
+    fila,
+  }: {
+    clave: string;
+    fila: Record<string, unknown>;
+  }): void {
     if (clave !== CLAVE_DRILL_DOWN_BANCA_SOLIDARIA) return;
     const nodo = this.nodoHijo(fila);
     if (!nodo) return;
 
     // Por el selector oculto, que emite el nodo y la ruta nueva. Si el nodo no está entre sus
     // opciones, se agrega a la ruta y se consulta igual.
-    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
-      this.rutaJerarquica.update((ruta) => [...ruta, nodo]);
-      this.onNivelSeleccionado(nodo);
-    }
+    this.navegacion.descender(nodo);
   }
 
   /** Clic en una miga: vuelve a ese nivel y recorta la ruta (`changeHier`). */
   protected volverANivel(indice: number): void {
-    const ruta = this.rutaJerarquica();
-    const nodo = ruta[indice];
-    if (!nodo || indice === ruta.length - 1) return;
-
-    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
-      this.rutaJerarquica.set(ruta.slice(0, indice + 1));
-      this.onNivelSeleccionado(nodo);
-    }
+    this.navegacion.volver(indice);
   }
 
   /** Nodo al que baja la fila; `null` para la fila del nivel que ya se está viendo (el total). */
   private nodoHijo(fila: Record<string, unknown>): HierarquiaNodo | null {
     const nodo = nodoDeFila(fila, CLAVE_DRILL_DOWN_BANCA_SOLIDARIA);
     const actual = this.nivelActual();
-    if (!nodo || (actual && nodo.tip_cod === actual.tip_cod && nodo.cod_rel === actual.cod_rel)) return null;
+    if (!nodo || (actual && nodo.tip_cod === actual.tip_cod && nodo.cod_rel === actual.cod_rel))
+      return null;
     return nodo;
   }
 
   private cargar(nodo: HierarquiaNodo): Subscription {
     this.cargando.set(true);
-    return this.servicio.bancaSolidaria({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({
-      next: (reporte) => {
-        this.reporte.set(reporte);
-        this.cargando.set(false);
-      },
-      error: () => {
-        this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
-        this.cargando.set(false);
-      },
-    });
+    return this.servicio
+      .bancaSolidaria({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel })
+      .subscribe({
+        next: (reporte) => {
+          this.reporte.set(reporte);
+          this.cargando.set(false);
+        },
+        error: () => {
+          this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+          this.cargando.set(false);
+        },
+      });
   }
 }

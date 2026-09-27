@@ -16,7 +16,9 @@ export function gruposOrdenados(
 ): { grupo: GrupoPanelAsesorDef; reportes: ReportePanelAsesor[] }[] {
   return grupos
     .map((grupo) => {
-      const propios = reportes.filter((r) => r.grupo === grupo.id).sort((a, b) => b.peticiones - a.peticiones);
+      const propios = reportes
+        .filter((r) => r.grupo === grupo.id)
+        .sort((a, b) => b.peticiones - a.peticiones);
       return { grupo, reportes: propios, total: propios.reduce((s, r) => s + r.peticiones, 0) };
     })
     .filter((g) => g.reportes.length > 0)
@@ -25,8 +27,12 @@ export function gruposOrdenados(
 }
 
 /** Bloques a pintar: los declarados que llegaron, o todas las tablas presentes en orden. */
-export function bloquesDe(reporte: ReportePanelAsesor, resultado: ResultadoPanelAsesor): BloquePanelAsesor[] {
-  const declarados: readonly BloquePanelAsesor[] = reporte.bloques ?? CLAVES_TABLA.map((tabla) => ({ tabla }));
+export function bloquesDe(
+  reporte: ReportePanelAsesor,
+  resultado: ResultadoPanelAsesor,
+): BloquePanelAsesor[] {
+  const declarados: readonly BloquePanelAsesor[] =
+    reporte.bloques ?? CLAVES_TABLA.map((tabla) => ({ tabla }));
   const presentes = declarados.filter((b) => resultado[b.tabla] !== undefined);
   // Toda tabla lleva nombre en su chip. El legado no titula muchas: sin título propio va el del
   // reporte, numerado si hay varias sin nombre. No se inventa un nombre de negocio.
@@ -34,7 +40,13 @@ export function bloquesDe(reporte: ReportePanelAsesor, resultado: ResultadoPanel
   return presentes.map((b) => {
     if (b.titulo) return b;
     const orden = sinTitulo.indexOf(b) + 1;
-    return { ...b, titulo: sinTitulo.length > 1 ? `${reporte.nombre} · ${orden} de ${sinTitulo.length}` : reporte.nombre };
+    return {
+      ...b,
+      titulo:
+        sinTitulo.length > 1
+          ? `${reporte.nombre} · ${orden} de ${sinTitulo.length}`
+          : reporte.nombre,
+    };
   });
 }
 
@@ -42,8 +54,12 @@ export function bloquesDe(reporte: ReportePanelAsesor, resultado: ResultadoPanel
 export function sinDatos(resultado: ResultadoPanelAsesor): boolean {
   const tablas = CLAVES_TABLA.map((c) => resultado[c]).filter((t) => t !== undefined);
   const hayFilas = tablas.some((t) => t.body.length > 0);
-  const haySeries = (resultado.graficos ?? []).some((g) => g.series.some((s) => s.datos.some((d) => d !== null)));
-  const hayKpi = Boolean(resultado.kpiOperaciones?.cumpl_des_acum || resultado.kpiMonto?.cumpl_ope_acum);
+  const haySeries = (resultado.graficos ?? []).some((g) =>
+    g.series.some((s) => s.datos.some((d) => d !== null)),
+  );
+  const hayKpi = Boolean(
+    resultado.kpiOperaciones?.cumpl_des_acum || resultado.kpiMonto?.cumpl_ope_acum,
+  );
   return !hayFilas && !haySeries && !hayKpi;
 }
 
@@ -52,14 +68,16 @@ export function columnasDato(tabla: TablaReporteResultado): ColumnaReporte[] {
   return tabla.headers
     .flatMap((fila) => (fila?.columns ?? []).filter((c): c is ColumnaReporte => c != null))
     .filter((c) => c.isdata != null)
-    .sort((a, b) => (a.ordenPresentacion ?? a.isdata ?? 0) - (b.ordenPresentacion ?? b.isdata ?? 0));
+    .sort(
+      (a, b) => (a.ordenPresentacion ?? a.isdata ?? 0) - (b.ordenPresentacion ?? b.isdata ?? 0),
+    );
 }
-
 
 /** Número del motor: `number` tal cual, o texto estrictamente numérico. Lo demás no es cifra. */
 export function aNumero(valor: unknown): number | null {
   if (typeof valor === 'number') return Number.isFinite(valor) ? valor : null;
-  if (typeof valor === 'string' && /^-?\d+(\.\d+)?$/.test(valor.trim())) return Number(valor.trim());
+  if (typeof valor === 'string' && /^-?\d+(\.\d+)?$/.test(valor.trim()))
+    return Number(valor.trim());
   return null;
 }
 
@@ -68,23 +86,18 @@ export function formatearValor(valor: unknown, columna: ColumnaReporte): string 
   if (valor === null || valor === undefined || valor === '') return '';
   switch (columna.format?.['type']) {
     case 'number':
-      return typeof valor === 'number' ? new Intl.NumberFormat('es-PE').format(valor) : String(valor);
+      return typeof valor === 'number'
+        ? new Intl.NumberFormat('es-PE').format(valor)
+        : String(valor);
     case 'percent':
       return typeof valor === 'number'
-        ? new Intl.NumberFormat('es-PE', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(valor)
+        ? new Intl.NumberFormat('es-PE', {
+            style: 'percent',
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1,
+          }).format(valor)
         : String(valor);
     default:
       return String(valor);
   }
-}
-
-function semaforo(valor: unknown): 1 | 0 | -1 | null {
-  if (valor === null || valor === undefined || valor === '') return null;
-  const n = Number(valor);
-  return n === 1 || n === 0 || n === -1 ? n : null;
-}
-
-/** Semáforo de las tarjetas KPI del monitor de desembolsos (`style_cumpl_*`). */
-export function semaforoKpi(valor: unknown): 1 | 0 | -1 | null {
-  return semaforo(valor);
 }

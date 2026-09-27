@@ -1,10 +1,21 @@
 import { filasDeResultado, resultadoCrudo } from '../../../../../utils/reportes-mapeo.util';
-import type { ColumnaDinamica, TablaRegularResultadoRaw } from '../../../../../models/tabla-dinamica.model';
-import type { BloqueGrafico, FormatoValor } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
+import type {
+  ColumnaDinamica,
+  TablaRegularResultadoRaw,
+} from '../../../../../models/tabla-dinamica.model';
+import type {
+  BloqueGrafico,
+  FormatoValor,
+} from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import { seriesDeGraficoConColor } from '../../../../../../../../shared/ui/graficos/utils/series-grafico.util';
 import type { TarjetaCmgCartera } from '../models/cmg-cartera.model';
 import type { GraficoGestionComercial } from '../models/gestion-comercial.model';
-import { GRAFICOS_AGRICOLA, TOTALES_AGRO, type DetalleAgricolaResultado, type TotalAgro } from '../models/cartera-agricola.model';
+import {
+  GRAFICOS_AGRICOLA,
+  TOTALES_AGRO,
+  type DetalleAgricolaResultado,
+  type TotalAgro,
+} from '../models/cartera-agricola.model';
 import {
   AVANCES_RANKING_COMERCIAL,
   FILAS_TARJETAS_CMG,
@@ -12,6 +23,15 @@ import {
 } from '../constantes/cartera.constantes';
 
 /** Mapeo de los payloads de Cartera. Son funciones puras: el service solo pide. */
+
+/** `meta1` agrícola puede llegar como JSON o como arreglo. */
+export function metaAgricolaDe(
+  resultado: TablaRegularResultadoRaw | undefined,
+): Record<string, unknown>[] | undefined {
+  const meta = resultado?.meta1;
+  return (typeof meta === 'string' ? JSON.parse(meta) : meta) as
+    Record<string, unknown>[] | undefined;
+}
 
 /** El legado descarta las columnas que el backend marca como ocultas. */
 export function columnasVisibles(headers: string | undefined): ColumnaDinamica[] {
@@ -22,7 +42,9 @@ export function columnasVisibles(headers: string | undefined): ColumnaDinamica[]
 
 /** Marca las columnas de CMG Cartera con su columna de control, para que la tabla dibuje el punto. */
 export function conColumnasSemaforo(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
-  return columnas.map((c) => (SEMAFOROS_CMG_CARTERA[c.key] ? { ...c, semaforoKey: SEMAFOROS_CMG_CARTERA[c.key] } : c));
+  return columnas.map((c) =>
+    SEMAFOROS_CMG_CARTERA[c.key] ? { ...c, semaforoKey: SEMAFOROS_CMG_CARTERA[c.key] } : c,
+  );
 }
 
 /**
@@ -35,7 +57,8 @@ export function tarjetasCmgCartera(
 ): TarjetaCmgCartera[] {
   // `tasaminima` llega como `"42.07%"`: se descarta todo lo que no sea dígito, signo o punto.
   const num = (v: unknown) => Number(String(v ?? '0').replace(/[^0-9.-]/g, '')) || 0;
-  const filaSaldo = filasTabla[FILAS_TARJETAS_CMG.saldoMedio] as Record<string, unknown> | undefined;
+  const filaSaldo = filasTabla[FILAS_TARJETAS_CMG.saldoMedio] as
+    Record<string, unknown> | undefined;
   const filaTapp = filasTabla[FILAS_TARJETAS_CMG.tapp] as Record<string, unknown> | undefined;
 
   const saldoMedio = num(filaSaldo?.[6]);
@@ -45,7 +68,9 @@ export function tarjetasCmgCartera(
   const tappMes = filaTapp?.[6] == null ? undefined : num(filaTapp[6]);
   const tappMinima = kpis['tasaminima'] == null ? undefined : num(kpis['tasaminima']);
   const deltaPbs =
-    tappMes === undefined || tappMinima === undefined ? undefined : Math.round((tappMes - tappMinima) * 100);
+    tappMes === undefined || tappMinima === undefined
+      ? undefined
+      : Math.round((tappMes - tappMinima) * 100);
 
   return [
     {

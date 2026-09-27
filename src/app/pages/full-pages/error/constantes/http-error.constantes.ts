@@ -1,11 +1,12 @@
-import type { HttpErrorInfo, KnownHttpErrorCode } from '../interfaces/http-error.model';
+import type { HttpErrorInfo, KnownHttpErrorCode } from '../models/http-error.model';
 
-/** Mapeo único de errores HTTP conocidos → cómo se muestran en el Host. Centralizado dentro del módulo de errores. */
+/** Mapeo de errores HTTP conocidos para la página de error. */
 export const HTTP_ERROR_MESSAGES: Record<KnownHttpErrorCode, HttpErrorInfo> = {
   0: {
     code: 0,
     titulo: 'Sin conexión',
-    mensaje: 'No se pudo contactar al servidor. Verifica tu conexión a internet e inténtalo de nuevo.',
+    mensaje:
+      'No se pudo contactar al servidor. Verifica tu conexión a internet e inténtalo de nuevo.',
     icono: 'lucideWifiOff',
     accion: 'retry',
     esFatal: true,
@@ -29,7 +30,8 @@ export const HTTP_ERROR_MESSAGES: Record<KnownHttpErrorCode, HttpErrorInfo> = {
   403: {
     code: 403,
     titulo: 'Acceso denegado',
-    mensaje: 'No tienes permisos para acceder a este recurso. Contacta al Administrador del Sistema.',
+    mensaje:
+      'No tienes permisos para acceder a este recurso. Contacta al Administrador del Sistema.',
     icono: 'lucideShieldAlert',
     accion: 'home',
     esFatal: false,

@@ -9,10 +9,18 @@ import { WindowPanelComponent } from '../../../../../../../../../shared/ui/windo
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
-import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
+import {
+  TABLA_DINAMICA_VACIA,
+  type TablaDinamicaResultado,
+} from '../../../../../../models/tabla-dinamica.model';
 import type { OpcionFiltro } from '../../../../../../models/filtros.model';
-import { CLAVE_DRILL_DOWN_SEGUROS, kpisDeFilaTotal, nodoDrillDownSeguros } from '../../models/seguros.model';
+import {
+  CLAVE_DRILL_DOWN_SEGUROS,
+  kpisDeFilaTotal,
+  nodoDrillDownSeguros,
+} from '../../models/seguros.model';
 import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
+import { NavegacionJerarquica } from '../../../../../../models/navegacion-jerarquica.model';
 import { SegurosService } from '../../services/seguros.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
@@ -44,6 +52,10 @@ export class SegurosOptativosComponent {
   private readonly servicio = inject(SegurosService);
   private readonly toast = inject(ToastService);
   private readonly selectorJerarquia = viewChild(HierSelectorComponent);
+  private readonly navegacion = new NavegacionJerarquica(
+    (nodo) => this.selectorJerarquia()?.seleccionarNodo(nodo) ?? false,
+    (nodo) => this.onNivelSeleccionado(nodo),
+  );
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
@@ -57,7 +69,7 @@ export class SegurosOptativosComponent {
   protected readonly periodo = signal('');
 
   /** Ruta de la raíz al nivel actual, para las migas (`hierBuffer` del legado). */
-  protected readonly rutaJerarquica = signal<HierarquiaNodo[]>([]);
+  protected readonly rutaJerarquica = this.navegacion.ruta;
 
   /** `RNOMSUB` solo es clicable si alguna fila tiene a dónde bajar. */
   protected readonly columnasDrillDown = computed(() =>
@@ -106,50 +118,49 @@ export class SegurosOptativosComponent {
   }
 
   /** Clic en una celda: solo `RNOMSUB` baja de nivel, como `ddHier` del legado. */
-  protected onCeldaSeleccionada({ clave, fila }: { clave: string; fila: Record<string, unknown> }): void {
+  protected onCeldaSeleccionada({
+    clave,
+    fila,
+  }: {
+    clave: string;
+    fila: Record<string, unknown>;
+  }): void {
     if (clave !== CLAVE_DRILL_DOWN_SEGUROS) return;
     const nodo = this.nodoHijo(fila);
     if (!nodo) return;
 
     // Por el selector oculto, que emite el nodo y la ruta nueva. Si el nodo no está entre sus
     // opciones, se agrega a la ruta y se consulta igual.
-    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
-      this.rutaJerarquica.update((ruta) => [...ruta, nodo]);
-      this.onNivelSeleccionado(nodo);
-    }
+    this.navegacion.descender(nodo);
   }
 
   /** Clic en una miga: vuelve a ese nivel y recorta la ruta (`changeHier`). */
   protected volverANivel(indice: number): void {
-    const ruta = this.rutaJerarquica();
-    const nodo = ruta[indice];
-    if (!nodo || indice === ruta.length - 1) return;
-
-    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
-      this.rutaJerarquica.set(ruta.slice(0, indice + 1));
-      this.onNivelSeleccionado(nodo);
-    }
+    this.navegacion.volver(indice);
   }
 
   /** Nodo al que baja la fila; `null` si no baja o es el nivel que ya se está viendo. */
   private nodoHijo(fila: Record<string, unknown>): HierarquiaNodo | null {
     const nodo = nodoDrillDownSeguros(fila);
     const actual = this.nivelActual();
-    if (!nodo || (actual && nodo.tip_cod === actual.tip_cod && nodo.cod_rel === actual.cod_rel)) return null;
+    if (!nodo || (actual && nodo.tip_cod === actual.tip_cod && nodo.cod_rel === actual.cod_rel))
+      return null;
     return nodo;
   }
 
   private cargar(nodo: HierarquiaNodo, periodo: string): Subscription {
     this.cargando.set(true);
-    return this.servicio.segurosOptativos({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined).subscribe({
-      next: (tabla) => {
-        this.tabla.set(tabla);
-        this.cargando.set(false);
-      },
-      error: () => {
-        this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
-        this.cargando.set(false);
-      },
-    });
+    return this.servicio
+      .segurosOptativos({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, periodo || undefined)
+      .subscribe({
+        next: (tabla) => {
+          this.tabla.set(tabla);
+          this.cargando.set(false);
+        },
+        error: () => {
+          this.toast.error('No se pudo cargar el reporte', 'Inténtalo de nuevo en unos segundos.');
+          this.cargando.set(false);
+        },
+      });
   }
 }

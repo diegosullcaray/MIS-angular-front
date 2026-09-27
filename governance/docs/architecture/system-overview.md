@@ -17,6 +17,8 @@ Componente -> servicio del modulo -> fachada de reportes -> Winder/Ant -> HttpCl
 `core/` no contiene ninguna carpeta con nombre de pantalla: lo que solo usa una
 vive con ella. Preferencias y recientes estuvieron en `core/` hasta 2026-09-08 y
 bajaron al layout y al modulo Home respectivamente.
+El modulo `pages/full-pages/error/` contiene el catalogo, el servicio y el interceptor
+de errores HTTP; `app.config.ts` registra ese interceptor para toda la aplicacion.
 
 ## Shell y navegacion
 

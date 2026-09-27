@@ -7,10 +7,14 @@ import { WindowPanelComponent } from '../../../../../../../../../shared/ui/windo
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../utils/hier-selector-error.util';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
-import { TABLA_DINAMICA_VACIA, type TablaDinamicaResultado } from '../../../../../../models/tabla-dinamica.model';
+import {
+  TABLA_DINAMICA_VACIA,
+  type TablaDinamicaResultado,
+} from '../../../../../../models/tabla-dinamica.model';
 import { VinculacionCarteraService } from '../../services/vinculacion-cartera.service';
 import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
 import { nodoDeFila } from '../../../../../../utils/nodo-fila.util';
+import { NavegacionJerarquica } from '../../../../../../models/navegacion-jerarquica.model';
 import type { ColumnaDinamica } from '../../../../../../../../../shared/ui/tablas/models/tabla-dinamica.model';
 
 /**
@@ -23,13 +27,24 @@ import type { ColumnaDinamica } from '../../../../../../../../../shared/ui/tabla
 @Component({
   selector: 'app-vinculacion-cartera',
   standalone: true,
-  imports: [DecimalPipe, HierSelectorComponent, TablaDinamicaComponent, EmptyStateComponent, WindowPanelComponent, RutaJerarquicaComponent],
+  imports: [
+    DecimalPipe,
+    HierSelectorComponent,
+    TablaDinamicaComponent,
+    EmptyStateComponent,
+    WindowPanelComponent,
+    RutaJerarquicaComponent,
+  ],
   templateUrl: './vinculacion-cartera.component.html',
 })
 export class VinculacionCarteraComponent {
   private readonly servicio = inject(VinculacionCarteraService);
   private readonly toast = inject(ToastService);
   private readonly selectorJerarquia = viewChild(HierSelectorComponent);
+  private readonly navegacion = new NavegacionJerarquica(
+    (nodo) => this.selectorJerarquia()?.seleccionarNodo(nodo) ?? false,
+    (nodo) => this.onNivelSeleccionado(nodo),
+  );
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
@@ -40,7 +55,7 @@ export class VinculacionCarteraComponent {
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   /** Ruta de la raíz al nivel actual, para las migas. */
-  protected readonly rutaJerarquica = signal<HierarquiaNodo[]>([]);
+  protected readonly rutaJerarquica = this.navegacion.ruta;
 
   /** Columna con el nombre de la fila (la primera): es la que baja de nivel. */
   private readonly claveEtiqueta = computed(() => primeraHoja(this.tabla().columnas)?.key ?? null);
@@ -79,22 +94,12 @@ export class VinculacionCarteraComponent {
 
     // Por el selector oculto, que emite el nodo y la ruta nueva. Si el nodo no está entre sus
     // opciones, se agrega a la ruta y se consulta igual.
-    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
-      this.rutaJerarquica.update((ruta) => [...ruta, nodo]);
-      this.onNivelSeleccionado(nodo);
-    }
+    this.navegacion.descender(nodo);
   }
 
   /** Clic en una miga (o "Volver" en móvil): vuelve a ese nivel. */
   protected volverANivel(indice: number): void {
-    const ruta = this.rutaJerarquica();
-    const nodo = ruta[indice];
-    if (!nodo || indice === ruta.length - 1) return;
-
-    if (!this.selectorJerarquia()?.seleccionarNodo(nodo)) {
-      this.rutaJerarquica.set(ruta.slice(0, indice + 1));
-      this.onNivelSeleccionado(nodo);
-    }
+    this.navegacion.volver(indice);
   }
 
   /**
@@ -106,9 +111,12 @@ export class VinculacionCarteraComponent {
     const clave = this.claveEtiqueta() ?? undefined;
     const nodo =
       nodoDeFila(fila, clave) ??
-      (clave ? (this.selectorJerarquia()?.opcionPorDescripcion(String(fila[clave] ?? '')) ?? null) : null);
+      (clave
+        ? (this.selectorJerarquia()?.opcionPorDescripcion(String(fila[clave] ?? '')) ?? null)
+        : null);
     const actual = this.nivelActual();
-    if (!nodo || (actual && nodo.tip_cod === actual.tip_cod && nodo.cod_rel === actual.cod_rel)) return null;
+    if (!nodo || (actual && nodo.tip_cod === actual.tip_cod && nodo.cod_rel === actual.cod_rel))
+      return null;
     return nodo;
   }
 }

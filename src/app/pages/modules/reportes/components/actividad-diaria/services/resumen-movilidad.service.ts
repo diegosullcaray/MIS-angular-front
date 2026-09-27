@@ -4,22 +4,16 @@ import { BloqueReporteService, type NodoConsulta } from '../../../services/bloqu
 import type { ReporteBloqueUnico } from '../components/Captaciones/models/captaciones.model';
 import { COD_RESUMEN_MOVILIDAD } from '../constantes/resumen-movilidad.constantes';
 
-/**
- * Los dos "Resumen de Movilidad".
- *
- * No cuelgan de ningún sub-nodo del menú, así que viven como items directos de
- * "Actividad Diaria" y su service vive acá y no dentro de un módulo.
- *
- * Se parecen en el nombre y en nada más: cada uno sale de un host distinto y
- * eso cambia por completo cómo se piden.
- */
+/** Los dos Resúmenes de Movilidad usan hosts distintos: paginado y regular exacto. */
 @Injectable({ providedIn: 'root' })
 export class ResumenMovilidadService {
   private readonly bloques = inject(BloqueReporteService);
 
   /** Resumen de Movilidad Comercial. */
   comercial(nodo: NodoConsulta, pagina = 1): Observable<ReporteBloqueUnico> {
-    return this.bloques.regularPaginado(COD_RESUMEN_MOVILIDAD.comercial, nodo, {}, pagina).pipe(map((tabla1) => ({ tabla1 })));
+    return this.bloques
+      .regularPaginado(COD_RESUMEN_MOVILIDAD.comercial, nodo, {}, pagina)
+      .pipe(map((tabla1) => ({ tabla1 })));
   }
 
   /** Resumen de Movilidad · Recuperaciones (RESNMOVR_01) */

@@ -5,7 +5,12 @@ import {
   provideAppInitializer,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding, withRouterConfig, withViewTransitions } from '@angular/router';
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withRouterConfig,
+  withViewTransitions,
+} from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { providePrimeNG } from 'primeng/config';
@@ -15,7 +20,7 @@ import { provideOAuthClient } from 'angular-oauth2-oidc';
 import { APP_ROUTES } from './app.routes';
 import { MisTheme } from './theme/mis-theme';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
+import { httpErrorInterceptor } from './pages/full-pages/error/interceptors/http-error.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AuthService } from './pages/full-pages/auth/service/auth.service';
 import { PreferenciasService } from './pages/full-pages/layout/services/preferencias.service';
@@ -34,13 +39,19 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
 
     // `onSameUrlNavigation: 'reload'` evita que volver a la misma ruta congele la pantalla.
-    provideRouter(APP_ROUTES, withComponentInputBinding(), withRouterConfig({ onSameUrlNavigation: 'reload' }),
+    provideRouter(
+      APP_ROUTES,
+      withComponentInputBinding(),
+      withRouterConfig({ onSameUrlNavigation: 'reload' }),
       // Transición al cambiar de módulo o reporte; el CSS vive en base/animations.css.
-      withViewTransitions({ skipInitialTransition: true })
+      withViewTransitions({ skipInitialTransition: true }),
     ),
 
     // Fetch API nativa (compatible con Zoneless)
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, httpErrorInterceptor, loadingInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor, httpErrorInterceptor, loadingInterceptor]),
+    ),
 
     // Cliente OAuth (Google Sign-In) usado por AuthService
     provideOAuthClient(),

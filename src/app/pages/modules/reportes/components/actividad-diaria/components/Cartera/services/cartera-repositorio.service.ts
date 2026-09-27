@@ -1,15 +1,27 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
-import { BloqueReporteService, type NodoConsulta } from '../../../../../services/bloque-reporte.service';
+import {
+  BloqueReporteService,
+  type NodoConsulta,
+} from '../../../../../services/bloque-reporte.service';
 import { ModReportesService } from '../../../../../../../../core/winder/instances/mod-reportes.service';
-import { filasDeResultado, resultadoCrudo, tablaDeResultado } from '../../../../../utils/reportes-mapeo.util';
+import {
+  filasDeResultado,
+  resultadoCrudo,
+  tablaDeResultado,
+} from '../../../../../utils/reportes-mapeo.util';
 import { aplicarEstilosEstructuraDesembolsos } from '../../../../actividad-mensual/utils/estructura-desembolsos.util';
-import { COD_CARTERA_REPO, PARAMS_RANKING_COMERCIAL, TABLAS_GESTION_COMERCIAL } from '../constantes/cartera.constantes';
+import {
+  COD_CARTERA_REPO,
+  PARAMS_RANKING_COMERCIAL,
+  TABLAS_GESTION_COMERCIAL,
+} from '../constantes/cartera.constantes';
 import {
   columnasVisibles,
   conColumnasSemaforo,
   conSemaforos,
   graficoGestionComercial,
+  metaAgricolaDe,
   tarjetasCmgCartera,
   totalesAgro,
 } from '../utils/cartera-mapeo.util';
@@ -17,10 +29,13 @@ import { COLUMNAS_RANKING_COMERCIAL } from '../models/ranking-comercial.columnas
 import { GRAFICOS_AGRICOLA } from '../models/cartera-agricola.model';
 import { detalleAgricolaDe } from '../utils/cartera-mapeo.util';
 import { GRAFICOS_GESTION_COMERCIAL, kpisDeFilaTotal } from '../models/gestion-comercial.model';
-import type { TablaDinamicaResultado, TablaRegularResultadoRaw } from '../../../../../models/tabla-dinamica.model';
+import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { ColumnaMonitor } from '../models/monitor-inteligencia.model';
 import type { CmgCarteraResultado } from '../models/cmg-cartera.model';
-import type { CarteraAgricolaResultado, DetalleAgricolaResultado } from '../models/cartera-agricola.model';
+import type {
+  CarteraAgricolaResultado,
+  DetalleAgricolaResultado,
+} from '../models/cartera-agricola.model';
 import type { GestionComercialResultado } from '../models/gestion-comercial.model';
 import type { OpcionFiltro } from '../../../../../../../../shared/ui/formularios/opcion-filtro.model';
 
@@ -37,38 +52,46 @@ export class CarteraRepositorioService {
   /** Estructura de Desembolsos, con la coloración condicional de la fila de distribución. */
   estructuraDesembolsos(nodo: NodoConsulta): Observable<TablaDinamicaResultado> {
     return this.bloques
-      .tablaRegularCon(COD_CARTERA_REPO.estructuraDesembolsos, { ...this.paramsNodo(nodo), fec: this.bloques.fecha() })
+      .tablaRegularCon(COD_CARTERA_REPO.estructuraDesembolsos, {
+        ...this.paramsNodo(nodo),
+        fec: this.bloques.fecha(),
+      })
       .pipe(map(aplicarEstilosEstructuraDesembolsos));
   }
 
   /** Cartera Agrícola · Cultivos. Las tarjetas del mes anterior salen de `meta1[0]`. */
   carteraAgricola(nodo: NodoConsulta, periodo?: string): Observable<CarteraAgricolaResultado> {
     const fec = periodo || this.bloques.fecha();
-    return this.reportes.getRegularTableResult(COD_CARTERA_REPO.carteraAgricola, { ...this.paramsNodo(nodo), fec }).pipe(
-      map((r) => {
-        const resultado = resultadoCrudo(r);
-        const filas = filasDeResultado(resultado);
-        const meta = parseMeta(resultado);
-        return {
-          tabla: tablaDeResultado(resultado),
-          totales: totalesAgro(filas[0] ?? {}, meta?.[0] ?? {}),
-        };
-      }),
-    );
+    return this.reportes
+      .getRegularTableResult(COD_CARTERA_REPO.carteraAgricola, { ...this.paramsNodo(nodo), fec })
+      .pipe(
+        map((r) => {
+          const resultado = resultadoCrudo(r);
+          const filas = filasDeResultado(resultado);
+          const meta = metaAgricolaDe(resultado);
+          return {
+            tabla: tablaDeResultado(resultado),
+            totales: totalesAgro(filas[0] ?? {}, meta?.[0] ?? {}),
+          };
+        }),
+      );
   }
 
   /**
    * Los cuatro gráficos del detalle por cultivo. Solo dos de ellos usan sus
    * filas: son los que abren el modal de detalle (el `detailDataMap` del legado).
    */
-  detalleGraficosAgricola(nodo: NodoConsulta, periodo?: string): Observable<DetalleAgricolaResultado> {
+  detalleGraficosAgricola(
+    nodo: NodoConsulta,
+    periodo?: string,
+  ): Observable<DetalleAgricolaResultado> {
     const fec = periodo || this.bloques.fecha();
     const params = { ...this.paramsNodo(nodo), fec };
-    const bloques = GRAFICOS_AGRICOLA.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
-
-    return forkJoin(bloques).pipe(
-      map(detalleAgricolaDe),
+    const bloques = GRAFICOS_AGRICOLA.map((g) =>
+      this.reportes.getRegularTableResult(g.codRep, params),
     );
+
+    return forkJoin(bloques).pipe(map(detalleAgricolaDe));
   }
 
   /** Opciones del selector de periodo de Gestión Comercial. */
@@ -86,10 +109,17 @@ export class CarteraRepositorioService {
    * la misma fecha, así que se piden juntos. La fecha es la del selector de
    * periodo; si no llega, la de corte del usuario.
    */
-  gestionComercial(nodo: NodoConsulta, fecha = this.bloques.fecha()): Observable<GestionComercialResultado> {
+  gestionComercial(
+    nodo: NodoConsulta,
+    fecha = this.bloques.fecha(),
+  ): Observable<GestionComercialResultado> {
     const params = { ...this.paramsNodo(nodo), fecha };
-    const tablas = TABLAS_GESTION_COMERCIAL.map((c) => this.reportes.getRegularTableResult(c, params));
-    const graficos = GRAFICOS_GESTION_COMERCIAL.map((g) => this.reportes.getRegularTableResult(g.codRep, params));
+    const tablas = TABLAS_GESTION_COMERCIAL.map((c) =>
+      this.reportes.getRegularTableResult(c, params),
+    );
+    const graficos = GRAFICOS_GESTION_COMERCIAL.map((g) =>
+      this.reportes.getRegularTableResult(g.codRep, params),
+    );
 
     return forkJoin([...tablas, ...graficos]).pipe(
       map((respuestas) => {
@@ -100,7 +130,9 @@ export class CarteraRepositorioService {
           varSaldoVigente: tablaDeResultado(r02),
           varClientesStock: tablaDeResultado(r03),
           kpis: kpisDeFilaTotal(filas),
-          graficos: rGraficos.map((r, i) => graficoGestionComercial(r, GRAFICOS_GESTION_COMERCIAL[i])),
+          graficos: rGraficos.map((r, i) =>
+            graficoGestionComercial(r, GRAFICOS_GESTION_COMERCIAL[i]),
+          ),
         };
       }),
     );
@@ -150,7 +182,12 @@ export class CarteraRepositorioService {
     const params = { ...PARAMS_RANKING_COMERCIAL, fecha: this.bloques.fecha() };
     return this.bloques
       .tablaRegularCon(COD_CARTERA_REPO.rankingComercial, params)
-      .pipe(map(({ filas }) => ({ columnas: COLUMNAS_RANKING_COMERCIAL, filas: filas.map(conSemaforos) })));
+      .pipe(
+        map(({ filas }) => ({
+          columnas: COLUMNAS_RANKING_COMERCIAL,
+          filas: filas.map(conSemaforos),
+        })),
+      );
   }
 
   /**
@@ -165,7 +202,9 @@ export class CarteraRepositorioService {
         const crudo = resultadoCrudo(r)?.headers;
         if (!crudo) return [];
         const parseado = JSON.parse(crudo) as ColumnaMonitor[] | ColumnaMonitor[][];
-        return Array.isArray(parseado[0]) ? (parseado[0] as ColumnaMonitor[]) : (parseado as ColumnaMonitor[]);
+        return Array.isArray(parseado[0])
+          ? (parseado[0] as ColumnaMonitor[])
+          : (parseado as ColumnaMonitor[]);
       }),
     );
   }
@@ -173,10 +212,4 @@ export class CarteraRepositorioService {
   private paramsNodo(nodo: NodoConsulta): Record<string, unknown> {
     return { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel };
   }
-}
-
-/** `meta1` llega serializado en unos bloques y ya parseado en otros. */
-function parseMeta(resultado: TablaRegularResultadoRaw | undefined): Record<string, unknown>[] | undefined {
-  const meta = resultado?.meta1;
-  return (typeof meta === 'string' ? JSON.parse(meta) : meta) as Record<string, unknown>[] | undefined;
 }
