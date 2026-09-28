@@ -165,7 +165,8 @@ export function crearSuperPlusDefault(): ItemSuperPlus[] {
     val: 0,
     show: false,
     enab: false,
-    estado: 1,
+    // `state` fijo de `super-plus.util.ts` (legado): Retención es la única caja gris (`bg3`).
+    estado: id === 'ret' ? 0 : 1,
     parametros: PARAMETROS_DETALLE_SUPER_PLUS[id] ?? { comp: 1, req: 'getProd', card: false },
   }));
 }
@@ -239,7 +240,9 @@ export const ETIQUETAS_DETALLE_VARIABLE: Record<number, EtiquetasDetalle> = {
 
 /** `typ:'sp'` — solo `prod`(1) y `tas`(6) tienen tarjetas reales en el legado (el resto de super-plus con detalle nunca llegan a habilitarse para ningún perfil). */
 export const ETIQUETAS_DETALLE_SUPER_PLUS: Record<number, EtiquetasDetalle> = {
-  1: { tarjetas: ['Productividad', 'Var. Mensual', 'Meta'], nota: NOTA_ZONIFICACION },
+  1: { titulo: 'Productividad', tarjetas: ['Productividad', 'Var. Mensual', 'Meta'], nota: NOTA_ZONIFICACION },
+  // `detalleConfig.items2[5]` del legado: el detalle de Tasas se titula "Gestión de Precios" y no lleva tarjetas.
+  6: { titulo: 'Gestión de Precios', nota: NOTA_ZONIFICACION },
 };
 
 export function crearCalculadoraDefault(): CalculadoraConfig {

@@ -119,17 +119,17 @@
               <td [class]="fila.cod_bdd !== undefined && fila.cod_bdd !== null ? 'underline font-medium text-[var(--mis-secondary)] hover:text-[var(--mis-secondary-hover)]' : 'font-medium'">
                 {{ fila.des_var }}
               </td>
-              <td class="text-right font-medium">{{ formatearCelda(fila.f1, fila.fmt) }}</td>
-              <td class="text-right font-semibold">{{ formatearCelda(fila.f2, fila.fmt) }}</td>
-              <td class="text-right font-semibold" [class]="(fila.diff ?? 0) < 0 ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-success)]'">{{ formatearCelda(fila.diff, fila.fmt) }}</td>
+              <td class="text-right font-medium" [style.color]="colorCelda(fila, fila.f1)">{{ formatearCelda(fila.f1, fila.fmt) }}</td>
+              <td class="text-right font-semibold" [style.color]="colorCelda(fila, fila.f2)">{{ formatearCelda(fila.f2, fila.fmt) }}</td>
+              <td class="text-right font-semibold" [style.color]="colorCelda(fila, fila.diff)">{{ formatearCelda(fila.diff, fila.fmt) }}</td>
             </tr>
             @if (fila.cod_bdd !== undefined && fila.cod_bdd !== null && bloqueExpandido() === fila.cod_bdd) {
               @for (sub of subVars(fila.cod_bdd); track sub.des_var) {
                 <tr class="text-[12px]" style="background: var(--mis-panel-bg);">
                   <td class="pl-6 text-[var(--mis-text-secondary)]">{{ sub.des_var }}</td>
-                  <td class="text-right">{{ formatearCelda(sub.f1, sub.fmt) }}</td>
-                  <td class="text-right font-medium">{{ formatearCelda(sub.f2, sub.fmt) }}</td>
-                  <td class="text-right font-medium" [class]="(sub.diff ?? 0) < 0 ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-success)]'">{{ formatearCelda(sub.diff, sub.fmt) }}</td>
+                  <td class="text-right" [style.color]="colorCelda(sub, sub.f1)">{{ formatearCelda(sub.f1, sub.fmt) }}</td>
+                  <td class="text-right font-medium" [style.color]="colorCelda(sub, sub.f2)">{{ formatearCelda(sub.f2, sub.fmt) }}</td>
+                  <td class="text-right font-medium" [style.color]="colorCelda(sub, sub.diff)">{{ formatearCelda(sub.diff, sub.fmt) }}</td>
                 </tr>
               }
             }
@@ -155,7 +155,7 @@
               <td class="underline font-medium text-[var(--mis-secondary)] hover:text-[var(--mis-secondary-hover)]" (click)="drillRanking(fila)">{{ fila.des_rel }}</td>
               <td class="text-right font-semibold">{{ formatearRanking(fila.var_real, formatosRanking().real) }}</td>
               <td class="text-right font-medium">{{ formatearRanking(fila.met, formatosRanking().meta) }}</td>
-              <td class="text-right font-semibold" [class]="fila.diff < 0 ? 'text-[var(--mis-danger)]' : 'text-[var(--mis-success)]'">{{ formatearRanking(fila.diff, formatosRanking().distancia) }}</td>
+              <td class="text-right font-semibold" [style.color]="colorDistancia(fila.diff)">{{ formatearRanking(fila.diff, formatosRanking().distancia) }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">

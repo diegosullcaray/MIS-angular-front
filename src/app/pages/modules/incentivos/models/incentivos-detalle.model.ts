@@ -1,6 +1,8 @@
 /** Etiquetas de las tarjetas KPI y notas al pie del diálogo de detalle. */
 export interface EtiquetasDetalle {
-  tarjetas: [string, string, string];
+  /** Título del diálogo — `item.title` de `detalleConfig` en el legado. */
+  titulo?: string;
+  tarjetas?: [string, string, string];
   nota?: string;
 }
 
@@ -19,6 +21,8 @@ export interface CardDetalleVariable {
 /** Fila de la tabla de indicadores del detalle. */
 export interface FilaVariableDetalle {
   des_var: string;
+  /** Clave de la fila (`tas_diff`, …): el legado solo pinta en magenta la distancia de tasas negativa. */
+  cod_var?: string;
   cod_bdd?: number;
   cod_block: number;
   fmt?: string;

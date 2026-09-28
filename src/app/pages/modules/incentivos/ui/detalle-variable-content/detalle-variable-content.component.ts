@@ -118,12 +118,13 @@ export class DetalleVariableContentComponent {
       next: (resultado) => {
         if (resultado) {
           const perf = this.incentivos.perfil();
+          // `init()` del legado: un asesor se ve como "Asesor: {nombre}"; otro nivel, con su etiqueta y su descripción.
           this.pila.set([
             {
               tipCod: nivel.tipCod,
               codRel: nivel.codRel,
-              desRel: perf?.nombre ?? '',
-              desLab: perf?.descripcionNivel ?? 'Perfil',
+              desRel: (nivel.tipCod === 1 ? perf?.nombre : perf?.descripcionNivel) ?? '',
+              desLab: this.etiquetaNivel(nivel.tipCod),
               resultado,
             },
           ]);
@@ -217,19 +218,35 @@ export class DetalleVariableContentComponent {
     return this.formatearValorTarjeta(card.met);
   }
 
-  /** Celda de la tabla de indicadores — `ctFn2` del legado: sin `fmt` la fila se muestra como entero, no con decimales. */
+  /**
+   * Celda de la tabla de indicadores — `ctFn2` del legado: el `fmt` de cada fila es el formato de
+   * `dynamicFormatPipe` (`integer`, `decimal`, `percent`, `pbs`); sin `fmt`, entero. Las tasas llegan
+   * como `percent` (dos decimales fijos) y su distancia como `pbs` (×10.000): antes `pbs` caía en
+   * entero y la distancia se veía como 0.
+   */
   protected formatearCelda(val: number | undefined, fmt?: string): string {
-    if (val === undefined || val === null) return '--';
-    if (fmt === 'p' || fmt === 'percent') return `${this.numero(val * 100, 0, 1)}%`;
+    if (val === undefined || val === null) return '';
+    if (fmt === 'p' || fmt === 'percent') return `${this.numero(val * 100, 2, 2)}%`;
+    if (fmt === 'pbs') return `${this.numero(val * 10000, 0, 0)} pbs`;
     if (fmt === 'pen') return `S/. ${this.numero(val, 0, 0)}`;
     if (fmt === 'd' || fmt === 'decimal') return this.numero(val, 0, 2);
     return this.numero(val, 0, 0);
   }
 
+  /** `csFn2` del legado: en la tabla de indicadores solo la fila `tas_diff` negativa va en magenta. */
+  protected colorCelda(fila: FilaVariableDetalle, val: number | undefined): string | null {
+    return fila.cod_var === 'tas_diff' && (val ?? 0) < 0 ? 'var(--mis-inc-negativo)' : null;
+  }
+
+  /** `csFn` del legado: en el ranking la distancia negativa va en magenta; la positiva, sin color. */
+  protected colorDistancia(val: number | undefined): string | null {
+    return (val ?? 0) < 0 ? 'var(--mis-inc-negativo)' : null;
+  }
+
   /** Celda de la tabla de ranking, según el formato que le toca a esa columna. */
   protected formatearRanking(val: number | undefined, formato: FormatoRanking): string {
     if (val === undefined || val === null) return '--';
-    if (formato === 'porcentaje') return `${this.numero(val * 100, 0, 2)}%`;
+    if (formato === 'porcentaje') return `${this.numero(val * 100, 2, 2)}%`;
     if (formato === 'decimal') return this.numero(val, 0, 2);
     // Puntos básicos: la diferencia de tasas se lee ×10.000 (0,0125 → 125 pbs).
     if (formato === 'pbs') return `${this.numero(val * 10000, 0, 0)} pbs`;
