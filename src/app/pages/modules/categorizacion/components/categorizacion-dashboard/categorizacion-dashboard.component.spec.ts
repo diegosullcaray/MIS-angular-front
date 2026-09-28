@@ -154,7 +154,7 @@ describe('CategorizacionDashboardComponent', () => {
     const hijos = Array.from(fila!.children).map((c) => c.getAttribute('aria-label') ?? c.tagName.toLowerCase());
     expect(hijos).toEqual(['Perfil del asesor', 'Estado Requisitos', 'div']);
     // Estado Requisitos es la columna angosta; la imagen guía, la más ancha.
-    expect(fila!.className).toContain('xl:grid-cols-[minmax(0,4fr)_minmax(14rem,2.4fr)_minmax(0,7fr)]');
+    expect(fila!.className).toContain('xl:grid-cols-[minmax(0,3.4fr)_minmax(15rem,2fr)_minmax(0,8fr)]');
   });
 
   it('Estado Requisitos va en una sola columna: cada fila con su descripción y un Tag al costado', () => {
