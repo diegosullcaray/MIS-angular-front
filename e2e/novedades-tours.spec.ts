@@ -16,7 +16,6 @@ const GUIAS = [
   { titulo: 'Encuentra un reporte sin recorrer menús', pasos: 5, conClic: /Abre la búsqueda/ },
   // En el celular son 8: el paso del breadcrumb no aplica (el shell lo oculta).
   { titulo: 'Navega por sistemas y sus paneles', pasos: 9, conClic: /Abre un sistema|Entra a una carpeta|Abre un reporte/ },
-  { titulo: 'Personaliza tu espacio de trabajo', pasos: 6, conClic: /Abre tu perfil|Entra a Configuración/ },
 ] as const;
 
 async function abrirGuia(page: Page, titulo: string): Promise<void> {

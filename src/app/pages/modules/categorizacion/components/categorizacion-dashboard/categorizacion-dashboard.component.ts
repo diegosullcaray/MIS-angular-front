@@ -46,6 +46,8 @@ export class CategorizacionDashboardComponent implements OnInit {
   protected readonly cargando = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly perfil = signal<PerfilColaborador | null>(null);
+  /** El backend respondió sin datos para el colaborador: estado vacío, no error. */
+  protected readonly sinDatos = signal<string | null>(null);
   protected readonly requisitos = signal<RequisitoTarjeta[]>([]);
   protected readonly comisiones = signal<ComisionTarjeta[]>([]);
   protected readonly tipoComision = signal<'individual' | 'grupal'>('grupal');
@@ -131,8 +133,9 @@ export class CategorizacionDashboardComponent implements OnInit {
 
     this.categorizacion.obtenerDetalle(codBt).subscribe({
       next: (detalle) => {
+        this.sinDatos.set(null);
         if (!detalle) {
-          this.error.set(`No se encontraron datos para el colaborador: ${codBt}`);
+          this.sinDatos.set(codBt);
           this.perfil.set(null);
           this.requisitos.set([]);
           this.comisiones.set([]);

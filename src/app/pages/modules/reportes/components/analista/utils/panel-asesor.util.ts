@@ -1,4 +1,4 @@
-import type { ColumnaReporte, TablaReporteResultado } from '../../../models/tabla-reporte.model';
+import { TABLA_PENDIENTE, type ColumnaReporte, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import type {
   BloquePanelAsesor,
   ClaveTabla,
@@ -7,7 +7,7 @@ import type {
   ResultadoPanelAsesor,
 } from '../models/panel-asesor.model';
 
-const CLAVES_TABLA: readonly ClaveTabla[] = ['tabla1', 'tabla2', 'tabla3', 'tabla4'];
+const CLAVES_TABLA: readonly ClaveTabla[] = ['tabla1', 'tabla2', 'tabla3', 'tabla4', 'tabla5'];
 
 /** Grupos ordenados por el tráfico total de sus reportes, y cada reporte por su propio tráfico. */
 export function gruposOrdenados(
@@ -53,6 +53,8 @@ export function bloquesDe(
 /** Vacío real: ni filas, ni series con datos, ni KPI. Un error nunca llega acá. */
 export function sinDatos(resultado: ResultadoPanelAsesor): boolean {
   const tablas = CLAVES_TABLA.map((c) => resultado[c]).filter((t) => t !== undefined);
+  // Una tabla que todavía no respondió puede traer filas: no es "sin datos".
+  if (tablas.some((t) => t === TABLA_PENDIENTE)) return false;
   const hayFilas = tablas.some((t) => t.body.length > 0);
   const haySeries = (resultado.graficos ?? []).some((g) =>
     g.series.some((s) => s.datos.some((d) => d !== null)),

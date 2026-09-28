@@ -95,6 +95,16 @@ describe('RecientesService', () => {
     );
   });
 
+  it('una categoría de Ranking Kaypacha no se anota con su id: primero el módulo, luego su nombre', async () => {
+    await ir('/app/ranking-k/categoria/12');
+    expect(preferencias.recientes()[0]).toEqual(expect.objectContaining({ ruta: '/app/ranking-k/categoria/12', titulo: 'Ranking Kaypacha' }));
+
+    preferencias.renombrarReporteReciente('/app/ranking-k/categoria/12', 'Colocaciones', 'Ranking Kaypacha');
+    expect(preferencias.recientes()[0]).toEqual(
+      expect.objectContaining({ ruta: '/app/ranking-k/categoria/12', titulo: 'Colocaciones', categoria: 'Ranking Kaypacha' }),
+    );
+  });
+
   it('no duplica un reporte revisitado: lo devuelve al frente', async () => {
     await ir('/app/actividades/dest-credito');
     await ir('/app/actividades/regprosp-corr');

@@ -25,7 +25,7 @@ Si ese módulo hubiera importado los servicios de `reportes`, habría roto la re
 - **A favor:** un único dueño de cada consulta. Corregir un reporte corrige también el panel.
 - **Costo:** el inventario de módulos no ve esta ruta, porque solo sigue `loadChildren`. Por eso el generador lista aparte las pantallas enlazadas directo desde `app.routes.ts`.
 - **Límite:** las acciones que el panel no replica (por ejemplo, "Nuevo prospecto") se hacen en la pantalla original del reporte, desde Reportes › Analista. El panel no enlaza a ella (ver enmienda).
-- **Riesgo:** si un reporte cambia su forma de resultado, el panel lo muestra con las mismas tablas genéricas. Las pruebas de `panel-asesor-consultas.service.spec.ts` comprueban que los 17 códigos llegan a Ant con `tip_cod: 2` y el DNI del asesor.
+- **Riesgo:** si un reporte cambia su forma de resultado, el panel lo muestra con las mismas tablas genéricas. Las pruebas de `panel-asesor-consultas.service.spec.ts` comprueban que todos los códigos del panel llegan a Ant con `tip_cod: 2` y el DNI del asesor.
 
 ## Enmienda (2026-09-27): panel pensado para móvil
 
@@ -35,6 +35,15 @@ A pedido de negocio, el panel se simplificó para el asesor en el celular:
 - Categorías y reportes van en pestañas lineales con desplazamiento lateral, en todos los anchos.
 - Se quitó el enlace "Abrir reporte completo" y la cabecera de cada reporte: el chip activo ya lo nombra. El nombre de cada tabla va en un chip.
 - Consecuencia: las acciones que el panel no replica quedan solo en la pantalla original del reporte, dentro de Reportes › Analista.
+
+## Enmienda (2026-09-28): menos reportes y vista consolidada de clientes
+
+A pedido de negocio (tareas de gobierno de septiembre), el panel se acotó:
+
+- Se dieron de baja del panel Captaciones, Proyección Diaria, Prospecto Corresponsal, Cero y Una Cuota, Inversión y Stock de Mora y la pestaña completa "Movilidad y gestión" (Planilla Movilidad, Resumen Movilidad, Desempeño Social). Sus pantallas del menú (Reportes › Analista) siguen en pie; solo salen del panel.
+- Grupos PDM, Clientes Nuevos y Recurrentes y Clientes Producto se ven juntos en una vista consolidada ("Clientes y Grupos PDM", código interno `PANEL_CLIENTES`). Cada tabla carga por su cuenta.
+- En la pestaña "Cartera y clientes" las tablas van en dos columnas desde 1024 px; debajo, en una.
+- Quedan 7 entradas en tres pestañas: Cartera y clientes, Colocación, Recuperación.
 
 ## Evidencia
 

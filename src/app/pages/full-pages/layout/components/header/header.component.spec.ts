@@ -348,24 +348,15 @@ describe('HeaderComponent', () => {
     ).toBeNull();
   });
 
-  describe('Configuración', () => {
-    it('el menú de perfil ofrece "Configuración" a cualquier usuario, sin depender de alternates', async () => {
+  describe('Configuración (deshabilitada)', () => {
+    it('el menú de perfil ya no ofrece "Configuración" ni monta su diálogo', async () => {
       const fixture = await crear('/app/dashboard');
       fixture.componentInstance['toggleDropdown']();
       fixture.detectChanges();
 
-      expect((fixture.nativeElement as HTMLElement).textContent).toContain('Configuración');
-    });
-
-    it('abrirConfiguracion() cierra el dropdown y abre el diálogo de configuración', async () => {
-      const fixture = await crear('/app/dashboard');
-      const instancia = fixture.componentInstance;
-      instancia['toggleDropdown']();
-
-      instancia['abrirConfiguracion']();
-
-      expect(instancia['dropdownOpen']()).toBe(false);
-      expect(instancia['configuracionOpen']()).toBe(true);
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('.perfil-menu')?.textContent).not.toContain('Configuración');
+      expect(el.querySelector('app-configuracion-dialog')).toBeNull();
     });
   });
 

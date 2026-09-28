@@ -132,10 +132,12 @@
           <p class="perfil-email">{{ shell.usuarioActivo()?.email }}</p>
         </div>
 
-        <button class="perfil-item" role="menuitem" (click)="abrirConfiguracion()">
-          <ng-icon name="lucideSettings" size="15" />
-          <span class="perfil-item-nombre">Configuración</span>
-        </button>
+        @if (configuracionHabilitada) {
+          <button class="perfil-item" role="menuitem" (click)="abrirConfiguracion()">
+            <ng-icon name="lucideSettings" size="15" />
+            <span class="perfil-item-nombre">Configuración</span>
+          </button>
+        }
 
         <button
           class="perfil-item perfil-item--peligro"
@@ -255,9 +257,11 @@
     </div>
   </p-dialog>
 
-  <!-- Configuración del sistema -->
-  <app-configuracion-dialog
-    [visible]="configuracionOpen()"
-    (visibleChange)="configuracionOpen.set($event)"
-  />
+  <!-- Configuración del sistema (apagada con FUNCIONES_HABILITADAS.configuracion) -->
+  @if (configuracionHabilitada) {
+    <app-configuracion-dialog
+      [visible]="configuracionOpen()"
+      (visibleChange)="configuracionOpen.set($event)"
+    />
+  }
 </div>

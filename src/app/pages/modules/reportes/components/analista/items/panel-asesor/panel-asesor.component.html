@@ -137,7 +137,8 @@
               descripcion="Este asesor no tiene datos en este reporte, o los datos podrían seguir procesándose."
             />
           } @else {
-            <div class="contenido-reporte">
+            <!-- En "Cartera y clientes" las tablas van de a dos por fila (en pantallas anchas). -->
+            <div class="contenido-reporte" [class.contenido-reporte--dos-columnas]="dosColumnas()">
               @if (e.resultado.kpiOperaciones || e.resultado.kpiMonto) {
                 <div class="kpis">
                   @for (k of kpisDesembolso(); track k.etiqueta) {
@@ -157,7 +158,7 @@
                 </div>
               }
               @for (b of bloques(reporte, e.resultado); track b.tabla) {
-                <app-bloque-panel [tabla]="e.resultado[b.tabla]!" [titulo]="b.titulo ?? ''" [chip]="b.chip ?? ''" [nota]="b.nota ?? []" [ajustarAncho]="true" />
+                <app-bloque-panel [tabla]="e.resultado[b.tabla]!" [titulo]="b.titulo ?? ''" [chip]="b.chip ?? ''" [nota]="b.nota ?? []" [ajustarAncho]="true" [cargando]="esPendiente(e.resultado[b.tabla])" />
               }
             </div>
           }

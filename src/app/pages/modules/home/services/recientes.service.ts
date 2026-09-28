@@ -55,6 +55,11 @@ export class RecientesService {
     }
 
     const ultimo = resto[resto.length - 1];
+    // Un id al final (`/ranking-k/categoria/12`) no es un título: se usa el del módulo hasta que
+    // la pantalla, ya con el nombre en mano, lo corrige con `renombrarReporteReciente`.
+    if (/^\d+$/.test(ultimo)) {
+      return { titulo: SEGMENTO_LABELS[resto[0]] ?? this.legible(resto[0]) };
+    }
     return {
       titulo: SEGMENTO_LABELS[ultimo] ?? this.legible(ultimo),
       categoria: SEGMENTO_LABELS[resto[0]] ?? this.legible(resto[0]),

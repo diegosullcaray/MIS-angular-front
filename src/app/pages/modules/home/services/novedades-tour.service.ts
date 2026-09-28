@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { DriverTourService } from '../../../../shared/services/driver-tour.service';
 import type { ModoEjemploNovedad, Novedad, PosePachi } from '../models/novedad.model';
+import { FUNCIONES_HABILITADAS } from '../../../full-pages/layout/constantes/funciones-habilitadas.constantes';
 
 /** Carpeta de las imágenes de Pachi, el personaje que guía los recorridos. */
 const MASCOTA = '/assets/images/fc/tours/mascota-';
@@ -369,9 +370,10 @@ export class NovedadesTourService {
   readonly ejemploActivo = signal<ModoEjemploNovedad>(null);
 
   /** Las novedades publicadas, de la más reciente a la más antigua. */
-  readonly novedades: readonly Novedad[] = [...NOVEDADES].sort((a, b) =>
-    b.fecha.localeCompare(a.fecha),
-  );
+  readonly novedades: readonly Novedad[] = NOVEDADES.filter(
+    // Sin "Configuración" en el menú, su recorrido no tendría a dónde llevar.
+    (n) => n.id !== 'configuracion-personal' || FUNCIONES_HABILITADAS.configuracion,
+  ).sort((a, b) => b.fecha.localeCompare(a.fecha));
 
   /** Cada `iniciar()` toma un turno: si llega otro mientras prepara, el anterior se descarta. */
   private turno = 0;

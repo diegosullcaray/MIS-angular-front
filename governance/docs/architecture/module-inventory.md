@@ -67,7 +67,7 @@ Ninguna de estas cifras mide paridad funcional ni cobertura de negocio.
 
 Concentra la mayor superficie funcional y compone rutas de subdominio desde archivos separados: Clientes, Cartera, Cartera en Mora, Captaciones, Portafolio Reasignado, Seguros, Campañas, Proyecciones, Tablero Digital, Reportes PDM, Actividad Mensual, Avance Comercial, Desarrollo Sostenible y Analista. Ver [`skills/mis-reportes-bloques`](../../skills/mis-reportes-bloques/SKILL.md).
 
-El subdominio Analista (`reportes/components/analista/`) aloja además el **panel unificado del asesor** (`items/panel-asesor/`): un panel que reúne los 17 reportes `rda/sectorista` por categoría, sin duplicar sus consultas. Se publica en `/app/analista/panel-unificado` directamente desde `app.routes.ts` ([ADR-0006](./adr/ADR-0006-panel-unificado-en-reportes.md)).
+El subdominio Analista (`reportes/components/analista/`) aloja además el **panel unificado del asesor** (`items/panel-asesor/`): un panel que reúne los reportes `rda/sectorista` más usados por categoría, sin duplicar sus consultas. Se publica en `/app/analista/panel-unificado` directamente desde `app.routes.ts` ([ADR-0006](./adr/ADR-0006-panel-unificado-en-reportes.md)).
 
 ## Restricciones de navegación
 
