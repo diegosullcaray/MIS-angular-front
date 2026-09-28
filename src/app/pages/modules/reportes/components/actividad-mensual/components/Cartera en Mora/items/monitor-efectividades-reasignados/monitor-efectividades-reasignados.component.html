@@ -19,12 +19,12 @@
       <p-tabpanels>
         <p-tabpanel value="monitor">
           <div class="mis-card p-3 overflow-x-auto">
-            <app-tabla-reporte [encabezados]="resumen().headers" [filas]="resumen().body" [cargando]="cargandoResumen()" />
+            <app-tabla-reporte [ajustarAncho]="true" [encabezados]="resumen().headers" [filas]="resumen().body" [cargando]="cargandoResumen()" />
           </div>
         </p-tabpanel>
 
         <p-tabpanel value="detalle">
-          <app-detalle-reasignado
+          <app-detalle-reasignado [ajustarAncho]="true"
             [tabla]="detalle()"
             [cargando]="cargandoDetalle()"
             [total]="totalDetalle()"

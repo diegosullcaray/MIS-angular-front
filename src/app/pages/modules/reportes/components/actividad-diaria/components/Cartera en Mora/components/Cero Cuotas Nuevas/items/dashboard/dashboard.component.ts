@@ -2,7 +2,7 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { HierSelectorComponent } from '../../../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { GraficoMixtoComponent } from '../../../../../../../../../../../shared/ui/graficos/grafico-mixto/grafico-mixto.component';
 import { EmptyStateComponent } from '../../../../../../../../../../../shared/ui/empty-state/empty-state.component';
-import { ListSkeletonComponent } from '../../../../../../../../../../../shared/ui/list-skeleton/list-skeleton.component';
+import { EsqueletoGraficoComponent } from '../../../../../../../../../../../shared/ui/graficos/esqueleto-grafico/esqueleto-grafico.component';
 import { WindowPanelComponent } from '../../../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../../../utils/hier-selector-error.util';
@@ -21,7 +21,7 @@ import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas
 @Component({
   selector: 'app-cero-cuotas-dashboard',
   standalone: true,
-  imports: [HierSelectorComponent, GraficoMixtoComponent, EmptyStateComponent, ListSkeletonComponent, WindowPanelComponent],
+  imports: [HierSelectorComponent, GraficoMixtoComponent, EmptyStateComponent, EsqueletoGraficoComponent, WindowPanelComponent],
   templateUrl: './dashboard.component.html',
 })
 export class CeroCuotasDashboardComponent {

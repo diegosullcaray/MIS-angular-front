@@ -94,7 +94,7 @@
 
     <!-- La tabla es el drill down: RNOMSUB baja un nivel. -->
     <div class="mis-card p-3 overflow-x-auto">
-      <app-tabla-dinamica
+      <app-tabla-dinamica [ajustarAncho]="true"
         [columnas]="tabla().columnas"
         [filas]="tabla().filas"
         [cargando]="cargando()"

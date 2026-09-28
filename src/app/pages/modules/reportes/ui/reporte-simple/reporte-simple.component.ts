@@ -1,4 +1,4 @@
-import { Component, computed, input, linkedSignal, model, output } from '@angular/core';
+import { Component, computed, input, linkedSignal, model, output, signal } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
 import { PaginatorModule, type PaginatorState } from 'primeng/paginator';
 import { HierSelectorComponent } from '../../../../../shared/ui/hier-selector/hier-selector.component';
@@ -89,34 +89,60 @@ export interface PestanaReporte {
           <p-tabpanels>
             @for (tab of tabs; track tab.id) {
               <p-tabpanel [value]="tab.id">
-                <div class="flex flex-col gap-5">
-                  @for (bloque of tab.bloques; track $index) {
-                    <section class="flex flex-col gap-2">
-                      @if (bloque.titulo) {
-                        <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
+                <div class="flex flex-col gap-4">
+                  <!-- Con varios bloques en la misma pestaña, chips para elegir cuál ver en vez de apilarlos. -->
+                  @if (tab.bloques.length > 1) {
+                    <div class="flex flex-wrap gap-2" role="tablist">
+                      @for (bloque of tab.bloques; track $index) {
+                        <button
+                          type="button"
+                          role="tab"
+                          class="px-3 py-1.5 rounded-full text-[12px] font-semibold transition-colors border"
+                          [attr.aria-selected]="bloqueSeleccionado(tab.id) === $index"
+                          [class]="
+                            bloqueSeleccionado(tab.id) === $index
+                              ? 'bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] border-[var(--mis-primary)]'
+                              : 'bg-[var(--mis-surface)] text-[var(--mis-text-secondary)] border-[var(--mis-border)] hover:border-[var(--mis-primary)]'
+                          "
+                          (click)="seleccionarBloque(tab.id, $index)"
+                        >
+                          {{ bloque.titulo || 'Bloque ' + ($index + 1) }}
+                        </button>
                       }
-                      @if (bloque.chip) {
-                        <app-chip-informativo [texto]="bloque.chip" />
-                      }
-                      <div class="mis-card p-3 overflow-x-auto">
-                        <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme() || !!bloque.paginado" />
-                        @if (bloque.paginado && totalFilas(); as total) {
-                          <p-paginator
-                            class="border-t border-[var(--mis-border)] mt-2 pt-1"
-                            [first]="(pagina() - 1) * filasPorPagina()"
-                            [rows]="filasPorPagina()"
-                            [totalRecords]="total"
-                            [showFirstLastIcon]="true"
-                            (onPageChange)="onPagina($event)"
-                            styleClass="text-[12px] !bg-transparent"
-                          />
-                        }
-                      </div>
-                      @if (bloque.nota) {
-                        <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
-                      }
-                    </section>
+                    </div>
                   }
+
+                  <div class="flex flex-col gap-5">
+                    @for (bloque of tab.bloques; track $index) {
+                      @if (bloqueSeleccionado(tab.id) === $index) {
+                        <section class="flex flex-col gap-2">
+                          @if (bloque.titulo && tab.bloques.length === 1) {
+                            <h2 class="text-[13px] font-semibold text-[var(--mis-text-primary)] m-0">{{ bloque.titulo }}</h2>
+                          }
+                          @if (bloque.chip) {
+                            <app-chip-informativo [texto]="bloque.chip" />
+                          }
+                          <div class="mis-card p-3 overflow-x-auto">
+                            <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme() || !!bloque.paginado" />
+                            @if (bloque.paginado && totalFilas(); as total) {
+                              <p-paginator
+                                class="border-t border-[var(--mis-border)] mt-2 pt-1"
+                                [first]="(pagina() - 1) * filasPorPagina()"
+                                [rows]="filasPorPagina()"
+                                [totalRecords]="total"
+                                [showFirstLastIcon]="true"
+                                (onPageChange)="onPagina($event)"
+                                styleClass="text-[12px] !bg-transparent"
+                              />
+                            }
+                          </div>
+                          @if (bloque.nota) {
+                            <p class="text-[12px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed" [innerHTML]="bloque.nota"></p>
+                          }
+                        </section>
+                      }
+                    }
+                  </div>
                 </div>
               </p-tabpanel>
             }
@@ -234,6 +260,17 @@ export class ReporteSimpleComponent {
 
   readonly nivelSeleccionado = output<HierarquiaNodo>();
   readonly errorJerarquia = output<void>();
+
+  /** Bloque activo por pestaña (chips dentro del tab), por índice. */
+  private readonly bloqueActivo = signal<Record<string, number>>({});
+
+  protected bloqueSeleccionado(tabId: string): number {
+    return this.bloqueActivo()[tabId] ?? 0;
+  }
+
+  protected seleccionarBloque(tabId: string, indice: number): void {
+    this.bloqueActivo.update((actual) => ({ ...actual, [tabId]: indice }));
+  }
 
   protected onPagina(evento: PaginatorState): void {
     const pagina = (evento.page ?? 0) + 1;

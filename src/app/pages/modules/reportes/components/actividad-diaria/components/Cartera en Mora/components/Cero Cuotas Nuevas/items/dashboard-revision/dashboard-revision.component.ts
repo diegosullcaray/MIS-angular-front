@@ -7,6 +7,7 @@ import { ListSkeletonComponent } from '../../../../../../../../../../../shared/u
 import { WindowPanelComponent } from '../../../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { GraficoMapaCalorComponent } from '../../../../../../../../../../../shared/ui/graficos/grafico-mapa-calor/grafico-mapa-calor.component';
+import { GraficoPieComponent } from '../../../../../../../../../../../shared/ui/graficos/grafico-pie/grafico-pie.component';
 import { ToastService } from '../../../../../../../../../../../shared/services/toast.service';
 import { crearManejadorErrorJerarquia } from '../../../../../../../../utils/hier-selector-error.util';
 import {
@@ -20,6 +21,7 @@ import {
 import type {
   BloqueGrafico,
   MapaCalorGrafico,
+  PorcionGrafico,
 } from '../../../../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas.service';
 import type { KpiCeroCuotas } from '../../../../models/cartera-en-mora.model';
@@ -41,6 +43,7 @@ import type { KpiCeroCuotas } from '../../../../models/cartera-en-mora.model';
     WindowPanelComponent,
     TablaDinamicaComponent,
     GraficoMapaCalorComponent,
+    GraficoPieComponent,
   ],
   templateUrl: './dashboard-revision.component.html',
 })
@@ -55,6 +58,8 @@ export class CeroCuotasDashboardRevisionComponent {
   protected readonly kpis = signal<KpiCeroCuotas[]>([]);
   protected readonly topAsesores = signal<TablaDinamicaResultado>(TABLA_DINAMICA_VACIA);
   protected readonly mapasCalor = signal<MapaCalorGrafico[]>([]);
+  protected readonly participacionProducto = signal<PorcionGrafico[]>([]);
+  protected readonly concentracionSaldos = signal<BloqueGrafico | null>(null);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(this.toast, this.cargando);
 
   constructor() {
@@ -113,12 +118,16 @@ export class CeroCuotasDashboardRevisionComponent {
       kpis: this.servicio.kpisDashboardRevision(consulta),
       topAsesores: this.servicio.topAsesoresDashboardRevision(consulta),
       mapasCalor: this.servicio.mapasCalorDashboardRevision(consulta),
+      participacionProducto: this.servicio.participacionProductoDashboardRevision(consulta),
+      concentracionSaldos: this.servicio.concentracionSaldosDashboardRevision(consulta),
     }).subscribe({
-      next: ({ graficos, kpis, topAsesores, mapasCalor }) => {
+      next: ({ graficos, kpis, topAsesores, mapasCalor, participacionProducto, concentracionSaldos }) => {
         this.graficos.set(graficos);
         this.kpis.set(kpis);
         this.topAsesores.set(topAsesores);
         this.mapasCalor.set(mapasCalor);
+        this.participacionProducto.set(participacionProducto);
+        this.concentracionSaldos.set(concentracionSaldos);
         this.cargando.set(false);
       },
       error: () => {

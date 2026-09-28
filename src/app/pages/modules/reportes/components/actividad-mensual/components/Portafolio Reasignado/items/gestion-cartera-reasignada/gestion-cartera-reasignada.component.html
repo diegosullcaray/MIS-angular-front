@@ -21,7 +21,7 @@
       <p-tabpanels>
         <p-tabpanel value="resumen">
           <div class="mis-card p-3 overflow-x-auto">
-            <app-tabla-reporte [encabezados]="resumen().headers" [filas]="resumen().body" [cargando]="cargandoResumen()" />
+            <app-tabla-reporte [ajustarAncho]="true" [encabezados]="resumen().headers" [filas]="resumen().body" [cargando]="cargandoResumen()" />
           </div>
           <p class="text-[12px] text-[var(--mis-text-tertiary)] mt-2 mb-0 leading-relaxed" [innerHTML]="nota"></p>
         </p-tabpanel>
@@ -29,7 +29,7 @@
         <p-tabpanel value="detalle">
           <!-- El paginador va dentro de la tarjeta de la tabla, pegado a su pie. -->
           <div class="mis-card p-3 overflow-x-auto">
-            <app-tabla-reporte [encabezados]="detalle().headers" [filas]="detalle().body" [cargando]="cargandoDetalle()" [encabezadoUniforme]="true" />
+            <app-tabla-reporte [ajustarAncho]="true" [encabezados]="detalle().headers" [filas]="detalle().body" [cargando]="cargandoDetalle()" [encabezadoUniforme]="true" />
             @if (totalDetalle() > porPagina) {
               <p-paginator
                 class="border-t border-[var(--mis-border)] mt-2 pt-1"

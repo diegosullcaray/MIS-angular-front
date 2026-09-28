@@ -41,7 +41,7 @@
                   <h3 class="text-sm sm:text-base font-bold text-[var(--mis-text-primary)] m-0">
                     Cartera Programas del Gobierno
                   </h3>
-                  <app-tabla-reporte [encabezados]="t1.headers" [filas]="t1.body" [cargando]="cargando()" />
+                  <app-tabla-reporte [ajustarAncho]="true" [encabezados]="t1.headers" [filas]="t1.body" [cargando]="cargando()" />
                 </div>
               }
 
@@ -55,7 +55,7 @@
                       *La fecha de Clasificación RCC tiene un desfase de un mes
                     </span>
                   </div>
-                  <app-tabla-reporte [encabezados]="t2.headers" [filas]="t2.body" [cargando]="cargando()" />
+                  <app-tabla-reporte [ajustarAncho]="true" [encabezados]="t2.headers" [filas]="t2.body" [cargando]="cargando()" />
                 </div>
               }
             </div>
@@ -69,7 +69,7 @@
                   <h3 class="text-sm sm:text-base font-bold text-[var(--mis-text-primary)] m-0">
                     Cartera sin Programas del Gobierno
                   </h3>
-                  <app-tabla-reporte [encabezados]="t3.headers" [filas]="t3.body" [cargando]="cargando()" />
+                  <app-tabla-reporte [ajustarAncho]="true" [encabezados]="t3.headers" [filas]="t3.body" [cargando]="cargando()" />
                 </div>
               }
 
@@ -83,7 +83,7 @@
                       *La fecha de Clasificación RCC tiene un desfase de un mes
                     </span>
                   </div>
-                  <app-tabla-reporte [encabezados]="t4.headers" [filas]="t4.body" [cargando]="cargando()" />
+                  <app-tabla-reporte [ajustarAncho]="true" [encabezados]="t4.headers" [filas]="t4.body" [cargando]="cargando()" />
                 </div>
               }
             </div>

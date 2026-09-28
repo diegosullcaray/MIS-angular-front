@@ -32,7 +32,7 @@
               <!-- Iteramos sobre las tablas configuradas para esta pestaña -->
               @for (tabla of tab.tablas; track $index) {
                 <div class="mis-card p-3 overflow-x-auto">
-                  <app-tabla-reporte
+                  <app-tabla-reporte [ajustarAncho]="true"
                     [encabezados]="tabla().headers"
                     [filas]="tabla().body"
                     [cargando]="cargando()" />

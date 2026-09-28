@@ -51,12 +51,16 @@ export class PortafolioReasignadoService {
     );
   }
 
-  /** Bloque con parámetro fecha. */
+  /**
+   * Bloque con parámetro fecha, tolerante al bloque vacío: el legado (`cra-v11`/`cra-v12`,
+   * `renderTable` sobre el índice del resumen) también absorbe el 500 "Resultado vacio para:
+   * regularData" y solo deja esa tabla vacía, sin tumbar la pantalla.
+   */
   private bloqueConFecha(
     codRep: string,
     nodo: NodoConsulta,
     extra: Record<string, unknown> = {},
   ): Observable<TablaReporteResultado> {
-    return this.bloques.regular(codRep, nodo, { fecha: this.bloques.fec(), ...extra });
+    return this.bloques.regularTolerante(codRep, nodo, { fecha: this.bloques.fec(), ...extra });
   }
 }

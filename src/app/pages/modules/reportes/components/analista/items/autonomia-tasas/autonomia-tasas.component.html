@@ -16,7 +16,7 @@
       <div class="flex flex-col gap-2">
         <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">Resumen Gestión de Tasas</h3>
         <div class="mis-card p-3 overflow-x-auto">
-          <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
+          <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
         </div>
         <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
           1. TAPP Mes: Tasa Activa Promedio Ponderadas de las operaciones desembolsadas en el mes<br />
@@ -28,7 +28,7 @@
       <div class="flex flex-col gap-2">
         <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">Número de Operaciones Desembolsadas por Producto</h3>
         <div class="mis-card p-3 overflow-x-auto">
-          <app-tabla-reporte [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="cargando()" />
+          <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="cargando()" />
         </div>
         <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">
           Tasa Mínima: Tasa Base en función de Mercado +/- Segmentación Comercial (en pbs) + Factores de Riesgo (en pbs).
@@ -38,7 +38,7 @@
       <div class="flex flex-col gap-2">
         <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">Monto Desembolsado por Producto</h3>
         <div class="mis-card p-3 overflow-x-auto">
-          <app-tabla-reporte [encabezados]="tabla3().headers" [filas]="tabla3().body" [cargando]="cargando()" />
+          <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla3().headers" [filas]="tabla3().body" [cargando]="cargando()" />
         </div>
         <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">
           Tasa Mínima: Tasa Base en función de Mercado +/- Segmentación Comercial (en pbs) + Factores de Riesgo (en pbs).
@@ -48,7 +48,7 @@
       <div class="flex flex-col gap-2">
         <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">TAPP Mes de Operaciones Desembolsadas por Producto</h3>
         <div class="mis-card p-3 overflow-x-auto">
-          <app-tabla-reporte [encabezados]="tabla4().headers" [filas]="tabla4().body" [cargando]="cargando()" />
+          <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla4().headers" [filas]="tabla4().body" [cargando]="cargando()" />
         </div>
         <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0">
           Tasa Mínima: Tasa Base en función de Mercado +/- Segmentación Comercial (en pbs) + Factores de Riesgo (en pbs).

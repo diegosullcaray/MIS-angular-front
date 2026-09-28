@@ -62,6 +62,9 @@ export class MonitorEfectividadesComponent {
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
 
+  /** Bloque activo de la pestaña "Monitor de Efectividades" (chips dentro del tab). */
+  protected readonly bloqueActivoResumen = signal(0);
+
   // ── Pestaña 1: resumen ───────────────────────────────────────────────────────
   protected readonly cargandoResumen = signal(false);
   protected readonly onErrorJerarquia = crearManejadorErrorJerarquia(

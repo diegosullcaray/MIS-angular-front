@@ -51,6 +51,8 @@ export class DetalleReasignadoComponent {
    * no los configura nunca: su detalle solo depende del nivel y de los filtros del reporte.
    */
   readonly filtrosComunes = input(true);
+  /** Sin scroll horizontal en escritorio: encabezados con salto de línea, sin anchos fijos. */
+  readonly ajustarAncho = input(false);
 
   readonly asesor = model('');
   readonly fechaCompromiso = model<Date | null>(null);

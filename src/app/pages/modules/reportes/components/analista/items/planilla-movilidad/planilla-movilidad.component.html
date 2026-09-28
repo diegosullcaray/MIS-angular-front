@@ -30,14 +30,14 @@
                     <span class="text-[11px] text-[var(--mis-text-secondary)]">Período: {{ periodo }}</span>
                   </div>
                   <div class="overflow-x-auto">
-                    <app-tabla-reporte [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="cargando()" />
+                    <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="cargando()" />
                   </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
                   <span class="text-[12px] font-bold text-[var(--mis-text-primary)]">Planilla de Gastos por Movilidad - Asesores</span>
                   <div class="overflow-x-auto">
-                    <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
+                    <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
                   </div>
                 </div>
               </div>
@@ -46,7 +46,7 @@
             <p-tabpanel value="validos">
               <div class="flex flex-col gap-2">
                 <div class="overflow-x-auto">
-                  <app-tabla-reporte [encabezados]="tabla3().headers" [filas]="tabla3().body" [cargando]="cargando()" />
+                  <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla3().headers" [filas]="tabla3().body" [cargando]="cargando()" />
                 </div>
                 <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
                   @for (criterio of criteriosMovilidad; track criterio) {
@@ -59,7 +59,7 @@
             <p-tabpanel value="depurados">
               <div class="flex flex-col gap-2">
                 <div class="overflow-x-auto">
-                  <app-tabla-reporte [encabezados]="tabla4().headers" [filas]="tabla4().body" [cargando]="cargando()" />
+                  <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla4().headers" [filas]="tabla4().body" [cargando]="cargando()" />
                 </div>
                 <p class="text-[11px] text-[var(--mis-text-tertiary)] m-0 leading-relaxed">
                   @for (criterio of criteriosMovilidad; track criterio) {

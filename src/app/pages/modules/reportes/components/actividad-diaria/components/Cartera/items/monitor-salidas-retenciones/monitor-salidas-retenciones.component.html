@@ -80,7 +80,7 @@
 
     <!-- La descripción baja un nivel; las salidas y los clientes por vencer abren su listado. -->
     <div class="mis-card p-3 overflow-x-auto">
-      <app-tabla-dinamica
+      <app-tabla-dinamica [ajustarAncho]="true"
         [columnas]="columnas"
         [filas]="filas()"
         [cargando]="cargando()"

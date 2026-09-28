@@ -25,7 +25,7 @@
         @for (p of pestanas; track p.id) {
           <p-tabpanel [value]="p.id">
             <div class="mis-card p-3 overflow-x-auto">
-              <app-tabla-dinamica
+              <app-tabla-dinamica [ajustarAncho]="true"
                 [columnas]="tablas().at(p.indice)?.columnas ?? []"
                 [filas]="tablas().at(p.indice)?.filas ?? []"
                 [cargando]="cargando()"

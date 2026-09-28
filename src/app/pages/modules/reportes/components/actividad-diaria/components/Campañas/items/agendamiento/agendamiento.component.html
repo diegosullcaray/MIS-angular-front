@@ -38,7 +38,7 @@
             <!-- Solo la pestaña visible pinta su tabla. -->
             @if (pestana() === 'resumen-total') {
               <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-dinamica
+                <app-tabla-dinamica [ajustarAncho]="true"
                   [columnas]="resumenTotal().columnas"
                   [filas]="resumenTotal().filas"
                   [cargando]="cargandoTabla(0)"
@@ -63,7 +63,7 @@
             <!-- Solo la pestaña visible pinta su tabla. -->
             @if (pestana() === 'resumen-bases') {
               <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-dinamica
+                <app-tabla-dinamica [ajustarAncho]="true"
                   [columnas]="resumenPorBases().columnas"
                   [filas]="resumenPorBases().filas"
                   [cargando]="cargandoTabla(1)"
@@ -92,7 +92,7 @@
             <!-- Solo la pestaña visible pinta su tabla. -->
             @if (pestana() === 'detalle-vivas') {
               <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-dinamica
+                <app-tabla-dinamica [ajustarAncho]="true"
                   [columnas]="detalleBasesVivas().columnas"
                   [filas]="detalleBasesVivas().filas"
                   [cargando]="cargandoTabla(2)"
@@ -123,7 +123,7 @@
             <!-- Solo la pestaña visible pinta su tabla. -->
             @if (pestana() === 'detalle-auto') {
               <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-dinamica
+                <app-tabla-dinamica [ajustarAncho]="true"
                   [columnas]="detalleBasesAutomaticas().columnas"
                   [filas]="detalleBasesAutomaticas().filas"
                   [cargando]="cargandoTabla(3)"

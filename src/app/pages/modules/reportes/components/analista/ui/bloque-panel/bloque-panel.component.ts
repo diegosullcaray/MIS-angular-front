@@ -19,4 +19,5 @@ export class BloquePanelComponent {
   readonly nota = input<readonly string[]>([]);
   /** La tabla del bloque todavía está cargando: muestra su esqueleto. */
   readonly cargando = input(false);
+  readonly ajustarAncho = input(false);
 }

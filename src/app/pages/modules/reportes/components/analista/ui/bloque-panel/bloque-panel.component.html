@@ -12,7 +12,7 @@
   }
 
   <div class="bloque-tabla">
-    <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" [cargando]="cargando()" />
+    <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
   </div>
 
   @if (nota().length) {

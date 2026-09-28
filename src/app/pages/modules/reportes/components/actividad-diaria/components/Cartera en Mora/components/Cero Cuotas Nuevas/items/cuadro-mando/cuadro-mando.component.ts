@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ReporteSimpleComponent } from '../../../../../../../../ui/reporte-simple/reporte-simple.component';
+import { ReporteSimpleComponent, type PestanaReporte } from '../../../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteBloquesBase } from '../../../../../../../../ui/reporte-simple/reporte-bloques.base';
 import { SelectFiltroComponent } from '../../../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../../../models/jerarquia.model';
@@ -39,5 +39,18 @@ export class CeroCuotasCuadroMandoComponent extends ReporteBloquesBase {
 
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.cuadroMando(nodo, { prod: this.producto(), tipcuota: this.tipo() });
+  }
+
+  /** Un bloque por pestaña, en vez de apilados. */
+  protected pestanas(): PestanaReporte[] | undefined {
+    const bloques = this.bloques();
+    if (bloques.length === 0) return undefined;
+
+    return bloques.map((bloque, i) => ({
+      id: String(i),
+      titulo: this.titulos[i],
+      // Sin título de bloque: repetiría el nombre de la pestaña.
+      bloques: [{ ...bloque, titulo: undefined }],
+    }));
   }
 }

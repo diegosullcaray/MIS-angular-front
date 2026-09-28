@@ -75,8 +75,7 @@ export function opcionesMixto(
   const estiloTexto = { color: texto, fontSize: '11px' };
   // En modo `linea` no hay eje secundario: todas las series comparten el eje de valores.
   // Ahí van las de porcentaje y las que lo pidan explícitamente (`secundaria`).
-  const enEjeSecundario = (s: SerieGrafico) =>
-    forma !== 'linea' && (s.secundaria ?? esPorcentaje(s.nombre));
+  const enEjeSecundario = (s: SerieGrafico) => forma !== 'linea' && (s.secundaria ?? esPorcentaje(s.nombre));
   const secundarias = bloque.series.filter(enEjeSecundario);
   // El eje secundario se rotula en "%" solo si TODO lo que va ahí es porcentaje.
   const ejeSecundarioEnPorcentaje =

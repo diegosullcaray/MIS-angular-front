@@ -4,6 +4,7 @@ import Heatmap from 'highcharts/esm/modules/heatmap.js';
 import { ThemeService } from '../../../services/theme.service';
 import type { MapaCalorGrafico } from '../models/grafico-comun.model';
 import { GraficoBaseComponent } from '../grafico-base/grafico-base.component';
+import { tokensTema } from '../utils/paleta-colores.util';
 
 // En Highcharts 13 el módulo se auto-registra al importarse (su export por
 // defecto es la instancia Highcharts extendida, no una función inicializadora).
@@ -26,6 +27,8 @@ export class GraficoMapaCalorComponent {
     const datos = this.datos();
     const oscuro = this.tema.oscuro();
     const puntos = datos.valores.flatMap((fila, y) => fila.map((valor, x) => [x, y, valor]));
+    const { texto, textoFuerte, linea } = tokensTema(oscuro);
+    const estiloTexto = { color: texto, fontSize: '11px' };
 
     return {
       chart: { type: 'heatmap', backgroundColor: 'transparent', marginTop: 50, marginBottom: 72 },
@@ -33,10 +36,17 @@ export class GraficoMapaCalorComponent {
         text: datos.titulo,
         style: { color: oscuro ? '#E8EEF9' : '#164D90', fontWeight: 'bold', fontSize: '14px' },
       },
-      xAxis: { categories: datos.categoriasX, title: { text: 'Año de desembolso' } },
+      xAxis: {
+        categories: datos.categoriasX,
+        title: { text: 'Año de desembolso', style: { color: textoFuerte, fontWeight: 'bold' } },
+        labels: { style: estiloTexto },
+        lineColor: linea,
+        tickColor: linea,
+      },
       yAxis: {
         categories: datos.categoriasY,
-        title: { text: 'Estado' },
+        title: { text: 'Estado', style: { color: textoFuerte, fontWeight: 'bold' } },
+        labels: { style: estiloTexto },
         reversed: datos.ejeYInvertido ?? true,
       },
       colorAxis: {
@@ -55,7 +65,8 @@ export class GraficoMapaCalorComponent {
         verticalAlign: 'top',
         y: 24,
         symbolHeight: 250,
-        title: { text: 'Saldos (M S/)' },
+        title: { text: 'Saldos (M S/)', style: { color: textoFuerte } },
+        itemStyle: { color: texto },
       },
       tooltip: {
         formatter: function (this: Highcharts.Point & { value?: number }) {

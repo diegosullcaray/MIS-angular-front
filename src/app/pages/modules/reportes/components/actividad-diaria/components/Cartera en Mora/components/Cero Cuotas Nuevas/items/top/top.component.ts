@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ReporteSimpleComponent } from '../../../../../../../../ui/reporte-simple/reporte-simple.component';
+import { ReporteSimpleComponent, type PestanaReporte } from '../../../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteBloquesBase } from '../../../../../../../../ui/reporte-simple/reporte-bloques.base';
 import { SelectFiltroComponent } from '../../../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../../../models/jerarquia.model';
@@ -47,5 +47,22 @@ export class CeroCuotasTopComponent extends ReporteBloquesBase {
 
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.top(nodo, { tipcuota: this.tipo() });
+  }
+
+  /**
+   * Los diez bloques agrupados en tres pestañas: "Top 10" (los dos primeros),
+   * "Tipo Producto" (los cuatro de nuevo ingreso por producto) y "Tipo Repro"
+   * (los cuatro de nuevo ingreso reprogramado). Con más de un bloque por
+   * pestaña, el armazón ya pinta los chips para elegir cuál ver.
+   */
+  protected pestanas(): PestanaReporte[] | undefined {
+    const bloques = this.bloques();
+    if (bloques.length === 0) return undefined;
+
+    return [
+      { id: 'top10', titulo: 'Top 10', bloques: bloques.slice(0, 2) },
+      { id: 'producto', titulo: 'Tipo Producto', bloques: bloques.slice(2, 6) },
+      { id: 'repro', titulo: 'Tipo Repro', bloques: bloques.slice(6) },
+    ];
   }
 }

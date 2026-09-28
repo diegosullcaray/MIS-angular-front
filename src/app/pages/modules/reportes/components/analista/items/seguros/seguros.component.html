@@ -15,7 +15,7 @@
     <div class="flex flex-col gap-2">
       <app-chip-informativo texto="Expresado en PEN y %" />
       <div class="mis-card p-3 overflow-x-auto">
-        <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
+        <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
       </div>
     </div>
   }

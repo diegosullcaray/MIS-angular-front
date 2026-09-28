@@ -16,21 +16,21 @@
       <div class="flex flex-col gap-2">
         <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">Proyección Diaria por Operaciones</h3>
         <div class="mis-card p-3 overflow-x-auto">
-          <app-tabla-reporte [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
+          <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla1().headers" [filas]="tabla1().body" [cargando]="cargando()" />
         </div>
       </div>
 
       <div class="flex flex-col gap-2">
         <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">Proyección Diaria por Colocaciones</h3>
         <div class="mis-card p-3 overflow-x-auto">
-          <app-tabla-reporte [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="cargando()" />
+          <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla2().headers" [filas]="tabla2().body" [cargando]="cargando()" />
         </div>
       </div>
 
       <div class="flex flex-col gap-2">
         <h3 class="m-0 text-[13px] font-bold text-[var(--mis-text-primary)]">Proyección Diaria por Efectividades</h3>
         <div class="mis-card p-3 overflow-x-auto">
-          <app-tabla-reporte [encabezados]="tabla3().headers" [filas]="tabla3().body" [cargando]="cargando()" />
+          <app-tabla-reporte [ajustarAncho]="true" [encabezados]="tabla3().headers" [filas]="tabla3().body" [cargando]="cargando()" />
         </div>
       </div>
     </div>

@@ -20,7 +20,12 @@
   } @else if (cargando()) {
     <app-list-skeleton />
   } @else if (
-    !kpis().length && !graficos().length && !topAsesores().filas.length && !mapasCalor().length
+    !kpis().length &&
+    !graficos().length &&
+    !topAsesores().filas.length &&
+    !mapasCalor().length &&
+    !participacionProducto().length &&
+    !concentracionSaldos()
   ) {
     <app-empty-state
       titulo="Sin datos"
@@ -55,7 +60,7 @@
           <h3 class="m-0 mb-3 text-[14px] font-semibold text-[var(--mis-primary-text)]">
             Top 10 Asesores
           </h3>
-          <app-tabla-dinamica
+          <app-tabla-dinamica [ajustarAncho]="true"
             [columnas]="topAsesores().columnas"
             [filas]="topAsesores().filas"
             [cargando]="cargando()"
@@ -63,6 +68,25 @@
             (celdaSeleccionada)="onTopAsesorSeleccionado($event)"
           />
         </section>
+      }
+
+      @if (concentracionSaldos() || participacionProducto().length) {
+        <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+          @if (concentracionSaldos(); as concentracion) {
+            <div class="mis-card h-[400px] p-3">
+              <app-grafico-mixto [datos]="concentracion" tipo="barra" formato="numero" />
+            </div>
+          }
+          @if (participacionProducto().length) {
+            <div class="mis-card h-[400px] p-3">
+              <app-grafico-pie
+                titulo="Participación de Saldo por Producto"
+                [porciones]="participacionProducto()"
+                [dona]="true"
+              />
+            </div>
+          }
+        </div>
       }
 
       @if (mapasCalor().length) {

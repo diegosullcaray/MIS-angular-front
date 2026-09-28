@@ -13,6 +13,8 @@ describe('CeroCuotasDashboardRevisionComponent', () => {
     kpisDashboardRevision: vi.fn().mockReturnValue(of([])),
     topAsesoresDashboardRevision: vi.fn().mockReturnValue(of(TABLA_DINAMICA_VACIA)),
     mapasCalorDashboardRevision: vi.fn().mockReturnValue(of([])),
+    participacionProductoDashboardRevision: vi.fn().mockReturnValue(of([])),
+    concentracionSaldosDashboardRevision: vi.fn().mockReturnValue(of(null)),
   };
 
   beforeEach(() => {

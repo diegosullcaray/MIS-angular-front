@@ -24,7 +24,7 @@
       <p-tabpanels>
         <p-tabpanel value="monitor">
           <div class="mis-card p-3 overflow-x-auto">
-            <app-tabla-reporte [encabezados]="resumen().headers" [filas]="resumen().body" [cargando]="cargandoResumen()" />
+            <app-tabla-reporte [encabezados]="resumen().headers" [filas]="resumen().body" [cargando]="cargandoResumen()" [ajustarAncho]="true" />
           </div>
         </p-tabpanel>
 
@@ -33,6 +33,7 @@
             [tabla]="detalle()"
             [cargando]="cargandoDetalle()"
             [total]="totalDetalle()"
+            [ajustarAncho]="true"
             [opcionesUltimaGestion]="opcionesUltimaGestion()"
             [(asesor)]="asesor"
             [(fechaCompromiso)]="fechaCompromiso"

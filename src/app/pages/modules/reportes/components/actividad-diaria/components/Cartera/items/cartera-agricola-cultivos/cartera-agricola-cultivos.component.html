@@ -112,7 +112,7 @@
 
       <!-- La tabla es el drill-down: Descripción baja un nivel; las métricas abren gráficos. -->
       <section class="mis-card p-3.5 sm:p-4 overflow-x-auto w-full">
-        <app-tabla-dinamica
+        <app-tabla-dinamica [ajustarAncho]="true"
           [columnas]="tabla().columnas"
           [filas]="tabla().filas"
           [cargando]="cargando()"

@@ -102,6 +102,10 @@ export const COD_DASHBOARD_REVISION_COMPLEMENTOS = {
   topAsesores: 'RS_TOP_ZCUO_01',
   /** Mapas de calor por año de desembolso. */
   mapasCalor: ['GRAF_ZCUO_03', 'GRAF_ZCUO_04'],
+  /** Dona "Participación de Saldo por Producto" (legado `prepareVariacionCliStockChart`). */
+  participacionProducto: 'GRAF_ZCUO_01',
+  /** Barras apiladas "Concentración de Saldos por Territorio" (legado `prepareIngresosSalidasChart`). */
+  concentracionSaldos: 'GRAF_ZCUO_02',
 } as const;
 
 export interface SerieDashboardRevision {

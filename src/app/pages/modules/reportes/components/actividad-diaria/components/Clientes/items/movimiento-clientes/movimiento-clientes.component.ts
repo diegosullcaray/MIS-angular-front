@@ -25,6 +25,9 @@ export class MovimientoClientesComponent {
   protected readonly cargando = signal(true);
   protected readonly reporte = signal<MovimientoClientesResultado>(MOVIMIENTO_CLIENTES_VACIO);
 
+  /** Bloque activo por pestaña (chips dentro del tab, como en el selector de nivel). */
+  private readonly bloqueActivo = signal<Record<string, number>>({});
+
   constructor() {
     // Sin jerarquía que elegir, el reporte se pide de una — igual que el legado.
     this.servicio.obtener().subscribe({
@@ -41,5 +44,14 @@ export class MovimientoClientesComponent {
 
   protected filas(gru: number): Record<string, unknown>[] {
     return this.reporte().grupos[gru] ?? [];
+  }
+
+  /** Bloque elegido de esa pestaña; por defecto, el primero. */
+  protected bloqueSeleccionado(pestanaId: string, bloques: readonly { gru: number }[]): number {
+    return this.bloqueActivo()[pestanaId] ?? bloques[0].gru;
+  }
+
+  protected seleccionarBloque(pestanaId: string, gru: number): void {
+    this.bloqueActivo.update((actual) => ({ ...actual, [pestanaId]: gru }));
   }
 }

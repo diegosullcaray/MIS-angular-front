@@ -19,9 +19,11 @@ import {
   GRAFICOS_DASHBOARD_REVISION,
 } from '../constantes/cartera-mora.constantes';
 import {
+  concentracionSaldosDashboardRevision,
   graficoDashboardRevision,
   kpisCeroCuotas,
   mapaCalorDashboardRevision,
+  participacionProductoDashboardRevision,
 } from '../utils/cero-cuotas-mapeo.util';
 import type {
   ReporteBloqueUnico,
@@ -30,7 +32,7 @@ import type {
 import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { KpiCeroCuotas } from '../models/cartera-en-mora.model';
-import type { MapaCalorGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
+import type { MapaCalorGrafico, PorcionGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
 /**
  * Los reportes del nodo "Cero Cuotas Nuevas".
@@ -141,6 +143,22 @@ export class CeroCuotasNuevasService {
           .filter((mapa): mapa is MapaCalorGrafico => mapa !== null),
       ),
     );
+  }
+
+  /** Dona "Participación de Saldo por Producto" (legado `prepareVariacionCliStockChart`). */
+  participacionProductoDashboardRevision(nodo: NodoConsulta): Observable<PorcionGrafico[]> {
+    const params = { ...this.paramsNodo(nodo), fecha: this.bloques.fecha() };
+    return this.reportes
+      .getRegularTableResult(COD_DASHBOARD_REVISION_COMPLEMENTOS.participacionProducto, params)
+      .pipe(map((respuesta) => participacionProductoDashboardRevision(resultadoCrudo(respuesta))));
+  }
+
+  /** Barras "Concentración de Saldos por Territorio" (legado `prepareIngresosSalidasChart`). */
+  concentracionSaldosDashboardRevision(nodo: NodoConsulta): Observable<BloqueGrafico | null> {
+    const params = { ...this.paramsNodo(nodo), fecha: this.bloques.fecha() };
+    return this.reportes
+      .getRegularTableResult(COD_DASHBOARD_REVISION_COMPLEMENTOS.concentracionSaldos, params)
+      .pipe(map((respuesta) => concentracionSaldosDashboardRevision(resultadoCrudo(respuesta))));
   }
 
   private paramsNodo(nodo: NodoConsulta): Record<string, unknown> {

@@ -48,7 +48,7 @@
       </p-tabs>
 
       <div class="mis-card p-3 overflow-x-auto w-full">
-        <app-tabla-dinamica
+        <app-tabla-dinamica [ajustarAncho]="true"
           [columnas]="tabla().columnas"
           [filas]="tabla().filas"
           [cargando]="cargando()"

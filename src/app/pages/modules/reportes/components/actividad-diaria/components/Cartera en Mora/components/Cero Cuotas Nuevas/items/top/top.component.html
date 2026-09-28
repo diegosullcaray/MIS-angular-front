@@ -1,9 +1,9 @@
-<app-reporte-simple
+<app-reporte-simple [ajustarAncho]="true"
   titulo="Top"
   subtitulo="Cero Cuotas Nuevas"
   [paramsHier]="paramsHier"
   [nivel]="nivelActual()"
-  [bloques]="bloques()"
+  [pestanas]="pestanas()"
   [cargando]="cargando()"
   (nivelSeleccionado)="onNivelSeleccionado($event)"
   (errorJerarquia)="onErrorJerarquia()"

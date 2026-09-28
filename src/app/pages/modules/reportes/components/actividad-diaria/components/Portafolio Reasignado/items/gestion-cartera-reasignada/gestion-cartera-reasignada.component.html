@@ -21,7 +21,7 @@
     <p-tabpanels>
       <p-tabpanel value="resumen">
         <div class="mis-card p-3 overflow-x-auto">
-          <app-tabla-reporte [encabezados]="resumen().headers" [filas]="resumen().body"
+          <app-tabla-reporte [ajustarAncho]="true" [encabezados]="resumen().headers" [filas]="resumen().body"
             [cargando]="cargandoResumen()" />
 
           <!-- `content.lower` de `RS_AGE_COM_CR` en `com-map.module.ts`. -->
@@ -35,7 +35,7 @@
 
       <p-tabpanel value="detalle">
         <!-- `cra-v11` no configura Última Gestión, Fecha Compromiso ni Asesor: el detalle solo depende del nivel y de "Mostrar por". -->
-        <app-detalle-reasignado [tabla]="detalle()" [cargando]="cargandoDetalle()" [total]="totalDetalle()" [filtrosComunes]="false"
+        <app-detalle-reasignado [ajustarAncho]="true" [tabla]="detalle()" [cargando]="cargandoDetalle()" [total]="totalDetalle()" [filtrosComunes]="false"
           [opcionesUltimaGestion]="opcionesUltimaGestion()" [(asesor)]="asesor" [(fechaCompromiso)]="fechaCompromiso"
           [(ultimaGestion)]="ultimaGestion" [(pagina)]="pagina" (buscarAsesor)="onBuscarAsesor()" />
       </p-tabpanel>
