@@ -43,6 +43,13 @@ describe('fábricas de configuración por defecto', () => {
     expect(avances.every((a) => !a.show && !a.enab && a.per === 0)).toBe(true);
   });
 
+  it('crearSuperPlusDefault() deja a Retención en gris (state 0 del legado) y al resto activo', () => {
+    const estados = Object.fromEntries(crearSuperPlusDefault().map((s) => [s.id, s.estado]));
+    expect(estados['ret']).toBe(0);
+    expect(estados['tas']).toBe(1);
+    expect(estados['prod']).toBe(1);
+  });
+
   it('crearSuperPlusDefault() asigna los parámetros de detalle correctos por id', () => {
     const superPlus = crearSuperPlusDefault();
     const prod = superPlus.find((s) => s.id === 'prod');

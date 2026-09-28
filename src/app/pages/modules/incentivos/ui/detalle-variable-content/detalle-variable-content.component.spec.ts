@@ -29,7 +29,7 @@ describe('DetalleVariableContentComponent', () => {
 
   beforeEach(() => {
     incentivosFalso = {
-      perfil: signal<PerfilUsuarioIncentivo | null>({ nombre: 'Juan Pérez', nivel: 'CARGO', descripcionNivel: 'Asesor', imagenUrl: '' }),
+      perfil: signal<PerfilUsuarioIncentivo | null>({ nombre: 'Juan Pérez', nivel: 'CARGO', descripcionNivel: 'Asesor de Negocios', imagenUrl: '' }),
       nivelActual: signal<NivelSeleccionado | null>({ tipCod: 1, codRel: 'BT-001', claUsu: 1 }),
       obtenerDetalleVariable: vi.fn().mockReturnValue(of(resultado())),
     };
@@ -54,6 +54,16 @@ describe('DetalleVariableContentComponent', () => {
     expect(fixture.componentInstance['frameActual']()?.desRel).toBe('Juan Pérez');
     expect(fixture.componentInstance['frameActual']()?.desLab).toBe('Asesor');
     expect(fixture.componentInstance['puedeVolver']()).toBe(false);
+  });
+
+  it('Tasas de un asesor: pide getTasa con su propio código y se encabeza "Asesor: {nombre}", no con el cargo', () => {
+    const fixture = crear({ req: 'getTasa', codVar: 6 });
+
+    expect(incentivosFalso.obtenerDetalleVariable).toHaveBeenCalledWith('getTasa', 1, 'BT-001', 6);
+    expect(fixture.componentInstance['frameActual']()?.desLab).toBe('Asesor');
+    expect(fixture.componentInstance['frameActual']()?.desRel).toBe('Juan Pérez');
+    expect(fixture.componentInstance['encabezadosRanking']().real).toBe('Tasa Mes');
+    expect(fixture.componentInstance['formatosRanking']().distancia).toBe('pbs');
   });
 
   it('varsMostradas() filtra por el bloqueActivo del frame (1 al abrir)', () => {
@@ -147,11 +157,25 @@ describe('DetalleVariableContentComponent', () => {
     expect(fixture.componentInstance['formatearMeta']()).toBe('--');
   });
 
-  it('formatearCelda() aplica formato percent/pen/decimal, o "--" si el valor es nulo', () => {
+  it('formatearCelda() usa el fmt de la fila como el dynamicFormatPipe del legado (percent con 2 decimales, pbs ×10.000)', () => {
     const fixture = crear();
-    expect(fixture.componentInstance['formatearCelda'](0.5, 'percent')).toBe('50%');
+    expect(fixture.componentInstance['formatearCelda'](0.5, 'percent')).toBe('50.00%');
+    expect(fixture.componentInstance['formatearCelda'](0.0125, 'pbs')).toBe('125 pbs');
+    expect(fixture.componentInstance['formatearCelda'](-0.003, 'pbs')).toBe('-30 pbs');
     expect(fixture.componentInstance['formatearCelda'](100, 'pen')).toBe('S/. 100');
-    expect(fixture.componentInstance['formatearCelda'](undefined, 'percent')).toBe('--');
+    expect(fixture.componentInstance['formatearCelda'](3.456, 'decimal')).toBe('3.46');
+    expect(fixture.componentInstance['formatearCelda'](1234.6, undefined)).toBe('1,235');
+    expect(fixture.componentInstance['formatearCelda'](undefined, 'percent')).toBe('');
+  });
+
+  it('colorCelda() solo pinta en magenta la fila tas_diff negativa (csFn2 del legado)', () => {
+    const fixture = crear();
+    const c = fixture.componentInstance;
+    expect(c['colorCelda']({ des_var: 'Distancia', cod_var: 'tas_diff', cod_block: 1 }, -0.002)).toBe('var(--mis-inc-negativo)');
+    expect(c['colorCelda']({ des_var: 'Distancia', cod_var: 'tas_diff', cod_block: 1 }, 0.002)).toBeNull();
+    expect(c['colorCelda']({ des_var: 'Tasa Mes', cod_var: 'tas_mes', cod_block: 1 }, -1)).toBeNull();
+    expect(c['colorDistancia'](-5)).toBe('var(--mis-inc-negativo)');
+    expect(c['colorDistancia'](5)).toBeNull();
   });
 
   it('si falla la carga, muestra un toast de error', () => {

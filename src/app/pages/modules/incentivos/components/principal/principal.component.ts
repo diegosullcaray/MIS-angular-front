@@ -15,6 +15,7 @@ import { DetalleVariableDialogComponent } from '../../ui/detalle-variable-dialog
 import { DetalleBancarizacionDialogComponent } from '../../ui/detalle-bancarizacion-dialog/detalle-bancarizacion-dialog.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import type { DetalleVariableActivo, ReqDetalleVariable } from '../../models/incentivos-detalle.model';
+import { ETIQUETAS_DETALLE_SUPER_PLUS } from '../../utils/incentivos-config.util';
 import type { DetalleAvanceEvent, DetalleSuperPlusEvent, DetalleTablaVariableEvent } from '../../models/incentivos-eventos.model';
 
 /** Cuadro de Mando principal del módulo Incentivos. */
@@ -96,7 +97,7 @@ export class PrincipalComponent {
       return;
     }
     this.detalleActivo.set({
-      titulo: evento.item.des,
+      titulo: ETIQUETAS_DETALLE_SUPER_PLUS[evento.codVar]?.titulo ?? evento.item.des,
       icono: evento.item.icono,
       req: parametros.req as ReqDetalleVariable,
       codVar: evento.codVar,
