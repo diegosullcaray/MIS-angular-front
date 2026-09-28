@@ -122,4 +122,23 @@ test.describe('Cuenta de Resultados', () => {
       expect(fondo).not.toMatch(/rgba\(.*,\s*0(\.\d+)?\)$/);
     });
   }
+
+  for (const [dispositivo, ancho, enBarra] of [['escritorio', 1280, true], ['teléfono', 390, false]] as const) {
+    test(`el filtro de período va ${enBarra ? 'en la barra del panel' : 'solo dentro de Filtros'} (${dispositivo})`, async ({ page }) => {
+      await page.setViewportSize({ width: ancho, height: 800 });
+      await abrir(page, 'datos');
+      await expect(page.locator('app-tabla-dinamica')).toBeVisible();
+
+      const botonBarra = page.getByRole('button', { name: 'Período', exact: true });
+      const selectFiltros = page.locator('app-select-filtro').getByLabel('Período');
+      if (enBarra) {
+        await expect(botonBarra).toBeVisible();
+        await expect(selectFiltros).toBeHidden();
+      } else {
+        await expect(botonBarra).toBeHidden();
+        await page.getByRole('button', { name: /filtros/i }).first().click();
+        await expect(selectFiltros).toBeVisible();
+      }
+    });
+  }
 });
