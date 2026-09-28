@@ -1,7 +1,9 @@
 <app-window-panel
   [conFiltros]="true"
   titulo="Planilla de Movilidad"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!asesorSeleccionado()"
+  [actualizando]="cargando()"
+  (actualizar)="refrescar()"
 >
   <span class="text-[11px] text-[var(--mis-text-tertiary)]">Período: {{ periodo }}</span>
   <app-grupo-filtros ventana-filtros>

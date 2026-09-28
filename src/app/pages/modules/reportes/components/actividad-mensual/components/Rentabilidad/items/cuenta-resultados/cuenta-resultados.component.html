@@ -1,7 +1,7 @@
 <app-window-panel
   titulo="Cuenta de Resultados"
   subtitulo="PYG FC · Estado de ganancias y pérdidas"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
   [conFiltros]="true"
 >
   <div ventana-filtros class="flex flex-col gap-3">

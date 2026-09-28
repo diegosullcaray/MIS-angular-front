@@ -1,7 +1,7 @@
 <app-window-panel
   [conFiltros]="true" [filtrosAbiertos]="true"
   titulo="Productos Misionales"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
 >
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />

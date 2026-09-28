@@ -1,7 +1,7 @@
 <app-window-panel
   titulo="Dashboard en Revisión"
   subtitulo="Cero Cuotas Nuevas"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
   [conFiltros]="true"
 >
   <app-hier-selector

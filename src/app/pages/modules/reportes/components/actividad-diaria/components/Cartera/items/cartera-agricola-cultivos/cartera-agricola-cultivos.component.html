@@ -1,7 +1,7 @@
 <app-window-panel
   titulo="Gestión Comercial - Portafolio Agrícola"
   [subtitulo]="mensual ? 'Información mensual por cultivos' : 'Información por cultivos'"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
   [conFiltros]="true"
 >
   <div ventana-filtros class="flex flex-col gap-3">

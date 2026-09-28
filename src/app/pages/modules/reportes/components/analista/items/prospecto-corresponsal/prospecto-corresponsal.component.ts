@@ -57,4 +57,8 @@ export class ProspectoCorresponsalComponent extends SelectorAsesorBase {
     this.toast.exito('Prospecto registrado', 'El prospecto corresponsal se guardó correctamente.');
     this.cargarProspectos();
   }
+
+  protected refrescar(): void {
+    if (this.asesorSeleccionado()) this.cargarProspectos();
+  }
 }

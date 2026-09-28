@@ -1,4 +1,4 @@
-<app-window-panel titulo="Tasas Mes por Producto" subtitulo="Expresado en Porcentaje" [conFiltros]="true">
+<app-window-panel titulo="Tasas Mes por Producto" subtitulo="Expresado en Porcentaje" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
   <div ventana-filtros class="flex flex-col gap-3">
     <!-- Selector de Jerarquía -->
     <app-hier-selector

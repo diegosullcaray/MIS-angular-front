@@ -1,7 +1,7 @@
 <app-window-panel
   titulo="CMG Cartera"
   subtitulo="Cartera"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
   [conFiltros]="true"
 >
   <div ventana-filtros class="flex flex-col gap-3">

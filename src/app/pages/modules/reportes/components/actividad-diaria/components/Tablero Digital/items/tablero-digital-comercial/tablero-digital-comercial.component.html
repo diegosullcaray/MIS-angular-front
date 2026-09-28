@@ -1,7 +1,7 @@
 <app-window-panel
   titulo="Tablero Digital Comercial"
   subtitulo="Tablero Digital"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
   [conFiltros]="true"
 >
   <app-hier-selector

@@ -1,4 +1,4 @@
-<app-window-panel titulo="CMG Cartera" [conFiltros]="true">
+<app-window-panel titulo="CMG Cartera" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
   <div ventana-filtros class="flex flex-col gap-3">
     <!-- Selector de Jerarquía (arriba) -->
     <app-hier-selector

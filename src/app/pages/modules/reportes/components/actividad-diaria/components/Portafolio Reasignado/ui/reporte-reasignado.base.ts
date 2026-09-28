@@ -75,6 +75,12 @@ export abstract class ReporteReasignadoTabsBase {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar resumen y detalle sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.nivelActual.set({ ...nodo });
+  }
+
   protected onBuscarAsesor(): void {
     this.asesorBuscado.set(this.asesor());
     this.pagina.set(1);

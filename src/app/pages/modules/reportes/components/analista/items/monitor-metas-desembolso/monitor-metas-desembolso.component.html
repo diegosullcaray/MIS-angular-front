@@ -2,7 +2,9 @@
   [conFiltros]="true"
   titulo="Monitor de Desembolsos"
   [subtitulo]="kpiOperaciones()?.fecha ? 'Actualizado al ' + kpiOperaciones()?.fecha + ' ' + kpiOperaciones()?.hora : ''"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!asesorSeleccionado()"
+  [actualizando]="cargando()"
+  (actualizar)="refrescar()"
 >
   <app-grupo-filtros ventana-filtros>
     <app-filtro-asesor [asesores]="asesores()" [seleccionado]="asesorSeleccionado()" [editable]="mostrarSelector()" (cambio)="onAsesorSeleccionado($event)" />

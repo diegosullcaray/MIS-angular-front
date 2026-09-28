@@ -81,6 +81,12 @@ export class CmgCarteraComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
+
   /** Valor animado del aro de cumplimiento de una tarjeta (0 mientras no ha animado). */
   protected valorAnillo(tarjeta: TarjetaCmgCartera): number {
     return this.progresoAnillos()[tarjeta.etiqueta] ?? 0;

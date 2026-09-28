@@ -133,6 +133,12 @@ export class MonitorEfectividadesComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar resumen y detalle sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.nivelActual.set({ ...nodo });
+  }
+
   /** Parámetros de filtros de detalle. */
   private filtrosDetalle(): Record<string, unknown> {
     return {

@@ -92,6 +92,12 @@ export class AgendamientoComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
+
   private cargar(nodo: HierarquiaNodo, filtros: { fuga: number; prop: number; rango: number }): Subscription {
     this.cargando.set(true);
     this.tablas.set([]);

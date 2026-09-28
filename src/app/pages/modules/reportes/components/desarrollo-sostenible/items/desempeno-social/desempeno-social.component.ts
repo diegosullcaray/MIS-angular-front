@@ -49,4 +49,10 @@ export class DesempenoSocialComponent {
       },
     });
   }
+
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
 }

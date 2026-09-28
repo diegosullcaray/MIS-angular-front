@@ -1,4 +1,4 @@
-<app-window-panel titulo="Panel Operaciones" [permitirActualizar]="false" [conFiltros]="true">
+<app-window-panel titulo="Panel Operaciones" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
   <!-- El filtro propio del reporte va debajo del general, igual que el legado
        (`report-cra-v1p11`: `hier-rem-selector` y después `app-select-multiple`). -->
   <div ventana-filtros class="flex flex-col gap-3">

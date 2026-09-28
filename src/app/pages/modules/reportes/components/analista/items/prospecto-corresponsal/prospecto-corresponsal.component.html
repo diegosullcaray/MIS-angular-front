@@ -1,7 +1,9 @@
 <app-window-panel
   [conFiltros]="true"
   titulo="Prospecto Corresponsal"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!asesorSeleccionado()"
+  [actualizando]="cargando()"
+  (actualizar)="refrescar()"
 >
   @if (asesorSeleccionado()) {
     <p-button icon="pi pi-plus" label="Nuevo" (onClick)="dialogoVisible.set(true)" />

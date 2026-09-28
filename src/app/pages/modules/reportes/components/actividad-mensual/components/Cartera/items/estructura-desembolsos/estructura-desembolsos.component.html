@@ -1,4 +1,4 @@
-<app-window-panel titulo="Estructura de Desembolsos" [conFiltros]="true">
+<app-window-panel titulo="Estructura de Desembolsos" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector
       [paramsHier]="paramsHier"

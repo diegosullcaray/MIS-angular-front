@@ -1,7 +1,9 @@
 <app-window-panel
   titulo="Monitor Efectividades"
   subtitulo="Cartera en Mora"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()"
+  [actualizando]="cargandoResumen() || cargandoDetalle()"
+  (actualizar)="refrescar()"
   [conFiltros]="true"
 >
   <app-hier-selector

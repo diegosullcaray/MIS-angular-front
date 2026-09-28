@@ -1,4 +1,4 @@
-<app-window-panel titulo="Monitor de Efectividades Reasignados" subtitulo="Cartera en Mora" [permitirActualizar]="false" [conFiltros]="true">
+<app-window-panel titulo="Monitor de Efectividades Reasignados" subtitulo="Cartera en Mora" [permitirActualizar]="!!nivelActual()" [actualizando]="cargandoResumen() || cargandoDetalle()" (actualizar)="refrescar()" [conFiltros]="true">
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />
     <app-grupo-filtros>

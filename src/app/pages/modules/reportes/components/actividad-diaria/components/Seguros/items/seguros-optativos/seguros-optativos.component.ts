@@ -113,6 +113,12 @@ export class SegurosOptativosComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
+
   protected onRutaSeleccionada(ruta: HierarquiaNodo[]): void {
     this.rutaJerarquica.set(ruta);
   }

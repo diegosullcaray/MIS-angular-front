@@ -1,4 +1,4 @@
-<app-window-panel titulo="Gestión de Tasas Pasivas" [permitirActualizar]="false" [conFiltros]="true">
+<app-window-panel titulo="Gestión de Tasas Pasivas" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir agencia"
       (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />

@@ -1,4 +1,4 @@
-<app-window-panel titulo="Gestión de Cartera Reasignada" subtitulo="Portafolio Reasignado" [permitirActualizar]="false"
+<app-window-panel titulo="Gestión de Cartera Reasignada" subtitulo="Portafolio Reasignado" [permitirActualizar]="!!nivelActual()" [actualizando]="cargandoResumen() || cargandoDetalle()" (actualizar)="refrescar()"
   [conFiltros]="true">
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel"

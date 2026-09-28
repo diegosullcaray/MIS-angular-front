@@ -130,6 +130,12 @@ export abstract class MonitorEfectividadesMensualBase {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar resumen y detalle sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.nivelActual.set({ ...nodo });
+  }
+
   protected onFechaBase(fecha: string): void {
     this.pagina.set(1);
     this.fechaBase.set(fecha);

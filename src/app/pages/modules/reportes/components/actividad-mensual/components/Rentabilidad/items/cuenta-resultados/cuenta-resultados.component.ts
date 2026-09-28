@@ -92,6 +92,12 @@ export class CuentaResultadosComponent {
     this.consulta.set({ nodo: { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, fecha: this.periodo() || null });
   }
 
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
+
   protected onPeriodoChange(valor: string): void {
     const fecha = normalizarFechaCuenta(valor);
     if (!fecha || !this.periodos().some((p) => p.id === fecha)) {

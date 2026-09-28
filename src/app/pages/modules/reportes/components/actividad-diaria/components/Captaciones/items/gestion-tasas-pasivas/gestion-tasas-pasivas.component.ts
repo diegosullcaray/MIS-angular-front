@@ -56,6 +56,12 @@ export class GestionTasasPasivasComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
+
   private cargar(nodo: HierarquiaNodo, agr: number, varCanal: number): void {
     this.cargando.set(true);
     this.servicio.obtener({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, { agr, var: varCanal }).subscribe({

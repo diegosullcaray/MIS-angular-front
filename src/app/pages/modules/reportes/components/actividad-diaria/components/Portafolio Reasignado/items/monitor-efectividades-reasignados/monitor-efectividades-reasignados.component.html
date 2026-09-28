@@ -1,7 +1,7 @@
 <app-window-panel
   titulo="Monitor Efectividades Reasignados"
   subtitulo="Portafolio Reasignado"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()" [actualizando]="cargandoResumen() || cargandoDetalle()" (actualizar)="refrescar()"
   [conFiltros]="true"
 >
   <app-hier-selector

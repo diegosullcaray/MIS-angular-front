@@ -1,7 +1,9 @@
 <app-window-panel
   [conFiltros]="true"
   titulo="Inversión y Stock de Mora"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!asesorSeleccionado()"
+  [actualizando]="cargando()"
+  (actualizar)="refrescar()"
 >
   <app-grupo-filtros ventana-filtros>
     <app-filtro-asesor [asesores]="asesores()" [seleccionado]="asesorSeleccionado()" [editable]="mostrarSelector()" (cambio)="onAsesorSeleccionado($event)" />

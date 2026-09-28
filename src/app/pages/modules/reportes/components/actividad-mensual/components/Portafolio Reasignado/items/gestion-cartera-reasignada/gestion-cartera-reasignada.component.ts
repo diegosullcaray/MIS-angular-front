@@ -127,6 +127,12 @@ export class GestionCarteraReasignadaComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar resumen y detalle sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.nivelActual.set({ ...nodo });
+  }
+
   protected onMostrarPor(ver: number): void {
     this.pagina.set(1);
     this.mostrarPor.set(ver);

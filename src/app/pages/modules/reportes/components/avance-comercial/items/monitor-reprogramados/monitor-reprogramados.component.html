@@ -1,7 +1,7 @@
 <app-window-panel
   [conFiltros]="true"
   titulo="Monitor Reprogramados"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
 >
   <div ventana-filtros class="flex flex-col gap-3">
     <!-- Mismo criterio que su hermano de Avance Comercial: la raíz se emite al

@@ -36,6 +36,12 @@ export abstract class ReporteAsesorBase<T> extends SelectorAsesorBase {
     return tablas.every((t) => t.body.length === 0);
   }
 
+  /** Reemite el asesor actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const asesor = this.asesorSeleccionado();
+    if (asesor) this.onAsesorSeleccionado(asesor);
+  }
+
   protected onAsesorSeleccionado(asesor: AsesorSec | null): void {
     this.asesorSeleccionado.set(asesor);
     if (!asesor) return;

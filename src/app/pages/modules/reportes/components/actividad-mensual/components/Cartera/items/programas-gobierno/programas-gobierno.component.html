@@ -1,4 +1,4 @@
-<app-window-panel titulo="Programas del Gobierno" subtitulo="Información mensual" [conFiltros]="true">
+<app-window-panel titulo="Programas del Gobierno" subtitulo="Información mensual" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
   <div ventana-filtros class="flex flex-col gap-3">
     <!-- Selector de Jerarquía -->
     <app-hier-selector

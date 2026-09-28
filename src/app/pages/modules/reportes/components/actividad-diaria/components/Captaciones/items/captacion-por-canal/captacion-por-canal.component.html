@@ -1,4 +1,4 @@
-<app-window-panel titulo="Captaciones por Canal" subtitulo="Captaciones Red" [permitirActualizar]="false" [conFiltros]="true">
+<app-window-panel titulo="Captaciones por Canal" subtitulo="Captaciones Red" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
   <app-hier-selector
     ventana-filtros
     [paramsHier]="paramsHier"

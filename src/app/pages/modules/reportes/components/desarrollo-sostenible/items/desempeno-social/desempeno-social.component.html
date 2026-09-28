@@ -1,7 +1,7 @@
 <app-window-panel
   [conFiltros]="true" [filtrosAbiertos]="true"
   titulo="Desempeño Social"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
 >
   <div ventana-filtros class="flex items-center gap-3 flex-wrap">
     <app-hier-selector [paramsHier]="paramsHier" placeholder="Elegir nivel" (nodoSeleccionado)="onNivelSeleccionado($event)" (error)="onErrorJerarquia()" />

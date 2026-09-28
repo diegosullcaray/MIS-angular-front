@@ -46,6 +46,12 @@ export class CeroCuotasDashboardComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
+
   private cargar(nodo: HierarquiaNodo): void {
     this.cargando.set(true);
     this.servicio.dashboard({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({

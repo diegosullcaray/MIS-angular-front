@@ -1,7 +1,8 @@
 <app-window-panel
   titulo="Ranking Unidades de Negocio - Desembolsos"
   subtitulo="Cartera"
-  [permitirActualizar]="false"
+  [actualizando]="cargando()"
+  (actualizar)="cargar()"
   [conFiltros]="true"
 >
   <!--

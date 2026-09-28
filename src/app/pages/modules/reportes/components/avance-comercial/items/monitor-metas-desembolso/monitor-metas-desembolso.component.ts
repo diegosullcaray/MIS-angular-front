@@ -66,6 +66,12 @@ export class MonitorMetasDesembolsoComponent {
       },
     });
   }
+
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
   /**
    * Chip informativo por pestaña, en reemplazo de las tarjetas KPI de arriba.
    * El color sigue la misma regla de semáforo que ya colorea las celdas de las

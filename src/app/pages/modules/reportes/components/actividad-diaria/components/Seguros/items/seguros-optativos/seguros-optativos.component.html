@@ -1,4 +1,4 @@
-<app-window-panel titulo="Reporte Seguros Optativos" subtitulo="Seguros" [permitirActualizar]="false" [conFiltros]="true">
+<app-window-panel titulo="Reporte Seguros Optativos" subtitulo="Seguros" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
   <!-- Como el legado, la jerarquía no se elige en un desplegable: el selector oculto solo resuelve
        el nodo autorizado y lleva la ruta; se navega con el drill down de la tabla y las migas. -->
   <app-hier-selector

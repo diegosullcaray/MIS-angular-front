@@ -42,6 +42,12 @@ export class MonitorReprogramadosComponent {
     this.cargarReporte();
   }
 
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
+
   protected onTipoSeleccionado(tipo: 1 | 2): void {
     this.tipoSeleccionado.set(tipo);
     if (this.nivelActual()) this.cargarReporte();

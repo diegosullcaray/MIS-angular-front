@@ -49,6 +49,10 @@ export class MonitorEfectividadesComponent extends SelectorAsesorBase {
     if (this.asesorSeleccionado()) this.cargarMonitorEfectividades();
   }
 
+  protected refrescar(): void {
+    if (this.asesorSeleccionado()) this.cargarMonitorEfectividades();
+  }
+
   private cargarMonitorEfectividades(): void {
     const asesor = this.asesorSeleccionado();
     if (!asesor) return;

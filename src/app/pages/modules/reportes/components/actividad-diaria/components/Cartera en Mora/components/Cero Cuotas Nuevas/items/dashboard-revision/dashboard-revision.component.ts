@@ -68,6 +68,12 @@ export class CeroCuotasDashboardRevisionComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.onNivelSeleccionado({ ...nodo });
+  }
+
   /** Conserva el drill-down del Top 10 cuando el backend entrega el nodo destino. */
   protected onTopAsesorSeleccionado({
     clave,
