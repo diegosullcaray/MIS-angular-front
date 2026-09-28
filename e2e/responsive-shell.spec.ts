@@ -49,7 +49,7 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     await expect(shell.botonHamburguesaDelRail).toHaveCount(0);
   });
 
-  test('usa el wallpaper de mobile (wallpaper_cell.jpg)', async ({ page }) => {
+  test('usa el wallpaper de mobile (wallpaper_cell.png)', async ({ page }) => {
     const shell = new ShellPage(page);
     // El tema se fija, como en los dos casos de escritorio de más abajo: lo que
     // se prueba es móvil contra escritorio, no claro contra oscuro. Sin fijarlo
@@ -58,7 +58,7 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     await shell.fijarTema('claro');
     await shell.ir();
 
-    expect(await shell.wallpaperAplicado()).toContain('wallpaper_cell.jpg');
+    expect(await shell.wallpaperAplicado()).toContain('wallpaper_cell.png');
   });
 });
 
@@ -105,7 +105,7 @@ test.describe('Shell responsive — desktop (>= 640px)', () => {
 
     const wallpaper = await shell.wallpaperAplicado();
     expect(wallpaper).toContain('wallpaper.png');
-    expect(wallpaper).not.toContain('wallpaper_cell.jpg');
+    expect(wallpaper).not.toContain('wallpaper_cell.png');
   });
 
   test('en oscuro usa la foto propia del tema (wallpaper_dark.png), sin velo encima', async ({ page }) => {

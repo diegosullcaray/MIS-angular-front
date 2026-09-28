@@ -28,7 +28,7 @@
 /* Mobile responsive login view */
 @media (max-width: 767.98px) {
   .login-right-panel {
-    background-image: url('/assets/images/fc/fondos/wallpaper_login_cell.webp') !important;
+    background-image: url('/assets/images/fc/fondos/wallpaper_login_cell.png') !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
     background-position: center center !important;

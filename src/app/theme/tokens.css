@@ -119,7 +119,7 @@
   --mis-sidebar-item-border: rgba(255, 255, 255, 0.38);
   /* Wallpaper del shell. Arranca con el de mobile; los `@media` de más abajo
      lo suben a la versión de escritorio y, en oscuro, a la propia de ese tema. */
-  --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper_cell.jpg');
+  --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper_cell.png');
   /* Color plano bajo el wallpaper. Vale `transparent` mientras el fondo sea una
      foto; lo pisa `AparienciaDomAdaptador` cuando el usuario elige un color. */
   --mis-wallpaper-color: transparent;
@@ -367,7 +367,7 @@
   --mis-sidebar-item-active: rgba(255, 255, 255, 0.2);
   --mis-sidebar-item-border: rgba(255, 255, 255, 0.18);
   /* Usamos la versión de wallpaper oscuro para mobile */
-  --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper_dark_cell.jpg');
+  --mis-wallpaper: url('/assets/images/fc/fondos/wallpaper_dark_cell.png');
   --mis-overlay-bg: rgba(8, 14, 26, 0.78);
   --mis-dialog-mask: rgba(8, 16, 30, 0.3);
   --mis-dialog-bg: rgba(22, 32, 52, 0.86);
