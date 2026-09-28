@@ -8,16 +8,21 @@ import type { OpcionFiltro } from '../opcion-filtro.model';
  * Botón de calendario para la barra del panel (`[ventana-acciones]`), al costado del de filtros:
  * abre un popover con el selector de fecha de cierre en vez de ocuparle una fila a los filtros del
  * cuerpo. Reemplaza al `app-select-filtro` de "Fecha Cierre" en escritorio; en pantallas angostas
- * ese selector sigue en el cuerpo (todavía no hay una vista de escritorio confirmada para móvil).
+ * ese selector sigue en el cuerpo (dentro de "Filtros") y este botón no se muestra.
+ *
+ * La visibilidad va en el host y no en el `<button>`: `.mis-window-btn` (en `ventana.css`, fuera de
+ * las capas de Tailwind) fija `display: inline-flex` y le ganaba a `hidden`, así que en móvil el
+ * botón aparecía también en la barra, duplicando el filtro.
  */
 @Component({
   selector: 'app-fecha-cierre-boton',
   standalone: true,
   imports: [SelectFiltroComponent, Popover, TooltipModule],
+  host: { class: 'hidden lg:contents' },
   template: `
     <button
       type="button"
-      class="mis-window-btn hidden lg:inline-flex"
+      class="mis-window-btn"
       (click)="popover.toggle($event)"
       [attr.aria-label]="etiqueta()"
       [pTooltip]="etiqueta()"

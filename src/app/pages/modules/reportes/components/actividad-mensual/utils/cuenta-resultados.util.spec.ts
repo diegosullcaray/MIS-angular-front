@@ -3,6 +3,7 @@ import {
   colorVariacionCuenta,
   crearColumnasCuentaResultados,
   estiloFilaCuenta,
+  fondoOpaco,
   etiquetaPeriodoCuenta,
   fechaCuentaParaBackend,
   leerMetadatosCuenta,
@@ -33,6 +34,21 @@ function hojas(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
 }
 
 describe('cuenta-resultados.util', () => {
+  describe('columna fija de cuentas', () => {
+    it('apila el fondo del nivel sobre la superficie sólida, para tapar las cifras al desplazar', () => {
+      expect(fondoOpaco('var(--mis-hover-bg)')).toBe('linear-gradient(var(--mis-hover-bg), var(--mis-hover-bg)), var(--mis-surface)');
+      expect(fondoOpaco(undefined)).toBe('var(--mis-surface)');
+    });
+
+    it('la celda de cuenta es sticky y lleva fondo opaco en todos los niveles', () => {
+      const [cuenta] = crearColumnasCuentaResultados('2026-06-01', false);
+      expect(cuenta.cellStyle).toEqual(expect.objectContaining({ position: 'sticky', left: '0' }));
+      for (const style of [1, 2, 3, 4]) {
+        expect(cuenta.cellStyleFn!(null, { style })!['background']).toContain('var(--mis-surface)');
+      }
+    });
+  });
+
   describe('fechas', () => {
     it('acepta solo YYYY-MM-DD de calendario', () => {
       expect(normalizarFechaCuenta('2026-05-01')).toBe('2026-05-01');

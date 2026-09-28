@@ -136,6 +136,15 @@ export function colorVariacionCuenta(valor: number, fila: Record<string, unknown
   return favorable ? 'var(--mis-success)' : 'var(--mis-danger)';
 }
 
+/**
+ * La columna fija pasa por encima de las cifras al desplazar en horizontal: su fondo tiene que
+ * tapar. Algunos niveles usan un tono translúcido (`--mis-hover-bg`), así que se apila sobre la
+ * superficie sólida.
+ */
+export function fondoOpaco(fondo: string | undefined): string {
+  return fondo ? `linear-gradient(${fondo}, ${fondo}), var(--mis-surface)` : 'var(--mis-surface)';
+}
+
 /** 280px como el legado; en un teléfono se acota para que la columna fija no tape las cifras. */
 const ESTILO_CUENTA_FIJA = {
   position: 'sticky',
@@ -193,7 +202,10 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
       key: 'cuenta_nombre',
       style: { ...ESTILO_CUENTA_FIJA, 'z-index': '3' },
       cellStyle: { ...ESTILO_CUENTA_FIJA, 'z-index': '1', 'text-align': 'left' },
-      cellStyleFn: (_valor, fila) => ({ ...estiloFilaCuenta(fila), 'padding-left': sangriaCuenta(fila) }),
+      cellStyleFn: (_valor, fila) => {
+        const estilo = estiloFilaCuenta(fila);
+        return { ...estilo, background: fondoOpaco(estilo['background']), 'padding-left': sangriaCuenta(fila) };
+      },
     },
     {
       label: 'Mensual',

@@ -23,11 +23,13 @@
 /* ── PrimeNG cssLayer ordering ────────────────────────────── */
 @layer theme, base, primeng, utilities;
 /* Tablas con `appMaxFilas` (ver shared/ui/tablas/max-filas.directive.ts): al hacer scroll dentro
-   de la tabla, el encabezado queda fijo arriba. */
+   de la tabla, el encabezado queda fijo arriba. Va una capa por encima de las celdas fijas del
+   cuerpo (columna congelada, `z-index: 1`): si empatan, las filas que suben se pintan sobre el
+   encabezado y lo "rompen". */
 .mis-max-filas .p-datatable-table-container > .p-datatable-table > .p-datatable-thead {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 /* `app-tabla-reporte` con `[ajustarAncho]`: además de dejar saltar de línea los encabezados,

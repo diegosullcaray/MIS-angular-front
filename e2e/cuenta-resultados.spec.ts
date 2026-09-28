@@ -51,7 +51,8 @@ test.describe('Cuenta de Resultados', () => {
     expect(consultas[0]).toContain('NOW');
     await expect(page.getByRole('heading', { name: 'Cuenta de Resultados', exact: true })).toBeVisible();
     await expect(page.getByText('Período: Junio de 2026')).toBeVisible();
-    await expect(page.getByLabel('Período')).toContainText('Junio de 2026');
+    // El botón de la barra es solo ícono; el valor elegido se lee en el select de filtros.
+    await expect(page.locator('app-select-filtro').getByLabel('Período')).toContainText('Junio de 2026');
     await expect(page.getByText('Preliminar', { exact: true })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Mensual' })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Acumulado' })).toBeVisible();
@@ -78,4 +79,66 @@ test.describe('Cuenta de Resultados', () => {
     await expect(page.getByRole('button', { name: 'Reintentar' })).toBeVisible();
     await expect(page.getByText('No se encontraron resultados')).toHaveCount(0);
   });
+
+  for (const [dispositivo, ancho] of [['escritorio', 1280], ['teléfono', 390]] as const) {
+    test(`al desplazar, el encabezado y la columna de cuentas quedan fijos y no se pisan (${dispositivo})`, async ({ page }) => {
+      await page.setViewportSize({ width: ancho, height: 800 });
+      await inyectarSesionVigente(page);
+      const muchas = Array.from({ length: 40 }, (_, i) => ({
+        style: [2, 1, 4, 3][i % 4], cuenta_codigo: `CR${i}`, cuenta_nombre: `CUENTA ${i}`,
+        periodo_anio_anterior: 1000 + i, periodo_anterior: 2000, periodo_actual: 3000, variacion_periodo_anterior: 5,
+        acumulado_anio_anterior: 4000, acumulado_actual: 5000, variacion_acumulado: 6, variacion_acumulado_pct: 0.1,
+      }));
+      await page.route('**/cores2/ant/**', (route) => {
+        const strands = route.request().headers()['winder-params'] ?? '';
+        let body: unknown = {};
+        if (strands.includes('base_hier')) body = { base_hierarchy: [RAIZ] };
+        else if (strands.includes('level_hier')) body = { level_hierarchy: NIVEL_1 };
+        else if (strands.includes('TAB_CUE_RES_01')) body = { resultado: { headers: HEADERS, data: muchas } };
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ code: '0', headers: {}, body }) });
+      });
+      await page.goto(RUTA);
+      await expect(page.locator('app-tabla-dinamica tbody tr').first()).toBeVisible();
+
+      const cabecera = page.getByRole('columnheader', { name: 'Estado de ganancias y pérdidas' });
+      const x0 = (await page.locator('app-tabla-dinamica tbody td').first().boundingBox())!.x;
+      await page.locator('app-tabla-dinamica .p-datatable-table-container').evaluate((el) => {
+        el.scrollTop = 300;
+        el.scrollLeft = 200;
+      });
+
+      // Lo que se ve en el centro del encabezado de la columna fija es el propio encabezado, no una fila.
+      const caja = (await cabecera.boundingBox())!;
+      const encima = await page.evaluate(
+        ([x, y]) => document.elementFromPoint(x, y)?.closest('th, td')?.tagName,
+        [caja.x + caja.width / 2, caja.y + caja.height / 2],
+      );
+      expect(encima).toBe('TH');
+
+      // La columna de cuentas no se va con el desplazamiento horizontal, y su fondo tapa las cifras.
+      const celda = page.locator('app-tabla-dinamica tbody tr:nth-child(10) td').first();
+      expect(Math.abs((await celda.boundingBox())!.x - x0)).toBeLessThanOrEqual(1);
+      const fondo = await celda.evaluate((el) => getComputedStyle(el).backgroundColor);
+      expect(fondo).not.toMatch(/rgba\(.*,\s*0(\.\d+)?\)$/);
+    });
+  }
+
+  for (const [dispositivo, ancho, enBarra] of [['escritorio', 1280, true], ['teléfono', 390, false]] as const) {
+    test(`el filtro de período va ${enBarra ? 'en la barra del panel' : 'solo dentro de Filtros'} (${dispositivo})`, async ({ page }) => {
+      await page.setViewportSize({ width: ancho, height: 800 });
+      await abrir(page, 'datos');
+      await expect(page.locator('app-tabla-dinamica')).toBeVisible();
+
+      const botonBarra = page.getByRole('button', { name: 'Período', exact: true });
+      const selectFiltros = page.locator('app-select-filtro').getByLabel('Período');
+      if (enBarra) {
+        await expect(botonBarra).toBeVisible();
+        await expect(selectFiltros).toBeHidden();
+      } else {
+        await expect(botonBarra).toBeHidden();
+        await page.getByRole('button', { name: /filtros/i }).first().click();
+        await expect(selectFiltros).toBeVisible();
+      }
+    });
+  }
 });
