@@ -29,14 +29,14 @@ export class TableroDigitalService {
     return this.unBloque(COD_TABLERO_DIGITAL.vistaGeneralCanal, nodo);
   }
 
-  /** Vista General de Corresponsal. */
-  vistaGeneralCorresponsal(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque(COD_TABLERO_DIGITAL.vistaGeneralCorresponsal, nodo);
+  /** Vista General de Corresponsal. Su filtro `tip_age` (`TIPOAgenteC()`) es obligatorio en el legado. */
+  vistaGeneralCorresponsal(nodo: NodoConsulta, tipAge: string): Observable<ReporteBloqueUnico> {
+    return this.unBloque(COD_TABLERO_DIGITAL.vistaGeneralCorresponsal, nodo, { tip_age: tipAge });
   }
 
-  /** Gestión de Corresponsal. */
-  gestionCorresponsal(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.unBloque(COD_TABLERO_DIGITAL.gestionCorresponsal, nodo);
+  /** Gestión de Corresponsal. Mismo filtro `tip_age` obligatorio que "Vista General". */
+  gestionCorresponsal(nodo: NodoConsulta, tipAge: string): Observable<ReporteBloqueUnico> {
+    return this.unBloque(COD_TABLERO_DIGITAL.gestionCorresponsal, nodo, { tip_age: tipAge });
   }
 
   /**
@@ -61,7 +61,11 @@ export class TableroDigitalService {
       );
   }
 
-  private unBloque(codRep: string, nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.bloques.regular(codRep, nodo).pipe(map((tabla1) => ({ tabla1 })));
+  private unBloque(
+    codRep: string,
+    nodo: NodoConsulta,
+    extra: Record<string, unknown> = {},
+  ): Observable<ReporteBloqueUnico> {
+    return this.bloques.regular(codRep, nodo, extra).pipe(map((tabla1) => ({ tabla1 })));
   }
 }

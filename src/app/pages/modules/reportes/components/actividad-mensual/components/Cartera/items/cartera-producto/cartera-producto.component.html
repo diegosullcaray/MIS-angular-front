@@ -1,4 +1,8 @@
 <app-window-panel titulo="Cartera por Producto" subtitulo="Expresado en Millones PEN" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
+  <!-- En escritorio la fecha de cierre se elige desde el botón de calendario de la barra;
+       en móvil (todavía sin vista propia confirmada) se conserva el selector de siempre. -->
+  <app-fecha-cierre-boton ventana-acciones etiqueta="Fecha Cierre" [opciones]="opcionesFechaBase" [(valor)]="fechaBase" />
+
   <div ventana-filtros class="flex flex-col gap-3">
     <!-- Selector de Jerarquía -->
     <app-hier-selector
@@ -8,8 +12,8 @@
       (error)="onErrorJerarquia()"
     />
 
-    <!-- Filtro de Fecha -->
-    <app-grupo-filtros>
+    <!-- Filtro de Fecha: solo en móvil, en escritorio va el botón de calendario de la barra. -->
+    <app-grupo-filtros class="lg:hidden">
       <app-select-filtro
         etiqueta="Fecha Cierre"
         [opciones]="opcionesFechaBase"

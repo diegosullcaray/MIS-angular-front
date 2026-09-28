@@ -1,4 +1,8 @@
 <app-window-panel titulo="Tablero Digital Comercial" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
+  @if (periodos().length > 0) {
+    <app-fecha-cierre-boton ventana-acciones etiqueta="Fecha Cierre" [opciones]="periodos()" [(valor)]="periodo" />
+  }
+
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector
       [paramsHier]="paramsHier"
@@ -7,7 +11,7 @@
       (error)="onErrorJerarquia()"
     />
     @if (periodos().length > 0) {
-      <app-grupo-filtros>
+      <app-grupo-filtros class="lg:hidden">
         <app-select-filtro
           etiqueta="Fecha Cierre"
           [opciones]="periodos()"

@@ -19,6 +19,9 @@ import type { OpcionFiltro } from '../opcion-filtro.model';
         [styleClass]="'text-[11.5px] ' + ancho()"
         [ariaLabel]="etiqueta()"
         appendTo="body"
+        [filter]="conBuscador()"
+        filterBy="desc"
+        filterPlaceholder="Buscar…"
       />
     </div>
   `,
@@ -27,5 +30,7 @@ export class SelectFiltroComponent<T extends string | number> {
   readonly etiqueta = input.required<string>();
   readonly opciones = input.required<OpcionFiltro<T>[]>();
   readonly ancho = input('w-44');
+  /** Buscador dentro del desplegable, para catálogos largos (asesores, agencias). */
+  readonly conBuscador = input(false);
   readonly valor = model.required<T>();
 }

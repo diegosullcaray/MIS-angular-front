@@ -2,6 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { GraficoMixtoComponent } from '../../../../../../../../../shared/ui/graficos/grafico-mixto/grafico-mixto.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -26,6 +27,7 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
     HierSelectorComponent,
     GraficoMixtoComponent,
     SelectFiltroComponent,
+    FechaCierreBotonComponent,
     EmptyStateComponent,
     WindowPanelComponent,
     GrupoFiltrosComponent,

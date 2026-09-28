@@ -218,6 +218,18 @@ export const MisTheme = definePreset(Aura, {
         dark: ESQUEMA_TABLA,
       },
     },
+    /**
+     * La página activa usaba el `highlight` semántico genérico: en oscuro es
+     * un 4% de blanco casi invisible, y en claro un azul tan pálido que apenas
+     * se distinguía del fondo. Un fondo sólido (igual al de los botones
+     * primarios) se ve en los dos temas.
+     */
+    paginator: {
+      navButton: {
+        selectedBackground: 'var(--mis-primary)',
+        selectedColor: 'var(--mis-text-on-primary)',
+      },
+    },
     /** Forma y densidad del control en el preset; el relieve visual vive en `assets/styles/componentes/botones.css`. */
     button: {
       root: {

@@ -80,13 +80,14 @@ export class CeroCuotasNuevasService {
     return this.bloques.regulares(bloques, nodo);
   }
 
-  /** Base de Gestión, con su filtro `tipcuota`. */
+  /** Base de Gestión, con su filtro `tipcuota` y paginado en el servidor (host `report-cra-V10`). */
   baseGestion(
     nodo: NodoConsulta,
     filtros: Record<string, unknown>,
+    pagina = 1,
   ): Observable<ReporteBloqueUnico> {
     return this.bloques
-      .regularPaginado(COD_BASE_GESTION, nodo, filtros)
+      .regularPaginado(COD_BASE_GESTION, nodo, filtros, pagina)
       .pipe(map((tabla1) => ({ tabla1 })));
   }
 

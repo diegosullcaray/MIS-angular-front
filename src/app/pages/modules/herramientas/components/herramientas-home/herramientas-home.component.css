@@ -1,3 +1,25 @@
 :host {
   display: block;
 }
+
+/* Entrada rápida del panel al montarse (`animate.enter` nativo de Angular). */
+.mis-page.mis-fade-in {
+  animation: mis-page-fade-in 200ms ease-out;
+}
+
+@keyframes mis-page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mis-page.mis-fade-in {
+    animation: none;
+  }
+}

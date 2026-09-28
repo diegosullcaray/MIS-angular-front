@@ -55,24 +55,36 @@ describe('TableroDigitalService', () => {
    * un bloque que no existe.
    */
   it('"gestionCorresponsal" usa el id `_02`, no `_01`', () => {
-    servicio.gestionCorresponsal(NODO).subscribe();
+    servicio.gestionCorresponsal(NODO, 'TODOS').subscribe();
 
     expect(getRegularData.mock.calls[0][0]).toBe('RVIUWGCORE_02');
   });
 
-  it.each([
-    ['vistaGeneralCanal', 'TABDIG_VR2_01'],
-    ['vistaGeneralCorresponsal', 'RVIUWGCOR_01'],
-  ])('"%s" pide su bloque `_01`', (metodo, codRep) => {
-    (servicio[metodo as 'vistaGeneralCanal' | 'vistaGeneralCorresponsal'])(NODO).subscribe();
+  it('"vistaGeneralCanal" pide su bloque `_01`', () => {
+    servicio.vistaGeneralCanal(NODO).subscribe();
 
-    expect(getRegularData.mock.calls[0][0]).toBe(codRep);
+    expect(getRegularData.mock.calls[0][0]).toBe('TABDIG_VR2_01');
+  });
+
+  it('"vistaGeneralCorresponsal" pide su bloque `_01`', () => {
+    servicio.vistaGeneralCorresponsal(NODO, 'TODOS').subscribe();
+
+    expect(getRegularData.mock.calls[0][0]).toBe('RVIUWGCOR_01');
+  });
+
+  /** `TIPOAgenteC()` del legado: filtro obligatorio, sin él el backend no responde. */
+  it('"vistaGeneralCorresponsal" y "gestionCorresponsal" mandan `tip_age`', () => {
+    servicio.vistaGeneralCorresponsal(NODO, '1').subscribe();
+    servicio.gestionCorresponsal(NODO, '2').subscribe();
+
+    expect(getRegularData.mock.calls[0][1]).toMatchObject({ tip_age: '1' });
+    expect(getRegularData.mock.calls[1][1]).toMatchObject({ tip_age: '2' });
   });
 
   it('todos van por `regularData`: sus entradas del mapa declaran `ReportType.REGULAR`', () => {
     servicio.vistaGeneralCanal(NODO).subscribe();
-    servicio.vistaGeneralCorresponsal(NODO).subscribe();
-    servicio.gestionCorresponsal(NODO).subscribe();
+    servicio.vistaGeneralCorresponsal(NODO, 'TODOS').subscribe();
+    servicio.gestionCorresponsal(NODO, 'TODOS').subscribe();
 
     expect(getDeprecatedData).not.toHaveBeenCalled();
     expect(getRegularData).toHaveBeenCalledTimes(3);

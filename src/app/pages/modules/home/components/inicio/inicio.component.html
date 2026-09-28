@@ -14,6 +14,7 @@
   class="inicio"
   [attr.aria-labelledby]="recientes().length > 0 ? 'inicio-titulo' : null"
   [attr.aria-label]="recientes().length > 0 ? null : 'Inicio'"
+  animate.enter="mis-fade-in"
 >
   @if (recientes().length > 0) {
     <header class="inicio-encabezado">

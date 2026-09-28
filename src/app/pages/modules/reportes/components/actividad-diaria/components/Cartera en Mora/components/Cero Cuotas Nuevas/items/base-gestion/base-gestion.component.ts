@@ -1,7 +1,7 @@
 ﻿import { Component, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ReporteSimpleComponent } from '../../../../../../../../ui/reporte-simple/reporte-simple.component';
-import { ReporteSimpleBase } from '../../../../../../../../ui/reporte-simple/reporte-simple.base';
+import { ReportePaginadoBase } from '../../../../../../../../ui/reporte-simple/reporte-paginado.base';
 import { SelectFiltroComponent } from '../../../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../../../services/bloque-reporte.service';
@@ -22,7 +22,7 @@ import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas
   imports: [ReporteSimpleComponent, SelectFiltroComponent],
   templateUrl: './base-gestion.component.html',
 })
-export class CeroCuotasBaseGestionComponent extends ReporteSimpleBase {
+export class CeroCuotasBaseGestionComponent extends ReportePaginadoBase {
   private readonly servicio = inject(CeroCuotasNuevasService);
 
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
@@ -30,7 +30,7 @@ export class CeroCuotasBaseGestionComponent extends ReporteSimpleBase {
   protected readonly opcionesTipo = OPCIONES_TIPO_CUOTA_BASE;
   protected readonly tipo = signal(TIPO_CUOTA_BASE_POR_DEFECTO);
 
-  protected consultar(nodo: NodoConsulta): Observable<ReporteBloqueUnico> {
-    return this.servicio.baseGestion(nodo, { tipcuota: this.tipo() });
+  protected consultarPagina(nodo: NodoConsulta, pagina: number): Observable<ReporteBloqueUnico> {
+    return this.servicio.baseGestion(nodo, { tipcuota: this.tipo() }, pagina);
   }
 }

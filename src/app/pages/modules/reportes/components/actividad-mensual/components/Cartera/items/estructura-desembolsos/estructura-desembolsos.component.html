@@ -1,4 +1,6 @@
 <app-window-panel titulo="Estructura de Desembolsos" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
+  <app-fecha-cierre-boton ventana-acciones etiqueta="Fecha Cierre" [opciones]="opcionesFechaBase()" [(valor)]="fechaBase" />
+
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector
       [paramsHier]="paramsHier"
@@ -6,7 +8,7 @@
       (nodoSeleccionado)="onNivelSeleccionado($event)"
       (error)="onErrorJerarquia()"
     />
-    <app-grupo-filtros>
+    <app-grupo-filtros class="lg:hidden">
       <app-select-filtro
         etiqueta="Fecha Cierre"
         [opciones]="opcionesFechaBase()"

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ReporteSimpleComponent } from '../../../../../../ui/reporte-simple/reporte-simple.component';
+import { ReporteSimpleComponent, type PestanaReporte } from '../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteBloquesBase } from '../../../../../../ui/reporte-simple/reporte-bloques.base';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
@@ -30,5 +30,21 @@ export class ReporteSegurosComponent extends ReporteBloquesBase {
 
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.reporteSeguros(nodo);
+  }
+
+  /**
+   * Dos pestañas: "Reporte Seguro" agrupa los tres primeros bloques (con
+   * chips para elegir cuál ver, al tener más de uno) y "Detalle" el último,
+   * solo.
+   */
+  protected pestanas(): PestanaReporte[] | undefined {
+    const bloques = this.bloques();
+    if (bloques.length === 0) return undefined;
+
+    return [
+      { id: 'reporte', titulo: 'Reporte Seguro', bloques: bloques.slice(0, 3) },
+      // Sin título de bloque: repetiría el nombre de la pestaña.
+      { id: 'detalle', titulo: 'Detalle', bloques: bloques.slice(3).map((bloque) => ({ ...bloque, titulo: undefined })) },
+    ];
   }
 }

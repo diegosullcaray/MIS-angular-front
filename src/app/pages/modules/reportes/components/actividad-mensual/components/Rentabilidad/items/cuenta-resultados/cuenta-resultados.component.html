@@ -4,6 +4,10 @@
   [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
   [conFiltros]="true"
 >
+  @if (periodos().length > 0) {
+    <app-fecha-cierre-boton ventana-acciones etiqueta="Período" [opciones]="periodos()" [valor]="periodo()" (valorChange)="onPeriodoChange($event)" />
+  }
+
   <div ventana-filtros class="flex flex-col gap-3">
     <app-hier-selector
       [paramsHier]="paramsHier"
@@ -12,7 +16,7 @@
       (error)="onErrorJerarquia()"
     />
     @if (periodos().length > 0) {
-      <app-grupo-filtros>
+      <app-grupo-filtros class="lg:hidden">
         <app-select-filtro
           etiqueta="Período"
           [opciones]="periodos()"

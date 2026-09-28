@@ -1,4 +1,10 @@
 <app-window-panel titulo="CMG Cartera" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()" [conFiltros]="true">
+  <!-- En escritorio la fecha de cierre se elige desde el botón de calendario de la barra;
+       en móvil (todavía sin vista propia confirmada) se conserva el selector de siempre. -->
+  @if (periodos().length > 0) {
+    <app-fecha-cierre-boton ventana-acciones etiqueta="Fecha Cierre" [opciones]="periodos()" [(valor)]="periodo" />
+  }
+
   <div ventana-filtros class="flex flex-col gap-3">
     <!-- Selector de Jerarquía (arriba) -->
     <app-hier-selector
@@ -8,8 +14,8 @@
       (error)="onErrorJerarquia()"
     />
 
-    <!-- Filtros Personales (abajo, dispuestos horizontalmente en desktop) -->
-    <app-grupo-filtros>
+    <!-- Filtros Personales (abajo, dispuestos horizontalmente en desktop): solo en móvil. -->
+    <app-grupo-filtros class="lg:hidden">
       @if (periodos().length > 0) {
         <app-select-filtro
           etiqueta="Fecha Cierre"

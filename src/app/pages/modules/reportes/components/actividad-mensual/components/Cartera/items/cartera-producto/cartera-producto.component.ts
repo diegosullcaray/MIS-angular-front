@@ -3,6 +3,7 @@ import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier
 import { TablaReporteComponent } from '../../../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { GraficoMixtoComponent } from '../../../../../../../../../shared/ui/graficos/grafico-mixto/grafico-mixto.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -28,6 +29,7 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
     TablaReporteComponent,
     GraficoMixtoComponent,
     SelectFiltroComponent,
+    FechaCierreBotonComponent,
     EmptyStateComponent,
     WindowPanelComponent,
     GrupoFiltrosComponent,

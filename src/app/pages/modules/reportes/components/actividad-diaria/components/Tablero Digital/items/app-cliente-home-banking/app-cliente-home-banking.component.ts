@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ReporteSimpleComponent } from '../../../../../../ui/reporte-simple/reporte-simple.component';
+import { ReporteSimpleComponent, type PestanaReporte } from '../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteBloquesBase } from '../../../../../../ui/reporte-simple/reporte-bloques.base';
 import { PARAMS_HIER_OFICINA } from '../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
@@ -30,5 +30,16 @@ export class AppClienteHomeBankingComponent extends ReporteBloquesBase {
 
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {
     return this.servicio.appClienteHomeBanking(nodo);
+  }
+
+  /** Los dos bloques (`_01`, `_02`) en pestañas: APP Home Banking y Corresponsal. */
+  protected pestanas(): PestanaReporte[] | undefined {
+    const bloques = this.bloques();
+    if (bloques.length === 0) return undefined;
+
+    return [
+      { id: 'home-banking', titulo: 'APP - Home Banking', bloques: bloques.slice(0, 1) },
+      { id: 'corresponsal', titulo: 'Corresponsal', bloques: bloques.slice(1) },
+    ];
   }
 }

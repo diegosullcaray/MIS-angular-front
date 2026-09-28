@@ -5,6 +5,7 @@ import { TabsModule } from 'primeng/tabs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { InlineErrorComponent } from '../../../../../../../../../shared/ui/inline-error/inline-error.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
@@ -33,6 +34,7 @@ import { animarAnillos } from '../../../../../../ui/tarjeta-meta/animar-anillos'
     HierSelectorComponent,
     TablaDinamicaComponent,
     SelectFiltroComponent,
+    FechaCierreBotonComponent,
     EmptyStateComponent,
     InlineErrorComponent,
     WindowPanelComponent,

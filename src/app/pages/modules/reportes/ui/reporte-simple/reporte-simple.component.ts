@@ -131,6 +131,8 @@ export interface PestanaReporte {
                                 [rows]="filasPorPagina()"
                                 [totalRecords]="total"
                                 [showFirstLastIcon]="true"
+                                [showCurrentPageReport]="true"
+                                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
                                 (onPageChange)="onPagina($event)"
                                 styleClass="text-[12px] !bg-transparent"
                               />
@@ -169,6 +171,8 @@ export interface PestanaReporte {
                     [rows]="filasPorPagina()"
                     [totalRecords]="total"
                     [showFirstLastIcon]="true"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
                     (onPageChange)="onPagina($event)"
                     styleClass="text-[12px] !bg-transparent"
                   />

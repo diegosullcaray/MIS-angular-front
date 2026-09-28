@@ -7,4 +7,7 @@
   [cargando]="cargando()" [error]="error()"
   (nivelSeleccionado)="onNivelSeleccionado($event)"
   (errorJerarquia)="onErrorJerarquia()"
-/>
+>
+  <!-- `TIPOAgenteC()` del legado: filtro obligatorio, si no se manda el backend no responde. -->
+  <app-select-filtro filtros etiqueta="Tipo" [opciones]="opcionesTipoAgente" [(valor)]="tipoAgente" ancho="w-40" />
+</app-reporte-simple>

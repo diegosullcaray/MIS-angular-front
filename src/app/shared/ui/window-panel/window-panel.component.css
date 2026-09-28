@@ -27,3 +27,28 @@
   border-right: 0;
   box-shadow: none;
 }
+
+/* Entrada del panel al montarse (`animate.enter` nativo de Angular, sin
+   @angular/animations). Rápida a propósito — ver preferencia de animación
+   del Host: 150–400 ms, nada de animar más allá de entradas y cambios de
+   panel/pestaña. */
+.mis-window.mis-fade-in {
+  animation: mis-window-fade-in 200ms ease-out;
+}
+
+@keyframes mis-window-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mis-window.mis-fade-in {
+    animation: none;
+  }
+}

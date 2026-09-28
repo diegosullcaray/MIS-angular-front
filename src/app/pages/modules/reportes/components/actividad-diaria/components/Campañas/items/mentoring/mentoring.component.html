@@ -15,7 +15,7 @@
   -->
   @if (!ocultarAsesor()) {
     <div filtros class="flex flex-wrap items-end gap-3">
-      <app-select-filtro etiqueta="Asesor" [opciones]="opcionesAsesor()" [(valor)]="asesor" ancho="w-64" />
+      <app-select-filtro etiqueta="Asesor" [opciones]="opcionesAsesor()" [(valor)]="asesor" ancho="w-64" [conBuscador]="true" />
     </div>
   }
 </app-reporte-simple>

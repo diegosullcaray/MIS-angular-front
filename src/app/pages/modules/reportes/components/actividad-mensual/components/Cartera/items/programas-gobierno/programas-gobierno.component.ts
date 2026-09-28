@@ -3,6 +3,7 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { TablaReporteComponent } from '../../../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -24,6 +25,7 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
     WindowPanelComponent,
     HierSelectorComponent,
     SelectFiltroComponent,
+    FechaCierreBotonComponent,
     EmptyStateComponent,
     TablaReporteComponent,
     Tabs,

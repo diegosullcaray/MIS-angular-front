@@ -3,6 +3,7 @@ import { retry } from 'rxjs';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
@@ -25,6 +26,7 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
     HierSelectorComponent,
     TablaDinamicaComponent,
     SelectFiltroComponent,
+    FechaCierreBotonComponent,
     EmptyStateComponent,
     WindowPanelComponent,
     GrupoFiltrosComponent,

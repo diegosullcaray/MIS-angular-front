@@ -74,6 +74,8 @@
       [first]="primeraFila"
       [rows]="porPagina"
       [totalRecords]="total()"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
       (onPageChange)="onPagina($event)"
       styleClass="text-[12px] !bg-transparent"
     />
