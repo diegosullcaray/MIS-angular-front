@@ -55,11 +55,7 @@ describe('NovedadesTourService', () => {
   });
 
   it('solo publica recorridos que señalan funciones del sistema, no el panel de novedades', () => {
-    expect(servicio.novedades.map((n) => n.id)).toEqual([
-      'busqueda-global',
-      'sistemas-y-paneles',
-      'configuracion-personal',
-    ]);
+    expect(servicio.novedades.map((n) => n.id)).toEqual(['busqueda-global', 'sistemas-y-paneles']);
   });
 
   it('iniciar() prepara la interfaz y delega los pasos de esa novedad en el motor de tours', async () => {
@@ -111,11 +107,8 @@ describe('NovedadesTourService', () => {
     header.remove();
   });
 
-  it('Configuración enseña el camino: espera el clic en el perfil y en la opción', () => {
-    const config = servicio.novedades.find((n) => n.id === 'configuracion-personal')!;
-    const conClic = config.pasos.filter((p) => p.advanceOnClick).map((p) => p.element);
-
-    expect(conClic).toEqual(['header [aria-haspopup="true"]', '.perfil-menu .perfil-item']);
+  it('con Configuración deshabilitada no se publica su recorrido (no tendría a dónde llevar)', () => {
+    expect(servicio.novedades.some((n) => n.id === 'configuracion-personal')).toBe(false);
   });
 
   it('iniciar() con un id inexistente no arranca ningún recorrido', () => {

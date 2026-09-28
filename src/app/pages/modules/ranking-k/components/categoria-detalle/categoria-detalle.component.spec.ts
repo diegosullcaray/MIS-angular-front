@@ -4,28 +4,33 @@ import { CategoriaDetalleComponent } from './categoria-detalle.component';
 import { KaypachaService } from '../../services/kaypacha.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
 import type { DetalleRanking, FilaDetalleRanking } from '../../models/categoria-ranking.model';
+import { PreferenciasService } from '../../../../full-pages/layout/services/preferencias.service';
 
 function fila(overrides: Partial<FilaDetalleRanking> = {}): FilaDetalleRanking {
   return { ROWNUMBER: 1, HCOLNOM: 'Ana Torres', TOTAL_MES: 100, hdester: 'Norte', ...overrides };
 }
 
 describe('CategoriaDetalleComponent', () => {
-  let kaypachaFalso: { buscarCategoria: ReturnType<typeof vi.fn>; cargarCategorias: ReturnType<typeof vi.fn>; obtenerDetalle: ReturnType<typeof vi.fn> };
+  let kaypachaFalso: { ruta: string; buscarCategoria: ReturnType<typeof vi.fn>; cargarCategorias: ReturnType<typeof vi.fn>; obtenerDetalle: ReturnType<typeof vi.fn> };
   let redirectFalso: { redirigir: ReturnType<typeof vi.fn> };
+  let preferenciasFalso: { renombrarReporteReciente: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     kaypachaFalso = {
+      ruta: '/app/ranking-k',
       buscarCategoria: vi.fn().mockReturnValue(undefined),
       cargarCategorias: vi.fn(),
       obtenerDetalle: vi.fn().mockReturnValue(of({ filas: [], fechaActualizacion: null } as DetalleRanking)),
     };
     redirectFalso = { redirigir: vi.fn() };
+    preferenciasFalso = { renombrarReporteReciente: vi.fn() };
 
     TestBed.configureTestingModule({
       imports: [CategoriaDetalleComponent],
       providers: [
         { provide: KaypachaService, useValue: kaypachaFalso },
         { provide: RedirectOverlayService, useValue: redirectFalso },
+        { provide: PreferenciasService, useValue: preferenciasFalso },
       ],
     });
   });
@@ -40,6 +45,12 @@ describe('CategoriaDetalleComponent', () => {
     fixture.detectChanges();
     return fixture;
   }
+
+  it('cuando llega la categoría, renombra su acceso en "Recientes" con el nombre y no con el id', () => {
+    kaypachaFalso.buscarCategoria.mockReturnValue({ name: 'Colocaciones', rdestip: '12', reportType: 'x' });
+    crear('12');
+    expect(preferenciasFalso.renombrarReporteReciente).toHaveBeenCalledWith('/app/ranking-k/categoria/12', 'Colocaciones', 'Ranking Kaypacha');
+  });
 
   it('carga las categorías al construirse', () => {
     crear('z1');

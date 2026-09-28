@@ -117,30 +117,6 @@ test.describe('El shell en el ancho más chico del mercado', () => {
   });
 });
 
-test.describe('Diálogos en móvil', () => {
-  const telefono = TELEFONOS[1];
-
-  test.beforeEach(async ({ page }) => {
-    await page.setViewportSize({ width: telefono.ancho, height: telefono.alto });
-    await inyectarSesionVigente(page);
-    await mockearBackendAnt(page);
-  });
-
-  test('el diálogo de configuración entra en el ancho del teléfono', async ({ page }) => {
-    await page.goto('/app/dashboard');
-    await page.locator('header [role="button"][aria-haspopup="true"]').click();
-    await page.getByRole('menuitem', { name: 'Configuración' }).click();
-
-    const dialogo = page.getByRole('dialog').filter({ hasText: 'Configuración' });
-    await expect(dialogo).toBeVisible();
-
-    const caja = (await dialogo.boundingBox())!;
-    expect(Math.round(caja.width)).toBeLessThanOrEqual(telefono.ancho);
-    expect(caja.x).toBeGreaterThanOrEqual(-1);
-    expect(await paginaDesbordaEnHorizontal(page)).toBe(false);
-  });
-});
-
 test.describe('Objetivos táctiles', () => {
   const telefono = TELEFONOS[1];
 

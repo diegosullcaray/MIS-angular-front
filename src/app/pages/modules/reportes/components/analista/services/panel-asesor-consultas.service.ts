@@ -1,7 +1,9 @@
 import { Injectable, Injector, inject } from '@angular/core';
-import { Observable, map, throwError } from 'rxjs';
+import { Observable, map, merge, scan, throwError } from 'rxjs';
+import { TABLA_PENDIENTE } from '../../../models/tabla-reporte.model';
 import type { ResultadoPanelAsesor } from '../models/panel-asesor.model';
 import type { FiltrosMonitorEfectividades } from '../models/monitor-efectividades.model';
+import { CODIGO_CLIENTES_CONSOLIDADO } from '../constantes/panel-asesor.constantes';
 import { CarteraService } from './cartera.service';
 import { MonitorMetasDesembolsoService } from './monitor-metas-desembolso.service';
 import { MonitorEfectividadesService } from './monitor-efectividades.service';
@@ -9,16 +11,8 @@ import { GruposPorVencerService } from './grupos-por-vencer.service';
 import { ClientesNuevosRecurrentesService } from './clientes-nuevos-recurrentes.service';
 import { ClientesProductoService } from './clientes-producto.service';
 import { SegurosService } from './seguros.service';
-import { CeroCuotasService } from './cero-cuotas.service';
 import { RecuperacionPreventivaService } from './recuperacion-preventiva.service';
-import { CaptacionesService } from './captaciones.service';
 import { AutonomiaTasasService } from './autonomia-tasas.service';
-import { PlanillaMovilidadService } from './planilla-movilidad.service';
-import { ResumenMovilidadService } from './resumen-movilidad.service';
-import { InversionStockMoraService } from './inversion-stock-mora.service';
-import { DesempenoSocialAnalistaService } from './desempeno-social-analista.service';
-import { ColocacionesDiariaService } from './colocaciones-diaria.service';
-import { ProspectoCorresponsalService } from './prospecto-corresponsal.service';
 
 /** Delega cada reporte (por su `SCODSEC`) al servicio que ya conserva su motor, bloques y parámetros. */
 @Injectable()
@@ -31,21 +25,31 @@ export class PanelAsesorConsultasService {
       case 'L_CART_SEC': return this.injector.get(CarteraService).obtenerCartera(nodo);
       case 'L_MONI_DESE_SEC': return this.injector.get(MonitorMetasDesembolsoService).obtenerMonitorMetasDesembolso(nodo);
       case 'L_MON_EFE_DET_SEC': return this.injector.get(MonitorEfectividadesService).obtenerMonitorEfectividades(nodo, filtros);
-      case 'L_GPDM_SEC': return this.injector.get(GruposPorVencerService).obtenerGruposPorVencer(nodo);
-      case 'L_CLI_NUEVRE_SEC': return this.injector.get(ClientesNuevosRecurrentesService).obtenerClientesNuevosRecurrentes(nodo);
-      case 'L_CLI_PROD_SEC': return this.injector.get(ClientesProductoService).obtenerClientesProducto(nodo);
+      case CODIGO_CLIENTES_CONSOLIDADO: return this.clientesConsolidado(nodo);
       case 'L_SEG_SEC': return this.injector.get(SegurosService).obtenerSeguros(nodo);
-      case 'L_CER_CUO_SEC': return this.injector.get(CeroCuotasService).obtenerCeroCuotas(nodo);
       case 'L_REC_PREVE_SEC': return this.injector.get(RecuperacionPreventivaService).obtenerRecuperacionPreventiva(nodo);
-      case 'L_CAPT_SEC': return this.injector.get(CaptacionesService).obtenerCaptaciones(nodo);
       case 'L_REP_AUTO_SEC': return this.injector.get(AutonomiaTasasService).obtenerAutonomiaTasas(nodo);
-      case 'L_PLAN_SEC': return this.injector.get(PlanillaMovilidadService).obtenerPlanillaMovilidad(nodo);
-      case 'L_RES_MOV_ASESOR': return this.injector.get(ResumenMovilidadService).obtenerResumenMovilidad(nodo);
-      case 'L_INVERS_STOCK_SEC': return this.injector.get(InversionStockMoraService).obtenerGraficos(nodo);
-      case 'L_DESEMP_SOC_SEC': return this.injector.get(DesempenoSocialAnalistaService).obtenerDesempenoSocial(nodo);
-      case 'L_PROYDIAOPERSEC': return this.injector.get(ColocacionesDiariaService).obtenerColocacionesDiaria(nodo);
-      case 'L_REG_PROS_SEC': return this.injector.get(ProspectoCorresponsalService).obtenerProspectos(nodo).pipe(map((tabla1) => ({ tabla1 })));
       default: return throwError(() => new Error(`Reporte no disponible: ${codigo}`));
     }
+  }
+
+  /**
+   * Grupos PDM + Clientes Nuevos y Recurrentes + Clientes Producto en una sola vista. Cada reporte
+   * llega por su cuenta: lo que falta queda como `TABLA_PENDIENTE` (esqueleto), sin esperar al más lento.
+   */
+  private clientesConsolidado(nodo: { tip_cod: number; cod_rel: string }): Observable<ResultadoPanelAsesor> {
+    const grupos$ = this.injector.get(GruposPorVencerService).obtenerGruposPorVencer(nodo).pipe(map((r) => ({ tabla1: r.tabla1 })));
+    const clientes$ = this.injector.get(ClientesNuevosRecurrentesService).obtenerClientesNuevosRecurrentes(nodo).pipe(map((r) => ({ tabla2: r.tabla1 })));
+    const producto$ = this.injector.get(ClientesProductoService).obtenerClientesProducto(nodo).pipe(
+      map((r) => ({ tabla3: r.tabla1, tabla4: r.tabla2, tabla5: r.tabla3 })),
+    );
+    const inicial: ResultadoPanelAsesor = {
+      tabla1: TABLA_PENDIENTE,
+      tabla2: TABLA_PENDIENTE,
+      tabla3: TABLA_PENDIENTE,
+      tabla4: TABLA_PENDIENTE,
+      tabla5: TABLA_PENDIENTE,
+    };
+    return merge(grupos$, clientes$, producto$).pipe(scan((acumulado, parte) => ({ ...acumulado, ...parte }), inicial));
   }
 }

@@ -258,3 +258,22 @@ a:focus-visible {
     height: 260px;
   }
 }
+
+/* "Cartera y clientes": tablas de a dos por fila en pantallas anchas; KPI y gráficos ocupan
+   la fila entera. Por debajo de 1024 px vuelve a una columna. */
+.contenido-reporte--dos-columnas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.contenido-reporte--dos-columnas > .kpis,
+.contenido-reporte--dos-columnas > .tarjeta-grafico {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1023px) {
+  .contenido-reporte--dos-columnas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

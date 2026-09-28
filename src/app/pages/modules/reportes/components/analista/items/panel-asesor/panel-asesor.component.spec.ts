@@ -32,7 +32,6 @@ const RESPUESTAS: Record<string, ResultadoPanelAsesor> = {
     kpiMonto: { cumpl_ope_acum: '81.4%' },
     tabla1: CARTERA,
   },
-  L_INVERS_STOCK_SEC: { graficos: [] },
 };
 
 describe('PanelAsesorComponent', () => {
@@ -101,6 +100,20 @@ describe('PanelAsesorComponent', () => {
     fixture.detectChanges();
     expect(el.querySelector('.chip.activa')?.textContent).toContain('Monitor Metas Desembolso');
     expect(el.querySelector('.detalle')?.getAttribute('aria-label')).toBe('Monitor Metas Desembolso');
+  });
+
+  it('solo quedan tres pestañas: "Movilidad y gestión" se dio de baja', () => {
+    const el: HTMLElement = crear().nativeElement;
+    const pestanas = [...el.querySelectorAll('.pestana')].map((b) => b.textContent!.trim());
+    expect(pestanas).toHaveLength(3);
+    expect(pestanas.join('|')).not.toContain('Movilidad');
+  });
+
+  it('"Cartera y clientes" ofrece Cartera y la vista consolidada de clientes, en dos columnas', () => {
+    const el: HTMLElement = crear().nativeElement;
+    const chips = [...el.querySelectorAll('.chip')].map((c) => c.textContent!.trim());
+    expect(chips).toEqual(['Cartera', 'Clientes y Grupos PDM']);
+    expect(el.querySelector('.contenido-reporte')?.classList).toContain('contenido-reporte--dos-columnas');
   });
 
   it('un reporte que falla muestra el error con reintento, no un vacío', () => {

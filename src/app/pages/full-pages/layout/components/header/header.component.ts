@@ -41,6 +41,7 @@ import { ToastService } from '../../../../../shared/services/toast.service';
 import { MenuStgService } from '../../services/menu-stg.service';
 import { NavegacionSistemasService } from '../../services/navegacion-sistemas.service';
 import { KaypachaService } from '../../../../modules/ranking-k/services/kaypacha.service';
+import { FUNCIONES_HABILITADAS } from '../../constantes/funciones-habilitadas.constantes';
 import { ConfiguracionDialogComponent } from '../dialogs/configuracion-dialog/configuracion-dialog.component';
 import { SEGMENTO_LABELS } from '../../interfaces/navigation.constants';
 import { BuscadorComponent } from '../../../../../shared/ui/buscador/buscador.component';
@@ -98,6 +99,8 @@ export class HeaderComponent {
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
   protected readonly configuracionOpen = signal(false);
+  /** "Configuración" está deshabilitada por ahora (ver `FUNCIONES_HABILITADAS`). */
+  protected readonly configuracionHabilitada = FUNCIONES_HABILITADAS.configuracion;
   /** Selector explícito de perfiles, equivalente al diálogo `Escoge Usuario` del legado. */
   protected readonly selectorPerfilOpen = signal(false);
   protected readonly perfilSeleccionado = signal<PerfilDelMenu | null>(null);

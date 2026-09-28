@@ -9,6 +9,7 @@ import { RankingFiltrosComponent } from '../../ui/ranking-filtros/ranking-filtro
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { RankingInfoDialogComponent } from '../../ui/ranking-info-dialog/ranking-info-dialog.component';
 import { KaypachaService } from '../../services/kaypacha.service';
+import { PreferenciasService } from '../../../../full-pages/layout/services/preferencias.service';
 import { RedirectOverlayService } from '../../../../../shared/services/redirect-overlay.service';
 import type { FilaDetalleRanking } from '../../models/categoria-ranking.model';
 import type { GrupoRanking, RankingTableFila } from '../../models/ranking-table.model';
@@ -35,6 +36,7 @@ const DURACION_TRANSICION_FILTROS_MS = 350;
 })
 export class CategoriaDetalleComponent {
   private readonly kaypacha = inject(KaypachaService);
+  private readonly preferencias = inject(PreferenciasService);
   protected readonly redirect = inject(RedirectOverlayService);
 
   readonly id = input.required<string>();
@@ -111,6 +113,15 @@ export class CategoriaDetalleComponent {
     effect(() => {
       this.id();
       untracked(() => this.cargarDetalle());
+    });
+
+    // La URL solo trae el id: cuando llega la categoría, "Recientes" pasa a mostrar su nombre.
+    effect(() => {
+      const categoria = this.categoria();
+      if (!categoria?.name) return;
+      untracked(() =>
+        this.preferencias.renombrarReporteReciente(`${this.kaypacha.ruta}/categoria/${this.id()}`, categoria.name, 'Ranking Kaypacha'),
+      );
     });
   }
 

@@ -133,12 +133,26 @@ describe('CategorizacionDashboardComponent', () => {
     expect(fixture.componentInstance['perfil']()).toEqual(DETALLE.perfil);
   });
 
-  it('cargar() sin resultado del backend (null) fija un mensaje de error y limpia el estado', () => {
+  it('cargar() sin resultado del backend (null) muestra el estado vacío estándar, no un error ni la guía', () => {
     categorizacionFalso.obtenerDetalle.mockReturnValue(of(null));
     const fixture = crear();
+    fixture.detectChanges();
 
-    expect(fixture.componentInstance['error']()).toContain('BT-001');
+    expect(fixture.componentInstance['error']()).toBeNull();
+    expect(fixture.componentInstance['sinDatos']()).toBe('BT-001');
     expect(fixture.componentInstance['perfil']()).toBeNull();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('app-empty-state')?.textContent).toContain('Sin datos de categorización');
+    expect(el.querySelector('p-image')).toBeNull();
+  });
+
+  it('con datos, la primera fila tiene tres columnas: perfil, estado de requisitos e imagen guía', () => {
+    const fixture = crear();
+    fixture.detectChanges();
+    const fila = (fixture.nativeElement as HTMLElement).querySelector('.xl\\:grid-cols-3');
+    expect(fila).not.toBeNull();
+    const hijos = Array.from(fila!.children).map((c) => c.getAttribute('aria-label') ?? c.tagName.toLowerCase());
+    expect(hijos).toEqual(['Perfil del asesor', 'Estado Requisitos', 'div']);
   });
 
   it('cargar() muestra un mensaje de error genérico si falla la petición', () => {

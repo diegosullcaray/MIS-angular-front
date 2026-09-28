@@ -2,21 +2,22 @@ import type { TablaReporteResultado } from '../../../models/tabla-reporte.model'
 import type { BloqueGrafico, TipoGraficoMixto } from '../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { KpiOperacionesDesembolsadas, KpiMontoDesembolsado } from './monitor-metas-desembolso.model';
 
-/** Resultado normalizado de cualquiera de los 17 reportes del panel: cada servicio original ya lo cumple. */
+/** Resultado normalizado de cualquiera de los reportes del panel: cada servicio original ya lo cumple. */
 export interface ResultadoPanelAsesor {
   tabla1?: TablaReporteResultado;
   tabla2?: TablaReporteResultado;
   tabla3?: TablaReporteResultado;
   tabla4?: TablaReporteResultado;
+  tabla5?: TablaReporteResultado;
   graficos?: BloqueGrafico[];
   kpiOperaciones?: KpiOperacionesDesembolsadas | null;
   kpiMonto?: KpiMontoDesembolsado | null;
 }
 
-export type ClaveTabla = 'tabla1' | 'tabla2' | 'tabla3' | 'tabla4';
+export type ClaveTabla = 'tabla1' | 'tabla2' | 'tabla3' | 'tabla4' | 'tabla5';
 
 /** Categorías de navegación del panel, pensadas para el día a día del asesor. */
-export type GrupoPanelAsesor = 'cartera' | 'colocacion' | 'recuperacion' | 'gestion';
+export type GrupoPanelAsesor = 'cartera' | 'colocacion' | 'recuperacion';
 
 /** Un bloque tal como lo presenta la pantalla legacy: qué tabla, con qué título y qué nota al pie. */
 export interface BloquePanelAsesor {

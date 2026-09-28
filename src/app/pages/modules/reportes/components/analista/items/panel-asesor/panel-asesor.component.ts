@@ -29,6 +29,7 @@ import type {
 } from '../../models/panel-asesor.model';
 import { bloquesDe, gruposOrdenados, sinDatos } from '../../utils/panel-asesor.util';
 import { semaforo } from '../../../../utils/semaforo.util';
+import { TABLA_PENDIENTE, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 interface FiltroEfectividades {
@@ -48,7 +49,7 @@ const FILTROS_EFECTIVIDADES: readonly FiltroEfectividades[] = [
 ];
 
 /**
- * Panel unificado del asesor: los 17 reportes de `rda/sectorista` agrupados por
+ * Panel unificado del asesor: los reportes de `rda/sectorista` agrupados por
  * categoría y ordenados por uso, con KPI, gráficos y tablas reales de Ant. Abre en
  * el más consultado.
  */
@@ -136,6 +137,14 @@ export class PanelAsesorComponent {
     if (!reporte) return;
     this.ultimoPorGrupo.update((u) => ({ ...u, [reporte.grupo]: reporte.codigo }));
     this.panel.seleccionarVista(reporte.codigo);
+  }
+
+  /** Las tablas de "Cartera y clientes" se alinean en dos columnas. */
+  protected readonly dosColumnas = computed(() => this.pestanaActiva() === 'cartera');
+
+  /** Tabla de una vista consolidada que todavía no respondió: se muestra con su esqueleto. */
+  protected esPendiente(tabla: TablaReporteResultado | undefined): boolean {
+    return tabla === TABLA_PENDIENTE;
   }
 
   protected bloques(reporte: ReportePanelAsesor, resultado: ResultadoPanelAsesor) {

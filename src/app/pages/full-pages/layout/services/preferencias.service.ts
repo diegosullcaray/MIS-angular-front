@@ -133,6 +133,21 @@ export class PreferenciasService {
     }));
   }
 
+  /**
+   * Corrige el título de un reciente ya anotado, sin moverlo de lugar. Lo usan las pantallas
+   * cuyo nombre llega después de navegar (p. ej. una categoría de Ranking Kaypacha, cuya URL
+   * solo trae el id): sin esto, el acceso rápido mostraba el número en vez del nombre.
+   */
+  renombrarReporteReciente(ruta: string, titulo: string, categoria?: string): void {
+    if (!ruta || !titulo) return;
+    const actual = this._preferencias().recientes.find((r) => r.ruta === ruta);
+    if (!actual || (actual.titulo === titulo && actual.categoria === categoria)) return;
+    this.actualizar((p) => ({
+      ...p,
+      recientes: p.recientes.map((r) => (r.ruta === ruta ? { ...r, titulo, ...(categoria ? { categoria } : {}) } : r)),
+    }));
+  }
+
   /** Vacía el historial sin tocar el resto de las preferencias. */
   limpiarRecientes(): void {
     this.actualizar((p) => ({ ...p, recientes: [] }));
