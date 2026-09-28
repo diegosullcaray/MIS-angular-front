@@ -235,17 +235,13 @@ describe('AnunciosDialogComponent', () => {
     expect(TestBed.inject(PreferenciasService).anuncios().vistos).toEqual([]);
   });
 
-  it('"No mostrar este comunicado" sí lo persiste en las preferencias', () => {
+  it('el pie tiene un único botón: "Entendido"', () => {
     const fixture = crear();
-    const anuncios = TestBed.inject(AnunciosService);
-    anuncios.abrirSiCorresponde();
+    TestBed.inject(AnunciosService).abrirSiCorresponde();
     fixture.detectChanges();
 
-    (fixture.componentInstance as unknown as { noMostrarEste(): void }).noMostrarEste();
-    fixture.detectChanges();
-
-    expect(anuncios.abierto()).toBe(false);
-    expect(TestBed.inject(PreferenciasService).anuncios().vistos).toEqual(['vinculacion-cartera-captaciones']);
+    const botones = [...document.querySelectorAll('.p-dialog-footer button')].map((b) => b.textContent!.trim());
+    expect(botones).toEqual(['Entendido']);
   });
 
   it('abierto a pedido con el comunicado ya leído, muestra la pieza y nada más', () => {

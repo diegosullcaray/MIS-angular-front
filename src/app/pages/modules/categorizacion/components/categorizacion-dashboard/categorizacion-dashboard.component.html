@@ -125,25 +125,24 @@
         @if (requisitos().length === 0) {
           <app-empty-state titulo="Sin requisitos" descripcion="Aún no hay requisitos evaluados para este colaborador." />
         }
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- Una sola columna: cada requisito es una fila con su descripción y, al costado, un
+             Tag con el resultado (verde si cumple, rojo si no). -->
+        <ul class="m-0 flex list-none flex-col gap-2 p-0">
           @for (r of requisitos(); track r.etiqueta) {
-            <div
-              class="mis-baldosa rounded-lg p-3 flex flex-col items-center justify-between gap-1 text-center min-h-[90px] shadow-xs"
-            >
-              <span class="text-[12px] font-semibold text-[var(--mis-text-primary)]">{{
-                r.etiqueta
-              }}</span>
-              <span
-                class="text-[16px] font-bold"
-                [class.text-[var(--mis-success)]]="r.cumplido"
-                [class.text-[var(--mis-danger)]]="!r.cumplido"
-              >
-                {{ r.valor || '—' }}
-              </span>
+            <li class="mis-baldosa requisito flex flex-col gap-1.5 rounded-lg px-3 py-2.5 shadow-xs">
+              <div class="flex items-center justify-between gap-3">
+                <span class="min-w-0 text-[13px] font-medium text-[var(--mis-text-primary)]">{{
+                  r.etiqueta
+                }}</span>
+                <p-tag
+                  [value]="r.valor || '—'"
+                  [severity]="r.cumplido ? 'success' : 'danger'"
+                  [rounded]="true"
+                  styleClass="shrink-0 text-[12px]"
+                />
+              </div>
               @if (r.etiqueta === 'Formación') {
-                <div
-                  class="flex flex-col gap-1 text-[11px] leading-snug mt-1 pt-1 border-t border-[var(--mis-border)] w-full"
-                >
+                <div class="flex flex-col gap-0.5 text-[11px] leading-snug text-[var(--mis-text-secondary)]">
                   <span>
                     Si no eres apto, ingresa
                     <a
@@ -166,9 +165,9 @@
                   </span>
                 </div>
               }
-            </div>
+            </li>
           }
-        </div>
+        </ul>
       </section>
 
       <div

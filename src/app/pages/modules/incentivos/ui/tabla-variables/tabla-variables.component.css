@@ -1,7 +1,7 @@
 /* "Chips" de las celdas numéricas — `chipFn1`/`chipFn2` de `tabla.util.ts` (legado): cada valor
    va sobre un fondo sólido con el número a la derecha, texto oscuro y borde navy.
-   Los colores son los del legado (tokens `--mis-inc-chip-*` en `tokens.css`): gris sin señal,
-   celeste real, navy monetizado, verde/rojo según la meta. */
+   Los colores salen de los tokens `--mis-inc-chip-*` de `tokens.css` (en claro, la paleta del
+   sistema): gris sin señal, celeste real, navy monetizado, verde/rojo según la meta. */
 :host {
   --chip-neutro-bg: var(--mis-inc-chip-neutro);
   --chip-neutro-fg: var(--mis-inc-chip-texto);

@@ -155,6 +155,16 @@ describe('CategorizacionDashboardComponent', () => {
     expect(hijos).toEqual(['Perfil del asesor', 'Estado Requisitos', 'div']);
   });
 
+  it('Estado Requisitos va en una sola columna: cada fila con su descripción y un Tag al costado', () => {
+    const fixture = crear();
+    fixture.detectChanges();
+    const seccion = (fixture.nativeElement as HTMLElement).querySelector('[aria-label="Estado Requisitos"]')!;
+    expect(seccion.querySelector('.sm\\:grid-cols-2')).toBeNull();
+    const fila = seccion.querySelector('li.requisito')!;
+    expect(fila.textContent).toContain('Disciplina');
+    expect(fila.querySelector('p-tag')?.textContent).toContain('Cumple');
+  });
+
   it('cargar() muestra un mensaje de error genérico si falla la petición', () => {
     categorizacionFalso.obtenerDetalle.mockReturnValue(throwError(() => new Error('fail')));
     const fixture = crear();

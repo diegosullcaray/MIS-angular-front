@@ -7,13 +7,10 @@ import { comunicadoVigente, estaPendiente } from '../interfaces/anuncio.model';
 /**
  * Caso de uso del comunicado del sistema.
  *
- * Los dos botones del pie del diálogo NO son sinónimos, y esa es la corrección
- * de la incidencia:
- *
- * - **Entendido** (`cerrar()`) lo calla mientras dure esta sesión de
- *   navegación. Es también lo que ocurre al hacer clic fuera del diálogo.
- * - **No mostrar este comunicado** (`noMostrarEste()`) lo calla de forma
- *   permanente, guardando su id en las preferencias.
+ * El pie del diálogo tiene un único botón, **Entendido** (`cerrar()`): calla el
+ * comunicado mientras dure esta sesión de navegación. Es también lo que ocurre
+ * al hacer clic fuera del diálogo. Los ids ya guardados en las preferencias
+ * (`anuncios().vistos`) se siguen respetando.
  *
  * El interruptor que apaga *todos* los comunicados es otra cosa y vive en
  * Configuración (`PreferenciasService.setSilenciarAnuncios`).
@@ -59,13 +56,6 @@ export class AnunciosService {
     const comunicado = this.comunicado();
     if (comunicado) this.sesion.marcar(comunicado.id);
     this._abierto.set(false);
-  }
-
-  /** "No mostrar este comunicado": lo da por leído de forma permanente. */
-  noMostrarEste(): void {
-    const comunicado = this.comunicado();
-    if (comunicado) this.preferencias.marcarAnunciosVistos([comunicado.id]);
-    this.cerrar();
   }
 
   private hoy(): string {

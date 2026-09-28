@@ -24,8 +24,8 @@ import { laminaEnRango, laminasDe } from '../../../interfaces/anuncio.model';
  * desde el botón de comunicados del header.
  *
  * Cerrarlo lo calla hasta la próxima sesión: con la X, con "Entendido" o
- * haciendo clic fuera, que es lo que habilita `dismissableMask`. Para que no
- * vuelva nunca está el otro botón del pie.
+ * haciendo clic fuera, que es lo que habilita `dismissableMask`. El pie tiene
+ * un único botón, "Entendido".
  */
 @Component({
   selector: 'app-anuncios-dialog',
@@ -103,9 +103,5 @@ export class AnunciosDialogComponent {
 
   protected cerrar(): void {
     this.anuncios.cerrar();
-  }
-
-  protected noMostrarEste(): void {
-    this.anuncios.noMostrarEste();
   }
 }

@@ -36,9 +36,12 @@ export class PanelAsesorConsultasService {
   /**
    * Grupos PDM + Clientes Nuevos y Recurrentes + Clientes Producto en una sola vista. Cada reporte
    * llega por su cuenta: lo que falta queda como `TABLA_PENDIENTE` (esqueleto), sin esperar al más lento.
+   * Si Grupos PDM llega sin filas (la data viene nula), su bloque se quita entero: ni chip ni tabla.
    */
   private clientesConsolidado(nodo: { tip_cod: number; cod_rel: string }): Observable<ResultadoPanelAsesor> {
-    const grupos$ = this.injector.get(GruposPorVencerService).obtenerGruposPorVencer(nodo).pipe(map((r) => ({ tabla1: r.tabla1 })));
+    const grupos$ = this.injector.get(GruposPorVencerService).obtenerGruposPorVencer(nodo).pipe(
+      map((r) => ({ tabla1: r.tabla1.body.length > 0 ? r.tabla1 : undefined })),
+    );
     const clientes$ = this.injector.get(ClientesNuevosRecurrentesService).obtenerClientesNuevosRecurrentes(nodo).pipe(map((r) => ({ tabla2: r.tabla1 })));
     const producto$ = this.injector.get(ClientesProductoService).obtenerClientesProducto(nodo).pipe(
       map((r) => ({ tabla3: r.tabla1, tabla4: r.tabla2, tabla5: r.tabla3 })),
