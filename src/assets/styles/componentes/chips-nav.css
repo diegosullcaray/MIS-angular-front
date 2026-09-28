@@ -1,0 +1,32 @@
+/* Navegación por chips (elegir un bloque o una vista dentro de un reporte).
+   En escritorio los chips se acomodan en filas; en el teléfono van en una sola
+   fila con desplazamiento lateral, como los filtros de chats de WhatsApp: si
+   saltaran de línea se apilarían uno debajo de otro y empujarían el contenido.
+   Mismo comportamiento que las pestañas del Panel del Asesor. */
+.mis-chips-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mis-space-2);
+}
+
+@media (max-width: 767px) {
+  .mis-chips-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    /* Deja ver que hay más chips: el último asoma cortado en el borde. */
+    padding-bottom: 2px;
+  }
+
+  .mis-chips-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mis-chips-nav > * {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+}

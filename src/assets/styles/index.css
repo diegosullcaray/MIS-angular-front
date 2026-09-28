@@ -28,6 +28,7 @@
 @import './componentes/explorador.css';
 @import './componentes/buscador.css';
 @import './componentes/kpi.css';
+@import './componentes/chips-nav.css';
 
 /* Vendor: ajustes sobre CSS de terceros. Al final, para poder pisarlo. */
 @import './vendor/driver.css';
