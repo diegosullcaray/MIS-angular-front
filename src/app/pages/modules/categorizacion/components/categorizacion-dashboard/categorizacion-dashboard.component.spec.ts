@@ -149,10 +149,12 @@ describe('CategorizacionDashboardComponent', () => {
   it('con datos, la primera fila tiene tres columnas: perfil, estado de requisitos e imagen guía', () => {
     const fixture = crear();
     fixture.detectChanges();
-    const fila = (fixture.nativeElement as HTMLElement).querySelector('.xl\\:grid-cols-3');
+    const fila = (fixture.nativeElement as HTMLElement).querySelector('.fila-principal');
     expect(fila).not.toBeNull();
     const hijos = Array.from(fila!.children).map((c) => c.getAttribute('aria-label') ?? c.tagName.toLowerCase());
     expect(hijos).toEqual(['Perfil del asesor', 'Estado Requisitos', 'div']);
+    // Estado Requisitos es la columna angosta; la imagen guía, la más ancha.
+    expect(fila!.className).toContain('xl:grid-cols-[minmax(0,3.4fr)_minmax(15rem,2fr)_minmax(0,8fr)]');
   });
 
   it('Estado Requisitos va en una sola columna: cada fila con su descripción y un Tag al costado', () => {

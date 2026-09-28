@@ -43,9 +43,11 @@
       descripcion="Busca un colaborador para ver su categorización."
     />
   } @else {
-    <!-- Fila 1: tres columnas — perfil, estado de requisitos e imagen guía. En tablet la imagen baja
-         a su propia fila; en teléfono todo se apila. -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full items-stretch">
+    <!-- Fila 1: tres columnas — perfil, estado de requisitos (angosta) e imagen guía, que es la
+         que manda en ancho. En tablet la imagen baja a su propia fila; en teléfono todo se apila. -->
+    <div
+      class="fila-principal grid grid-cols-1 md:grid-cols-[minmax(0,3fr)_minmax(15rem,1.6fr)] xl:grid-cols-[minmax(0,3.4fr)_minmax(15rem,2fr)_minmax(0,8fr)] gap-4 w-full items-stretch"
+    >
       <section
         class="mis-superficie w-full min-w-0 overflow-hidden rounded-2xl shadow-sm"
         aria-label="Perfil del asesor"
@@ -129,9 +131,10 @@
              Tag con el resultado (verde si cumple, rojo si no). -->
         <ul class="m-0 flex list-none flex-col gap-2 p-0">
           @for (r of requisitos(); track r.etiqueta) {
-            <li class="mis-baldosa requisito flex flex-col gap-1.5 rounded-lg px-3 py-2.5 shadow-xs">
-              <div class="flex items-center justify-between gap-3">
-                <span class="min-w-0 text-[13px] font-medium text-[var(--mis-text-primary)]">{{
+            <li class="mis-baldosa requisito flex flex-col gap-1.5 rounded-lg px-2.5 py-2.5 shadow-xs">
+              <!-- Si el Tag no entra al costado, baja debajo en vez de recortar la descripción. -->
+              <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                <span class="text-[13px] font-medium text-[var(--mis-text-primary)]">{{
                   r.etiqueta
                 }}</span>
                 <p-tag
@@ -183,7 +186,7 @@
           [preview]="true"
           appendTo="body"
           appImagenAmpliable
-          imageClass="w-full h-auto max-h-[360px] object-contain rounded-lg cursor-zoom-in"
+          imageClass="w-full h-auto max-h-[440px] object-contain rounded-lg cursor-zoom-in"
         />
         <span
           class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3"
