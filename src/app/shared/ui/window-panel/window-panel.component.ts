@@ -47,8 +47,6 @@ export class WindowPanelComponent {
   readonly mostrarSemaforo = input<boolean>(true);
   /** Padding interno del cuerpo; `false` para contenido a sangre (tablas). */
   readonly conRelleno = input<boolean>(true);
-  /** Alto natural del contenido en vez de llenar el viewport (como `.mis-page--auto`). */
-  readonly altoAuto = input<boolean>(false);
 
   /** Muestra el botón de filtros en la barra y la franja colapsable que proyecta `[ventana-filtros]`. */
   readonly conFiltros = input<boolean>(false);

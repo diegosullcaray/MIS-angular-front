@@ -92,7 +92,7 @@ export interface PestanaReporte {
                 <div class="flex flex-col gap-4">
                   <!-- Con varios bloques en la misma pestaña, chips para elegir cuál ver en vez de apilarlos. -->
                   @if (tab.bloques.length > 1) {
-                    <div class="flex flex-wrap gap-2" role="tablist">
+                    <div class="mis-chips-nav" role="tablist">
                       @for (bloque of tab.bloques; track $index) {
                         <button
                           type="button"

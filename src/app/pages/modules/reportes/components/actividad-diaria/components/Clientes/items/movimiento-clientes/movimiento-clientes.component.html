@@ -11,7 +11,7 @@
         <p-tabpanel [value]="pestana.id">
           <div class="flex flex-col gap-4">
             @if (pestana.bloques.length > 1) {
-              <div class="flex flex-wrap gap-2" role="tablist">
+              <div class="mis-chips-nav" role="tablist">
                 @for (bloque of pestana.bloques; track bloque.gru) {
                   <button
                     type="button"

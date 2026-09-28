@@ -2,7 +2,6 @@
   titulo="Consulta FEN - CENEPRED"
   subtitulo="Gestión territorial"
   [permitirActualizar]="false"
-  [altoAuto]="true"
   [conRelleno]="false"
   volverA="/app/dashboard"
 >
@@ -40,10 +39,12 @@
           </div>
         </div>
 
+        <!-- La burbuja va dentro de la tarjeta (debajo de la mascota en escritorio): el cuerpo del
+             panel hace scroll y recorta lo que sobresale por arriba. -->
         <aside class="relative hidden sm:flex min-h-20 items-center justify-center gap-2 border-t border-[var(--mis-border)] bg-[var(--mis-tile-bg)] px-2 py-2 text-left lg:flex-col lg:border-l lg:border-t-0 lg:text-center">
           <img class="h-16 w-16 shrink-0 object-contain lg:h-20 lg:w-20" [src]="mascota()" alt="Mascota de MIS" width="1024" height="1024" />
-          <div class="relative max-w-32 rounded-2xl border border-[var(--mis-border)] bg-[var(--mis-surface)] px-2.5 py-1.5 text-xs font-medium leading-snug text-[var(--mis-text-secondary)] shadow-[var(--mis-shadow-md)] lg:absolute lg:bottom-[calc(100%-0.5rem)] lg:top-auto lg:right-2 lg:left-auto lg:z-30 lg:w-56 lg:max-w-none lg:translate-x-0">
-            <span class="absolute -left-1 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border-b border-l border-[var(--mis-border)] bg-[var(--mis-surface)] lg:-bottom-1 lg:top-auto lg:right-6 lg:left-auto lg:translate-x-0 lg:translate-y-0 lg:border-b lg:border-r lg:border-t-0 lg:border-l-0"></span>
+          <div class="relative max-w-32 rounded-2xl border border-[var(--mis-border)] bg-[var(--mis-surface)] px-2.5 py-1.5 text-xs font-medium leading-snug text-[var(--mis-text-secondary)] shadow-[var(--mis-shadow-md)] lg:w-full lg:max-w-none">
+            <span class="absolute -left-1 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border-b border-l border-[var(--mis-border)] bg-[var(--mis-surface)] lg:-top-1 lg:left-1/2 lg:-translate-x-1/2 lg:translate-y-0 lg:border-t lg:border-l lg:border-b-0"></span>
             <p class="relative m-0">{{ mensajeMascota() }}</p>
           </div>
         </aside>

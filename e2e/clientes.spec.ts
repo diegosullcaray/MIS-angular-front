@@ -76,4 +76,27 @@ test.describe('Clientes — smoke de las 6 pantallas migradas', () => {
     const carteras = page.locator('app-tabla-dinamica').first();
     await expect(carteras.getByText('Pasivo', { exact: true })).toHaveCount(0);
   });
+
+  test('en el teléfono los chips de navegación van en una sola fila con desplazamiento lateral', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 780 });
+    await inyectarSesionVigente(page);
+    await mockBackend(page);
+    await page.goto('/app/reportes/repositorio/actividad-diaria/clientes/movimiento-clientes');
+
+    const nav = page.locator('.mis-chips-nav:visible').first();
+    await expect(nav).toBeVisible();
+    const medidas = await nav.evaluate((el) => {
+      const tops = [...el.children].map((c) => Math.round(c.getBoundingClientRect().top));
+      return {
+        filas: new Set(tops).size,
+        chips: tops.length,
+        overflowX: getComputedStyle(el).overflowX,
+        desbordePagina: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      };
+    });
+    expect(medidas.chips).toBeGreaterThan(1);
+    expect(medidas.filas).toBe(1);
+    expect(medidas.overflowX).toBe('auto');
+    expect(medidas.desbordePagina).toBeLessThanOrEqual(1);
+  });
 });

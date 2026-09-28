@@ -31,12 +31,3 @@
   }
 }
 
-/* Alto natural del contenido, sin llenar el viewport. `flex-grow:0` (y no
-   solo `min-height:0`) es necesario desde que el host de la ruta también
-   creció a `flex:1` (ver `.shell-content-inner > router-outlet + *` más
-   abajo): sin él, este panel se estiraba igual que el resto pese al
-   modificador. */
-.mis-page--auto {
-  flex: 0 1 auto;
-  min-height: 0;
-}
