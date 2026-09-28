@@ -15,8 +15,9 @@
   flex: 1;
   min-width: 0;
   width: 100%;
-  /* Mismo alto de referencia que `.mis-page`: llena la zona de contenido del
-     shell sin forzar scroll cuando el módulo trae poco contenido. */
+  /* Todas las ventanas llenan el alto de la zona de contenido del shell, traigan
+     muchos o pocos datos: el panel no se encoge al contenido (ya no existe el
+     modo de alto automático). Mismo alto de referencia que `.mis-page`. */
   min-height: calc(100vh - 130px);
   overflow: hidden;
   background: var(--mis-glass-bg);
@@ -29,19 +30,6 @@
     var(--mis-shadow-lg);
 }
 
-/* Alto natural del contenido, sin llenar el viewport (equivalente de
-   `.mis-page--auto`, mismo motivo para el `flex-grow:0`). */
-.mis-window--auto {
-  flex: 0 1 auto;
-  min-height: 0;
-}
-
-/* Si la ventana es de alto automático, no necesita hacer scroll interno,
-   por lo que podemos hacer visible el desbordamiento para evitar cortar
-   elementos flotantes (como tooltips, burbujas o popups). */
-.mis-window--auto .mis-window-body {
-  overflow-y: visible;
-}
 
 /* Barra de título. `grid` de 3 columnas (no flex) para que el título quede
    ópticamente centrado en la ventana aunque el semáforo y las acciones tengan

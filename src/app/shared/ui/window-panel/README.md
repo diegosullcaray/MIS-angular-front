@@ -75,7 +75,6 @@ Tres puntos donde el módulo mete lo suyo, como atributo del elemento proyectado
 | `etiquetaActualizar` | `string` | `'Actualizar'` | Tooltip y `aria-label` de ese botón |
 | `mostrarSemaforo` | `boolean` | `true` | Apagalo en paneles anidados |
 | `conRelleno` | `boolean` | `true` | `false` deja el contenido a sangre (tablas) |
-| `altoAuto` | `boolean` | `false` | Alto natural del contenido en vez de llenar el viewport |
 | `conFiltros` | `boolean` | `false` | Botón de filtros + franja que proyecta `[ventana-filtros]` |
 | `filtrosAbiertos` | `boolean` | `false` | Estado **inicial** de esa franja |
 
