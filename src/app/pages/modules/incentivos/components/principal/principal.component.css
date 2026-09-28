@@ -84,3 +84,11 @@
     border-radius: var(--mis-radius-lg);
   }
 }
+
+/* Tablas del mes (variables y efectividad): solo desde tablet. En el teléfono
+   no entran sin scroll lateral, así que la sección no se muestra. */
+@media (max-width: 767px) {
+  .inc-panel--tablas {
+    display: none;
+  }
+}

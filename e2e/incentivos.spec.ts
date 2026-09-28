@@ -223,3 +223,24 @@ test.describe('Incentivos — colores por tema', () => {
     expect(oscuro.monto).toBe('rgb(0, 159, 227)');
   });
 });
+
+test.describe('Incentivos — tablas del mes solo desde tablet', () => {
+  for (const [nombre, ancho, visibles] of [['teléfono', 375, false], ['tablet', 768, true], ['escritorio', 1280, true]] as const) {
+    test(`en ${nombre} (${ancho} px) las tablas ${visibles ? 'se muestran' : 'se ocultan'}`, async ({ page }) => {
+      await page.setViewportSize({ width: ancho, height: 900 });
+      await sesionConCuadroDeMando(page);
+      await page.goto('/app/incentivos3');
+      await expect(page.locator('.semaforo-chip').first()).toBeVisible();
+
+      const tablas = page.getByRole('region', { name: 'Variables del mes' });
+      if (visibles) {
+        await expect(tablas).toBeVisible();
+      } else {
+        await expect(tablas).toBeHidden();
+        // El resto del tablero sigue en pie.
+        await expect(page.getByRole('region', { name: 'Avance de metas' })).toBeVisible();
+        await expect(page.getByRole('region', { name: 'Bonos Super Plus' })).toBeVisible();
+      }
+    });
+  }
+});

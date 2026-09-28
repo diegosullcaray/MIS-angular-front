@@ -46,7 +46,9 @@
           <app-perfil-card (abrirCalculadora)="abrirCalculadora()" />
         </section>
 
-        <section class="inc-panel" aria-label="Variables del mes">
+        <!-- Las tablas de variables no entran en un teléfono: ahí se ocultan y el
+             asesor sigue su mes por el perfil, los avances y los Super Plus. -->
+        <section class="inc-panel inc-panel--tablas" aria-label="Variables del mes">
           <app-tabla-variables (abrirDetalle)="abrirDetalleTabla($event)" />
         </section>
       </div>
