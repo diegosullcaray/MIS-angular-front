@@ -52,12 +52,14 @@ servicio del shell, que es de donde son las preferencias.
 
 ## Comunicados: dos memorias distintas
 
-El diálogo del comunicado ofrece dos salidas, y no significan lo mismo:
+Desde el 2026-09-28 el diálogo del comunicado tiene un único botón,
+**Entendido**. La memoria permanente (`anuncios.vistos`) se sigue leyendo, pero
+el diálogo ya no la escribe.
 
 | Acción | Dónde se guarda | Cuánto dura |
 |---|---|---|
 | **Entendido**, la X, o clic fuera | `sessionStorage`, clave `mis.comunicados.sesion` (`ComunicadosSesionService`) | Esta sesión de navegación. Sobrevive a un F5; muere con la pestaña y con el cierre de sesión. |
-| **No mostrar este comunicado** | `localStorage`, dentro de `mis.preferencias` → `anuncios.vistos` | Permanente. |
+| Ids ya guardados como vistos (el botón "No mostrar este comunicado" se retiró el 2026-09-28) | `localStorage`, dentro de `mis.preferencias` → `anuncios.vistos` | Permanente. |
 | Interruptor de Configuración → Comunicados | `localStorage`, `anuncios.silenciar` | Permanente, y apaga **todos**, incluidos los que aún no se publicaron. |
 
 Hasta el 2026-09-08 las dos primeras hacían casi lo mismo: "Entendido" persistía
@@ -75,8 +77,8 @@ cambia: `localStorage` queda vacío y una recarga arranca con el tema de fábric
 Lo cubren `limpieza-sesion.service.spec.ts` y `e2e/session-expiry.spec.ts`.
 
 **Efecto del borrado de sesión.** `LimpiezaSesionService.limpiarTodo()` vacía
-`localStorage` entero, así que en la práctica "No mostrar este comunicado" dura
-hasta el próximo cierre de sesión. Es una consecuencia conocida de la política
+`localStorage` entero, así que en la práctica `anuncios.vistos` dura hasta el
+próximo cierre de sesión. Es una consecuencia conocida de la política
 de borrado total, no un defecto del diálogo.
 
 ## La bienvenida de Pachi

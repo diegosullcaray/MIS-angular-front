@@ -16,8 +16,7 @@ function pieza(id: string, extra: Partial<Anuncio> = {}): Anuncio {
  *
  * - `cerrar()` —"Entendido" y el clic fuera— calla el comunicado hasta la
  *   próxima sesión de navegación.
- * - `noMostrarEste()` lo calla para siempre, guardando su id en las
- *   preferencias.
+ * - un id guardado en las preferencias (`vistos`) lo calla para siempre.
  *
  * Sigue vigente la regresión que originó este servicio: `abrirSiCorresponde()`
  * es la única puerta al diálogo, y solo cede si el comunicado vigente está
@@ -87,13 +86,12 @@ describe('AnunciosService', () => {
     expect(siguienteSesion.abierto()).toBe(true);
   });
 
-  it('tras "No mostrar este comunicado" NO vuelve en el siguiente inicio de sesión', () => {
+  it('un comunicado ya guardado como visto NO vuelve en el siguiente inicio de sesión', () => {
     const anuncios = crear();
+    TestBed.inject(PreferenciasService).marcarAnunciosVistos(['comunicado-01']);
     anuncios.abrirSiCorresponde();
-    anuncios.noMostrarEste();
 
     expect(anuncios.abierto()).toBe(false);
-    expect(TestBed.inject(PreferenciasService).anuncios().vistos).toEqual(['comunicado-01']);
 
     // Otro arranque, con las mismas preferencias ya guardadas: nada que mostrar.
     sessionStorage.clear();
@@ -105,9 +103,8 @@ describe('AnunciosService', () => {
   });
 
   it('un comunicado NUEVO sí vuelve a abrirlo, aunque el anterior esté leído', () => {
-    const anuncios = crear();
-    anuncios.abrirSiCorresponde();
-    anuncios.noMostrarEste();
+    crear();
+    TestBed.inject(PreferenciasService).marcarAnunciosVistos(['comunicado-01']);
 
     // Publicar el siguiente es ponerlo arriba del catálogo.
     TestBed.resetTestingModule();
@@ -132,19 +129,6 @@ describe('AnunciosService', () => {
     expect(anuncios.abierto()).toBe(false);
     // Silenciar no es marcar como leído: sigue pendiente para cuando se reactive.
     expect(anuncios.hayPendientes()).toBe(true);
-  });
-
-  it('noMostrarEste() lo guarda y lo cierra de una vez, sin apagar los demás', () => {
-    const anuncios = crear();
-    anuncios.abrirSiCorresponde();
-
-    anuncios.noMostrarEste();
-
-    expect(anuncios.abierto()).toBe(false);
-    expect(TestBed.inject(PreferenciasService).anuncios().vistos).toEqual(['comunicado-01']);
-    // El interruptor global es otra cosa y vive en Configuración.
-    expect(TestBed.inject(PreferenciasService).anuncios().silenciar).toBe(false);
-    expect(TestBed.inject(ComunicadosSesionService).yaLeido('comunicado-01')).toBe(true);
   });
 
   it('abrir() a pedido funciona aunque ya esté leído', () => {

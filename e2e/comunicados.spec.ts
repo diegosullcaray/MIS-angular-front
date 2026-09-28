@@ -81,16 +81,10 @@ test('el botón de comunicados del header lo reabre aunque ya esté leído', asy
   await expect(imagen(page)).toHaveCount(1);
 });
 
-// "No mostrar este comunicado" es el camino permanente; "Entendido" solo calla
-// el aviso en esta sesión de navegación. Ver INC-2026-09-08-05.
-test('"No mostrar este comunicado" lo apaga para los siguientes ingresos', async ({ page }) => {
+test('el comunicado solo ofrece "Entendido"', async ({ page }) => {
   await page.goto('/app/dashboard');
-  await visor(page).getByRole('button', { name: 'No mostrar este comunicado' }).click();
-  await expect(visor(page)).toBeHidden();
-
-  await page.goto('/app/dashboard');
-  await expect(page.locator('#tour-sidebar-icons')).toBeVisible();
-  await expect(visor(page)).toBeHidden();
+  await expect(visor(page).getByRole('button', { name: 'Entendido' })).toBeVisible();
+  await expect(visor(page).getByRole('button', { name: 'No mostrar este comunicado' })).toHaveCount(0);
 });
 
 test('la lámina entra en el diálogo sin scroll horizontal', async ({ page }) => {

@@ -6,9 +6,9 @@ export const CLAVE_COMUNICADOS_SESION = 'mis.comunicados.sesion';
 /**
  * Los comunicados que el usuario cerró con "Entendido" en ESTA sesión.
  *
- * Es la mitad efímera de la regla: "Entendido" calla el comunicado mientras dure
- * la navegación, y "No mostrar este comunicado" lo calla para siempre —eso
- * último vive en `PreferenciasService`, sobre `localStorage`.
+ * "Entendido" calla el comunicado mientras dure la navegación. Los que ya
+ * figuran como vistos en `PreferenciasService` (sobre `localStorage`) tampoco
+ * se vuelven a abrir.
  *
  * Va en `sessionStorage` y no en una señal suelta por una razón concreta: con
  * la señal, recargar la página (F5) volvería a levantar el aviso, que es

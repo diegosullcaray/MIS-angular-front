@@ -176,32 +176,50 @@ for (const [nombre, ancho, alto] of [['teléfono', 375, 812], ['tablet', 768, 10
   });
 }
 
-test.describe('Incentivos — colores del legado', () => {
+test.describe('Incentivos — colores por tema', () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
-  test('semáforo, anillos, Super Plus y monetizado usan la paleta de incentivos3', async ({ page }) => {
-    await sesionConCuadroDeMando(page);
-    await page.goto('/app/incentivos3');
-    await expect(page.locator('.semaforo-chip').first()).toBeVisible();
-
-    // En escritorio el semáforo sí lleva el nombre.
-    await expect(page.locator('.semaforo-texto').first()).toBeVisible();
-
+  async function colores(page: Page) {
     const colorIcono = (titulo: RegExp) =>
       page.locator('.semaforo-chip', { has: page.locator('.semaforo-texto', { hasText: titulo }) }).locator('.semaforo-icono')
         .evaluate((el) => getComputedStyle(el).color);
-    expect(await colorIcono(/^Cartera/)).toBe('rgb(59, 209, 54)'); // .am  #3bd136
-    expect(await colorIcono(/^Clientes/)).toBe('rgb(233, 30, 47)'); // .dm  #e91e2f
+    return {
+      bien: await colorIcono(/^Cartera/),
+      mal: await colorIcono(/^Clientes/),
+      anillos: (await page.locator('.avance-anillo').evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundImage))).join(' '),
+      superPlus: await page.locator('.super-plus-item').evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor)),
+      monto: await page.locator('.monetizado-cifra--total').evaluate((el) => getComputedStyle(el).color),
+    };
+  }
 
-    const anillos = await page.locator('.avance-anillo').evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundImage));
-    expect(anillos.some((a) => a.includes('rgb(63, 233, 30)'))).toBe(true); // meta   #3fe91e
-    expect(anillos.some((a) => a.includes('rgb(239, 180, 95)'))).toBe(true); // 65-100 #efb45f
-    expect(anillos.some((a) => a.includes('rgb(227, 0, 91)'))).toBe(true); // < 65   #E3005B
+  test('en claro usa la paleta del sistema; en oscuro conserva la de incentivos3', async ({ page }) => {
+    await sesionConCuadroDeMando(page);
+    await page.goto('/app/incentivos3');
+    await expect(page.locator('.semaforo-chip').first()).toBeVisible();
+    // En escritorio el semáforo sí lleva el nombre.
+    await expect(page.locator('.semaforo-texto').first()).toBeVisible();
 
-    const fondos = await page.locator('.super-plus-item').evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor));
-    expect(fondos).toContain('rgb(0, 159, 227)'); // bg1 #009fe3
-    expect(fondos).toContain('rgb(227, 0, 91)'); // bg2 #E3005B
+    await page.evaluate(() => document.documentElement.classList.remove('dark'));
+    const claro = await colores(page);
+    expect(claro.bien).toBe('rgb(17, 128, 58)'); // --mis-success #11803a
+    expect(claro.mal).toBe('rgb(211, 36, 36)'); // --mis-danger  #d32424
+    expect(claro.anillos).toContain('rgb(17, 128, 58)'); // meta
+    expect(claro.anillos).toContain('rgb(217, 119, 6)'); // 65-100
+    expect(claro.anillos).toContain('rgb(211, 36, 36)'); // < 65
+    expect(claro.superPlus).toContain('rgb(3, 80, 150)'); // --mis-primary #035096
+    expect(claro.monto).toBe('rgb(3, 80, 150)');
+    // Ningún tono saturado del legado queda en claro.
+    const todo = JSON.stringify(claro);
+    for (const legado of ['rgb(63, 233, 30)', 'rgb(227, 0, 91)', 'rgb(0, 159, 227)', 'rgb(59, 209, 54)']) {
+      expect(todo).not.toContain(legado);
+    }
 
-    expect(await page.locator('.monetizado-cifra--total').evaluate((el) => getComputedStyle(el).color)).toBe('rgb(0, 159, 227)');
+    await page.evaluate(() => document.documentElement.classList.add('dark'));
+    const oscuro = await colores(page);
+    expect(oscuro.bien).toBe('rgb(59, 209, 54)'); // .am #3bd136
+    expect(oscuro.mal).toBe('rgb(233, 30, 47)'); // .dm #e91e2f
+    expect(oscuro.anillos).toContain('rgb(63, 233, 30)'); // #3fe91e
+    expect(oscuro.superPlus).toContain('rgb(0, 159, 227)'); // bg1 #009fe3
+    expect(oscuro.monto).toBe('rgb(0, 159, 227)');
   });
 });

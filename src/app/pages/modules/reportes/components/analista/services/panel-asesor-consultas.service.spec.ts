@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 import { PanelAsesorConsultasService } from './panel-asesor-consultas.service';
 import { ModReportesService } from '../../../../../../core/winder/instances/mod-reportes.service';
 import { CODIGO_CLIENTES_CONSOLIDADO, REPORTES_ASESOR } from '../constantes/panel-asesor.constantes';
+import { COD_ANALISTA } from '../constantes/analista.constantes';
 import { TABLA_PENDIENTE } from '../../../models/tabla-reporte.model';
 import { FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO } from '../models/monitor-efectividades.model';
 import type { IWinderResponse } from '../../../../../../core/winder/winder/winder.interface';
@@ -52,6 +53,18 @@ describe('PanelAsesorConsultasService', () => {
     const final = resultados.at(-1)!;
     expect(Object.keys(final).sort()).toEqual(['tabla1', 'tabla2', 'tabla3', 'tabla4', 'tabla5']);
     expect(Object.values(final).every((t) => t !== TABLA_PENDIENTE)).toBe(true);
+  });
+
+  it('si Grupos PDM llega sin datos, la vista consolidada no lo incluye', () => {
+    const conFilas: IWinderResponse = { code: '0', headers: {}, body: { result: { headers: [], body: [{ a: 1 }], additional: {} } } };
+    const nula: IWinderResponse = { code: '0', headers: {}, body: { result: null } };
+    reportes['getDeprecatedData'].mockImplementation((cod: string) => of(cod === COD_ANALISTA.gruposPorVencer ? nula : conFilas));
+    const resultados: Record<string, unknown>[] = [];
+    TestBed.inject(PanelAsesorConsultasService)
+      .consultar(CODIGO_CLIENTES_CONSOLIDADO, '12345678', FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO)
+      .subscribe((r) => resultados.push(r as Record<string, unknown>));
+    expect(resultados.at(-1)!['tabla1']).toBeUndefined();
+    expect(resultados.at(-1)!['tabla2']).not.toBe(TABLA_PENDIENTE);
   });
 
   it('los reportes dados de baja del panel ya no se consultan desde aquí', () => {

@@ -2,6 +2,7 @@ import { Component, OnInit, computed, effect, inject, signal, untracked } from '
 import { TooltipModule } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
 import { ImageModule } from 'primeng/image';
+import { TagModule } from 'primeng/tag';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
@@ -25,6 +26,7 @@ import type { NodoJerarquiaAncla, SectoristaItem } from '../../models/colaborado
     TooltipModule,
     ButtonModule,
     ImageModule,
+    TagModule,
     ListSkeletonComponent,
     InlineErrorComponent,
     EmptyStateComponent,
