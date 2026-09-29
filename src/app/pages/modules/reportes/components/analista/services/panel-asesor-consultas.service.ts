@@ -14,7 +14,7 @@ import { SegurosService } from './seguros.service';
 import { RecuperacionPreventivaService } from './recuperacion-preventiva.service';
 import { AutonomiaTasasService } from './autonomia-tasas.service';
 
-/** Delega cada reporte (por su `SCODSEC`) al servicio que ya conserva su motor, bloques y parámetros. */
+/** Delega cada reporte (por `SCODSEC`) a su servicio existente. */
 @Injectable()
 export class PanelAsesorConsultasService {
   private readonly injector = inject(Injector);
@@ -34,9 +34,8 @@ export class PanelAsesorConsultasService {
   }
 
   /**
-   * Grupos PDM + Clientes Nuevos y Recurrentes + Clientes Producto en una sola vista. Cada reporte
-   * llega por su cuenta: lo que falta queda como `TABLA_PENDIENTE` (esqueleto), sin esperar al más lento.
-   * Si Grupos PDM llega sin filas (la data viene nula), su bloque se quita entero: ni chip ni tabla.
+   * Grupos PDM, Clientes Nuevos y Recurrentes y Clientes Producto en una vista; cada uno llega por
+   * su cuenta (lo pendiente, con esqueleto). Grupos PDM sin filas no se muestra.
    */
   private clientesConsolidado(nodo: { tip_cod: number; cod_rel: string }): Observable<ResultadoPanelAsesor> {
     const grupos$ = this.injector.get(GruposPorVencerService).obtenerGruposPorVencer(nodo).pipe(

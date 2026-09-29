@@ -52,8 +52,7 @@ tablero. Reemplaza la navegación por pestañas y chips de las enmiendas anterio
 
 - Sin título ni subtítulos: ni "Impacto del mes" ni el asesor con la fecha de corte; la ventana solo lleva su
   nombre. Los cuatro KPI titulares de la maqueta quedan fuera por decisión de negocio.
-- **Focos de atención**: avisos que solo aparecen si los datos cumplen su regla (monto muy por detrás de
-  los días hábiles, efectividad del tramo 1–30 bajo 50 %, TAPP del mes bajo la mínima, recurrentes que bajan).
+- Los "Focos de atención" de la maqueta también quedan fuera (retirados a pedido de negocio).
 - Seis tarjetas por dominio (Cartera, Clientes, Colocación, Tasas, Seguros, Recuperación y mora). Sus cifras se
   leen de las tablas reales de los 7 reportes buscando cada fila por su nombre y cada columna por su encabezado
   (`utils/panel-resumen.util.ts`); una fila que no llega se muestra "—" y nunca se reemplaza por otra.

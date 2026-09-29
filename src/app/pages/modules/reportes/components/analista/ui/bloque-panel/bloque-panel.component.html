@@ -1,5 +1,4 @@
 <section class="bloque" [attr.aria-label]="titulo() || null">
-  <!-- El nombre de la tabla va en un chip, junto al de la unidad: sin cabecera aparte. -->
   @if (titulo() || chip()) {
     <div class="bloque-chips">
       @if (titulo()) {
@@ -14,12 +13,4 @@
   <div class="bloque-tabla">
     <app-tabla-reporte [encabezados]="tabla().headers" [filas]="tabla().body" [cargando]="cargando()" [ajustarAncho]="ajustarAncho()" />
   </div>
-
-  @if (nota().length) {
-    <ul class="bloque-nota">
-      @for (linea of nota(); track linea) {
-        <li>{{ linea }}</li>
-      }
-    </ul>
-  }
 </section>

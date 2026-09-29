@@ -1,7 +1,7 @@
 import type { TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import { TABLA_PENDIENTE } from '../../../models/tabla-reporte.model';
 import { CODIGO_CLIENTES_CONSOLIDADO } from '../constantes/panel-asesor.constantes';
-import { focosDeAtencion, hallarFila, normalizar, numeroDe, resumenDominio, type ResultadosPanel } from './panel-resumen.util';
+import { hallarFila, normalizar, numeroDe, resumenDominio, type ResultadosPanel } from './panel-resumen.util';
 
 type Celda = string | number | null;
 
@@ -139,18 +139,5 @@ describe('panel-resumen.util', () => {
       ['1 a 30 días', '0.00%', 'mal'],
     ]);
     expect(r.pie[0]).toEqual(expect.objectContaining({ valor: '5', detalle: '+4', tono: 'mal' }));
-  });
-
-  it('focos de atención: solo los que cumplen su regla, con datos reales', () => {
-    expect(focosDeAtencion(RESULTADOS).map((f) => [f.dominio, f.texto])).toEqual([
-      ['colocacion', 'Meta de monto al 6.51% con 96.15% de días hábiles transcurridos'],
-      ['mora', 'Efectividad tramo 1–30 en 0.00% · 4 clientes, 95,197'],
-      ['tasas', 'TAPP del mes 277 pbs por debajo de la mínima'],
-      ['clientes', 'Recurrentes desembolsados bajan de 20 a 6'],
-    ]);
-  });
-
-  it('sin datos no hay focos', () => {
-    expect(focosDeAtencion({})).toEqual([]);
   });
 });

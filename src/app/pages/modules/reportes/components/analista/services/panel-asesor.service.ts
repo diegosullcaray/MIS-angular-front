@@ -11,12 +11,8 @@ import { CODIGO_EFECTIVIDADES, REPORTES_ASESOR } from '../constantes/panel-aseso
 const ERROR_CONSULTA = 'No se pudo cargar el reporte. Reintenta la consulta.';
 
 /**
- * Estado del panel unificado del asesor.
- *
- * El tablero resume todos los reportes, así que al elegir asesor se piden todos a la vez; cada
- * uno llega por su cuenta y su tarjeta se completa sola. Se consulta una sola vez por asesor (y
- * por filtros, en efectividades): abrir un detalle no vuelve a pedir lo ya traído. Cambiar de
- * asesor, de usuario o pulsar "Actualizar" cancela lo pendiente y descarta lo anterior.
+ * Estado del panel del asesor: al elegir asesor se piden todos los reportes, una vez por asesor
+ * (y por filtros en efectividades). Cambiar de asesor o de usuario, o actualizar, cancela lo pendiente.
  */
 @Injectable()
 export class PanelAsesorService {
@@ -77,7 +73,7 @@ export class PanelAsesorService {
     });
 
     effect(() => {
-      // Identidad, asesor y revisión definen el contexto: si cambia, lo anterior ya no vale.
+      // Si cambia usuario, asesor o revisión, lo anterior ya no vale.
       const contexto = [this.shell.usuarioActivo(), this._asesor(), this.revision()];
       this._filtros();
       untracked(() => {
@@ -92,7 +88,6 @@ export class PanelAsesorService {
     });
   }
 
-  /** Estado de un reporte para el asesor actual (y los filtros vigentes, si aplica). */
   estado(codigo: string): EstadoConsultaPanel | null {
     return this._estados()[this.clave(codigo)] ?? null;
   }

@@ -19,23 +19,21 @@ const RESUMEN: TablaReporteResultado = {
 };
 
 describe('BloquePanelComponent', () => {
-  function crear(titulo = '', nota: string[] = [], chip = '') {
+  function crear(titulo = '', chip = '') {
     TestBed.configureTestingModule({ imports: [BloquePanelComponent] });
     const fixture = TestBed.createComponent(BloquePanelComponent);
     fixture.componentRef.setInput('tabla', RESUMEN);
     fixture.componentRef.setInput('titulo', titulo);
-    fixture.componentRef.setInput('nota', nota);
     fixture.componentRef.setInput('chip', chip);
     fixture.detectChanges();
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('muestra la tabla con su título en un chip y su nota, sin opción de gráfico', () => {
-    const el = crear('Resumen', ['(1) criterio']);
+  it('muestra la tabla con su título en un chip, sin opción de gráfico', () => {
+    const el = crear('Resumen');
     expect(el.querySelector('.bloque-chips app-chip-informativo')?.textContent).toContain('Resumen');
     expect(el.querySelector('h3, header')).toBeNull();
     expect(el.querySelector('app-tabla-reporte')).not.toBeNull();
-    expect(el.querySelector('.bloque-nota')?.textContent).toContain('(1) criterio');
     expect(el.querySelector('app-grafico-mixto')).toBeNull();
   });
 
@@ -44,13 +42,13 @@ describe('BloquePanelComponent', () => {
   });
 
   it('muestra la nota de unidad como chip, no como título', () => {
-    const el = crear('', [], 'Expresado en PEN y %');
+    const el = crear('', 'Expresado en PEN y %');
     expect(el.querySelector('app-chip-informativo')?.textContent).toContain('Expresado en PEN y %');
     expect(el.querySelector('h3')).toBeNull();
   });
 
   it('con título y chip muestra los dos, título primero', () => {
-    const chips = [...crear('Resumen', [], 'Expresado en PEN y %').querySelectorAll('app-chip-informativo')];
+    const chips = [...crear('Resumen', 'Expresado en PEN y %').querySelectorAll('app-chip-informativo')];
     expect(chips.map((c) => c.textContent?.trim())).toEqual(['Resumen', 'Expresado en PEN y %']);
   });
 });

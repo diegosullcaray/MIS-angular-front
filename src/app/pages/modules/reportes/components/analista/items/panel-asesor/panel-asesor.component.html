@@ -37,109 +37,85 @@
       descripcion="Selecciona un asesor en el filtro superior para ver sus reportes."
     />
   } @else {
-    <div class="tablero">
-      <!-- Focos de atención: solo aparecen si los datos reales cumplen su regla. -->
-      <section class="focos" aria-label="Focos de atención">
-        <h2 class="focos-titulo"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i> Focos de atención</h2>
-        @if (!focosListos()) {
-          <app-list-skeleton [rows]="[1]" [cols]="[1, 2, 3, 4]" />
-        } @else if (focos().length === 0) {
-          <p class="focos-vacio">Sin focos de atención: los indicadores del mes están en rango.</p>
-        } @else {
-          <div class="focos-grilla">
-            @for (f of focos(); track f.dominio) {
-              <button type="button" class="foco" (click)="abrir(f.dominio)">
-                <span class="foco-titulo" [class]="claseTono(f.tono)">{{ f.titulo }}</span>
-                <span class="foco-texto">{{ f.texto }}</span>
-              </button>
+    <section class="tarjetas" aria-label="Dominios">
+      @for (t of tarjetas(); track t.dominio.id) {
+        <article class="tarjeta" [attr.aria-label]="t.dominio.nombre">
+          <button type="button" class="tarjeta-cabecera" (click)="abrir(t.dominio.id)">
+            <span class="tarjeta-icono" [class.tarjeta-icono--alerta]="t.dominio.alerta"><i [class]="t.dominio.icono" aria-hidden="true"></i></span>
+            <span class="tarjeta-titulo">{{ t.dominio.nombre }}</span>
+            <span class="tarjeta-enlace">Ver detalle →</span>
+          </button>
+
+          @switch (t.estado) {
+            @case ('cargando') {
+              <app-list-skeleton [rows]="[1, 2, 3]" [cols]="[1, 2]" />
             }
-          </div>
-        }
-      </section>
-
-      <!-- Una tarjeta por dominio; toda la tarjeta abre su detalle. -->
-      <section class="tarjetas" aria-label="Dominios">
-        @for (t of tarjetas(); track t.dominio.id) {
-          <article class="tarjeta" [attr.aria-label]="t.dominio.nombre">
-            <button type="button" class="tarjeta-cabecera" (click)="abrir(t.dominio.id)">
-              <span class="tarjeta-icono" [class.tarjeta-icono--alerta]="t.dominio.alerta"><i [class]="t.dominio.icono" aria-hidden="true"></i></span>
-              <span class="tarjeta-titulo">{{ t.dominio.nombre }}</span>
-              <span class="tarjeta-enlace">Ver detalle →</span>
-            </button>
-
-            @switch (t.estado) {
-              @case ('cargando') {
-                <app-list-skeleton [rows]="[1, 2, 3]" [cols]="[1, 2]" />
-              }
-              @case ('error') {
-                <app-inline-error [titulo]="'No se pudo cargar ' + t.dominio.nombre" (reintentar)="reintentarTarjeta(t.dominio.id)" />
-              }
-              @case ('vacio') {
-                <app-empty-state titulo="Sin datos" descripcion="Este asesor no tiene datos en este reporte todavía." />
-              }
-              @default {
-                <button type="button" class="tarjeta-cuerpo" (click)="abrir(t.dominio.id)" [attr.aria-label]="'Ver detalle de ' + t.dominio.nombre">
-                  @if (t.resumen.destacado; as d) {
-                    <span class="destacado"><strong>{{ d.valor }}</strong><span>{{ d.texto }}</span></span>
-                  }
-                  @if (t.resumen.barras.length) {
-                    <span class="barras">
-                      @if (t.resumen.tituloBarras) {
-                        <span class="barras-titulo">{{ t.resumen.tituloBarras }}</span>
-                      }
-                      @for (b of t.resumen.barras; track b.etiqueta) {
-                        <span class="barra">
-                          <span class="barra-etiqueta">{{ b.etiqueta }}</span>
-                          <span class="barra-pista">
-                            <span class="barra-relleno" [class]="claseTono(b.tono)" [style.width.%]="b.porcentaje"></span>
-                            @if (b.marca !== null && b.marca !== undefined) {
-                              <span class="barra-marca" [style.left.%]="b.marca" aria-hidden="true"></span>
-                            }
-                          </span>
-                          <span class="barra-valor" [class.barra-valor--fuerte]="b.tono !== 'referencia'">{{ b.valor }}</span>
-                        </span>
-                      }
-                      @if (t.resumen.notaBarras) {
-                        <span class="barras-nota"><span class="barras-nota-marca" aria-hidden="true"></span>{{ t.resumen.notaBarras }}</span>
-                      }
-                    </span>
-                  }
-                  @if (t.resumen.lista.length) {
-                    <span class="lista">
-                      @for (m of t.resumen.lista; track m.etiqueta) {
-                        <span class="lista-fila">
-                          <span class="lista-etiqueta">{{ m.etiqueta }}</span>
-                          <span class="lista-valor">{{ m.valor }}</span>
-                          <span class="lista-detalle" [class]="claseTono(m.tono)">{{ m.detalle ?? '' }}</span>
-                        </span>
-                      }
-                    </span>
-                  }
-                  @if (t.resumen.pie.length) {
-                    <span class="pie">
-                      @for (m of t.resumen.pie; track m.etiqueta) {
-                        <span class="pie-metrica">
-                          <span class="pie-etiqueta">{{ m.etiqueta }}</span>
-                          <span class="pie-valor">{{ m.valor }}</span>
-                          @if (m.detalle) {
-                            <span class="pie-detalle" [class]="claseTono(m.tono)">{{ m.detalle }}</span>
+            @case ('error') {
+              <app-inline-error [titulo]="'No se pudo cargar ' + t.dominio.nombre" (reintentar)="reintentarTarjeta(t.dominio.id)" />
+            }
+            @case ('vacio') {
+              <app-empty-state titulo="Sin datos" descripcion="Este asesor no tiene datos en este reporte todavía." />
+            }
+            @default {
+              <button type="button" class="tarjeta-cuerpo" (click)="abrir(t.dominio.id)" [attr.aria-label]="'Ver detalle de ' + t.dominio.nombre">
+                @if (t.resumen.destacado; as d) {
+                  <span class="destacado"><strong>{{ d.valor }}</strong><span>{{ d.texto }}</span></span>
+                }
+                @if (t.resumen.barras.length) {
+                  <span class="barras">
+                    @if (t.resumen.tituloBarras) {
+                      <span class="barras-titulo">{{ t.resumen.tituloBarras }}</span>
+                    }
+                    @for (b of t.resumen.barras; track b.etiqueta) {
+                      <span class="barra">
+                        <span class="barra-etiqueta">{{ b.etiqueta }}</span>
+                        <span class="barra-pista">
+                          <span class="barra-relleno" [class]="claseTono(b.tono)" [style.width.%]="b.porcentaje"></span>
+                          @if (b.marca !== null && b.marca !== undefined) {
+                            <span class="barra-marca" [style.left.%]="b.marca" aria-hidden="true"></span>
                           }
                         </span>
-                      }
-                    </span>
-                  }
-                </button>
-              }
+                        <span class="barra-valor" [class.barra-valor--fuerte]="b.tono !== 'referencia'">{{ b.valor }}</span>
+                      </span>
+                    }
+                    @if (t.resumen.notaBarras) {
+                      <span class="barras-nota"><span class="barras-nota-marca" aria-hidden="true"></span>{{ t.resumen.notaBarras }}</span>
+                    }
+                  </span>
+                }
+                @if (t.resumen.lista.length) {
+                  <span class="lista">
+                    @for (m of t.resumen.lista; track m.etiqueta) {
+                      <span class="lista-fila">
+                        <span class="lista-etiqueta">{{ m.etiqueta }}</span>
+                        <span class="lista-valor">{{ m.valor }}</span>
+                        <span class="lista-detalle" [class]="claseTono(m.tono)">{{ m.detalle ?? '' }}</span>
+                      </span>
+                    }
+                  </span>
+                }
+                @if (t.resumen.pie.length) {
+                  <span class="pie">
+                    @for (m of t.resumen.pie; track m.etiqueta) {
+                      <span class="pie-metrica">
+                        <span class="pie-etiqueta">{{ m.etiqueta }}</span>
+                        <span class="pie-valor">{{ m.valor }}</span>
+                        @if (m.detalle) {
+                          <span class="pie-detalle" [class]="claseTono(m.tono)">{{ m.detalle }}</span>
+                        }
+                      </span>
+                    }
+                  </span>
+                }
+              </button>
             }
-          </article>
-        }
-      </section>
-    </div>
+          }
+        </article>
+      }
+    </section>
   }
 </app-window-panel>
 
-<!-- Detalle de un dominio: la barra del diálogo solo lleva su nombre; el cuerpo abre con los chips
-     globales para pasar de un dominio a otro y sigue con sus KPI, filtros, tablas y gráficos. -->
 <p-dialog
   [visible]="!!abierto()"
   (visibleChange)="$event ? null : cerrar()"
@@ -249,7 +225,7 @@
                 </div>
               }
               @for (b of bloques(reporte, e.resultado); track b.tabla) {
-                <app-bloque-panel [tabla]="e.resultado[b.tabla]!" [titulo]="b.titulo ?? ''" [chip]="b.chip ?? ''" [nota]="b.nota ?? []" [ajustarAncho]="true" [cargando]="esPendiente(e.resultado[b.tabla])" />
+                <app-bloque-panel [tabla]="e.resultado[b.tabla]!" [titulo]="b.titulo ?? ''" [chip]="b.chip ?? ''" [ajustarAncho]="true" [cargando]="esPendiente(e.resultado[b.tabla])" />
               }
             }
           }

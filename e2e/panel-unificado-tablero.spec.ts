@@ -1,11 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { QUINCE_MINUTOS_MS, SESSION_STORAGE_KEY, USUARIO_DE_PRUEBA, inyectarSesionVigente } from './fixtures/session';
 
-/**
- * Tablero del panel del asesor (maqueta de gobierno `panel unificado
- * asesor`): las cifras de tarjetas, focos e indicadores salen de las tablas de los 7 reportes,
- * leídas por el nombre de su fila. Aquí el backend responde con esas tablas.
- */
+/** Panel del asesor: las cifras de tarjetas e indicadores salen de las tablas de los 7 reportes. */
 
 type Celda = string | number | null;
 function tabla(encabezados: string[], filas: Celda[][], formatos: (string | null)[] = []) {
@@ -78,9 +74,8 @@ async function preparar(page: Page, ancho: number, alto: number) {
 
 
 test.describe('Panel del asesor · tablero', () => {
-  test('tarjetas y focos con las cifras de las tablas; sin los 4 KPI titulares', async ({ page }) => {
+  test('tarjetas con las cifras de las tablas; sin KPI titulares ni focos de atención', async ({ page }) => {
     await preparar(page, 1440, 1000);
-    // Sin título ni subtítulos: ni "Impacto del mes" ni el asesor con la fecha de corte.
     await expect(page.getByText('Impacto del mes')).toHaveCount(0);
     await expect(page.getByText('Corte al')).toHaveCount(0);
     await expect(page.locator('[aria-label="Indicadores titulares"]')).toHaveCount(0);
@@ -88,13 +83,12 @@ test.describe('Panel del asesor · tablero', () => {
     await expect(page.locator('.tarjeta[aria-label="Cartera"]')).toContainText('3,254,743');
     await expect(page.locator('.tarjeta[aria-label="Autonomía de tasas"]')).toContainText('−277 pbs');
     await expect(page.locator('.tarjeta[aria-label="Seguros"]')).toContainText('pólizas Multiriesgo en el mes (5 el mes anterior)');
-    await expect(page.locator('.focos')).toContainText('TAPP del mes 277 pbs por debajo de la mínima');
-    await expect(page.locator('.focos')).toContainText('Recurrentes desembolsados bajan de 20 a 6');
+    await expect(page.getByText('Focos de atención')).toHaveCount(0);
   });
 
-  test('un foco abre el detalle de su dominio, con pestañas para pasar a otro', async ({ page }) => {
+  test('una tarjeta abre el detalle de su dominio, con chips para pasar a otro', async ({ page }) => {
     await preparar(page, 1440, 1000);
-    await page.locator('.foco', { hasText: 'Tasas' }).click();
+    await page.locator('.tarjeta[aria-label="Autonomía de tasas"] .tarjeta-cabecera').click();
     const dialogo = page.getByRole('dialog');
     await expect(dialogo.getByRole('tab', { selected: true })).toHaveText('Tasas');
     await expect(dialogo.locator('.kpi-card')).toHaveCount(4);

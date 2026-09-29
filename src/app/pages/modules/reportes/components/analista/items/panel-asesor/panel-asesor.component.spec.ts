@@ -75,12 +75,12 @@ describe('PanelAsesorComponent', () => {
     expect(consultar).not.toHaveBeenCalled();
   });
 
-  it('sin título ni subtítulos: ni "Impacto del mes" ni el asesor con la fecha de corte', () => {
+  it('sin título, subtítulos ni focos de atención', () => {
     const el: HTMLElement = crear().nativeElement;
     expect(el.textContent).not.toContain('Impacto del mes');
     expect(el.textContent).not.toContain('Corte al');
     expect(el.querySelector('.mis-window-bar')?.textContent).not.toContain('Ana Torres');
-    expect(el.textContent).not.toContain('Toca un foco');
+    expect(el.querySelector('.focos')).toBeNull();
   });
 
   it('seis tarjetas por dominio y sin los 4 KPI titulares de la maqueta', () => {

@@ -15,22 +15,12 @@
   padding: 10px 12px 0;
 }
 .bloque-tabla {
-  /* La tabla ya se desplaza dentro de su propio contenedor: un segundo `overflow-x` aquí
-     dejaba dos scrollbars horizontales apilados cuando la tabla no entraba. */
+  /* Sin overflow-x propio: la tabla ya se desplaza sola. */
   padding: 4px;
   min-width: 0;
 }
-.bloque-nota {
-  margin: 0;
-  padding: 8px 14px 12px 28px;
-  font-size: var(--mis-text-xs);
-  line-height: 1.6;
-  color: var(--mis-text-tertiary);
-}
 
-/* La columna de descripción (la primera) puede saltar de línea dentro de un tope de ancho: con
-   nombres largos era la que empujaba la tabla fuera de la tarjeta y sacaba un scrollbar
-   horizontal en escritorio. Las cifras siguen sin partirse (`ajustarAncho`). */
+/* La primera columna parte líneas con tope de ancho; las cifras no (`ajustarAncho`). */
 :host ::ng-deep .p-datatable-tbody > tr > td:first-child {
   min-width: 7.5rem;
   max-width: 13rem;

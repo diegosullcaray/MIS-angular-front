@@ -16,8 +16,7 @@ export function bloquesDe(
   const declarados: readonly BloquePanelAsesor[] =
     reporte.bloques ?? CLAVES_TABLA.map((tabla) => ({ tabla }));
   const presentes = declarados.filter((b) => resultado[b.tabla] !== undefined);
-  // Toda tabla lleva nombre en su chip. El legado no titula muchas: sin título propio va el del
-  // reporte, numerado si hay varias sin nombre. No se inventa un nombre de negocio.
+  // Sin título propio va el del reporte, numerado si hay varias.
   const sinTitulo = presentes.filter((b) => !b.titulo);
   return presentes.map((b) => {
     if (b.titulo) return b;
@@ -32,10 +31,9 @@ export function bloquesDe(
   });
 }
 
-/** Vacío real: ni filas, ni series con datos, ni KPI. Un error nunca llega acá. */
+/** Vacío real: ni filas, ni series con datos, ni KPI. */
 export function sinDatos(resultado: ResultadoPanelAsesor): boolean {
   const tablas = CLAVES_TABLA.map((c) => resultado[c]).filter((t) => t !== undefined);
-  // Una tabla que todavía no respondió puede traer filas: no es "sin datos".
   if (tablas.some((t) => t === TABLA_PENDIENTE)) return false;
   const hayFilas = tablas.some((t) => t.body.length > 0);
   const haySeries = (resultado.graficos ?? []).some((g) =>
@@ -55,12 +53,4 @@ export function columnasDato(tabla: TablaReporteResultado): ColumnaReporte[] {
     .sort(
       (a, b) => (a.ordenPresentacion ?? a.isdata ?? 0) - (b.ordenPresentacion ?? b.isdata ?? 0),
     );
-}
-
-/** Número del motor: `number` tal cual, o texto estrictamente numérico. Lo demás no es cifra. */
-export function aNumero(valor: unknown): number | null {
-  if (typeof valor === 'number') return Number.isFinite(valor) ? valor : null;
-  if (typeof valor === 'string' && /^-?\d+(\.\d+)?$/.test(valor.trim()))
-    return Number(valor.trim());
-  return null;
 }

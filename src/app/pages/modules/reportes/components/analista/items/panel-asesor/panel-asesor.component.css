@@ -1,21 +1,15 @@
-/*
- * Panel del asesor · "Impacto del mes" — maqueta `governance/tasks/panel unificado asesor`,
- * llevada a los tokens del sistema: el navy de la maqueta es `--mis-primary`, los verdes, ámbares
- * y rojos son `--mis-success`, `--mis-warning` y `--mis-danger`, y las superficies y bordes, los
- * del tema (claro y oscuro).
- */
+/* Panel del asesor: tarjetas por dominio y diálogo de detalle, con los tokens del tema. */
 :host {
   display: block;
   min-width: 0;
   color: var(--mis-text-primary);
 }
-/* Solo los botones propios del tablero: los chips del diálogo son globales (`.mis-chip`) y un
-   reinicio sin acotar les ganaba por la especificidad del encapsulado. */
-.tablero button {
+/* Acotado a las tarjetas: sin acotar le gana a los `.mis-chip` globales del diálogo. */
+.tarjetas button {
   font: inherit;
   color: inherit;
 }
-.tablero button:focus-visible {
+.tarjetas button:focus-visible {
   outline: none;
   box-shadow: var(--mis-shadow-focus);
 }
@@ -46,79 +40,13 @@
   background: var(--mis-surface);
 }
 
-/* ---------- Tablero ---------- */
-.tablero {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- Focos de atención ---------- */
-.focos {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 14px 16px;
-  border: 1px solid var(--mis-border);
-  border-radius: var(--mis-radius-lg);
-  background: var(--mis-surface);
-}
-.focos-titulo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  font-size: 13px;
-  font-weight: 600;
-}
-.focos-titulo > i {
-  font-size: 13px;
-  color: var(--mis-danger);
-}
-.focos-vacio {
-  margin: 0;
-  font-size: 13px;
-  color: var(--mis-text-secondary);
-}
-.focos-grilla {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
-}
-.foco {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-height: 44px;
-  padding: 10px 14px;
-  border: 1px solid var(--mis-border);
-  border-radius: var(--mis-radius-md);
-  background: var(--mis-panel-bg);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color var(--mis-transition-fast);
-}
-.foco:hover {
-  border-color: var(--mis-border-strong);
-}
-.foco-titulo {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-.foco-texto {
-  font-size: 13px;
-  line-height: 1.4;
-}
-
 /* ---------- Tarjetas por dominio ---------- */
 .tarjetas {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
 }
 .tarjeta {
   display: flex;
@@ -347,10 +275,7 @@
   background: color-mix(in srgb, var(--mis-primary) 40%, var(--mis-surface));
 }
 
-/* ---------- Diálogo de detalle ----------
-   La barra del diálogo solo lleva el nombre del dominio; la navegación son los chips globales
-   (`.mis-chip`, ver chips-nav.css) al inicio del cuerpo, fijos al desplazarse. Los KPI usan el
-   material global `.kpi-card`. */
+/* ---------- Diálogo de detalle ---------- */
 .detalle-navegacion {
   position: sticky;
   top: 0;

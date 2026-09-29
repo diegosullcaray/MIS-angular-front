@@ -5,7 +5,6 @@ import { CODIGO_CLIENTES_CONSOLIDADO, CODIGO_EFECTIVIDADES } from '../constantes
 import type {
   BarraPanel,
   DominioPanel,
-  FocoPanel,
   MetricaPanel,
   ResultadoPanelAsesor,
   ResumenDominio,
@@ -13,12 +12,8 @@ import type {
 } from '../models/panel-asesor.model';
 import { CLAVES_TABLA, columnasDato } from './panel-asesor.util';
 
-/**
- * Tablero del asesor: lee las cifras de las tablas REALES de cada reporte (no hay datos de ejemplo)
- * buscando la fila por su nombre y la columna por su encabezado, como las muestra la pantalla
- * legacy ("Stock de cartera" › "Ejecutado"). Si el motor no trae una fila, la cifra queda en "—":
- * nunca se inventa ni se reemplaza por otra.
- */
+// Cifras del panel leídas de las tablas reales: fila por su nombre, columna por su encabezado.
+// Lo que no llega queda en "—".
 
 /** Resultados listos por `SCODSEC`; los que aún cargan o fallaron no están. */
 export type ResultadosPanel = Readonly<Partial<Record<string, ResultadoPanelAsesor>>>;
@@ -36,7 +31,7 @@ export function normalizar(texto: unknown): string {
     .trim();
 }
 
-/** Número de una celda: `number` tal cual (el porcentaje del motor viene en fracción) o texto como "−274,224" o "23.32%". */
+/** Número de una celda (`number`, con el porcentaje en fracción, o texto como "−274,224"). */
 export function numeroDe(valor: unknown, columna?: ColumnaReporte): number | null {
   if (typeof valor === 'number') {
     if (!Number.isFinite(valor)) return null;
@@ -67,7 +62,7 @@ function tablasDe(resultado: ResultadoPanelAsesor | undefined): TablaReporteResu
   );
 }
 
-/** Primera fila (en cualquiera de las tablas) cuya etiqueta —primera columna de datos— cumple el patrón. */
+/** Primera fila cuya etiqueta (primera columna) cumple el patrón. */
 export function hallarFila(tablas: readonly TablaReporteResultado[], patron: RegExp): FilaHallada | null {
   for (const tabla of tablas) {
     const columnas = columnasDato(tabla);
@@ -79,7 +74,7 @@ export function hallarFila(tablas: readonly TablaReporteResultado[], patron: Reg
   return null;
 }
 
-/** Celda de una fila hallada: por encabezado de columna, o por posición entre las columnas de valor. */
+/** Celda de una fila, por encabezado o por posición entre las columnas de valor. */
 export function cifra(hallada: FilaHallada | null, columna: RegExp | number): Cifra | null {
   if (!hallada) return null;
   const valores = hallada.columnas.slice(1);
@@ -91,7 +86,6 @@ export function cifra(hallada: FilaHallada | null, columna: RegExp | number): Ci
   return { texto: formatearCeldaReporte(valor, col), numero: numeroDe(valor, col) };
 }
 
-/** Columnas que usan las pantallas legacy del asesor para comparar contra el cierre. */
 const COL = {
   cierre: /cierre|anterior/,
   actual: /ejecutado|a hoy|actual|real/,
@@ -99,20 +93,19 @@ const COL = {
   total: /^total$/,
 };
 
-/** Para mostrar: el menos tipográfico y el signo "+" en las subidas. */
+/** Menos tipográfico y "+" en las subidas. */
 function conSigno(c: Cifra | null): string | undefined {
   if (!c) return undefined;
   const texto = c.texto.replace(/^-/, '−');
   return c.numero !== null && c.numero > 0 && !texto.startsWith('+') ? `+${texto}` : texto;
 }
 
-/** Tono por el signo de una variación, según si subir es bueno o malo para esa cifra. */
 function tonoPorSigno(n: number | null | undefined, subirEsBueno: boolean): TonoPanel {
   if (n === null || n === undefined || n === 0) return 'neutro';
   return n > 0 === subirEsBueno ? 'bien' : 'mal';
 }
 
-/** Métrica "valor actual + variación" de una fila de comparación contra el cierre. */
+/** Valor actual y variación contra el cierre. */
 function metricaComparada(
   etiqueta: string,
   hallada: FilaHallada | null,
@@ -130,7 +123,7 @@ function porcentajeDe(n: number | null, maximo: number): number {
   return Math.max(0, Math.min(100, (Math.abs(n) / maximo) * 100));
 }
 
-/** Mes abreviado en minúsculas con punto ("ago."), como en la maqueta. */
+/** "ago." */
 function mesCorto(fecha: Date): string {
   return fecha.toLocaleString('es-PE', { month: 'short' }).replace(/\.?$/, '.');
 }
@@ -183,7 +176,7 @@ function resumenClientes(r: ResultadosPanel): ResumenDominio {
   const recurrentes = hallarFila(t, /^(numero de |nro de )?clientes recurrentes/);
   const ticket = hallarFila(t, /^ticket promedio de clientes desembolsados/);
 
-  // Clientes por producto: las tablas de Clientes Producto (sin sus filas de total), a hoy.
+  // Clientes por producto a hoy, sin filas de total.
   const productos = [consolidado?.tabla3, consolidado?.tabla4, consolidado?.tabla5]
     .filter((x): x is TablaReporteResultado => !!x && x !== TABLA_PENDIENTE)
     .flatMap((tabla) => {
@@ -226,7 +219,7 @@ function resumenClientes(r: ResultadosPanel): ResumenDominio {
 
 // ── Colocación ─────────────────────────────────────────────────────────────
 
-/** Última fila con dato en la columna que cumple el patrón (el monitor diario crece día a día). */
+/** Último dato de la columna (el monitor crece día a día). */
 function ultimaCifra(tabla: TablaReporteResultado | undefined, columna: RegExp): Cifra | null {
   if (!tabla || tabla === TABLA_PENDIENTE) return null;
   const columnas = columnasDato(tabla);
@@ -241,33 +234,24 @@ function ultimaCifra(tabla: TablaReporteResultado | undefined, columna: RegExp):
   return null;
 }
 
-/** Tono de un avance contra el ritmo del mes (días hábiles transcurridos). */
+/** Tono del avance contra los días hábiles transcurridos. */
 function tonoAvance(avance: number | null, ritmo: number | null, estiloMotor: string | undefined): TonoPanel {
   const s = semaforo(estiloMotor);
   if (s === 1) return 'bien';
   if (s === 0) return 'revisar';
   if (s === -1) return 'mal';
   if (avance === null) return 'neutro';
-  // Al ritmo del mes o por encima, bien; con al menos la mitad del ritmo, a revisar; si no, en alerta.
   const meta = ritmo ?? 100;
   return avance >= meta ? 'bien' : avance >= meta / 2 ? 'revisar' : 'mal';
 }
 
-function datosColocacion(r: ResultadosPanel) {
-  const m = r['L_MONI_DESE_SEC'];
-  const ops = m?.kpiOperaciones?.cumpl_des_acum ?? null;
-  const monto = m?.kpiMonto?.cumpl_ope_acum ?? null;
-  const dias = ultimaCifra(m?.tabla1, /dias/) ?? ultimaCifra(m?.tabla2, /dias/);
-  return {
-    m,
-    ops: ops ? { texto: ops, numero: numeroDe(ops) } : null,
-    monto: monto ? { texto: monto, numero: numeroDe(monto) } : null,
-    dias,
-  };
-}
-
 function resumenColocacion(r: ResultadosPanel): ResumenDominio {
-  const { m, ops, monto, dias } = datosColocacion(r);
+  const m = r['L_MONI_DESE_SEC'];
+  const kpiOps = m?.kpiOperaciones?.cumpl_des_acum;
+  const kpiMonto = m?.kpiMonto?.cumpl_ope_acum;
+  const ops = kpiOps ? { texto: kpiOps, numero: numeroDe(kpiOps) } : null;
+  const monto = kpiMonto ? { texto: kpiMonto, numero: numeroDe(kpiMonto) } : null;
+  const dias = ultimaCifra(m?.tabla1, /dias/) ?? ultimaCifra(m?.tabla2, /dias/);
   const marca = dias?.numero ?? null;
   const opsAcum = ultimaCifra(m?.tabla1, /ops? acum|operaciones acum/);
   const metaAcum = ultimaCifra(m?.tabla1, /meta acum/);
@@ -301,18 +285,11 @@ function resumenColocacion(r: ResultadosPanel): ResumenDominio {
 
 // ── Autonomía de tasas ────────────────────────────────────────────────────
 
-function datosTasas(r: ResultadosPanel) {
-  const t = tablasDe(r['L_REP_AUTO_SEC']);
-  return {
-    t,
-    distancia: cifra(hallarFila(t, /^distancia/), COL.total),
-    tappMes: cifra(hallarFila(t, /^tapp mes/), COL.total),
-    tappMinima: cifra(hallarFila(t, /^tapp minima/), COL.total),
-  };
-}
-
 function resumenTasas(r: ResultadosPanel): ResumenDominio {
-  const { t, distancia, tappMes, tappMinima } = datosTasas(r);
+  const t = tablasDe(r['L_REP_AUTO_SEC']);
+  const distancia = cifra(hallarFila(t, /^distancia/), COL.total);
+  const tappMes = cifra(hallarFila(t, /^tapp mes/), COL.total);
+  const tappMinima = cifra(hallarFila(t, /^tapp minima/), COL.total);
   const operaciones = hallarFila(t, /^nro operaciones$|^numero de operaciones$|^nro de operaciones$/);
   const operacionesPct = hallarFila(t, /^nro operaciones %|^numero de operaciones %|^nro de operaciones %/);
   const monto = cifra(hallarFila(t, /^monto desembolsado$/), COL.total);
@@ -383,23 +360,14 @@ function tonoEfectividad(n: number | null): TonoPanel {
   return n >= 90 ? 'bien' : n >= 50 ? 'revisar' : 'mal';
 }
 
-function datosMora(r: ResultadosPanel) {
-  const cartera = tablasDe(r['L_CART_SEC']);
-  return {
-    cartera,
-    efectividad0: cifra(hallarFila(cartera, /efectividad.*-30 a 0/), COL.actual),
-    efectividad30: cifra(hallarFila(cartera, /efectividad.*(^|[^-\d])1 a 30/), COL.actual),
-    clientes30: cifra(hallarFila(cartera, /^clientes en mora tramo 1 a 30/), COL.actual),
-    saldo30: cifra(hallarFila(cartera, /^saldo en mora tramo 1 a 30/), COL.actual),
-  };
-}
-
 function resumenMora(r: ResultadosPanel): ResumenDominio {
-  const { cartera, efectividad0, efectividad30 } = datosMora(r);
+  const cartera = tablasDe(r['L_CART_SEC']);
+  const efectividad0 = cifra(hallarFila(cartera, /efectividad.*-30 a 0/), COL.actual);
+  const efectividad30 = cifra(hallarFila(cartera, /efectividad.*(^|[^-\d])1 a 30/), COL.actual);
   const enMora = hallarFila(cartera, /^numero de clientes en mora/);
   const saldo30 = hallarFila(cartera, /^saldo en mora tramo 1 a 30/);
 
-  // Recuperación preventiva: cada fila es un cliente por vencer; se cuentan y se suma su saldo.
+  // Preventiva: una fila por cliente; se cuentan y se suma su saldo.
   const preventiva = tablasDe(r['L_REC_PREVE_SEC'])[0];
   let preventivaM: MetricaPanel = { etiqueta: 'Preventiva', valor: SIN_DATO, tono: 'neutro' };
   if (preventiva) {
@@ -434,7 +402,7 @@ function resumenMora(r: ResultadosPanel): ResumenDominio {
   };
 }
 
-/** Reportes que alimentan cada tarjeta (algunas cruzan datos: mora lee la fila de efectividad de Cartera). */
+/** Reportes que alimentan cada tarjeta. */
 export const FUENTES_DOMINIO: Readonly<Record<DominioPanel, readonly string[]>> = {
   cartera: ['L_CART_SEC'],
   clientes: [CODIGO_CLIENTES_CONSOLIDADO, 'L_CART_SEC'],
@@ -460,61 +428,4 @@ export function resumenDominio(dominio: DominioPanel, r: ResultadosPanel, corte:
     case 'mora':
       return resumenMora(r);
   }
-}
-
-/**
- * "Focos de atención": un aviso por dominio solo cuando sus datos reales lo ameritan. Las reglas
- * son las de la maqueta: meta de monto muy por detrás del avance del mes, efectividad del tramo
- * 1–30 baja, TAPP del mes bajo la mínima y caída de clientes recurrentes.
- */
-export function focosDeAtencion(r: ResultadosPanel): FocoPanel[] {
-  const focos: FocoPanel[] = [];
-
-  const { monto, dias } = datosColocacion(r);
-  if (monto?.numero !== null && monto?.numero !== undefined) {
-    const ritmo = dias?.numero ?? null;
-    if (ritmo !== null ? monto.numero < ritmo - 25 : monto.numero < 50) {
-      focos.push({
-        dominio: 'colocacion',
-        titulo: 'Colocación',
-        texto: `Meta de monto al ${monto.texto}${dias ? ` con ${dias.texto} de días hábiles transcurridos` : ''}`,
-        tono: 'mal',
-      });
-    }
-  }
-
-  const { efectividad30, clientes30, saldo30 } = datosMora(r);
-  if (efectividad30?.numero !== null && efectividad30?.numero !== undefined && efectividad30.numero < 50) {
-    const extra = [clientes30 ? `${clientes30.texto} clientes` : null, saldo30?.texto ?? null].filter(Boolean).join(', ');
-    focos.push({
-      dominio: 'mora',
-      titulo: 'Recuperación',
-      texto: `Efectividad tramo 1–30 en ${efectividad30.texto}${extra ? ` · ${extra}` : ''}`,
-      tono: 'mal',
-    });
-  }
-
-  const { distancia } = datosTasas(r);
-  if (distancia?.numero !== null && distancia?.numero !== undefined && distancia.numero < 0) {
-    focos.push({
-      dominio: 'tasas',
-      titulo: 'Tasas',
-      texto: `TAPP del mes ${new Intl.NumberFormat('es-PE').format(Math.abs(distancia.numero))} pbs por debajo de la mínima`,
-      tono: 'revisar',
-    });
-  }
-
-  const recurrentes = hallarFila(tablasDe(r[CODIGO_CLIENTES_CONSOLIDADO]), /^(numero de |nro de )?clientes recurrentes/);
-  const antes = cifra(recurrentes, COL.cierre);
-  const ahora = cifra(recurrentes, COL.actual);
-  if (antes?.numero != null && ahora?.numero != null && ahora.numero < antes.numero) {
-    focos.push({
-      dominio: 'clientes',
-      titulo: 'Clientes',
-      texto: `Recurrentes desembolsados bajan de ${antes.texto} a ${ahora.texto}`,
-      tono: 'revisar',
-    });
-  }
-
-  return focos;
 }

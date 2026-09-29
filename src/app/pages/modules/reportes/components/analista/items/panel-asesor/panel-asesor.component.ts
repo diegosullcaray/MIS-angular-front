@@ -28,7 +28,7 @@ import type {
   TonoPanel,
 } from '../../models/panel-asesor.model';
 import { bloquesDe, sinDatos } from '../../utils/panel-asesor.util';
-import { FUENTES_DOMINIO, focosDeAtencion, resumenDominio, type ResultadosPanel } from '../../utils/panel-resumen.util';
+import { FUENTES_DOMINIO, resumenDominio, type ResultadosPanel } from '../../utils/panel-resumen.util';
 import { TABLA_PENDIENTE, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 
 interface FiltroEfectividades {
@@ -47,10 +47,7 @@ const FILTROS_EFECTIVIDADES: readonly FiltroEfectividades[] = [
   { campo: 'tdcr', etiqueta: 'Tramo días gestión', opciones: OPCIONES_TRAMO_DIAS_GESTION },
 ];
 
-/**
- * Centra la pestaña activa en su fila con scroll lateral (ambos offsets, contra el mismo
- * contenedor) y, si se pide, le da el foco sin que el navegador vuelva a desplazar la fila.
- */
+/** Centra el chip activo en su fila (scroll lateral) y, si se pide, le da el foco. */
 function centrarActiva(fila: HTMLElement, enfocar = false): void {
   const activa = fila.querySelector<HTMLElement>('.mis-chip--activo');
   if (!activa) return;
@@ -58,7 +55,6 @@ function centrarActiva(fila: HTMLElement, enfocar = false): void {
   if (enfocar) activa.focus({ preventScroll: true });
 }
 
-/** Estado de una tarjeta: se decide por los reportes que la alimentan. */
 type EstadoTarjeta = 'cargando' | 'error' | 'vacio' | 'listo';
 
 interface TarjetaPanel {
@@ -67,11 +63,7 @@ interface TarjetaPanel {
   resumen: ResumenDominio;
 }
 
-/**
- * Panel unificado del asesor: tablero de focos de atención y una tarjeta por dominio —todo con
- * cifras de las tablas reales de Ant— y, al tocar una tarjeta, su detalle en un diálogo del
- * sistema con navegación por dominios, indicadores, filtros y las tablas y gráficos completos.
- */
+/** Panel unificado del asesor: una tarjeta por dominio con datos reales y su detalle en un diálogo. */
 @Component({
   selector: 'app-panel-unificado',
   standalone: true,
@@ -96,7 +88,6 @@ export class PanelAsesorComponent {
 
   protected readonly dominios = DOMINIOS_PANEL;
   protected readonly filtrosEfectividades = FILTROS_EFECTIVIDADES;
-  protected readonly codigoEfectividades = CODIGO_EFECTIVIDADES;
 
   /** Fecha de corte: la que informa el monitor de desembolsos, o hoy si aún no llegó. */
   private readonly corte = computed(() => {
@@ -124,15 +115,6 @@ export class PanelAsesorComponent {
     })),
   );
 
-  protected readonly focos = computed(() => focosDeAtencion(this.resultados()));
-
-  /** Los focos se evalúan cuando todo lo que los alimenta dejó de cargar. */
-  protected readonly focosListos = computed(() =>
-    REPORTES_ASESOR.every((r) => this.panel.estado(r.codigo)?.estado !== 'cargando'),
-  );
-
-  // ── Detalle ──────────────────────────────────────────────────────────────
-
   protected readonly abierto = signal<DominioPanel | null>(null);
 
   protected readonly dominioAbierto = computed(() => this.dominios.find((d) => d.id === this.abierto()) ?? null);
@@ -143,15 +125,13 @@ export class PanelAsesorComponent {
 
   protected readonly reportesAbiertos = computed(() => REPORTES_ASESOR.filter((r) => r.dominio === this.abierto()));
 
-  /** El diálogo tiene filtros propios solo cuando muestra el detalle de efectividades. */
   protected readonly conFiltros = computed(() => this.reportesAbiertos().some((r) => r.codigo === CODIGO_EFECTIVIDADES));
 
   private readonly injector = inject(Injector);
   private readonly filaPestanas = viewChild<ElementRef<HTMLElement>>('filaPestanas');
 
   constructor() {
-    // En el teléfono la fila de pestañas no entra: al abrir o cambiar de dominio se desliza hasta
-    // la activa. Depende de la fila misma porque el diálogo crea su contenido recién al abrirse.
+    // En el teléfono la fila de chips se desliza hasta el activo al abrir o cambiar de dominio.
     effect(() => {
       const fila = this.filaPestanas()?.nativeElement;
       this.abierto();
@@ -159,16 +139,13 @@ export class PanelAsesorComponent {
     });
   }
 
-  /**
-   * Al terminar de abrirse el diálogo: el foco va a la pestaña activa (el diálogo no enfoca el
-   * primer botón por su cuenta, que desplazaba la fila de vuelta a "Cartera") y queda centrada.
-   */
+  /** Con el diálogo abierto, el foco va al chip activo (no al primero). */
   protected alMostrarDetalle(): void {
     const fila = this.filaPestanas()?.nativeElement;
     if (fila) centrarActiva(fila, true);
   }
 
-  /** Abre (o cambia) el dominio del detalle; al cambiar desde el diálogo vuelve al inicio del contenido. */
+  /** Abre o cambia el dominio del detalle y vuelve al inicio del contenido. */
   protected abrir(dominio: DominioPanel): void {
     this.abierto.set(dominio);
     this.filaPestanas()?.nativeElement.closest('.p-dialog')?.querySelector('.p-dialog-content')?.scrollTo?.({ top: 0 });
@@ -190,7 +167,6 @@ export class PanelAsesorComponent {
     return sinDatos(resultado);
   }
 
-  /** Tabla de una vista consolidada que todavía no respondió: se muestra con su esqueleto. */
   protected esPendiente(tabla: TablaReporteResultado | undefined): boolean {
     return tabla === TABLA_PENDIENTE;
   }
@@ -199,7 +175,6 @@ export class PanelAsesorComponent {
     return `tono-${tono}`;
   }
 
-  /** Reintenta los reportes fallidos de una tarjeta. */
   protected reintentarTarjeta(dominio: DominioPanel): void {
     for (const codigo of FUENTES_DOMINIO[dominio]) {
       if (this.panel.estado(codigo)?.estado === 'error') this.panel.reintentar(codigo);

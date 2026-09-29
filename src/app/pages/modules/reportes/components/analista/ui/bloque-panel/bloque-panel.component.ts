@@ -3,7 +3,7 @@ import { TablaReporteComponent } from '../../../../../../../shared/ui/tablas/tab
 import type { TablaReporteResultado } from '../../../../models/tabla-reporte.model';
 import { ChipInformativoComponent } from '../../../../../../../shared/ui/chip-informativo/chip-informativo.component';
 
-/** Un bloque del motor de reportes con su título y nota del legado. */
+/** Tabla de un reporte con su título y unidad en chips. */
 @Component({
   selector: 'app-bloque-panel',
   standalone: true,
@@ -14,10 +14,7 @@ import { ChipInformativoComponent } from '../../../../../../../shared/ui/chip-in
 export class BloquePanelComponent {
   readonly tabla = input.required<TablaReporteResultado>();
   readonly titulo = input('');
-  /** Nota corta sobre la tabla (la unidad, p. ej.), como chip. */
   readonly chip = input('');
-  readonly nota = input<readonly string[]>([]);
-  /** La tabla del bloque todavía está cargando: muestra su esqueleto. */
   readonly cargando = input(false);
   readonly ajustarAncho = input(false);
 }

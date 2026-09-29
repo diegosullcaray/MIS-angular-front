@@ -1,6 +1,6 @@
 import { TABLA_PENDIENTE, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
 import { CODIGO_CLIENTES_CONSOLIDADO, DOMINIOS_PANEL, REPORTES_ASESOR } from '../constantes/panel-asesor.constantes';
-import { aNumero, bloquesDe, sinDatos } from './panel-asesor.util';
+import { bloquesDe, sinDatos } from './panel-asesor.util';
 
 function tabla(overrides: Partial<TablaReporteResultado> = {}): TablaReporteResultado {
   return { headers: [], body: [], additional: {}, ...overrides };
@@ -16,15 +16,6 @@ describe('panel-asesor.util', () => {
     expect(porDominio('tasas')).toEqual(['L_REP_AUTO_SEC']);
     expect(porDominio('seguros')).toEqual(['L_SEG_SEC']);
     expect(porDominio('mora')).toEqual(['L_MON_EFE_DET_SEC', 'L_REC_PREVE_SEC']);
-  });
-
-  it('aNumero acepta números y texto estrictamente numérico, nada más', () => {
-    expect(aNumero(12.5)).toBe(12.5);
-    expect(aNumero(' 42 ')).toBe(42);
-    expect(aNumero('S/ 1,000')).toBeNull();
-    expect(aNumero('81.4%')).toBeNull();
-    expect(aNumero(Number.NaN)).toBeNull();
-    expect(aNumero(null)).toBeNull();
   });
 
   it('sinDatos distingue vacío real de tablas, gráficos o KPI con contenido', () => {
