@@ -62,6 +62,8 @@ export class TablaDinamicaComponent {
    * anchos fijos de las columnas (lo que forzaba el scroll). Las celdas de datos no se parten.
    */
   readonly ajustarAncho = input(false);
+  /** La tabla ocupa hasta el pie del panel antes de sacar su scroll (ver `MaxFilasDirective.hastaElFondo`). */
+  readonly llenarAlto = input(false);
 
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<Record<string, unknown>>();

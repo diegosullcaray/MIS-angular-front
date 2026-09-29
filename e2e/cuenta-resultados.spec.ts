@@ -113,6 +113,13 @@ test.describe('Cuenta de Resultados', () => {
         el.scrollLeft = 200;
       });
 
+      // La tabla ocupa hasta el pie del panel antes de sacar su scroll (no se corta a mitad).
+      const fin = await page.evaluate(() => ({
+        tabla: document.querySelector('app-tabla-dinamica .p-datatable-table-container')!.getBoundingClientRect().bottom,
+        panel: document.querySelector('.mis-window')!.getBoundingClientRect().bottom,
+      }));
+      expect(fin.panel - fin.tabla).toBeLessThanOrEqual(60);
+
       // Lo que se ve en el centro del encabezado de la columna fija es el propio encabezado, no una fila.
       const caja = (await cabecera.boundingBox())!;
       const encima = await page.evaluate(

@@ -1,7 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TableModule } from 'primeng/table';
-import { FRACCION_MAX_ALTO_VENTANA, MAX_FILAS_VISIBLES, MaxFilasDirective } from './max-filas.directive';
+import {
+  ALTO_MINIMO_FONDO_PX,
+  FRACCION_MAX_ALTO_VENTANA,
+  MAX_FILAS_VISIBLES,
+  MaxFilasDirective,
+  RESERVA_PIE_PX,
+} from './max-filas.directive';
 
 const ALTO_ENCABEZADO = 30;
 const ALTO_FILA = 25;
@@ -65,3 +71,42 @@ describe('MaxFilasDirective', () => {
   });
 });
 
+
+@Component({
+  standalone: true,
+  imports: [TableModule, MaxFilasDirective],
+  template: `
+    <p-table appMaxFilas [hastaElFondo]="true" [value]="filas()" [scrollable]="true">
+      <ng-template pTemplate="header"><tr><th>N</th></tr></ng-template>
+      <ng-template pTemplate="body" let-fila><tr><td>{{ fila }}</td></tr></ng-template>
+    </p-table>
+  `,
+})
+class AnfitrionFondoComponent {
+  readonly filas = signal<number[]>([]);
+}
+
+describe('MaxFilasDirective con hastaElFondo', () => {
+  function ajustarCon(arriba: number, altoVentana: number): HTMLElement {
+    const fixture = TestBed.createComponent(AnfitrionFondoComponent);
+    fixture.componentInstance.filas.set(Array.from({ length: 40 }, (_, i) => i));
+    fixture.detectChanges();
+    const contenedor = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('.p-datatable-table-container')!;
+    contenedor.getBoundingClientRect = () => ({ top: arriba }) as DOMRect;
+    vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(altoVentana);
+    fixture.debugElement.children[0].injector.get(MaxFilasDirective).ajustar();
+    return contenedor;
+  }
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('ignora el tope de 16 filas y crece hasta el pie de la ventana, menos la reserva del panel', () => {
+    const contenedor = ajustarCon(200, 900);
+    expect(contenedor.style.maxHeight).toBe(`${900 - 200 - RESERVA_PIE_PX}px`);
+    expect(contenedor.style.overflowY).toBe('auto');
+  });
+
+  it('en una ventana muy baja no baja del alto mínimo', () => {
+    expect(ajustarCon(500, 600).style.maxHeight).toBe(`${ALTO_MINIMO_FONDO_PX}px`);
+  });
+});
