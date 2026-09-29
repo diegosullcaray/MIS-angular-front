@@ -335,3 +335,33 @@ describe('TablaDinamicaComponent: colorVariacion', () => {
     expect(celda.querySelector('span[style]')).toBeNull();
   });
 });
+
+describe('TablaDinamicaComponent: indicadorVariacion "punto"', () => {
+  const colorVariacion = (valor: number) => (valor >= 0 ? 'var(--mis-success)' : 'var(--mis-danger)');
+
+  function celda(valor: unknown): HTMLElement {
+    TestBed.configureTestingModule({ imports: [TablaDinamicaComponent] });
+    const fixture = TestBed.createComponent(TablaDinamicaComponent);
+    fixture.componentRef.setInput('columnas', [
+      { key: 'nombre', label: 'Cuenta' },
+      { key: 'var', label: 'Var.', format: { type: 'integer' }, colorVariacion, indicadorVariacion: 'punto' },
+    ] satisfies ColumnaDinamica[]);
+    fixture.componentRef.setInput('filas', [{ nombre: 'INGRESOS', var: valor }]);
+    fixture.detectChanges();
+    return fixture.nativeElement.querySelectorAll('tbody td')[1] as HTMLElement;
+  }
+
+  it('antepone un punto del color del reporte y deja la cifra con su signo, sin flecha ni color', () => {
+    const td = celda(-1500);
+    const punto = td.querySelector('i.pi-circle-fill') as HTMLElement;
+
+    expect(punto.style.color).toBe('var(--mis-danger)');
+    expect(td.textContent).not.toContain('▼');
+    expect(td.textContent).toMatch(/-1.?500/);
+    expect((td.querySelector('span') as HTMLElement).style.color).toBe('');
+  });
+
+  it('sin valor no dibuja el punto', () => {
+    expect(celda(null).querySelector('i.pi-circle-fill')).toBeNull();
+  });
+});

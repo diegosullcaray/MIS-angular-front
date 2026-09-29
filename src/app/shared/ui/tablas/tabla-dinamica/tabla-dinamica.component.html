@@ -49,8 +49,11 @@
             @if (mostrarSemaforo(fila, columna)) {
               <i class="pi pi-circle-fill text-[10px] mr-2 shrink-0" [class]="colorSemaforo(fila, columna)"></i>
             }
+            @if (colorPuntoVariacion(fila, columna); as colorPunto) {
+              <i class="pi pi-circle-fill text-[9px] mr-2 shrink-0" aria-hidden="true" [style.color]="colorPunto"></i>
+            }
             <span class="flex-1" [class]="alineacion(columna)" [class.truncate]="truncarTexto()" [class.min-w-0]="truncarTexto()"
-                  [attr.title]="truncarTexto() ? valor(fila, columna) : null" [style.color]="colorIndicador(fila, columna)">
+                  [attr.title]="truncarTexto() ? valor(fila, columna) : null" [style.color]="colorCifra(fila, columna)">
               @if (flechaVariacion(fila, columna); as flecha) {
                 <span aria-hidden="true" class="text-[11px] mr-1">{{ flecha }}</span>
                 <span class="sr-only">{{ flecha === '▲' ? 'Sube' : 'Baja' }}</span>

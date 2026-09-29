@@ -15,6 +15,7 @@ import { MENSAJES_CUENTA_RESULTADOS } from '../../../../constantes/actividad-men
 import type { CuentaResultadosResultado } from '../../../../models/cuenta-resultados.model';
 import {
   ContratoCuentaResultadosError,
+  crearColumnasCuentaResultados,
   etiquetaPeriodoCuenta,
   normalizarFechaCuenta,
 } from '../../../../utils/cuenta-resultados.util';
@@ -71,6 +72,15 @@ export class CuentaResultadosComponent {
   protected readonly etiquetaPeriodo = computed(() => {
     const fecha = this.resultado()?.fecha;
     return fecha ? etiquetaPeriodoCuenta(fecha) : '';
+  });
+
+  /** Columnas del periodo con el nivel elegido en el título ("PYG NORTE 1"), como la maqueta de PYG. */
+  protected readonly columnas = computed(() => {
+    const reporte = this.resultado();
+    if (!reporte) return [];
+    const nodo = this.nivelActual();
+    const nivel = nodo?.des_rel ?? nodo?.desc_rel ?? nodo?.lbl_hier;
+    return crearColumnasCuentaResultados(reporte.fecha, reporte.preliminar, nivel);
   });
 
   /** La tabla no resalta por su cuenta: cada nivel ya trae su estilo. */
