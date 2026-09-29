@@ -9,6 +9,7 @@ Cada carpeta tiene su propio README con la API y ejemplos.
 | Carpeta | Qué es |
 |---|---|
 | [`animaciones/`](./animaciones/README.md) | `appAnimar`: todo el movimiento con GSAP, desde un catálogo cerrado |
+| [`burbuja-flotante/`](./burbuja-flotante/README.md) | `appBurbujaFlotante`: globo de texto pegado a un ancla, por delante de la página (al `body`) |
 | [`buscador/`](./buscador/README.md) | Búsqueda instantánea del Host; los módulos se suman registrando una `FuenteBusqueda` |
 | [`data-table/`](./data-table/README.md) | Tabla plana de propósito general: buscador, filtros por columna, paginador, esqueleto |
 | [`empty-state/`](./empty-state/README.md) | Lista sin datos |

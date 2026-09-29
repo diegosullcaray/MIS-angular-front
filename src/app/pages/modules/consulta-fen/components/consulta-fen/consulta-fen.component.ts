@@ -9,6 +9,7 @@ import { DataTableComponent } from '../../../../../shared/ui/data-table/data-tab
 import { DataTableCellDirective } from '../../../../../shared/ui/data-table/data-table-cell.directive';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
+import { BurbujaFlotanteDirective } from '../../../../../shared/ui/burbuja-flotante/burbuja-flotante.directive';
 import {
   COLUMNAS_FEN,
   COLUMNAS_FEN_MOVIL,
@@ -24,7 +25,7 @@ import { esRiesgoAlto } from '../../utils/consulta-fen.util';
   standalone: true,
   imports: [
     FormsModule, ButtonModule, InputTextModule, SelectModule, TagModule,
-    DataTableComponent, DataTableCellDirective, WindowPanelComponent, ListSkeletonComponent,
+    DataTableComponent, DataTableCellDirective, WindowPanelComponent, ListSkeletonComponent, BurbujaFlotanteDirective,
   ],
   templateUrl: './consulta-fen.component.html',
 })
