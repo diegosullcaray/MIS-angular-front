@@ -74,6 +74,11 @@ export class TablaReporteComponent {
 
   /** Ajustar ancho de columnas al contenido. */
   readonly ajustarAncho = input(false);
+  /**
+   * Crece hasta el pie del panel antes de sacar su scroll. En `'auto'` (por defecto) solo si es la
+   * única tabla de su pestaña o panel (ver `MaxFilasDirective.hastaElFondo`).
+   */
+  readonly llenarAlto = input<boolean | 'auto'>('auto');
 
   /**
    * Todos los encabezados con el color del tema, ignorando el `style.background`/`color` del backend,

@@ -110,3 +110,70 @@ describe('MaxFilasDirective con hastaElFondo', () => {
     expect(ajustarCon(500, 600).style.maxHeight).toBe(`${ALTO_MINIMO_FONDO_PX}px`);
   });
 });
+
+@Component({
+  standalone: true,
+  imports: [TableModule, MaxFilasDirective],
+  template: `
+    <div class="mis-window-body" style="overflow-y: auto" [class.p-dialog]="enDialogo()">
+      @for (t of tablas(); track t) {
+        <p-table appMaxFilas hastaElFondo="auto" [value]="filas" [scrollable]="true">
+          <ng-template pTemplate="header"><tr><th>N</th></tr></ng-template>
+          <ng-template pTemplate="body" let-fila><tr><td>{{ fila }}</td></tr></ng-template>
+        </p-table>
+      }
+      @if (conPaginador()) {
+        <div class="p-paginator"></div>
+      }
+    </div>
+  `,
+})
+class AnfitrionAutoComponent {
+  readonly filas = Array.from({ length: 40 }, (_, i) => i);
+  readonly tablas = signal([1]);
+  readonly enDialogo = signal(false);
+  readonly conPaginador = signal(false);
+}
+
+describe("MaxFilasDirective con hastaElFondo 'auto'", () => {
+  const ARRIBA_PANEL = 100;
+  const ALTO_PANEL = 800;
+  const ARRIBA_TABLA = 200;
+
+  function ajustar(tablas: number[], enDialogo = false, conPaginador = false): HTMLElement {
+    const fixture = TestBed.createComponent(AnfitrionAutoComponent);
+    fixture.componentInstance.tablas.set(tablas);
+    fixture.componentInstance.enDialogo.set(enDialogo);
+    fixture.componentInstance.conPaginador.set(conPaginador);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    const panel = el.querySelector<HTMLElement>('.mis-window-body')!;
+    panel.getBoundingClientRect = () => ({ top: ARRIBA_PANEL }) as DOMRect;
+    Object.defineProperty(panel, 'clientHeight', { configurable: true, value: ALTO_PANEL });
+    const contenedor = el.querySelector<HTMLElement>('.p-datatable-table-container')!;
+    contenedor.getBoundingClientRect = () => ({ top: ARRIBA_TABLA, bottom: ARRIBA_TABLA }) as DOMRect;
+    contenedor.querySelectorAll<HTMLElement>('tbody > tr').forEach((fila, i) => {
+      fila.getBoundingClientRect = () => ({ bottom: ARRIBA_TABLA + ALTO_ENCABEZADO + (i + 1) * ALTO_FILA }) as DOMRect;
+    });
+    fixture.debugElement.query((d) => d.name === 'p-table').injector.get(MaxFilasDirective).ajustar();
+    return contenedor;
+  }
+
+  const normal = () => Math.min(ALTO_ENCABEZADO + MAX_FILAS_VISIBLES * ALTO_FILA, Math.round(window.innerHeight * FRACCION_MAX_ALTO_VENTANA));
+
+  it('única tabla del panel: crece hasta el pie visible del panel', () => {
+    expect(ajustar([1]).style.maxHeight).toBe(`${ALTO_PANEL - (ARRIBA_TABLA - ARRIBA_PANEL)}px`);
+  });
+
+  it('con otra tabla en el mismo panel conserva el tope normal', () => {
+    expect(ajustar([1, 2]).style.maxHeight).toBe(`${normal()}px`);
+  });
+
+  it('dentro de un diálogo conserva el tope normal', () => {
+    expect(ajustar([1], true).style.maxHeight).toBe(`${normal()}px`);
+  });
+
+  it('con paginador conserva el tope normal', () => {
+    expect(ajustar([1], false, true).style.maxHeight).toBe(`${normal()}px`);
+  });
+});

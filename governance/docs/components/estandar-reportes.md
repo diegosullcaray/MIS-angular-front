@@ -45,7 +45,7 @@ contrato de cada componente, en `src/app/shared/ui/tablas/README.md`.
 |---|---|---|
 | Componente | Una de las cuatro compartidas: `app-tabla-reporte`, `app-tabla-dinamica`, `app-data-table`, `app-editable-table`. Un `p-table` propio es la excepción | — |
 | Contenedor | La tabla va en su tarjeta `mis-card`; paginador, esqueleto y scroll quedan **dentro** de esa tarjeta | la pantalla |
-| Alto | Hasta **16 filas** visibles y nunca más del **62 %** del alto de la ventana; después, scroll interno con encabezado fijo | `appMaxFilas` |
+| Alto | Hasta **16 filas** visibles y nunca más del **62 %** del alto de la ventana; después, scroll interno con encabezado fijo. **Única tabla** de su pestaña o panel (`app-tabla-reporte`, `app-tabla-dinamica`): crece hasta el pie del panel | `appMaxFilas` (`llenarAlto`) |
 | Carga | **Esqueleto** dentro de la tabla mientras carga; el spinner global se corta con la primera respuesta | `[cargando]` / `[loading]` + `LoadingService` |
 | Paginación | Paginador dentro de la tarjeta, pegado al pie de la tabla | armazón / tabla |
 | Filas | Resaltado al pasar el cursor | `[rowHover]` |
@@ -74,6 +74,12 @@ contrato de cada componente, en `src/app/shared/ui/tablas/README.md`.
   `MAX_FILAS_VISIBLES` y `FRACCION_MAX_ALTO_VENTANA`, no por pantalla.
 - Un `p-table` propio lleva `appMaxFilas` y `[scrollable]="true"`. **No** se fija un
   `scrollHeight` en píxeles.
+- **Una sola tabla, todo el alto.** `app-tabla-reporte` y `app-tabla-dinamica` (sin paginador) traen
+  `llenarAlto="auto"` por defecto: si son la única tabla de su pestaña (o del panel, sin pestañas)
+  crecen hasta el pie visible del panel, descontando lo que tengan debajo (leyendas, gráficos), y
+  recién ahí sacan su scroll. Con dos o más tablas en la misma vista, con paginador o dentro de un
+  diálogo, rige el tope de 16 filas. Nunca quedan más bajas que con ese tope. `[llenarAlto]="false"` lo apaga;
+  `true` lo fuerza.
 
 ### Carga: esqueleto por tabla y carga independiente
 
@@ -331,7 +337,7 @@ Lo que no es texto de plantilla lo cubren pruebas:
 | Comportamiento | Pruebas |
 |---|---|
 | Formato de números (`mode` / `unit`) | `tabla-reporte.component.spec.ts`, con valores reales de *Captaciones por Canal* |
-| Alto: 16 filas y tope de la ventana | `max-filas.directive.spec.ts`; E2E `cartera.spec.ts` ("16 filas visibles…", ventana baja) |
+| Alto: 16 filas y tope de la ventana; única tabla hasta el pie | `max-filas.directive.spec.ts`; E2E `cartera.spec.ts` ("16 filas visibles…", ventana baja) |
 | Esqueleto mientras carga | `esqueleto-tabla.spec.ts` (las cuatro tablas); E2E `cartera.spec.ts` ("Carga independiente…") |
 | Spinner por consulta | `loading.service.spec.ts` |
 | Bloques progresivos | `bloque-reporte.regulares.spec.ts` |

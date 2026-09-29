@@ -58,6 +58,7 @@ import { TABLA_VACIA } from '…/pages/modules/reportes/models/tabla-reporte.mod
 | `filas` | `FilaReporte[]` | — | **Requerido** |
 | `cargando` | `boolean` | `false` | Estado de carga: mientras es `true` pinta filas de esqueleto en vez de las filas (ver abajo) |
 | `seleccionable` | `boolean` | `false` | Hace las filas clicables |
+| `llenarAlto` | `boolean \| 'auto'` | `'auto'` | Crece hasta el pie del panel; en `'auto'`, solo si es la única tabla de su pestaña o panel y no hay paginador |
 
 | Output | Cuándo |
 |---|---|
@@ -84,6 +85,7 @@ no sus celdas.
 | `filas` | `Record<string, unknown>[]` | — | **Requerido** |
 | `cargando` | `boolean` | `false` | Estado de carga: mientras es `true` pinta filas de esqueleto en vez de las filas (ver abajo) |
 | `colorearVariaciones` | `boolean` | `false` | Pinta los negativos en rojo |
+| `llenarAlto` | `boolean \| 'auto'` | `'auto'` | Igual que en `<app-tabla-reporte>` |
 | `seleccionable` | `boolean` | `false` | Hace las filas clicables |
 
 Una columna con `semaforoKey` lee ese campo de la fila (`-1`/`0`/`1`) y dibuja el punto de color,

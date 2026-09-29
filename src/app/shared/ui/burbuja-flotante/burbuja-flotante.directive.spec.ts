@@ -38,7 +38,7 @@ class Anfitrion {
 }
 
 describe('BurbujaFlotanteDirective', () => {
-  it('lleva la burbuja al body, fija y sin ocupar lugar, y la retira al destruirse', () => {
+  it('lleva la burbuja al body, fija y sin ocupar lugar, y la retira al destruirse', async () => {
     const fixture = TestBed.createComponent(Anfitrion);
     fixture.detectChanges();
     TestBed.tick();
@@ -51,6 +51,7 @@ describe('BurbujaFlotanteDirective', () => {
     fixture.componentInstance.mostrar.set(false);
     fixture.detectChanges();
     TestBed.tick();
-    expect(document.body.querySelector('.burbuja')).toBeNull();
+    // Angular puede diferir la baja de la vista: se espera a que la burbuja salga del body.
+    await vi.waitFor(() => expect(document.body.querySelector('.burbuja')).toBeNull());
   });
 });
