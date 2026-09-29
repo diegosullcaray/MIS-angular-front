@@ -54,8 +54,8 @@
           }
         </p>
         <div class="mis-card p-3 overflow-x-auto w-full">
-          <app-tabla-dinamica [ajustarAncho]="true"
-            [columnas]="reporte.columnas"
+          <app-tabla-dinamica [ajustarAncho]="true" [llenarAlto]="true"
+            [columnas]="columnas()"
             [filas]="reporte.filas"
             [cargando]="cargando()"
             [destacarFila]="sinDestacar"

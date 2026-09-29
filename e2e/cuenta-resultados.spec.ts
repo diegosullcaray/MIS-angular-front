@@ -54,15 +54,21 @@ test.describe('Cuenta de Resultados', () => {
     // El botón de la barra es solo ícono; el valor elegido se lee en el select de filtros.
     await expect(page.locator('app-select-filtro').getByLabel('Período')).toContainText('Junio de 2026');
     await expect(page.getByText('Preliminar', { exact: true })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: 'Mensual' })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: 'Acumulado' })).toBeVisible();
+    // Encabezado de la maqueta de PYG: el nivel elegido, los años y el mes preliminar resaltado.
+    await expect(page.getByRole('columnheader', { name: 'PYG FINANCIERA' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: '2025', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Preliminar Jun' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Resultado Trimestral' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: '2T - 2026' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Total 2026' })).toBeVisible();
 
-    // Gasto que baja: flecha abajo en verde (polaridad invertida del legado).
+    // Gasto que baja: punto verde (polaridad invertida del legado) y la cifra con su signo.
     const gasto = page.locator('app-tabla-dinamica tr').filter({ hasText: 'GASTOS FINANCIEROS' });
-    await expect(gasto).toContainText('▼');
-    await expect(gasto.locator('span[style*="--mis-success"]')).toContainText('80');
+    await expect(gasto).toContainText('-80');
+    await expect(gasto.locator('i.pi-circle-fill[style*="--mis-success"]')).toHaveCount(1);
     const ingreso = page.locator('app-tabla-dinamica tr').filter({ hasText: 'INGRESOS FINANCIEROS' });
-    await expect(ingreso.locator('span[style*="--mis-danger"]')).toContainText('120');
+    await expect(ingreso).toContainText('-120');
+    await expect(ingreso.locator('i.pi-circle-fill[style*="--mis-danger"]')).toHaveCount(1);
   });
 
   test('sin filas muestra el vacío, no un error', async ({ page }) => {
@@ -106,6 +112,13 @@ test.describe('Cuenta de Resultados', () => {
         el.scrollTop = 300;
         el.scrollLeft = 200;
       });
+
+      // La tabla ocupa hasta el pie del panel antes de sacar su scroll (no se corta a mitad).
+      const fin = await page.evaluate(() => ({
+        tabla: document.querySelector('app-tabla-dinamica .p-datatable-table-container')!.getBoundingClientRect().bottom,
+        panel: document.querySelector('.mis-window')!.getBoundingClientRect().bottom,
+      }));
+      expect(fin.panel - fin.tabla).toBeLessThanOrEqual(60);
 
       // Lo que se ve en el centro del encabezado de la columna fija es el propio encabezado, no una fila.
       const caja = (await cabecera.boundingBox())!;

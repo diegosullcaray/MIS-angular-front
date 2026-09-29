@@ -94,7 +94,14 @@ describe('cuenta-resultados.util', () => {
       expect(r.preliminar).toBe(true);
       expect(r.periodos.map((p) => p.id)).toEqual(['2026-06-01', '2026-05-01', '2026-04-01']);
       expect(r.periodos[0].desc).toBe('Junio de 2026');
-      expect(r.filas).toEqual([FILA]);
+      expect(r.filas).toEqual([{ ...FILA, total_anual: FILA.acumulado_actual }]);
+    });
+
+    it('"Total {año}" trimestral: usa total_anual si el backend lo envía; si no, el acumulado del año', () => {
+      const conTotal = mapearCuentaResultados({ headers: METADATOS, data: [{ ...FILA, total_anual: 999 }] }, null);
+      expect(conTotal.filas[0].total_anual).toBe(999);
+      const sinTotal = mapearCuentaResultados({ headers: METADATOS, data: [FILA] }, null);
+      expect(sinTotal.filas[0].total_anual).toBe(FILA.acumulado_actual);
     });
 
     it('conserva la fecha pedida si está entre los periodos', () => {
@@ -118,7 +125,7 @@ describe('cuenta-resultados.util', () => {
 
   describe('columnas', () => {
     it('la cuenta y las ocho métricas del legado, en su orden', () => {
-      const columnas = crearColumnasCuentaResultados('2026-06-01', true);
+      const columnas = crearColumnasCuentaResultados('2026-08-01', true);
 
       expect(hojas(columnas).map((c) => c.key)).toEqual([
         'cuenta_nombre',
@@ -130,40 +137,86 @@ describe('cuenta-resultados.util', () => {
         'acumulado_actual',
         'variacion_acumulado',
         'variacion_acumulado_pct',
+        'trimestre_1',
+        'trimestre_2',
+        'trimestre_3',
+        'total_anual',
       ]);
-      expect(columnas[1].label).toBe('Mensual');
-      expect(columnas[2].label).toBe('Acumulado');
     });
 
-    it('rotula relativo al periodo elegido', () => {
-      const etiquetas = hojas(crearColumnasCuentaResultados('2026-06-01', true)).map((c) => c.label);
-      expect(etiquetas.slice(1)).toEqual([
-        'Jun-25',
-        'May-26',
-        'Jun-26 · Prelim.',
-        'Jun-26 vs May-26',
-        'Acum. Jun-25',
-        'Acum. Jun-26',
-        'Var.',
-        'Var. %',
+    it('bloque "Resultado Trimestral" del año: un trimestre por cada uno ya iniciado y el total', () => {
+      const trimestral = crearColumnasCuentaResultados('2026-08-01', true)[2];
+      expect(trimestral.label).toBe('Resultado Trimestral');
+      expect(trimestral.subs![0].label).toBe('2026');
+      expect(trimestral.subs![0].subs!.map((c) => c.label)).toEqual(['1T - 2026', '2T - 2026', '3T - 2026', 'Total 2026']);
+
+      const enNoviembre = crearColumnasCuentaResultados('2026-11-01', false)[2].subs![0].subs!;
+      expect(enNoviembre.map((c) => c.key)).toEqual(['trimestre_1', 'trimestre_2', 'trimestre_3', 'trimestre_4', 'total_anual']);
+      expect(crearColumnasCuentaResultados('2026-02-01', false)[2].subs![0].subs!.map((c) => c.key)).toEqual(['trimestre_1', 'total_anual']);
+    });
+
+    it('encabezado de la maqueta: "PYG {nivel}" sobre las cifras y los meses agrupados por año', () => {
+      const [cuenta, pyg] = crearColumnasCuentaResultados('2026-08-01', true, 'NORTE 1');
+      expect(cuenta.label).toBe('Estado de ganancias y pérdidas · en miles (PEN)');
+      expect(cuenta.style?.['text-align']).toBe('left');
+      expect(pyg.label).toBe('PYG NORTE 1');
+
+      const [anioPasado, anioActual] = pyg.subs!;
+      expect(anioPasado.label).toBe('2025');
+      expect(anioPasado.subs!.map((c) => c.label)).toEqual(['Ago']);
+      expect(anioActual.label).toBe('2026');
+      expect(anioActual.subs!.map((c) => c.label)).toEqual(['Jul', 'Preliminar Ago']);
+
+      expect(pyg.subs!.slice(2).map((c) => c.label)).toEqual([
+        'Ago.26 vs Jul.26',
+        'Acum Ago.25',
+        'Acum Ago.26',
+        'Ago.26 vs Ago.25',
+        'Ago.26 vs Ago.25 %',
       ]);
-
-      const cerrado = hojas(crearColumnasCuentaResultados('2026-05-01', false));
-      expect(cerrado[3].label).toBe('May-26');
+      expect(crearColumnasCuentaResultados('2026-08-01', false)[1].label).toBe('PYG');
     });
 
-    it('enero compara contra diciembre del año anterior', () => {
-      expect(hojas(crearColumnasCuentaResultados('2026-01-01', false))[4].label).toBe('Ene-26 vs Dic-25');
+    it('el mes preliminar va en mostaza con texto negro; cerrado, solo con su nombre', () => {
+      const preliminar = hojas(crearColumnasCuentaResultados('2026-08-01', true)).find((c) => c.key === 'periodo_actual')!;
+      expect(preliminar.style?.['background']).toBe('var(--mis-escala-3)');
+      expect(preliminar.style?.['color']).toBe('var(--mis-escala-3-texto)');
+
+      const cerrado = hojas(crearColumnasCuentaResultados('2026-05-01', false)).find((c) => c.key === 'periodo_actual')!;
+      expect(cerrado.label).toBe('May');
+      expect(cerrado.style?.['background']).toBeUndefined();
     });
 
-    it('solo las variaciones llevan indicador; la porcentual se formatea como porcentaje', () => {
-      const conIndicador = hojas(crearColumnasCuentaResultados('2026-06-01', false))
-        .filter((c) => c.colorVariacion)
-        .map((c) => c.key);
-      expect(conIndicador).toEqual(['variacion_periodo_anterior', 'variacion_acumulado', 'variacion_acumulado_pct']);
+    it('las cifras y sus encabezados van a la derecha', () => {
+      for (const c of hojas(crearColumnasCuentaResultados('2026-08-01', false)).slice(1)) {
+        expect(c.style?.['text-align'], c.key).toBe('right');
+        expect(c.cellStyle?.['text-align'], c.key).toBe('right');
+      }
+    });
 
-      const pct = hojas(crearColumnasCuentaResultados('2026-06-01', false)).find((c) => c.key === 'variacion_acumulado_pct');
+    it('enero compara contra diciembre del año anterior, cada mes bajo su año', () => {
+      const pyg = crearColumnasCuentaResultados('2026-01-01', false)[1];
+      expect(pyg.subs!.map((c) => c.label).slice(0, 3)).toEqual(['2025', '2026', 'Ene.26 vs Dic.25']);
+      expect(pyg.subs![0].subs!.map((c) => c.label)).toEqual(['Ene', 'Dic']);
+    });
+
+    it('semáforo en la variación mensual, el acumulado del año y la variación interanual; no en el %', () => {
+      const columnas = hojas(crearColumnasCuentaResultados('2026-06-01', false));
+      const conPunto = columnas.filter((c) => c.indicadorVariacion === 'punto').map((c) => c.key);
+      expect(conPunto).toEqual(['variacion_periodo_anterior', 'acumulado_actual', 'variacion_acumulado']);
+
+      const pct = columnas.find((c) => c.key === 'variacion_acumulado_pct');
       expect(pct?.format?.type).toBe('percent');
+      expect(pct?.colorVariacion).toBeUndefined();
+    });
+
+    it('el acumulado del año toma el color de su variación contra el año anterior', () => {
+      const acumulado = hojas(crearColumnasCuentaResultados('2026-06-01', false)).find((c) => c.key === 'acumulado_actual')!;
+      const gasto = { cuenta_codigo: 'CR018', style: 2 };
+      expect(acumulado.colorVariacion!(12647, { ...gasto, variacion_acumulado: -1022 })).toBe('var(--mis-success)');
+      expect(acumulado.colorVariacion!(12647, { ...gasto, variacion_acumulado: 500 })).toBe('var(--mis-danger)');
+      // Sin variación no hay semáforo.
+      expect(acumulado.colorVariacion!(12647, gasto)).toBeNull();
     });
   });
 
@@ -184,12 +237,18 @@ describe('cuenta-resultados.util', () => {
       expect(colorVariacionCuenta(0, { cuenta_codigo: 'CR012' })).toBe('var(--mis-success)');
       expect(colorVariacionCuenta(0, { cuenta_codigo: 'CR018' })).toBe('var(--mis-success)');
     });
+
+    it('sobre la banda navy del resultado el color se aclara para que se vea', () => {
+      expect(colorVariacionCuenta(1, { cuenta_codigo: 'CR021', style: 3 })).toBe('color-mix(in srgb, var(--mis-success) 55%, white)');
+    });
   });
 
-  it('distingue detalle, principal y resultado por `style`', () => {
-    expect(estiloFilaCuenta({ style: 1 })['font-weight']).toBe('600');
-    expect(estiloFilaCuenta({ style: 2 })['font-weight']).toBe('800');
-    expect(estiloFilaCuenta({ style: 3 })['border-top']).toContain('var(--mis-primary)');
+  it('distingue detalle, principal y resultado por `style`, como la maqueta', () => {
+    expect(estiloFilaCuenta({ style: 1 })).toEqual(expect.objectContaining({ 'font-weight': '500', color: 'var(--mis-text-secondary)' }));
+    expect(estiloFilaCuenta({ style: 2 })).toEqual(expect.objectContaining({ 'font-weight': '800', background: 'var(--mis-primary-light)' }));
+    expect(estiloFilaCuenta({ style: 3 })).toEqual(
+      expect.objectContaining({ background: 'var(--mis-primary)', color: 'var(--mis-text-on-primary)' }),
+    );
   });
 
   it('sangra la cuenta según su nivel', () => {

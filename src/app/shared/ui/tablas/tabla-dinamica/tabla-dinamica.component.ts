@@ -62,6 +62,8 @@ export class TablaDinamicaComponent {
    * anchos fijos de las columnas (lo que forzaba el scroll). Las celdas de datos no se parten.
    */
   readonly ajustarAncho = input(false);
+  /** La tabla ocupa hasta el pie del panel antes de sacar su scroll (ver `MaxFilasDirective.hastaElFondo`). */
+  readonly llenarAlto = input(false);
 
   readonly seleccionable = input(false);
   readonly filaSeleccionada = output<Record<string, unknown>>();
@@ -87,8 +89,8 @@ export class TablaDinamicaComponent {
     let numero = Number(crudo);
     // Un porcentaje que ya viene con `%` (texto) no es convertible: se deja tal cual.
     if (Number.isNaN(numero)) return crudo;
-    // Con indicador, el signo lo dice la flecha.
-    if (columna.colorVariacion) numero = Math.abs(numero);
+    // Con flecha, el signo lo dice la flecha; con punto, la cifra conserva su signo.
+    if (this.conFlecha(columna)) numero = Math.abs(numero);
 
     if (tipo === 'percent') return formatPercent(numero, this.locale, '1.2-2');
     return formatNumber(numero, this.locale, tipo === 'integer' ? '1.0-0' : '1.2-2');
@@ -165,8 +167,13 @@ export class TablaDinamicaComponent {
     return Number.isNaN(numero) ? null : numero;
   }
 
+  private conFlecha(columna: ColumnaDinamica): boolean {
+    return !!columna.colorVariacion && columna.indicadorVariacion !== 'punto';
+  }
+
   /** Flecha del indicador: ▲ si sube, ▼ si baja, vacía en cero. */
   protected flechaVariacion(fila: Record<string, unknown>, columna: ColumnaDinamica): '▲' | '▼' | '' {
+    if (!this.conFlecha(columna)) return '';
     const numero = this.numeroVariacion(fila, columna);
     if (numero === null || numero === 0) return '';
     return numero > 0 ? '▲' : '▼';
@@ -176,6 +183,16 @@ export class TablaDinamicaComponent {
   protected colorIndicador(fila: Record<string, unknown>, columna: ColumnaDinamica): string | null {
     const numero = this.numeroVariacion(fila, columna);
     return numero === null ? null : (columna.colorVariacion?.(numero, fila) ?? null);
+  }
+
+  /** Color del texto de la cifra: solo el modo flecha la tiñe. */
+  protected colorCifra(fila: Record<string, unknown>, columna: ColumnaDinamica): string | null {
+    return this.conFlecha(columna) ? this.colorIndicador(fila, columna) : null;
+  }
+
+  /** Color del punto de semáforo de la variación (modo `'punto'`), o `null` si no lleva. */
+  protected colorPuntoVariacion(fila: Record<string, unknown>, columna: ColumnaDinamica): string | null {
+    return columna.indicadorVariacion === 'punto' ? this.colorIndicador(fila, columna) : null;
   }
 
   protected destacada(fila: Record<string, unknown>): boolean {

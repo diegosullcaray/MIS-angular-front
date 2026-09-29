@@ -21,6 +21,16 @@ export type CuentaResultadoFila = {
   acumulado_actual: number;
   variacion_acumulado: number;
   variacion_acumulado_pct: number;
+  /**
+   * Resultado de cada trimestre del año y total anual (bloque "Resultado Trimestral" de la maqueta
+   * de PYG). Nombres acordados en `governance/tasks/tareas.md`; mientras el backend no los envíe,
+   * las celdas quedan vacías y el total cae en el acumulado del año.
+   */
+  trimestre_1?: number;
+  trimestre_2?: number;
+  trimestre_3?: number;
+  trimestre_4?: number;
+  total_anual?: number;
 };
 
 /** `resultado.headers` de `TAB_CUE_RES_01`: no son columnas, son los periodos del propio reporte. */

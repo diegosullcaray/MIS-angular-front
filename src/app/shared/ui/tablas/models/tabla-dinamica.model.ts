@@ -20,5 +20,11 @@ export interface ColumnaDinamica {
    * decide si subir es bueno: esa polaridad es del reporte. `null` deja la celda sin indicador.
    */
   colorVariacion?: (valor: number, fila: Record<string, unknown>) => string | null;
+  /**
+   * Cómo se muestra el indicador de `colorVariacion`: `'flecha'` (por defecto) tiñe la cifra y le
+   * antepone ▲/▼ con el valor en absoluto; `'punto'` pone un punto de ese color a la derecha de la cifra y la deja
+   * con su signo y el color de la fila (semáforo de la PYG).
+   */
+  indicadorVariacion?: 'flecha' | 'punto';
   subs?: ColumnaDinamica[];
 }

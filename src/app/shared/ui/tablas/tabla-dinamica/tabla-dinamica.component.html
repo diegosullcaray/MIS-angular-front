@@ -3,7 +3,7 @@
      y dejaba dos indicadores para una sola espera. Mientras carga, la tabla
      pinta filas de esqueleto (carga independiente: el overlay global se va con
      la primera respuesta) y conserva `aria-busy` para los lectores de pantalla. -->
-<p-table appMaxFilas [value]="filasMostradas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm" [class.mis-tabla-compacta]="ajustarAncho()"
+<p-table appMaxFilas [hastaElFondo]="llenarAlto()" [value]="filasMostradas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm" [class.mis-tabla-compacta]="ajustarAncho()"
          [paginator]="filasPorPagina() > 0" [rows]="filasPorPagina() || filas().length" [showFirstLastIcon]="true" [alwaysShowPaginator]="false"
          [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
          [dataKey]="dataKey()" [expandedRowKeys]="expandedRowKeys()">
@@ -50,13 +50,16 @@
               <i class="pi pi-circle-fill text-[10px] mr-2 shrink-0" [class]="colorSemaforo(fila, columna)"></i>
             }
             <span class="flex-1" [class]="alineacion(columna)" [class.truncate]="truncarTexto()" [class.min-w-0]="truncarTexto()"
-                  [attr.title]="truncarTexto() ? valor(fila, columna) : null" [style.color]="colorIndicador(fila, columna)">
+                  [attr.title]="truncarTexto() ? valor(fila, columna) : null" [style.color]="colorCifra(fila, columna)">
               @if (flechaVariacion(fila, columna); as flecha) {
                 <span aria-hidden="true" class="text-[11px] mr-1">{{ flecha }}</span>
                 <span class="sr-only">{{ flecha === '▲' ? 'Sube' : 'Baja' }}</span>
               }
               {{ valor(fila, columna) }}
             </span>
+            @if (colorPuntoVariacion(fila, columna); as colorPunto) {
+              <i class="pi pi-circle-fill text-[9px] ml-1.5 shrink-0" aria-hidden="true" [style.color]="colorPunto"></i>
+            }
           </div>
         </td>
       }

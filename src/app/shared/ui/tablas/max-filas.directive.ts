@@ -9,6 +9,11 @@ export const MAX_FILAS_VISIBLES = 16;
  */
 export const FRACCION_MAX_ALTO_VENTANA = 0.62;
 
+/** Con `hastaElFondo`: espacio que se deja bajo la tabla (relleno de la tarjeta y del panel). */
+export const RESERVA_PIE_PX = 48;
+/** Con `hastaElFondo`: la tabla nunca baja de este alto, aunque la ventana sea muy baja. */
+export const ALTO_MINIMO_FONDO_PX = 240;
+
 /**
  * Limita el alto de un `p-table` a `MAX_FILAS_VISIBLES` filas del cuerpo y, además, a
  * `FRACCION_MAX_ALTO_VENTANA` de la altura de la ventana (lo que sea menor): pasado eso, el
@@ -34,6 +39,13 @@ export class MaxFilasDirective {
     alias: 'appMaxFilas',
     transform: (valor: unknown) => (Number(valor) > 0 ? Number(valor) : MAX_FILAS_VISIBLES),
   });
+
+  /**
+   * En vez del tope de filas y de `FRACCION_MAX_ALTO_VENTANA`, la tabla crece hasta el pie de la
+   * ventana (menos `RESERVA_PIE_PX` para el relleno del panel) y recién ahí saca su scroll. Para
+   * reportes que son una sola tabla larga, donde cortarla a mitad del panel desperdicia espacio.
+   */
+  readonly hastaElFondo = input(false);
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   /** `max-height` que la tabla ya traía (p. ej. un `scrollHeight` propio), para devolverlo. */
@@ -74,6 +86,10 @@ export class MaxFilasDirective {
     this.altoOriginal ??= contenedor.style.maxHeight;
 
     const filas = contenedor.querySelectorAll<HTMLElement>('tbody.p-datatable-tbody > tr');
+    if (this.hastaElFondo()) {
+      this.ajustarHastaElFondo(contenedor);
+      return;
+    }
     const limite = this.maxFilas();
     const tope = Math.round(window.innerHeight * FRACCION_MAX_ALTO_VENTANA);
 
@@ -93,6 +109,16 @@ export class MaxFilasDirective {
       return;
     }
     contenedor.style.maxHeight = `${Math.ceil(alto)}px`;
+    contenedor.style.overflowY = 'auto';
+  }
+
+  /** Alto disponible desde el borde superior de la tabla hasta el pie de la ventana. */
+  private ajustarHastaElFondo(contenedor: HTMLElement): void {
+    const arriba = contenedor.getBoundingClientRect().top;
+    // Sin layout (pruebas, tabla oculta) no hay nada que medir.
+    if (!window.innerHeight || (arriba === 0 && contenedor.scrollHeight === 0)) return;
+    const disponible = Math.max(ALTO_MINIMO_FONDO_PX, Math.floor(window.innerHeight - arriba - RESERVA_PIE_PX));
+    contenedor.style.maxHeight = `${disponible}px`;
     contenedor.style.overflowY = 'auto';
   }
 }
