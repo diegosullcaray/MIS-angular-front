@@ -22,7 +22,7 @@ export interface ColumnaDinamica {
   colorVariacion?: (valor: number, fila: Record<string, unknown>) => string | null;
   /**
    * Cómo se muestra el indicador de `colorVariacion`: `'flecha'` (por defecto) tiñe la cifra y le
-   * antepone ▲/▼ con el valor en absoluto; `'punto'` antepone un punto de ese color y deja la cifra
+   * antepone ▲/▼ con el valor en absoluto; `'punto'` pone un punto de ese color a la derecha de la cifra y la deja
    * con su signo y el color de la fila (semáforo de la PYG).
    */
   indicadorVariacion?: 'flecha' | 'punto';

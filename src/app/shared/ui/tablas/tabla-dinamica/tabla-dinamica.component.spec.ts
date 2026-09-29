@@ -351,7 +351,7 @@ describe('TablaDinamicaComponent: indicadorVariacion "punto"', () => {
     return fixture.nativeElement.querySelectorAll('tbody td')[1] as HTMLElement;
   }
 
-  it('antepone un punto del color del reporte y deja la cifra con su signo, sin flecha ni color', () => {
+  it('pone un punto del color del reporte a la derecha y deja la cifra con su signo, sin flecha ni color', () => {
     const td = celda(-1500);
     const punto = td.querySelector('i.pi-circle-fill') as HTMLElement;
 

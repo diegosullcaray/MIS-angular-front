@@ -83,7 +83,11 @@ export function mapearCuentaResultados(
     fecha,
     preliminar,
     columnas: crearColumnasCuentaResultados(fecha, preliminar),
-    filas: resultado.data as CuentaResultadoFila[],
+    // "Total {año}" del bloque trimestral: si el backend aún no lo envía, es el acumulado del año.
+    filas: (resultado.data as CuentaResultadoFila[]).map((fila) => ({
+      ...fila,
+      total_anual: fila.total_anual ?? fila.acumulado_actual,
+    })),
   };
 }
 
@@ -154,12 +158,15 @@ const ESTILO_CUENTA_FIJA = {
 /** Encabezado de una cifra: compacto y a la derecha, como su valor. */
 const ENCABEZADO_CIFRA = { 'text-align': 'right', padding: '4px 8px' };
 
-/** "Preliminar Ago": el mes aún abierto va resaltado, como en la maqueta. */
+/** "Preliminar Ago": el mes aún abierto va en mostaza con texto negro, como en la maqueta. */
 const ENCABEZADO_PRELIMINAR = {
   ...ENCABEZADO_CIFRA,
-  background: 'var(--mis-warning-light)',
-  color: 'var(--mis-warning)',
+  background: 'var(--mis-escala-3)',
+  color: 'var(--mis-escala-3-texto)',
 };
+
+/** Ancho fijo y legible de cada cifra: si no entran, la tabla entera se desplaza en horizontal. */
+const CELDA_CIFRA = { 'text-align': 'right', 'min-width': '84px' };
 
 function columnaCifra(label: string, key: string, extra: Partial<ColumnaDinamica> = {}): ColumnaDinamica {
   return {
@@ -167,19 +174,24 @@ function columnaCifra(label: string, key: string, extra: Partial<ColumnaDinamica
     key,
     format: { type: 'integer' },
     style: ENCABEZADO_CIFRA,
-    cellStyle: { 'text-align': 'right' },
+    cellStyle: CELDA_CIFRA,
     cellStyleFn: (_valor, fila) => estiloFilaCuenta(fila),
     ...extra,
   };
 }
 
-/** Variación con el punto verde/rojo a la izquierda y la cifra con su signo. */
-function columnaVariacion(label: string, key: string, tipo: 'integer' | 'percent' = 'integer'): ColumnaDinamica {
-  return columnaCifra(label, key, {
-    format: { type: tipo },
-    colorVariacion: colorVariacionCuenta,
+/** Cifra con el punto de semáforo verde/rojo a su lado; `desde` es la variación que decide el color. */
+function conSemaforo(columna: ColumnaDinamica, desde = columna.key): ColumnaDinamica {
+  return {
+    ...columna,
+    colorVariacion: (_valor, fila) => {
+      const variacion = fila[desde];
+      // Sin la variación que decide el color, no hay semáforo (no se pinta rojo por omisión).
+      if (variacion == null || variacion === '' || !Number.isFinite(Number(variacion))) return null;
+      return colorVariacionCuenta(Number(variacion), fila);
+    },
     indicadorVariacion: 'punto',
-  });
+  };
 }
 
 /** "Ago" — mes abreviado sin punto, como `toLocaleString('es-PE', { month: 'short' })` del legado. */
@@ -226,6 +238,10 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
     else porAnio.push({ label: anio, key: `anio_${porAnio.length}_${anio}`, subs: [columna] });
   }
 
+  // Trimestres del año hasta el que contiene el mes elegido (agosto: 1T a 3T).
+  const trimestres = Math.ceil((actual.getMonth() + 1) / 3);
+  const anio = actual.getFullYear();
+
   return [
     {
       label: 'Estado de ganancias y pérdidas · en miles (PEN)',
@@ -242,13 +258,34 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
       key: 'pyg',
       subs: [
         ...porAnio,
-        columnaVariacion(`${mesAnio(actual)} vs ${mesAnio(anterior)}`, 'variacion_periodo_anterior'),
+        conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anterior)}`, 'variacion_periodo_anterior')),
         columnaCifra(`Acum ${mesAnio(anioAnterior)}`, 'acumulado_anio_anterior', {
-          cellStyle: { 'text-align': 'right', 'border-left': '1px solid var(--mis-border)' },
+          cellStyle: { ...CELDA_CIFRA, 'border-left': '1px solid var(--mis-border)' },
         }),
-        columnaCifra(`Acum ${mesAnio(actual)}`, 'acumulado_actual'),
-        columnaVariacion(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)}`, 'variacion_acumulado'),
-        columnaVariacion(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)} %`, 'variacion_acumulado_pct', 'percent'),
+        // El acumulado del año se juzga por su variación contra el año anterior.
+        conSemaforo(columnaCifra(`Acum ${mesAnio(actual)}`, 'acumulado_actual'), 'variacion_acumulado'),
+        conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)}`, 'variacion_acumulado')),
+        columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)} %`, 'variacion_acumulado_pct', {
+          format: { type: 'percent' },
+        }),
+      ],
+    },
+    {
+      label: 'Resultado Trimestral',
+      key: 'resultado_trimestral',
+      subs: [
+        {
+          label: String(anio),
+          key: `trimestral_${anio}`,
+          subs: [
+            ...Array.from({ length: trimestres }, (_, i) =>
+              columnaCifra(`${i + 1}T - ${anio}`, `trimestre_${i + 1}`, {
+                cellStyle: { ...CELDA_CIFRA, ...(i === 0 ? { 'border-left': '1px solid var(--mis-border)' } : {}) },
+              }),
+            ),
+            columnaCifra(`Total ${anio}`, 'total_anual'),
+          ],
+        },
       ],
     },
   ];

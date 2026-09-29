@@ -58,6 +58,9 @@ test.describe('Cuenta de Resultados', () => {
     await expect(page.getByRole('columnheader', { name: 'PYG FINANCIERA' })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: '2025', exact: true })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Preliminar Jun' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Resultado Trimestral' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: '2T - 2026' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Total 2026' })).toBeVisible();
 
     // Gasto que baja: punto verde (polaridad invertida del legado) y la cifra con su signo.
     const gasto = page.locator('app-tabla-dinamica tr').filter({ hasText: 'GASTOS FINANCIEROS' });
