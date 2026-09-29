@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, Injector, afterNextRender, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { DialogModule } from 'primeng/dialog';
@@ -47,6 +47,17 @@ const FILTROS_EFECTIVIDADES: readonly FiltroEfectividades[] = [
   { campo: 'tdcr', etiqueta: 'Tramo días gestión', opciones: OPCIONES_TRAMO_DIAS_GESTION },
 ];
 
+/**
+ * Centra la pestaña activa en su fila con scroll lateral (ambos offsets, contra el mismo
+ * contenedor) y, si se pide, le da el foco sin que el navegador vuelva a desplazar la fila.
+ */
+function centrarActiva(fila: HTMLElement, enfocar = false): void {
+  const activa = fila.querySelector<HTMLElement>('.activa');
+  if (!activa) return;
+  fila.scrollLeft = activa.offsetLeft - fila.offsetLeft - (fila.clientWidth - activa.offsetWidth) / 2;
+  if (enfocar) activa.focus({ preventScroll: true });
+}
+
 /** Estado de una tarjeta: se decide por los reportes que la alimentan. */
 type EstadoTarjeta = 'cargando' | 'error' | 'vacio' | 'listo';
 
@@ -57,10 +68,9 @@ interface TarjetaPanel {
 }
 
 /**
- * Panel unificado del asesor: "Impacto del mes" (maqueta `governance/tasks/panel unificado
- * asesor`). Un tablero con focos de atención y una tarjeta por dominio —todo con cifras de las
- * tablas reales de Ant— y, al tocar una tarjeta, su detalle en un diálogo con pestañas por
- * dominio, indicadores, filtros y las tablas y gráficos completos de sus reportes.
+ * Panel unificado del asesor: tablero de focos de atención y una tarjeta por dominio —todo con
+ * cifras de las tablas reales de Ant— y, al tocar una tarjeta, su detalle en un diálogo del
+ * sistema con navegación por dominios, indicadores, filtros y las tablas y gráficos completos.
  */
 @Component({
   selector: 'app-panel-unificado',
@@ -96,11 +106,12 @@ export class PanelAsesorComponent {
     return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : new Date();
   });
 
-  protected readonly textoCorte = computed(() => this.corte().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }));
-
-  protected readonly mesCorte = computed(() => {
-    const texto = this.corte().toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).replace(' de ', ' ');
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  /** Subtítulo de la ventana: el asesor y la fecha de corte, sin encabezado propio en el cuerpo. */
+  protected readonly subtitulo = computed(() => {
+    const asesor = this.panel.asesor();
+    if (!asesor) return 'Reportes consolidados';
+    const corte = this.corte().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return `${asesor.nombre} · Corte al ${corte}`;
   });
 
   /** Resultados ya recibidos, por `SCODSEC`. */
@@ -143,8 +154,32 @@ export class PanelAsesorComponent {
   /** El diálogo tiene filtros propios solo cuando muestra el detalle de efectividades. */
   protected readonly conFiltros = computed(() => this.reportesAbiertos().some((r) => r.codigo === CODIGO_EFECTIVIDADES));
 
-  protected abrir(dominio: DominioPanel): void {
+  private readonly injector = inject(Injector);
+  private readonly filaPestanas = viewChild<ElementRef<HTMLElement>>('filaPestanas');
+
+  constructor() {
+    // En el teléfono la fila de pestañas no entra: al abrir o cambiar de dominio se desliza hasta
+    // la activa. Depende de la fila misma porque el diálogo crea su contenido recién al abrirse.
+    effect(() => {
+      const fila = this.filaPestanas()?.nativeElement;
+      this.abierto();
+      if (fila) afterNextRender(() => requestAnimationFrame(() => centrarActiva(fila)), { injector: this.injector });
+    });
+  }
+
+  /**
+   * Al terminar de abrirse el diálogo: el foco va a la pestaña activa (el diálogo no enfoca el
+   * primer botón por su cuenta, que desplazaba la fila de vuelta a "Cartera") y queda centrada.
+   */
+  protected alMostrarDetalle(): void {
+    const fila = this.filaPestanas()?.nativeElement;
+    if (fila) centrarActiva(fila, true);
+  }
+
+  /** Abre (o cambia) el dominio del detalle; al cambiar desde el diálogo vuelve al inicio del contenido. */
+  protected abrir(dominio: DominioPanel, cuerpo?: HTMLElement): void {
     this.abierto.set(dominio);
+    cuerpo?.closest('.p-dialog-content')?.scrollTo?.({ top: 0 });
   }
 
   protected cerrar(): void {

@@ -5,12 +5,12 @@ import type { DominioPanelDef, ReportePanelAsesor } from '../models/panel-asesor
  * asesor`): tres de cartera y negocio arriba, tres de tasas, seguros y mora abajo.
  */
 export const DOMINIOS_PANEL: readonly DominioPanelDef[] = [
-  { id: 'cartera', nombre: 'Cartera', pestana: 'Cartera', subtitulo: 'Presupuesto, stock, tasas y calidad de la cartera', icono: 'pi pi-briefcase' },
-  { id: 'clientes', nombre: 'Clientes', pestana: 'Clientes', subtitulo: 'Nuevos, recurrentes y distribución por producto', icono: 'pi pi-users' },
-  { id: 'colocacion', nombre: 'Colocación · metas', pestana: 'Colocación', subtitulo: 'Monitor de metas de desembolso del mes', icono: 'pi pi-flag' },
-  { id: 'tasas', nombre: 'Autonomía de tasas', pestana: 'Tasas', subtitulo: 'Resumen de gestión de tasas por nivel de autonomía', icono: 'pi pi-percentage' },
-  { id: 'seguros', nombre: 'Seguros', pestana: 'Seguros', subtitulo: 'Pólizas del mes y stock', icono: 'pi pi-shield' },
-  { id: 'mora', nombre: 'Recuperación y mora', pestana: 'Mora', subtitulo: 'Efectividad de gestión y cartera por vencer', icono: 'pi pi-exclamation-circle', alerta: true },
+  { id: 'cartera', nombre: 'Cartera', pestana: 'Cartera', icono: 'pi pi-briefcase' },
+  { id: 'clientes', nombre: 'Clientes', pestana: 'Clientes', icono: 'pi pi-users' },
+  { id: 'colocacion', nombre: 'Colocación · metas', pestana: 'Colocación', icono: 'pi pi-flag' },
+  { id: 'tasas', nombre: 'Autonomía de tasas', pestana: 'Tasas', icono: 'pi pi-percentage' },
+  { id: 'seguros', nombre: 'Seguros', pestana: 'Seguros', icono: 'pi pi-shield' },
+  { id: 'mora', nombre: 'Recuperación y mora', pestana: 'Mora', icono: 'pi pi-exclamation-circle', alerta: true },
 ];
 
 /** Reporte con filtros propios dentro del panel. */

@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { QUINCE_MINUTOS_MS, SESSION_STORAGE_KEY, USUARIO_DE_PRUEBA, inyectarSesionVigente } from './fixtures/session';
 
 /**
- * Tablero "Impacto del mes" del panel del asesor (maqueta `governance/tasks/panel unificado
+ * Tablero del panel del asesor (maqueta de gobierno `panel unificado
  * asesor`): las cifras de tarjetas, focos e indicadores salen de las tablas de los 7 reportes,
  * leídas por el nombre de su fila. Aquí el backend responde con esas tablas.
  */
@@ -80,8 +80,9 @@ async function preparar(page: Page, ancho: number, alto: number) {
 test.describe('Panel del asesor · tablero', () => {
   test('tarjetas y focos con las cifras de las tablas; sin los 4 KPI titulares', async ({ page }) => {
     await preparar(page, 1440, 1000);
-    await expect(page.getByRole('heading', { name: 'Impacto del mes' })).toBeVisible();
-    await expect(page.getByText('Corte al 29/09/2026')).toBeVisible();
+    // Sin encabezado propio: el asesor y el corte van en la barra de la ventana.
+    await expect(page.locator('.mis-window-bar')).toContainText('Corte al 29/09/2026');
+    await expect(page.getByText('Impacto del mes')).toHaveCount(0);
     await expect(page.locator('[aria-label="Indicadores titulares"]')).toHaveCount(0);
 
     await expect(page.locator('.tarjeta[aria-label="Cartera"]')).toContainText('3,254,743');
@@ -95,13 +96,21 @@ test.describe('Panel del asesor · tablero', () => {
     await preparar(page, 1440, 1000);
     await page.locator('.foco', { hasText: 'Tasas' }).click();
     const dialogo = page.getByRole('dialog');
-    await expect(dialogo.locator('.detalle-titulo')).toHaveText('Autonomía de tasas');
+    await expect(dialogo.locator('.p-dialog-title')).toHaveText('Autonomía de tasas');
     await expect(dialogo.locator('.indicador')).toHaveCount(4);
     await expect(dialogo).toContainText('Resumen Gestión de Tasas');
 
     await dialogo.getByRole('tab', { name: 'Mora' }).click();
-    await expect(dialogo.locator('.detalle-titulo')).toHaveText('Recuperación y mora');
+    await expect(dialogo.locator('.p-dialog-title')).toHaveText('Recuperación y mora');
     await expect(dialogo.locator('.filtros-reporte p-select')).toHaveCount(6);
+  });
+
+  test('en el teléfono la pestaña del dominio abierto queda a la vista y con el foco', async ({ page }) => {
+    await preparar(page, 390, 844);
+    await page.locator('.tarjeta[aria-label="Seguros"] .tarjeta-cabecera').click();
+    const activa = page.getByRole('tab', { name: 'Seguros' });
+    await expect(activa).toBeFocused();
+    await expect(activa).toBeInViewport({ ratio: 1 });
   });
 
   for (const [nombre, ancho, alto] of [['escritorio', 1440, 1000], ['teléfono', 390, 844]] as const) {

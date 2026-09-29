@@ -52,8 +52,6 @@ export interface DominioPanelDef {
   nombre: string;
   /** Rótulo corto de la pestaña del detalle. */
   pestana: string;
-  /** Bajada del encabezado del detalle. */
-  subtitulo: string;
   icono: string;
   /** La tarjeta de recuperación va en tono de alerta, como en la maqueta. */
   alerta?: boolean;

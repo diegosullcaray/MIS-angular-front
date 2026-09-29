@@ -75,11 +75,11 @@ describe('PanelAsesorComponent', () => {
     expect(consultar).not.toHaveBeenCalled();
   });
 
-  it('muestra "Impacto del mes" con el asesor, el mes y la fecha de corte del monitor', () => {
+  it('sin encabezado propio: el asesor y la fecha de corte del monitor van en el subtítulo de la ventana', () => {
     const el: HTMLElement = crear().nativeElement;
-    expect(el.querySelector('.encabezado h2')?.textContent).toContain('Impacto del mes');
-    expect(el.querySelector('.bajada')?.textContent).toContain('Ana Torres · Setiembre 2026');
-    expect(el.querySelector('.corte')?.textContent).toContain('22/09/2026');
+    expect(el.querySelector('.mis-window-bar')?.textContent).toContain('Ana Torres · Corte al 22/09/2026');
+    expect(el.textContent).not.toContain('Impacto del mes');
+    expect(el.textContent).not.toContain('Toca un foco');
   });
 
   it('seis tarjetas por dominio y sin los 4 KPI titulares de la maqueta', () => {
@@ -111,8 +111,8 @@ describe('PanelAsesorComponent', () => {
     (fixture.nativeElement.querySelector('.tarjeta[aria-label="Cartera"] .tarjeta-cabecera') as HTMLButtonElement).click();
     refrescar(fixture);
 
-    const dialogo = document.querySelector('.detalle-banda')!.closest('.p-dialog')!;
-    expect(dialogo.querySelector('.detalle-titulo')?.textContent).toContain('Cartera');
+    const dialogo = document.querySelector('.detalle-navegacion')!.closest('.p-dialog')!;
+    expect(dialogo.querySelector('.p-dialog-title')?.textContent).toContain('Cartera');
     expect([...dialogo.querySelectorAll('.detalle-pestana')].map((p) => p.textContent!.trim())).toEqual([
       'Cartera', 'Clientes', 'Colocación', 'Tasas', 'Seguros', 'Mora',
     ]);
@@ -121,7 +121,7 @@ describe('PanelAsesorComponent', () => {
 
     (dialogo.querySelectorAll('.detalle-pestana')[4] as HTMLButtonElement).click();
     refrescar(fixture);
-    expect(document.querySelector('.detalle-titulo')?.textContent).toContain('Seguros');
+    expect(document.querySelector('.p-dialog-title')?.textContent).toContain('Seguros');
   });
 
   it('el detalle de Mora muestra los 6 filtros de efectividades del legado', () => {

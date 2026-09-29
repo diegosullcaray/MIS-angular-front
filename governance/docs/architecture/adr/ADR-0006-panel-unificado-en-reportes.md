@@ -45,13 +45,13 @@ A pedido de negocio (tareas de gobierno de septiembre), el panel se acotó:
 - En la pestaña "Cartera y clientes" las tablas van en dos columnas desde 1024 px; debajo, en una.
 - Quedan 7 entradas en tres pestañas: Cartera y clientes, Colocación, Recuperación.
 
-## Enmienda (2026-09-29): tablero "Impacto del mes"
+## Enmienda (2026-09-29): tablero por dominios
 
 A pedido de negocio (maqueta entregada en las tareas de gobierno), el panel pasa de pestañas a un
 tablero. Reemplaza la navegación por pestañas y chips de las enmiendas anteriores:
 
-- Encabezado "Impacto del mes" con el asesor, el mes y la fecha de corte (la del monitor de desembolsos).
-  Los cuatro KPI titulares de la maqueta quedan fuera por decisión de negocio.
+- Sin encabezado propio en el cuerpo: el asesor y la fecha de corte (la del monitor de desembolsos) van en el
+  subtítulo de la ventana. Los cuatro KPI titulares de la maqueta quedan fuera por decisión de negocio.
 - **Focos de atención**: avisos que solo aparecen si los datos cumplen su regla (monto muy por detrás de
   los días hábiles, efectividad del tramo 1–30 bajo 50 %, TAPP del mes bajo la mínima, recurrentes que bajan).
 - Seis tarjetas por dominio (Cartera, Clientes, Colocación, Tasas, Seguros, Recuperación y mora). Sus cifras se
@@ -59,8 +59,9 @@ tablero. Reemplaza la navegación por pestañas y chips de las enmiendas anterio
   (`utils/panel-resumen.util.ts`); una fila que no llega se muestra "—" y nunca se reemplaza por otra.
 - Al elegir asesor se piden los 7 reportes a la vez; cada tarjeta se completa por su cuenta, con esqueleto,
   error con reintento o vacío.
-- "Ver detalle" abre un diálogo con pestañas por dominio, cuatro indicadores, los filtros de efectividades
-  (en Mora) y las tablas y gráficos completos de sus reportes.
+- "Ver detalle" abre un `p-dialog` con el cromo del sistema (sin banda propia): una fila de chips fija arriba
+  para pasar de un dominio a otro —en el teléfono se desliza y centra la pestaña activa, que recibe el foco—,
+  cuatro indicadores, los filtros de efectividades (en Mora) y las tablas y gráficos completos de sus reportes.
 
 ## Evidencia
 

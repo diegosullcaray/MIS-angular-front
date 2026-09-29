@@ -48,76 +48,33 @@ button:focus-visible {
 .tablero {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   min-width: 0;
   font-variant-numeric: tabular-nums;
-}
-
-.encabezado {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 12px 24px;
-}
-.encabezado-texto {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-.antetitulo {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--mis-primary-text);
-}
-.encabezado h2 {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.1;
-}
-.bajada {
-  font-size: 15px;
-  color: var(--mis-text-secondary);
-}
-.corte {
-  padding: 9px 16px;
-  border: 1px solid var(--mis-border);
-  border-radius: var(--mis-radius-full);
-  background: var(--mis-surface);
-  font-size: 13px;
-  color: var(--mis-text-secondary);
-  white-space: nowrap;
 }
 
 /* ---------- Focos de atención ---------- */
 .focos {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 18px 20px;
+  gap: 10px;
+  padding: 14px 16px;
   border: 1px solid var(--mis-border);
   border-radius: var(--mis-radius-lg);
   background: var(--mis-surface);
 }
-.focos-cabecera {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-}
-.focos-cabecera > i {
-  color: var(--mis-danger);
-}
 .focos-titulo {
-  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
   font-weight: 600;
 }
-.focos-ayuda,
+.focos-titulo > i {
+  font-size: 13px;
+  color: var(--mis-danger);
+}
 .focos-vacio {
   margin: 0;
   font-size: 13px;
@@ -131,9 +88,9 @@ button:focus-visible {
 .foco {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   min-height: 44px;
-  padding: 14px 16px;
+  padding: 10px 14px;
   border: 1px solid var(--mis-border);
   border-radius: var(--mis-radius-md);
   background: var(--mis-panel-bg);
@@ -145,13 +102,13 @@ button:focus-visible {
   border-color: var(--mis-border-strong);
 }
 .foco-titulo {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 .foco-texto {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.4;
 }
 
@@ -159,15 +116,15 @@ button:focus-visible {
 .tarjetas {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
 .tarjeta {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   min-width: 0;
-  min-height: 300px;
-  padding: 22px 24px;
+  min-height: 270px;
+  padding: 16px 18px;
   border: 1px solid var(--mis-border);
   border-radius: var(--mis-radius-lg);
   background: var(--mis-surface);
@@ -193,9 +150,10 @@ button:focus-visible {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--mis-radius-md);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--mis-radius-sm);
+  font-size: 13px;
   background: var(--mis-primary-light);
   color: var(--mis-primary-text);
 }
@@ -206,12 +164,12 @@ button:focus-visible {
 .tarjeta-titulo {
   flex: 1 1 auto;
   min-width: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
 }
 .tarjeta-enlace {
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--mis-primary-text);
 }
@@ -235,7 +193,7 @@ button:focus-visible {
   gap: 4px 12px;
 }
 .destacado strong {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
   line-height: 1.1;
 }
@@ -388,62 +346,45 @@ button:focus-visible {
 }
 
 /* ---------- Diálogo de detalle ---------- */
-.detalle-banda {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 16px;
-  padding: 20px 28px;
-  background: var(--mis-primary);
-  color: var(--mis-text-on-primary);
-}
-.detalle-banda-texto {
-  display: flex;
-  flex: 1 1 18rem;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-.detalle-antetitulo {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  opacity: 0.8;
-}
-.detalle-titulo {
-  font-size: 24px;
-  font-weight: 700;
-}
-.detalle-subtitulo {
-  font-size: 14px;
-  opacity: 0.85;
-}
-.detalle-pestanas {
-  gap: 6px;
+/* Navegación entre dominios: fija arriba del contenido del diálogo, como chips del sistema. */
+.detalle-navegacion {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--mis-border);
+  background: var(--mis-surface);
 }
 .detalle-pestana {
-  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
   padding: 0 14px;
-  border: 1px solid color-mix(in srgb, var(--mis-text-on-primary) 40%, transparent);
+  border: 1px solid var(--mis-border-control);
   border-radius: var(--mis-radius-full);
-  background: transparent;
-  color: var(--mis-text-on-primary);
-  font-size: 13px;
-  font-weight: 500;
+  background: var(--mis-surface);
+  color: var(--mis-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
+  transition: border-color var(--mis-transition-fast), color var(--mis-transition-fast);
+}
+.detalle-pestana:hover {
+  border-color: var(--mis-primary);
+  color: var(--mis-text-primary);
 }
 .detalle-pestana.activa {
-  border-color: var(--mis-text-on-primary);
-  background: var(--mis-text-on-primary);
-  color: var(--mis-primary);
-  font-weight: 600;
+  border-color: var(--mis-primary);
+  background: var(--mis-primary);
+  color: var(--mis-text-on-primary);
 }
 .detalle-cuerpo {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 24px 28px 32px;
+  gap: 16px;
+  padding: 16px 20px 24px;
   background: var(--mis-panel-bg);
 }
 .indicadores {
@@ -454,9 +395,9 @@ button:focus-visible {
 .indicador {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
-  padding: 16px 18px;
+  padding: 12px 14px;
   border: 1px solid var(--mis-border);
   border-radius: var(--mis-radius-md);
   background: var(--mis-surface);
@@ -467,7 +408,7 @@ button:focus-visible {
 }
 .indicador-valor {
   overflow-wrap: anywhere;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 600;
   line-height: 1.15;
 }
@@ -511,12 +452,6 @@ button:focus-visible {
   }
 }
 @media (max-width: 767px) {
-  .tablero {
-    gap: 18px;
-  }
-  .encabezado h2 {
-    font-size: 26px;
-  }
   .tarjetas,
   .indicadores {
     grid-template-columns: minmax(0, 1fr);
@@ -530,11 +465,11 @@ button:focus-visible {
     padding: 18px;
   }
   .indicador-valor {
-    font-size: 20px;
+    font-size: 18px;
   }
-  .detalle-banda,
+  .detalle-navegacion,
   .detalle-cuerpo {
-    padding-inline: 16px;
+    padding-inline: 12px;
   }
   .tarjeta-grafico {
     height: 260px;

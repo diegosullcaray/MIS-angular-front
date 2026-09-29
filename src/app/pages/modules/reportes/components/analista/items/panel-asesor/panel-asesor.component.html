@@ -1,6 +1,6 @@
 <app-window-panel
   titulo="Panel del asesor"
-  [subtitulo]="panel.asesor()?.nombre ?? 'Impacto del mes'"
+  [subtitulo]="subtitulo()"
   [conFiltros]="!panel.propio()"
   [filtrosAbiertos]="!panel.asesor()"
   [actualizando]="panel.consultando()"
@@ -39,23 +39,9 @@
     />
   } @else {
     <div class="tablero">
-      <!-- Encabezado: qué es, de quién y a qué fecha. Los 4 KPI titulares de la maqueta quedan fuera por ahora. -->
-      <header class="encabezado">
-        <div class="encabezado-texto">
-          <span class="antetitulo">MIS · Panel del asesor</span>
-          <h2>Impacto del mes</h2>
-          <span class="bajada">{{ panel.asesor()!.nombre }} · {{ mesCorte() }}</span>
-        </div>
-        <span class="corte">Corte al {{ textoCorte() }}</span>
-      </header>
-
       <!-- Focos de atención: solo aparecen si los datos reales cumplen su regla. -->
       <section class="focos" aria-label="Focos de atención">
-        <div class="focos-cabecera">
-          <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-          <span class="focos-titulo">Focos de atención</span>
-          <span class="focos-ayuda">Toca un foco para abrir su detalle</span>
-        </div>
+        <h2 class="focos-titulo"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i> Focos de atención</h2>
         @if (!focosListos()) {
           <app-list-skeleton [rows]="[1]" [cols]="[1, 2, 3, 4]" />
         } @else if (focos().length === 0) {
@@ -157,24 +143,21 @@
 <p-dialog
   [visible]="!!abierto()"
   (visibleChange)="$event ? null : cerrar()"
+  (onShow)="alMostrarDetalle()"
+  [focusOnShow]="false"
   [modal]="true"
   [dismissableMask]="true"
   [draggable]="false"
   [resizable]="false"
   appendTo="body"
   [header]="dominioAbierto()?.nombre ?? ''"
-  styleClass="panel-detalle"
   [style]="{ width: '96vw', maxWidth: '1220px' }"
   [contentStyle]="{ padding: '0' }"
 >
   @if (dominioAbierto(); as d) {
-    <div class="detalle-banda">
-      <div class="detalle-banda-texto">
-        <span class="detalle-antetitulo">Detalle · {{ panel.asesor()?.nombre }}</span>
-        <span class="detalle-titulo">{{ d.nombre }}</span>
-        <span class="detalle-subtitulo">{{ d.subtitulo }}</span>
-      </div>
-      <nav class="mis-chips-nav detalle-pestanas" aria-label="Otras vistas" role="tablist">
+    <!-- Navegación entre dominios: fija arriba del contenido; en el teléfono se desliza de costado. -->
+    <nav class="detalle-navegacion" aria-label="Dominios del panel">
+      <div class="mis-chips-nav" role="tablist" #filaPestanas>
         @for (o of dominios; track o.id) {
           <button
             type="button"
@@ -182,15 +165,16 @@
             class="detalle-pestana"
             [class.activa]="o.id === d.id"
             [attr.aria-selected]="o.id === d.id"
-            (click)="abrir(o.id)"
+            (click)="abrir(o.id, cuerpo)"
           >
+            <i [class]="o.icono" aria-hidden="true"></i>
             {{ o.pestana }}
           </button>
         }
-      </nav>
-    </div>
+      </div>
+    </nav>
 
-    <div class="detalle-cuerpo">
+    <div class="detalle-cuerpo" #cuerpo>
       @if (resumenAbierto(); as resumen) {
         <div class="indicadores">
           @for (k of resumen.indicadores; track k.etiqueta) {
