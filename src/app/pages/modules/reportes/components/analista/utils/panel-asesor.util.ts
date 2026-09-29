@@ -2,29 +2,11 @@ import { TABLA_PENDIENTE, type ColumnaReporte, type TablaReporteResultado } from
 import type {
   BloquePanelAsesor,
   ClaveTabla,
-  GrupoPanelAsesorDef,
   ReportePanelAsesor,
   ResultadoPanelAsesor,
 } from '../models/panel-asesor.model';
 
-const CLAVES_TABLA: readonly ClaveTabla[] = ['tabla1', 'tabla2', 'tabla3', 'tabla4', 'tabla5'];
-
-/** Grupos ordenados por el tráfico total de sus reportes, y cada reporte por su propio tráfico. */
-export function gruposOrdenados(
-  grupos: readonly GrupoPanelAsesorDef[],
-  reportes: readonly ReportePanelAsesor[],
-): { grupo: GrupoPanelAsesorDef; reportes: ReportePanelAsesor[] }[] {
-  return grupos
-    .map((grupo) => {
-      const propios = reportes
-        .filter((r) => r.grupo === grupo.id)
-        .sort((a, b) => b.peticiones - a.peticiones);
-      return { grupo, reportes: propios, total: propios.reduce((s, r) => s + r.peticiones, 0) };
-    })
-    .filter((g) => g.reportes.length > 0)
-    .sort((a, b) => b.total - a.total)
-    .map(({ grupo, reportes: propios }) => ({ grupo, reportes: propios }));
-}
+export const CLAVES_TABLA: readonly ClaveTabla[] = ['tabla1', 'tabla2', 'tabla3', 'tabla4', 'tabla5'];
 
 /** Bloques a pintar: los declarados que llegaron, o todas las tablas presentes en orden. */
 export function bloquesDe(
@@ -81,25 +63,4 @@ export function aNumero(valor: unknown): number | null {
   if (typeof valor === 'string' && /^-?\d+(\.\d+)?$/.test(valor.trim()))
     return Number(valor.trim());
   return null;
-}
-
-/** Mismo formato que `app-tabla-reporte`, para que KPI y tabla muestren idéntica cifra. */
-export function formatearValor(valor: unknown, columna: ColumnaReporte): string {
-  if (valor === null || valor === undefined || valor === '') return '';
-  switch (columna.format?.['type']) {
-    case 'number':
-      return typeof valor === 'number'
-        ? new Intl.NumberFormat('es-PE').format(valor)
-        : String(valor);
-    case 'percent':
-      return typeof valor === 'number'
-        ? new Intl.NumberFormat('es-PE', {
-            style: 'percent',
-            minimumFractionDigits: 1,
-            maximumFractionDigits: 1,
-          }).format(valor)
-        : String(valor);
-    default:
-      return String(valor);
-  }
 }

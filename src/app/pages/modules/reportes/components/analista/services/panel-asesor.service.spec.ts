@@ -6,6 +6,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { ShellStateService } from '../../../../../../core/services/shell-state.service';
 import type { AsesorSec } from '../models/asesor-sec.model';
 import type { ResultadoPanelAsesor } from '../models/panel-asesor.model';
+import { REPORTES_ASESOR } from '../constantes/panel-asesor.constantes';
 
 const ANA: AsesorSec = { nombre: 'Ana', dni: '11111111' };
 const LUIS: AsesorSec = { nombre: 'Luis', dni: '22222222' };
@@ -39,32 +40,17 @@ describe('PanelAsesorService', () => {
     consultar = vi.fn().mockReturnValue(of(RESULTADO));
   });
 
-  it('al elegir asesor consulta solo el reporte abierto, que arranca en el más usado', () => {
+  it('al elegir asesor consulta todos los reportes del tablero, una vez cada uno', () => {
     const s = crear();
     s.seleccionarAsesor(ANA);
     TestBed.tick();
-    expect(s.vista()).toBe('L_CART_SEC');
-    expect(consultar.mock.calls.map((c) => c[0])).toEqual(['L_CART_SEC']);
+    expect(consultar.mock.calls.map((c) => c[0]).sort()).toEqual(REPORTES_ASESOR.map((r) => r.codigo).sort());
     expect(consultar).toHaveBeenCalledWith('L_CART_SEC', ANA.dni, expect.any(Object));
     expect(s.estado('L_CART_SEC')).toEqual({ estado: 'listo', resultado: RESULTADO });
-  });
 
-  it('abrir un reporte lo consulta una vez; volver a él no repite la consulta', () => {
-    const s = crear();
-    s.seleccionarAsesor(ANA);
-    s.seleccionarVista('L_SEG_SEC');
+    // Sin cambios de contexto no se repite ninguna consulta.
     TestBed.tick();
-    s.seleccionarVista('L_CART_SEC');
-    TestBed.tick();
-    s.seleccionarVista('L_SEG_SEC');
-    TestBed.tick();
-    expect(consultar.mock.calls.filter((c) => c[0] === 'L_SEG_SEC')).toHaveLength(1);
-  });
-
-  it('ignora vistas que no son reportes del panel', () => {
-    const s = crear();
-    s.seleccionarVista('L_INEXISTENTE');
-    expect(s.vista()).toBe('L_CART_SEC');
+    expect(consultar).toHaveBeenCalledTimes(REPORTES_ASESOR.length);
   });
 
   it('un error queda como error (no como vacío) y se puede reintentar', () => {
@@ -99,7 +85,6 @@ describe('PanelAsesorService', () => {
   it('efectividades se vuelve a consultar al cambiar filtros, con los filtros vigentes', () => {
     const s = crear();
     s.seleccionarAsesor(ANA);
-    s.seleccionarVista('L_MON_EFE_DET_SEC');
     TestBed.tick();
     s.filtrar('prod', 'CONSUMO');
     TestBed.tick();
@@ -108,15 +93,14 @@ describe('PanelAsesorService', () => {
     expect(llamadas[1][2]).toEqual(expect.objectContaining({ prod: 'CONSUMO' }));
   });
 
-  it('actualizar vuelve a consultar el reporte abierto', () => {
+  it('actualizar vuelve a consultar todos los reportes', () => {
     const s = crear();
     s.seleccionarAsesor(ANA);
-    s.seleccionarVista('L_SEG_SEC');
     TestBed.tick();
     consultar.mockClear();
     s.actualizar();
     TestBed.tick();
-    expect(consultar.mock.calls.map((c) => c[0])).toEqual(['L_SEG_SEC']);
+    expect(consultar).toHaveBeenCalledTimes(REPORTES_ASESOR.length);
   });
 
   it('el asesor autenticado (tipoUsuario 1) se carga solo, sin selector', () => {

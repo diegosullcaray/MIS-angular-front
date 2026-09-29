@@ -45,13 +45,30 @@ A pedido de negocio (tareas de gobierno de septiembre), el panel se acotó:
 - En la pestaña "Cartera y clientes" las tablas van en dos columnas desde 1024 px; debajo, en una.
 - Quedan 7 entradas en tres pestañas: Cartera y clientes, Colocación, Recuperación.
 
+## Enmienda (2026-09-29): tablero "Impacto del mes"
+
+A pedido de negocio (maqueta entregada en las tareas de gobierno), el panel pasa de pestañas a un
+tablero. Reemplaza la navegación por pestañas y chips de las enmiendas anteriores:
+
+- Encabezado "Impacto del mes" con el asesor, el mes y la fecha de corte (la del monitor de desembolsos).
+  Los cuatro KPI titulares de la maqueta quedan fuera por decisión de negocio.
+- **Focos de atención**: avisos que solo aparecen si los datos cumplen su regla (monto muy por detrás de
+  los días hábiles, efectividad del tramo 1–30 bajo 50 %, TAPP del mes bajo la mínima, recurrentes que bajan).
+- Seis tarjetas por dominio (Cartera, Clientes, Colocación, Tasas, Seguros, Recuperación y mora). Sus cifras se
+  leen de las tablas reales de los 7 reportes buscando cada fila por su nombre y cada columna por su encabezado
+  (`utils/panel-resumen.util.ts`); una fila que no llega se muestra "—" y nunca se reemplaza por otra.
+- Al elegir asesor se piden los 7 reportes a la vez; cada tarjeta se completa por su cuenta, con esqueleto,
+  error con reintento o vacío.
+- "Ver detalle" abre un diálogo con pestañas por dominio, cuatro indicadores, los filtros de efectividades
+  (en Mora) y las tablas y gráficos completos de sus reportes.
+
 ## Evidencia
 
 - **Implementación:**
   - `src/app/pages/modules/reportes/components/analista/items/panel-asesor/`
   - `services/panel-asesor.service.ts`
   - `services/panel-asesor-consultas.service.ts`
-- **Reglas puras:** `utils/panel-asesor.util.ts` y su spec.
+- **Reglas puras:** `utils/panel-asesor.util.ts`, `utils/panel-resumen.util.ts` y sus specs.
 - **Ruta:** `src/app/app.routes.ts` (`analista/panel-unificado`).
 - **Acceso en menú:** `src/app/pages/full-pages/layout/utils/panel-unificado-menu.util.ts`.
-- **E2E:** `e2e/panel-unificado.spec.ts`.
+- **E2E:** `e2e/panel-unificado.spec.ts` y `e2e/panel-unificado-tablero.spec.ts`.

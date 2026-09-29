@@ -1,19 +1,17 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
+import { DialogModule } from 'primeng/dialog';
 import { WindowPanelComponent } from '../../../../../../../shared/ui/window-panel/window-panel.component';
 import { InlineErrorComponent } from '../../../../../../../shared/ui/inline-error/inline-error.component';
 import { EmptyStateComponent } from '../../../../../../../shared/ui/empty-state/empty-state.component';
 import { ListSkeletonComponent } from '../../../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { GraficoMixtoComponent } from '../../../../../../../shared/ui/graficos/grafico-mixto/grafico-mixto.component';
+import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 import { BloquePanelComponent } from '../../ui/bloque-panel/bloque-panel.component';
 import { PanelAsesorService } from '../../services/panel-asesor.service';
 import { PanelAsesorConsultasService } from '../../services/panel-asesor-consultas.service';
-import {
-  CODIGO_EFECTIVIDADES,
-  GRUPOS_PANEL_ASESOR,
-  REPORTES_ASESOR,
-} from '../../constantes/panel-asesor.constantes';
+import { CODIGO_EFECTIVIDADES, DOMINIOS_PANEL, REPORTES_ASESOR } from '../../constantes/panel-asesor.constantes';
 import {
   OPCIONES_PRODUCTO,
   OPCIONES_SI_NO,
@@ -22,15 +20,16 @@ import {
   type FiltrosMonitorEfectividades,
 } from '../../models/monitor-efectividades.model';
 import type {
-  GrupoPanelAsesor,
-  KpiPanelAsesor,
+  DominioPanel,
+  DominioPanelDef,
   ReportePanelAsesor,
   ResultadoPanelAsesor,
+  ResumenDominio,
+  TonoPanel,
 } from '../../models/panel-asesor.model';
-import { bloquesDe, gruposOrdenados, sinDatos } from '../../utils/panel-asesor.util';
-import { semaforo } from '../../../../utils/semaforo.util';
+import { bloquesDe, sinDatos } from '../../utils/panel-asesor.util';
+import { FUENTES_DOMINIO, focosDeAtencion, resumenDominio, type ResultadosPanel } from '../../utils/panel-resumen.util';
 import { TABLA_PENDIENTE, type TablaReporteResultado } from '../../../../models/tabla-reporte.model';
-import { GrupoFiltrosComponent } from '../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
 interface FiltroEfectividades {
   campo: keyof FiltrosMonitorEfectividades;
@@ -48,10 +47,20 @@ const FILTROS_EFECTIVIDADES: readonly FiltroEfectividades[] = [
   { campo: 'tdcr', etiqueta: 'Tramo días gestión', opciones: OPCIONES_TRAMO_DIAS_GESTION },
 ];
 
+/** Estado de una tarjeta: se decide por los reportes que la alimentan. */
+type EstadoTarjeta = 'cargando' | 'error' | 'vacio' | 'listo';
+
+interface TarjetaPanel {
+  dominio: DominioPanelDef;
+  estado: EstadoTarjeta;
+  resumen: ResumenDominio;
+}
+
 /**
- * Panel unificado del asesor: los reportes de `rda/sectorista` agrupados por
- * categoría y ordenados por uso, con KPI, gráficos y tablas reales de Ant. Abre en
- * el más consultado.
+ * Panel unificado del asesor: "Impacto del mes" (maqueta `governance/tasks/panel unificado
+ * asesor`). Un tablero con focos de atención y una tarjeta por dominio —todo con cifras de las
+ * tablas reales de Ant— y, al tocar una tarjeta, su detalle en un diálogo con pestañas por
+ * dominio, indicadores, filtros y las tablas y gráficos completos de sus reportes.
  */
 @Component({
   selector: 'app-panel-unificado',
@@ -59,6 +68,7 @@ const FILTROS_EFECTIVIDADES: readonly FiltroEfectividades[] = [
   imports: [
     FormsModule,
     SelectModule,
+    DialogModule,
     WindowPanelComponent,
     InlineErrorComponent,
     EmptyStateComponent,
@@ -74,77 +84,75 @@ const FILTROS_EFECTIVIDADES: readonly FiltroEfectividades[] = [
 export class PanelAsesorComponent {
   protected readonly panel = inject(PanelAsesorService);
 
-  protected readonly grupos = gruposOrdenados(GRUPOS_PANEL_ASESOR, REPORTES_ASESOR);
+  protected readonly dominios = DOMINIOS_PANEL;
   protected readonly filtrosEfectividades = FILTROS_EFECTIVIDADES;
   protected readonly codigoEfectividades = CODIGO_EFECTIVIDADES;
 
-  /** Filtros de efectividades desplegados en móvil (en escritorio se ven siempre). */
-  protected readonly filtrosAbiertos = signal(false);
-
-  /** Último reporte abierto en cada categoría, para volver donde se estaba. */
-  private readonly ultimoPorGrupo = signal<Partial<Record<GrupoPanelAsesor, string>>>({});
-
-  protected readonly reporteActivo = computed<ReportePanelAsesor | null>(() => {
-    return REPORTES_ASESOR.find((r) => r.codigo === this.panel.vista()) ?? null;
+  /** Fecha de corte: la que informa el monitor de desembolsos, o hoy si aún no llegó. */
+  protected readonly corte = computed(() => {
+    const e = this.panel.estado('L_MONI_DESE_SEC');
+    const fecha = e?.estado === 'listo' ? e.resultado.kpiOperaciones?.fecha : undefined;
+    const m = fecha ? /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(fecha) : null;
+    return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : new Date();
   });
 
-  protected readonly pestanaActiva = computed<GrupoPanelAsesor | null>(
-    () => this.reporteActivo()?.grupo ?? null,
-  );
+  protected readonly textoCorte = computed(() => this.corte().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }));
 
-  protected readonly reportesDelGrupo = computed(
-    () => this.grupos.find((g) => g.grupo.id === this.pestanaActiva())?.reportes ?? [],
-  );
-
-  protected readonly estadoActivo = computed(() => {
-    const reporte = this.reporteActivo();
-    return reporte ? this.panel.estado(reporte.codigo) : null;
+  protected readonly mesCorte = computed(() => {
+    const texto = this.corte().toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).replace(' de ', ' ');
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
   });
 
-  protected readonly subtitulo = computed(
-    () => this.panel.asesor()?.nombre ?? 'Reportes consolidados',
-  );
-
-  /** KPI del monitor de desembolsos, que se muestran arriba de su detalle. */
-  protected readonly estadoDesembolso = computed(() => this.panel.estado('L_MONI_DESE_SEC'));
-
-  protected readonly kpisDesembolso = computed<KpiPanelAsesor[]>(() => {
-    const e = this.estadoDesembolso();
-    if (e?.estado !== 'listo') return [];
-    const { kpiOperaciones, kpiMonto } = e.resultado;
-    return [
-      {
-        etiqueta: 'Operaciones · cumplimiento',
-        valor: kpiOperaciones?.cumpl_des_acum || '--',
-        semaforo: semaforo(kpiOperaciones?.style_cumpl_des_acum),
-      },
-      {
-        etiqueta: 'Monto · cumplimiento',
-        valor: kpiMonto?.cumpl_ope_acum || '--',
-        semaforo: semaforo(kpiMonto?.style_cumpl_ope_acum),
-      },
-    ];
+  /** Resultados ya recibidos, por `SCODSEC`. */
+  private readonly resultados = computed<ResultadosPanel>(() => {
+    const listos: Record<string, ResultadoPanelAsesor> = {};
+    for (const r of REPORTES_ASESOR) {
+      const e = this.panel.estado(r.codigo);
+      if (e?.estado === 'listo') listos[r.codigo] = e.resultado;
+    }
+    return listos;
   });
 
-  protected abrirPestana(pestana: GrupoPanelAsesor): void {
-    const grupo = this.grupos.find((g) => g.grupo.id === pestana);
-    const destino = this.ultimoPorGrupo()[pestana] ?? grupo?.reportes[0]?.codigo;
-    if (destino) this.abrirReporte(destino);
+  protected readonly tarjetas = computed<TarjetaPanel[]>(() =>
+    this.dominios.map((dominio) => ({
+      dominio,
+      estado: this.estadoTarjeta(dominio.id),
+      resumen: resumenDominio(dominio.id, this.resultados(), this.corte()),
+    })),
+  );
+
+  protected readonly focos = computed(() => focosDeAtencion(this.resultados()));
+
+  /** Los focos se evalúan cuando todo lo que los alimenta dejó de cargar. */
+  protected readonly focosListos = computed(() =>
+    REPORTES_ASESOR.every((r) => this.panel.estado(r.codigo)?.estado !== 'cargando'),
+  );
+
+  // ── Detalle ──────────────────────────────────────────────────────────────
+
+  protected readonly abierto = signal<DominioPanel | null>(null);
+
+  protected readonly dominioAbierto = computed(() => this.dominios.find((d) => d.id === this.abierto()) ?? null);
+
+  protected readonly resumenAbierto = computed(
+    () => this.tarjetas().find((t) => t.dominio.id === this.abierto())?.resumen ?? null,
+  );
+
+  protected readonly reportesAbiertos = computed(() => REPORTES_ASESOR.filter((r) => r.dominio === this.abierto()));
+
+  /** El diálogo tiene filtros propios solo cuando muestra el detalle de efectividades. */
+  protected readonly conFiltros = computed(() => this.reportesAbiertos().some((r) => r.codigo === CODIGO_EFECTIVIDADES));
+
+  protected abrir(dominio: DominioPanel): void {
+    this.abierto.set(dominio);
   }
 
-  protected abrirReporte(codigo: string | null): void {
-    const reporte = REPORTES_ASESOR.find((r) => r.codigo === codigo);
-    if (!reporte) return;
-    this.ultimoPorGrupo.update((u) => ({ ...u, [reporte.grupo]: reporte.codigo }));
-    this.panel.seleccionarVista(reporte.codigo);
+  protected cerrar(): void {
+    this.abierto.set(null);
   }
 
-  /** Las tablas de "Cartera y clientes" se alinean en dos columnas. */
-  protected readonly dosColumnas = computed(() => this.pestanaActiva() === 'cartera');
-
-  /** Tabla de una vista consolidada que todavía no respondió: se muestra con su esqueleto. */
-  protected esPendiente(tabla: TablaReporteResultado | undefined): boolean {
-    return tabla === TABLA_PENDIENTE;
+  protected estado(codigo: string) {
+    return this.panel.estado(codigo);
   }
 
   protected bloques(reporte: ReportePanelAsesor, resultado: ResultadoPanelAsesor) {
@@ -155,25 +163,27 @@ export class PanelAsesorComponent {
     return sinDatos(resultado);
   }
 
-  protected claseSemaforo(semaforo: KpiPanelAsesor['semaforo']): string {
-    return semaforo === 1
-      ? 'kpi-ok'
-      : semaforo === 0
-        ? 'kpi-alerta'
-        : semaforo === -1
-          ? 'kpi-riesgo'
-          : '';
+  /** Tabla de una vista consolidada que todavía no respondió: se muestra con su esqueleto. */
+  protected esPendiente(tabla: TablaReporteResultado | undefined): boolean {
+    return tabla === TABLA_PENDIENTE;
   }
 
-  protected iconoSemaforo(semaforo: KpiPanelAsesor['semaforo']): string {
-    return semaforo === 1
-      ? 'pi pi-check-circle'
-      : semaforo === 0
-        ? 'pi pi-minus-circle'
-        : 'pi pi-times-circle';
+  protected claseTono(tono: TonoPanel | 'referencia'): string {
+    return `tono-${tono}`;
   }
 
-  protected textoSemaforo(semaforo: KpiPanelAsesor['semaforo']): string {
-    return semaforo === 1 ? 'Semáforo verde' : semaforo === 0 ? 'Semáforo ámbar' : 'Semáforo rojo';
+  /** Reintenta los reportes fallidos de una tarjeta. */
+  protected reintentarTarjeta(dominio: DominioPanel): void {
+    for (const codigo of FUENTES_DOMINIO[dominio]) {
+      if (this.panel.estado(codigo)?.estado === 'error') this.panel.reintentar(codigo);
+    }
+  }
+
+  private estadoTarjeta(dominio: DominioPanel): EstadoTarjeta {
+    const propios = REPORTES_ASESOR.filter((r) => r.dominio === dominio).map((r) => this.panel.estado(r.codigo));
+    if (propios.some((e) => !e || e.estado === 'cargando')) return 'cargando';
+    if (propios.every((e) => e?.estado === 'error')) return 'error';
+    const listos = propios.filter((e) => e?.estado === 'listo');
+    return listos.every((e) => e?.estado === 'listo' && sinDatos(e.resultado)) ? 'vacio' : 'listo';
   }
 }

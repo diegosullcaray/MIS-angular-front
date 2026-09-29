@@ -1,23 +1,21 @@
 import { TABLA_PENDIENTE, type TablaReporteResultado } from '../../../models/tabla-reporte.model';
-import { CODIGO_CLIENTES_CONSOLIDADO, GRUPOS_PANEL_ASESOR, REPORTES_ASESOR } from '../constantes/panel-asesor.constantes';
-import { aNumero, bloquesDe, gruposOrdenados, sinDatos } from './panel-asesor.util';
+import { CODIGO_CLIENTES_CONSOLIDADO, DOMINIOS_PANEL, REPORTES_ASESOR } from '../constantes/panel-asesor.constantes';
+import { aNumero, bloquesDe, sinDatos } from './panel-asesor.util';
 
 function tabla(overrides: Partial<TablaReporteResultado> = {}): TablaReporteResultado {
   return { headers: [], body: [], additional: {}, ...overrides };
 }
 
 describe('panel-asesor.util', () => {
-  it('ordena grupos por tráfico total y cada reporte por su tráfico, sin perder ninguno', () => {
-    const grupos = gruposOrdenados(GRUPOS_PANEL_ASESOR, REPORTES_ASESOR);
-    // "Movilidad y gestión" se dio de baja: quedan tres pestañas.
-    expect(grupos.map((g) => g.grupo.id)).toEqual(['cartera', 'colocacion', 'recuperacion']);
-    expect(grupos[0].reportes.map((r) => r.codigo)).toEqual(['L_CART_SEC', CODIGO_CLIENTES_CONSOLIDADO]);
-    expect(grupos[1].reportes.map((r) => r.codigo)).toEqual(['L_MONI_DESE_SEC', 'L_SEG_SEC', 'L_REP_AUTO_SEC']);
-    expect(grupos[2].reportes.map((r) => r.codigo)).toEqual(['L_MON_EFE_DET_SEC', 'L_REC_PREVE_SEC']);
-    for (const g of grupos) {
-      const trafico = g.reportes.map((r) => r.peticiones);
-      expect(trafico).toEqual([...trafico].sort((a, b) => b - a));
-    }
+  it('seis dominios en el orden de la maqueta, y todo reporte en el detalle de uno de ellos', () => {
+    expect(DOMINIOS_PANEL.map((d) => d.id)).toEqual(['cartera', 'clientes', 'colocacion', 'tasas', 'seguros', 'mora']);
+    const porDominio = (id: string) => REPORTES_ASESOR.filter((r) => r.dominio === id).map((r) => r.codigo);
+    expect(porDominio('cartera')).toEqual(['L_CART_SEC']);
+    expect(porDominio('clientes')).toEqual([CODIGO_CLIENTES_CONSOLIDADO]);
+    expect(porDominio('colocacion')).toEqual(['L_MONI_DESE_SEC']);
+    expect(porDominio('tasas')).toEqual(['L_REP_AUTO_SEC']);
+    expect(porDominio('seguros')).toEqual(['L_SEG_SEC']);
+    expect(porDominio('mora')).toEqual(['L_MON_EFE_DET_SEC', 'L_REC_PREVE_SEC']);
   });
 
   it('aNumero acepta números y texto estrictamente numérico, nada más', () => {
@@ -43,11 +41,11 @@ describe('panel-asesor.util', () => {
     const clientes = REPORTES_ASESOR.find((r) => r.codigo === CODIGO_CLIENTES_CONSOLIDADO)!;
     const cinco = { tabla1: tabla(), tabla2: tabla(), tabla3: tabla(), tabla4: tabla(), tabla5: tabla() };
     expect(bloquesDe(clientes, cinco).map((b) => b.titulo)).toEqual([
+      'Clientes nuevos y recurrentes',
+      'Clientes por producto · 1 de 3',
+      'Clientes por producto · 2 de 3',
+      'Clientes por producto · 3 de 3',
       'Grupos PDM',
-      'Clientes Nuevos y Recurrentes',
-      'Clientes Producto · 1 de 3',
-      'Clientes Producto · 2 de 3',
-      'Clientes Producto · 3 de 3',
     ]);
     const cartera = REPORTES_ASESOR.find((r) => r.codigo === 'L_CART_SEC')!;
     expect(bloquesDe(cartera, { tabla1: tabla(), tabla2: tabla() }).map((b) => b.tabla)).toEqual(['tabla1', 'tabla2']);

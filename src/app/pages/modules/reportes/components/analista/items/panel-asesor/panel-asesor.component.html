@@ -1,8 +1,8 @@
 <app-window-panel
   titulo="Panel del asesor"
-  [subtitulo]="subtitulo()"
+  [subtitulo]="panel.asesor()?.nombre ?? 'Impacto del mes'"
   [conFiltros]="!panel.propio()"
-  [filtrosAbiertos]="true"
+  [filtrosAbiertos]="!panel.asesor()"
   [actualizando]="panel.consultando()"
   etiquetaActualizar="Actualizar reportes"
   [permitirActualizar]="!!panel.asesor()"
@@ -38,119 +38,213 @@
       descripcion="Selecciona un asesor en el filtro superior para ver sus reportes."
     />
   } @else {
-    <!-- Categorías en una fila con scroll lateral (como las pestañas de WhatsApp) -->
-    <nav class="navegacion" aria-label="Secciones del panel">
-      <ul class="pestanas">
-        @for (g of grupos; track g.grupo.id) {
-          <li>
-            <button
-              type="button"
-              class="pestana"
-              [class.activa]="pestanaActiva() === g.grupo.id"
-              [attr.aria-current]="pestanaActiva() === g.grupo.id ? 'page' : null"
-              (click)="abrirPestana(g.grupo.id)"
-            >
-              <i [class]="g.grupo.icono" aria-hidden="true"></i>
-              <span>{{ g.grupo.nombre }}</span>
-            </button>
-          </li>
-        }
-      </ul>
-    </nav>
+    <div class="tablero">
+      <!-- Encabezado: qué es, de quién y a qué fecha. Los 4 KPI titulares de la maqueta quedan fuera por ahora. -->
+      <header class="encabezado">
+        <div class="encabezado-texto">
+          <span class="antetitulo">MIS · Panel del asesor</span>
+          <h2>Impacto del mes</h2>
+          <span class="bajada">{{ panel.asesor()!.nombre }} · {{ mesCorte() }}</span>
+        </div>
+        <span class="corte">Corte al {{ textoCorte() }}</span>
+      </header>
 
-    @if (reporteActivo(); as reporte) {
-      <!-- Reportes de la categoría, del más al menos consultado -->
-      <ul class="chips" aria-label="Reportes de la categoría">
-        @for (r of reportesDelGrupo(); track r.codigo) {
-          <li>
-            <button
-              type="button"
-              class="chip"
-              [class.activa]="r.codigo === reporte.codigo"
-              [attr.aria-current]="r.codigo === reporte.codigo ? 'true' : null"
-              (click)="abrirReporte(r.codigo)"
-            >
-              <i [class]="r.icono" aria-hidden="true"></i>
-              {{ r.nombre }}
-            </button>
-          </li>
-        }
-      </ul>
-
-      <!-- Sin cabecera: el chip activo ya dice qué reporte es. -->
-      <section class="detalle" [attr.aria-label]="reporte.nombre">
-
-        @if (reporte.codigo === codigoEfectividades) {
-          <!-- En móvil los filtros se pliegan: primero se ven los datos. En escritorio siempre están a la vista. -->
-          <button
-            type="button"
-            class="alternar-filtros"
-            [attr.aria-expanded]="filtrosAbiertos()"
-            aria-controls="filtros-efectividades"
-            (click)="filtrosAbiertos.set(!filtrosAbiertos())"
-          >
-            <i class="pi pi-sliders-h" aria-hidden="true"></i>
-            Filtros
-            <i class="pi" [class.pi-angle-down]="!filtrosAbiertos()" [class.pi-angle-up]="filtrosAbiertos()" aria-hidden="true"></i>
-          </button>
-          <div
-            id="filtros-efectividades"
-            class="filtros-reporte"
-            [class.abiertos]="filtrosAbiertos()"
-            role="group"
-            aria-label="Filtros de efectividades"
-          >
-            @for (f of filtrosEfectividades; track f.campo) {
-              <div class="filtro">
-                <label [for]="'filtro-' + f.campo">{{ f.etiqueta }}</label>
-                <p-select
-                  [inputId]="'filtro-' + f.campo"
-                  appendTo="body"
-                  [options]="f.opciones"
-                  [ngModel]="panel.filtros()[f.campo]"
-                  (ngModelChange)="panel.filtrar(f.campo, $event)"
-                  optionLabel="desc"
-                  optionValue="id"
-                  [filter]="f.opciones.length > 10"
-                  filterBy="desc"
-                  styleClass="w-full text-[11.5px]"
-                />
-              </div>
+      <!-- Focos de atención: solo aparecen si los datos reales cumplen su regla. -->
+      <section class="focos" aria-label="Focos de atención">
+        <div class="focos-cabecera">
+          <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+          <span class="focos-titulo">Focos de atención</span>
+          <span class="focos-ayuda">Toca un foco para abrir su detalle</span>
+        </div>
+        @if (!focosListos()) {
+          <app-list-skeleton [rows]="[1]" [cols]="[1, 2, 3, 4]" />
+        } @else if (focos().length === 0) {
+          <p class="focos-vacio">Sin focos de atención: los indicadores del mes están en rango.</p>
+        } @else {
+          <div class="focos-grilla">
+            @for (f of focos(); track f.dominio) {
+              <button type="button" class="foco" (click)="abrir(f.dominio)">
+                <span class="foco-titulo" [class]="claseTono(f.tono)">{{ f.titulo }}</span>
+                <span class="foco-texto">{{ f.texto }}</span>
+              </button>
             }
           </div>
         }
+      </section>
 
-        @let e = estadoActivo();
-        @if (e?.estado === 'error') {
-          <app-inline-error
-            [titulo]="'No se pudo cargar ' + reporte.nombre"
-            detalle="Reintenta la consulta en unos segundos."
-            (reintentar)="panel.reintentar(reporte.codigo)"
-          />
-        } @else if (!e || e.estado === 'cargando') {
-          <app-list-skeleton />
-        } @else if (e.estado === 'listo') {
-          @if (vacio(e.resultado)) {
-            <app-empty-state
-              titulo="Sin resultados"
-              descripcion="Este asesor no tiene datos en este reporte, o los datos podrían seguir procesándose."
-            />
-          } @else {
-            <!-- En "Cartera y clientes" las tablas van de a dos por fila (en pantallas anchas). -->
-            <div class="contenido-reporte" [class.contenido-reporte--dos-columnas]="dosColumnas()">
-              @if (e.resultado.kpiOperaciones || e.resultado.kpiMonto) {
-                <div class="kpis">
-                  @for (k of kpisDesembolso(); track k.etiqueta) {
-                    <div class="kpi" [class]="claseSemaforo(k.semaforo)">
-                      <span class="kpi-etiqueta">{{ k.etiqueta }}</span>
-                      <span class="kpi-valor">{{ k.valor }}</span>
-                      @if (k.semaforo !== null) {
-                        <span class="kpi-pie"><i [class]="iconoSemaforo(k.semaforo)" aria-hidden="true"></i> {{ textoSemaforo(k.semaforo) }}</span>
-                      }
-                    </div>
-                  }
-                </div>
+      <!-- Una tarjeta por dominio; toda la tarjeta abre su detalle. -->
+      <section class="tarjetas" aria-label="Dominios">
+        @for (t of tarjetas(); track t.dominio.id) {
+          <article class="tarjeta" [attr.aria-label]="t.dominio.nombre">
+            <button type="button" class="tarjeta-cabecera" (click)="abrir(t.dominio.id)">
+              <span class="tarjeta-icono" [class.tarjeta-icono--alerta]="t.dominio.alerta"><i [class]="t.dominio.icono" aria-hidden="true"></i></span>
+              <span class="tarjeta-titulo">{{ t.dominio.nombre }}</span>
+              <span class="tarjeta-enlace">Ver detalle →</span>
+            </button>
+
+            @switch (t.estado) {
+              @case ('cargando') {
+                <app-list-skeleton [rows]="[1, 2, 3]" [cols]="[1, 2]" />
               }
+              @case ('error') {
+                <app-inline-error [titulo]="'No se pudo cargar ' + t.dominio.nombre" (reintentar)="reintentarTarjeta(t.dominio.id)" />
+              }
+              @case ('vacio') {
+                <app-empty-state titulo="Sin datos" descripcion="Este asesor no tiene datos en este reporte todavía." />
+              }
+              @default {
+                <button type="button" class="tarjeta-cuerpo" (click)="abrir(t.dominio.id)" [attr.aria-label]="'Ver detalle de ' + t.dominio.nombre">
+                  @if (t.resumen.destacado; as d) {
+                    <span class="destacado"><strong>{{ d.valor }}</strong><span>{{ d.texto }}</span></span>
+                  }
+                  @if (t.resumen.barras.length) {
+                    <span class="barras">
+                      @if (t.resumen.tituloBarras) {
+                        <span class="barras-titulo">{{ t.resumen.tituloBarras }}</span>
+                      }
+                      @for (b of t.resumen.barras; track b.etiqueta) {
+                        <span class="barra">
+                          <span class="barra-etiqueta">{{ b.etiqueta }}</span>
+                          <span class="barra-pista">
+                            <span class="barra-relleno" [class]="claseTono(b.tono)" [style.width.%]="b.porcentaje"></span>
+                            @if (b.marca !== null && b.marca !== undefined) {
+                              <span class="barra-marca" [style.left.%]="b.marca" aria-hidden="true"></span>
+                            }
+                          </span>
+                          <span class="barra-valor" [class.barra-valor--fuerte]="b.tono !== 'referencia'">{{ b.valor }}</span>
+                        </span>
+                      }
+                      @if (t.resumen.notaBarras) {
+                        <span class="barras-nota"><span class="barras-nota-marca" aria-hidden="true"></span>{{ t.resumen.notaBarras }}</span>
+                      }
+                    </span>
+                  }
+                  @if (t.resumen.lista.length) {
+                    <span class="lista">
+                      @for (m of t.resumen.lista; track m.etiqueta) {
+                        <span class="lista-fila">
+                          <span class="lista-etiqueta">{{ m.etiqueta }}</span>
+                          <span class="lista-valor">{{ m.valor }}</span>
+                          <span class="lista-detalle" [class]="claseTono(m.tono)">{{ m.detalle ?? '' }}</span>
+                        </span>
+                      }
+                    </span>
+                  }
+                  @if (t.resumen.pie.length) {
+                    <span class="pie">
+                      @for (m of t.resumen.pie; track m.etiqueta) {
+                        <span class="pie-metrica">
+                          <span class="pie-etiqueta">{{ m.etiqueta }}</span>
+                          <span class="pie-valor">{{ m.valor }}</span>
+                          @if (m.detalle) {
+                            <span class="pie-detalle" [class]="claseTono(m.tono)">{{ m.detalle }}</span>
+                          }
+                        </span>
+                      }
+                    </span>
+                  }
+                </button>
+              }
+            }
+          </article>
+        }
+      </section>
+    </div>
+  }
+</app-window-panel>
+
+<!-- Detalle de un dominio: indicadores, filtros y las tablas y gráficos completos de sus reportes. -->
+<p-dialog
+  [visible]="!!abierto()"
+  (visibleChange)="$event ? null : cerrar()"
+  [modal]="true"
+  [dismissableMask]="true"
+  [draggable]="false"
+  [resizable]="false"
+  appendTo="body"
+  [header]="dominioAbierto()?.nombre ?? ''"
+  styleClass="panel-detalle"
+  [style]="{ width: '96vw', maxWidth: '1220px' }"
+  [contentStyle]="{ padding: '0' }"
+>
+  @if (dominioAbierto(); as d) {
+    <div class="detalle-banda">
+      <div class="detalle-banda-texto">
+        <span class="detalle-antetitulo">Detalle · {{ panel.asesor()?.nombre }}</span>
+        <span class="detalle-titulo">{{ d.nombre }}</span>
+        <span class="detalle-subtitulo">{{ d.subtitulo }}</span>
+      </div>
+      <nav class="mis-chips-nav detalle-pestanas" aria-label="Otras vistas" role="tablist">
+        @for (o of dominios; track o.id) {
+          <button
+            type="button"
+            role="tab"
+            class="detalle-pestana"
+            [class.activa]="o.id === d.id"
+            [attr.aria-selected]="o.id === d.id"
+            (click)="abrir(o.id)"
+          >
+            {{ o.pestana }}
+          </button>
+        }
+      </nav>
+    </div>
+
+    <div class="detalle-cuerpo">
+      @if (resumenAbierto(); as resumen) {
+        <div class="indicadores">
+          @for (k of resumen.indicadores; track k.etiqueta) {
+            <div class="indicador">
+              <span class="indicador-etiqueta">{{ k.etiqueta }}</span>
+              <span class="indicador-valor">{{ k.valor }}</span>
+              @if (k.detalle) {
+                <span class="indicador-detalle" [class]="claseTono(k.tono)" [class.indicador-detalle--chip]="k.tono !== 'neutro'">{{ k.detalle }}</span>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      @if (conFiltros()) {
+        <div class="filtros-reporte" role="group" aria-label="Filtros de efectividades">
+          @for (f of filtrosEfectividades; track f.campo) {
+            <div class="filtro">
+              <label [for]="'filtro-' + f.campo">{{ f.etiqueta }}</label>
+              <p-select
+                [inputId]="'filtro-' + f.campo"
+                appendTo="body"
+                [options]="f.opciones"
+                [ngModel]="panel.filtros()[f.campo]"
+                (ngModelChange)="panel.filtrar(f.campo, $event)"
+                optionLabel="desc"
+                optionValue="id"
+                [filter]="f.opciones.length > 10"
+                filterBy="desc"
+                styleClass="w-full text-[11.5px]"
+              />
+            </div>
+          }
+        </div>
+      }
+
+      @for (reporte of reportesAbiertos(); track reporte.codigo) {
+        @let e = estado(reporte.codigo);
+        <section class="detalle-reporte" [attr.aria-label]="reporte.nombre">
+          @if (e?.estado === 'error') {
+            <app-inline-error
+              [titulo]="'No se pudo cargar ' + reporte.nombre"
+              detalle="Reintenta la consulta en unos segundos."
+              (reintentar)="panel.reintentar(reporte.codigo)"
+            />
+          } @else if (!e || e.estado === 'cargando') {
+            <app-list-skeleton />
+          } @else if (e.estado === 'listo') {
+            @if (vacio(e.resultado)) {
+              <app-empty-state
+                [titulo]="reporte.nombre + ': sin resultados'"
+                descripcion="Este asesor no tiene datos en este reporte, o los datos podrían seguir procesándose."
+              />
+            } @else {
               @for (grafico of e.resultado.graficos ?? []; track $index) {
                 <div class="tarjeta-grafico">
                   <app-grafico-mixto [datos]="grafico" [tipo]="reporte.tipoGrafico ?? 'auto'" [fondoTransparente]="true" />
@@ -159,10 +253,10 @@
               @for (b of bloques(reporte, e.resultado); track b.tabla) {
                 <app-bloque-panel [tabla]="e.resultado[b.tabla]!" [titulo]="b.titulo ?? ''" [chip]="b.chip ?? ''" [nota]="b.nota ?? []" [ajustarAncho]="true" [cargando]="esPendiente(e.resultado[b.tabla])" />
               }
-            </div>
+            }
           }
-        }
-      </section>
-    }
+        </section>
+      }
+    </div>
   }
-</app-window-panel>
+</p-dialog>

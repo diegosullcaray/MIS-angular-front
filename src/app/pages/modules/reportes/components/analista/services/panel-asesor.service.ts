@@ -5,7 +5,7 @@ import { AsesorSecService } from './asesor-sec.service';
 import { PanelAsesorConsultasService } from './panel-asesor-consultas.service';
 import { FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO, type FiltrosMonitorEfectividades } from '../models/monitor-efectividades.model';
 import type { AsesorSec } from '../models/asesor-sec.model';
-import type { EstadoConsultaPanel, VistaPanelAsesor } from '../models/panel-asesor.model';
+import type { EstadoConsultaPanel } from '../models/panel-asesor.model';
 import { CODIGO_EFECTIVIDADES, REPORTES_ASESOR } from '../constantes/panel-asesor.constantes';
 
 const ERROR_CONSULTA = 'No se pudo cargar el reporte. Reintenta la consulta.';
@@ -13,9 +13,10 @@ const ERROR_CONSULTA = 'No se pudo cargar el reporte. Reintenta la consulta.';
 /**
  * Estado del panel unificado del asesor.
  *
- * Cada reporte se consulta una sola vez por asesor (y por filtros, en efectividades):
- * cambiar de pestaña no vuelve a pedir lo ya traído. Cambiar de asesor, de usuario o
- * pulsar "Actualizar" cancela lo pendiente y descarta lo anterior.
+ * El tablero resume todos los reportes, así que al elegir asesor se piden todos a la vez; cada
+ * uno llega por su cuenta y su tarjeta se completa sola. Se consulta una sola vez por asesor (y
+ * por filtros, en efectividades): abrir un detalle no vuelve a pedir lo ya traído. Cambiar de
+ * asesor, de usuario o pulsar "Actualizar" cancela lo pendiente y descarta lo anterior.
  */
 @Injectable()
 export class PanelAsesorService {
@@ -27,8 +28,6 @@ export class PanelAsesorService {
   private readonly revisionLista = signal(0);
   private readonly _asesores = signal<AsesorSec[]>([]);
   private readonly _asesor = signal<AsesorSec | null>(null);
-  /** Arranca en el reporte más consultado (`REPORTES_ASESOR` va por tráfico). */
-  private readonly _vista = signal<VistaPanelAsesor>(REPORTES_ASESOR[0].codigo);
   private readonly _filtros = signal<FiltrosMonitorEfectividades>({ ...FILTROS_MONITOR_EFECTIVIDADES_POR_DEFECTO });
   private readonly _estados = signal<Readonly<Record<string, EstadoConsultaPanel>>>({});
   private readonly _errorLista = signal<string | null>(null);
@@ -39,7 +38,6 @@ export class PanelAsesorService {
 
   readonly asesores = this._asesores.asReadonly();
   readonly asesor = this._asesor.asReadonly();
-  readonly vista = this._vista.asReadonly();
   readonly filtros = this._filtros.asReadonly();
   readonly errorLista = this._errorLista.asReadonly();
   readonly cargandoLista = this._cargandoLista.asReadonly();
@@ -81,7 +79,6 @@ export class PanelAsesorService {
     effect(() => {
       // Identidad, asesor y revisión definen el contexto: si cambia, lo anterior ya no vale.
       const contexto = [this.shell.usuarioActivo(), this._asesor(), this.revision()];
-      const vista = this._vista();
       this._filtros();
       untracked(() => {
         if (contexto.some((v, i) => v !== this.contexto[i])) {
@@ -90,7 +87,7 @@ export class PanelAsesorService {
           this._estados.set({});
         }
         if (!this._asesor()) return;
-        this.asegurar(vista);
+        for (const reporte of REPORTES_ASESOR) this.asegurar(reporte.codigo);
       });
     });
   }
@@ -103,10 +100,6 @@ export class PanelAsesorService {
   seleccionarAsesor(asesor: AsesorSec | null): void {
     if (this.propio()) return;
     this._asesor.set(this.asesores().find((a) => a.dni === asesor?.dni) ?? null);
-  }
-
-  seleccionarVista(vista: VistaPanelAsesor): void {
-    if (REPORTES_ASESOR.some((r) => r.codigo === vista)) this._vista.set(vista);
   }
 
   filtrar(campo: keyof FiltrosMonitorEfectividades, valor: string): void {
