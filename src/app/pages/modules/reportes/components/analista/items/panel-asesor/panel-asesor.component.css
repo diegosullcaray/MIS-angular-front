@@ -9,11 +9,13 @@
   min-width: 0;
   color: var(--mis-text-primary);
 }
-button {
+/* Solo los botones propios del tablero: los chips del diálogo son globales (`.mis-chip`) y un
+   reinicio sin acotar les ganaba por la especificidad del encapsulado. */
+.tablero button {
   font: inherit;
   color: inherit;
 }
-button:focus-visible {
+.tablero button:focus-visible {
   outline: none;
   box-shadow: var(--mis-shadow-focus);
 }
@@ -345,41 +347,9 @@ button:focus-visible {
   background: color-mix(in srgb, var(--mis-primary) 40%, var(--mis-surface));
 }
 
-/* ---------- Diálogo de detalle ---------- */
-/* Navegación entre dominios: fija arriba del contenido del diálogo, como chips del sistema. */
-.detalle-navegacion {
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  padding: 10px 20px;
-  border-bottom: 1px solid var(--mis-border);
-  background: var(--mis-surface);
-}
-.detalle-pestana {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid var(--mis-border-control);
-  border-radius: var(--mis-radius-full);
-  background: var(--mis-surface);
-  color: var(--mis-text-secondary);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: border-color var(--mis-transition-fast), color var(--mis-transition-fast);
-}
-.detalle-pestana:hover {
-  border-color: var(--mis-primary);
-  color: var(--mis-text-primary);
-}
-.detalle-pestana.activa {
-  border-color: var(--mis-primary);
-  background: var(--mis-primary);
-  color: var(--mis-text-on-primary);
-}
+/* ---------- Diálogo de detalle ----------
+   La barra del diálogo es la navegación (chips globales `.mis-chip`, ver chips-nav.css y
+   `.mis-dialog--navegacion` en dialogo.css); los KPI usan el material global `.kpi-card`. */
 .detalle-cuerpo {
   display: flex;
   flex-direction: column;
@@ -390,45 +360,66 @@ button:focus-visible {
 .indicadores {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 .indicador {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   min-width: 0;
-  padding: 12px 14px;
-  border: 1px solid var(--mis-border);
-  border-radius: var(--mis-radius-md);
-  background: var(--mis-surface);
+  padding: 14px 16px;
+}
+.indicador-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 .indicador-etiqueta {
-  font-size: 12px;
-  color: var(--mis-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--mis-text-tertiary);
+}
+.indicador-icono {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--mis-radius-md);
+  background: var(--mis-primary-light);
+  color: var(--mis-primary-text);
+  font-size: 13px;
+}
+.indicador-icono--alerta {
+  background: var(--mis-danger-light);
+  color: var(--mis-danger);
 }
 .indicador-valor {
   overflow-wrap: anywhere;
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 800;
   line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--mis-primary-text);
 }
-.indicador-detalle {
-  font-size: 12px;
-}
-.indicador-detalle--chip {
+.indicador-pie {
   align-self: flex-start;
-  padding: 3px 10px;
+  padding: 2px 10px;
   border-radius: var(--mis-radius-full);
+  font-size: 11px;
   font-weight: 600;
 }
-.indicador-detalle--chip.tono-bien {
-  background: var(--mis-success-light);
-}
-.indicador-detalle--chip.tono-revisar {
+.indicador-pie--revisar {
+  border: 1px solid color-mix(in srgb, var(--mis-warning) 25%, transparent);
   background: var(--mis-warning-light);
+  color: var(--mis-warning);
 }
-.indicador-detalle--chip.tono-mal {
-  background: var(--mis-danger-light);
+.indicador-nota {
+  font-size: 11px;
+  color: var(--mis-text-secondary);
 }
 .detalle-reporte {
   display: flex;
@@ -465,9 +456,8 @@ button:focus-visible {
     padding: 18px;
   }
   .indicador-valor {
-    font-size: 18px;
+    font-size: 19px;
   }
-  .detalle-navegacion,
   .detalle-cuerpo {
     padding-inline: 12px;
   }

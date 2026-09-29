@@ -97,13 +97,9 @@ export interface PestanaReporte {
                         <button
                           type="button"
                           role="tab"
-                          class="px-3 py-1.5 rounded-full text-[12px] font-semibold transition-colors border"
+                          class="mis-chip"
                           [attr.aria-selected]="bloqueSeleccionado(tab.id) === $index"
-                          [class]="
-                            bloqueSeleccionado(tab.id) === $index
-                              ? 'bg-[var(--mis-primary)] text-[var(--mis-text-on-primary)] border-[var(--mis-primary)]'
-                              : 'bg-[var(--mis-surface)] text-[var(--mis-text-secondary)] border-[var(--mis-border)] hover:border-[var(--mis-primary)]'
-                          "
+                          [class.mis-chip--activo]="bloqueSeleccionado(tab.id) === $index"
                           (click)="seleccionarBloque(tab.id, $index)"
                         >
                           {{ bloque.titulo || 'Bloque ' + ($index + 1) }}

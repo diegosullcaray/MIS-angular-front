@@ -30,3 +30,45 @@
     scroll-snap-align: start;
   }
 }
+
+/* Chip de navegación: uno por opción dentro de `.mis-chips-nav`. El activo va
+   relleno con el color de marca; el resto, sobre la superficie con borde. Es
+   el mismo chip en todos los reportes y diálogos (antes cada pantalla repetía
+   sus clases). */
+.mis-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--mis-border);
+  border-radius: var(--mis-radius-full);
+  background: var(--mis-surface);
+  color: var(--mis-text-secondary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--mis-transition-fast),
+    border-color var(--mis-transition-fast),
+    color var(--mis-transition-fast);
+}
+
+.mis-chip:hover {
+  border-color: var(--mis-primary);
+  color: var(--mis-text-primary);
+}
+
+.mis-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--mis-shadow-focus);
+}
+
+.mis-chip--activo,
+.mis-chip--activo:hover {
+  border-color: var(--mis-primary);
+  background: var(--mis-primary);
+  color: var(--mis-text-on-primary);
+}

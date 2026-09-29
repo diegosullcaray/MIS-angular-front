@@ -75,10 +75,11 @@ describe('PanelAsesorComponent', () => {
     expect(consultar).not.toHaveBeenCalled();
   });
 
-  it('sin encabezado propio: el asesor y la fecha de corte del monitor van en el subtítulo de la ventana', () => {
+  it('sin título ni subtítulos: ni "Impacto del mes" ni el asesor con la fecha de corte', () => {
     const el: HTMLElement = crear().nativeElement;
-    expect(el.querySelector('.mis-window-bar')?.textContent).toContain('Ana Torres · Corte al 22/09/2026');
     expect(el.textContent).not.toContain('Impacto del mes');
+    expect(el.textContent).not.toContain('Corte al');
+    expect(el.querySelector('.mis-window-bar')?.textContent).not.toContain('Ana Torres');
     expect(el.textContent).not.toContain('Toca un foco');
   });
 
@@ -111,17 +112,18 @@ describe('PanelAsesorComponent', () => {
     (fixture.nativeElement.querySelector('.tarjeta[aria-label="Cartera"] .tarjeta-cabecera') as HTMLButtonElement).click();
     refrescar(fixture);
 
-    const dialogo = document.querySelector('.detalle-navegacion')!.closest('.p-dialog')!;
-    expect(dialogo.querySelector('.p-dialog-title')?.textContent).toContain('Cartera');
-    expect([...dialogo.querySelectorAll('.detalle-pestana')].map((p) => p.textContent!.trim())).toEqual([
+    // La barra del diálogo es la navegación: chips globales, con el activo relleno.
+    const dialogo = document.querySelector('.p-dialog.mis-dialog--navegacion')!;
+    expect(dialogo.querySelector('.p-dialog-header .mis-chip--activo')?.textContent).toContain('Cartera');
+    expect([...dialogo.querySelectorAll('.p-dialog-header .mis-chip')].map((p) => p.textContent!.trim())).toEqual([
       'Cartera', 'Clientes', 'Colocación', 'Tasas', 'Seguros', 'Mora',
     ]);
-    expect(dialogo.querySelectorAll('.indicador')).toHaveLength(4);
+    expect(dialogo.querySelectorAll('.kpi-card.indicador')).toHaveLength(4);
     expect(dialogo.querySelector('app-bloque-panel')).not.toBeNull();
 
-    (dialogo.querySelectorAll('.detalle-pestana')[4] as HTMLButtonElement).click();
+    (dialogo.querySelectorAll('.p-dialog-header .mis-chip')[4] as HTMLButtonElement).click();
     refrescar(fixture);
-    expect(document.querySelector('.p-dialog-title')?.textContent).toContain('Seguros');
+    expect(document.querySelector('.p-dialog-header .mis-chip--activo')?.textContent).toContain('Seguros');
   });
 
   it('el detalle de Mora muestra los 6 filtros de efectividades del legado', () => {

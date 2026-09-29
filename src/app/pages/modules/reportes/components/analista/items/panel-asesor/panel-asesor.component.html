@@ -1,6 +1,5 @@
 <app-window-panel
   titulo="Panel del asesor"
-  [subtitulo]="subtitulo()"
   [conFiltros]="!panel.propio()"
   [filtrosAbiertos]="!panel.asesor()"
   [actualizando]="panel.consultando()"
@@ -139,7 +138,8 @@
   }
 </app-window-panel>
 
-<!-- Detalle de un dominio: indicadores, filtros y las tablas y gráficos completos de sus reportes. -->
+<!-- Detalle de un dominio: la barra del diálogo es la navegación entre dominios (chips globales) y
+     el cuerpo, sus KPI, filtros y las tablas y gráficos completos de sus reportes. -->
 <p-dialog
   [visible]="!!abierto()"
   (visibleChange)="$event ? null : cerrar()"
@@ -150,45 +150,60 @@
   [draggable]="false"
   [resizable]="false"
   appendTo="body"
-  [header]="dominioAbierto()?.nombre ?? ''"
+  styleClass="mis-dialog--navegacion"
   [style]="{ width: '96vw', maxWidth: '1220px' }"
   [contentStyle]="{ padding: '0' }"
 >
-  @if (dominioAbierto(); as d) {
-    <!-- Navegación entre dominios: fija arriba del contenido; en el teléfono se desliza de costado. -->
-    <nav class="detalle-navegacion" aria-label="Dominios del panel">
-      <div class="mis-chips-nav" role="tablist" #filaPestanas>
-        @for (o of dominios; track o.id) {
-          <button
-            type="button"
-            role="tab"
-            class="detalle-pestana"
-            [class.activa]="o.id === d.id"
-            [attr.aria-selected]="o.id === d.id"
-            (click)="abrir(o.id, cuerpo)"
-          >
-            <i [class]="o.icono" aria-hidden="true"></i>
-            {{ o.pestana }}
-          </button>
-        }
-      </div>
+  <ng-template pTemplate="header" let-ariaLabelledBy="ariaLabelledBy">
+    <div class="mis-window-lights mis-dialog-lights" role="group" aria-label="Controles del diálogo">
+      <button type="button" class="mis-window-light mis-window-light--cerrar" data-glifo="✕" (click)="cerrar()" aria-label="Cerrar detalle"></button>
+      <span class="mis-window-light mis-window-light--apagada" aria-hidden="true"></span>
+      <span class="mis-window-light mis-window-light--apagada" aria-hidden="true"></span>
+    </div>
+    <nav class="mis-chips-nav" role="tablist" aria-label="Dominios del panel" #filaPestanas>
+      <span [id]="ariaLabelledBy" class="sr-only">{{ dominioAbierto()?.nombre }}</span>
+      @for (o of dominios; track o.id) {
+        <button
+          type="button"
+          role="tab"
+          class="mis-chip"
+          [class.mis-chip--activo]="o.id === abierto()"
+          [attr.aria-selected]="o.id === abierto()"
+          (click)="abrir(o.id)"
+        >
+          <i [class]="o.icono" aria-hidden="true"></i>
+          {{ o.pestana }}
+        </button>
+      }
     </nav>
+  </ng-template>
 
-    <div class="detalle-cuerpo" #cuerpo>
+  @if (dominioAbierto(); as d) {
+    <div class="detalle-cuerpo">
       @if (resumenAbierto(); as resumen) {
         <div class="indicadores">
           @for (k of resumen.indicadores; track k.etiqueta) {
-            <div class="indicador">
-              <span class="indicador-etiqueta">{{ k.etiqueta }}</span>
+            <div class="kpi-card indicador">
+              <div class="indicador-cabecera">
+                <span class="indicador-etiqueta">{{ k.etiqueta }}</span>
+                <span class="indicador-icono" [class.indicador-icono--alerta]="d.alerta"><i [class]="d.icono" aria-hidden="true"></i></span>
+              </div>
               <span class="indicador-valor">{{ k.valor }}</span>
               @if (k.detalle) {
-                <span class="indicador-detalle" [class]="claseTono(k.tono)" [class.indicador-detalle--chip]="k.tono !== 'neutro'">{{ k.detalle }}</span>
+                @if (k.tono === 'bien') {
+                  <span class="indicador-pie trend-badge-positive">{{ k.detalle }}</span>
+                } @else if (k.tono === 'mal') {
+                  <span class="indicador-pie trend-badge-negative">{{ k.detalle }}</span>
+                } @else if (k.tono === 'revisar') {
+                  <span class="indicador-pie indicador-pie--revisar">{{ k.detalle }}</span>
+                } @else {
+                  <span class="indicador-nota">{{ k.detalle }}</span>
+                }
               }
             </div>
           }
         </div>
       }
-
       @if (conFiltros()) {
         <div class="filtros-reporte" role="group" aria-label="Filtros de efectividades">
           @for (f of filtrosEfectividades; track f.campo) {

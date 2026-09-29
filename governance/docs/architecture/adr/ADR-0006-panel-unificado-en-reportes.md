@@ -50,8 +50,8 @@ A pedido de negocio (tareas de gobierno de septiembre), el panel se acotó:
 A pedido de negocio (maqueta entregada en las tareas de gobierno), el panel pasa de pestañas a un
 tablero. Reemplaza la navegación por pestañas y chips de las enmiendas anteriores:
 
-- Sin encabezado propio en el cuerpo: el asesor y la fecha de corte (la del monitor de desembolsos) van en el
-  subtítulo de la ventana. Los cuatro KPI titulares de la maqueta quedan fuera por decisión de negocio.
+- Sin título ni subtítulos: ni "Impacto del mes" ni el asesor con la fecha de corte; la ventana solo lleva su
+  nombre. Los cuatro KPI titulares de la maqueta quedan fuera por decisión de negocio.
 - **Focos de atención**: avisos que solo aparecen si los datos cumplen su regla (monto muy por detrás de
   los días hábiles, efectividad del tramo 1–30 bajo 50 %, TAPP del mes bajo la mínima, recurrentes que bajan).
 - Seis tarjetas por dominio (Cartera, Clientes, Colocación, Tasas, Seguros, Recuperación y mora). Sus cifras se
@@ -59,9 +59,11 @@ tablero. Reemplaza la navegación por pestañas y chips de las enmiendas anterio
   (`utils/panel-resumen.util.ts`); una fila que no llega se muestra "—" y nunca se reemplaza por otra.
 - Al elegir asesor se piden los 7 reportes a la vez; cada tarjeta se completa por su cuenta, con esqueleto,
   error con reintento o vacío.
-- "Ver detalle" abre un `p-dialog` con el cromo del sistema (sin banda propia): una fila de chips fija arriba
-  para pasar de un dominio a otro —en el teléfono se desliza y centra la pestaña activa, que recibe el foco—,
-  cuatro indicadores, los filtros de efectividades (en Mora) y las tablas y gráficos completos de sus reportes.
+- "Ver detalle" abre un `p-dialog` (`.mis-dialog--navegacion`) cuya barra es la navegación: luces del sistema y
+  los chips globales `.mis-chip` / `.mis-chip--activo` (`chips-nav.css`) para pasar de un dominio a otro —en el
+  teléfono se deslizan y centran el activo, que recibe el foco—. El cuerpo lleva cuatro KPI con el material
+  global `.kpi-card` y las insignias `trend-badge-*`, los filtros de efectividades (en Mora) y las tablas y
+  gráficos completos de sus reportes.
 
 ## Evidencia
 

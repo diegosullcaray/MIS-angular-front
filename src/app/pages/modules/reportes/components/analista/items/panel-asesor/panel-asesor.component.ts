@@ -52,7 +52,7 @@ const FILTROS_EFECTIVIDADES: readonly FiltroEfectividades[] = [
  * contenedor) y, si se pide, le da el foco sin que el navegador vuelva a desplazar la fila.
  */
 function centrarActiva(fila: HTMLElement, enfocar = false): void {
-  const activa = fila.querySelector<HTMLElement>('.activa');
+  const activa = fila.querySelector<HTMLElement>('.mis-chip--activo');
   if (!activa) return;
   fila.scrollLeft = activa.offsetLeft - fila.offsetLeft - (fila.clientWidth - activa.offsetWidth) / 2;
   if (enfocar) activa.focus({ preventScroll: true });
@@ -99,19 +99,11 @@ export class PanelAsesorComponent {
   protected readonly codigoEfectividades = CODIGO_EFECTIVIDADES;
 
   /** Fecha de corte: la que informa el monitor de desembolsos, o hoy si aún no llegó. */
-  protected readonly corte = computed(() => {
+  private readonly corte = computed(() => {
     const e = this.panel.estado('L_MONI_DESE_SEC');
     const fecha = e?.estado === 'listo' ? e.resultado.kpiOperaciones?.fecha : undefined;
     const m = fecha ? /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(fecha) : null;
     return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : new Date();
-  });
-
-  /** Subtítulo de la ventana: el asesor y la fecha de corte, sin encabezado propio en el cuerpo. */
-  protected readonly subtitulo = computed(() => {
-    const asesor = this.panel.asesor();
-    if (!asesor) return 'Reportes consolidados';
-    const corte = this.corte().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    return `${asesor.nombre} · Corte al ${corte}`;
   });
 
   /** Resultados ya recibidos, por `SCODSEC`. */
@@ -177,9 +169,9 @@ export class PanelAsesorComponent {
   }
 
   /** Abre (o cambia) el dominio del detalle; al cambiar desde el diálogo vuelve al inicio del contenido. */
-  protected abrir(dominio: DominioPanel, cuerpo?: HTMLElement): void {
+  protected abrir(dominio: DominioPanel): void {
     this.abierto.set(dominio);
-    cuerpo?.closest('.p-dialog-content')?.scrollTo?.({ top: 0 });
+    this.filaPestanas()?.nativeElement.closest('.p-dialog')?.querySelector('.p-dialog-content')?.scrollTo?.({ top: 0 });
   }
 
   protected cerrar(): void {

@@ -80,9 +80,9 @@ async function preparar(page: Page, ancho: number, alto: number) {
 test.describe('Panel del asesor · tablero', () => {
   test('tarjetas y focos con las cifras de las tablas; sin los 4 KPI titulares', async ({ page }) => {
     await preparar(page, 1440, 1000);
-    // Sin encabezado propio: el asesor y el corte van en la barra de la ventana.
-    await expect(page.locator('.mis-window-bar')).toContainText('Corte al 29/09/2026');
+    // Sin título ni subtítulos: ni "Impacto del mes" ni el asesor con la fecha de corte.
     await expect(page.getByText('Impacto del mes')).toHaveCount(0);
+    await expect(page.getByText('Corte al')).toHaveCount(0);
     await expect(page.locator('[aria-label="Indicadores titulares"]')).toHaveCount(0);
 
     await expect(page.locator('.tarjeta[aria-label="Cartera"]')).toContainText('3,254,743');
@@ -96,12 +96,12 @@ test.describe('Panel del asesor · tablero', () => {
     await preparar(page, 1440, 1000);
     await page.locator('.foco', { hasText: 'Tasas' }).click();
     const dialogo = page.getByRole('dialog');
-    await expect(dialogo.locator('.p-dialog-title')).toHaveText('Autonomía de tasas');
-    await expect(dialogo.locator('.indicador')).toHaveCount(4);
+    await expect(dialogo.getByRole('tab', { selected: true })).toHaveText('Tasas');
+    await expect(dialogo.locator('.kpi-card')).toHaveCount(4);
     await expect(dialogo).toContainText('Resumen Gestión de Tasas');
 
     await dialogo.getByRole('tab', { name: 'Mora' }).click();
-    await expect(dialogo.locator('.p-dialog-title')).toHaveText('Recuperación y mora');
+    await expect(dialogo.getByRole('tab', { selected: true })).toHaveText('Mora');
     await expect(dialogo.locator('.filtros-reporte p-select')).toHaveCount(6);
   });
 
