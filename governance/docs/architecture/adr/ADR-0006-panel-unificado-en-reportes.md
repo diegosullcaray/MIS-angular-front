@@ -59,9 +59,9 @@ tablero. Reemplaza la navegación por pestañas y chips de las enmiendas anterio
   (`utils/panel-resumen.util.ts`); una fila que no llega se muestra "—" y nunca se reemplaza por otra.
 - Al elegir asesor se piden los 7 reportes a la vez; cada tarjeta se completa por su cuenta, con esqueleto,
   error con reintento o vacío.
-- "Ver detalle" abre un `p-dialog` (`.mis-dialog--navegacion`) cuya barra es la navegación: luces del sistema y
-  los chips globales `.mis-chip` / `.mis-chip--activo` (`chips-nav.css`) para pasar de un dominio a otro —en el
-  teléfono se deslizan y centran el activo, que recibe el foco—. El cuerpo lleva cuatro KPI con el material
+- "Ver detalle" abre un `p-dialog` cuya barra solo lleva las luces del sistema y el nombre del dominio. El cuerpo
+  abre con los chips globales `.mis-chip` / `.mis-chip--activo` (`chips-nav.css`), fijos al desplazarse, para
+  pasar de un dominio a otro —en el teléfono se deslizan y centran el activo, que recibe el foco—. El cuerpo lleva cuatro KPI con el material
   global `.kpi-card` y las insignias `trend-badge-*`, los filtros de efectividades (en Mora) y las tablas y
   gráficos completos de sus reportes.
 

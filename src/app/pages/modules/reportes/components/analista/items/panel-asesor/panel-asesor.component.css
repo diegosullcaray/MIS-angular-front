@@ -348,8 +348,17 @@
 }
 
 /* ---------- Diálogo de detalle ----------
-   La barra del diálogo es la navegación (chips globales `.mis-chip`, ver chips-nav.css y
-   `.mis-dialog--navegacion` en dialogo.css); los KPI usan el material global `.kpi-card`. */
+   La barra del diálogo solo lleva el nombre del dominio; la navegación son los chips globales
+   (`.mis-chip`, ver chips-nav.css) al inicio del cuerpo, fijos al desplazarse. Los KPI usan el
+   material global `.kpi-card`. */
+.detalle-navegacion {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--mis-border);
+  background: var(--mis-panel-bg);
+}
 .detalle-cuerpo {
   display: flex;
   flex-direction: column;
@@ -458,6 +467,7 @@
   .indicador-valor {
     font-size: 19px;
   }
+  .detalle-navegacion,
   .detalle-cuerpo {
     padding-inline: 12px;
   }

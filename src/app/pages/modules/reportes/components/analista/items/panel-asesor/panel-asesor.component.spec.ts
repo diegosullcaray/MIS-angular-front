@@ -112,18 +112,21 @@ describe('PanelAsesorComponent', () => {
     (fixture.nativeElement.querySelector('.tarjeta[aria-label="Cartera"] .tarjeta-cabecera') as HTMLButtonElement).click();
     refrescar(fixture);
 
-    // La barra del diálogo es la navegación: chips globales, con el activo relleno.
-    const dialogo = document.querySelector('.p-dialog.mis-dialog--navegacion')!;
-    expect(dialogo.querySelector('.p-dialog-header .mis-chip--activo')?.textContent).toContain('Cartera');
-    expect([...dialogo.querySelectorAll('.p-dialog-header .mis-chip')].map((p) => p.textContent!.trim())).toEqual([
+    // La barra del diálogo solo lleva el nombre; los chips globales van en el cuerpo.
+    const dialogo = document.querySelector('.p-dialog')!;
+    expect(dialogo.querySelector('.p-dialog-header .p-dialog-title')?.textContent?.trim()).toBe('Cartera');
+    expect(dialogo.querySelector('.p-dialog-header .mis-chip')).toBeNull();
+    expect(dialogo.querySelector('.p-dialog-content .mis-chip--activo')?.textContent).toContain('Cartera');
+    expect([...dialogo.querySelectorAll('.p-dialog-content .mis-chip')].map((p) => p.textContent!.trim())).toEqual([
       'Cartera', 'Clientes', 'Colocación', 'Tasas', 'Seguros', 'Mora',
     ]);
     expect(dialogo.querySelectorAll('.kpi-card.indicador')).toHaveLength(4);
     expect(dialogo.querySelector('app-bloque-panel')).not.toBeNull();
 
-    (dialogo.querySelectorAll('.p-dialog-header .mis-chip')[4] as HTMLButtonElement).click();
+    (dialogo.querySelectorAll('.p-dialog-content .mis-chip')[4] as HTMLButtonElement).click();
     refrescar(fixture);
-    expect(document.querySelector('.p-dialog-header .mis-chip--activo')?.textContent).toContain('Seguros');
+    expect(document.querySelector('.p-dialog-content .mis-chip--activo')?.textContent).toContain('Seguros');
+    expect(document.querySelector('.p-dialog-header .p-dialog-title')?.textContent?.trim()).toBe('Seguros');
   });
 
   it('el detalle de Mora muestra los 6 filtros de efectividades del legado', () => {

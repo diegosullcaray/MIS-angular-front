@@ -268,16 +268,3 @@
 .p-dialog.mis-bienvenida-dialog .p-dialog-content {
   overflow: visible;
 }
-
-/* Diálogo cuya barra ES la navegación (chips de `.mis-chips-nav` en lugar del
-   título): en el teléfono la fila de chips ocupa todo lo que deja el semáforo
-   y se desliza de costado, en vez de desbordar la barra. */
-@media (max-width: 767px) {
-  .p-dialog.mis-dialog--navegacion .p-dialog-header {
-    grid-template-columns: auto minmax(0, 1fr) 0;
-  }
-
-  .p-dialog.mis-dialog--navegacion .p-dialog-header > .mis-chips-nav {
-    justify-self: stretch;
-  }
-}

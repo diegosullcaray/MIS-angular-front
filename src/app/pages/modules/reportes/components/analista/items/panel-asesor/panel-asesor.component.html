@@ -138,8 +138,8 @@
   }
 </app-window-panel>
 
-<!-- Detalle de un dominio: la barra del diálogo es la navegación entre dominios (chips globales) y
-     el cuerpo, sus KPI, filtros y las tablas y gráficos completos de sus reportes. -->
+<!-- Detalle de un dominio: la barra del diálogo solo lleva su nombre; el cuerpo abre con los chips
+     globales para pasar de un dominio a otro y sigue con sus KPI, filtros, tablas y gráficos. -->
 <p-dialog
   [visible]="!!abierto()"
   (visibleChange)="$event ? null : cerrar()"
@@ -150,7 +150,6 @@
   [draggable]="false"
   [resizable]="false"
   appendTo="body"
-  styleClass="mis-dialog--navegacion"
   [style]="{ width: '96vw', maxWidth: '1220px' }"
   [contentStyle]="{ padding: '0' }"
 >
@@ -160,8 +159,11 @@
       <span class="mis-window-light mis-window-light--apagada" aria-hidden="true"></span>
       <span class="mis-window-light mis-window-light--apagada" aria-hidden="true"></span>
     </div>
-    <nav class="mis-chips-nav" role="tablist" aria-label="Dominios del panel" #filaPestanas>
-      <span [id]="ariaLabelledBy" class="sr-only">{{ dominioAbierto()?.nombre }}</span>
+    <span [id]="ariaLabelledBy" class="p-dialog-title">{{ dominioAbierto()?.nombre }}</span>
+  </ng-template>
+
+  @if (dominioAbierto(); as d) {
+    <nav class="mis-chips-nav detalle-navegacion" role="tablist" aria-label="Dominios del panel" #filaPestanas>
       @for (o of dominios; track o.id) {
         <button
           type="button"
@@ -176,9 +178,6 @@
         </button>
       }
     </nav>
-  </ng-template>
-
-  @if (dominioAbierto(); as d) {
     <div class="detalle-cuerpo">
       @if (resumenAbierto(); as resumen) {
         <div class="indicadores">
