@@ -27,6 +27,7 @@
           >Fecha compromiso</span
         >
         <p-datepicker
+          appendTo="body"
           [ngModel]="fechaCompromiso()"
           (ngModelChange)="fechaCompromiso.set($event)"
           dateFormat="dd/mm/yy"

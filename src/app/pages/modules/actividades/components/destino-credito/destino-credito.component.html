@@ -8,6 +8,7 @@
 >
   <div ventana-filtros class="max-w-xl">
     <p-select
+      appendTo="body"
       [options]="asesores()"
       [ngModel]="asesorSeleccionado()"
       (onChange)="asesorSeleccionado.set($event.value)"

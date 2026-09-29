@@ -21,6 +21,7 @@
       <div class="flex flex-col gap-1">
         <label class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">Fecha</label>
         <p-datepicker
+          appendTo="body"
           [(ngModel)]="fechaCalendario"
           (ngModelChange)="onFechaCalendarioChange($event)"
           dateFormat="yy-mm-dd"
