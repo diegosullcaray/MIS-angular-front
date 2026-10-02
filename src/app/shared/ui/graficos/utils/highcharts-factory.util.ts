@@ -16,11 +16,7 @@ import type {
   PorcionGrafico,
   SerieGrafico,
 } from '../models/grafico-comun.model';
-import {
-  PALETA_SERIES,
-  esPorcentaje,
-  tokensTema,
-} from './paleta-colores.util';
+import { PALETA_SERIES, AZUL, NAVY, esPorcentaje, tokensTema } from './paleta-colores.util';
 
 /** Abrevia un monto a "k"/"M" a partir de mil/millón; por debajo, formato numérico plano. */
 function abreviarMonto(valor: number, decimales: number): string {
@@ -66,7 +62,13 @@ export function opcionesMixto(
   oscuro: boolean,
   config: OpcionesGrafico = {},
 ): Options {
-  const { tipo = 'auto', formato = 'soles', fondoTransparente = false, apilado = false, decimales = 1 } = config;
+  const {
+    tipo = 'auto',
+    formato = 'soles',
+    fondoTransparente = false,
+    apilado = false,
+    decimales = 1,
+  } = config;
   const esApilado = apilado || Boolean(bloque.apilado);
   const base = opcionesBase(oscuro, fondoTransparente);
   const { texto, linea } = tokensTema(oscuro);
@@ -75,7 +77,8 @@ export function opcionesMixto(
   const estiloTexto = { color: texto, fontSize: '11px' };
   // En modo `linea` no hay eje secundario: todas las series comparten el eje de valores.
   // Ahí van las de porcentaje y las que lo pidan explícitamente (`secundaria`).
-  const enEjeSecundario = (s: SerieGrafico) => forma !== 'linea' && (s.secundaria ?? esPorcentaje(s.nombre));
+  const enEjeSecundario = (s: SerieGrafico) =>
+    forma !== 'linea' && (s.secundaria ?? esPorcentaje(s.nombre));
   const secundarias = bloque.series.filter(enEjeSecundario);
   // El eje secundario se rotula en "%" solo si TODO lo que va ahí es porcentaje.
   const ejeSecundarioEnPorcentaje =
@@ -89,18 +92,18 @@ export function opcionesMixto(
     if (!color) {
       const nombreLower = (serie.nombre ?? '').toLowerCase();
       if (nombreLower.includes('real')) {
-        color = '#0284C7'; // Azul para barras Real
+        color = AZUL; // Azul para barras Real
       } else if (
         nombreLower.includes('meta') ||
         nombreLower.includes('ppto') ||
         nombreLower.includes('presupuesto')
       ) {
-        color = '#1D396E'; // Navy para Meta
+        color = NAVY; // Navy para Meta
       } else if (bloque.series.length > 1) {
-        const paleta = ['#0284C7', '#003f5c', '#16a34a', '#bc5090', '#ff7c43', '#2f9bd8'];
+        const paleta = PALETA_SERIES;
         color = paleta[i % paleta.length];
       } else {
-        color = '#0284C7'; // Azul corporativo por defecto
+        color = AZUL; // Azul corporativo por defecto
       }
     }
 

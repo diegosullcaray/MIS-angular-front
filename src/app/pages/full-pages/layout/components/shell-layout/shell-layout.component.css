@@ -11,6 +11,11 @@
   position: relative;
   isolation: isolate;
   background-image: var(--mis-wallpaper);
+  /* Conservar completa la composición: cover recortaba el endoso y mascotas
+     cuando el viewport no tenía la misma proporción que el archivo. */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   /* Color plano debajo de la imagen: es lo que se ve cuando el usuario elige un
      fondo sólido, porque entonces `--mis-wallpaper` pasa a valer `none`. */
   background-color: var(--mis-wallpaper-color, transparent);

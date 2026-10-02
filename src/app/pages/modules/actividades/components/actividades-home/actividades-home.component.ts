@@ -19,7 +19,7 @@ export class ActividadesHomeComponent {
       icono: 'pi pi-compass',
       ruta: 'dest-credito',
       colorBg: 'rgba(3,80,150,0.08)',
-      colorIcon: '#035096',
+      colorIcon: 'var(--mis-brand-navy)',
       badge: 'Seguimiento',
     },
     {

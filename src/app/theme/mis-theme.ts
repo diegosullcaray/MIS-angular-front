@@ -54,7 +54,7 @@ function botonColorScheme(colorTextoSemaforo: string) {
         activeColor: 'var(--mis-text-on-primary)',
         focusRing: { color: 'var(--mis-primary)', shadow: 'none' },
       },
-      secondary: botonSemaforo('secondary', colorTextoSemaforo),
+      secondary: botonSemaforo('secondary', 'var(--mis-text-on-secondary)'),
       success: botonSemaforo('success', colorTextoSemaforo),
       warn: botonSemaforo('warning', colorTextoSemaforo),
       danger: botonSemaforo('danger', colorTextoSemaforo),
@@ -123,8 +123,8 @@ export const MisTheme = definePreset(Aura, {
       500: '#5285C2',
       600: '#3A68A5',
       700: '#2A4E8F',
-      800: '#1D396E', // Base Primary (Navy)
-      900: '#162D58', // Hover Primary
+      800: '#0A4681', // Base Primary (Navy)
+      900: '#083867', // Hover Primary
       950: '#0F1E3D',
     },
     colorScheme: {
@@ -135,10 +135,10 @@ export const MisTheme = definePreset(Aura, {
           100: '#f4f6f9',
         },
         primary: {
-          color: '{primary.800}',
-          contrastColor: '#ffffff',
-          hoverColor: '{primary.900}',
-          activeColor: '{primary.950}',
+          color: 'var(--mis-primary)',
+          contrastColor: 'var(--mis-text-on-primary)',
+          hoverColor: 'var(--mis-primary-hover)',
+          activeColor: 'var(--mis-primary-hover)',
         },
         highlight: {
           background: '{primary.50}',
@@ -154,10 +154,10 @@ export const MisTheme = definePreset(Aura, {
           100: '#f1f5f9',
         },
         primary: {
-          color: '{primary.400}',
-          contrastColor: '{surface.900}',
-          hoverColor: '{primary.300}',
-          activeColor: '{primary.200}',
+          color: 'var(--mis-primary)',
+          contrastColor: 'var(--mis-text-on-primary)',
+          hoverColor: 'var(--mis-primary-hover)',
+          activeColor: 'var(--mis-primary-hover)',
         },
         highlight: {
           background: 'rgba(255,255,255,.04)',

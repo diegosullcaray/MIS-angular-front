@@ -45,18 +45,18 @@ export const FONDO_PERSONALIZADO = 'personalizado';
 export const CATALOGO_FONDOS: readonly OpcionFondo[] = [
   {
     clave: 'institucional',
-    etiqueta: 'Foto institucional',
+    etiqueta: 'Fondo institucional',
     tipo: 'imagen',
     valor: '',
-    muestra: "url('/assets/images/fc/fondos/wallpaper.png')",
+    muestra: "url('/assets/images/fc/fondos/brand-desktop-light.webp')",
     institucional: true,
   },
   {
     clave: 'navy',
     etiqueta: 'Navy',
     tipo: 'color',
-    valor: '#1d396e',
-    muestra: '#1d396e',
+    valor: '#0a4681',
+    muestra: '#0a4681',
   },
   {
     clave: 'pizarra',
@@ -83,8 +83,8 @@ export const CATALOGO_FONDOS: readonly OpcionFondo[] = [
     clave: 'degradado-navy',
     etiqueta: 'Degradado navy',
     tipo: 'degradado',
-    valor: 'linear-gradient(160deg, #0b1f3f 0%, #1d396e 55%, #035096 100%)',
-    muestra: 'linear-gradient(160deg, #0b1f3f 0%, #1d396e 55%, #035096 100%)',
+    valor: 'linear-gradient(160deg, #0b1f3f 0%, #0a4681 55%, #0a4681 100%)',
+    muestra: 'linear-gradient(160deg, #0b1f3f 0%, #0a4681 55%, #0a4681 100%)',
   },
   {
     clave: 'degradado-amanecer',
@@ -110,13 +110,13 @@ export function buscarFondo(clave: string): OpcionFondo | undefined {
 
 /** Acentos sugeridos. El usuario igual puede elegir cualquier otro hex. */
 export const ACENTOS_SUGERIDOS: readonly string[] = [
-  '#0094ea',
-  '#035096',
-  '#0ea5e9',
-  '#14b8a6',
-  '#7c3aed',
-  '#e11d48',
-  '#f59e0b',
+  '#009fe3',
+  '#0a4681',
+  '#f28f16',
+  '#8dbf3a',
+  '#fabf35',
+  '#b91b5e',
+  '#4d525a',
 ] as const;
 
 // ─── Estructura ─────────────────────────────────────────────────────────────
@@ -148,7 +148,8 @@ export const CATALOGO_MODOS_SIDEBAR: readonly OpcionModoSidebar[] = [
   {
     clave: 'estatico',
     etiqueta: 'Estático',
-    descripcion: 'El rail de sistemas queda fijo a la izquierda, con el nombre debajo de cada ícono.',
+    descripcion:
+      'El rail de sistemas queda fijo a la izquierda, con el nombre debajo de cada ícono.',
     icono: 'pi pi-th-large',
   },
   {
@@ -243,8 +244,8 @@ export const PREFERENCIAS_POR_DEFECTO: Preferencias = {
   apariencia: {
     tema: 'oscuro',
     fondo: 'institucional',
-    colorFondo: '#1d396e',
-    acento: '#0094ea',
+    colorFondo: '#0a4681',
+    acento: '#009fe3',
   },
   estructura: {
     modoSidebar: 'estatico',
@@ -273,6 +274,10 @@ function booleano(valor: unknown, porDefecto: boolean): boolean {
 
 function hex(valor: unknown, porDefecto: string): string {
   return (typeof valor === 'string' ? normalizarHex(valor) : null) ?? porDefecto;
+}
+
+function migrarAcento(valor: string): string {
+  return valor === '#0094ea' ? '#009fe3' : valor;
 }
 
 function objeto(valor: unknown): Record<string, unknown> {
@@ -316,12 +321,16 @@ export function sanearPreferencias(crudo: unknown): Preferencias {
       tema: unoDe(apariencia['tema'], MODOS_TEMA, base.apariencia.tema),
       fondo: buscarFondo(fondo) ? fondo : base.apariencia.fondo,
       colorFondo: hex(apariencia['colorFondo'], base.apariencia.colorFondo),
-      acento: hex(apariencia['acento'], base.apariencia.acento),
+      acento: migrarAcento(hex(apariencia['acento'], base.apariencia.acento)),
     },
     estructura: {
       modoSidebar: unoDe(estructura['modoSidebar'], MODOS_SIDEBAR, base.estructura.modoSidebar),
       etiquetasSidebar: booleano(estructura['etiquetasSidebar'], base.estructura.etiquetasSidebar),
-      vistaExplorador: unoDe(estructura['vistaExplorador'], VISTAS_EXPLORADOR, base.estructura.vistaExplorador),
+      vistaExplorador: unoDe(
+        estructura['vistaExplorador'],
+        VISTAS_EXPLORADOR,
+        base.estructura.vistaExplorador,
+      ),
     },
     anuncios: {
       vistos: Array.isArray(anuncios['vistos'])

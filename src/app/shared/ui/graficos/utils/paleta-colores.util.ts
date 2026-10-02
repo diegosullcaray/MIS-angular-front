@@ -1,24 +1,15 @@
 /** Colores corporativos y tokens de tema para Highcharts. */
 
 /** Paleta de series de reportes mixtos. */
-export const NAVY = '#003f5c';
-export const MAGENTA = '#bc5090';
-export const NARANJA = '#ff7c43';
-export const AZUL = '#2f9bd8';
+export const NAVY = '#0A4681';
+// Magenta oficial aclarado 10%: el par saldo/vencido supera Delta E 8
+// bajo daltonismo; la paleta genérica conserva el valor oficial exacto.
+export const MAGENTA = '#C0326E';
+export const NARANJA = '#F28F16';
+export const AZUL = '#009FE3';
 
 /** Paleta de series genéricas con colores únicos y diferenciados. */
-export const PALETA_SERIES = [
-  '#0284C7', // Azul cielo
-  '#10B981', // Esmeralda / Verde
-  '#F59E0B', // Ámbar / Dorado
-  '#8B5CF6', // Violeta
-  '#EC4899', // Rosa
-  '#06B6D4', // Cyan
-  '#F97316', // Naranja
-  '#14B8A6', // Teal
-  '#6366F1', // Índigo
-  '#6AA312', // Lima
-] as const;
+export const PALETA_SERIES = [NAVY, '#FABF35', '#B91B5E', '#8DBF3A', AZUL, NARANJA] as const;
 
 /** Paleta de los tramos de mora del dashboard del analista. */
 /**
@@ -27,7 +18,14 @@ export const PALETA_SERIES = [
  * los originales: `#B45309` quedaba a Delta E 9.9 del rojo de al lado y
  * `#334155` desaparecía sobre el fondo oscuro del gráfico (1.57:1).
  */
-export const PALETA_TRAMOS = ['#16A34A', '#0094EA', '#B8860B', '#DC2626', '#8040EE', '#606B7A'] as const;
+export const PALETA_TRAMOS = [
+  '#16A34A',
+  '#0094EA',
+  '#B8860B',
+  '#DC2626',
+  '#8040EE',
+  '#606B7A',
+] as const;
 
 /** Tokens de tema resueltos para Highcharts (equivalen a `--mis-*` de `tokens.css`). */
 export interface TokensTema {

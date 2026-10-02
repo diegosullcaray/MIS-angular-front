@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
   protected readonly appVersion = APP_VERSION;
 
   protected readonly logoMis = computed(() =>
-    this.theme.oscuro() ? 'assets/images/fc/logos/mis_white.png' : 'assets/images/fc/logos/mis.png'
+    this.theme.oscuro() ? 'assets/images/fc/logos/mis_white.png' : 'assets/images/fc/logos/mis.png',
   );
 
   /** `verificando`: revisando si venimos de un redirect de Google. */

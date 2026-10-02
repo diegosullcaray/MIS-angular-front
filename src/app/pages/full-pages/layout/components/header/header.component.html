@@ -1,6 +1,12 @@
 <div
   class="flex h-full w-full items-center justify-end gap-1 px-2 relative sm:justify-start sm:gap-3 sm:px-4"
 >
+  <img
+    [src]="logoInstitucional()"
+    alt="Financiera Confianza — Fundación BBVA Microfinanzas"
+    class="header-marca"
+    [class.header-marca--buscando]="buscadorAbierto()"
+  />
   <!-- Botón del rail: solo existe en el modo de menú "superpuesto", donde el
        rail no está anclado y este es el único camino para abrirlo. En los
        demás modos el rail se ve siempre y el botón sobra. -->
@@ -187,12 +193,7 @@
       </p>
     </div>
     <div class="flex justify-end gap-2 mt-4">
-      <p-button
-        label="Cancelar"
-        
-        severity="secondary"
-        (click)="confirmarSalirOpen.set(false)"
-      />
+      <p-button label="Cancelar" severity="secondary" (click)="confirmarSalirOpen.set(false)" />
       <p-button label="Cerrar sesión" severity="danger" (click)="confirmarCerrarSesion()" />
     </div>
   </p-dialog>
@@ -242,12 +243,7 @@
     </div>
 
     <div class="flex justify-end gap-2 mt-4">
-      <p-button
-        label="Cancelar"
-        
-        severity="secondary"
-        (onClick)="selectorPerfilOpen.set(false)"
-      />
+      <p-button label="Cancelar" severity="secondary" (onClick)="selectorPerfilOpen.set(false)" />
       <p-button
         label="Cambiar perfil"
         [disabled]="!perfilSeleccionado() || !!cambiandoPerfil()"

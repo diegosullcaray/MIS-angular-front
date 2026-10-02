@@ -75,7 +75,7 @@ describe('PreferenciasService', () => {
     const preferencias = crear();
     preferencias.setFondo('navy');
     TestBed.tick();
-    expect(raiz.style.getPropertyValue('--mis-wallpaper-color')).toBe('#1d396e');
+    expect(raiz.style.getPropertyValue('--mis-wallpaper-color')).toBe('#0a4681');
 
     preferencias.setFondo('institucional');
     TestBed.tick();

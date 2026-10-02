@@ -1,7 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { AparienciaDomAdaptador } from './apariencia-dom.service';
 import { PREFERENCIAS_POR_DEFECTO } from '../interfaces/preferencias.model';
-import type { PreferenciasApariencia, PreferenciasEstructura } from '../interfaces/preferencias.model';
+import type {
+  PreferenciasApariencia,
+  PreferenciasEstructura,
+} from '../interfaces/preferencias.model';
 
 /**
  * El único punto donde una preferencia se convierte en píxeles: escribe
@@ -56,6 +59,21 @@ describe('AparienciaDomAdaptador', () => {
     adaptador.aplicar(apariencia({ acento: '#00a2ff' }), true);
 
     expect(raiz.style.getPropertyValue('--mis-secondary-hover')).not.toBe(enClaro);
+  });
+
+  it('restablecer el acento libera los tokens de ambos temas después de personalizar', () => {
+    adaptador.aplicar(apariencia({ acento: '#7c3aed' }), false);
+    adaptador.aplicar(apariencia(), true);
+    for (const token of [
+      '--mis-accent',
+      '--mis-secondary',
+      '--mis-secondary-hover',
+      '--mis-secondary-light',
+      '--mis-text-on-secondary',
+      '--mis-shadow-focus',
+    ]) {
+      expect(raiz.style.getPropertyValue(token)).toBe('');
+    }
   });
 
   it('publica el modo de menú y las etiquetas como atributos de <html>', () => {
