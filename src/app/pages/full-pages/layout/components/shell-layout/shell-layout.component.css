@@ -11,8 +11,8 @@
   position: relative;
   isolation: isolate;
   background-image: var(--mis-wallpaper);
-  background-size: contain;
-  background-position: center;
+  background-size: var(--mis-wallpaper-size);
+  background-position: var(--mis-wallpaper-position);
   background-repeat: no-repeat;
   /* Color plano debajo de la imagen: es lo que se ve cuando el usuario elige un
      fondo sólido, porque entonces `--mis-wallpaper` pasa a valer `none`. */
@@ -64,11 +64,6 @@
    `AparienciaDomAdaptador` desde las preferencias. Solo desde `sm`: en móvil
    el rail siempre es la barra inferior fija. */
 @media (min-width: 640px) {
-  /* La imagen ocupa también el área detrás de novedades, sin bandas laterales. */
-  .shell-wallpaper {
-    background-size: cover;
-  }
-
   :host-context(html[data-menu='horizontal']) .shell-wallpaper {
     flex-direction: column;
   }

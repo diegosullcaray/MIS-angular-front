@@ -7,23 +7,8 @@
   }
   @default {
     <div class="login-wrapper min-h-screen w-full grid grid-cols-1 md:grid-cols-2 overflow-hidden">
-      <!-- Left Column: Banner Image -->
-      <div class="relative hidden md:flex md:flex-col overflow-hidden">
-        <img
-          src="assets/images/fc/fondos/images.jpg"
-          alt="Atención en oficina Financiera Confianza"
-          class="absolute inset-0 w-full h-full object-cover block"
-          appAnimar="zoom-lento"
-        />
-        <div class="login-banner-velo absolute inset-0"></div>
-        <div class="relative mt-auto p-8 md:p-12 flex flex-col items-center gap-2">
-          <img
-            src="assets/images/fc/logos/fc_blank.png"
-            alt="Financiera Confianza — Fundación BBVA Microfinanzas"
-            class="login-marca-banner"
-          />
-        </div>
-      </div>
+      <!-- Mismos PNG originales de Pachi y Mapu que en el shell. -->
+      <div class="login-banner relative hidden md:block overflow-hidden" aria-hidden="true"></div>
 
       <!-- Right Column: Google Sign-In -->
       <div

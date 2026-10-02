@@ -24,8 +24,10 @@
   flex-direction: column;
   gap: var(--mis-space-3);
   padding: var(--mis-space-3);
-  /* Las tarjetas aportan contraste; el fondo del shell continúa detrás. */
-  background: transparent;
+  background: var(--mis-glass-bg);
+  backdrop-filter: saturate(110%) blur(18px);
+  border-left: 1px solid var(--mis-glass-border);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
   overflow-y: auto;
   transition: transform var(--mis-transition-base);
 }

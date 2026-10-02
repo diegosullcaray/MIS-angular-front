@@ -49,7 +49,7 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     await expect(shell.botonHamburguesaDelRail).toHaveCount(0);
   });
 
-  test('usa el wallpaper de mobile (brand-mobile-light.webp)', async ({ page }) => {
+  test('móvil usa el entorno claro con los personajes originales', async ({ page }) => {
     const shell = new ShellPage(page);
     // El tema se fija, como en los dos casos de escritorio de más abajo: lo que
     // se prueba es móvil contra escritorio, no claro contra oscuro. Sin fijarlo
@@ -58,7 +58,7 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     await shell.fijarTema('claro');
     await shell.ir();
 
-    expect(await shell.wallpaperAplicado()).toContain('brand-mobile-light.webp');
+    expect(await shell.wallpaperAplicado()).toContain('brand-backdrop-light.webp');
   });
 });
 
@@ -98,23 +98,24 @@ test.describe('Shell responsive — desktop (>= 640px)', () => {
     await expect(shell.botonHamburguesaDelHeader).toHaveCount(0);
   });
 
-  test('en claro usa el wallpaper de escritorio (brand-desktop-light.webp), no el de mobile', async ({ page }) => {
+  test('escritorio claro usa las capas institucionales originales', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.fijarTema('claro');
     await shell.ir();
 
     const wallpaper = await shell.wallpaperAplicado();
-    expect(wallpaper).toContain('brand-desktop-light.webp');
-    expect(wallpaper).not.toContain('brand-mobile-light.webp');
+    expect(wallpaper).toContain('brand-backdrop-light.webp');
+    expect(decodeURIComponent(wallpaper)).toContain('/avatars/pachi/Copia de 002.png');
+    expect(decodeURIComponent(wallpaper)).toContain('/avatars/mapu/02(1).png');
   });
 
-  test('en oscuro usa la foto propia del tema (brand-desktop-dark.webp), sin velo encima', async ({ page }) => {
+  test('en oscuro usa la foto propia del tema (brand-backdrop-dark.webp), sin velo encima', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.fijarTema('oscuro');
     await shell.ir();
 
     const wallpaper = await shell.wallpaperAplicado();
-    expect(wallpaper).toContain('brand-desktop-dark.webp');
+    expect(wallpaper).toContain('brand-backdrop-dark.webp');
 
     // La foto ya es oscura de origen: encimarle el degradado la ensuciaba.
     const velo = await shell.veloWallpaper();
