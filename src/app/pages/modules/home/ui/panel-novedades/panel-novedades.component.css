@@ -24,16 +24,14 @@
   flex-direction: column;
   gap: var(--mis-space-3);
   padding: var(--mis-space-3);
-  background: var(--mis-glass-bg);
-  backdrop-filter: saturate(180%) blur(18px);
-  border-left: 1px solid var(--mis-glass-border);
-  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
+  /* Las tarjetas aportan contraste; el fondo del shell continúa detrás. */
+  background: transparent;
   overflow-y: auto;
   transition: transform var(--mis-transition-base);
 }
 
 .novedades--cerrado {
-  /* Se aparta del todo: el 1px extra esconde también el borde izquierdo. */
+  /* Se aparta del todo, sin bloquear las acciones del Home. */
   transform: translateX(calc(100% + 1px));
 }
 
@@ -87,16 +85,33 @@
 
   .novedades {
     top: var(--mis-header-h);
+    bottom: 4rem;
     left: 0;
     width: 100%;
     max-width: 100%;
     /* El rail inferior de sistemas (`z-40`) queda por encima a propósito: es la
        forma de salir de acá sin cerrar la hoja primero. */
     padding: var(--mis-space-4) var(--mis-space-3);
-    padding-bottom: calc(4rem + var(--mis-space-4));
+    padding-bottom: var(--mis-space-4);
     border-left: 0;
     background: var(--mis-surface);
     backdrop-filter: none;
+  }
+
+  .novedades .novedades-cabecera {
+    position: sticky;
+    top: calc(-1 * var(--mis-space-4));
+    z-index: 1;
+    flex-shrink: 0;
+    padding-top: var(--mis-space-4);
+    margin-top: calc(-1 * var(--mis-space-4));
+    background: var(--mis-surface);
+  }
+
+  .novedades .novedades-cerrar {
+    width: 44px;
+    height: 44px;
+    align-self: center;
   }
 
   .novedades-lista {

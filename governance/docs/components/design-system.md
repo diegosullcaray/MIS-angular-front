@@ -13,7 +13,7 @@ Ant/Winder; no modifica cálculos, permisos ni los significados de los indicador
 | Principales: azul #0A4681 y celeste #009FE3 | Tokens de marca invariables y controles de PrimeNG; azul como acción principal en claro. |
 | Secundarios: #F28F16, #8DBF3A, #FABF35, #B91B5E y #4D525A | Acentos sugeridos y paleta de gráficos, con presencia secundaria. |
 | Segoe UI principal / Montserrat secundaria interna | Segoe UI cuando está instalada; Montserrat variable local, bajo SIL OFL, como alternativa en otros equipos. |
-| Logotipo con endoso FMBBVA y proporción original | Activos existentes `fc_color.png` / `fc_blank.png` en cabecera y acceso, con alto automático y espacio de protección. |
+| Logotipo con endoso FMBBVA y proporción original | Activos existentes `fc_color.png` / `fc_blank.png` en el acceso, con alto automático y espacio de protección. |
 | Color completo sobre claro / blanco sobre oscuro | Selección reactiva al tema; blanco sobre la fotografía del acceso. |
 | Ilustraciones proporcionadas por la empresa | Se conservan las mascotas existentes de los módulos; los fondos conservan personajes y marcas de las imágenes de referencia. |
 
@@ -24,8 +24,11 @@ Las variantes de acceso son `brand-login-light.webp` y `brand-login-dark.webp`.
 Se editaron con ImageGen a partir de las imágenes originales para mantener los
 personajes, logos y su composición; no se diseñaron nuevos personajes ni marcas.
 Son imágenes raster: 1920×1080 en desktop y 1080×1920 en móvil, codificadas en WebP.
-Los originales se conservan. El shell usa `contain` para no recortar logos
-y personajes en pantallas con otra proporción; los márgenes usan el fondo del tema. Las variantes generativas deben revisarse visualmente
+Los originales se conservan. En escritorio el shell usa `cover` para llenar todo
+el viewport, también detrás del panel transparente de novedades. En móvil conserva
+`contain`. La cabecera inicia con el breadcrumb en escritorio; en móvil no muestra
+logo ni breadcrumb. El cierre de novedades permanece visible al desplazarse por
+la lista móvil y tiene un área táctil de 44×44 px. Las variantes generativas deben revisarse visualmente
 al aprobar identidad y microtexto; no garantizan identidad píxel por píxel.
 El acceso móvil mantiene libre la zona inferior para el formulario y conserva el
 logo inferior en su imagen de fondo, evitando duplicarlo como elemento del DOM.
