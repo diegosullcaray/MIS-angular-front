@@ -17,21 +17,28 @@ Ant/Winder; no modifica cálculos, permisos ni los significados de los indicador
 | Color completo sobre claro / blanco sobre oscuro | Selección reactiva al tema; blanco sobre la fotografía del acceso. |
 | Ilustraciones proporcionadas por la empresa | Se conservan las mascotas existentes de los módulos; los fondos conservan personajes y marcas de las imágenes de referencia. |
 
-Los cuatro fondos `brand-desktop-light.webp`, `brand-desktop-dark.webp`,
-`brand-mobile-light.webp` y `brand-mobile-dark.webp` siguen un entorno uniforme,
-con curvas suaves y azules de baja intensidad, sin neón ni reflejos fuertes.
-Las variantes de acceso son `brand-login-light.webp` y `brand-login-dark.webp`.
-Se editaron con ImageGen a partir de las imágenes originales para mantener los
-personajes, logos y su composición; no se diseñaron nuevos personajes ni marcas.
-Son imágenes raster: 1920×1080 en desktop y 1080×1920 en móvil, codificadas en WebP.
-Los originales se conservan. En escritorio el shell usa `cover` para llenar todo
-el viewport, también detrás del panel transparente de novedades. En móvil conserva
-`contain`. La cabecera inicia con el breadcrumb en escritorio; en móvil no muestra
-logo ni breadcrumb. El cierre de novedades permanece visible al desplazarse por
-la lista móvil y tiene un área táctil de 44×44 px. Las variantes generativas deben revisarse visualmente
-al aprobar identidad y microtexto; no garantizan identidad píxel por píxel.
-El acceso móvil mantiene libre la zona inferior para el formulario y conserva el
-logo inferior en su imagen de fondo, evitando duplicarlo como elemento del DOM.
+El fondo institucional se compone en CSS de cinco capas: los PNG originales
+`avatars/pachi/Copia de 002.png` y `avatars/mapu/02(1).png`, los logos originales
+Financiera Confianza/FMBBVA y MIS, y un entorno vacío claro u oscuro
+(`brand-backdrop-light.webp` / `brand-backdrop-dark.webp`). Los PNG se utilizan
+sin retoque ni regeneración: conservan rostros, uniformes, marcas, poses y
+proporciones. Las mismas fuentes se usan en escritorio, móvil y login.
+
+Solo los entornos vacíos se editaron con ImageGen: curvas suaves, perla/azul
+en claro y navy mate en oscuro, poca saturación, sin personas, objetos, letras,
+logos, neón ni reflejos intensos. No contienen personajes generativos. Los seis
+fondos anteriores `brand-desktop-*`, `brand-mobile-*` y `brand-login-*` se retiran
+para evitar reutilizar las identidades alteradas. Se conservan los wallpapers
+originales anteriores y todos los avatares/logos de la empresa.
+
+El entorno usa `cover` para llenar el viewport. Cada personaje y logo usa alto
+o ancho automático para conservar su proporción, con tamaño/posición propios
+por vista. Login sitúa los personajes arriba del formulario y la marca
+institucional al pie. Novedades mantiene su superficie translúcida, borde y blur;
+la imagen continúa debajo. La cabecera inicia con breadcrumb en escritorio y
+no muestra logo ni breadcrumb en móvil. El cierre móvil de novedades permanece
+visible al desplazarse, con área táctil de 44×44 px y sin tooltip que desplace el
+objetivo durante el toque.
 
 El manual no define un tema oscuro de aplicación. Los tokens de interacción
 oscuros son una adaptación para legibilidad; los siete tokens `--mis-brand-*`

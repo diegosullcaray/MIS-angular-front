@@ -76,6 +76,15 @@ describe('AparienciaDomAdaptador', () => {
     }
   });
 
+  it('el fondo personalizado llena la pantalla y al restablecer libera las capas institucionales', () => {
+    adaptador.aplicar(apariencia({ fondo: 'navy' }), false);
+    expect(raiz.style.getPropertyValue('--mis-wallpaper-size')).toBe('cover');
+    expect(raiz.style.getPropertyValue('--mis-wallpaper-position')).toBe('center');
+    adaptador.aplicar(apariencia(), false);
+    expect(raiz.style.getPropertyValue('--mis-wallpaper-size')).toBe('');
+    expect(raiz.style.getPropertyValue('--mis-wallpaper-position')).toBe('');
+  });
+
   it('publica el modo de menú y las etiquetas como atributos de <html>', () => {
     adaptador.aplicarEstructura(estructura({ modoSidebar: 'estatico', etiquetasSidebar: true }));
 

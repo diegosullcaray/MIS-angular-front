@@ -35,7 +35,7 @@ for (const width of [280, 390, 640]) {
 }
 
 for (const tema of ['claro', 'oscuro']) {
-  test(`desktop ${tema}: fondo continuo y cabecera sin logo`, async ({ page }) => {
+  test(`desktop ${tema}: fondo continuo, novedades con fondo y cabecera sin logo`, async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 900 });
     await inyectarSesionVigente(page);
     await mockearBackendAnt(page);
@@ -47,9 +47,12 @@ for (const tema of ['claro', 'oscuro']) {
     await page.goto('/app/dashboard');
     await expect(page.locator('.header-breadcrumb')).toBeVisible();
     await expect(page.locator('app-header img')).toHaveCount(0);
-    await expect(page.locator('.shell-wallpaper')).toHaveCSS('background-size', 'cover');
-    await expect(page.locator('.novedades')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.locator('.novedades')).toHaveCSS('backdrop-filter', 'none');
-    await expect(page.locator('.novedades')).toHaveCSS('border-left-width', '0px');
+    await expect(page.locator('.shell-wallpaper')).toHaveCSS('background-size', /cover$/);
+    await expect(page.locator('.novedades')).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(page.locator('.novedades')).toHaveCSS('backdrop-filter', 'saturate(1.1) blur(18px)');
+    await expect(page.locator('.novedades')).toHaveCSS('border-left-width', '1px');
+    const fondo = decodeURIComponent(await page.locator('.shell-wallpaper').evaluate(el => getComputedStyle(el).backgroundImage));
+    expect(fondo).toContain('/avatars/pachi/Copia de 002.png');
+    expect(fondo).toContain('/avatars/mapu/02(1).png');
   });
 }

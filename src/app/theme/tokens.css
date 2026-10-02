@@ -125,13 +125,21 @@
   --mis-sidebar-item-hover: rgba(255, 255, 255, 0.12);
   --mis-sidebar-item-active: rgba(255, 255, 255, 0.24);
   --mis-sidebar-item-border: rgba(255, 255, 255, 0.38);
-  /* Fondo institucional con los personajes y logotipos de referencia.
-     Arranca con el de mobile; los `@media` de más abajo
-     lo suben a la versión de escritorio y, en oscuro, a la propia de ese tema. */
-  --mis-wallpaper: url('/assets/images/fc/fondos/brand-mobile-light.webp');
-  --mis-login-wallpaper: url('/assets/images/fc/fondos/brand-login-light.webp');
-  /* Color del tema bajo el wallpaper: rellena los márgenes de contain.
-     AparienciaDomAdaptador lo cambia cuando el usuario elige un color. */
+  /* Composición por capas: personajes y logos originales, sin regenerarlos.
+     Solo el entorno vacío se genera; las proporciones se adaptan en cada vista. */
+  --mis-wallpaper-pachi: url('/assets/images/fc/avatars/pachi/Copia de 002.png');
+  --mis-wallpaper-mapu: url('/assets/images/fc/avatars/mapu/02(1).png');
+  --mis-wallpaper-fc: url('/assets/images/fc/logos/fc_color.png');
+  --mis-wallpaper-mis: url('/assets/images/fc/logos/mis_text.png');
+  --mis-wallpaper-backdrop: url('/assets/images/fc/fondos/brand-backdrop-light.webp');
+  --mis-wallpaper: var(--mis-wallpaper-pachi), var(--mis-wallpaper-mapu),
+    var(--mis-wallpaper-fc), var(--mis-wallpaper-mis), var(--mis-wallpaper-backdrop);
+  --mis-wallpaper-size: auto 29%, auto 28%, min(62vw, 280px) auto,
+    min(48vw, 220px) auto, cover;
+  --mis-wallpaper-position: 26% 86%, 76% 86%, center 20%, center 40%, center;
+  --mis-login-wallpaper: var(--mis-wallpaper-pachi), var(--mis-wallpaper-mapu),
+    var(--mis-wallpaper-fc), var(--mis-wallpaper-mis), var(--mis-wallpaper-backdrop);
+  /* AparienciaDomAdaptador lo cambia cuando el usuario elige un color. */
   --mis-wallpaper-color: var(--mis-bg);
   /* Ambos temas usan su propio fondo; el velo queda transparente por defecto. */
   --mis-wallpaper-velo: transparent;
@@ -371,9 +379,9 @@
   --mis-sidebar-item-hover: rgba(255, 255, 255, 0.1);
   --mis-sidebar-item-active: rgba(255, 255, 255, 0.2);
   --mis-sidebar-item-border: rgba(255, 255, 255, 0.18);
-  /* Usamos la versión de wallpaper oscuro para mobile */
-  --mis-wallpaper: url('/assets/images/fc/fondos/brand-mobile-dark.webp');
-  --mis-login-wallpaper: url('/assets/images/fc/fondos/brand-login-dark.webp');
+  --mis-wallpaper-fc: url('/assets/images/fc/logos/fc_blank.png');
+  --mis-wallpaper-mis: url('/assets/images/fc/logos/mis_white.png');
+  --mis-wallpaper-backdrop: url('/assets/images/fc/fondos/brand-backdrop-dark.webp');
   --mis-overlay-bg: rgba(8, 14, 26, 0.78);
   --mis-dialog-mask: rgba(8, 16, 30, 0.3);
   --mis-dialog-bg: rgba(22, 32, 52, 0.86);
@@ -449,17 +457,11 @@
   color-scheme: dark;
 }
 
-/* ── Wallpaper de escritorio ──────────────────────────────────
-   Desde el breakpoint `sm` de Tailwind (640px) el shell usa la fondo de
-   escritorio. En oscuro no se reusa la de claro con un velo encima: hay una
-   versión propia, ya oscura de origen, así que el velo se apaga — encimarle
-   el degradado negro la ensuciaba y le comía el contraste. */
+/* Las capas se adaptan por tamaño, conservando todos los PNG completos. */
 @media (min-width: 640px) {
   :root {
-    --mis-wallpaper: url('/assets/images/fc/fondos/brand-desktop-light.webp');
-  }
-
-  .dark {
-    --mis-wallpaper: url('/assets/images/fc/fondos/brand-desktop-dark.webp');
+    --mis-wallpaper-size: auto min(38vh, 32vw), auto min(36vh, 30vw),
+      clamp(240px, 22vw, 400px) auto, clamp(180px, 16vw, 280px) auto, cover;
+    --mis-wallpaper-position: 55% 90%, 75% 90%, left calc(64px + 5vw) top 10%, 68% 25%, center;
   }
 }

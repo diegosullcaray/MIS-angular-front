@@ -34,3 +34,23 @@ test.describe('Botón "Continuar con Google" en modo claro', () => {
     expect(luminancia(colores[1])).toBeGreaterThan(200);
   });
 });
+
+for (const tema of ['claro', 'oscuro']) {
+  for (const viewport of [{ width: 280, height: 640 }, { width: 1440, height: 900 }]) {
+    test(`login ${tema} a ${viewport.width}px usa los personajes originales`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await bloquearGoogle(page);
+      await page.addInitScript(tema => localStorage.setItem('mis.preferencias',
+        JSON.stringify({ apariencia: { tema } })), tema);
+      await page.goto('/login');
+      const fondo = page.locator(viewport.width < 768 ? '.login-right-panel' : '.login-banner');
+      await expect(fondo).toBeVisible();
+      const imagen = decodeURIComponent(await fondo.evaluate(el => getComputedStyle(el).backgroundImage));
+      expect(imagen).toContain('/avatars/pachi/Copia de 002.png');
+      expect(imagen).toContain('/avatars/mapu/02(1).png');
+      expect(imagen).toContain(`brand-backdrop-${tema === 'claro' ? 'light' : 'dark'}.webp`);
+      expect(imagen).toContain(`/logos/${tema === 'claro' ? 'fc_color' : 'fc_blank'}.png`);
+      await expect(page.getByRole('button', { name: /Continuar con Google/ })).toBeInViewport();
+    });
+  }
+}

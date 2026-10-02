@@ -36,13 +36,14 @@ export class AparienciaDomAdaptador {
   private aplicarFondo(apariencia: PreferenciasApariencia, oscuro: boolean): void {
     const fondo = fondoEfectivo(apariencia);
 
-    // La foto institucional se deja resolver por `tokens.css`: ahí viven sus
-    // dos variantes de escritorio y el velo del tema oscuro.
+    // El fondo institucional deja sus capas y posiciones a `tokens.css`.
     if (fondo.institucional) {
       // `--mis-glass-bg` entra en la lista: si no, volver a la foto dejaría los
       // paneles con la opacidad que se les puso para un fondo plano.
       this.quitar(
         '--mis-wallpaper',
+        '--mis-wallpaper-size',
+        '--mis-wallpaper-position',
         '--mis-wallpaper-color',
         '--mis-wallpaper-velo',
         '--mis-glass-bg',
@@ -50,6 +51,9 @@ export class AparienciaDomAdaptador {
       return;
     }
 
+    // Un color o degradado ocupa el viewport completo, sin heredar el tamaño de los avatares.
+    this.poner('--mis-wallpaper-size', 'cover');
+    this.poner('--mis-wallpaper-position', 'center');
     if (fondo.tipo === 'degradado') {
       this.poner('--mis-wallpaper', fondo.valor);
       this.quitar('--mis-wallpaper-color');
