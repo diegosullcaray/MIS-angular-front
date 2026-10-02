@@ -2,6 +2,50 @@
 
 La fuente de verdad visual son los tokens `--mis-*` de `src/app/theme/tokens.css` y el preset de PrimeNG en `src/app/theme/mis-theme.ts`.
 
+## Marca institucional
+
+La referencia es `src/assets/docs/Manual de Marca - Financiera Confianza (1).pdf`,
+páginas 2–8. La adaptación de interfaz conserva la arquitectura y los contratos
+Ant/Winder; no modifica cálculos, permisos ni los significados de los indicadores.
+
+| Regla del manual | Aplicación en MIS Host |
+|---|---|
+| Principales: azul #0A4681 y celeste #009FE3 | Tokens de marca invariables y controles de PrimeNG; azul como acción principal en claro. |
+| Secundarios: #F28F16, #8DBF3A, #FABF35, #B91B5E y #4D525A | Acentos sugeridos y paleta de gráficos, con presencia secundaria. |
+| Segoe UI principal / Montserrat secundaria interna | Segoe UI cuando está instalada; Montserrat variable local, bajo SIL OFL, como alternativa en otros equipos. |
+| Logotipo con endoso FMBBVA y proporción original | Activos existentes `fc_color.png` / `fc_blank.png` en cabecera y acceso, con alto automático y espacio de protección. |
+| Color completo sobre claro / blanco sobre oscuro | Selección reactiva al tema; blanco sobre la fotografía del acceso. |
+| Ilustraciones proporcionadas por la empresa | Se conservan las mascotas existentes de los módulos; los fondos conservan personajes y marcas de las imágenes de referencia. |
+
+Los cuatro fondos `brand-desktop-light.webp`, `brand-desktop-dark.webp`,
+`brand-mobile-light.webp` y `brand-mobile-dark.webp` siguen un entorno uniforme,
+con curvas suaves y azules de baja intensidad, sin neón ni reflejos fuertes.
+Las variantes de acceso son `brand-login-light.webp` y `brand-login-dark.webp`.
+Se editaron con ImageGen a partir de las imágenes originales para mantener los
+personajes, logos y su composición; no se diseñaron nuevos personajes ni marcas.
+Son imágenes raster: 1920×1080 en desktop y 1080×1920 en móvil, codificadas en WebP.
+Los originales se conservan. El shell usa `contain` para no recortar logos
+y personajes en pantallas con otra proporción; los márgenes usan el fondo del tema. Las variantes generativas deben revisarse visualmente
+al aprobar identidad y microtexto; no garantizan identidad píxel por píxel.
+El acceso móvil mantiene libre la zona inferior para el formulario y conserva el
+logo inferior en su imagen de fondo, evitando duplicarlo como elemento del DOM.
+
+El manual no define un tema oscuro de aplicación. Los tokens de interacción
+oscuros son una adaptación para legibilidad; los siete tokens `--mis-brand-*`
+conservan los colores exactos en ambos temas. El foco claro usa azul porque el
+celeste oficial no llega a 3:1 sobre blanco. El celeste lleva texto oscuro encima.
+El acento predeterminado libera los estilos en línea para permitir esta adaptación;
+el acento de fábrica anterior se migra al cargar preferencias, manteniendo los
+colores personalizados. Las escalas de riesgo y mora conservan su significado y
+el rojo se reserva para estados de alerta, no para decorar series genéricas.
+
+La paleta genérica de gráficos usa seis tonos cromáticos oficiales ordenados por
+separación perceptual. Con más de seis series se repite la paleta; deben conservarse
+las leyendas, etiquetas y símbolos de serie. En reportes mixtos, el magenta del rol vencido se aclara 10% (#C0326E)
+para que el par saldo/vencido supere Delta E 8 bajo daltonismo; la paleta
+genérica conserva el magenta oficial exacto. Las escalas semánticas de
+reportes mantienen sus pruebas y colores específicos.
+
 ## Dónde vive cada cosa
 
 | Qué | Dónde | Por qué ahí |

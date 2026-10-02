@@ -6,7 +6,15 @@ import {
   fondoEfectivo,
   sanearPreferencias,
 } from './preferencias.model';
-import { aclarar, esColorClaro, hexARgb, hexARgba, mezclar, normalizarHex, textoSobre } from '../../../../theme/color.util';
+import {
+  aclarar,
+  esColorClaro,
+  hexARgb,
+  hexARgba,
+  mezclar,
+  normalizarHex,
+  textoSobre,
+} from '../../../../theme/color.util';
 
 describe('sanearPreferencias', () => {
   /**
@@ -33,11 +41,22 @@ describe('sanearPreferencias', () => {
     expect(saneadas.apariencia.colorFondo).toBe(PREFERENCIAS_POR_DEFECTO.apariencia.colorFondo);
     expect(saneadas.apariencia.acento).toBe('#aabbcc');
     expect(saneadas.estructura.modoSidebar).toBe('horizontal');
-    expect(saneadas.estructura.etiquetasSidebar).toBe(PREFERENCIAS_POR_DEFECTO.estructura.etiquetasSidebar);
+    expect(saneadas.estructura.etiquetasSidebar).toBe(
+      PREFERENCIAS_POR_DEFECTO.estructura.etiquetasSidebar,
+    );
     expect(saneadas.estructura.vistaExplorador).toBe('lista');
     // Los ids que no son texto se descartan sin tirar abajo la lista entera.
     expect(saneadas.anuncios.vistos).toEqual(['a', 'b']);
     expect(saneadas.anuncios.silenciar).toBe(false);
+  });
+
+  it('migra el antiguo acento de fábrica y conserva los personalizados', () => {
+    expect(sanearPreferencias({ apariencia: { acento: '#0094EA' } }).apariencia.acento).toBe(
+      '#009fe3',
+    );
+    expect(sanearPreferencias({ apariencia: { acento: '#7c3aed' } }).apariencia.acento).toBe(
+      '#7c3aed',
+    );
   });
 
   it('descarta un fondo que ya no existe en el catálogo', () => {
@@ -46,7 +65,9 @@ describe('sanearPreferencias', () => {
   });
 
   it('un modo de menú desconocido no se cuela hasta el atributo del <html>', () => {
-    expect(sanearPreferencias({ estructura: { modoSidebar: 'flotante' } }).estructura.modoSidebar).toBe('estatico');
+    expect(
+      sanearPreferencias({ estructura: { modoSidebar: 'flotante' } }).estructura.modoSidebar,
+    ).toBe('estatico');
   });
 });
 
@@ -65,7 +86,12 @@ describe('fondoEfectivo', () => {
 
   it('los fondos del catálogo se usan tal cual, sin mirar el color personalizado', () => {
     const navy = buscarFondo('navy')!;
-    const fondo = fondoEfectivo({ tema: 'oscuro', fondo: 'navy', colorFondo: '#123456', acento: '#00a2ff' });
+    const fondo = fondoEfectivo({
+      tema: 'oscuro',
+      fondo: 'navy',
+      colorFondo: '#123456',
+      acento: '#00a2ff',
+    });
 
     expect(fondo.valor).toBe(navy.valor);
   });

@@ -28,16 +28,13 @@
 /* Mobile responsive login view */
 @media (max-width: 767.98px) {
   .login-right-panel {
-    background-image: url('/assets/images/fc/fondos/wallpaper_login_cell.png') !important;
+    background-image: var(--mis-login-wallpaper) !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
     background-position: center center !important;
     justify-content: flex-end !important;
     padding-top: 2rem !important;
-    padding-bottom: min(
-      90px,
-      10vh
-    ) !important; /* Prevents overlapping with Financiera Confianza brand footer */
+    padding-bottom: max(90px, 11dvh) !important;
     width: 100% !important;
     min-height: 100vh !important;
     min-height: 100dvh !important;
@@ -75,4 +72,10 @@
     background: var(--mis-primary-hover) !important;
     border-color: var(--mis-primary-hover) !important;
   }
+}
+
+.login-marca-banner {
+  width: min(100%, 340px);
+  height: auto;
+  padding: 16px;
 }

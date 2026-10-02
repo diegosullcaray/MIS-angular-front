@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { aclarar, hexARgba, mezclar, oscurecer, textoSobre } from '../../../../theme/color.util';
-import { fondoEfectivo } from '../interfaces/preferencias.model';
-import type { PreferenciasApariencia, PreferenciasEstructura } from '../interfaces/preferencias.model';
+import { fondoEfectivo, PREFERENCIAS_POR_DEFECTO } from '../interfaces/preferencias.model';
+import type {
+  PreferenciasApariencia,
+  PreferenciasEstructura,
+} from '../interfaces/preferencias.model';
 
 /** Adaptador de apariencia: convierte preferencias en variables CSS. */
 @Injectable({ providedIn: 'root' })
@@ -38,7 +41,12 @@ export class AparienciaDomAdaptador {
     if (fondo.institucional) {
       // `--mis-glass-bg` entra en la lista: si no, volver a la foto dejaría los
       // paneles con la opacidad que se les puso para un fondo plano.
-      this.quitar('--mis-wallpaper', '--mis-wallpaper-color', '--mis-wallpaper-velo', '--mis-glass-bg');
+      this.quitar(
+        '--mis-wallpaper',
+        '--mis-wallpaper-color',
+        '--mis-wallpaper-velo',
+        '--mis-glass-bg',
+      );
       return;
     }
 
@@ -63,6 +71,20 @@ export class AparienciaDomAdaptador {
   }
 
   private aplicarAcento(acento: string, oscuro: boolean): void {
+    // El acento de fábrica deja que los tokens adapten el foco y el celeste
+    // a cada tema; un inline fijo anulaba esa accesibilidad.
+    if (acento.toLowerCase() === PREFERENCIAS_POR_DEFECTO.apariencia.acento) {
+      this.quitar(
+        '--mis-accent',
+        '--mis-secondary',
+        '--mis-secondary-hover',
+        '--mis-secondary-light',
+        '--mis-text-on-secondary',
+        '--mis-shadow-focus',
+      );
+      return;
+    }
+
     const hover = (oscuro ? aclarar(acento, 0.18) : oscurecer(acento, 0.14)) ?? acento;
     const claro = (oscuro ? mezclar(acento, '#0e1626', 0.84) : aclarar(acento, 0.9)) ?? acento;
     const anillo = hexARgba(acento, 0.35) ?? 'rgba(0, 162, 255, 0.35)';

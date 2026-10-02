@@ -96,6 +96,12 @@ export class HeaderComponent {
   private readonly injector = inject(Injector);
   private readonly buscador = viewChild(BuscadorComponent);
 
+  protected readonly logoInstitucional = computed(() =>
+    this.theme.oscuro()
+      ? 'assets/images/fc/logos/fc_blank.png'
+      : 'assets/images/fc/logos/fc_color.png',
+  );
+
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
   protected readonly configuracionOpen = signal(false);

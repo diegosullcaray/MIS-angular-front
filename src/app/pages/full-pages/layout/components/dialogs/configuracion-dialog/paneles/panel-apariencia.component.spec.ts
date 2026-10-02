@@ -42,7 +42,7 @@ describe('PanelAparienciaComponent', () => {
 
     const activos = el.querySelectorAll('.mis-fondo--activo');
     expect(activos).toHaveLength(1);
-    expect(activos[0].textContent).toContain('Foto institucional');
+    expect(activos[0].textContent).toContain('Fondo institucional');
   });
 
   it('elegir un fondo lo guarda como preferencia', () => {

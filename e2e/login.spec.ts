@@ -16,6 +16,7 @@ test.describe('Login', () => {
 // En móvil el botón usaba el vidrio del panel: en modo claro quedaba blanco.
 test.describe('Botón "Continuar con Google" en modo claro', () => {
   test('tiene el relleno oscuro de marca y texto claro, también en móvil', async ({ page }) => {
+    await bloquearGoogle(page);
     await page.addInitScript(() =>
       localStorage.setItem('mis.preferencias', JSON.stringify({ apariencia: { tema: 'claro' } })),
     );
