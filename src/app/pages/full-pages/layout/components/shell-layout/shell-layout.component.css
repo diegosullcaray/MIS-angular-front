@@ -11,8 +11,6 @@
   position: relative;
   isolation: isolate;
   background-image: var(--mis-wallpaper);
-  /* Conservar completa la composición: cover recortaba el endoso y mascotas
-     cuando el viewport no tenía la misma proporción que el archivo. */
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -66,6 +64,11 @@
    `AparienciaDomAdaptador` desde las preferencias. Solo desde `sm`: en móvil
    el rail siempre es la barra inferior fija. */
 @media (min-width: 640px) {
+  /* La imagen ocupa también el área detrás de novedades, sin bandas laterales. */
+  .shell-wallpaper {
+    background-size: cover;
+  }
+
   :host-context(html[data-menu='horizontal']) .shell-wallpaper {
     flex-direction: column;
   }
