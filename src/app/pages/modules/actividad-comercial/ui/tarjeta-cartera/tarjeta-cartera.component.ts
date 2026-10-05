@@ -12,16 +12,8 @@ import { TarjetaDominioComponent } from '../tarjeta-dominio/tarjeta-dominio.comp
   standalone: true,
   imports: [TarjetaDominioComponent, ColumnasCarteraComponent, KpiPieComponent],
   viewProviders: [provideIcons({ lucideBriefcase })],
-  template: `
-    <app-tarjeta-dominio titulo="Cartera" icono="lucideBriefcase" (verDetalle)="verDetalle.emit()">
-      <div class="grid min-h-0 w-full flex-1 grid-cols-1 gap-[18px] sm:grid-cols-2">
-        <app-columnas-cartera [datos]="datos().saldo" />
-        <app-columnas-cartera [datos]="datos().operaciones" />
-      </div>
-      <app-kpi-pie pie [kpis]="datos().kpis" />
-    </app-tarjeta-dominio>
-  `,
-  styles: [':host { display: block; min-width: 0; }'],
+  templateUrl: './tarjeta-cartera.component.html',
+  styleUrl: './tarjeta-cartera.component.css',
 })
 export class TarjetaCarteraComponent {
   readonly datos = input.required<CarteraAsesor>();

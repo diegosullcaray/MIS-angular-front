@@ -9,20 +9,8 @@ import { datosColumnasCartera, faltanteMeta, formatearValor } from '../../utils/
   selector: 'app-columnas-cartera',
   standalone: true,
   imports: [GraficoColumnasApiladasComponent],
-  template: `
-    <figure class="m-0 flex min-w-0 flex-col" [attr.aria-label]="resumenAccesible()">
-      <figcaption class="flex items-baseline justify-between gap-2 text-xs leading-4 text-[var(--mis-text-secondary)]">
-        <span>{{ datos().titulo }}</span>
-        @if (faltante() !== null) {
-          <span class="text-[10px]" [style.color]="colorMeta">Faltan <b>{{ texto(faltante()!) }}</b></span>
-        }
-      </figcaption>
-      <div class="h-[210px] min-h-0">
-        <app-grafico-columnas-apiladas [datos]="grafico()" />
-      </div>
-    </figure>
-  `,
-  styles: [':host { display: block; min-width: 0; }'],
+  templateUrl: './columnas-cartera.component.html',
+  styleUrl: './columnas-cartera.component.css',
 })
 export class ColumnasCarteraComponent {
   readonly datos = input.required<ColumnasCartera>();

@@ -1,0 +1,22 @@
+<app-tarjeta-dominio titulo="Desempeño" icono="lucideRadar" (verDetalle)="verDetalle.emit()">
+  <div class="grid min-h-0 flex-1 grid-cols-1 items-center gap-4 sm:grid-cols-[30fr_70fr]">
+    <div class="flex min-w-0 flex-col items-center gap-1.5 text-center">
+      <p-avatar [label]="datos().iniciales" shape="circle" size="xlarge" aria-hidden="true" styleClass="!h-[88px] !w-[88px] !text-[28px] !font-bold" />
+      <strong class="text-xs leading-[15px] text-[var(--mis-text-primary)]">{{ datos().nombre }}</strong>
+      <span class="text-[11px] text-[var(--mis-text-secondary)]">{{ datos().cargo }}</span>
+      <div class="mt-1 flex flex-col items-center">
+        <span class="text-[10px] text-[var(--mis-text-secondary)]">Score general</span>
+        <div
+          class="flex items-center gap-1.5"
+          [attr.aria-label]="'Score de desempeño general: ' + datos().score + ' de 100. Calificación ' + datos().calificacion"
+        >
+          <strong class="text-4xl font-bold leading-10 tracking-tight text-[var(--mis-primary-text)]">{{ datos().score }}</strong>
+          <p-tag [value]="datos().calificacion" severity="info" />
+        </div>
+      </div>
+    </div>
+    <div class="h-[250px] min-w-0">
+      <app-grafico-radar [datos]="radar()" />
+    </div>
+  </div>
+</app-tarjeta-dominio>

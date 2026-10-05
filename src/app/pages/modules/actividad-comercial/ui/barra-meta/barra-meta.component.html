@@ -1,0 +1,45 @@
+<div class="relative" [class.mt-[18px]]="etiquetaFlotante()">
+  <p-progressbar
+    [value]="pct()"
+    [showValue]="false"
+    [color]="color()"
+    [attr.aria-label]="descripcion()"
+    [style.--p-progressbar-height.px]="alto()"
+    style="--p-progressbar-background: var(--mis-panel-bg)"
+  />
+  @if (etiquetaFlotante()) {
+    <span
+      class="absolute -top-[18px] -translate-x-1/2 whitespace-nowrap text-[11px] font-bold"
+      [style.left.%]="pct()"
+      [style.color]="colorTexto()"
+      >{{ etiquetaFlotante() }}</span
+    >
+  }
+  @if (marca() !== null) {
+    <span
+      aria-hidden="true"
+      class="absolute -top-[3px] z-[2] w-0.5 -translate-x-1/2 bg-[var(--mis-text-primary)]"
+      [style.left.%]="marca()"
+      [style.height.px]="alto() + 6"
+    ></span>
+  }
+  @if (esperado() !== null) {
+    <span
+      aria-hidden="true"
+      class="absolute top-0 z-[2] w-0.5 -translate-x-1/2 bg-[var(--mis-primary)]"
+      [style.left.%]="esperado()"
+      [style.height.px]="alto() + 3"
+    ></span>
+    <svg
+      aria-hidden="true"
+      class="absolute -top-[7px] z-[3] -translate-x-1/2"
+      width="9"
+      height="10"
+      viewBox="0 0 10 10"
+      [style.left.%]="esperado()"
+      style="fill: var(--mis-primary)"
+    >
+      <polygon points="0,0 10,0 5,8" />
+    </svg>
+  }
+</div>

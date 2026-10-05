@@ -6,35 +6,8 @@ import { formatearValor } from '../../utils/actividad-comercial.util';
 @Component({
   selector: 'app-kpi-pie',
   standalone: true,
-  template: `
-    <dl class="m-0 grid w-full grid-cols-3 gap-3 border-t border-[var(--mis-border)] pt-3">
-      @for (kpi of kpis(); track kpi.etiqueta) {
-        <div class="flex min-w-0 flex-col gap-px">
-          <dt class="text-[11px] leading-[14px] text-[var(--mis-text-secondary)]">{{ kpi.etiqueta }}</dt>
-          <dd
-            class="m-0 text-[15px] font-semibold leading-5"
-            [class.text-[var(--mis-danger)]]="kpi.alerta"
-            [class.text-[var(--mis-text-primary)]]="!kpi.alerta"
-          >
-            {{ texto(kpi) }}
-          </dd>
-          @if (kpi.delta) {
-            <dd
-              class="m-0 text-[11px] leading-[14px]"
-              [class.text-[var(--mis-success)]]="kpi.tono === 'positivo'"
-              [class.text-[var(--mis-danger)]]="kpi.tono === 'negativo'"
-              [class.text-[var(--mis-text-secondary)]]="kpi.tono !== 'positivo' && kpi.tono !== 'negativo'"
-            >
-              {{ kpi.delta }}
-            </dd>
-          } @else if (kpi.apoyo) {
-            <dd class="m-0 text-[11px] leading-[14px] text-[var(--mis-text-secondary)]">{{ kpi.apoyo }}</dd>
-          }
-        </div>
-      }
-    </dl>
-  `,
-  styles: [':host { display: block; width: 100%; margin-top: auto; }'],
+  templateUrl: './kpi-pie.component.html',
+  styleUrl: './kpi-pie.component.css',
 })
 export class KpiPieComponent {
   readonly kpis = input.required<readonly KpiTablero[]>();

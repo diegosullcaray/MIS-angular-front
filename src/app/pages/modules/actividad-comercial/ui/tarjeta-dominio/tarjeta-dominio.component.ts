@@ -7,29 +7,8 @@ import { ButtonModule } from 'primeng/button';
   selector: 'app-tarjeta-dominio',
   standalone: true,
   imports: [NgIconComponent, ButtonModule],
-  template: `
-    <article
-      class="mis-superficie flex h-full min-h-[285px] flex-col gap-3 rounded-[14px] px-5 py-4 shadow-[var(--mis-shadow-sm)]"
-      [attr.aria-label]="titulo()"
-    >
-      <header class="flex w-full items-center gap-2.5">
-        <span
-          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px]"
-          [style.background]="alerta() ? 'var(--mis-danger-light)' : 'var(--mis-primary-light)'"
-          [style.color]="alerta() ? 'var(--mis-danger)' : 'var(--mis-primary-text)'"
-        >
-          <ng-icon [name]="icono()" size="18" color="currentColor" />
-        </span>
-        <h3 class="m-0 grow text-base font-semibold text-[var(--mis-text-primary)]">{{ titulo() }}</h3>
-        <p-button label="Ver detalle →" [link]="true" size="small" (onClick)="verDetalle.emit()" />
-      </header>
-      <div class="flex min-h-0 w-full flex-1 flex-col gap-3">
-        <ng-content />
-      </div>
-      <ng-content select="[pie]" />
-    </article>
-  `,
-  styles: [':host { display: block; min-width: 0; }'],
+  templateUrl: './tarjeta-dominio.component.html',
+  styleUrl: './tarjeta-dominio.component.css',
 })
 export class TarjetaDominioComponent {
   readonly titulo = input.required<string>();
