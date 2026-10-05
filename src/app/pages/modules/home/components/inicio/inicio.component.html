@@ -30,9 +30,6 @@
         @for (reporte of recientes(); track reporte.ruta) {
           <li>
             <a class="reciente-fila" [routerLink]="reporte.ruta">
-              <span class="reciente-icono" aria-hidden="true">
-                <i class="pi pi-chart-line"></i>
-              </span>
               <span class="reciente-contenido">
                 <span class="reciente-nombre">{{ reporte.titulo }}</span>
                 @if (reporte.categoria) {
