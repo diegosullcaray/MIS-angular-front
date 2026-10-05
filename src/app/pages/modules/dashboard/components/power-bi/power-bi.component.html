@@ -14,8 +14,8 @@
       <div class="h-full flex items-center justify-center">
         <p-skeleton width="100%" height="100%" />
       </div>
-    } @else if (embedConfig(); as config) {
-      <powerbi-report [embedConfig]="config" [cssClassName]="reportClass"></powerbi-report>
+    } @else if (embedConfig()) {
+      <div #visor class="w-full h-full"></div>
     }
   </div>
 </app-window-panel>

@@ -1,9 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, effect, inject, signal, viewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
-import { PowerBIEmbedModule } from 'powerbi-client-angular';
-import { models, type IReportEmbedConfiguration } from 'powerbi-client';
+import { factories, models, service, type IReportEmbedConfiguration } from 'powerbi-client';
 import { DashboardService } from '../../services/dashboard.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
@@ -13,7 +12,7 @@ import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inli
 @Component({
   selector: 'app-dashboard-power-bi',
   standalone: true,
-  imports: [SkeletonModule, TooltipModule, PowerBIEmbedModule, WindowPanelComponent, InlineErrorComponent],
+  imports: [SkeletonModule, TooltipModule, WindowPanelComponent, InlineErrorComponent],
   templateUrl: './power-bi.component.html',
   styleUrl: './power-bi.component.css',
 })
@@ -27,9 +26,19 @@ export class PowerBiComponent {
   protected readonly cargando = signal(true);
   protected readonly error = signal(false);
   protected readonly embedConfig = signal<IReportEmbedConfiguration | null>(null);
-  protected readonly reportClass = 'w-full h-full';
+  private readonly visor = viewChild<ElementRef<HTMLElement>>('visor');
+  private readonly powerbi = new service.Service(factories.hpmFactory, factories.wpmpFactory, factories.routerFactory);
 
   constructor() {
+    effect(() => {
+      const el = this.visor()?.nativeElement;
+      const config = this.embedConfig();
+      if (el && config) this.powerbi.embed(el, config);
+    });
+    inject(DestroyRef).onDestroy(() => {
+      const el = this.visor()?.nativeElement;
+      if (el) this.powerbi.reset(el);
+    });
     if (!this.reporte()) {
       this.volver();
       return;
