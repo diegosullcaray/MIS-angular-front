@@ -69,7 +69,7 @@ export const TABLERO_DEMO: TableroAsesor = {
       paleta: 'saldo',
       hoy: [
         { clave: 'trasladada', etiqueta: 'Trasladada', valor: 325474 },
-        { clave: 'propia', etiqueta: 'Propia', valor: 2115583 },
+        { clave: 'propia', etiqueta: 'Propia', valor: 976423 },
         { clave: 'heredada', etiqueta: 'Heredada', valor: 1139160 },
       ],
       totalHoy: 2441057,
@@ -82,7 +82,7 @@ export const TABLERO_DEMO: TableroAsesor = {
       paleta: 'operaciones',
       hoy: [
         { clave: 'trasladada', etiqueta: 'Trasladada', valor: 16 },
-        { clave: 'propia', etiqueta: 'Propia', valor: 108 },
+        { clave: 'propia', etiqueta: 'Propia', valor: 62 },
         { clave: 'heredada', etiqueta: 'Heredada', valor: 46 },
       ],
       totalHoy: 124,

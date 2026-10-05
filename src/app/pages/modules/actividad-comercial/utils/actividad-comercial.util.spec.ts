@@ -43,7 +43,7 @@ describe('actividad-comercial.util', () => {
 
       expect(d.categorias).toEqual(['Hoy', 'Cierre Anterior']);
       expect(d.series.map((s) => s.nombre)).toEqual(['Trasladada', 'Propia', 'Heredada']);
-      expect(d.series.find((s) => s.nombre === 'Propia')?.valores).toEqual([2115583, 3528967]);
+      expect(d.series.find((s) => s.nombre === 'Propia')?.valores).toEqual([976423, 3528967]);
       expect(d.series.find((s) => s.nombre === 'Heredada')?.valores).toEqual([1139160, null]);
       expect(d.meta).toEqual({ valor: 4100000, etiqueta: 'Meta 4,100,000' });
     });

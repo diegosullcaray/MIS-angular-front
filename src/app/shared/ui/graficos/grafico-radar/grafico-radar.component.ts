@@ -32,8 +32,8 @@ export class GraficoRadarComponent {
 
     return {
       ...opcionesBase(oscuro, true),
-      chart: { polar: true, type: 'area', backgroundColor: 'transparent', style: { fontFamily: 'inherit' }, margin: [26, 52, 42, 52] },
-      pane: { size: '100%' },
+      chart: { polar: true, type: 'area', backgroundColor: 'transparent', style: { fontFamily: 'inherit' } },
+      pane: { size: '80%' },
       xAxis: {
         categories: [...ejes],
         tickmarkPlacement: 'on',
@@ -47,7 +47,7 @@ export class GraficoRadarComponent {
         gridLineInterpolation: 'polygon',
         gridLineColor: linea,
         lineWidth: 0,
-        labels: { style: { color: texto, fontSize: '8px' } },
+        labels: { style: { color: texto, fontSize: '10px' } },
       },
       tooltip: { ...opcionesBase(oscuro).tooltip, shared: true, valueSuffix: '' },
       legend: { ...opcionesBase(oscuro).legend, verticalAlign: 'bottom', itemStyle: { color: texto, fontSize: '11px', fontWeight: '500' } },

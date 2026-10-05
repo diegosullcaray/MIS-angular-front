@@ -7,6 +7,12 @@ import { GraficoBaseComponent } from '../grafico-base/grafico-base.component';
 import { opcionesBase } from '../utils/highcharts-factory.util';
 import { AZUL, tokensTema } from '../utils/paleta-colores.util';
 
+/** Luminancia aproximada de un `#RRGGBB`: decide texto blanco u oscuro encima. */
+function esOscuro(hex: string): boolean {
+  const n = Number.parseInt(hex.replace('#', ''), 16);
+  return 0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255) < 150;
+}
+
 /** Columnas apiladas (una por categoría) con etiqueta por tramo, leyenda abajo y meta opcional. */
 @Component({
   selector: 'app-grafico-columnas-apiladas',
@@ -44,6 +50,13 @@ export class GraficoColumnasApiladasComponent {
         labels: { enabled: false },
         gridLineColor: linea,
         reversedStacks: false,
+        stackLabels: {
+          enabled: true,
+          formatter() {
+            return miles(this.total);
+          },
+          style: { color: textoFuerte, fontSize: '11px', fontWeight: '700', textOutline: 'none' },
+        },
         plotLines: meta
           ? [
               {
@@ -73,14 +86,21 @@ export class GraficoColumnasApiladasComponent {
           groupPadding: 0.12,
           dataLabels: {
             enabled: true,
+            // Un tramo muy fino no cabe con su cifra: se omite (queda en el tooltip).
             formatter() {
-              return this.y === null || this.y === undefined ? '' : miles(this.y);
+              return this.y === null || this.y === undefined || (this.percentage ?? 100) < 8 ? '' : miles(this.y);
             },
-            style: { color: textoFuerte, fontSize: '10px', fontWeight: '500', textOutline: 'none' },
+            style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' },
           },
         },
       },
-      series: series.map((s) => ({ type: 'column' as const, name: s.nombre, data: [...s.valores], color: s.color })),
+      series: series.map((s) => ({
+        type: 'column' as const,
+        name: s.nombre,
+        data: [...s.valores],
+        color: s.color,
+        dataLabels: { color: esOscuro(s.color) ? '#FFFFFF' : '#1B2A41' },
+      })),
     };
   });
 }
