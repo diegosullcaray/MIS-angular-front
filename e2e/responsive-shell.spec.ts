@@ -58,7 +58,7 @@ test.describe('Shell responsive — mobile (< 640px, breakpoint `sm` de Tailwind
     await shell.fijarTema('claro');
     await shell.ir();
 
-    expect(await shell.wallpaperAplicado()).toContain('brand-backdrop-light.webp');
+    expect(await shell.wallpaperAplicado()).toContain('wallpaper_cell.png');
   });
 });
 
@@ -98,24 +98,22 @@ test.describe('Shell responsive — desktop (>= 640px)', () => {
     await expect(shell.botonHamburguesaDelHeader).toHaveCount(0);
   });
 
-  test('escritorio claro usa las capas institucionales originales', async ({ page }) => {
+  test('escritorio claro usa wallpaper.png', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.fijarTema('claro');
     await shell.ir();
 
     const wallpaper = await shell.wallpaperAplicado();
-    expect(wallpaper).toContain('brand-backdrop-light.webp');
-    expect(decodeURIComponent(wallpaper)).toContain('/avatars/pachi/Copia de 002.png');
-    expect(decodeURIComponent(wallpaper)).toContain('/avatars/mapu/02(1).png');
+    expect(wallpaper).toContain('/fondos/wallpaper.png');
   });
 
-  test('en oscuro usa la foto propia del tema (brand-backdrop-dark.webp), sin velo encima', async ({ page }) => {
+  test('en oscuro usa la foto propia del tema (wallpaper_dark.png), sin velo encima', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.fijarTema('oscuro');
     await shell.ir();
 
     const wallpaper = await shell.wallpaperAplicado();
-    expect(wallpaper).toContain('brand-backdrop-dark.webp');
+    expect(wallpaper).toContain('wallpaper_dark');
 
     // La foto ya es oscura de origen: encimarle el degradado la ensuciaba.
     const velo = await shell.veloWallpaper();

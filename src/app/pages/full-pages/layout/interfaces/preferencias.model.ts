@@ -48,7 +48,7 @@ export const CATALOGO_FONDOS: readonly OpcionFondo[] = [
     etiqueta: 'Fondo institucional',
     tipo: 'imagen',
     valor: '',
-    muestra: "url('/assets/images/fc/fondos/brand-backdrop-light.webp')",
+    muestra: "url('/assets/images/fc/fondos/wallpaper_cell.png')",
     institucional: true,
   },
   {

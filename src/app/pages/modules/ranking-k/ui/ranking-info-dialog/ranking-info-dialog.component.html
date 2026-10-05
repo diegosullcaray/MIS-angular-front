@@ -1,13 +1,13 @@
-<p-button
-  icon="pi pi-info-circle"
-  ariaLabel="Información y condiciones del ranking"
-  [rounded]="true"
-  severity="secondary"
-  styleClass="mis-info-pulse-btn"
+<button
+  type="button"
+  class="mis-window-btn mis-info-pulse-btn"
+  aria-label="Información y condiciones del ranking"
   pTooltip="Información y condiciones del ranking"
-  tooltipPosition="top"
+  tooltipPosition="bottom"
   (click)="abrir()"
-/>
+>
+  <i class="pi pi-info-circle text-[14px]"></i>
+</button>
 
 <p-dialog
   [(visible)]="visible"

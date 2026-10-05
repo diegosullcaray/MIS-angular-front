@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { interval, startWith, switchMap } from 'rxjs';
+import { interval, startWith, Subject, switchMap } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 import { TablaReporteComponent } from '../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { ControlCargasService } from './control-cargas.service';
@@ -31,10 +31,19 @@ export class ControlCargasComponent {
     { id: 'procesos', titulo: 'Procesos Diarios MIS', tabla: () => this.tablaProcesos() },
   ];
 
+  private readonly refresco$ = new Subject<void>();
+
+  /** Reinicia el ciclo: pide el reporte ya y vuelve a contar los 30 s. */
+  protected refrescar(): void {
+    this.cargando.set(true);
+    this.refresco$.next();
+  }
+
   constructor() {
-    interval(INTERVALO_REFRESCO_MS)
+    this.refresco$
       .pipe(
-        startWith(0),
+        startWith(undefined),
+        switchMap(() => interval(INTERVALO_REFRESCO_MS).pipe(startWith(0))),
         switchMap(() => this.servicio.obtenerReporte()),
         takeUntilDestroyed()
       )

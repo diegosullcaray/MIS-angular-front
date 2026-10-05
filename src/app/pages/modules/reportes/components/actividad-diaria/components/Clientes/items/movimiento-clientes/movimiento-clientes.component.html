@@ -1,4 +1,4 @@
-<app-window-panel titulo="Movimiento de Clientes" subtitulo="Clientes" [permitirActualizar]="false">
+<app-window-panel titulo="Movimiento de Clientes" subtitulo="Clientes" [actualizando]="cargando()" (actualizar)="cargar()">
   <p-tabs value="carteras">
     <p-tablist>
       @for (pestana of pestanas; track pestana.id) {

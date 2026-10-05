@@ -1,7 +1,8 @@
 <app-window-panel
   titulo="Control de Cargas"
   [subtitulo]="'Actualizado al ' + actualizadoAl()"
-  [permitirActualizar]="false"
+  [actualizando]="cargando()"
+  (actualizar)="refrescar()"
 >
   <p-tabs value="produccion">
     <p-tablist>

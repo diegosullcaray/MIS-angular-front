@@ -2,9 +2,6 @@
   [visible]="visible()"
   (visibleChange)="cerrar()"
   [modal]="true"
-  [closable]="!requiereSeleccionInicial()"
-  [closeOnEscape]="!requiereSeleccionInicial()"
-  [dismissableMask]="!requiereSeleccionInicial()"
   [style]="estiloDialogo()"
   [styleClass]="vista() === 'menu' ? 'mis-dialog--sin-pie' : ''"
   [draggable]="false"
@@ -16,19 +13,15 @@
        ponérselo al título, o el diálogo queda sin nombre accesible. -->
   <ng-template pTemplate="header" let-ariaLabelledBy="ariaLabelledBy">
     <div class="mis-window-lights mis-dialog-lights" role="group" aria-label="Controles del diálogo">
-      @if (!requiereSeleccionInicial()) {
-        <button
-          type="button"
-          class="mis-window-light mis-window-light--cerrar"
-          data-glifo="✕"
-          (click)="cerrar()"
-          aria-label="Cerrar y volver al inicio"
-          pTooltip="Cerrar"
-          tooltipPosition="bottom"
-        ></button>
-      } @else {
-        <span class="mis-window-light mis-window-light--apagada" aria-hidden="true"></span>
-      }
+      <button
+        type="button"
+        class="mis-window-light mis-window-light--cerrar"
+        data-glifo="✕"
+        (click)="cerrar()"
+        aria-label="Cerrar y volver al inicio"
+        pTooltip="Cerrar"
+        tooltipPosition="bottom"
+      ></button>
 
       @if (vista() === 'menu') {
         <span class="mis-window-light mis-window-light--apagada" aria-hidden="true"></span>

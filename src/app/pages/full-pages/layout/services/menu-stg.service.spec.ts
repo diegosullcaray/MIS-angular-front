@@ -43,6 +43,16 @@ describe('MenuStgService', () => {
     expect(getMenuItemsSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('recargar() vuelve a pedir el menú aunque el email sea el mismo', () => {
+    getMenuItemsSpy.mockReturnValue(of(respuestaCon([])));
+
+    service.cargar('ana.torres@confianza.pe');
+    service.recargar('ana.torres@confianza.pe');
+
+    expect(getMenuItemsSpy).toHaveBeenCalledTimes(2);
+    expect(service.cargando()).toBe(false);
+  });
+
   it('cargar() vuelve a pedir el menú cuando el email cambia (cambiar/revertir usuario alterno)', () => {
     getMenuItemsSpy.mockReturnValue(of(respuestaCon([])));
 

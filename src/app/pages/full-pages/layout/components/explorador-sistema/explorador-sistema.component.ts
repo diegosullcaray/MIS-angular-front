@@ -1,4 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
+import { MenuStgService } from '../../services/menu-stg.service';
 import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
@@ -20,8 +21,14 @@ import type { VistaExplorador } from '../../interfaces/preferencias.model';
 export class ExploradorSistemaComponent {
   private readonly navegacion = inject(NavegacionSistemasService);
   private readonly shell = inject(ShellStateService);
+  protected readonly menuStg = inject(MenuStgService);
   private readonly router = inject(Router);
   private readonly preferencias = inject(PreferenciasService);
+
+  protected actualizarMenu(): void {
+    const email = this.shell.usuarioActivo()?.email;
+    if (email) this.menuStg.recargar(email);
+  }
 
   protected readonly panel = this.navegacion.panelActivo;
   /** El buscador del explorador es local: no mezcla resultados de otros sistemas. */

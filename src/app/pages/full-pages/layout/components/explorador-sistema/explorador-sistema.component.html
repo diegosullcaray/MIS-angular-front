@@ -1,5 +1,10 @@
 @if (panel(); as sistema) {
-  <app-window-panel [titulo]="sistema.titulo" [permitirActualizar]="false">
+  <app-window-panel
+    [titulo]="sistema.titulo"
+    [actualizando]="menuStg.cargando()"
+    etiquetaActualizar="Actualizar menú"
+    (actualizar)="actualizarMenu()"
+  >
     <div class="mis-explorador">
       <div class="mis-explorador-barra">
         <!-- El header resuelve la búsqueda global. Acá se conserva una búsqueda

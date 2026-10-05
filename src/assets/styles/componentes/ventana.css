@@ -126,7 +126,7 @@
    separar demasiado las luces. */
 @media (pointer: coarse) {
   .mis-window-lights {
-    gap: 16px;
+    gap: 10px;
   }
   .mis-window-light {
     width: 16px;
@@ -178,6 +178,28 @@
   .mis-window-separador,
   .mis-window-subtitulo {
     display: none;
+  }
+
+  /* El título largo hace un salto de línea corto (máx. 2) en vez de cortarse;
+     la barra crece lo justo y semáforo y acciones quedan a su ancho natural. */
+  .mis-window-bar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    height: auto;
+    padding-block: var(--mis-space-1);
+  }
+
+  .mis-window-titulo {
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .mis-window-actions {
+    gap: 2px;
   }
 }
 

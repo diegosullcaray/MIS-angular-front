@@ -408,6 +408,26 @@ const REGLAS = [
         ),
   },
   {
+    id: 'panel-con-actualizar',
+    nivel: 'error',
+    titulo: 'todo `<app-window-panel>` con datos enlaza su botón de actualizar',
+    doc: 'docs/components/estandar-reportes.md',
+    porque:
+      'el botón de la esquina existe en móvil y escritorio; apagado con `[permitirActualizar]="false"` fijo o sin `(actualizar)`, la pantalla no se puede refrescar. Un panel condicionado (`!!nivelActual()`) sí vale: aparece al haber algo que recargar.',
+    evaluar: (archivos) =>
+      archivos
+        .filter((a) => a.esPlantilla && !a.ruta.endsWith('actividades-home.component.html'))
+        .flatMap((a) =>
+          coincidencias(a.contenido, /<app-window-panel[^>]*>/g)
+            .filter((c) => !c.texto.includes('(actualizar)') || /\[permitirActualizar\]="false"/.test(c.texto))
+            .map((c) => ({
+              ruta: a.ruta,
+              linea: c.linea,
+              detalle: 'panel sin `(actualizar)` o con `[permitirActualizar]="false"` — enlazarlo a la recarga real',
+            })),
+        ),
+  },
+  {
     id: 'nota-de-unidad-en-chip',
     nivel: 'error',
     titulo: 'la unidad de una tabla ("Expresado en…") va en un chip',

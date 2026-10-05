@@ -3,7 +3,7 @@
   align-items: center;
 }
 
-:host ::ng-deep .mis-info-pulse-btn .p-button-icon {
+:host ::ng-deep .mis-info-pulse-btn .pi {
   animation: mis-pulse-heartbeat 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
   color: var(--mis-primary-text);
 }

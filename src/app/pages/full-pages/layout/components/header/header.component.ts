@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
@@ -94,7 +94,19 @@ export class HeaderComponent {
   private readonly navegacion = inject(NavegacionSistemasService);
   private readonly kaypacha = inject(KaypachaService);
   private readonly injector = inject(Injector);
-  private readonly buscador = viewChild(BuscadorComponent);
+  protected readonly buscador = viewChild(BuscadorComponent);
+  /** Misma frontera que `sm` de Tailwind: por debajo, la búsqueda se abre en diálogo. */
+  protected readonly esMovil = toSignal(
+    new Observable<boolean>((suscriptor) => {
+      // jsdom no trae matchMedia: ahí se comporta como escritorio.
+      const consulta = window.matchMedia?.('(max-width: 639.98px)');
+      const emitir = () => suscriptor.next(consulta?.matches ?? false);
+      emitir();
+      consulta?.addEventListener?.('change', emitir);
+      return () => consulta?.removeEventListener?.('change', emitir);
+    }),
+    { requireSync: true },
+  );
 
   protected readonly dropdownOpen = signal(false);
   protected readonly confirmarSalirOpen = signal(false);
@@ -230,7 +242,7 @@ export class HeaderComponent {
   protected alternarBuscador(): void {
     const abre = !this.buscadorAbierto();
     this.buscadorAbierto.set(abre);
-    if (abre) {
+    if (abre && !this.esMovil()) {
       afterNextRender(() => this.buscador()?.enfocar(), { injector: this.injector });
     }
   }

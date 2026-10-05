@@ -24,11 +24,19 @@ export class MenuStgService {
   readonly hijosPorSistema = signal<Record<string, SidebarNavRuta[]>>({});
 
   private emailCargado: string | null = null;
+  readonly cargando = signal(false);
+
+  /** Vuelve a pedir el menú aunque el usuario no haya cambiado. */
+  recargar(email: string): void {
+    this.emailCargado = null;
+    this.cargar(email);
+  }
 
   /** Carga y construye el menú para un usuario. Evita llamadas duplicadas si el email no cambia. */
   cargar(email: string): void {
     if (this.emailCargado === email) return;
     this.emailCargado = email;
+    this.cargando.set(true);
 
     this.modSysAdminService.getMenuItems(email).subscribe({
       next: (response) => {
@@ -69,8 +77,12 @@ export class MenuStgService {
 
         this.sistemas.set(sistemas);
         this.hijosPorSistema.set(hijosPorId);
+        this.cargando.set(false);
       },
-      error: () => this.sistemas.set([]),
+      error: () => {
+        this.sistemas.set([]);
+        this.cargando.set(false);
+      },
     });
   }
 

@@ -1,4 +1,4 @@
-<app-window-panel titulo="Vinculación Cartera" subtitulo="Captaciones" [permitirActualizar]="false">
+<app-window-panel titulo="Vinculación Cartera" subtitulo="Captaciones" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()">
   <!-- Sin filtros visibles: el selector solo resuelve el nodo inicial autorizado y lleva la ruta.
        Se navega con el drill down de la tabla y las migas. -->
   <app-hier-selector

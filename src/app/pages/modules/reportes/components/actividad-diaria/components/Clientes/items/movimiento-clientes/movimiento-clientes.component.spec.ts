@@ -37,4 +37,14 @@ describe('MovimientoClientesComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
+  it('cargar() vuelve a pedir el reporte', () => {
+    const cmp = TestBed.createComponent(MovimientoClientesComponent).componentInstance;
+    expect(servicioSpy['obtener']).toHaveBeenCalledTimes(1);
+
+    cmp['cargar']();
+
+    expect(servicioSpy['obtener']).toHaveBeenCalledTimes(2);
+    expect(cmp['cargando']()).toBe(false);
+  });
+
 });

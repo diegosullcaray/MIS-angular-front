@@ -68,6 +68,15 @@ export class VinculacionCarteraComponent {
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
+    this.cargar(nodo);
+  }
+
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.cargar(nodo);
+  }
+
+  private cargar(nodo: HierarquiaNodo): void {
     this.cargando.set(true);
 
     this.servicio.obtener({ tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }).subscribe({

@@ -1,4 +1,4 @@
-<app-window-panel titulo="Gestión de Banca Solidaria" subtitulo="Reportes PDM" [permitirActualizar]="false">
+<app-window-panel titulo="Gestión de Banca Solidaria" subtitulo="Reportes PDM" [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()">
   <!-- Como el legado, la jerarquía no se elige en un desplegable: el selector oculto solo resuelve
        el nodo autorizado y lleva la ruta; se navega con el drill down de la tabla y las migas. -->
   <app-hier-selector

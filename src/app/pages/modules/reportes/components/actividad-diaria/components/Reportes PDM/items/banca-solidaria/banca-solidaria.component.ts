@@ -88,6 +88,12 @@ export class BancaSolidariaComponent {
     this.nivelActual.set(nodo);
   }
 
+  /** El `effect` de arriba depende del nodo: uno nuevo (misma jerarquía) fuerza la consulta. */
+  protected refrescar(): void {
+    const nodo = this.nivelActual();
+    if (nodo) this.nivelActual.set({ ...nodo });
+  }
+
   protected onRutaSeleccionada(ruta: HierarquiaNodo[]): void {
     this.rutaJerarquica.set(ruta);
   }
