@@ -109,7 +109,7 @@ export class GraficoColumnasApiladasComponent {
         column: {
           stacking: 'normal',
           borderWidth: 0,
-          pointWidth: 26,
+          pointWidth: 30,
           // Barras corridas a la izquierda de su categoría: a la derecha queda el sitio de la cifra de cada tramo.
           pointPlacement: -0.25,
           dataLabels: {
@@ -117,7 +117,7 @@ export class GraficoColumnasApiladasComponent {
             // Cifra del tramo a un costado de la barra; un tramo casi nulo no lleva cifra (queda en el tooltip).
             align: 'left',
             verticalAlign: 'middle',
-            x: 20,
+            x: 28,
             overflow: 'allow',
             crop: false,
             allowOverlap: true,
