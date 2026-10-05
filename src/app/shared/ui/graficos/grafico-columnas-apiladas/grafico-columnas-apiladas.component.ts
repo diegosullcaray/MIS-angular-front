@@ -1,5 +1,4 @@
 import { Component, computed, inject, input } from '@angular/core';
-import Highcharts from 'highcharts/esm/highcharts.js';
 import type { Options } from 'highcharts';
 import { ThemeService } from '../../../services/theme.service';
 import type { DatosColumnasApiladas } from '../models/grafico-comun.model';
@@ -31,11 +30,12 @@ export class GraficoColumnasApiladasComponent {
     const oscuro = this.tema.oscuro();
     const base = opcionesBase(oscuro, true);
     const { texto, textoFuerte, linea } = tokensTema(oscuro);
-    const miles = (valor: number) => Highcharts.numberFormat(valor, 0, '.', ',');
+    // Dentro de una barra delgada solo caben cifras cortas (1.1M, 976K); el tooltip trae el valor exacto.
+    const compacto = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
 
     return {
       ...base,
-      chart: { type: 'column', backgroundColor: 'transparent', style: { fontFamily: 'inherit' }, spacing: [18, 4, 4, 4] },
+      chart: { type: 'column', backgroundColor: 'transparent', style: { fontFamily: 'inherit' }, spacing: [10, 4, 4, 4] },
       xAxis: {
         categories: [...categorias],
         lineColor: linea,
@@ -44,8 +44,8 @@ export class GraficoColumnasApiladasComponent {
       },
       yAxis: {
         min: 0,
-        // La escala llega a la meta para que la línea quede dentro del gráfico.
-        ...(meta ? { softMax: meta.valor } : {}),
+        // La escala llega justo a la barra más alta; la meta solo se dibuja si cae dentro de ese rango.
+        maxPadding: 0.02,
         title: { text: undefined },
         labels: { enabled: false },
         gridLineColor: linea,
@@ -84,7 +84,7 @@ export class GraficoColumnasApiladasComponent {
             enabled: true,
             // Un tramo muy fino no cabe con su cifra: se omite (queda en el tooltip).
             formatter() {
-              return this.y === null || this.y === undefined || (this.percentage ?? 100) < 8 ? '' : miles(this.y);
+              return this.y === null || this.y === undefined || (this.percentage ?? 100) < 8 ? '' : compacto.format(this.y);
             },
             style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' },
           },

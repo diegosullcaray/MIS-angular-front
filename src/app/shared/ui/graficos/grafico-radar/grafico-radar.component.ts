@@ -28,7 +28,9 @@ export class GraficoRadarComponent {
   protected readonly opciones = computed<Options>(() => {
     const { ejes, series, maximo = 100 } = this.datos();
     const oscuro = this.tema.oscuro();
-    const { texto, textoFuerte, linea } = tokensTema(oscuro);
+    const { textoFuerte, linea } = tokensTema(oscuro);
+    // Texto del radar: negro en claro (el gris no se leía), el tono fuerte del tema en oscuro.
+    const texto = oscuro ? textoFuerte : '#000000';
 
     return {
       ...opcionesBase(oscuro, true),
@@ -44,7 +46,7 @@ export class GraficoRadarComponent {
             const valores = series.map((s) => s.valores[this.pos]).join('/');
             return `<span style="font-weight:600">${this.value}</span><br/><span style="font-size:10px;font-weight:400;color:${texto}">${valores}</span>`;
           },
-          style: { color: textoFuerte, fontSize: '11px', textOverflow: 'none', whiteSpace: 'nowrap' },
+          style: { color: texto, fontSize: '11px', textOverflow: 'none', whiteSpace: 'nowrap' },
         },
       },
       yAxis: {
