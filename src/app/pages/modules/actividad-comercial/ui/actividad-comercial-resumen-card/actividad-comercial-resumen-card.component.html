@@ -1,0 +1,10 @@
+<div
+  class="rounded-xl border p-4"
+  style="background: var(--mis-surface); border-color: var(--mis-border)"
+>
+  <p class="m-0 text-[13px]" style="color: var(--mis-text-secondary)">{{ titulo() }}</p>
+  <p class="m-0 mt-1 text-[22px] font-semibold" style="color: var(--mis-text-primary)">{{ valor() }}</p>
+  @if (detalle()) {
+    <p class="m-0 mt-1 text-[12px]" style="color: var(--mis-text-tertiary)">{{ detalle() }}</p>
+  }
+</div>

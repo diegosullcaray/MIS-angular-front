@@ -1,13 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { inyectarSesionVigente } from './fixtures/session';
 
-/** Smoke de las rutas que ningún otro spec tocaba: Desarrollo Sostenible, Control de Cargas y Actividades. */
+/** Smoke de las rutas que ningún otro spec tocaba: Desarrollo Sostenible, Control de Cargas, Actividades y Actividad Comercial. */
 const RUTAS: readonly string[] = [
   '/app/reportes/leg/com/rda/adm/mon-desem-misi',
   '/app/reportes/leg/com/rda/adm/desemp-social',
   '/app/reportes/repositorio/actividad-diaria/prod-misionales/productos-misionales',
   '/app/reportes/leg/prd',
   '/app/actividades/regprosp-corr',
+  '/app/actividad-comercial',
 ];
 
 test.describe('Rutas sin cobertura previa — smoke', () => {

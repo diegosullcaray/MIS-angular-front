@@ -96,6 +96,11 @@ export const APP_ROUTES: Routes = [
           import('./pages/modules/consulta-fen/consulta-fen.routes').then((m) => m.CONSULTA_FEN_ROUTES),
         data: { title: 'Consulta FEN - CENEPRED' },
       },
+      {
+        path: 'actividad-comercial',
+        loadChildren: () =>
+          import('./pages/modules/actividad-comercial/actividad-comercial.routes').then((m) => m.ACTIVIDAD_COMERCIAL_ROUTES)
+      },
     ]
   },
   {
