@@ -1,9 +1,6 @@
 <figure class="m-0 flex min-w-0 flex-1 flex-col" [attr.aria-label]="resumenAccesible()">
   <figcaption class="flex items-baseline justify-between gap-2 text-xs leading-4 text-[var(--mis-text-secondary)]">
     <span>{{ datos().titulo }}</span>
-    @if (faltante() !== null) {
-      <span class="text-[10px]" [style.color]="colorMeta">Faltan <b>{{ texto(faltante()!) }}</b></span>
-    }
   </figcaption>
   <div class="min-h-[150px] flex-1">
     <app-grafico-columnas-apiladas [datos]="grafico()" />

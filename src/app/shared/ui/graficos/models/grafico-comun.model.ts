@@ -99,4 +99,8 @@ export interface DatosColumnasApiladas {
   series: readonly SerieApilada[];
   /** Línea de meta punteada sobre el gráfico. */
   meta?: { valor: number; etiqueta: string };
+  /** Hueco punteado sobre la primera columna, desde el total `desde` hasta la meta: lo que falta. */
+  faltan?: { desde: number; etiqueta: string };
+  /** Total de cada categoría (en el orden de `categorias`), ya formateado; se muestra bajo su nombre. */
+  totales?: readonly string[];
 }

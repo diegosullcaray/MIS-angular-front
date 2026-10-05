@@ -43,9 +43,11 @@ describe('actividad-comercial.util', () => {
 
       expect(d.categorias).toEqual(['Hoy', 'Cierre Anterior']);
       expect(d.series.map((s) => s.nombre)).toEqual(['Trasladada', 'Propia', 'Heredada']);
-      expect(d.series.find((s) => s.nombre === 'Propia')?.valores).toEqual([976423, 3528967]);
+      expect(d.series.find((s) => s.nombre === 'Propia')?.valores).toEqual([2115583, 3528967]);
       expect(d.series.find((s) => s.nombre === 'Heredada')?.valores).toEqual([1139160, null]);
       expect(d.meta).toEqual({ valor: 4100000, etiqueta: 'Meta 4,100,000' });
+      expect(d.faltan).toEqual({ desde: 2441057, etiqueta: 'Faltan 1,658,943' });
+      expect(d.totales).toEqual(['2,441,057', '3,528,967']);
     });
 
     it('aclarar mezcla con blanco sin salirse del rango', () => {

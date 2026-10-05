@@ -1,8 +1,8 @@
 import { Component, computed, input } from '@angular/core';
 import { GraficoColumnasApiladasComponent } from '../../../../../shared/ui/graficos/grafico-columnas-apiladas/grafico-columnas-apiladas.component';
-import { AZUL, MAGENTA, NAVY } from '../../../../../shared/ui/graficos/utils/paleta-colores.util';
+import { MAGENTA, NAVY } from '../../../../../shared/ui/graficos/utils/paleta-colores.util';
 import type { ColumnasCartera } from '../../models/actividad-comercial.model';
-import { datosColumnasCartera, faltanteMeta, formatearValor } from '../../utils/actividad-comercial.util';
+import { datosColumnasCartera, formatearValor } from '../../utils/actividad-comercial.util';
 
 /** Columnas de cartera (hoy apilado y cierre anterior): el dibujo es del gráfico compartido; acá solo se preparan los datos. */
 @Component({
@@ -15,8 +15,6 @@ import { datosColumnasCartera, faltanteMeta, formatearValor } from '../../utils/
 export class ColumnasCarteraComponent {
   readonly datos = input.required<ColumnasCartera>();
 
-  protected readonly colorMeta = AZUL;
-  protected readonly faltante = computed(() => faltanteMeta(this.datos()));
 
   protected readonly grafico = computed(() =>
     datosColumnasCartera(this.datos(), this.datos().paleta === 'saldo' ? NAVY : MAGENTA),

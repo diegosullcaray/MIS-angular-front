@@ -47,6 +47,7 @@ const ACLARADO_TRAMO: Record<SegmentoColumna['clave'], number> = { propia: 0, tr
  * (va en la serie `propia`). Cada tramo es un tono más claro del color base de la paleta.
  */
 export function datosColumnasCartera(datos: ColumnasCartera, colorBase: string): DatosColumnasApiladas {
+  const faltante = faltanteMeta(datos);
   return {
     categorias: ['Hoy', 'Cierre Anterior'],
     series: datos.hoy.map((s) => ({
@@ -55,6 +56,9 @@ export function datosColumnasCartera(datos: ColumnasCartera, colorBase: string):
       color: aclarar(colorBase, ACLARADO_TRAMO[s.clave]),
     })),
     meta: datos.meta === undefined ? undefined : { valor: datos.meta, etiqueta: `Meta ${formatearValor(datos.meta, datos.formato)}` },
+    faltan: faltante ? { desde: datos.totalHoy, etiqueta: `Faltan ${formatearValor(faltante, datos.formato)}` } : undefined,
+    // La Heredada se apila como tramo extra pero no suma al total Hoy (ver governance/tasks/demo).
+    totales: [formatearValor(datos.totalHoy, datos.formato), formatearValor(datos.cierreAnterior, datos.formato)],
   };
 }
 
