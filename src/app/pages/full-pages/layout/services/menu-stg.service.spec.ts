@@ -113,12 +113,28 @@ describe('MenuStgService', () => {
     expect(service.sistemas()[0].ruta).toBe('/app/ranking-k');
   });
 
-  it('cae a cod_sec cuando el ítem no trae act_sec', () => {
+  it('sin act_sec no hay ruta: no se inventa una desde cod_sec (igual que el legado)', () => {
     getMenuItemsSpy.mockReturnValue(of(respuestaCon([{ cod_sec: 'sin-act-sec', desc_sec: 'B' }])));
 
     service.cargar('ana.torres@confianza.pe');
 
-    expect(service.sistemas()[0].ruta).toBe('/app/sin-act-sec');
+    expect(service.sistemas()[0].ruta).toBeUndefined();
+  });
+
+  it('omite los hijos sin ruta ni descendientes (p. ej. un diálogo) y, si no queda ninguno, el sistema no tiene panel', () => {
+    getMenuItemsSpy.mockReturnValue(
+      of(
+        respuestaCon([
+          { cod_sec: 'sis', desc_sec: 'Sistema', act_sec: 'sistema' },
+          { cod_sec: 'usuarios', cod_par: 'sis', desc_sec: 'Usuarios' },
+        ]),
+      ),
+    );
+
+    service.cargar('ana.torres@confianza.pe');
+
+    expect(service.sistemas()[0].tienePanel).toBe(false);
+    expect(service.hijosPorSistema()['sis']).toBeUndefined();
   });
 
   it('construye el árbol de hijos recursivamente y compara cod_par como string (tipos mixtos)', () => {

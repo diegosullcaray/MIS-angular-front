@@ -124,14 +124,6 @@ describe('SidebarComponent', () => {
     expect(icono?.tienePanel).toBe(true);
   });
 
-  it('iconos() habilita tienePanel para "Analista" aunque STG lo mande como hoja (sin hijos)', () => {
-    menuStgFalso.sistemas.set([{ id: 'sist-an', tipo: 'remote', icono: 'pi pi-briefcase', etiqueta: 'Analista', tienePanel: false, ruta: '/app/analista' }]);
-    const fixture = crear();
-
-    const icono = fixture.componentInstance['iconos']().find((i) => i.id === 'sist-an');
-    expect(icono?.tienePanel).toBe(true);
-  });
-
   it('iconos() habilita tienePanel para "Analista" cuando STG ya lo manda como grupo (con "Categorización" de hijo)', () => {
     menuStgFalso.sistemas.set([{ id: 'sist-an', tipo: 'remote', icono: 'pi pi-briefcase', etiqueta: 'Analista', tienePanel: true }]);
     menuStgFalso.hijosPorSistema.set({ 'sist-an': [{ etiqueta: 'Categorización', ruta: '/app/analista/categorizacion' }] });
@@ -139,34 +131,6 @@ describe('SidebarComponent', () => {
 
     const icono = fixture.componentInstance['iconos']().find((i) => i.id === 'sist-an');
     expect(icono?.tienePanel).toBe(true);
-  });
-
-  it('iconos() deshabilita tienePanel para "Dashboards Integrados" aunque STG mande un hijo "usuarios" (ya migrado a diálogo, no a ruta)', () => {
-    menuStgFalso.sistemas.set([
-      { id: 'sist-db', tipo: 'remote', icono: 'pi pi-table', etiqueta: 'Dashboards Integrados', tienePanel: true },
-    ]);
-    menuStgFalso.hijosPorSistema.set({ 'sist-db': [{ etiqueta: 'Usuarios', ruta: '/app/dashboards/usuarios' }] });
-    const fixture = crear();
-
-    const icono = fixture.componentInstance['iconos']().find((i) => i.id === 'sist-db');
-
-    expect(icono?.tienePanel).toBe(false);
-    expect(icono?.ruta).toBe('/app/dashboards');
-  });
-
-  it('seleccionarIcono() navega directo a /app/dashboards para "Dashboards Integrados", sin abrir el panel secundario', () => {
-    const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
-    menuStgFalso.sistemas.set([
-      { id: 'sist-db', tipo: 'remote', icono: 'pi pi-table', etiqueta: 'Dashboards Integrados', tienePanel: true },
-    ]);
-    menuStgFalso.hijosPorSistema.set({ 'sist-db': [{ etiqueta: 'Usuarios', ruta: '/app/dashboards/usuarios' }] });
-    const fixture = crear();
-    const icono = fixture.componentInstance['iconos']().find((i) => i.id === 'sist-db')!;
-
-    fixture.componentInstance['seleccionarIcono'](icono);
-
-    expect(navSpy).toHaveBeenCalledWith('/app/dashboards');
-    expect(shell.contenidoPendienteSeleccion()).toBe(false);
   });
 
   it('al navegar a /app/dashboards NO fuerza sidebarIconActivo a "host-inicio" — es un sistema distinto de /app/dashboard (Inicio)', async () => {
@@ -190,7 +154,7 @@ describe('SidebarComponent', () => {
     expect(shell.sidebarIconActivo()).toBe('host-inicio');
   });
 
-  it('panelActivo() arma el panel propio de "Analista" (Categorización) en vez del panel remoto de STG', () => {
+  it('panelActivo() de un sistema remoto usa tal cual los hijos que devolvió el backend (sin rutas manuales)', () => {
     menuStgFalso.sistemas.set([{ id: 'sist-an', tipo: 'remote', icono: 'pi pi-briefcase', etiqueta: 'Analista', tienePanel: true }]);
     menuStgFalso.hijosPorSistema.set({ 'sist-an': [{ etiqueta: 'Categorización', ruta: '/app/analista/categorizacion' }] });
     crear();
@@ -199,9 +163,7 @@ describe('SidebarComponent', () => {
     const panel = TestBed.inject(NavegacionSistemasService).panelActivo();
 
     expect(panel?.titulo).toBe('Analista');
-    expect(panel?.secciones[0].rutas).toEqual([
-      { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
-    ]);
+    expect(panel?.secciones[0].rutas).toEqual([{ etiqueta: 'Categorización', ruta: '/app/analista/categorizacion' }]);
   });
 
   it('panelActivo() para "host-inicio" es null: Inicio navega directo al dashboard, sin explorador', () => {

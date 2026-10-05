@@ -86,9 +86,10 @@ export class MenuStgService {
     });
   }
 
-  /** Normaliza la ruta absoluta, asegurando el prefijo /app/ sin duplicarlo. */
-  private rutaDeAntItem(item: AntMenuItem): string {
-    const segmento = String(item.act_sec || item.cod_sec || '').replace(/^\/+/, '');
+  /** Ruta absoluta a partir de `act_sec` (igual que el legado: `state = act_sec`). Sin `act_sec` no hay ruta: no se inventa una desde `cod_sec`. */
+  private rutaDeAntItem(item: AntMenuItem): string | undefined {
+    const segmento = String(item.act_sec ?? '').replace(/^\/+/, '');
+    if (!segmento) return undefined;
     return segmento.startsWith('app/') ? `/${segmento}` : `/app/${segmento}`;
   }
 
@@ -101,7 +102,7 @@ export class MenuStgService {
     const hijosRaw = porPadre.get(String(codPadre));
     if (!hijosRaw?.length) return undefined;
 
-    return hijosRaw
+    const hijos = hijosRaw
       .sort((a, b) => (a.order_sec ?? 0) - (b.order_sec ?? 0))
       .map((hijo) => {
         const nietos = this.construirHijos(hijo.cod_sec, porPadre);
@@ -112,7 +113,11 @@ export class MenuStgService {
           ruta: nietos ? undefined : this.rutaDeAntItem(hijo),
           hijos: nietos,
         };
-      });
+      })
+      // Sin ruta ni descendientes no hay a dónde ir (p. ej. un ítem que el backend manda como diálogo).
+      .filter((nodo) => nodo.ruta || nodo.hijos);
+
+    return hijos.length ? hijos : undefined;
   }
 
   /** Busca en el árbol una ruta activa para resolver el breadcrumb dinámicamente. */

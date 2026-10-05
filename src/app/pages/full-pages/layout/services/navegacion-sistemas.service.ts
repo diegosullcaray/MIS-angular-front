@@ -28,15 +28,10 @@ export class NavegacionSistemasService {
       },
     ];
 
-    const sistemasStg = this.menuStg.sistemas().map((sistema) => {
-      if (sistema.ruta === this.kaypacha.ruta || this.esAnalista(sistema))
-        return { ...sistema, tienePanel: true };
-      // El backend sigue mandando un hijo "usuarios" que ya es un diálogo, no una ruta:
-      // sin este override el sistema abriría un explorador con un único ítem muerto y sin `ruta`.
-      if (this.esDashboardsIntegrados(sistema))
-        return { ...sistema, tienePanel: false, ruta: '/app/dashboards' };
-      return sistema;
-    });
+    // El menú es el que devuelve `list_sec`; solo Kaypacha agrega su propio panel (categorías del ranking).
+    const sistemasStg = this.menuStg
+      .sistemas()
+      .map((sistema) => (sistema.ruta === this.kaypacha.ruta ? { ...sistema, tienePanel: true } : sistema));
 
     return [...base, ...sistemasStg];
   });
@@ -61,7 +56,6 @@ export class NavegacionSistemasService {
 
     if (icono.ruta === this.kaypacha.ruta)
       return this.kaypacha.panelPara(icono.etiqueta, icono.icono);
-    if (this.esAnalista(icono)) return this.getPanelAnalista(icono.etiqueta, icono.icono);
 
     return this.getPanelStg(id);
   }
@@ -235,29 +229,6 @@ export class NavegacionSistemasService {
       if (ruta.soloAdmin && !this.shell.esAdmin()) return false;
       return true;
     });
-  }
-
-  private esAnalista(icono: SidebarIcon): boolean {
-    return (icono.etiqueta || '').trim().toLowerCase() === 'analista';
-  }
-
-  private esDashboardsIntegrados(icono: SidebarIcon): boolean {
-    return (icono.etiqueta || '').trim().toLowerCase() === 'dashboards integrados';
-  }
-
-  private getPanelAnalista(titulo: string, icono: string): SidebarNavPanelConfig {
-    return {
-      tipo: 'host-admin',
-      titulo,
-      icono,
-      secciones: [
-        {
-          rutas: [
-            { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
-          ],
-        },
-      ],
-    };
   }
 
   /** Panel para módulos legacy no migrados, basándose en la data del menú STG. */
