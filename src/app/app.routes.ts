@@ -62,14 +62,6 @@ export const APP_ROUTES: Routes = [
           import('./pages/modules/herramientas/herramientas.routes').then((m) => m.HERRAMIENTAS_ROUTES)
       },
       {
-        /** Panel 360 del asesor; vive con los reportes de `rda/sectorista` porque consume sus servicios. */
-        path: 'analista/panel-unificado',
-        loadComponent: () =>
-          import('./pages/modules/reportes/components/analista/items/panel-asesor/panel-asesor.component').then(
-            (m) => m.PanelAsesorComponent
-          )
-      },
-      {
         /** Módulo `categorizacion`. El segmento `analista/` es el `act_sec` del menú legacy. */
         path: 'analista/categorizacion',
         loadChildren: () =>

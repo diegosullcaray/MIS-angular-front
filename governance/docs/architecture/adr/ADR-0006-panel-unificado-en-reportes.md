@@ -1,6 +1,6 @@
 # ADR-0006: El panel unificado del asesor vive en `reportes` y se enruta desde `app.routes.ts`
 
-- Estado: Vigente
+- Estado: Retirado (2026-10-05)
 - Fecha: 2026-09-23
 - Responsables: Frontend MIS Host
 
@@ -15,7 +15,7 @@ Si ese módulo hubiera importado los servicios de `reportes`, habría roto la re
 ## Decisión
 
 - El panel es una pantalla del subdominio Analista de `reportes`: `reportes/components/analista/items/panel-asesor/`.
-- Consume los servicios existentes a través de `PanelAsesorConsultasService`, que despacha por `SCODSEC` (`L_CART_SEC`, `L_MONI_DESE_SEC`…). No declara `cod_rep` propios ni cambia parámetros.
+- Consume los servicios existentes a través de el servicio de consultas del panel, que despacha por `SCODSEC` (`L_CART_SEC`, `L_MONI_DESE_SEC`…). No declara `cod_rep` propios ni cambia parámetros.
 - La URL `/app/analista/panel-unificado` se declara con `loadComponent` en `app.routes.ts`. La raíz de rutas no es un módulo, así que componer ahí no crea acoplamiento entre módulos.
 - El orden de categorías y reportes se deriva del tráfico histórico (`peticiones`), que no se muestra al asesor.
 - Los KPI de desembolso salen del propio monitor (`kpiOperaciones`/`kpiMonto`). El panel no suma ni infiere totales.
@@ -66,11 +66,4 @@ tablero. Reemplaza la navegación por pestañas y chips de las enmiendas anterio
 
 ## Evidencia
 
-- **Implementación:**
-  - `src/app/pages/modules/reportes/components/analista/items/panel-asesor/`
-  - `services/panel-asesor.service.ts`
-  - `services/panel-asesor-consultas.service.ts`
-- **Reglas puras:** `utils/panel-asesor.util.ts`, `utils/panel-resumen.util.ts` y sus specs.
-- **Ruta:** `src/app/app.routes.ts` (`analista/panel-unificado`).
-- **Acceso en menú:** `src/app/pages/full-pages/layout/utils/panel-unificado-menu.util.ts`.
-- **E2E:** `e2e/panel-unificado.spec.ts` y `e2e/panel-unificado-tablero.spec.ts`.
+Retirado el 2026-10-05 por pedido del producto: se eliminó el subdominio Analista de `reportes` completo (componentes, servicios, modelos, utilidades y pruebas), la ruta `/app/analista/panel-unificado`, su acceso en el menú y los E2E asociados. Queda como registro histórico; ya no hay código que lo respalde. El módulo `categorizacion` (`/app/analista/categorizacion`) no se tocó.

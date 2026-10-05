@@ -32,7 +32,7 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica en CI.
 
 <!-- generado:inicio rutas-de-accion -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-09-28 · commit 5b5092f5. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-10-05 · commit 6eece08c. No editar a mano. -->
 
 | Módulo Ant | Servicio | Método | Ruta de acción | Verbo | Parámetros de payload | Clave de respuesta | Llamadas |
 |---|---|---|---|---|---|---|---:|
@@ -78,9 +78,9 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 | `rep2` (6304) | `ModRep2Service` | `getMonImrResultados` | `mon_imr.resultados` | GET | — | `response` | **0** |
 | `rep2` (6304) | `ModRep2Service` | `getMonSalidasDetalle` | `mon_sali_ret.detalle` | GET | — | `response` | 1 |
 | `rep2` (6304) | `ModRep2Service` | `getMonSalidasResultados` | `mon_sali_ret.resultados` | GET | — | `response` | 1 |
-| `reporting` (5304) | `ModReportesService` | `getGraphicData` | `graphicData` | GET | `cod_rep` | `result` | 5 |
-| `reporting` (5304) | `ModReportesService` | `getRegularData` | `regularData` | GET | `cod_rep` | `result` | 20 |
-| `reporting` (5304) | `ModReportesService` | `getDeprecatedData` | `reportData` | GET | `cod_rep` | `result` | 15 |
+| `reporting` (5304) | `ModReportesService` | `getGraphicData` | `graphicData` | GET | `cod_rep` | `result` | 4 |
+| `reporting` (5304) | `ModReportesService` | `getRegularData` | `regularData` | GET | `cod_rep` | `result` | 13 |
+| `reporting` (5304) | `ModReportesService` | `getDeprecatedData` | `reportData` | GET | `cod_rep` | `result` | 1 |
 | `reporting` (5304) | `ModReportesService` | `getRegularTableResult` | `table.regular` | GET | `cod_rep` | `resultado` | 29 |
 | `secciones` (5301) | `ModSeccionesService` | `getDetalleCategorizacion` | `categorizacion.detalle` | GET | `cod_bt` | `resultado` | 1 |
 | `secciones` (5301) | `ModSeccionesService` | `getDetalleCliente` | `dashboard.cliente` | GET | `cod_bt`, `num_doc`, `tip_doc`, `pais` | `resultado` | **0** |
@@ -89,8 +89,8 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 | `secciones` (5301) | `ModSeccionesService` | `postProsBecas` | `listas.post_becas` | POST | `cod_bt`, `num_doc`, `com` | `response` | **0** |
 | `secciones` (5301) | `ModSeccionesService` | `getListaPrioLeads` | `listas.prio_leads` | GET | `cod_bt` | `resultado` | **0** |
 | `secciones` (5301) | `ModSeccionesService` | `getListaBecas` | `listas.pro_becas` | GET | `cod_bt` | `resultado` | **0** |
-| `secciones` (5301) | `ModSeccionesService` | `postRegularUpdate` | `regularUpdate` | GET | `cod_rep` | `result` | 1 |
-| `secciones` (5301) | `ModSeccionesService` | `getSecList` | `sec_list2` | GET | `email` | `result_sectorista` | 2 |
+| `secciones` (5301) | `ModSeccionesService` | `postRegularUpdate` | `regularUpdate` | GET | `cod_rep` | `result` | **0** |
+| `secciones` (5301) | `ModSeccionesService` | `getSecList` | `sec_list2` | GET | `email` | `result_sectorista` | **0** |
 | `admin` (6301) | `ModSysAdminService` | `getBaseHierarchy` | `base_hier` | GET | `email`, `cod_jer` | `base_hierarchy` | 3 |
 | `admin` (6301) | `ModSysAdminService` | `getLevelHierarchy` | `level_hier` | GET | `cod_jer`, `lvl_jer`, `tip_cod`, `cod_rels`, `params` | `level_hierarchy` | 1 |
 | `admin` (6301) | `ModSysAdminService` | `getListPick01` | `list_pick_01` | GET | `tip_cod`, `cod_rel` | `list_res` | 2 |
@@ -102,7 +102,7 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 
 _62 rutas de acción únicas en 10 servicios de `core/winder/instances/`._
 
-_24 métodos sin llamadas fuera de `core/winder/` (transporte congelado; se conservan hasta decidir su retiro): `ModPresupuestoService.getResCarCreditos`, `ModPresupuestoService.getResDepBP`, `ModPresupuestoService.getResDepRed`, `ModPresupuestoService.getLogVerificaciones`, `ModPresupuestoService.getRegResultados`, `ModPresupuestoService.getResSegComercial`, `ModPresupuestoService.getResSegOperaciones`, `ModPresupuestoService.postResCarCreditos`, `ModPresupuestoService.postResDepBP`, `ModPresupuestoService.postResDepRed`, `ModPresupuestoService.postLogVerificaciones`, `ModPresupuestoService.postRegResultados`, `ModPresupuestoService.postResSegComercial`, `ModPresupuestoService.postResSegOperaciones`, `ModRep2Service.getMonImrDetalle`, `ModRep2Service.getMonImrResultados`, `ModSeccionesService.getDetalleCliente`, `ModSeccionesService.getHistoricoVariable`, `ModSeccionesService.getResumenDashboard`, `ModSeccionesService.postProsBecas`, `ModSeccionesService.getListaPrioLeads`, `ModSeccionesService.getListaBecas`, `ModSysAdminService.postRouteTrack`, `ModSysLoginService.postMeta`._
+_26 métodos sin llamadas fuera de `core/winder/` (transporte congelado; se conservan hasta decidir su retiro): `ModPresupuestoService.getResCarCreditos`, `ModPresupuestoService.getResDepBP`, `ModPresupuestoService.getResDepRed`, `ModPresupuestoService.getLogVerificaciones`, `ModPresupuestoService.getRegResultados`, `ModPresupuestoService.getResSegComercial`, `ModPresupuestoService.getResSegOperaciones`, `ModPresupuestoService.postResCarCreditos`, `ModPresupuestoService.postResDepBP`, `ModPresupuestoService.postResDepRed`, `ModPresupuestoService.postLogVerificaciones`, `ModPresupuestoService.postRegResultados`, `ModPresupuestoService.postResSegComercial`, `ModPresupuestoService.postResSegOperaciones`, `ModRep2Service.getMonImrDetalle`, `ModRep2Service.getMonImrResultados`, `ModSeccionesService.getDetalleCliente`, `ModSeccionesService.getHistoricoVariable`, `ModSeccionesService.getResumenDashboard`, `ModSeccionesService.postProsBecas`, `ModSeccionesService.getListaPrioLeads`, `ModSeccionesService.getListaBecas`, `ModSeccionesService.postRegularUpdate`, `ModSeccionesService.getSecList`, `ModSysAdminService.postRouteTrack`, `ModSysLoginService.postMeta`._
 <!-- generado:fin -->
 
 ## Límites

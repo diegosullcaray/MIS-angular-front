@@ -4,7 +4,6 @@ import { MenuStgService } from './menu-stg.service';
 import { KaypachaService } from '../../../modules/ranking-k/services/kaypacha.service';
 import { Location } from '@angular/common';
 import type { RegistroNavegacion, SidebarIcon, SidebarNavPanelConfig, SidebarNavRuta } from '../interfaces/sidebar.model';
-import { ACCESO_PANEL_UNIFICADO, conPanelUnificado } from '../utils/panel-unificado-menu.util';
 
 /** Árbol de navegación de cada sistema y ubicación actual; lo comparten el rail de sistemas, el explorador y el breadcrumb del header. */
 @Injectable({ providedIn: 'root' })
@@ -254,7 +253,6 @@ export class NavegacionSistemasService {
       secciones: [
         {
           rutas: [
-            { ...ACCESO_PANEL_UNIFICADO },
             { etiqueta: 'Categorización', ruta: '/app/analista/categorizacion', icono: 'pi pi-briefcase' },
           ],
         },
@@ -272,7 +270,7 @@ export class NavegacionSistemasService {
       tipo: 'remote',
       titulo,
       icono: stg?.icono ?? 'pi pi-th-large',
-      secciones: [{ titulo, rutas: stg?.ruta === '/app/reportes' ? conPanelUnificado(hijosStg) : hijosStg }],
+      secciones: [{ titulo, rutas: hijosStg }],
     };
   }
 }

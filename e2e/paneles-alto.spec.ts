@@ -6,7 +6,7 @@ import { inyectarSesionVigente, mockearBackendAnt } from './fixtures/session';
  * (`.mis-window { min-height: calc(100vh - 130px) }`). Estas pantallas usaban el modo de alto
  * automático, ya retirado, y se encogían al contenido.
  */
-for (const ruta of ['/app/dashboards', '/app/ranking-k', '/app/consulta-fen', '/app/analista/panel-unificado']) {
+for (const ruta of ['/app/dashboards', '/app/ranking-k', '/app/consulta-fen']) {
   test(`el panel de ${ruta} ocupa el alto completo aunque tenga poco contenido`, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await inyectarSesionVigente(page);
