@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
@@ -49,7 +49,7 @@ const COLUMNAS: DataTableColumn[] = [
   selector: 'app-destino-credito',
   standalone: true,
   imports: [
-    CommonModule,
+    CurrencyPipe,
     FormsModule,
     ButtonModule,
     SelectModule,

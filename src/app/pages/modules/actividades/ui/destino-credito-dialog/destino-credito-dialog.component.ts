@@ -1,5 +1,5 @@
 import { Component, input, output, OnChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -12,7 +12,7 @@ import type { DestinoCreditoItem } from '../../models/actividades.model';
   selector: 'app-destino-credito-dialog',
   standalone: true,
   imports: [
-    CommonModule,
+    CurrencyPipe,
     FormsModule,
     DialogModule,
     ButtonModule,

@@ -1,5 +1,12 @@
 import type { OpcionFiltro } from '../../../../../../shared/ui/formularios/opcion-filtro.model';
 
+export {
+  MOSTRAR_POR_POR_DEFECTO,
+  OPCIONES_MOSTRAR_POR,
+  OPCIONES_PRODUCTO_PASIVO,
+  OPCIONES_SEGMENTO,
+} from '../../../models/filtros.model';
+
 export type { OpcionFiltro };
 
 /** `SCARGAAMBIENTAL()` del legado — variable `cargambiental` de "Huella Carbono". */
@@ -67,30 +74,8 @@ export const OPCIONES_TIPO_OPERACION_SALDO: OpcionFiltro[] = [
 ];
 export const TIPO_OPERACION_SALDO_POR_DEFECTO = 'Saldo';
 
-/** `Mostrar_por()` del legado — variable `ver` de "Gestión de Cartera Reasignada" y "Gestión de Cartera Stock". */
-export const OPCIONES_MOSTRAR_POR: OpcionFiltro<number>[] = [
-  { id: 0, desc: 'Operación' },
-  { id: 1, desc: 'Saldo' },
-];
-export const MOSTRAR_POR_POR_DEFECTO = 0;
-
-/** `SPRODUCTO()` del legado — variable `prod` de "Captación por Canal Comercial" y "Operaciones". */
-export const OPCIONES_PRODUCTO_PASIVO: OpcionFiltro[] = [
-  { id: 'TODOS', desc: 'TODOS' },
-  { id: 'AHORROS', desc: 'AHORROS' },
-  { id: 'CTS', desc: 'CTS' },
-  { id: 'PLAZO FIJO', desc: 'DPF' },
-];
 export const PRODUCTO_PASIVO_POR_DEFECTO = 'TODOS';
 
-/** `Segmento()` del legado — variable `segmento` de "Captación Operacional". */
-export const OPCIONES_SEGMENTO: OpcionFiltro[] = [
-  { id: 'TODOS', desc: 'Todos' },
-  { id: 'Mujer', desc: 'Mujer' },
-  { id: 'Rural', desc: 'Rural' },
-  { id: 'Urbano', desc: 'Urbano' },
-  { id: 'Migrantes', desc: 'Migrantes' },
-];
 export const SEGMENTO_POR_DEFECTO = 'TODOS';
 
 const MESES_ES = [

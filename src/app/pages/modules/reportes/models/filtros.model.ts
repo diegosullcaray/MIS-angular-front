@@ -49,6 +49,13 @@ export const OPCIONES_SEGMENTO: OpcionFiltro[] = [
   { id: 'Migrantes', desc: 'Migrantes' },
 ];
 
+/** `Mostrar_por()` del legado — variable `ver` de "Gestión de Cartera Reasignada" y "Gestión de Cartera Stock". */
+export const OPCIONES_MOSTRAR_POR: OpcionFiltro<number>[] = [
+  { id: 0, desc: 'Operación' },
+  { id: 1, desc: 'Saldo' },
+];
+export const MOSTRAR_POR_POR_DEFECTO = 0;
+
 /** `TipoVariable()` del legado — variable `agru` de los reportes "CMG Clientes Pasivo". */
 export const OPCIONES_VARIABLE_CMG: OpcionFiltro[] = [
   { id: 'Clientes', desc: 'Clientes' },
