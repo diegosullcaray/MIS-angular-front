@@ -45,6 +45,21 @@
   background: var(--mis-surface);
   border: 1px solid var(--mis-border);
   box-shadow: var(--mis-shadow-lg);
+  /* Misma entrada rápida que el panel de ventana. */
+  animation: mis-error-fade-in 200ms ease-out;
+}
+
+@keyframes mis-error-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .error-tarjeta {
+    animation: none;
+  }
 }
 
 /* Franja superior del color del error. */
