@@ -179,7 +179,15 @@ export class ConsultaFenComponent implements OnInit {
     return this.filtro() === 0;
   }
 
+  /** Repite la última consulta ejecutada (no la que se está escribiendo). */
+  protected refrescar(): void {
+    this.ejecutarConsulta(this.ultimaConsulta.columna, this.ultimaConsulta.valor);
+  }
+
+  private ultimaConsulta: { columna: ColumnaFiltroFen; valor: string } = { columna: 3, valor: '' };
+
   private ejecutarConsulta(columna: ColumnaFiltroFen, valor: string): void {
+    this.ultimaConsulta = { columna, valor };
     this.revisionSugerencias++;
     this.seleccion.set(null);
     this.sugerencias.set([]);

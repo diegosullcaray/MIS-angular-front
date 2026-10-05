@@ -30,6 +30,11 @@ export class MovimientoClientesComponent {
 
   constructor() {
     // Sin jerarquía que elegir, el reporte se pide de una — igual que el legado.
+    this.cargar();
+  }
+
+  protected cargar(): void {
+    this.cargando.set(true);
     this.servicio.obtener().subscribe({
       next: (reporte) => {
         this.reporte.set(reporte);

@@ -34,4 +34,15 @@ describe('ControlCargasComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
     expect(servicioSpy.obtenerReporte).toHaveBeenCalled();
   });
+
+  it('refrescar() pide el reporte de inmediato sin esperar el intervalo', () => {
+    const fixture = TestBed.createComponent(ControlCargasComponent);
+    fixture.detectChanges();
+    expect(servicioSpy.obtenerReporte).toHaveBeenCalledTimes(1);
+
+    fixture.componentInstance['refrescar']();
+
+    expect(servicioSpy.obtenerReporte).toHaveBeenCalledTimes(2);
+    expect(fixture.componentInstance['cargando']()).toBe(false);
+  });
 });

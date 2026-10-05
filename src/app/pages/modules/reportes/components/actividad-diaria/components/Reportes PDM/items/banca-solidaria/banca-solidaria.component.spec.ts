@@ -53,6 +53,7 @@ describe('BancaSolidariaComponent', () => {
       onRutaSeleccionada(r: HierarquiaNodo[]): void;
       onCeldaSeleccionada(e: { clave: string; fila: Record<string, unknown> }): void;
       volverANivel(i: number): void;
+      refrescar(): void;
       columnasDrillDown(): string[];
       rutaJerarquica(): HierarquiaNodo[];
     };
@@ -87,6 +88,17 @@ describe('BancaSolidariaComponent', () => {
       TestBed.tick();
       expect(servicioSpy['bancaSolidaria']).toHaveBeenLastCalledWith({ tip_cod: 20, cod_rel: 'T1' });
       expect(inst.rutaJerarquica().map((n) => n.cod_rel)).toEqual(['FC', 'T1']);
+    });
+
+    it('refrescar() vuelve a consultar el mismo nivel', () => {
+      const inst = crearCon([TOTAL, TERRITORIO]);
+      servicioSpy['bancaSolidaria'].mockClear();
+
+      inst.refrescar();
+      TestBed.tick();
+
+      expect(servicioSpy['bancaSolidaria']).toHaveBeenCalledTimes(1);
+      expect(servicioSpy['bancaSolidaria']).toHaveBeenLastCalledWith({ tip_cod: 9, cod_rel: 'FC' });
     });
 
     it('una miga vuelve a ese nivel y recorta la ruta', () => {

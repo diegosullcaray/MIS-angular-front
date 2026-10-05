@@ -2,7 +2,8 @@
   class="pbi-page"
   [titulo]="reporte()?.name ?? 'Reporte'"
   subtitulo="Power BI"
-  [permitirActualizar]="false"
+  [actualizando]="cargando()"
+  (actualizar)="cargar()"
   etiquetaVolver="Volver a Dashboards Integrados"
 >
 

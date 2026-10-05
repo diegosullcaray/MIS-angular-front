@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, input, linkedSignal, output, signal, viewChild } from '@angular/core';
 import { crearIndice, tokenizarConsulta } from './buscador.service';
 import { FUENTE_BUSQUEDA } from './fuente-busqueda';
 import type { ConfiguracionIndice, RegistroBuscable } from './buscador.model';
@@ -32,6 +32,8 @@ export class BuscadorComponent {
 
   readonly origenes = input<readonly string[]>();
   readonly alcance = input<string>();
+  /** Se emitió al abrir un resultado (carpeta o reporte). */
+  readonly abierto = output<void>();
 
   protected readonly consulta = signal('');
   protected readonly enfocado = signal(false);
@@ -161,6 +163,7 @@ export class BuscadorComponent {
     this.consulta.set('');
     this.cerrar();
     registro.abrir();
+    this.abierto.emit();
   }
 
   protected idOpcion(posicion: number): string {

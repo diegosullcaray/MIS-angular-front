@@ -1,7 +1,9 @@
 <app-window-panel
   titulo="Monitor de Salidas y Retenciones por Nivel de Riesgo"
   subtitulo="Cartera"
-  [permitirActualizar]="false"
+  [permitirActualizar]="!!nivelActual()"
+  [actualizando]="cargando()"
+  (actualizar)="reintentar()"
 >
   <!-- Sin filtros visibles, como el legado: el selector solo resuelve el nodo inicial autorizado y
        lleva la ruta. Se navega con el drill down de la tabla y las migas. -->

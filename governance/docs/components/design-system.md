@@ -17,19 +17,11 @@ Ant/Winder; no modifica cálculos, permisos ni los significados de los indicador
 | Color completo sobre claro / blanco sobre oscuro | Selección reactiva al tema; blanco sobre la fotografía del acceso. |
 | Ilustraciones proporcionadas por la empresa | Se conservan las mascotas existentes de los módulos; los fondos conservan personajes y marcas de las imágenes de referencia. |
 
-El fondo institucional se compone en CSS de cinco capas: los PNG originales
-`avatars/pachi/Copia de 002.png` y `avatars/mapu/02(1).png`, los logos originales
-Financiera Confianza/FMBBVA y MIS, y un entorno vacío claro u oscuro
-(`brand-backdrop-light.webp` / `brand-backdrop-dark.webp`). Los PNG se utilizan
-sin retoque ni regeneración: conservan rostros, uniformes, marcas, poses y
-proporciones. Las mismas fuentes se usan en escritorio, móvil y login.
-
-Solo los entornos vacíos se editaron con ImageGen: curvas suaves, perla/azul
-en claro y navy mate en oscuro, poca saturación, sin personas, objetos, letras,
-logos, neón ni reflejos intensos. No contienen personajes generativos. Los seis
-fondos anteriores `brand-desktop-*`, `brand-mobile-*` y `brand-login-*` se retiran
-para evitar reutilizar las identidades alteradas. Se conservan los wallpapers
-originales anteriores y todos los avatares/logos de la empresa.
+El fondo institucional son imágenes ya compuestas (logos y personajes incluidos)
+en `assets/images/fc/fondos/`: `wallpaper.png` / `wallpaper_dark.png` en escritorio
+(≥ 768px), `wallpaper_cell.png` / `wallpaper_dark_cell.png` en móvil y
+`wallpaper_login_cell.png` en el login móvil. El login de escritorio usa
+`login-banner.webp`. Todas usan `cover`.
 
 El entorno usa `cover` para llenar el viewport. Cada personaje y logo usa alto
 o ancho automático para conservar su proporción, con tamaño/posición propios

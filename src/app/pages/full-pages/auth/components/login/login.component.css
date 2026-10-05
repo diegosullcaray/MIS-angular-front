@@ -9,11 +9,10 @@
 }
 
 .login-banner {
-  background-image: var(--mis-login-wallpaper);
+  background-image: var(--mis-login-banner-foto);
   background-repeat: no-repeat;
-  background-size: auto min(40vh, 30vw), auto min(38vh, 28vw),
-    min(70%, 340px) auto, min(50%, 240px) auto, cover;
-  background-position: 20% 60%, 80% 60%, center 94%, center 16%, center;
+  background-size: cover;
+  background-position: 68% center;
   background-color: var(--mis-bg);
 }
 
@@ -35,11 +34,8 @@
   .login-right-panel {
     background-image: var(--mis-login-wallpaper) !important;
     background-repeat: no-repeat !important;
-    background-size: auto min(27dvh, max(60px, calc(100dvh - 530px))),
-      auto min(26dvh, max(58px, calc(100dvh - 540px))), min(62vw, 280px) auto,
-      min(36vw, 160px) auto, cover !important;
-    background-position: left 26% top 17dvh, left 76% top 17dvh,
-      center 96%, center 5%, center !important;
+    background-size: cover !important;
+    background-position: center !important;
     justify-content: flex-end !important;
     padding-top: 2rem !important;
     padding-bottom: max(90px, 11dvh) !important;

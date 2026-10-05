@@ -42,6 +42,16 @@ describe('VinculacionCarteraComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
+  it('refrescar() vuelve a consultar el nivel actual y no hace nada sin nivel', () => {
+    const cmp = TestBed.createComponent(VinculacionCarteraComponent).componentInstance;
+    cmp['refrescar']();
+    expect(servicioSpy['obtener']).not.toHaveBeenCalled();
+
+    cmp['nivelActual'].set(NODO);
+    cmp['refrescar']();
+    expect(servicioSpy['obtener']).toHaveBeenCalledWith({ tip_cod: NODO.tip_cod, cod_rel: NODO.cod_rel });
+  });
+
   describe('drill down', () => {
     const COLUMNAS = [{ key: 'DESUNI', label: 'Descripción' }, { key: 'SALDO', label: 'Saldo' }];
     const TOTAL = { htipcod: 9, cod_rel: 'FC', DESUNI: 'Financiera', style: 1 };

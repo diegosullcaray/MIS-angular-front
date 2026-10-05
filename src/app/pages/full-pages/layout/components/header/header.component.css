@@ -394,3 +394,16 @@
     height: 40px;
   }
 }
+
+/* Búsqueda en diálogo (móvil): el panel de resultados fluye dentro del diálogo
+   en vez de flotar, y la máscara propia del buscador sobra. */
+::ng-deep .header-buscador-dialogo .mis-buscador-panel {
+  position: static;
+  width: 100%;
+  margin-top: var(--mis-space-2);
+  max-height: 60dvh;
+}
+
+::ng-deep .header-buscador-dialogo .mis-buscador-fondo {
+  display: none;
+}

@@ -1,7 +1,8 @@
 <app-window-panel
   titulo="Consulta FEN - CENEPRED"
   subtitulo="Gestión territorial"
-  [permitirActualizar]="false"
+  [actualizando]="servicio.cargando()"
+  (actualizar)="refrescar()"
   [conRelleno]="false"
   volverA="/app/dashboard"
 >

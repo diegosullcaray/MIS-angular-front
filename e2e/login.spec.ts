@@ -37,7 +37,7 @@ test.describe('Botón "Continuar con Google" en modo claro', () => {
 
 for (const tema of ['claro', 'oscuro']) {
   for (const viewport of [{ width: 280, height: 640 }, { width: 1440, height: 900 }]) {
-    test(`login ${tema} a ${viewport.width}px usa los personajes originales`, async ({ page }) => {
+    test(`login ${tema} a ${viewport.width}px usa el fondo de marca`, async ({ page }) => {
       await page.setViewportSize(viewport);
       await bloquearGoogle(page);
       await page.addInitScript(tema => localStorage.setItem('mis.preferencias',
@@ -46,10 +46,12 @@ for (const tema of ['claro', 'oscuro']) {
       const fondo = page.locator(viewport.width < 768 ? '.login-right-panel' : '.login-banner');
       await expect(fondo).toBeVisible();
       const imagen = decodeURIComponent(await fondo.evaluate(el => getComputedStyle(el).backgroundImage));
-      expect(imagen).toContain('/avatars/pachi/Copia de 002.png');
-      expect(imagen).toContain('/avatars/mapu/02(1).png');
-      expect(imagen).toContain(`brand-backdrop-${tema === 'claro' ? 'light' : 'dark'}.webp`);
-      expect(imagen).toContain(`/logos/${tema === 'claro' ? 'fc_color' : 'fc_blank'}.png`);
+      if (viewport.width >= 768) {
+        expect(imagen).toContain('/fondos/login-banner.webp');
+        await expect(page.getByRole('button', { name: /Continuar con Google/ })).toBeInViewport();
+        return;
+      }
+      expect(imagen).toContain('/fondos/wallpaper_login_cell.png');
       await expect(page.getByRole('button', { name: /Continuar con Google/ })).toBeInViewport();
     });
   }

@@ -301,19 +301,6 @@ describe('SelectorNivelDialogComponent', () => {
     expect(navegar).toHaveBeenCalledWith(['/app/dashboard']);
   });
 
-  it('en la selección inicial STAFF no permite cerrar ni abandonar el selector', () => {
-    incentivosFalso.requiereSeleccionInicial.set(true);
-    const fixture = crear();
-    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    const visibleChangeSpy = vi.fn();
-    fixture.componentInstance.visibleChange.subscribe(visibleChangeSpy);
-
-    fixture.componentInstance['cerrar']();
-
-    expect(visibleChangeSpy).not.toHaveBeenCalled();
-    expect(navegar).not.toHaveBeenCalled();
-  });
-
   it('cerrar() con un perfil ya cargado no saca al usuario de la pantalla', () => {
     incentivosFalso.perfil.set({ nombre: 'Juan Pérez' });
     const fixture = crear();

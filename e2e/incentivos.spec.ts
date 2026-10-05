@@ -50,15 +50,8 @@ test.describe('Incentivos — smoke del Cuadro de Mando', () => {
     await expect(page.getByRole('button', { name: 'FC Individual' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'FC Grupal' })).toBeVisible();
 
-    // Paridad con Incentivos3 (commit 7b36254): un STAFF todavía no tiene un
-    // nivel desde el cual armar el Cuadro de Mando, así que el primer selector
-    // no se descarta — ni con la luz roja, ni con Escape. Lo que resolvió
-    // INC-2026-09-08-08 (quedarse SIN acceso a los niveles) se sigue cumpliendo:
-    // los seis niveles están a la vista.
-    await expect(dialogo.getByRole('button', { name: 'Cerrar y volver al inicio' })).toHaveCount(0);
-    await expect(page.locator('.p-dialog-close-button')).toHaveCount(0);
-    await page.keyboard.press('Escape');
-    await expect(dialogo).toBeVisible();
+    // El primer selector se puede cerrar: sin perfil, cerrar lleva al dashboard.
+    await expect(dialogo.getByRole('button', { name: 'Cerrar y volver al inicio' })).toBeVisible();
   });
 
   test('elegir "Asesores" muestra el buscador de colaboradores y un botón "Seleccionar" deshabilitado hasta elegir una fila', async ({ page }) => {
