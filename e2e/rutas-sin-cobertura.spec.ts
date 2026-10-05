@@ -8,7 +8,7 @@ const RUTAS: readonly string[] = [
   '/app/reportes/repositorio/actividad-diaria/prod-misionales/productos-misionales',
   '/app/reportes/leg/prd',
   '/app/actividades/regprosp-corr',
-  '/app/actividad-comercial',
+  '/app/act_comercial',
 ];
 
 test.describe('Rutas sin cobertura previa — smoke', () => {

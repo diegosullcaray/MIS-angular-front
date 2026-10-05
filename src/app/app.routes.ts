@@ -97,7 +97,8 @@ export const APP_ROUTES: Routes = [
         data: { title: 'Consulta FEN - CENEPRED' },
       },
       {
-        path: 'actividad-comercial',
+        /** Módulo `actividad-comercial`. `act_comercial` es el `act_sec` del menú. */
+        path: 'act_comercial',
         loadChildren: () =>
           import('./pages/modules/actividad-comercial/actividad-comercial.routes').then((m) => m.ACTIVIDAD_COMERCIAL_ROUTES)
       },
