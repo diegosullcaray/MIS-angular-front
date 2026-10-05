@@ -1,9 +1,9 @@
 <dl class="m-0 grid w-full grid-cols-3 gap-2 border-t border-[var(--mis-border)] pt-1.5">
   @for (kpi of kpis(); track kpi.etiqueta) {
     <div class="flex min-w-0 flex-col gap-px">
-      <dt class="text-[10px] leading-3 text-[var(--mis-text-secondary)]">{{ kpi.etiqueta }}</dt>
+      <dt class="text-[11px] leading-4 text-[var(--mis-text-secondary)]">{{ kpi.etiqueta }}</dt>
       <dd
-        class="m-0 text-sm font-semibold leading-4"
+        class="m-0 text-base font-semibold leading-5"
         [class.text-[var(--mis-danger)]]="kpi.alerta"
         [class.text-[var(--mis-text-primary)]]="!kpi.alerta"
       >
@@ -11,7 +11,7 @@
       </dd>
       @if (kpi.delta) {
         <dd
-          class="m-0 text-[10px] leading-3"
+          class="m-0 text-[11px] leading-4"
           [class.text-[var(--mis-success)]]="kpi.tono === 'positivo'"
           [class.text-[var(--mis-danger)]]="kpi.tono === 'negativo'"
           [class.text-[var(--mis-text-secondary)]]="kpi.tono !== 'positivo' && kpi.tono !== 'negativo'"
@@ -19,7 +19,7 @@
           {{ kpi.delta }}
         </dd>
       } @else if (kpi.apoyo) {
-        <dd class="m-0 text-[10px] leading-3 text-[var(--mis-text-secondary)]">{{ kpi.apoyo }}</dd>
+        <dd class="m-0 text-[11px] leading-4 text-[var(--mis-text-secondary)]">{{ kpi.apoyo }}</dd>
       }
     </div>
   }

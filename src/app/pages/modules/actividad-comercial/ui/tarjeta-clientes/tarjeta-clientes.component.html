@@ -3,38 +3,38 @@
     <div class="grid grid-cols-2 items-start gap-4">
       <div class="flex flex-col">
         <span class="text-xs font-semibold leading-4 text-[var(--mis-text-secondary)]">Hoy</span>
-        <strong class="text-[22px] font-bold leading-[26px] tracking-tight text-[var(--mis-primary-text)]">{{ datos().hoy }}</strong>
+        <strong class="text-[34px] font-bold leading-[38px] tracking-tight text-[var(--mis-primary-text)]">{{ datos().hoy }}</strong>
       </div>
       <div class="flex flex-col">
         <span class="text-xs font-semibold leading-4 text-[var(--mis-text-secondary)]">Cierre Anterior</span>
-        <strong class="text-[22px] font-bold leading-[26px] tracking-tight text-[var(--mis-primary-text)]">{{ datos().cierreAnterior }}</strong>
+        <strong class="text-[34px] font-bold leading-[38px] tracking-tight text-[var(--mis-primary-text)]">{{ datos().cierreAnterior }}</strong>
       </div>
     </div>
     <dl class="m-0 flex flex-col gap-0.5 border-l border-[var(--mis-border)] pl-3">
-      <dt class="text-[10px] font-semibold leading-[14px] text-[var(--mis-text-secondary)]">Movimiento del mes</dt>
+      <dt class="text-[11px] font-semibold leading-[14px] text-[var(--mis-text-secondary)]">Movimiento del mes</dt>
       @for (m of datos().movimientos; track m.etiqueta) {
-        <div class="flex justify-between gap-1.5 text-[10px] leading-[14px] text-[var(--mis-text-secondary)]">
+        <div class="flex justify-between gap-1.5 text-xs leading-4 text-[var(--mis-text-secondary)]">
           <dd class="m-0">{{ m.etiqueta }}</dd>
-          <dd class="m-0 text-[13px] font-semibold" [class]="claseMovimiento(m.valor)">{{ delta(m.valor) }}</dd>
+          <dd class="m-0 text-sm font-semibold" [class]="claseMovimiento(m.valor)">{{ delta(m.valor) }}</dd>
         </div>
       }
-      <div class="flex justify-between gap-1.5 border-t border-[var(--mis-border)] pt-1.5 text-[10px] leading-[14px] text-[var(--mis-text-primary)]">
+      <div class="flex justify-between gap-1.5 border-t border-[var(--mis-border)] pt-1.5 text-xs leading-4 text-[var(--mis-text-primary)]">
         <dd class="m-0">Crecimiento neto</dd>
-        <dd class="m-0 text-[13px] font-semibold text-[var(--mis-primary-text)]">{{ delta(datos().crecimientoNeto) }}</dd>
+        <dd class="m-0 text-sm font-semibold text-[var(--mis-primary-text)]">{{ delta(datos().crecimientoNeto) }}</dd>
       </div>
     </dl>
     <div class="col-span-full flex flex-col gap-0.5">
-      <div class="flex justify-between gap-2 text-[10px] leading-3 text-[var(--mis-text-secondary)]">
+      <div class="flex justify-between gap-2 text-[11px] leading-3 text-[var(--mis-text-secondary)]">
         <span>Avance: <b class="font-semibold">{{ delta(datos().crecimientoNeto) }} · {{ avanceTexto() }}</b></span>
         <span style="color: var(--mis-primary-text)">Meta de variación: <b class="font-semibold">{{ delta(datos().metaVariacion) }}</b></span>
       </div>
       <app-barra-meta
         [pct]="avance().avancePct"
-        [alto]="7"
+        [alto]="12"
         [marca]="100"
         [descripcion]="'Avance de la variación de clientes: ' + avanceTexto()"
       />
-      <span class="text-right text-[9px] leading-3" style="color: var(--mis-primary-text)">Faltan <b>{{ avance().faltan }} clientes</b></span>
+      <span class="text-right text-[10px] leading-3" style="color: var(--mis-primary-text)">Faltan <b>{{ avance().faltan }} clientes</b></span>
     </div>
   </div>
   <app-kpi-pie pie [kpis]="datos().kpis" />

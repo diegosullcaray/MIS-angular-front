@@ -5,11 +5,11 @@
     [color]="color()"
     [attr.aria-label]="descripcion()"
     [style.--p-progressbar-height.px]="alto()"
-    style="--p-progressbar-background: var(--mis-panel-bg)"
+    style="--p-progressbar-background: color-mix(in srgb, var(--mis-text-secondary) 22%, var(--mis-surface))"
   />
   @if (etiquetaFlotante()) {
     <span
-      class="absolute -top-[18px] -translate-x-1/2 whitespace-nowrap text-[11px] font-bold"
+      class="absolute -top-[18px] -translate-x-1/2 whitespace-nowrap text-xs font-bold"
       [style.left.%]="pct()"
       [style.color]="colorTexto()"
       >{{ etiquetaFlotante() }}</span

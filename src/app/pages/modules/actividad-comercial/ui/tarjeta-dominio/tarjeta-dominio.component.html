@@ -13,7 +13,7 @@
     <h3 class="m-0 grow text-sm font-semibold text-[var(--mis-text-primary)]">{{ titulo() }}</h3>
     <p-button label="Ver detalle →" [link]="true" size="small" (onClick)="verDetalle.emit()" />
   </header>
-  <div class="flex min-h-0 w-full flex-1 flex-col gap-3">
+  <div class="flex min-h-0 w-full flex-1 flex-col justify-evenly gap-1">
     <ng-content />
   </div>
   <ng-content select="[pie]" />

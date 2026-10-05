@@ -1,18 +1,18 @@
 <app-tarjeta-dominio titulo="Seguros" icono="lucideShield" (verDetalle)="verDetalle.emit()">
   <div class="flex w-full flex-col gap-0.5">
-    <div class="flex justify-between text-xs">
+    <div class="flex justify-between text-base">
       <span class="text-[var(--mis-text-primary)]">{{ datos().ingresos.etiqueta }}</span>
       <span class="font-semibold text-[var(--mis-text-secondary)]">{{ resumen(datos().ingresos) }}</span>
     </div>
     <app-barra-meta
       [pct]="pctIngresos()"
-      color="color-mix(in srgb, var(--mis-brand-navy) 40%, white)"
-      [alto]="9"
+      color="color-mix(in srgb, var(--mis-brand-navy) 60%, white)"
+      [alto]="12"
       [descripcion]="datos().ingresos.etiqueta + ': ' + resumen(datos().ingresos)"
     />
   </div>
   <div class="flex w-full flex-col gap-1">
-    <div class="flex justify-between text-xs">
+    <div class="flex justify-between text-base">
       <span class="text-[var(--mis-text-primary)]">{{ datos().polizas.etiqueta }}</span>
       <span class="font-semibold text-[var(--mis-text-secondary)]">{{ resumen(datos().polizas) }}</span>
     </div>
@@ -21,10 +21,10 @@
       [value]="tipos()"
       [max]="datos().polizas.meta"
       [attr.aria-label]="datos().polizas.etiqueta + ' por tipo'"
-      style="--p-metergroup-meters-size: 9px; --p-metergroup-meters-background: var(--mis-panel-bg)"
+      style="--p-metergroup-meters-size: 12px; --p-metergroup-meters-background: color-mix(in srgb, var(--mis-text-secondary) 22%, var(--mis-surface))"
     >
       <ng-template #label>
-        <ul class="m-0 mt-1 grid w-full list-none grid-cols-3 gap-x-1.5 gap-y-1 rounded-lg border border-[var(--mis-border)] px-2 py-1.5 text-[11px]" style="background: var(--mis-tile-bg)">
+        <ul class="m-0 mt-1 grid w-full list-none grid-cols-3 gap-x-1.5 gap-y-1 rounded-lg border border-[var(--mis-border)] px-2 py-1.5 text-xs" style="background: var(--mis-tile-bg)">
           @for (tipo of datos().tipos; track tipo.nombre) {
             <li class="flex items-center gap-1 overflow-hidden">
               <span class="h-1.5 w-1.5 shrink-0 rounded-full" [style.background]="tipo.color" aria-hidden="true"></span>
