@@ -39,7 +39,7 @@ node governance/scripts/crear-modulo.mjs mi-modulo --title "Mi Módulo" --cod-re
 
 Genera la estructura con los sufijos canónicos, un servicio contra Winder/Ant, los cuatro estados con los componentes de `shared/ui` y specs que cubren datos, vacío, error y payload malformado.
 
-Los segmentos bajo `/app` deben coincidir con el `act_sec` del menú: no se eligen libremente.
+Los segmentos bajo `/app` deben coincidir con el `act_sec` del menú: no se eligen libremente. `--registrar-ruta` enlaza el módulo como hijo de `app` (`/app/<segmento>`). El `cod_rep` provisional hay que confirmarlo con backend antes de usarlo, y el menú no se edita en el frontend: el ítem llega por `list_sec` ([ADR-0008](../architecture/adr/ADR-0008-navegacion-solo-desde-list-sec.md)).
 
 ## Agregar un reporte
 

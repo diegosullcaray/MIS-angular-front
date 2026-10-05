@@ -107,7 +107,7 @@ Después:
 4. `npm run verify`
 5. `npm run inventario` si cambiaron rutas.
 
-Sin `--registrar-ruta`, enlazar a mano en `src/app/app.routes.ts`. **Los segmentos bajo `/app` no son libres**: deben coincidir carácter por carácter con el `act_sec` que devuelve el menú (por eso existen rutas como `Kaypacha__`, `incentivos3` y `cons_base_negativa`, que son compatibilidad con el sistema legado, no nombres a imitar).
+`--registrar-ruta` lo enlaza como hijo de `app` en `src/app/app.routes.ts` (`/app/<segmento>`); sin ella, enlazarlo a mano ahí mismo, dentro de `children`. La navegación del menú no se declara en el frontend: viene de `list_sec` ([ADR-0008](../../docs/architecture/adr/ADR-0008-navegacion-solo-desde-list-sec.md)). **Los segmentos bajo `/app` no son libres**: deben coincidir carácter por carácter con el `act_sec` que devuelve el menú (por eso existen rutas como `Kaypacha__`, `incentivos3` y `cons_base_negativa`, que son compatibilidad con el sistema legado, no nombres a imitar).
 
 ---
 

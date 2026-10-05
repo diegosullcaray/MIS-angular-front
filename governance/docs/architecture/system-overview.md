@@ -22,7 +22,7 @@ de errores HTTP; `app.config.ts` registra ese interceptor para toda la aplicacio
 
 ## Shell y navegacion
 
-`ShellLayoutComponent` compone header, sidebar, explorador, overlay de carga y anuncios. `MenuStgService` obtiene la navegacion del backend Ant; `ShellStateService` conserva identidad y estado de presentacion. El menu controla visibilidad y orientacion, pero no reemplaza la autorizacion server-side.
+`ShellLayoutComponent` compone header, sidebar, explorador, overlay de carga y anuncios. `MenuStgService` obtiene la navegacion del backend Ant (`list_sec`) y es la unica fuente de rutas y paneles del menu ([ADR-0008](./adr/ADR-0008-navegacion-solo-desde-list-sec.md)); `ShellStateService` conserva identidad y estado de presentacion. El menu controla visibilidad y orientacion, pero no reemplaza la autorizacion server-side.
 
 Los contratos de transporte, reportes y jerarquia estan en [API contracts](../data/contracts/README.md). La autorizacion del backend se documenta en [access model](../data/contracts/access-model.md).
 

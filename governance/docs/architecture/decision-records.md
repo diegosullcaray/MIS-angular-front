@@ -13,6 +13,7 @@
 | [ADR-0005](./adr/ADR-0005-cambio-de-perfil-por-dialogo.md) | El cambio de perfil requiere selección y confirmación en diálogo | Vigente |
 | [ADR-0006](./adr/ADR-0006-panel-unificado-en-reportes.md) | El panel unificado del asesor vive en `reportes` y se enruta desde `app.routes.ts` | Retirado |
 | [ADR-0007](./adr/ADR-0007-retiro-de-reportes-sin-uso.md) | Retiro de reportes y módulos sin uso (Analista, Presupuesto y 23 reportes) | Vigente |
+| [ADR-0008](./adr/ADR-0008-navegacion-solo-desde-list-sec.md) | La navegación se construye solo desde `list_sec`, sin rutas manuales | Vigente |
 
 ## Decisiones vigentes sin ADR propio
 

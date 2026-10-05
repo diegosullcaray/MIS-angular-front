@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -56,4 +56,39 @@ test('HTTP usa el endpoint explícito y el scaffold no registra ruta en dry-run'
     assert.match(spec, /\/host\/consulta/);
   });
   await ejecutar(['--cod-rep', 'RS_PRUEBA', '--dry-run'], r => assert.equal(r.status, 0));
+});
+
+test('--registrar-ruta enlaza dentro de los hijos de `app` (/app/<segmento>), no en la raíz', async () => {
+  const rutas = [
+    "export const APP_ROUTES = [",
+    "  {",
+    "    path: 'app',",
+    "    children: [",
+    "      { path: 'otro', loadChildren: () => import('./x') },",
+    "    ]",
+    "  },",
+    "  {",
+    "    path: '**',",
+    "    loadComponent: () => import('./nf')",
+    "  }",
+    "];",
+    "",
+  ].join('\r\n');
+  const temporal = mkdtempSync(join(tmpdir(), 'mis-scaffold-'));
+  try {
+    mkdirSync(join(temporal, 'src/app'), { recursive: true });
+    writeFileSync(join(temporal, 'src/app/app.routes.ts'), rutas);
+    const r = spawnSync(process.execPath, [script, 'prueba', '--cod-rep', 'RS_PRUEBA', '--registrar-ruta'], {
+      cwd: temporal, encoding: 'utf8',
+    });
+    assert.equal(r.status, 0, r.stderr);
+    const fuente = readFileSync(join(temporal, 'src/app/app.routes.ts'), 'utf8');
+    assert.ok(fuente.indexOf("path: 'prueba'") < fuente.indexOf("path: '**'"));
+    // Dentro de `app`: aparece antes del `]` que cierra sus hijos.
+    assert.ok(fuente.indexOf("path: 'prueba'") < fuente.indexOf('\r\n    ]'));
+    // Conserva los saltos de línea originales (sin mezclar LF).
+    assert.ok(!/[^\r]\n/.test(fuente));
+  } finally {
+    rmSync(temporal, { recursive: true, force: true });
+  }
 });

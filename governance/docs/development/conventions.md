@@ -16,6 +16,7 @@
 - Separar constantes de backend, modelos, mapeos puros y transporte.
 - Rutas siempre lazy (`loadComponent` / `loadChildren`).
 - Leer `environment` desde `core/`.
+- Navegación (sidebar, explorador, breadcrumb) solo desde `list_sec`: sin rutas, paneles ni etiquetas de menú escritos a mano; sin `act_sec` no hay ruta. Ver [ADR-0008](../architecture/adr/ADR-0008-navegacion-solo-desde-list-sec.md).
 
 ### Angular
 

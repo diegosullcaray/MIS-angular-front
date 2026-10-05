@@ -747,14 +747,18 @@ if (flags['registrar-ruta'] && !seco) {
   if (fuente.includes(`modules/${kebab}/${kebab}.routes`)) {
     console.log(amarillo(`\n  ! La ruta '${kebab}' ya estaba registrada en app.routes.ts — no se tocó.`));
   } else {
-    // Se inserta antes del comodín de ruta desconocida, para no quedar detrás de él.
-    const marca = fuente.match(/^\s*\{\s*\n\s*path: '\*\*'/m);
-    if (marca) {
-      const corte = fuente.indexOf(marca[0]);
-      writeFileSync(rutaApp, `${fuente.slice(0, corte)}${bloqueRuta}\n${fuente.slice(corte)}`, 'utf8');
+    // Los segmentos viven dentro de `app` (hijos del shell → `/app/<segmento>`), no en la raíz:
+    // se inserta como último hijo de `app`, antes de su `]` de cierre (que precede al comodín raíz).
+    const eol = fuente.includes('\r\n') ? '\r\n' : '\n';
+    const texto = fuente.replace(/\r\n/g, '\n');
+    const marca = texto.match(/^\s*\{\s*\n\s*path: '\*\*'/m);
+    const cierre = marca ? texto.lastIndexOf('\n    ]', texto.indexOf(marca[0])) : -1;
+    if (cierre >= 0) {
+      const nuevo = `${texto.slice(0, cierre)}\n${bloqueRuta}${texto.slice(cierre)}`;
+      writeFileSync(rutaApp, nuevo.replace(/\n/g, eol), 'utf8');
       console.log(verde(`\n  ✓ Ruta '/app/${kebab}' registrada en src/app/app.routes.ts`));
     } else {
-      console.log(amarillo('\n  ! No se encontró la ruta comodín en app.routes.ts; registrala a mano.'));
+      console.log(amarillo('\n  ! No se encontró el cierre de los hijos de `app` en app.routes.ts; registrala a mano.'));
     }
   }
 }
