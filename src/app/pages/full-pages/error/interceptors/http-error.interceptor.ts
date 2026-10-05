@@ -18,7 +18,11 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       const status = httpError.statusDe(error);
       const info = httpError.resolver(status);
 
-      if (info.esFatal) {
+      // Status 0 con red disponible = request abortada por la navegación (p. ej. al volver
+      // de un reporte), no una caída real: que lo muestre la pantalla, no `/error/0`.
+      const abortada = status === 0 && navigator.onLine;
+
+      if (info.esFatal && !abortada) {
         httpError.irAPaginaDeError(status);
       }
 

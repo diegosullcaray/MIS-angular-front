@@ -43,6 +43,15 @@ describe('httpErrorInterceptor', () => {
     expect(irSpy).not.toHaveBeenCalled();
   });
 
+  it('no redirige con status 0 si hay red (request abortada al navegar)', async () => {
+    const irSpy = vi.spyOn(httpError, 'irAPaginaDeError').mockResolvedValue();
+    const error = new HttpErrorResponse({ status: 0 });
+    const next: HttpHandlerFn = () => throwError(() => error);
+
+    await expect(firstValueFrom(ejecutar('/api/v1/algo', next))).rejects.toBe(error);
+    expect(irSpy).not.toHaveBeenCalled();
+  });
+
   it('redirige a la página de error cuando el status resuelto es fatal (ej. 500)', async () => {
     const irSpy = vi.spyOn(httpError, 'irAPaginaDeError').mockResolvedValue();
     const error = new HttpErrorResponse({ status: 500 });

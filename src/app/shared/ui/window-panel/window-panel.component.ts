@@ -109,6 +109,14 @@ export class WindowPanelComponent {
       return;
     }
 
+    // Dentro de una carpeta del explorador (p. ej. Actividad Diaria → Campañas) el
+    // paso atrás es subir un nivel; el historial no sabe de carpetas y salía de la app.
+    const navegacion = this.injector.get(NavegacionSistemasService);
+    if (this.shell.contenidoPendienteSeleccion() && navegacion.rutaExplorador().length) {
+      navegacion.irANivel(navegacion.rutaExplorador().length - 2);
+      return;
+    }
+
     // Las hojas legacy declaran su sección padre mediante `cod_par`. Resolver
     // ese código abre la carpeta correcta; el historial no conoce ese nivel.
     if (this.injector.get(NavegacionSistemasService).volverAPadreDeRuta(this.router.url)) return;
