@@ -13,6 +13,10 @@ graficos/
 │   └── grafico-pie.component.ts      ← pre-configurado para donas/torta
 ├── grafico-mixto/
 │   └── grafico-mixto.component.ts    ← pre-configurado para barras + líneas
+├── grafico-columnas-apiladas/
+│   └── grafico-columnas-apiladas.component.ts  ← columnas apiladas con línea de meta
+├── grafico-radar/
+│   └── grafico-radar.component.ts    ← radar (polar) de varias series sobre los mismos ejes
 ├── models/
 │   └── grafico-comun.model.ts        ← interfaces (series, categorías, porciones)
 └── utils/

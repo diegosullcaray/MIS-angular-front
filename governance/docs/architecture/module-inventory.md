@@ -7,11 +7,11 @@ Las rutas bajo `/app` se conservan compatibles con el `act_sec` del menú STG: n
 La tabla se deriva de `src/app/app.routes.ts` y de los `*.routes.ts` de cada módulo. **No editar a mano**: regenerar con `npm run inventario` (o verificar con `npm run inventario:check`).
 
 <!-- generado:inicio modulos -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-10-05 · commit ce365c7a. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-10-05 · commit cdb48c44. No editar a mano. -->
 
 | Módulo | Ruta base | Archivos `*.routes.ts` | Destinos de ruta | Componentes | Servicios | Specs |
 |---|---|---:|---:|---:|---:|---:|
-| `actividad-comercial` | `/app/act_comercial` | 1 | 1 | 1 | 0 | 1 |
+| `actividad-comercial` | `/app/act_comercial` | 1 | 1 | 11 | 1 | 3 |
 | `actividades` | `/app/actividades` | 1 | 4 | 6 | 1 | 7 |
 | `categorizacion` | `/app/analista/categorizacion` | 1 | 1 | 2 | 1 | 3 |
 | `consulta-fen` | `/app/consulta-fen` | 1 | 1 | 1 | 1 | 2 |

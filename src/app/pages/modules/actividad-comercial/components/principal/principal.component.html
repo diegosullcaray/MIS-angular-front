@@ -1,3 +1,23 @@
-<app-window-panel titulo="Actividad Comercial" [permitirActualizar]="false">
-  <app-empty-state titulo="Actividad Comercial" descripcion="Este módulo aún no muestra información." />
+<app-window-panel [titulo]="titulo" [actualizando]="cargando()" (actualizar)="consultar()">
+  <!-- Orden de estados: error, cargando, contenido (los datos de ejemplo siempre traen contenido; el vacío llegará con el backend). -->
+  @if (error()) {
+    <app-inline-error [detalle]="error()!" (reintentar)="consultar()" />
+  } @else if (tablero(); as t) {
+    <div class="flex flex-col gap-3">
+      <header class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="m-0 text-[var(--mis-text-lg)] font-bold text-[var(--mis-text-primary)]">Asesor: {{ t.asesor }} · {{ t.periodo }}</h2>
+        <span class="rounded-full border border-[var(--mis-border)] bg-[var(--mis-surface)] px-3.5 py-2 text-xs text-[var(--mis-text-secondary)]">Corte al {{ t.corte }}</span>
+      </header>
+      <section class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" aria-label="Dominios">
+        <app-tarjeta-desempeno [datos]="t.desempeno" />
+        <app-tarjeta-desembolsos [datos]="t.desembolsos" />
+        <app-tarjeta-mora [datos]="t.mora" />
+        <app-tarjeta-seguros [datos]="t.seguros" />
+        <app-tarjeta-cartera [datos]="t.cartera" />
+        <app-tarjeta-clientes [datos]="t.clientes" />
+      </section>
+    </div>
+  } @else {
+    <app-list-skeleton />
+  }
 </app-window-panel>

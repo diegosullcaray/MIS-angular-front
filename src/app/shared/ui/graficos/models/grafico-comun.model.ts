@@ -69,3 +69,34 @@ export interface OpcionesGrafico {
   /** Solo en torta: la vacía por el centro (`innerSize`) para dejarla como dona. */
   dona?: boolean;
 }
+
+/** Una serie del radar: un valor por eje, en el mismo orden que `ejes`. */
+export interface SerieRadar {
+  nombre: string;
+  valores: readonly number[];
+  color: string;
+  /** Línea punteada (p. ej. el promedio de referencia). */
+  discontinua?: boolean;
+}
+
+/** Datos de `<app-grafico-radar>`: escala 0–`maximo` con los mismos ejes para todas las series. */
+export interface DatosRadar {
+  ejes: readonly string[];
+  series: readonly SerieRadar[];
+  maximo?: number;
+}
+
+/** Una serie de un gráfico de columnas apiladas: un valor por categoría (`null` = sin tramo en esa columna). */
+export interface SerieApilada {
+  nombre: string;
+  valores: readonly (number | null)[];
+  color: string;
+}
+
+/** Datos de `<app-grafico-columnas-apiladas>`. Las series se apilan de abajo hacia arriba en el orden recibido. */
+export interface DatosColumnasApiladas {
+  categorias: readonly string[];
+  series: readonly SerieApilada[];
+  /** Línea de meta punteada sobre el gráfico. */
+  meta?: { valor: number; etiqueta: string };
+}
