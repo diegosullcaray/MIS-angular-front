@@ -32,7 +32,7 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica en CI.
 
 <!-- generado:inicio rutas-de-accion -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-10-05 · commit 0f96c0de. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-10-05 · commit 5f1eb733. No editar a mano. -->
 
 | Módulo Ant | Servicio | Método | Ruta de acción | Verbo | Parámetros de payload | Clave de respuesta | Llamadas |
 |---|---|---|---|---|---|---|---:|
@@ -60,20 +60,6 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 | `app` (6302) | `ModKaypachaService` | `getColaboradoresData` | `kaypacha.colaboradoresData` | GET | `cod_bt` | `resultado` | 1 |
 | `app` (6302) | `ModKaypachaService` | `getDetalleRanking` | `kaypacha.DetalleRanking` | GET | `cod_bt` | `resultado` | 1 |
 | `app` (6302) | `ModKaypachaService` | `getListRanking` | `kaypacha.listRanking` | GET | `cod_bt` | `resultado` | 1 |
-| `app` (6302) | `ModPresupuestoService` | `getResCarCreditos` | `presupuesto.get_car_cre` | GET | `email`, `tip_cod`, `cod_rel` | `resumen` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `getResDepBP` | `presupuesto.get_dep_bp` | GET | `email`, `tip_cod`, `cod_rel` | `resumen` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `getResDepRed` | `presupuesto.get_dep_red` | GET | `email`, `tip_cod`, `cod_rel` | `resumen` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `getLogVerificaciones` | `presupuesto.get_log_ver` | GET | `tip_cod`, `cod_sec` | `resultado` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `getRegResultados` | `presupuesto.get_reg_res` | GET | `tip_cod` | `resultado` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `getResSegComercial` | `presupuesto.get_seg_com` | GET | `email`, `tip_cod`, `cod_rel` | `resumen` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `getResSegOperaciones` | `presupuesto.get_seg_ope` | GET | `email`, `tip_cod`, `cod_rel` | `resumen` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `postResCarCreditos` | `presupuesto.post_car_cre` | POST | `cod_bt`, `tip_cod`, `cod_rel`, `ov_json` | `response` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `postResDepBP` | `presupuesto.post_dep_bp` | POST | `cod_bt`, `tip_cod`, `cod_rel`, `ov_json` | `response` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `postResDepRed` | `presupuesto.post_dep_red` | POST | `cod_bt`, `tip_cod`, `cod_rel`, `ov_json` | `response` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `postLogVerificaciones` | `presupuesto.post_log_ver` | POST | `cod_bt`, `tip_cod`, `cod_rel`, `cod_sec` | `response` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `postRegResultados` | `presupuesto.post_reg_res` | POST | `cod_bt`, `ov_json` | `response` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `postResSegComercial` | `presupuesto.post_seg_com` | POST | `cod_bt`, `tip_cod`, `cod_rel`, `ov_json` | `response` | **0** |
-| `app` (6302) | `ModPresupuestoService` | `postResSegOperaciones` | `presupuesto.post_seg_ope` | POST | `cod_bt`, `tip_cod`, `cod_rel`, `ov_json` | `response` | **0** |
 | `rep2` (6304) | `ModRep2Service` | `getMonImrDetalle` | `mon_imr.detalle` | GET | — | `response` | **0** |
 | `rep2` (6304) | `ModRep2Service` | `getMonImrResultados` | `mon_imr.resultados` | GET | — | `response` | **0** |
 | `rep2` (6304) | `ModRep2Service` | `getMonSalidasDetalle` | `mon_sali_ret.detalle` | GET | — | `response` | 1 |
@@ -100,9 +86,9 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 | `session` (6300) | `ModSysLoginService` | `altLogin` | `login` | POST | `email`, `alt` | `login_response` | 1 |
 | `session` (6300) | `ModSysLoginService` | `postMeta` | `meta` | POST | `email`, `meta` | `response` | **0** |
 
-_62 rutas de acción únicas en 10 servicios de `core/winder/instances/`._
+_48 rutas de acción únicas en 9 servicios de `core/winder/instances/`._
 
-_26 métodos sin llamadas fuera de `core/winder/` (transporte congelado; se conservan hasta decidir su retiro): `ModPresupuestoService.getResCarCreditos`, `ModPresupuestoService.getResDepBP`, `ModPresupuestoService.getResDepRed`, `ModPresupuestoService.getLogVerificaciones`, `ModPresupuestoService.getRegResultados`, `ModPresupuestoService.getResSegComercial`, `ModPresupuestoService.getResSegOperaciones`, `ModPresupuestoService.postResCarCreditos`, `ModPresupuestoService.postResDepBP`, `ModPresupuestoService.postResDepRed`, `ModPresupuestoService.postLogVerificaciones`, `ModPresupuestoService.postRegResultados`, `ModPresupuestoService.postResSegComercial`, `ModPresupuestoService.postResSegOperaciones`, `ModRep2Service.getMonImrDetalle`, `ModRep2Service.getMonImrResultados`, `ModSeccionesService.getDetalleCliente`, `ModSeccionesService.getHistoricoVariable`, `ModSeccionesService.getResumenDashboard`, `ModSeccionesService.postProsBecas`, `ModSeccionesService.getListaPrioLeads`, `ModSeccionesService.getListaBecas`, `ModSeccionesService.postRegularUpdate`, `ModSeccionesService.getSecList`, `ModSysAdminService.postRouteTrack`, `ModSysLoginService.postMeta`._
+_12 métodos sin llamadas fuera de `core/winder/` (transporte congelado; se conservan hasta decidir su retiro): `ModRep2Service.getMonImrDetalle`, `ModRep2Service.getMonImrResultados`, `ModSeccionesService.getDetalleCliente`, `ModSeccionesService.getHistoricoVariable`, `ModSeccionesService.getResumenDashboard`, `ModSeccionesService.postProsBecas`, `ModSeccionesService.getListaPrioLeads`, `ModSeccionesService.getListaBecas`, `ModSeccionesService.postRegularUpdate`, `ModSeccionesService.getSecList`, `ModSysAdminService.postRouteTrack`, `ModSysLoginService.postMeta`._
 <!-- generado:fin -->
 
 ## Límites

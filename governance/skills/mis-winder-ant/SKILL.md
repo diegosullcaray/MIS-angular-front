@@ -51,7 +51,7 @@ Puertos lógicos en uso:
 |---:|---|---|---|
 | 6300 | `session` | `ModSysLoginService` | login y perfil |
 | 6301 | `admin` | `ModSysAdminService` | jerarquía organizativa |
-| 6302 | `app` | `ModDashboardService`, `ModKaypachaService`, `ModPresupuestoService`, `ModIncentivosService`, `ModFrameworkEsgService` | módulos de negocio |
+| 6302 | `app` | `ModDashboardService`, `ModKaypachaService`, `ModIncentivosService`, `ModFrameworkEsgService` | módulos de negocio |
 | 5301 | — | `ModSeccionesService` | menú y secciones |
 | 5304 | `reporting` | `ModReportesService` | motor de reportes |
 | 6304 | — | `ModRep2Service` | reportería secundaria |

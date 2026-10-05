@@ -127,7 +127,7 @@ export class CategoriaDetalleComponent {
 
   protected cargarDetalle(): void {
     const idStr = this.id().toLowerCase().trim();
-    if (idStr.includes('imparable') || idStr.includes('jira')) {
+    if (idStr.includes('jira')) {
       this.redirect.redirigir(this.id());
     }
 

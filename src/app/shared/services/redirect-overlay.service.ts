@@ -25,25 +25,9 @@ export class RedirectOverlayService {
 
     let targetUrl = urlDirecta || externalMap[key];
 
-    if (!targetUrl) {
-      if (key.includes('imparable')) {
-        targetUrl = externalMap['imparables'];
-      } else if (key.includes('jira')) {
-        targetUrl = externalMap['jira'];
-      } else if (key.includes('helpdesk')) {
-        targetUrl = externalMap['helpdesk'];
-      } else {
-        targetUrl = externalMap['imparables'] || 'https://stg.confianza.pe';
-      }
-    }
+    if (!targetUrl) targetUrl = key.includes('jira') ? externalMap['jira'] : 'https://stg.confianza.pe';
 
-    const nombre = key.includes('jira')
-      ? 'Mesa de Ayuda Jira'
-      : key.includes('helpdesk')
-      ? 'Portal Helpdesk Confianza'
-      : key.includes('imparable')
-      ? 'Portal Imparables'
-      : destino;
+    const nombre = key.includes('jira') ? 'Mesa de Ayuda Jira' : destino;
 
     this.state.set({
       visible: true,

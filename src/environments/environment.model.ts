@@ -24,11 +24,9 @@ export interface Environment {
 
   googleOAuthClientId: string;
 
-  /** `RedirectOverlayService` los resuelve por nombre: las tres claves son obligatorias. */
+  /** `RedirectOverlayService` los resuelve por nombre. */
   externalLinks: {
-    imparables: string;
     jira: string;
-    helpdesk: string;
   };
 
   /** Solo desarrollo. Ausente en producción; `AuthService` lo lee bajo `isDevMode()`. */

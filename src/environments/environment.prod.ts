@@ -20,9 +20,6 @@ export const environment: Environment = {
   googleOAuthClientId: '690217690558-7l16jg0u9r7udt2jjp6tjmtd3mhkgihu.apps.googleusercontent.com',
 
   externalLinks: {
-    imparables:
-      'https://sites.google.com/confianza.pe/imparables/p%C3%A1gina-principal?authuser=1&read_current=1',
     jira: 'https://jira.tecnologiafm.org/servicedesk/customer/user/login?destination=portal%2F15&logout=true',
-    helpdesk: 'https://sites.google.com/confianza.pe/helpdeskconfianza/index?pli=1&authuser=2',
   },
 };

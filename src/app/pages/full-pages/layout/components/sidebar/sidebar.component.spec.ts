@@ -239,7 +239,7 @@ describe('SidebarComponent', () => {
     expect(navSpy).not.toHaveBeenCalled();
   });
 
-  it('seleccionarIcono() de un enlace externo (Jira/Imparables/Helpdesk) dispara el overlay en vez de navegar', () => {
+  it('seleccionarIcono() de un enlace externo (Jira) dispara el overlay en vez de navegar', () => {
     const navSpy = vi.spyOn(router, 'navigateByUrl');
     const fixture = crear();
     const icono: SidebarIcon = { id: 'jira', tipo: 'remote', icono: 'pi', etiqueta: 'Jira - Mesa de ayuda', tienePanel: false, ruta: '' };

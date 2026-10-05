@@ -105,7 +105,7 @@ export class SidebarComponent implements AfterViewInit {
     const ruta = icon.ruta || '';
     
     // Verificación de enlaces externos
-    const esExterno = ['jira', 'imparable', 'helpdesk'].some(ext => key.includes(ext)) || ruta.startsWith('http');
+    const esExterno = key.includes('jira') || ruta.startsWith('http');
     if (esExterno) {
       this.shell.setContenidoPendienteSeleccion(false);
       this.redirect.redirigir(icon.etiqueta || icon.id, ruta.startsWith('http') ? ruta : undefined);

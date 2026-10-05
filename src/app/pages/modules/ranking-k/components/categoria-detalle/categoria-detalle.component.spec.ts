@@ -72,8 +72,8 @@ describe('CategoriaDetalleComponent', () => {
   });
 
   it('dispara el overlay de redirección si el :id requiere enlace externo', () => {
-    crear('Imparables');
-    expect(redirectFalso.redirigir).toHaveBeenCalledWith('Imparables');
+    crear('Jira');
+    expect(redirectFalso.redirigir).toHaveBeenCalledWith('Jira');
   });
 
   it('no dispara el overlay para un id normal', () => {

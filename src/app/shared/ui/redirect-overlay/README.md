@@ -17,8 +17,8 @@ import { RedirectOverlayService } from '…/shared/services/redirect-overlay.ser
 export class MiComponente {
   private readonly redirect = inject(RedirectOverlayService);
 
-  irAImparables(): void {
-    this.redirect.redirigir('imparables');
+  irAJira(): void {
+    this.redirect.redirigir('jira');
   }
 
   // Cuando el backend devuelve la URL, se le pasa y manda esa.
@@ -31,7 +31,7 @@ export class MiComponente {
 ## Cómo resuelve la URL
 
 En orden: la `urlDirecta` que se le pase, si no `environment.externalLinks[destino]`, y si no un
-fallback por coincidencia parcial del nombre (`imparables`, `jira`, `helpdesk`). El subtítulo se
+fallback por coincidencia parcial del nombre (`jira`). El subtítulo se
 arma del mismo nombre, así que conviene usar las claves que ya están en `externalLinks` en vez de
 inventar una.
 

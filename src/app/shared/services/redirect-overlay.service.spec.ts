@@ -23,10 +23,10 @@ describe('RedirectOverlayService', () => {
   });
 
   it('redirigir() muestra el overlay de inmediato con el nombre amigable del destino', () => {
-    service.redirigir('imparables');
+    service.redirigir('jira');
 
     expect(service.state().visible).toBe(true);
-    expect(service.state().subtitulo).toContain('Portal Imparables');
+    expect(service.state().subtitulo).toContain('Mesa de Ayuda Jira');
   });
 
   it('redirigir() usa la urlDirecta del backend si se pasa, en vez de environment', () => {
@@ -42,12 +42,12 @@ describe('RedirectOverlayService', () => {
   });
 
   it('redirigir() abre la URL en una pestaña nueva tras 1.5s y oculta el overlay 400ms después', () => {
-    service.redirigir('helpdesk');
+    service.redirigir('jira');
 
     expect(openSpy).not.toHaveBeenCalled();
 
     vi.advanceTimersByTime(1500);
-    expect(openSpy).toHaveBeenCalledWith(environment.externalLinks.helpdesk, '_blank', 'noopener,noreferrer');
+    expect(openSpy).toHaveBeenCalledWith(environment.externalLinks.jira, '_blank', 'noopener,noreferrer');
     expect(service.state().visible).toBe(true); // todavía visible, faltan los 400ms
 
     vi.advanceTimersByTime(400);
