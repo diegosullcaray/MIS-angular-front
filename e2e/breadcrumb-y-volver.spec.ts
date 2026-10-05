@@ -68,7 +68,7 @@ test.describe('Flecha de volver del panel de ventana', () => {
    * del sistema. Ahora sube UN nivel: al explorador, y **sin cambiar la URL**,
    * para que el contenido vuelva intacto.
    */
-  test('está presente y sube al explorador del sistema, no al inicio', async ({ page }) => {
+  test('desde un reporte sin sistema propio vuelve al Inicio (accesos recientes), sin panel "Host Principal"', async ({ page }) => {
     await inyectarSesionVigente(page);
     await mockearBackendAnt(page);
 
@@ -85,7 +85,8 @@ test.describe('Flecha de volver del panel de ventana', () => {
     await volver.click();
     await page.waitForTimeout(600);
 
-    await expect(page.locator('.mis-explorador')).toBeVisible();
-    expect(page.url()).toContain(RUTA_PROFUNDA);
+    await expect(page).toHaveURL((url) => url.pathname === '/app/dashboard');
+    await expect(page.locator('.mis-explorador')).toHaveCount(0);
+    await expect(page.getByText('Host Principal')).toHaveCount(0);
   });
 });

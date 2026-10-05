@@ -147,8 +147,8 @@ describe('FuenteNavegacionService', () => {
       menuStgFalso.sistemas.set([]);
       shell.setUsuarioActivo(usuario({ rol: 'admin-sistema' }));
 
-      // Sin sistemas remotos no se inventa ninguno: queda solo el panel del Host.
-      expect(fuente.registros().map((r) => r.etiqueta)).toEqual(['Mi espacio']);
+      // Sin sistemas remotos no se inventa ninguno (Inicio ya no tiene panel propio).
+      expect(fuente.registros()).toEqual([]);
     });
   });
 

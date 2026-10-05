@@ -127,6 +127,12 @@ export class WindowPanelComponent {
       return;
     }
 
+    // Inicio no tiene explorador: volver lleva a su pantalla (accesos recientes), no al historial.
+    if (this.shell.sidebarIconActivo() === 'host-inicio') {
+      void this.router.navigateByUrl(RUTA_HOME);
+      return;
+    }
+
     this.location.back();
   }
 

@@ -205,13 +205,11 @@ describe('SidebarComponent', () => {
     ]);
   });
 
-  it('panelActivo() para "host-inicio" es el panel fijo del Host ("Mi espacio")', () => {
+  it('panelActivo() para "host-inicio" es null: Inicio navega directo al dashboard, sin explorador', () => {
     crear();
     shell.setSidebarIconActivo('host-inicio');
 
-    const panel = TestBed.inject(NavegacionSistemasService).panelActivo();
-    expect(panel?.titulo).toBe('Host Principal');
-    expect(panel?.secciones[0].rutas).toEqual([{ etiqueta: 'Mi espacio', ruta: '/app/dashboard', icono: 'lucideGrid' }]);
+    expect(TestBed.inject(NavegacionSistemasService).panelActivo()).toBeNull();
   });
 
   it('panelActivo() delega en KaypachaService.panelPara() para el ícono de ranking-k', () => {

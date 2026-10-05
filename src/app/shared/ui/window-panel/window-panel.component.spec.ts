@@ -101,6 +101,7 @@ describe('WindowPanelComponent', () => {
 
   /** Sin `volverA` ni explorador, la navegación es un paso atrás en el historial. */
   it('sin destino fijo, la luz amarilla retrocede en el historial', () => {
+    shell.setSidebarIconActivo('sistema-x');
     const fixture = crear();
     const atras = vi.spyOn(TestBed.inject(Location), 'back');
     const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
@@ -109,6 +110,17 @@ describe('WindowPanelComponent', () => {
 
     expect(atras).toHaveBeenCalled();
     expect(navegar).not.toHaveBeenCalled();
+  });
+
+  it('desde Inicio no hay explorador: la luz amarilla vuelve al Home, no al historial', () => {
+    const fixture = crear();
+    const atras = vi.spyOn(TestBed.inject(Location), 'back');
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+    elemento(fixture, '.mis-window-light--volver')!.click();
+
+    expect(navegar).toHaveBeenCalledWith('/app/dashboard');
+    expect(atras).not.toHaveBeenCalled();
   });
 
   /**
@@ -128,6 +140,7 @@ describe('WindowPanelComponent', () => {
   });
 
   it('con el explorador ya a la vista, la luz amarilla sí retrocede', () => {
+    shell.setSidebarIconActivo('sistema-x');
     shell.setExploradorDisponible(true);
     shell.setContenidoPendienteSeleccion(true);
     const fixture = crear();

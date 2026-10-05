@@ -25,7 +25,7 @@ export class NavegacionSistemasService {
         tipo: 'host-inicio',
         icono: 'pi pi-home',
         etiqueta: 'Inicio',
-        tienePanel: true,
+        tienePanel: false,
       },
     ];
 
@@ -57,8 +57,6 @@ export class NavegacionSistemasService {
 
   /** Navegación de cualquier sistema: el buscador los necesita todos a la vez. */
   panelDe(id: string): SidebarNavPanelConfig | null {
-    if (id === 'host-inicio') return this.getPanelHost();
-
     const icono = this.iconos().find((i) => i.id === id);
     if (!icono?.tienePanel) return null;
 
@@ -246,20 +244,6 @@ export class NavegacionSistemasService {
 
   private esDashboardsIntegrados(icono: SidebarIcon): boolean {
     return (icono.etiqueta || '').trim().toLowerCase() === 'dashboards integrados';
-  }
-
-  private getPanelHost(): SidebarNavPanelConfig {
-    return {
-      tipo: 'host-admin',
-      titulo: 'Host Principal',
-      icono: 'pi pi-home',
-      secciones: [
-        {
-          titulo: 'Acceso directo',
-          rutas: [{ etiqueta: 'Mi espacio', ruta: '/app/dashboard', icono: 'lucideGrid' }],
-        },
-      ],
-    };
   }
 
   private getPanelAnalista(titulo: string, icono: string): SidebarNavPanelConfig {
