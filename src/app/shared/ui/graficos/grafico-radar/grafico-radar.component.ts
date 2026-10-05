@@ -38,7 +38,14 @@ export class GraficoRadarComponent {
         categories: [...ejes],
         tickmarkPlacement: 'on',
         lineWidth: 0,
-        labels: { style: { color: textoFuerte, fontSize: '11px', fontWeight: '600', textOverflow: 'none', whiteSpace: 'nowrap' } },
+        labels: {
+          // Nombre del eje y, debajo, el valor de cada serie ("85/70": asesor/promedio).
+          formatter() {
+            const valores = series.map((s) => s.valores[this.pos]).join('/');
+            return `<span style="font-weight:600">${this.value}</span><br/><span style="font-size:10px;font-weight:400;color:${texto}">${valores}</span>`;
+          },
+          style: { color: textoFuerte, fontSize: '11px', textOverflow: 'none', whiteSpace: 'nowrap' },
+        },
       },
       yAxis: {
         min: 0,
@@ -60,8 +67,7 @@ export class GraficoRadarComponent {
         lineWidth: 2,
         dashStyle: s.discontinua ? ('Dash' as const) : ('Solid' as const),
         fillOpacity: s.discontinua ? 0.06 : 0.16,
-        marker: { enabled: !s.discontinua },
-        pointPlacement: 'on' as const,
+        marker: { enabled: !s.discontinua },        pointPlacement: 'on' as const,
       })),
     };
   });

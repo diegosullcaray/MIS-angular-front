@@ -50,13 +50,6 @@ export class GraficoColumnasApiladasComponent {
         labels: { enabled: false },
         gridLineColor: linea,
         reversedStacks: false,
-        stackLabels: {
-          enabled: true,
-          formatter() {
-            return miles(this.total);
-          },
-          style: { color: textoFuerte, fontSize: '11px', fontWeight: '700', textOutline: 'none' },
-        },
         plotLines: meta
           ? [
               {
@@ -72,9 +65,12 @@ export class GraficoColumnasApiladasComponent {
       },
       legend: {
         ...base.legend,
-        itemStyle: { color: texto, fontSize: '10px', fontWeight: '500' },
-        symbolHeight: 8,
-        symbolWidth: 8,
+        itemStyle: { color: texto, fontSize: '9px', fontWeight: '500', whiteSpace: 'nowrap' },
+        itemDistance: 6,
+        padding: 0,
+        symbolPadding: 2,
+        symbolHeight: 7,
+        symbolWidth: 7,
         symbolRadius: 2,
       },
       tooltip: { ...base.tooltip, shared: true },
@@ -82,8 +78,8 @@ export class GraficoColumnasApiladasComponent {
         column: {
           stacking: 'normal',
           borderWidth: 0,
-          pointPadding: 0.12,
-          groupPadding: 0.12,
+          pointPadding: 0.3,
+          groupPadding: 0.2,
           dataLabels: {
             enabled: true,
             // Un tramo muy fino no cabe con su cifra: se omite (queda en el tooltip).
