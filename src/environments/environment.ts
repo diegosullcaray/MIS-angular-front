@@ -14,8 +14,8 @@ export const environment: Environment = {
     rep2: '8982D9BA889F825E1360E0C594653C68',
   },
 
-  requestConfigRootURL: 'https://stg.confianza.pe/cores2/ant',
-  // requestConfigRootURL: 'http://localhost:8080/ant',
+  //requestConfigRootURL: 'https://stg.confianza.pe/cores2/ant',
+   requestConfigRootURL: 'http://localhost:8080/ant',
 
   redirectUri: 'http://localhost:4200/login',
   googleOAuthClientId: '690217690558-7l16jg0u9r7udt2jjp6tjmtd3mhkgihu.apps.googleusercontent.com',

@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard de impacto del asesor</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Condensed:wght@500;600&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>html,body{margin:0;padding:0;background:#F3F4F1;min-height:100vh;width:100%}section[aria-label="Dominios"]>button:nth-child(1){order:5}section[aria-label="Dominios"]>button:nth-child(2){order:6}section[aria-label="Dominios"]>button:nth-child(3){order:2}section[aria-label="Dominios"]>button:nth-child(4){order:1}section[aria-label="Dominios"]>button:nth-child(5){order:4}section[aria-label="Dominios"]>button:nth-child(6){order:3}</style>
+</helmet>
+<helmet><link rel="stylesheet" href="./system-shell.css"></helmet>
+<div class="system-shell">
+<svg class="system-symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<symbol id="sys-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"></path></symbol>
+<symbol id="sys-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M7 17v-5m5 5V7m5 10V9"></path></symbol>
+<symbol id="sys-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></symbol>
+<symbol id="sys-money" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><circle cx="12" cy="12" r="3"></circle><path d="M5 8h2M17 16h2M5 16h2M17 8h2"></path></symbol>
+<symbol id="sys-trophy" viewBox="0 0 24 24"><path d="M8 3h8v7a4 4 0 0 1-8 0zM8 5H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4M12 14v6m-4 1h8"></path></symbol>
+<symbol id="sys-cloud" viewBox="0 0 24 24"><path d="M7 19h11a4 4 0 0 0 0-8h-1a6 6 0 0 0-12-1 4.5 4.5 0 0 0 2 9z"></path></symbol>
+<symbol id="sys-star" viewBox="0 0 24 24"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"></path></symbol>
+<symbol id="sys-list" viewBox="0 0 24 24"><path d="m2 5 2 2 3-3m-5 8 2 2 3-3m-5 8 2 2 3-3M10 6h12M10 13h12M10 20h12"></path></symbol>
+<symbol id="sys-pie" viewBox="0 0 24 24"><path d="M12 2v10l-8 6A10 10 0 0 1 12 2zM15 3a9 9 0 1 1-9 17l9-7z"></path></symbol>
+<symbol id="sys-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"></path></symbol>
+<symbol id="sys-external" viewBox="0 0 24 24"><path d="M14 3h7v7m0-7L10 14M10 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-6"></path></symbol>
+<symbol id="sys-trend" viewBox="0 0 24 24"><path d="M3 3v18h18M6 15l5-5 4 3 6-7m-6 0h6v6"></path></symbol>
+<symbol id="sys-wrench" viewBox="0 0 24 24"><path d="M14 5a6 6 0 0 0-7 7L2 17a3 3 0 0 0 5 5l5-5a6 6 0 0 0 7-7l-4 4-4-4 4-4z"></path></symbol>
+<symbol id="sys-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="7"></circle><path d="m15 15 6 6"></path></symbol>
+<symbol id="sys-moon" viewBox="0 0 24 24"><path d="M20 14A9 9 0 0 1 10 3a9 9 0 1 0 10 11z"></path></symbol>
+<symbol id="sys-megaphone" viewBox="0 0 24 24"><path d="m4 8 15-4v16L4 16zM4 8H2v8h2m3 1 2 5h3l-2-5M22 9v6"></path></symbol>
+<symbol id="sys-chevron" viewBox="0 0 24 24"><path d="m8 4 8 8-8 8"></path></symbol>
+<symbol id="sys-down" viewBox="0 0 24 24"><path d="m5 9 7 7 7-7"></path></symbol>
+<symbol id="sys-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M6 7a8 8 0 0 1 14 5M18 17a8 8 0 0 1-14-5"></path></symbol>
+<symbol id="sys-tree" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="5" rx="1"></rect><rect x="2" y="17" width="5" height="5" rx="1"></rect><rect x="10" y="17" width="5" height="5" rx="1"></rect><rect x="18" y="17" width="5" height="5" rx="1"></rect><path d="M12 7v5M4 17v-5h17v5m-9-5v5"></path></symbol>
+</defs>
+</svg>
+<aside class="system-sidebar" aria-label="Menú del sistema">
+<div class="system-brand"><img src="./reference/html/MisHost_files/mis_white.png" alt="MIS"></div>
+<nav class="system-navigation" aria-label="Módulos">
+<button type="button" class="system-nav-item" title="Inicio"><svg class="system-icon"><use href="#sys-home"></use></svg><span>Inicio</span></button>
+<button type="button" class="system-nav-item" title="Reportes"><svg class="system-icon"><use href="#sys-chart"></use></svg><span>Reportes</span></button>
+<button type="button" class="system-nav-item" title="Consultas"><svg class="system-icon"><use href="#sys-grid"></use></svg><span>Consul...</span></button>
+<button type="button" class="system-nav-item is-active" title="Incentivos" aria-current="page"><svg class="system-icon"><use href="#sys-money"></use></svg><span>Incenti...</span></button>
+<button type="button" class="system-nav-item" title="Ranking"><svg class="system-icon"><use href="#sys-trophy"></use></svg><span>Rankin...</span></button>
+<button type="button" class="system-nav-item" title="Dashboard"><svg class="system-icon"><use href="#sys-cloud"></use></svg><span>Dashb...</span></button>
+<button type="button" class="system-nav-item" title="Imparables"><svg class="system-icon"><use href="#sys-star"></use></svg><span>Impara...</span></button>
+<button type="button" class="system-nav-item" title="Categorías"><svg class="system-icon"><use href="#sys-list"></use></svg><span>Catego...</span></button>
+<button type="button" class="system-nav-item" title="Presupuesto"><svg class="system-icon"><use href="#sys-pie"></use></svg><span>Presup...</span></button>
+<button type="button" class="system-nav-item" title="Actividades"><svg class="system-icon"><use href="#sys-list"></use></svg><span>Activid...</span></button>
+<button type="button" class="system-nav-item" title="Kaypa"><svg class="system-icon"><use href="#sys-heart"></use></svg><span>Kaypa...</span></button>
+<button type="button" class="system-nav-item" title="Helpdesk"><svg class="system-icon"><use href="#sys-external"></use></svg><span>Helpde...</span></button>
+<button type="button" class="system-nav-item" title="Prospectos"><svg class="system-icon"><use href="#sys-trend"></use></svg><span>Prospe...</span></button>
+<button type="button" class="system-nav-item" title="Herramientas"><svg class="system-icon"><use href="#sys-wrench"></use></svg><span>Herram...</span></button>
+</nav>
+</aside>
+<main class="system-main">
+<header class="system-topbar">
+<div class="system-breadcrumb"><svg class="system-icon" aria-hidden="true"><use href="#sys-home"></use></svg><svg class="system-icon" aria-hidden="true"><use href="#sys-chevron"></use></svg><span>Incentivos</span></div>
+<div class="system-top-actions">
+<button type="button" class="system-round-button" aria-label="Buscar"><svg class="system-icon"><use href="#sys-search"></use></svg></button>
+<button type="button" class="system-round-button" aria-label="Tema"><svg class="system-icon"><use href="#sys-moon"></use></svg></button>
+<button type="button" class="system-round-button" aria-label="Anuncios"><svg class="system-icon"><use href="#sys-megaphone"></use></svg></button>
+<button type="button" class="system-user"><span class="system-avatar">SR</span><span>SULLCARAY RAMOS DIEGO DENILSON</span><svg class="system-icon" aria-hidden="true"><use href="#sys-down"></use></svg></button>
+</div>
+</header>
+<div class="system-workspace">
+<div class="system-watermark" aria-hidden="true">BBVA Microfinanzas<small>SISTEMA DE INFORMACIÓN</small></div>
+<section class="report-window" aria-label="Tablero de Mando - Asesor">
+<header class="report-heading">
+<div class="report-window-controls" aria-hidden="true"><span class="report-dot red">×</span><span class="report-dot yellow">‹</span><span class="report-dot green">↗</span></div>
+<h2>Tablero de Mando - Asesor</h2>
+<div class="report-tools"><button type="button" class="system-round-button" aria-label="Estructura del reporte"><svg class="system-icon"><use href="#sys-tree"></use></svg></button><button type="button" class="system-round-button" aria-label="Actualizar reporte"><svg class="system-icon"><use href="#sys-refresh"></use></svg></button></div>
+</header>
+<div class="dashboard-root" style="width: 100%; min-height: 100vh; box-sizing: border-box; padding: 14px 32px 18px; display: flex; flex-direction: column; gap: 12px; background: #F3F4F1; color: #16202E; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-variant-numeric: tabular-nums">
+
+<!-- Encabezado -->
+<header style="display: flex; align-items: center; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1">
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="font-size: 12px; color: #505A69; background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 999px; padding: 8px 14px">Corte al 29/09/2026</span>
+<button type="button" aria-label="Filtros" style="width: 38px; height: 38px; border-radius: 999px; border: 1px solid #E1E4E8; background: #FFFFFF; color: #16202E; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v6l-4-2v-4z"></path></svg></button>
+<button type="button" aria-label="Actualizar" style="width: 38px; height: 38px; border-radius: 999px; border: 1px solid #E1E4E8; background: #FFFFFF; color: #16202E; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"></path><path d="M20 4v7h-7"></path></svg></button>
+</div>
+</header>
+
+
+
+<!-- Tarjetas por dominio -->
+<section aria-label="Dominios" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto minmax(285px, 1fr); flex-grow: 1; gap: 12px">
+
+<!-- Cartera -->
+<button type="button" class="cartera-card" onClick="{{open.cartera}}" style="font: inherit; color: inherit; text-align: left; cursor: pointer; background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 14px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; min-height: 285px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; width: 100%"><span style="width: 36px; height: 36px; border-radius: 9px; background: #E7EEF7; color: #0B3D78; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></span><span style="font-size: 16px; font-weight: 600; flex-grow: 1">Cartera</span><span style="font-size: 13px; font-weight: 600; color: #0B3D78">Ver detalle →</span></div>
+<div class="cartera-charts">
+<div class="cartera-chart cartera-saldo">
+<span class="cartera-chart-title">Saldo vigente</span>
+<div class="cartera-plot" role="img" aria-label="Saldo vigente. Hoy: 2,441,057, suma de trasladada 325,474 y propia 2,115,583. Heredada 1,139,160 se muestra como segmento adicional, sin contar en el total Hoy ni en la meta. Desde abajo: trasladada, propia y heredada. Cierre Anterior: 3,528,967, sin división. Meta: 4,100,000. Faltan 1,658,943.">
+<div class="cartera-meta"><span>Meta 4,100,000</span></div>
+<div class="cartera-column"><span class="cartera-gap-label">Faltan <b>1,658,943</b></span><span class="cartera-gap" style="height: 40.46202%" aria-hidden="true"></span><div class="cartera-bar" style="height: 87.32237%"><span class="cartera-segment heredada" style="height: 31.81818%"><span class="cartera-segment-label">1,139,160</span></span><span class="cartera-segment propia" style="height: 59.09092%"><span class="cartera-segment-label">2,115,583</span></span><span class="cartera-segment trasladada" style="height: 9.09090%"><span class="cartera-segment-label">325,474</span></span></div></div>
+<div class="cartera-column"><div class="cartera-bar" style="height: 86.07237%"><span class="cartera-segment propia" style="height: 100%"></span></div></div>
+</div>
+<div class="cartera-axis"><span><strong>2,441,057</strong>Hoy</span><span><strong>3,528,967</strong>Cierre Anterior</span></div>
+<div class="cartera-chart-key"><span><i class="trasladada"></i>Trasladada</span><span><i class="propia"></i>Propia</span><span><i class="heredada"></i>Heredada</span></div>
+</div>
+<div class="cartera-chart cartera-operaciones">
+<span class="cartera-chart-title">Operaciones</span>
+<div class="cartera-plot" role="img" aria-label="Operaciones vigentes. Hoy: 124, suma de trasladada 16 y propia 108. Heredada 46 se muestra como segmento adicional, sin contar en el total Hoy. Desde abajo: trasladada, propia y heredada. Cierre Anterior: 146, sin división.">
+<div class="cartera-column"><div class="cartera-bar" style="height: 100%"><span class="cartera-segment heredada" style="height: 27.05882%"><span class="cartera-segment-label">46</span></span><span class="cartera-segment propia" style="height: 63.52942%"><span class="cartera-segment-label">108</span></span><span class="cartera-segment trasladada" style="height: 9.41176%"><span class="cartera-segment-label">16</span></span></div></div>
+<div class="cartera-column"><div class="cartera-bar" style="height: 85.88235%"><span class="cartera-segment propia" style="height: 100%"></span></div></div>
+</div>
+<div class="cartera-axis"><span><strong>124</strong>Hoy</span><span><strong>146</strong>Cierre Anterior</span></div>
+<div class="cartera-chart-key"><span><i class="trasladada"></i>Trasladada</span><span><i class="propia"></i>Propia</span><span><i class="heredada"></i>Heredada</span></div>
+</div>
+</div>
+<div class="dashboard-kpis cartera-kpis" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; margin-top: auto; border-top: 1px solid #EEF0EC; padding-top: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">Saldo promedio</span><span style="font-size: 17px; font-weight: 600">19,686</span><span style="font-size: 12px; color: #A1231B">−4,485</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">TAPP stock</span><span style="font-size: 17px; font-weight: 600">23.32%</span><span style="font-size: 12px; color: #1B6B43">+23 pbs</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">Concentración</span><span style="font-size: 17px; font-weight: 600">28.4%</span><span style="font-size: 12px; color: #505A69">Top 10</span></div>
+</div>
+</button>
+
+<!-- Clientes -->
+<button type="button" class="clientes-card" onClick="{{open.clientes}}" style="font: inherit; color: inherit; text-align: left; cursor: pointer; background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 14px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; min-height: 285px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; width: 100%"><span style="width: 36px; height: 36px; border-radius: 9px; background: #E7EEF7; color: #0B3D78; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14a6 6 0 0 1 3.5 6"></path></svg></span><span style="font-size: 16px; font-weight: 600; flex-grow: 1">Clientes</span><span style="font-size: 13px; font-weight: 600; color: #0B3D78">Ver detalle →</span></div>
+<div class="clientes-center">
+<div class="clientes-overview">
+<div class="clientes-stock"><span class="clientes-caption">Hoy</span><strong>143</strong></div>
+<div class="clientes-stock"><span class="clientes-caption">Cierre Anterior</span><strong>142</strong></div>
+</div>
+<div class="clientes-movement"><span class="clientes-caption">Movimiento del mes</span><div><span>Altas</span><strong class="clientes-in">+2</strong></div><div><span>Bajas</span><strong class="clientes-out">−1</strong></div><div><span>Heredados</span><strong>−1</strong></div><div><span>Trasladados</span><strong class="clientes-in">+1</strong></div><div class="clientes-net"><span>Crecimiento neto</span><strong>+1</strong></div></div>
+<div class="clientes-goal"><div class="clientes-goal-heading"><span>Avance: <b>+1 · 5.6%</b></span><span class="clientes-goal-target">Meta de variación: <b>+18</b></span></div><div class="clientes-goal-track"><span style="width: 5.55556%"></span><i aria-hidden="true"></i></div><span class="clientes-goal-gap">Faltan <b>17 clientes</b></span></div>
+</div>
+<div class="dashboard-kpis clientes-kpis">
+<div><span>Nuevos</span><strong>2</strong><small>0</small></div>
+<div><span>Bancarizados</span><strong>13</strong><small class="clientes-delta-positive">+4</small></div>
+<div><span>Retención</span><strong>99.3%</strong><small class="clientes-delta-negative">−0.7 pp</small></div>
+</div>
+</button>
+
+<!-- Desembolsos -->
+<button type="button" onClick="{{open.colocacion}}" style="font: inherit; color: inherit; text-align: left; cursor: pointer; background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 14px; padding: 12px 20px; display: flex; flex-direction: column; gap: 8px; min-height: 285px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; width: 100%"><span style="width: 36px; height: 36px; border-radius: 9px; background: #E7EEF7; color: #0B3D78; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4"></path><path d="M4 4h12l-2 4 2 4H4"></path></svg></span><span style="font-size: 16px; font-weight: 600; flex-grow: 1">Desembolsos</span><span style="font-size: 13px; font-weight: 600; color: #0B3D78">Ver detalle →</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px; width: 100%">
+<div style="display: flex; flex-direction: column; gap: 4px; width: 100%">
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #16202E">Operaciones</span><span style="font-weight: 600; color: #505A69">Meta: 15</span></div>
+<div style="position: relative; margin-top: 14px; height: 10px; background: #EEF0EC; border-radius: 5px; display: flex">
+<span style="width: 53.33%; background: #C77700; border-radius: 5px"></span>
+<span style="position: absolute; left: 53.33%; top: -18px; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: #C77700; white-space: nowrap">8 ops</span>
+<span style="position: absolute; left: 53.33%; top: -3px; width: 2px; height: 16px; background: #16202E; z-index: 2"></span>
+<svg width="9" height="10" viewBox="0 0 10 10" style="position: absolute; left: 80%; top: -7px; transform: translateX(-50%); fill: #0B3D78; z-index: 3"><polygon points="0,0 10,0 5,8"></polygon></svg>
+<span style="position: absolute; left: 80%; top: 0; width: 2px; height: 13px; background: #0B3D78; z-index: 2; transform: translateX(-50%)"></span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; width: 100%">
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #16202E">Monto</span><span style="font-weight: 600; color: #505A69">Meta: 225,000</span></div>
+<div style="position: relative; margin-top: 14px; height: 10px; background: #EEF0EC; border-radius: 5px; display: flex">
+<span style="width: 42.5%; background: #0B3D78; border-radius: 5px"></span>
+<span style="position: absolute; left: 42.5%; top: -18px; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: #0B3D78; white-space: nowrap">95,620</span>
+<span style="position: absolute; left: 42.5%; top: -3px; width: 2px; height: 16px; background: #16202E; z-index: 2"></span>
+<svg width="9" height="10" viewBox="0 0 10 10" style="position: absolute; left: 80%; top: -7px; transform: translateX(-50%); fill: #0B3D78; z-index: 3"><polygon points="0,0 10,0 5,8"></polygon></svg>
+<span style="position: absolute; left: 80%; top: 0; width: 2px; height: 13px; background: #0B3D78; z-index: 2; transform: translateX(-50%)"></span>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 14px; font-size: 11px; color: #505A69; margin-top: 2px"><span style="display: flex; align-items: center; gap: 4px"><span style="width: 2px; height: 11px; background: #16202E"></span>Avance actual</span><span style="display: flex; align-items: center; gap: 4px"><svg width="8" height="8" viewBox="0 0 10 10" style="fill: #0B3D78"><polygon points="0,0 10,0 5,8"></polygon></svg>Días hábiles (80%)</span></div>
+</div>
+<div class="dashboard-kpis" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; margin-top: auto; border-top: 1px solid #EEF0EC; padding-top: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">Ticket Promedio</span><span style="font-size: 17px; font-weight: 600">11,950</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">TAPP Mes</span><span style="font-size: 17px; font-weight: 600">48.63%</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">TAPP Mínima</span><span style="font-size: 17px; font-weight: 600">55.76%</span></div>
+</div>
+</button>
+
+<!-- Desempeño -->
+<button type="button" class="desempeno-card" onClick="{{open.tasas}}" style="font: inherit; color: inherit; text-align: left; cursor: pointer; background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 14px; padding: 12px 20px; display: flex; flex-direction: column; gap: 8px; min-height: 285px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; width: 100%"><span style="width: 36px; height: 36px; border-radius: 9px; background: #E7EEF7; color: #0B3D78; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 7-4 11H7L3 10z"></path><path d="M12 3v9m9-2-9 2m5 9-5-9m-5 9 5-9m-9-2 9 2"></path></svg></span><span style="font-size: 16px; font-weight: 600; flex-grow: 1">Desempeño</span><span style="font-size: 13px; font-weight: 600; color: #0B3D78">Ver detalle →</span></div>
+<div class="desempeno-main">
+<div class="desempeno-profile"><span class="desempeno-avatar" aria-hidden="true">MY</span><strong>Magali Mariet<br>Yactayo Luque</strong><span class="desempeno-role">Asesora de negocios</span><div class="desempeno-score-block"><span class="desempeno-score-label">Score general</span><div class="desempeno-score" aria-label="Score de desempeño general: 77 de 100. Calificación de ejemplo: B más."><strong>77</strong><span>B+</span></div></div></div>
+<div class="desempeno-chart">
+<svg class="desempeno-radar" viewBox="0 0 300 232" width="300" height="232" role="img" aria-label="Desempeño en escala de 0 a 100. Valores Asesor/Promedio: Comercial 85/70, Misional 70/75, Digital 92/65, Riesgo SF 60/72 y Calidad 78/68.">
+<g fill="none" stroke="#E1E4E8" stroke-width="1">
+<polygon points="150,40 226.08,95.28 197.02,184.72 102.98,184.72 73.92,95.28"></polygon>
+<polygon points="150,60 207.06,101.46 185.27,168.54 114.73,168.54 92.94,101.46"></polygon>
+<polygon points="150,80 188.04,107.64 173.51,152.36 126.49,152.36 111.96,107.64"></polygon>
+<polygon points="150,100 169.02,113.82 161.76,136.18 138.24,136.18 130.98,113.82"></polygon>
+<path d="M150 120V40M150 120 226.08 95.28M150 120 197.02 184.72M150 120 102.98 184.72M150 120 73.92 95.28"></path>
+</g>
+<g fill="#8A94A2" font-size="8"><text x="154" y="99">25</text><text x="154" y="79">50</text><text x="154" y="59">75</text><text x="154" y="39">100</text></g>
+<polygon points="150,64 207.06,101.46 180.56,162.07 116.15,166.60 98.26,103.19" fill="#C77700" fill-opacity="0.08" stroke="#C77700" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"></polygon>
+<polygon points="150,52 203.26,102.69 193.26,179.54 121.79,158.83 90.66,100.72" fill="#0B3D78" fill-opacity="0.16" stroke="#0B3D78" stroke-width="2" stroke-linejoin="round"></polygon>
+<g fill="#0B3D78" stroke="#FFFFFF" stroke-width="1.5"><circle cx="150" cy="52" r="3"><title>Comercial: 85 · Promedio: 70</title></circle><circle cx="203.26" cy="102.69" r="3"><title>Misional: 70 · Promedio: 75</title></circle><circle cx="193.26" cy="179.54" r="3"><title>Digital: 92 · Promedio: 65</title></circle><circle cx="121.79" cy="158.83" r="3"><title>Riesgo SF: 60 · Promedio: 72</title></circle><circle cx="90.66" cy="100.72" r="3"><title>Calidad: 78 · Promedio: 68</title></circle></g>
+<g fill="#16202E" font-size="11" font-weight="600" text-anchor="middle"><text x="150" y="13">Comercial<tspan class="desempeno-axis-values" x="150" dy="13"><tspan class="desempeno-axis-advisor">85</tspan><tspan>/70</tspan></tspan></text><text x="263" y="90">Misional<tspan class="desempeno-axis-values" x="263" dy="13"><tspan class="desempeno-axis-advisor">70</tspan><tspan>/75</tspan></tspan></text><text x="207" y="207">Digital<tspan class="desempeno-axis-values" x="207" dy="13"><tspan class="desempeno-axis-advisor">92</tspan><tspan>/65</tspan></tspan></text><text x="93" y="207">Riesgo SF<tspan class="desempeno-axis-values" x="93" dy="13"><tspan class="desempeno-axis-advisor">60</tspan><tspan>/72</tspan></tspan></text><text x="37" y="90">Calidad<tspan class="desempeno-axis-values" x="37" dy="13"><tspan class="desempeno-axis-advisor">78</tspan><tspan>/68</tspan></tspan></text></g>
+</svg>
+<div class="desempeno-legend">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 20px; height: 3px; background: #0B3D78; border-radius: 2px"></span>Asesor</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 20px; border-top: 2px dashed #C77700"></span>Promedio</span>
+</div>
+</div>
+</div>
+</button>
+
+<!-- Seguros -->
+<button type="button" onClick="{{open.seguros}}" style="font: inherit; color: inherit; text-align: left; cursor: pointer; background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 14px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; min-height: 285px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; width: 100%"><span style="width: 36px; height: 36px; border-radius: 9px; background: #E7EEF7; color: #0B3D78; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg></span><span style="font-size: 16px; font-weight: 600; flex-grow: 1">Seguros</span><span style="font-size: 13px; font-weight: 600; color: #0B3D78">Ver detalle →</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; width: 100%">
+<div style="display: flex; flex-direction: column; gap: 2px; width: 100%">
+<div style="display: flex; justify-content: space-between; font-size: 12px"><span style="color: #16202E">Ingresos (PEN)</span><span style="font-weight: 600; color: #505A69">12,450 / 15,000 meta</span></div>
+<div style="height: 9px; background: #EEF0EC; border-radius: 5px; display: flex"><span style="width: 83%; background: #9DB4D3; border-radius: 5px"></span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; width: 100%">
+<div style="display: flex; justify-content: space-between; font-size: 12px"><span style="color: #16202E">Pólizas Totales</span><span style="font-weight: 600; color: #505A69">42 / 50 meta</span></div>
+<div style="height: 9px; background: #EEF0EC; border-radius: 5px; display: flex; overflow: hidden">
+<div style="width: 84%; height: 100%; display: flex; border-radius: 5px; overflow: hidden">
+<span style="width: 38.1%; background: #0B3D78; height: 100%; border-right: 1px solid #FFFFFF" title="Multiriesgo"></span>
+<span style="width: 23.8%; background: #2E7D32; height: 100%; border-right: 1px solid #FFFFFF" title="Prot. Cuota"></span>
+<span style="width: 19.0%; background: #C77700; height: 100%; border-right: 1px solid #FFFFFF" title="Vida Segura"></span>
+<span style="width: 9.5%; background: #8E24AA; height: 100%; border-right: 1px solid #FFFFFF" title="Oncológico"></span>
+<span style="width: 7.1%; background: #00838F; height: 100%; border-right: 1px solid #FFFFFF" title="Agropecuario"></span>
+<span style="width: 2.5%; background: #D32F2F; height: 100%" title="Prot. Total"></span>
+</div>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 6px; font-size: 11px; background: #F7F8F6; padding: 6px 8px; border-radius: 8px; border: 1px solid #E1E4E8; width: 100%">
+<div style="display: flex; align-items: center; gap: 4px; overflow: hidden"><span style="width: 6px; height: 6px; border-radius: 50%; background: #0B3D78; flex-shrink: 0"></span><span style="color: #505A69; text-overflow: ellipsis; overflow: hidden; white-space: nowrap">Multiriesgo:</span><b style="color: #16202E">16</b></div>
+<div style="display: flex; align-items: center; gap: 4px; overflow: hidden"><span style="width: 6px; height: 6px; border-radius: 50%; background: #2E7D32; flex-shrink: 0"></span><span style="color: #505A69; text-overflow: ellipsis; overflow: hidden; white-space: nowrap">Prot. Cuota:</span><b style="color: #16202E">10</b></div>
+<div style="display: flex; align-items: center; gap: 4px; overflow: hidden"><span style="width: 6px; height: 6px; border-radius: 50%; background: #C77700; flex-shrink: 0"></span><span style="color: #505A69; text-overflow: ellipsis; overflow: hidden; white-space: nowrap">Vida Segura:</span><b style="color: #16202E">8</b></div>
+<div style="display: flex; align-items: center; gap: 4px; overflow: hidden"><span style="width: 6px; height: 6px; border-radius: 50%; background: #8E24AA; flex-shrink: 0"></span><span style="color: #505A69; text-overflow: ellipsis; overflow: hidden; white-space: nowrap">Oncológico:</span><b style="color: #16202E">4</b></div>
+<div style="display: flex; align-items: center; gap: 4px; overflow: hidden"><span style="width: 6px; height: 6px; border-radius: 50%; background: #00838F; flex-shrink: 0"></span><span style="color: #505A69; text-overflow: ellipsis; overflow: hidden; white-space: nowrap">Agropecuario:</span><b style="color: #16202E">3</b></div>
+<div style="display: flex; align-items: center; gap: 4px; overflow: hidden"><span style="width: 6px; height: 6px; border-radius: 50%; background: #D32F2F; flex-shrink: 0"></span><span style="color: #505A69; text-overflow: ellipsis; overflow: hidden; white-space: nowrap">Prot. Total:</span><b style="color: #16202E">1</b></div>
+</div>
+</div>
+<div class="dashboard-kpis" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; margin-top: auto; border-top: 1px solid #EEF0EC; padding-top: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">Penetración</span><span style="font-size: 17px; font-weight: 600">87.5%</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">Sin Venta</span><span style="font-size: 17px; font-weight: 600; color: #A1231B">3 ases.</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">Ticket Prima</span><span style="font-size: 17px; font-weight: 600">173</span></div>
+</div>
+</button>
+
+
+<!-- Recuperación y mora -->
+<button type="button" onClick="{{open.mora}}" style="font: inherit; color: inherit; text-align: left; cursor: pointer; background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 14px; padding: 12px 20px; display: flex; flex-direction: column; gap: 8px; min-height: 285px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; width: 100%"><span style="width: 36px; height: 36px; border-radius: 9px; background: #FBE6E4; color: #A1231B; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5"></path><path d="M12 16h.01"></path></svg></span><span style="font-size: 16px; font-weight: 600; flex-grow: 1">Recuperaciones y Mora</span><span style="font-size: 13px; font-weight: 600; color: #0B3D78">Ver detalle →</span></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%">
+<div style="display: flex; flex-direction: column; gap: 4px; background: #F0F4F9; border: 1px solid #DFE6EF; border-radius: 10px; padding: 10px 12px; box-sizing: border-box">
+<span style="font-size: 8px; font-weight: 600; letter-spacing: 0.04em; color: #0B3D78">MONTO RECUPERADO</span>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; color: #0B3D78"><span style="font-size: 14px; line-height: 1.2; font-weight: 600">76.94%</span><span style="font-size: 10px">recuperado</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: right"><span style="font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 26px; line-height: 1.15; font-weight: 600; color: #16202E">184,650</span><span style="font-size: 10px; color: #505A69">de 240,000</span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; background: #F0F4F9; border: 1px solid #DFE6EF; border-radius: 10px; padding: 10px 12px; box-sizing: border-box">
+<span style="font-size: 8px; font-weight: 600; letter-spacing: 0.04em; color: #0B3D78">OPERACIONES RECUPERADAS</span>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; color: #0B3D78"><span style="font-size: 14px; line-height: 1.2; font-weight: 600">70.00%</span><span style="font-size: 10px">recuperado</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: right"><span style="font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 26px; line-height: 1.15; font-weight: 600; color: #16202E">28</span><span style="font-size: 10px; color: #505A69">de 40</span></div>
+</div>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%">
+<div style="display: flex; flex-direction: column; gap: 5px; min-width: 0">
+<span style="font-size: 11px; color: #505A69">Efectividad −30 a 0 días</span>
+<div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 2px 6px"><span style="font-size: 14px; font-weight: 600">95.94%</span><span style="font-size: 10px; color: #505A69">Meta: 95.00%</span></div>
+<div style="position: relative; height: 8px; margin: 2px 0; background: #EEF0EC; border-radius: 5px">
+<span style="display: block; width: 95.94%; height: 100%; background: #1B6B43; border-radius: 5px"></span>
+<span aria-hidden="true" style="position: absolute; left: 95%; top: -3px; width: 2px; height: 14px; transform: translateX(-50%); background: #16202E"></span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 5px; min-width: 0">
+<span style="font-size: 11px; color: #505A69">Efectividad 1 a 30 días</span>
+<div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 2px 6px"><span style="font-size: 14px; font-weight: 600">62.50%</span><span style="font-size: 10px; color: #505A69">Meta: 75.00%</span></div>
+<div style="position: relative; height: 8px; margin: 2px 0; background: #EEF0EC; border-radius: 5px">
+<span style="display: block; width: 62.5%; height: 100%; background: #C77700; border-radius: 5px"></span>
+<span aria-hidden="true" style="position: absolute; left: 75%; top: -3px; width: 2px; height: 14px; transform: translateX(-50%); background: #16202E"></span>
+</div>
+</div>
+</div>
+<div class="dashboard-kpis" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; margin-top: auto; border-top: 1px solid #EEF0EC; padding-top: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">Clientes en mora</span><span style="font-size: 17px; font-weight: 600">5</span><span style="font-size: 12px; color: #A1231B">+4</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">Saldo en mora</span><span style="font-size: 17px; font-weight: 600">166,696</span><span style="font-size: 12px; color: #A1231B">+23,698</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #505A69">Ingresos a mora</span><span style="font-size: 17px; font-weight: 600">7 ops</span><span style="font-size: 12px; color: #505A69">48,320</span></div>
+</div>
+</button>
+
+</section>
+
+<!-- Diálogo de detalle -->
+<sc-if value="{{isOpen}}" hint-placeholder-val="{{false}}">
+<div style="position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(16, 24, 40, 0.5); z-index: 100"></div>
+<div role="dialog" aria-modal="true" aria-label="{{dlg.title}}" style="position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(1220px, 94vw); height: min(800px, 90vh); background: #FFFFFF; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 24px 64px rgba(16, 24, 40, 0.28); z-index: 101">
+<div style="background: #0B3D78; color: #FFFFFF; padding: 22px 28px; display: flex; align-items: center; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1">
+<div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8">Detalle · Yactayo Luque Magali Mariet</div>
+<h2 style="margin: 0; font-size: 26px; font-weight: 700">{{dlg.title}}</h2>
+<div style="font-size: 14px; opacity: 0.85">{{dlg.sub}}</div>
+</div>
+<nav aria-label="Otras vistas" style="display: flex; gap: 6px">
+<sc-for list="{{tabs}}" as="tb" hint-placeholder-count="6">
+<sc-if value="{{tb.active}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{tb.go}}" style="font: inherit; font-size: 13px; font-weight: 600; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #FFFFFF; background: #FFFFFF; color: #0B3D78; cursor: pointer">{{tb.label}}</button></sc-if>
+<sc-if value="{{tb.idle}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{tb.go}}" style="font: inherit; font-size: 13px; font-weight: 500; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.4); background: transparent; color: #FFFFFF; cursor: pointer">{{tb.label}}</button></sc-if>
+</sc-for>
+</nav>
+<button type="button" aria-label="Cerrar" onClick="{{close}}" style="width: 44px; height: 44px; border-radius: 999px; border: none; background: rgba(255, 255, 255, 0.14); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12"></path><path d="M18 6 6 18"></path></svg></button>
+</div>
+<div style="flex-grow: 1; overflow: auto; padding: 24px 28px 32px; display: flex; flex-direction: column; gap: 24px; background: #F3F4F1">
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<sc-for list="{{dlg.kpis}}" as="k" hint-placeholder-count="4">
+<div style="background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 12px; color: #505A69">{{k.label}}</span>
+<span style="font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 28px; font-weight: 600">{{k.value}}</span>
+<sc-if value="{{k.good}}" hint-placeholder-val="{{false}}"><span style="align-self: flex-start; font-size: 12px; font-weight: 600; background: #E4F1E9; color: #1B6B43; border-radius: 999px; padding: 3px 10px">{{k.delta}}</span></sc-if>
+<sc-if value="{{k.warn}}" hint-placeholder-val="{{false}}"><span style="align-self: flex-start; font-size: 12px; font-weight: 600; background: #FBEEDA; color: #8A4B00; border-radius: 999px; padding: 3px 10px">{{k.delta}}</span></sc-if>
+<sc-if value="{{k.bad}}" hint-placeholder-val="{{false}}"><span style="align-self: flex-start; font-size: 12px; font-weight: 600; background: #FBE6E4; color: #A1231B; border-radius: 999px; padding: 3px 10px">{{k.delta}}</span></sc-if>
+<sc-if value="{{k.neutral}}" hint-placeholder-val="{{true}}"><span style="font-size: 12px; color: #505A69">{{k.delta}}</span></sc-if>
+</div>
+</sc-for>
+</div>
+
+<sc-if value="{{dlg.hasFilters}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; gap: 12px; flex-wrap: wrap; background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 12px; padding: 14px 16px">
+<sc-for list="{{dlg.filters}}" as="f" hint-placeholder-count="6">
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #505A69">{{f.t}}<select style="font: inherit; font-size: 14px; font-weight: 400; letter-spacing: 0; text-transform: none; color: #16202E; min-width: 160px; height: 40px; border: 1px solid #C9CED6; border-radius: 8px; padding: 0 10px; background: #FFFFFF"><option>Todo</option></select></label>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-for list="{{dlg.sections}}" as="s" hint-placeholder-count="2">
+<section style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; gap: 12px"><h3 style="margin: 0; font-size: 17px; font-weight: 600">{{s.title}}</h3><sc-if value="{{s.hasNote}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; color: #505A69">{{s.note}}</span></sc-if></div>
+<div style="background: #FFFFFF; border: 1px solid #E1E4E8; border-radius: 12px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 12px; background: #0B3D78; color: #FFFFFF; font-size: 12px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; padding: 12px 16px">
+<span style="flex: 2.4 1 0">{{s.c0}}</span>
+<sc-for list="{{s.cols}}" as="c" hint-placeholder-count="3"><span style="flex: 1 1 0; text-align: right">{{c.t}}</span></sc-for>
+<sc-if value="{{s.hasSt}}" hint-placeholder-val="{{false}}"><span style="width: 110px; text-align: left; padding-left: 12px">Estado</span></sc-if>
+</div>
+<sc-for list="{{s.rows}}" as="r" hint-placeholder-count="6">
+<div style="display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-top: 1px solid #EEF0EC; font-size: 14px">
+<span style="flex: 2.4 1 0">{{r.label}}</span>
+<sc-for list="{{r.vals}}" as="v" hint-placeholder-count="3"><span style="flex: 1 1 0; text-align: right">{{v.t}}</span></sc-for>
+<sc-if value="{{s.hasSt}}" hint-placeholder-val="{{false}}"><span style="width: 110px; padding-left: 12px; display: flex">
+<sc-if value="{{r.stGood}}" hint-placeholder-val="{{false}}"><span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; background: #E4F1E9; color: #1B6B43; border-radius: 999px; padding: 3px 10px"><span style="width: 7px; height: 7px; border-radius: 50%; background: #1B6B43"></span>Favorable</span></sc-if>
+<sc-if value="{{r.stWarn}}" hint-placeholder-val="{{false}}"><span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; background: #FBEEDA; color: #8A4B00; border-radius: 999px; padding: 3px 10px"><span style="width: 7px; height: 7px; border-radius: 50%; background: #C77700"></span>Revisar</span></sc-if>
+<sc-if value="{{r.stBad}}" hint-placeholder-val="{{false}}"><span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; background: #FBE6E4; color: #A1231B; border-radius: 999px; padding: 3px 10px"><span style="width: 7px; height: 7px; border-radius: 50%; background: #A1231B"></span>Alerta</span></sc-if>
+</span></sc-if>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-for>
+
+</div>
+</div>
+</sc-if>
+
+</div>
+</section>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dialogo":{"editor":"enum","options":["none","cartera","clientes","colocacion","tasas","seguros","mora"],"default":"none"},"$preview":{"width":1440,"height":850}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var self = this;
+    var cur = (this.state && this.state.open) || this.props.dialogo || 'none';
+    var go = function (k) { return function () { self.setState({ open: k }); }; };
+
+    var row = function (label, vals, st) {
+      return { label: label, vals: vals.map(function (t) { return { t: t }; }),
+        stGood: st === 'g', stWarn: st === 'w', stBad: st === 'b' };
+    };
+    var sec = function (title, c0, cols, rows, hasSt, note) {
+      return { title: title, c0: c0, cols: cols.map(function (t) { return { t: t }; }),
+        rows: rows, hasSt: !!hasSt, note: note || '', hasNote: !!note };
+    };
+    var kpi = function (label, value, delta, tone) {
+      return { label: label, value: value, delta: delta,
+        good: tone === 'g', warn: tone === 'w', bad: tone === 'b', neutral: !tone };
+    };
+    var noFilters = { hasFilters: false, filters: [] };
+
+    var D = {
+      cartera: {
+        title: 'Cartera', sub: 'Presupuesto, stock, tasas y calidad de la cartera',
+        kpis: [
+          kpi('Stock de cartera', '2,441,057', '−1,087,910 vs cierre', 'b'),
+          kpi('Saldo promedio', '19,686', '−4,485', 'b'),
+          kpi('TAPP stock', '23.32%', '+23 pbs', 'g'),
+          kpi('TAPP mes', '48.63%', '+2,081 pbs', 'g')
+        ],
+        sections: [
+          sec('Composición de Hoy', 'Origen', ['Saldo vigente', 'Operaciones'], [
+            row('Trasladada', ['325,474', '16']),
+            row('Propia', ['2,115,583', '108']),
+            row('Heredada', ['1,139,160', '46']),
+            row('Total Hoy (trasladada + propia)', ['2,441,057', '124']),
+            row('Cierre Anterior', ['3,528,967', '146'])
+          ], false, 'Datos de ejemplo: Hoy suma solo trasladada y propia, tanto en saldo como en operaciones. Heredada se muestra como segmento adicional, pero se excluye del total Hoy y de la consecución de la meta. Cierre Anterior se muestra como un único total. Meta de saldo: 4,100,000; Hoy: 2,441,057; faltan 1,658,943. Saldo promedio: 2,441,057 / 124.'),
+          sec('Presupuesto vs ejecutado', 'Variable', ['Presupuesto', 'Ejecutado'], [
+            row('Variación de cartera', ['—', '−1,087,910'], 'w'),
+            row('Variación de clientes', ['—', '1'], 'w'),
+            row('Variación de clientes (mes pasado)', ['—', '8'], 'w'),
+            row('Variación de clientes (mes antepasado)', ['—', '−14'], 'w'),
+            row('Ratio de efectividad tramo −30 a 0 días', ['—', '95.94%'], 'w'),
+            row('Ratio de efectividad tramo 1 a 30 días', ['—', '0.00%'], 'w'),
+            row('Ratio de mora real', ['—', '2.20%'], 'w'),
+            row('Ratio de mora > 1 día', ['—', '5.12%'], 'w'),
+            row('Tamaño de grupo desembolsado', ['—', '0'], 'w')
+          ], true, 'Presupuesto pendiente de carga'),
+          sec('Evolución vs cierre del mes anterior', 'Variable', ['Cierre mes ant.', 'Ejecutado', 'Variación'], [
+            row('Stock de cartera', ['3,528,967', '2,441,057', '−1,087,910'], 'b'),
+            row('Operaciones vigentes', ['146', '124', '−22'], 'b'),
+            row('Stock de clientes', ['142', '143', '1'], 'g'),
+            row('Número de clientes nuevos', ['2', '2', '0'], 'g'),
+            row('TAPP stock', ['23.09%', '23.32%', '23 pbs'], 'g'),
+            row('TAPP mes', ['27.82%', '48.63%', '2,081 pbs'], 'g'),
+            row('Saldo puntual de mora real', ['0', '71,499', '71,499'], 'b'),
+            row('Variación de mora real', ['0', '71,499', '71,499'], 'b'),
+            row('Número de clientes en mora', ['1', '5', '4'], 'b'),
+            row('Clientes en tramo −30 a 0 días', ['107', '111', '4'], 'w'),
+            row('Saldo en tramo −30 a 0 días', ['2,343,998', '2,256,240', '−87,759'], 'g'),
+            row('Clientes en mora tramo 1 a 30 días', ['1', '4', '3'], 'b'),
+            row('Saldo en mora tramo 1 a 30 días', ['71,499', '95,197', '23,698'], 'b'),
+            row('Gasto de provisiones (proyectado)', ['—', '—', '—'], 'b'),
+            row('Saldo promedio', ['24,171', '19,686', '−4,485'], 'b')
+          ], true)
+        ]
+      },
+      clientes: {
+        title: 'Clientes', sub: 'Base activa, movimiento del mes y fidelización',
+        kpis: [
+          kpi('Stock de clientes', '143', '+1 vs 142', 'g'),
+          kpi('Nuevos', '2', '0', null),
+          kpi('Bancarizados', '13', '+4', 'g'),
+          kpi('Retención', '99.3%', '−0.7 pp', 'b')
+        ],
+        sections: [
+          sec('Movimiento de la base activa', 'Indicador', ['Mes actual'], [
+            row('Altas de clientes activos', ['2']),
+            row('Bajas de clientes activos', ['1']),
+            row('Clientes heredados (se descuentan del neto)', ['1']),
+            row('Clientes trasladados (suman al neto)', ['1']),
+            row('Crecimiento neto', ['+1']),
+            row('Clientes del cierre que siguen activos', ['141 de 142']),
+            row('Retención', ['99.3%']),
+            row('Retención al cierre anterior', ['100.0%']),
+            row('Variación de retención', ['−0.7 pp']),
+            row('Meta de variación de clientes', ['+18']),
+            row('Cumplimiento de la meta de variación', ['5.6%']),
+            row('Clientes pendientes para la meta', ['17'])
+          ], false, 'Datos de ejemplo: crecimiento neto = 2 altas − 1 baja − 1 heredado + 1 trasladado = +1; 142 al cierre + 1 neto = 143. Meta de variación: 160 − 142 = 18; avance: 1 / 18. Retención: 141 / 142, comparada con una retención de ejemplo de 100.0% al cierre anterior. Nuevos y recurrentes del mes corresponden a clientes desembolsados; no son segmentos del stock.'),
+          sec('Clientes nuevos y recurrentes', 'Variable', ['Cierre mes ant.', 'A hoy', 'Variación'], [
+            row('Número de clientes nuevos', ['2', '2', '0'], 'g'),
+            row('Número de clientes recurrentes', ['20', '6', '−14'], 'b'),
+            row('Total de clientes desembolsados', ['22', '8', '−14'], 'b'),
+            row('Ticket promedio de clientes nuevos', ['5,000', '6,000', '1,000'], 'g'),
+            row('Ticket promedio de clientes recurrentes', ['17,835', '2,717', '−15,119'], 'b'),
+            row('Ticket promedio de clientes desembolsados', ['16,668', '3,538', '−13,131'], 'b')
+          ], true),
+          sec('Productos core', 'Producto', ['Cierre mes ant.', 'A hoy', 'Variación'], [
+            row('Agropecuario', ['26', '24', '−2'], 'b'),
+            row('Construyendo Confianza', ['1', '2', '1'], 'g'),
+            row('Crédito Educativo', ['4', '4', '0'], 'g'),
+            row('Emprendiendo Confianza', ['126', '121', '−5'], 'w'),
+            row('Créditos FAE', ['1', '1', '0'], 'g'),
+            row('Impulsa MyPerú', ['8', '8', '0'], 'g'),
+            row('Total', ['166', '160', '−6'], 'w')
+          ], true),
+          sec('Productos no core', 'Producto', ['Cierre mes ant.', 'A hoy', 'Variación'], [
+            row('Garantía Líquida', ['1', '1', '0'], 'g')
+          ], true),
+          sec('Total de clientes', 'Concepto', ['Cierre mes ant.', 'A hoy', 'Variación'], [
+            row('Total', ['142', '143', '1'], 'g')
+          ], true)
+        ]
+      },
+      colocacion: {
+        title: 'Colocación y metas', sub: 'Monitor de metas de desembolso del mes',
+        kpis: [
+          kpi('Cumplimiento operaciones', '53.33%', '8 de 15 operaciones', 'w'),
+          kpi('Cumplimiento monto', '6.51%', 'Muy por debajo del avance del mes', 'b'),
+          kpi('Monto desembolsado', '14,800', '5 operaciones con tasa', null),
+          kpi('Días hábiles transcurridos', '96%', 'Estimado al 29/09', null)
+        ],
+        sections: [
+          sec('Monitor diario de metas', 'Día · fecha', ['Ops', 'Meta', '% cumpl.', 'Ops acum.', 'Meta acum.', '% acum.', '% días'], [
+            row('1 · Mar 01/09', ['0', '1', '0.00%', '0', '15', '0.00%', '3.85%']),
+            row('2 · Mié 02/09', ['0', '0', '100.00%', '0', '15', '0.00%', '7.69%']),
+            row('3 · Jue 03/09', ['0', '0', '100.00%', '0', '15', '0.00%', '11.54%']),
+            row('4 · Vie 04/09', ['1', '0', '100.00%', '1', '15', '6.67%', '15.38%']),
+            row('5 · Sáb 05/09', ['0', '1', '0.00%', '1', '15', '6.67%', '19.23%']),
+            row('6 · Lun 07/09', ['0', '1', '0.00%', '1', '15', '6.67%', '23.08%']),
+            row('7 · Mar 08/09', ['0', '1', '0.00%', '1', '15', '6.67%', '26.92%']),
+            row('8 · Mié 09/09', ['1', '1', '100.00%', '2', '15', '13.33%', '30.77%']),
+            row('9 · Jue 10/09', ['0', '1', '0.00%', '2', '15', '13.33%', '34.62%'])
+          ], false, 'Vista preliminar: días 1 a 9')
+        ]
+      },
+      tasas: {
+        title: 'Desempeño', sub: 'Comparación del asesor frente al promedio · escala de 0 a 100',
+        kpis: [
+          kpi('Desempeño del asesor', '77', 'Media de los cinco ejes', null),
+          kpi('Calificación general', 'B+', 'Calificación de ejemplo para la maqueta', null),
+          kpi('Desempeño promedio', '70', 'Media de referencia', null),
+          kpi('Diferencia', '+7', 'Puntos sobre el promedio', 'g'),
+          kpi('Ejes sobre el promedio', '3 de 5', 'Comercial, Digital y Calidad', 'g')
+        ],
+        sections: [
+          sec('Desempeño por eje', 'Eje', ['Asesor', 'Promedio', 'Diferencia'], [
+            row('Comercial', ['85', '70', '+15'], 'g'),
+            row('Misional', ['70', '75', '−5'], 'w'),
+            row('Digital', ['92', '65', '+27'], 'g'),
+            row('Riesgo SF', ['60', '72', '−12'], 'w'),
+            row('Calidad', ['78', '68', '+10'], 'g')
+          ], true, 'Datos de ejemplo para la maqueta')
+        ]
+      },
+      seguros: {
+        title: 'Seguros', sub: 'Pólizas del mes y stock, expresado en PEN y %',
+        kpis: [
+          kpi('Multiriesgo · mes', '0', '−5 vs cierre', 'b'),
+          kpi('Multiriesgo · stock', '26', '−2 vs cierre', 'b'),
+          kpi('Protec. cuota · stock', '1', 'Sin variación', 'w'),
+          kpi('Agropecuarios', 'Sin dato', 'Pendiente de fuente', null)
+        ],
+        sections: [
+          sec('Seguros', 'Variable', ['Cierre anterior', 'Ejecutado', 'Variación'], [
+            row('Multiriesgo (nro. pólizas mes)', ['5', '0', '−5'], 'b'),
+            row('Multiriesgo (nro. pólizas stock)', ['28', '26', '−2'], 'b'),
+            row('Mult. crédito y protec. cuota (pólizas mes)', ['—', '—', '—'], 'w'),
+            row('Mult. crédito y protec. cuota (pólizas stock)', ['1', '1', '0'], 'w'),
+            row('Seguros agropecuarios (pólizas mes)', ['—', '—', '—'], 'w'),
+            row('Seguros agropecuarios (pólizas stock)', ['—', '—', '—'], 'w')
+          ], true)
+        ]
+      },
+      mora: {
+        title: 'Recuperaciones y Mora', sub: 'Efectividad de gestión y cartera por vencer',
+        hasFilters: true,
+        filters: ['Tramo', 'Producto', 'Compromiso roto', '0 cuota', '1 cuota', 'Tramo días gestión'].map(function (t) { return { t: t }; }),
+        kpis: [
+          kpi('Ratio de mora real', '2.20%', 'Saldo 71,499', 'b'),
+          kpi('Ratio de mora > 1 día', '5.12%', 'Tramo 1–30: 95,197', 'b'),
+          kpi('Clientes en mora', '5', '+4 vs cierre', 'b'),
+          kpi('Efectividad −30 a 0', '95.94%', 'Tramo 1–30: 0.00%', 'w')
+        ],
+        sections: [
+          sec('Detalle de efectividades', 'Cliente', ['Saldo', 'Tramo inicio', 'Días', 'Gestiones', 'Últ. gestión', 'Resultado'], [
+            row('Vilca Alberto Santria', ['71,498.75', '1 a 30', '45', '5', '2026-09-23', 'Compromiso de pago']),
+            row('Arratia Amesquita Jesus Javier', ['62,710.37', '−30 a 0', '24', '6', '2026-09-22', 'Compromiso de pago']),
+            row('Pilco Mamani Belinda Rosa', ['22,026.39', '−30 a 0', '26', '7', '2026-09-23', 'Compromiso de pago']),
+            row('Pacohuanaco Chino Karin Yessenia', ['5,999.28', '−30 a 0', '12', '3', '2026-09-22', 'Compromiso de pago']),
+            row('Choque Ramos Elizabeth', ['4,460.99', '−30 a 0', '14', '3', '2026-09-22', 'Compromiso de pago'])
+          ], false, 'Emprendiendo Confianza · todos con registro de gestión'),
+          sec('Recuperación preventiva', 'Cliente', ['Cuenta', 'Saldo capital', 'Ingreso a mora', 'Días p/ venc.', 'Teléfono'], [
+            row('Torres Rojas Simon', ['332689', '82,524', '2026-10-02', '3', '952213516']),
+            row('Maquera Carrillo Nancy', ['3375444', '74,845', '2026-10-02', '3', '—']),
+            row('Maquera Llanque Nora', ['464617', '70,000', '2026-10-02', '3', '840017']),
+            row('Choque Aquino Edwin', ['5055329', '64,162', '2026-10-02', '3', '—']),
+            row('Enriquez Ancco Giampier Abdon', ['4524661', '49,882', '2026-10-02', '3', '—']),
+            row('Limachi Quispe Javier', ['548364', '46,991', '2026-10-02', '3', '—']),
+            row('Chambilla Ninaja Nemecio', ['4750236', '46,732', '2026-10-03', '4', '—']),
+            row('Copaja Bartra Jose Luis', ['278571', '45,177', '2026-10-02', '3', '952523568']),
+            row('Condori Mamani Rosa Elena', ['4427474', '43,594', '2026-10-02', '3', '—']),
+            row('Coaquira Feliciano Oscar Gil', ['4032134', '37,968', '2026-10-02', '3', '—']),
+            row('Ccalli Ccallo Jaime Rogelio', ['291042', '36,116', '2026-10-02', '3', '952993144'])
+          ], false, 'Emprendiendo Confianza · ordenado por saldo')
+        ]
+      }
+    };
+
+    var names = [['tasas', 'Desempeño'], ['colocacion', 'Desembolsos'], ['mora', 'Mora'], ['seguros', 'Seguros'], ['cartera', 'Cartera'], ['clientes', 'Clientes']];
+    var tabs = names.map(function (n) {
+      return { label: n[1], go: go(n[0]), active: n[0] === cur, idle: n[0] !== cur };
+    });
+
+    var base = D[cur];
+    var dlg = base ? Object.assign({}, noFilters, base) : Object.assign({ title: '', sub: '', kpis: [], sections: [] }, noFilters);
+
+    return {
+      isOpen: !!base,
+      dlg: dlg,
+      tabs: tabs,
+      close: function () { self.setState({ open: 'none' }); },
+      open: {
+        cartera: go('cartera'), clientes: go('clientes'), colocacion: go('colocacion'),
+        tasas: go('tasas'), seguros: go('seguros'), mora: go('mora')
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
