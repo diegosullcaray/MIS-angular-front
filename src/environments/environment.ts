@@ -28,5 +28,5 @@ export const environment: Environment = {
   },
 
   /** Usuario para pruebas locales. Cambiar con localStorage.setItem('mis.devUser', 'email'). */
-  devUser: 'jessica.rodriguez@confianza.pe',
+  devUser: 'diego.sullcaray@confianza.pe',
 };
