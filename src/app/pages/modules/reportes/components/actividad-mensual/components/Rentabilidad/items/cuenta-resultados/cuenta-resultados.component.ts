@@ -85,6 +85,7 @@ export class CuentaResultadosComponent {
   protected readonly filas = computed(() => filasConDrillDown(this.resultado()?.filas ?? [], this.abiertas()));
   private readonly conDetalleSet = computed(() => cuentasConDetalle(this.resultado()?.filas ?? []));
   protected readonly conDetalle = (fila: Record<string, unknown>) => this.conDetalleSet().has(String(fila['cuenta_codigo']));
+  protected readonly desplegada = (fila: Record<string, unknown>) => this.abiertas().has(String(fila['cuenta_codigo']));
   protected readonly columnasDrillDown = ['cuenta_nombre'];
 
   protected readonly sinDestacar = () => false;

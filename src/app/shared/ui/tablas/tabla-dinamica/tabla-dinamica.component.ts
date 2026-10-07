@@ -75,6 +75,11 @@ export class TablaDinamicaComponent {
   readonly columnasClicables = input<readonly string[]>([]);
   /** Con `columnasClicables`, limita el clic (y el subrayado) a las filas que cumplan. */
   readonly filaClicable = input<(fila: Record<string, unknown>) => boolean>(() => true);
+  /**
+   * Drill down tipo Excel: si se define, las celdas clicables llevan un cuadro con + (cerrada) o
+   * − (abierta) en vez del subrayado. Devuelve si la fila está desplegada.
+   */
+  readonly desplegada = input<((fila: Record<string, unknown>) => boolean) | null>(null);
   readonly celdaSeleccionada = output<{ clave: string; fila: Record<string, unknown> }>();
 
   /** Soporte para expansión de filas (Drill Down). */

@@ -250,19 +250,19 @@ describe('cuenta-resultados.util', () => {
     });
 
     it('cerrado deja las raíces; abrir INGRESOS FINANCIEROS muestra su nivel', () => {
-      expect(nombres([])).toEqual(['⊞ INGRESOS FINANCIEROS', '⊞ COMISIONES NETAS', 'MARGEN BRUTO']);
+      expect(nombres([])).toEqual(['INGRESOS FINANCIEROS', 'COMISIONES NETAS', 'MARGEN BRUTO']);
       expect(nombres(['FOR001'])).toEqual([
-        '⊟ INGRESOS FINANCIEROS',
+        'INGRESOS FINANCIEROS',
         'COEFICIENTES',
         'INGRESOS INVERSION GESTIONADA',
-        '⊞ COMISIONES NETAS',
+        'COMISIONES NETAS',
         'MARGEN BRUTO',
       ]);
     });
 
     it('un nivel profundo exige que todos sus ancestros estén abiertos', () => {
       expect(nombres(['PEND001'])).toHaveLength(3);
-      expect(nombres(['FOR004', 'FOR005', 'PEND001']).slice(1, 5)).toEqual(['⊟ COMISIONES NETAS', '⊟ COMISIONES RECIBIDAS', '⊟ SEGUROS', 'INDIVIDUAL']);
+      expect(nombres(['FOR004', 'FOR005', 'PEND001']).slice(1, 5)).toEqual(['COMISIONES NETAS', 'COMISIONES RECIBIDAS', 'SEGUROS', 'INDIVIDUAL']);
     });
   });
 });

@@ -41,11 +41,17 @@
           [class.celda-truncada]="truncarTexto()"
           [class.font-bold]="destacada(fila) || (fondoDinamico() && signoFondoDinamico(fila, columna) !== null)"
           [class.cursor-pointer]="clicable(columna, fila)"
-          [class.underline]="clicable(columna, fila)"
+          [class.underline]="clicable(columna, fila) && !desplegada()"
           [style]="estiloCelda(fila, columna)"
           (click)="onClickCelda(columna, fila)"
         >
           <div class="flex items-center w-full min-w-0">
+            @if (desplegada() && clicable(columna, fila)) {
+              <span class="mis-drill-caja" aria-hidden="true">
+                <i class="pi" [class.pi-minus]="desplegada()!(fila)" [class.pi-plus]="!desplegada()!(fila)"></i>
+              </span>
+              <span class="sr-only">{{ desplegada()!(fila) ? 'Contraer' : 'Desplegar' }}</span>
+            }
             @if (mostrarSemaforo(fila, columna)) {
               <i class="pi pi-circle-fill text-[10px] mr-2 shrink-0" [class]="colorSemaforo(fila, columna)"></i>
             }

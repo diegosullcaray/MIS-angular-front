@@ -120,20 +120,16 @@ export function cuentasConDetalle(filas: readonly Record<string, unknown>[]): Se
   return con;
 }
 
-/** Filas del drill down: cada cuenta abierta (por código) muestra su detalle; las que lo tienen llevan ⊞/⊟, como el agrupar de Excel. */
+/** Filas del drill down: cada cuenta abierta (por código) muestra su detalle; el cuadro +/− lo pinta la tabla (`desplegada`). */
 export function filasConDrillDown<T extends Record<string, unknown>>(filas: readonly T[], abiertas: ReadonlySet<string>): T[] {
-  const con = cuentasConDetalle(filas);
   const visibles: T[] = [];
   const ruta: boolean[] = []; // ruta[d]: el ancestro a profundidad d está abierto
   for (const fila of filas) {
     const d = profundidad(fila);
     ruta.length = d;
-    const codigo = String(fila['cuenta_codigo']);
-    const abierta = abiertas.has(codigo);
-    ruta[d] = abierta;
+    ruta[d] = abiertas.has(String(fila['cuenta_codigo']));
     if (ruta.slice(0, d).some((a) => !a)) continue;
-    const marca = con.has(codigo) ? (abierta ? '⊟ ' : '⊞ ') : '';
-    visibles.push({ ...fila, cuenta_nombre: `${marca}${fila['cuenta_nombre']}` });
+    visibles.push(fila);
   }
   return visibles;
 }

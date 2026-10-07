@@ -7,3 +7,23 @@
   max-width: 14rem;
   overflow: hidden;
 }
+
+/* Drill down tipo Excel (`desplegada`): cuadro con + / − antes del nombre. */
+.mis-drill-caja {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  border: 1px solid var(--mis-border-strong);
+  border-radius: 3px;
+  background: var(--mis-surface);
+  color: var(--mis-text-secondary);
+}
+
+.mis-drill-caja .pi {
+  font-size: 8px;
+  font-weight: 700;
+}

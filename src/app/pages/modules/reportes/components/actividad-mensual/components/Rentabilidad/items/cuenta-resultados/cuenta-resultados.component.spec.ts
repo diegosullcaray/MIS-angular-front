@@ -132,14 +132,19 @@ describe('CuentaResultadosComponent', () => {
       fixture.detectChanges();
     };
 
-    expect(filas()).toContain('⊞ INGRESOS FINANCIEROS');
+    const caja = () =>
+      ([...fixture.nativeElement.querySelectorAll('td')] as HTMLElement[]).find((td) => td.textContent?.includes('INGRESOS FINANCIEROS'))!;
+    // Cuadro tipo Excel con + (cerrada) y sin subrayado.
+    expect(caja().querySelector('.mis-drill-caja .pi-plus')).not.toBeNull();
+    expect(caja().classList).not.toContain('underline');
     expect(filas()).not.toContain('COEFICIENTES');
     clic();
     expect(filas()).toContain('COEFICIENTES');
+    expect(caja().querySelector('.mis-drill-caja .pi-minus')).not.toBeNull();
     const celdaDe = (texto: string) =>
       [...fixture.nativeElement.querySelectorAll('td')].find((td: HTMLElement) => td.textContent?.includes(texto)) as HTMLElement;
-    expect(celdaDe('INGRESOS FINANCIEROS').classList).toContain('underline');
-    expect(celdaDe('COEFICIENTES').classList).not.toContain('underline');
+    // Solo las cuentas con detalle llevan el cuadro.
+    expect(celdaDe('COEFICIENTES').querySelector('.mis-drill-caja')).toBeNull();
     clic();
     expect(filas()).not.toContain('COEFICIENTES');
   });
