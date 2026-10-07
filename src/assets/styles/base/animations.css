@@ -23,7 +23,10 @@
   --mis-ease-salida: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.shell-content-inner {
+/* El nombre solo existe mientras corre la transición: un `view-transition-name`
+   permanente convierte al contenedor en raíz de fondo y el `backdrop-filter` de
+   todos los paneles (`.mis-window`, `.mis-page`, tarjetas) deja de desenfocar el wallpaper. */
+:root:active-view-transition .shell-content-inner {
   view-transition-name: mis-contenido;
 }
 
