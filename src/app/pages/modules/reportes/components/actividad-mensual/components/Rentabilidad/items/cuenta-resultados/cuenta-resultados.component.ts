@@ -22,6 +22,7 @@ import {
   etiquetaPeriodoCuenta,
   normalizarFechaCuenta,
 } from '../../../../utils/cuenta-resultados.util';
+import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
 import { ActividadMensualRepoService } from '../../../../services/actividad-mensual-repo.service';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 
@@ -36,6 +37,7 @@ interface ConsultaCuenta {
   selector: 'app-mensual-cuenta-resultados',
   standalone: true,
   imports: [
+    RutaJerarquicaComponent,
     HierSelectorComponent,
     TablaDinamicaComponent,
     SelectFiltroComponent,
@@ -70,10 +72,8 @@ export class CuentaResultadosComponent {
     return fecha ? etiquetaPeriodoCuenta(fecha) : '';
   });
 
-  protected readonly etiquetaNivel = computed(() => {
-    const nodo = this.nivelActual();
-    return nodo?.des_rel ?? nodo?.desc_rel ?? nodo?.lbl_hier ?? '';
-  });
+  /** Ruta de la raíz al nivel elegido, para las migas sobre la tabla. */
+  protected readonly ruta = signal<HierarquiaNodo[]>([]);
 
   protected readonly columnas = computed(() => {
     const reporte = this.resultado();
@@ -114,6 +114,12 @@ export class CuentaResultadosComponent {
       if (!nueva.delete(codigo)) nueva.add(codigo);
       return nueva;
     });
+  }
+
+  /** Una miga vuelve a ese nivel a través del selector, que relanza la consulta. */
+  protected volverANivel(indice: number): void {
+    const nodo = this.ruta()[indice];
+    if (nodo) this.selector()?.seleccionarNodo(nodo);
   }
 
   protected refrescar(): void {

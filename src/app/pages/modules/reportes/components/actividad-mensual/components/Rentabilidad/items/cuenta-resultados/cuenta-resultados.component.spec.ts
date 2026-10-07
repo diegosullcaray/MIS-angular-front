@@ -132,7 +132,7 @@ describe('CuentaResultadosComponent', () => {
       fixture.detectChanges();
     };
 
-    expect(filas()).toContain('▸ INGRESOS FINANCIEROS');
+    expect(filas()).toContain('⊞ INGRESOS FINANCIEROS');
     expect(filas()).not.toContain('COEFICIENTES');
     clic();
     expect(filas()).toContain('COEFICIENTES');

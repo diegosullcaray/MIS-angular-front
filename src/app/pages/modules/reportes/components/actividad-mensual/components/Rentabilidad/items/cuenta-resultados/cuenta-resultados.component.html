@@ -1,6 +1,6 @@
 <app-window-panel
-  titulo="Cuenta de Resultados"
-  subtitulo="PYG FC · Estado de ganancias y pérdidas"
+  titulo="PYG FC · Estado de ganancias y pérdidas"
+  subtitulo="Cuenta de Resultados"
   [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
   [conFiltros]="true"
 >
@@ -13,6 +13,7 @@
       [paramsHier]="paramsHier"
       placeholder="Elegir nivel"
       (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (rutaSeleccionada)="ruta.set($event)"
       (error)="onErrorJerarquia()"
     />
     @if (periodos().length > 0) {
@@ -43,11 +44,9 @@
       <app-empty-state descripcion="No se encontraron resultados para los filtros seleccionados." />
     } @else {
       <div class="flex flex-col gap-2 w-full">
-        <p class="m-0 flex items-center gap-2 text-[12px] text-[var(--mis-text-secondary)]">
-          @if (etiquetaNivel(); as nivel) {
-            <b class="min-w-0 truncate text-[var(--mis-text-primary)]">{{ nivel }}</b>
-            <span aria-hidden="true">·</span>
-          }
+        <div class="flex flex-wrap items-center gap-2 text-[12px] text-[var(--mis-text-secondary)]">
+          <app-ruta-jerarquica [ruta]="ruta()" etiqueta="Ruta de la cuenta de resultados" (irANivel)="volverANivel($event)" />
+          <span aria-hidden="true">·</span>
           <span class="shrink-0 text-[var(--mis-text-primary)]">{{ etiquetaPeriodo() }}</span>
           @if (preliminar()) {
             <span
@@ -56,7 +55,7 @@
               Preliminar
             </span>
           }
-        </p>
+        </div>
         <div class="mis-card p-3 overflow-x-auto w-full">
           <app-tabla-dinamica [ajustarAncho]="true" [llenarAlto]="true"
             [columnas]="columnas()"

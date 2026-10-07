@@ -120,7 +120,7 @@ export function cuentasConDetalle(filas: readonly Record<string, unknown>[]): Se
   return con;
 }
 
-/** Filas del drill down: cada cuenta abierta (por código) muestra su detalle; las que lo tienen llevan ▸/▾. */
+/** Filas del drill down: cada cuenta abierta (por código) muestra su detalle; las que lo tienen llevan ⊞/⊟, como el agrupar de Excel. */
 export function filasConDrillDown<T extends Record<string, unknown>>(filas: readonly T[], abiertas: ReadonlySet<string>): T[] {
   const con = cuentasConDetalle(filas);
   const visibles: T[] = [];
@@ -132,7 +132,7 @@ export function filasConDrillDown<T extends Record<string, unknown>>(filas: read
     const abierta = abiertas.has(codigo);
     ruta[d] = abierta;
     if (ruta.slice(0, d).some((a) => !a)) continue;
-    const marca = con.has(codigo) ? (abierta ? '▾ ' : '▸ ') : '';
+    const marca = con.has(codigo) ? (abierta ? '⊟ ' : '⊞ ') : '';
     visibles.push({ ...fila, cuenta_nombre: `${marca}${fila['cuenta_nombre']}` });
   }
   return visibles;
@@ -248,7 +248,6 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
   const anterior = new Date(actual.getFullYear(), actual.getMonth() - 1, 1);
   const anioAnterior = new Date(actual.getFullYear() - 1, actual.getMonth(), 1);
   const mes = mesCorto(actual);
-  const mesLargo = capitalizar(actual.toLocaleString('es-PE', { month: 'long' }));
 
   return [
     {
@@ -262,7 +261,7 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
       },
     },
     {
-      label: `Mes de ${mesLargo}`,
+      label: 'Flujo mensual',
       key: 'bloque_mes',
       style: { ...ENCABEZADO_MAC, color: 'var(--mis-text-primary)' },
       subs: [

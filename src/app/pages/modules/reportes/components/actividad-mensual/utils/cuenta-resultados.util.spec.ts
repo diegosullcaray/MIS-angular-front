@@ -144,7 +144,7 @@ describe('cuenta-resultados.util', () => {
       const [cuenta, mes, acumulado] = crearColumnasCuentaResultados('2026-08-01', true);
       expect(cuenta.label).toBe('Estado de ganancias y pérdidas · en miles (PEN)');
       expect(cuenta.style?.['text-align']).toBe('left');
-      expect(mes.label).toBe('Mes de Agosto');
+      expect(mes.label).toBe('Flujo mensual');
       expect(mes.subs!.map((c) => c.label)).toEqual(['Ago.25', 'Jul.26', 'Preliminar Ago.26', 'Ago.26 vs Jul.26']);
       expect(acumulado.label).toBe('Acumulado Ene–Ago');
       expect(acumulado.subs!.map((c) => c.label)).toEqual(['2025', '2026', 'Ago.26 vs Ago.25', 'Ago.26 vs Ago.25 %']);
@@ -250,19 +250,19 @@ describe('cuenta-resultados.util', () => {
     });
 
     it('cerrado deja las raíces; abrir INGRESOS FINANCIEROS muestra su nivel', () => {
-      expect(nombres([])).toEqual(['▸ INGRESOS FINANCIEROS', '▸ COMISIONES NETAS', 'MARGEN BRUTO']);
+      expect(nombres([])).toEqual(['⊞ INGRESOS FINANCIEROS', '⊞ COMISIONES NETAS', 'MARGEN BRUTO']);
       expect(nombres(['FOR001'])).toEqual([
-        '▾ INGRESOS FINANCIEROS',
+        '⊟ INGRESOS FINANCIEROS',
         'COEFICIENTES',
         'INGRESOS INVERSION GESTIONADA',
-        '▸ COMISIONES NETAS',
+        '⊞ COMISIONES NETAS',
         'MARGEN BRUTO',
       ]);
     });
 
     it('un nivel profundo exige que todos sus ancestros estén abiertos', () => {
       expect(nombres(['PEND001'])).toHaveLength(3);
-      expect(nombres(['FOR004', 'FOR005', 'PEND001']).slice(1, 5)).toEqual(['▾ COMISIONES NETAS', '▾ COMISIONES RECIBIDAS', '▾ SEGUROS', 'INDIVIDUAL']);
+      expect(nombres(['FOR004', 'FOR005', 'PEND001']).slice(1, 5)).toEqual(['⊟ COMISIONES NETAS', '⊟ COMISIONES RECIBIDAS', '⊟ SEGUROS', 'INDIVIDUAL']);
     });
   });
 });
