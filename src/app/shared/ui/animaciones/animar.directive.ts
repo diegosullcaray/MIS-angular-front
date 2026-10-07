@@ -35,6 +35,27 @@ export type NombreAnimacion = keyof typeof ANIMACIONES;
 const EASE_POR_DEFECTO = 'expo.out';
 
 /**
+ * Corre una animación del catálogo sobre `el` (o sus hijos, si es escalonada). Sirve también para
+ * lo que aparece más de una vez, como la franja de filtros al abrirse. Devuelve el contexto para revertir.
+ */
+export function animar(el: HTMLElement, nombre: NombreAnimacion, retraso = 0): gsap.Context | undefined {
+  const a: Animacion = ANIMACIONES[nombre];
+  const reducir = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (reducir && !('autoAlpha' in a.desde)) return undefined;
+
+  return gsap.context(() => {
+    gsap.from(a.escalonado ? el.children : el, {
+      ...(reducir ? { autoAlpha: 0 } : a.desde),
+      duration: reducir ? 0.2 : a.duracion,
+      stagger: a.escalonado,
+      ease: a.ease ?? EASE_POR_DEFECTO,
+      delay: retraso,
+      clearProps: 'opacity,visibility,transform',
+    });
+  }, el);
+}
+
+/**
  * `<div appAnimar="entrada">` — animación de entrada, una vez, al renderizar.
  *
  * Con `prefers-reduced-motion` queda solo un fundido corto, sin desplazamiento ni
@@ -53,20 +74,7 @@ export class AnimarDirective {
     inject(DestroyRef).onDestroy(() => contexto?.revert());
 
     afterNextRender(() => {
-      const a: Animacion = ANIMACIONES[this.appAnimar()];
-      const reducir = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-      if (reducir && !('autoAlpha' in a.desde)) return;
-
-      contexto = gsap.context(() => {
-        gsap.from(a.escalonado ? this.host.children : this.host, {
-          ...(reducir ? { autoAlpha: 0 } : a.desde),
-          duration: reducir ? 0.2 : a.duracion,
-          stagger: a.escalonado,
-          ease: a.ease ?? EASE_POR_DEFECTO,
-          delay: this.retraso(),
-          clearProps: 'opacity,visibility,transform',
-        });
-      }, this.host);
+      contexto = animar(this.host, this.appAnimar(), this.retraso());
     });
   }
 }

@@ -6,6 +6,7 @@ import { lucideRefreshCw } from '@ng-icons/lucide';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ShellStateService } from '../../../core/services/shell-state.service';
+import { animar } from '../animaciones/animar.directive';
 import { HierSelectorComponent } from '../hier-selector/hier-selector.component';
 import { NavegacionSistemasService } from '../../../pages/full-pages/layout/services/navegacion-sistemas.service';
 
@@ -112,6 +113,20 @@ export class WindowPanelComponent {
   }
 
   constructor() {
+    // Cada vez que la franja de filtros se abre (escritorio o hoja en móvil), entra con el fundido del catálogo.
+    let franjaAbierta = false;
+    let fundido: { revert(): void } | undefined;
+    effect(() => {
+      const visible = this.franjaVisible();
+      const el = this.franja()?.nativeElement;
+      if (visible && !franjaAbierta && el) {
+        fundido?.revert();
+        fundido = animar(el, 'fundido');
+      }
+      franjaAbierta = visible;
+    });
+    inject(DestroyRef).onDestroy(() => fundido?.revert());
+
     afterNextRender(() => {
       const franja = this.franja()?.nativeElement;
       if (!franja) return;

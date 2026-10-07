@@ -317,7 +317,7 @@
     max-height: calc(100% - var(--mis-window-bar-h) - var(--mis-space-4));
     overflow-y: auto;
     padding: var(--mis-space-3);
-    /* Vidrio líquido: translúcido con desenfoque, brillo superior y entrada suave. */
+    /* Vidrio líquido: translúcido con desenfoque y brillo superior (la entrada es el fundido GSAP del panel). */
     background: color-mix(in srgb, var(--mis-surface) 62%, transparent);
     backdrop-filter: blur(24px) saturate(170%);
     -webkit-backdrop-filter: blur(24px) saturate(170%);
@@ -326,8 +326,6 @@
     box-shadow:
       inset 0 1px 0 var(--mis-glass-specular-top),
       var(--mis-shadow-lg);
-    transform-origin: top right;
-    animation: mis-franja-entrada 220ms var(--mis-ease-salida);
   }
 }
 
@@ -340,17 +338,8 @@
   filter: drop-shadow(var(--mis-shadow-lg));
 }
 
-@keyframes mis-franja-entrada {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.97);
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .mis-window-franja {
-    animation: none;
-  }
   .mis-window-girando {
     animation-duration: 2.4s;
   }
