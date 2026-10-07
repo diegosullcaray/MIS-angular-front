@@ -296,6 +296,33 @@
   }
 }
 
+/* ── Móvil ────────────────────────────────────────────────────
+   La ventana mide lo que cabe en pantalla: el scroll es el del cuerpo y la barra
+   de título queda siempre a la vista (antes scrolleaba toda la página con ella).
+   Los filtros salen como hoja por delante del cuerpo, sin quitarle alto. */
+@media (max-width: 639.98px) {
+  .mis-window {
+    position: relative;
+    flex: none;
+    height: calc(100dvh - 130px);
+    min-height: 0;
+  }
+
+  .mis-window-franja {
+    position: absolute;
+    top: var(--mis-window-bar-h);
+    left: 0;
+    right: 0;
+    z-index: 10;
+    max-height: calc(100% - var(--mis-window-bar-h));
+    overflow-y: auto;
+    padding: var(--mis-space-3);
+    background: var(--mis-panel-bg);
+    border-bottom: 1px solid var(--mis-window-bar-border);
+    box-shadow: var(--mis-shadow-lg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mis-window-girando {
     animation-duration: 2.4s;

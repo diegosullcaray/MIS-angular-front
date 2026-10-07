@@ -4,10 +4,11 @@
   [actualizando]="servicio.cargando()"
   (actualizar)="refrescar()"
   [conRelleno]="false"
+  [conFiltros]="true"
+  [filtrosAbiertos]="!esMovil"
   volverA="/app/dashboard"
 >
-  <main class="min-h-full bg-[var(--mis-bg)] text-[var(--mis-text-primary)]">
-    <div class="flex flex-col gap-3 p-3 sm:gap-4 sm:p-5">
+  <div ventana-filtros class="sm:p-5 sm:pb-0">
       <section class="mis-superficie relative z-[25] grid overflow-visible rounded-xl shadow-[var(--mis-shadow-sm)] lg:grid-cols-[minmax(0,1fr)_150px]">
         <div class="min-w-0 p-4 sm:p-5">
           <form class="grid gap-3 md:grid-cols-[190px_minmax(0,1fr)_auto] md:items-end" (submit)="$event.preventDefault(); buscar()">
@@ -39,7 +40,6 @@
             }
           </div>
         </div>
-
         <!-- La burbuja flota por delante de todo (`appBurbujaFlotante` la lleva al body): no suma alto
              ni ancho a la tarjeta ni tapa a la mascota. En escritorio va encima de ella; en tableta, a
              su lado, a la altura de la cabeza. -->
@@ -51,6 +51,10 @@
           </div>
         </aside>
       </section>
+  </div>
+
+  <main class="min-h-full bg-[var(--mis-bg)] text-[var(--mis-text-primary)]">
+    <div class="flex flex-col gap-3 p-3 sm:gap-4 sm:p-5 sm:pt-4">
 
       <section class="mis-superficie overflow-hidden rounded-xl shadow-[var(--mis-shadow-sm)]" aria-label="Matriz de riesgos" [attr.aria-busy]="servicio.cargando()">
         <header class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mis-border)] px-4 py-3 sm:px-5">

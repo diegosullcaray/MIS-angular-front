@@ -102,7 +102,7 @@
     @if (conFiltros()) {
       <div
         #franja
-        class="flex flex-col gap-3"
+        class="mis-window-franja flex flex-col gap-3"
         [class.hidden]="!franjaVisible()"
         [class.mis-oculta-jerarquia]="conJerarquia() && !jerarquiaVisible()"
         [class.mis-oculta-otros]="conJerarquia() && !filtrosVisibles()"

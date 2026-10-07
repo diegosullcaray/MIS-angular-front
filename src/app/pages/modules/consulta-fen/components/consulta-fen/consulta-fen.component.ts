@@ -1,4 +1,4 @@
-import { Component, DestroyRef, HostListener, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -38,6 +38,9 @@ export class ConsultaFenComponent implements OnInit {
   protected readonly sugerencias = signal<string[]>([]);
   protected readonly seleccion = signal<FilaRiesgoFen | null>(null);
   protected readonly filtro = signal<ColumnaFiltroFen>(3);
+  /** En móvil los filtros flotan sobre el resultado: arrancan cerrados y se cierran al buscar. */
+  protected readonly esMovil = window.innerWidth < 640;
+  private readonly panel = viewChild(WindowPanelComponent);
 
   protected readonly columnas = signal(window.innerWidth < 640 ? COLUMNAS_FEN_MOVIL : COLUMNAS_FEN);
   protected readonly filtros = [...FILTROS_FEN];
@@ -130,6 +133,7 @@ export class ConsultaFenComponent implements OnInit {
       this.servicio.mostrarErrorValidacion(`Ingresa al menos 2 caracteres para buscar por ${this.etiquetaFiltro().toLowerCase()}.`);
       return;
     }
+    if (this.esMovil) this.panel()?.cerrarFiltros();
     this.ejecutarConsulta(columna, valor);
   }
 

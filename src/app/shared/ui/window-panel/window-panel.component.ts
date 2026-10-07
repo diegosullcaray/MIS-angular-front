@@ -99,6 +99,11 @@ export class WindowPanelComponent {
     this.filtrosVisibles.update((v) => !v);
   }
 
+  /** Cierra la franja de filtros (p. ej. tras buscar en móvil, donde flota sobre el resultado). */
+  cerrarFiltros(): void {
+    this.filtrosVisibles.set(false);
+  }
+
   constructor() {
     afterNextRender(() => {
       const franja = this.franja()?.nativeElement;
