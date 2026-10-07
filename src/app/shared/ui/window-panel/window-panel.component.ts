@@ -72,9 +72,11 @@ export class WindowPanelComponent {
   /** Hay filtros además del selector de jerarquía (se revisa al cambiar la franja: algunos aparecen con datos). */
   protected readonly hayOtrosFiltros = signal(false);
 
-  /** La franja se ve si alguno de sus botones muestra algo; sin selector, el botón de filtros decide solo. */
-  protected readonly franjaVisible = computed(() =>
-    this.conJerarquia() ? this.jerarquiaVisible() || (this.filtrosVisibles() && this.hayOtrosFiltros()) : this.filtrosVisibles(),
+  /** El botón de filtros solo existe si el panel tiene filtros propios (no solo la jerarquía). */
+  protected readonly conBotonFiltros = computed(() => this.conFiltros() && this.hayOtrosFiltros());
+
+  protected readonly franjaVisible = computed(
+    () => (this.conJerarquia() && this.jerarquiaVisible()) || (this.conBotonFiltros() && this.filtrosVisibles()),
   );
 
   protected readonly etiquetaZoom = computed(() =>
@@ -101,14 +103,27 @@ export class WindowPanelComponent {
     afterNextRender(() => {
       const franja = this.franja()?.nativeElement;
       if (!franja) return;
+      // Hoja visible fuera del selector: lo oculto con CSS (p. ej. `lg:hidden` de la versión móvil) no cuenta.
+      const visible = (el: Element) => {
+        for (let n: Element | null = el; n && n !== franja; n = n.parentElement) {
+          if (getComputedStyle(n).display === 'none') return false;
+        }
+        return true;
+      };
       const revisar = () =>
         this.hayOtrosFiltros.set(
-          [...franja.querySelectorAll('*')].some((el) => !el.matches('app-hier-selector, app-hier-selector *') && !el.querySelector('app-hier-selector')),
+          [...franja.querySelectorAll('*')].some(
+            (el) => !el.children.length && !el.matches('app-hier-selector, app-hier-selector *') && visible(el),
+          ),
         );
       revisar();
       const observador = new MutationObserver(revisar);
       observador.observe(franja, { childList: true, subtree: true });
-      this.injector.get(DestroyRef).onDestroy(() => observador.disconnect());
+      window.addEventListener('resize', revisar);
+      this.injector.get(DestroyRef).onDestroy(() => {
+        observador.disconnect();
+        window.removeEventListener('resize', revisar);
+      });
     });
 
     // `fullscreenchange` es la única fuente fiable del estado real: se puede

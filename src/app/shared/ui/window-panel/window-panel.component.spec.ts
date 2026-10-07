@@ -21,6 +21,17 @@ class ConJerarquiaComponent {
   protected readonly params = PARAMS_HIER_UNIDAD;
 }
 
+@Component({
+  standalone: true,
+  imports: [WindowPanelComponent, HierSelectorComponent],
+  template: `<app-window-panel [conFiltros]="true" [filtrosAbiertos]="true">
+    <div ventana-filtros><app-hier-selector [paramsHier]="params" /><div style="display:none"><span>solo móvil</span></div></div>
+  </app-window-panel>`,
+})
+class SoloJerarquiaComponent {
+  protected readonly params = PARAMS_HIER_UNIDAD;
+}
+
 describe('WindowPanelComponent', () => {
   let shell: ShellStateService;
 
@@ -201,5 +212,14 @@ describe('WindowPanelComponent', () => {
     fixture.detectChanges();
     expect(franja.classList).toContain('mis-oculta-otros');
     expect(franja.classList).not.toContain('mis-oculta-jerarquia');
+  });
+
+  it('sin filtros propios (solo jerarquía, o filtros ocultos por CSS) no hay botón de filtros', () => {
+    const fixture = TestBed.createComponent(SoloJerarquiaComponent);
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+
+    expect(el.querySelector('.pi-sitemap')).not.toBeNull();
+    expect(el.querySelector('.pi-filter, .pi-filter-slash')).toBeNull();
   });
 });
