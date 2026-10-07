@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
+import { ScrollTopModule } from 'primeng/scrolltop';
 import { TooltipModule } from 'primeng/tooltip';
 import { ShellStateService } from '../../../core/services/shell-state.service';
 import { HierSelectorComponent } from '../hier-selector/hier-selector.component';
@@ -15,7 +16,7 @@ const RUTA_HOME = '/app/dashboard';
 @Component({
   selector: 'app-window-panel',
   standalone: true,
-  imports: [NgIconComponent, TooltipModule],
+  imports: [NgIconComponent, ScrollTopModule, TooltipModule],
   viewProviders: [provideIcons({ lucideRefreshCw })],
   templateUrl: './window-panel.component.html',
   styleUrl: './window-panel.component.css',
