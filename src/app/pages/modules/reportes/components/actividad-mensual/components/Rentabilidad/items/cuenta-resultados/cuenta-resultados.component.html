@@ -44,18 +44,7 @@
       <app-empty-state descripcion="No se encontraron resultados para los filtros seleccionados." />
     } @else {
       <div class="flex flex-col gap-2 w-full">
-        <div class="flex flex-wrap items-center gap-2 text-[12px] text-[var(--mis-text-secondary)]">
-          <app-ruta-jerarquica [ruta]="ruta()" etiqueta="Ruta de la cuenta de resultados" (irANivel)="volverANivel($event)" />
-          <span aria-hidden="true">·</span>
-          <span class="shrink-0 text-[var(--mis-text-primary)]">{{ etiquetaPeriodo() }}</span>
-          @if (preliminar()) {
-            <span
-              class="px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-[var(--mis-warning)] bg-[var(--mis-warning-light)]"
-            >
-              Preliminar
-            </span>
-          }
-        </div>
+        <app-ruta-jerarquica [ruta]="ruta()" etiqueta="Ruta de la cuenta de resultados" (irANivel)="volverANivel($event)" />
         <div class="mis-card p-3 overflow-x-auto w-full">
           <app-tabla-dinamica [ajustarAncho]="true" [llenarAlto]="true"
             [columnas]="columnas()"

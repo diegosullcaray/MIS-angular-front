@@ -17,10 +17,11 @@
   width: 14px;
   height: 14px;
   margin-right: 6px;
-  border: 1px solid var(--mis-border-strong);
+  /* Toma el color de la fila (tokens de `estiloCelda`): en una cuenta principal va en el tono de marca. */
+  border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
   border-radius: 3px;
-  background: var(--mis-surface);
-  color: var(--mis-text-secondary);
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  color: inherit;
 }
 
 .mis-drill-caja .pi {

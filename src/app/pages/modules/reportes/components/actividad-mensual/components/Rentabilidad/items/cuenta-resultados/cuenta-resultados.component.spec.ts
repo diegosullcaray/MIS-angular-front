@@ -65,8 +65,8 @@ describe('CuentaResultadosComponent', () => {
     const texto = fixture.nativeElement.textContent as string;
 
     expect(texto).toContain('INGRESOS FINANCIEROS');
-    expect(texto).toContain('Junio de 2026');
-    expect(texto).toContain('Preliminar');
+    // El periodo y su marca de preliminar van en el encabezado de la columna, no junto a las migas.
+    expect(texto).toContain('Preliminar Jun.26');
   });
 
   it('cambiar el periodo reconsulta el mismo nodo', () => {

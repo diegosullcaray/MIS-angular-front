@@ -19,7 +19,6 @@ import {
   crearColumnasCuentaResultados,
   cuentasConDetalle,
   filasConDrillDown,
-  etiquetaPeriodoCuenta,
   normalizarFechaCuenta,
 } from '../../../../utils/cuenta-resultados.util';
 import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
@@ -67,10 +66,6 @@ export class CuentaResultadosComponent {
   protected readonly periodo = signal('');
 
   protected readonly preliminar = computed(() => this.resultado()?.preliminar ?? false);
-  protected readonly etiquetaPeriodo = computed(() => {
-    const fecha = this.resultado()?.fecha;
-    return fecha ? etiquetaPeriodoCuenta(fecha) : '';
-  });
 
   /** Ruta de la raíz al nivel elegido, para las migas sobre la tabla. */
   protected readonly ruta = signal<HierarquiaNodo[]>([]);
