@@ -111,6 +111,12 @@ describe('CuentaResultadosComponent', () => {
     expect(fixture.nativeElement.querySelector('app-inline-error')).not.toBeNull();
   });
 
+  it('al entrar muestra el esqueleto hasta que la jerarquía resuelve el nivel', () => {
+    const { fixture } = crear();
+    expect(fixture.nativeElement.querySelector('app-list-skeleton')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-empty-state')).toBeNull();
+  });
+
   it('un fallo del backend es error persistente con reintento, no tabla vacía', () => {
     cuentaResultados.mockReturnValueOnce(throwError(() => new Error('500')));
     const { fixture, vista, seleccionar } = crear();

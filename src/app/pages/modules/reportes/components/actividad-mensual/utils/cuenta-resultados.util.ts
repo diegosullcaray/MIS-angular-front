@@ -238,10 +238,6 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
     else porAnio.push({ label: anio, key: `anio_${porAnio.length}_${anio}`, subs: [columna] });
   }
 
-  // Trimestres del año hasta el que contiene el mes elegido (agosto: 1T a 3T).
-  const trimestres = Math.ceil((actual.getMonth() + 1) / 3);
-  const anio = actual.getFullYear();
-
   return [
     {
       label: 'Estado de ganancias y pérdidas · en miles (PEN)',
@@ -268,24 +264,6 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
         columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)} %`, 'variacion_acumulado_pct', {
           format: { type: 'percent' },
         }),
-      ],
-    },
-    {
-      label: 'Resultado Trimestral',
-      key: 'resultado_trimestral',
-      subs: [
-        {
-          label: String(anio),
-          key: `trimestral_${anio}`,
-          subs: [
-            ...Array.from({ length: trimestres }, (_, i) =>
-              columnaCifra(`${i + 1}T - ${anio}`, `trimestre_${i + 1}`, {
-                cellStyle: { ...CELDA_CIFRA, ...(i === 0 ? { 'border-left': '1px solid var(--mis-border)' } : {}) },
-              }),
-            ),
-            columnaCifra(`Total ${anio}`, 'total_anual'),
-          ],
-        },
       ],
     },
   ];

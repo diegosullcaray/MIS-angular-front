@@ -31,13 +31,13 @@
     <app-inline-error titulo="No se pudo cargar la jerarquía." (reintentar)="reintentarJerarquia()" />
   } @else if (error(); as detalle) {
     <app-inline-error [detalle]="detalle" (reintentar)="reintentar()" />
+  } @else if (cargando()) {
+    <app-list-skeleton />
   } @else if (!nivelActual()) {
     <app-empty-state
       titulo="Elige un nivel"
       descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el reporte."
     />
-  } @else if (cargando()) {
-    <app-list-skeleton />
   } @else if (resultado(); as reporte) {
     @if (reporte.filas.length === 0) {
       <app-empty-state descripcion="No se encontraron resultados para los filtros seleccionados." />
@@ -58,6 +58,8 @@
             [columnas]="columnas()"
             [filas]="reporte.filas"
             [cargando]="cargando()"
+            [columnasClicables]="columnasDrillDown()"
+            (celdaSeleccionada)="onCeldaSeleccionada($event)"
             [destacarFila]="sinDestacar"
           />
         </div>

@@ -11,6 +11,7 @@ import { WindowPanelComponent } from '../../../../../../../../../shared/ui/windo
 import type { OpcionFiltro } from '../../../../../../../../../shared/ui/formularios/opcion-filtro.model';
 import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
+import { nodoDeFila } from '../../../../../../utils/nodo-fila.util';
 import { MENSAJES_CUENTA_RESULTADOS } from '../../../../constantes/actividad-mensual.constantes';
 import type { CuentaResultadosResultado } from '../../../../models/cuenta-resultados.model';
 import {
@@ -58,7 +59,8 @@ export class CuentaResultadosComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
-  protected readonly cargando = signal(false);
+  /** Arranca en `true`: la jerarquía resuelve el nivel inicial y, hasta entonces, la pantalla muestra su esqueleto. */
+  protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly resultado = signal<CuentaResultadosResultado | null>(null);
   /** El legado muestra el fallo de jerarquía en la página: no es un "elige un nivel". */
@@ -84,6 +86,11 @@ export class CuentaResultadosComponent {
     return crearColumnasCuentaResultados(reporte.fecha, reporte.preliminar, nivel);
   });
 
+  /** Drill down: la columna de cuentas baja de nivel solo si alguna fila trae su nodo (o coincide por nombre). */
+  protected readonly columnasDrillDown = computed(() =>
+    this.resultado()?.filas.some((fila) => this.nodoHijo(fila)) ? ['cuenta_nombre'] : [],
+  );
+
   /** La tabla no resalta por su cuenta: cada nivel ya trae su estilo. */
   protected readonly sinDestacar = () => false;
 
@@ -103,6 +110,22 @@ export class CuentaResultadosComponent {
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
     this.consulta.set({ nodo: { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, fecha: this.periodo() || null });
+  }
+
+  protected onCeldaSeleccionada(evento: { clave: string; fila: Record<string, unknown> }): void {
+    if (evento.clave !== 'cuenta_nombre') return;
+    const nodo = this.nodoHijo(evento.fila);
+    // Por el selector, así sus desplegables quedan en el nivel nuevo; si no está entre sus opciones, se consulta igual.
+    if (nodo && !this.selector()?.seleccionarNodo(nodo)) this.onNivelSeleccionado(nodo);
+  }
+
+  /** Nodo de la fila, salvo el nivel que ya se ve; sin claves propias, se busca por nombre entre las opciones del selector. */
+  private nodoHijo(fila: Record<string, unknown>): HierarquiaNodo | null {
+    const nodo =
+      nodoDeFila(fila, 'cuenta_nombre') ?? this.selector()?.opcionPorDescripcion(String(fila['cuenta_nombre'] ?? '')) ?? null;
+    const actual = this.nivelActual();
+    if (!nodo || (actual && nodo.tip_cod === actual.tip_cod && nodo.cod_rel === actual.cod_rel)) return null;
+    return nodo;
   }
 
   /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */

@@ -137,22 +137,12 @@ describe('cuenta-resultados.util', () => {
         'acumulado_actual',
         'variacion_acumulado',
         'variacion_acumulado_pct',
-        'trimestre_1',
-        'trimestre_2',
-        'trimestre_3',
-        'total_anual',
       ]);
     });
 
-    it('bloque "Resultado Trimestral" del año: un trimestre por cada uno ya iniciado y el total', () => {
-      const trimestral = crearColumnasCuentaResultados('2026-08-01', true)[2];
-      expect(trimestral.label).toBe('Resultado Trimestral');
-      expect(trimestral.subs![0].label).toBe('2026');
-      expect(trimestral.subs![0].subs!.map((c) => c.label)).toEqual(['1T - 2026', '2T - 2026', '3T - 2026', 'Total 2026']);
-
-      const enNoviembre = crearColumnasCuentaResultados('2026-11-01', false)[2].subs![0].subs!;
-      expect(enNoviembre.map((c) => c.key)).toEqual(['trimestre_1', 'trimestre_2', 'trimestre_3', 'trimestre_4', 'total_anual']);
-      expect(crearColumnasCuentaResultados('2026-02-01', false)[2].subs![0].subs!.map((c) => c.key)).toEqual(['trimestre_1', 'total_anual']);
+    it('no muestra el bloque "Resultado Trimestral"', () => {
+      const columnas = crearColumnasCuentaResultados('2026-08-01', true);
+      expect(columnas.map((c) => c.label)).not.toContain('Resultado Trimestral');
     });
 
     it('encabezado de la maqueta: "PYG {nivel}" sobre las cifras y los meses agrupados por año', () => {
