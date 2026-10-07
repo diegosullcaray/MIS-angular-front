@@ -1,10 +1,11 @@
-import { Component, ElementRef, Injector, computed, effect, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, Injector, afterNextRender, computed, contentChild, effect, inject, input, linkedSignal, output, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
 import { TooltipModule } from 'primeng/tooltip';
 import { ShellStateService } from '../../../core/services/shell-state.service';
+import { HierSelectorComponent } from '../hier-selector/hier-selector.component';
 import { NavegacionSistemasService } from '../../../pages/full-pages/layout/services/navegacion-sistemas.service';
 
 /** Destino de la luz roja: el inicio del shell. */
@@ -62,6 +63,19 @@ export class WindowPanelComponent {
   protected readonly pantallaCompleta = signal(false);
 
   protected readonly filtrosVisibles = linkedSignal(() => this.filtrosAbiertos());
+  protected readonly jerarquiaVisible = linkedSignal(() => this.filtrosAbiertos());
+
+  /** El selector de jerarquía del panel (si lo tiene) va con su propio botón, aparte de los filtros. */
+  protected readonly conJerarquia = computed(() => !!this.selectorJerarquia());
+  private readonly selectorJerarquia = contentChild(HierSelectorComponent);
+  private readonly franja = viewChild<ElementRef<HTMLElement>>('franja');
+  /** Hay filtros además del selector de jerarquía (se revisa al cambiar la franja: algunos aparecen con datos). */
+  protected readonly hayOtrosFiltros = signal(false);
+
+  /** La franja se ve si alguno de sus botones muestra algo; sin selector, el botón de filtros decide solo. */
+  protected readonly franjaVisible = computed(() =>
+    this.conJerarquia() ? this.jerarquiaVisible() || (this.filtrosVisibles() && this.hayOtrosFiltros()) : this.filtrosVisibles(),
+  );
 
   protected readonly etiquetaZoom = computed(() =>
     this.pantallaCompleta() ? 'Salir de pantalla completa' : 'Ver en pantalla completa',
@@ -71,11 +85,32 @@ export class WindowPanelComponent {
     this.filtrosVisibles() ? 'Ocultar filtros' : 'Mostrar filtros',
   );
 
+  protected readonly etiquetaJerarquia = computed(() =>
+    this.jerarquiaVisible() ? 'Ocultar jerarquía' : 'Mostrar jerarquía',
+  );
+
+  protected alternarJerarquia(): void {
+    this.jerarquiaVisible.update((v) => !v);
+  }
+
   protected alternarFiltros(): void {
     this.filtrosVisibles.update((v) => !v);
   }
 
   constructor() {
+    afterNextRender(() => {
+      const franja = this.franja()?.nativeElement;
+      if (!franja) return;
+      const revisar = () =>
+        this.hayOtrosFiltros.set(
+          [...franja.querySelectorAll('*')].some((el) => !el.matches('app-hier-selector, app-hier-selector *') && !el.querySelector('app-hier-selector')),
+        );
+      revisar();
+      const observador = new MutationObserver(revisar);
+      observador.observe(franja, { childList: true, subtree: true });
+      this.injector.get(DestroyRef).onDestroy(() => observador.disconnect());
+    });
+
     // `fullscreenchange` es la única fuente fiable del estado real: se puede
     // salir con Esc sin pasar por el botón verde.
     const alCambiar = () => this.pantallaCompleta.set(this.esElementoEnPantallaCompleta());

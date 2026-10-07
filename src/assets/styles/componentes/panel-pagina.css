@@ -17,7 +17,8 @@
   width: 100%;
   min-height: calc(100vh - 130px);
   padding: var(--mis-space-3);
-  background: var(--mis-glass-bg);
+  /* El vidrio se apila sobre la superficie sólida: conserva el tinte pero no deja ver el fondo del layout. */
+  background: linear-gradient(var(--mis-glass-bg), var(--mis-glass-bg)), var(--mis-surface);
   backdrop-filter: blur(15px);
   border: 1px solid var(--mis-glass-border);
   border-radius: var(--mis-radius-lg);

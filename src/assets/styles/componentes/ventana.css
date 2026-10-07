@@ -20,7 +20,8 @@
      modo de alto automático). Mismo alto de referencia que `.mis-page`. */
   min-height: calc(100vh - 130px);
   overflow: hidden;
-  background: var(--mis-glass-bg);
+  /* El vidrio se apila sobre la superficie sólida: conserva el tinte pero no deja ver el fondo del layout. */
+  background: linear-gradient(var(--mis-glass-bg), var(--mis-glass-bg)), var(--mis-surface);
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
   border: 1px solid var(--mis-glass-border);
@@ -30,6 +31,15 @@
     var(--mis-shadow-lg);
 }
 
+
+/* Franja de filtros dividida: cada botón de la barra muestra solo su parte. La jerarquía es
+   `app-hier-selector`; "otros" es todo lo que no sea el selector ni lo que lo contiene. */
+.mis-oculta-jerarquia app-hier-selector {
+  display: none;
+}
+.mis-oculta-otros *:not(app-hier-selector, :has(app-hier-selector), app-hier-selector *) {
+  display: none;
+}
 
 /* Barra de título. `grid` de 3 columnas (no flex) para que el título quede
    ópticamente centrado en la ventana aunque el semáforo y las acciones tengan

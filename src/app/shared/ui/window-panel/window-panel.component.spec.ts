@@ -2,11 +2,24 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 import { provideRouter, Router } from '@angular/router';
+import { HierSelectorComponent } from '../hier-selector/hier-selector.component';
+import { PARAMS_HIER_UNIDAD } from '../../../pages/modules/reportes/models/jerarquia.model';
 import { WindowPanelComponent } from './window-panel.component';
 import { ShellStateService } from '../../../core/services/shell-state.service';
 
 @Component({ template: '', standalone: true })
 class BlankComponent {}
+
+@Component({
+  standalone: true,
+  imports: [WindowPanelComponent, HierSelectorComponent],
+  template: `<app-window-panel [conFiltros]="true" [filtrosAbiertos]="true">
+    <div ventana-filtros><app-hier-selector [paramsHier]="params" /><input id="otro" /></div>
+  </app-window-panel>`,
+})
+class ConJerarquiaComponent {
+  protected readonly params = PARAMS_HIER_UNIDAD;
+}
 
 describe('WindowPanelComponent', () => {
   let shell: ShellStateService;
@@ -166,5 +179,27 @@ describe('WindowPanelComponent', () => {
     const fixture = crear({ mostrarSemaforo: false });
 
     expect(elemento(fixture, '.mis-window-light')).toBeNull();
+  });
+
+  it('con selector de jerarquía: botón propio y cada botón oculta solo su parte', () => {
+    const fixture = TestBed.createComponent(ConJerarquiaComponent);
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    const franja = el.querySelector('.flex.flex-col.gap-3')!;
+    const botones = () => [...el.querySelectorAll<HTMLElement>('.mis-window-btn:not(.mis-window-btn--esquina)')];
+
+    expect(el.querySelector('.pi-sitemap')).not.toBeNull();
+    expect(botones()).toHaveLength(2);
+
+    el.querySelector<HTMLElement>('.pi-sitemap')!.parentElement!.click();
+    fixture.detectChanges();
+    expect(franja.classList).toContain('mis-oculta-jerarquia');
+    expect(franja.classList).not.toContain('mis-oculta-otros');
+
+    el.querySelector<HTMLElement>('.pi-sitemap')!.parentElement!.click();
+    botones()[1].click();
+    fixture.detectChanges();
+    expect(franja.classList).toContain('mis-oculta-otros');
+    expect(franja.classList).not.toContain('mis-oculta-jerarquia');
   });
 });

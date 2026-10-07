@@ -53,7 +53,21 @@
     <div class="mis-window-actions">
       <ng-content select="[ventana-acciones]" />
 
-      @if (conFiltros()) {
+      @if (conFiltros() && conJerarquia()) {
+        <button
+          type="button"
+          class="mis-window-btn"
+          (click)="alternarJerarquia()"
+          [attr.aria-pressed]="jerarquiaVisible()"
+          [attr.aria-label]="etiquetaJerarquia()"
+          [pTooltip]="etiquetaJerarquia()"
+          tooltipPosition="bottom"
+        >
+          <i class="pi pi-sitemap text-[14px]"></i>
+        </button>
+      }
+
+      @if (conFiltros() && (!conJerarquia() || hayOtrosFiltros())) {
         <button
           type="button"
           class="mis-window-btn"
@@ -86,7 +100,13 @@
 
   <div class="mis-window-body" [class.mis-window-body--relleno]="conRelleno()">
     @if (conFiltros()) {
-      <div class="flex flex-col gap-3" [class.hidden]="!filtrosVisibles()">
+      <div
+        #franja
+        class="flex flex-col gap-3"
+        [class.hidden]="!franjaVisible()"
+        [class.mis-oculta-jerarquia]="conJerarquia() && !jerarquiaVisible()"
+        [class.mis-oculta-otros]="conJerarquia() && !filtrosVisibles()"
+      >
         <ng-content select="[ventana-filtros]" />
       </div>
     }
