@@ -14,6 +14,7 @@ import type { NodoConsulta } from '../../../../../../services/bloque-reporte.ser
 import { MENSAJES_CUENTA_RESULTADOS } from '../../../../constantes/actividad-mensual.constantes';
 import type { CuentaResultadosResultado } from '../../../../models/cuenta-resultados.model';
 import {
+  
   ContratoCuentaResultadosError,
   crearColumnasCuentaResultados,
   etiquetaPeriodoCuenta,

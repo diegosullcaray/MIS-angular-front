@@ -1,0 +1,694 @@
+{
+    "code": "SUCCESS",
+    "body": {
+        "resultado": {
+            "headers": "{\"preliminar\":1,\"fechas\":[\"2026-06-01\",\"2026-05-01\",\"2026-04-01\",\"2026-03-01\",\"2026-02-01\",\"2026-01-01\"]}",
+            "data": [
+                {
+                    "style": 2,
+                    "cuenta_codigo": "FOR001",
+                    "cuenta_nombre": "INGRESOS FINANCIEROS",
+                    "orden": 1,
+                    "periodo_anio_anterior": 47950.060000,
+                    "periodo_anterior": 55839.680000,
+                    "periodo_actual": 54991.510000,
+                    "variacion_periodo_anterior": -848.170000,
+                    "acumulado_anio_anterior": 284893.310000,
+                    "acumulado_actual": 321231.160000,
+                    "variacion_acumulado": 36337.850000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 156653.780000,
+                    "trimestre_2": 164577.380000,
+                    "trimestre_3": 56811.690000,
+                    "trimestre_4": 0.000000,
+                    "total_anio": 378042.850000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "EF001",
+                    "cuenta_nombre": "COEFICIENTES OBLIGATORIOS DE CAJA Y BANCOS",
+                    "orden": 2,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "EF002",
+                    "cuenta_nombre": "INGRESOS INTERMEDIARIOS FINANCIEROS",
+                    "orden": 3,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "EF003",
+                    "cuenta_nombre": "INGRESOS CARTERA DE VALORES",
+                    "orden": 4,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "S001MN",
+                    "cuenta_nombre": "INGRESOS INVERSION GESTIONADA",
+                    "orden": 5,
+                    "periodo_anio_anterior": 47950.060000,
+                    "periodo_anterior": 55839.680000,
+                    "periodo_actual": 54991.510000,
+                    "variacion_periodo_anterior": -848.170000,
+                    "acumulado_anio_anterior": 284893.310000,
+                    "acumulado_actual": 321231.160000,
+                    "variacion_acumulado": 36337.850000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 156653.780000,
+                    "trimestre_2": 164577.380000,
+                    "trimestre_3": 56811.690000,
+                    "total_anio": 378042.850000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "CONS001",
+                    "cuenta_nombre": "OTROS INGRESOS FINANCIEROS",
+                    "orden": 6,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 2,
+                    "cuenta_codigo": "FOR002",
+                    "cuenta_nombre": "COSTES FINANCIEROS",
+                    "orden": 7,
+                    "periodo_anio_anterior": 0.000000,
+                    "periodo_anterior": 0.000000,
+                    "periodo_actual": 0.000000,
+                    "variacion_periodo_anterior": 0.000000,
+                    "acumulado_anio_anterior": 0.000000,
+                    "acumulado_actual": 0.000000,
+                    "variacion_acumulado": 0.000000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 0.000000,
+                    "trimestre_2": 0.000000,
+                    "trimestre_3": 0.000000,
+                    "trimestre_4": 0.000000,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "EXT001",
+                    "cuenta_nombre": "COSTES RECURSOS GESTIONADOS",
+                    "orden": 8,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "EXT002",
+                    "cuenta_nombre": "COSTES OTRO FONDEO",
+                    "orden": 9,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 3,
+                    "cuenta_codigo": "FOR003",
+                    "cuenta_nombre": "MARGEN DE INTERESES",
+                    "orden": 10,
+                    "periodo_anio_anterior": 47950.060000,
+                    "periodo_anterior": 55839.680000,
+                    "periodo_actual": 54991.510000,
+                    "variacion_periodo_anterior": -848.170000,
+                    "acumulado_anio_anterior": 284893.310000,
+                    "acumulado_actual": 321231.160000,
+                    "variacion_acumulado": 36337.850000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 156653.780000,
+                    "trimestre_2": 164577.380000,
+                    "trimestre_3": 56811.690000,
+                    "trimestre_4": 0.000000,
+                    "total_anio": 378042.850000
+                },
+                {
+                    "style": 2,
+                    "cuenta_codigo": "FOR004",
+                    "cuenta_nombre": "COMISIONES NETAS",
+                    "orden": 11,
+                    "periodo_anio_anterior": 0.000000,
+                    "periodo_anterior": 0.000000,
+                    "periodo_actual": 0.000000,
+                    "variacion_periodo_anterior": 0.000000,
+                    "acumulado_anio_anterior": 0.000000,
+                    "acumulado_actual": 0.000000,
+                    "variacion_acumulado": 0.000000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 0.000000,
+                    "trimestre_2": 0.000000,
+                    "trimestre_3": 0.000000,
+                    "trimestre_4": 0.000000,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "FOR005",
+                    "cuenta_nombre": "COMISIONES RECIBIDAS",
+                    "orden": 12,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND001",
+                    "cuenta_nombre": "COMISIONES RECIBIDAS SEGUROS",
+                    "orden": 13,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "FOR006",
+                    "cuenta_nombre": "OTRAS COMISIONES RECIBIDAS",
+                    "orden": 14,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "FOR007",
+                    "cuenta_nombre": "COMISIONES PAGADAS",
+                    "orden": 15,
+                    "periodo_anio_anterior": 0.000000,
+                    "periodo_anterior": 0.000000,
+                    "periodo_actual": 0.000000,
+                    "variacion_periodo_anterior": 0.000000,
+                    "acumulado_anio_anterior": 0.000000,
+                    "acumulado_actual": 0.000000,
+                    "variacion_acumulado": 0.000000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 0.000000,
+                    "trimestre_2": 0.000000,
+                    "trimestre_3": 0.000000,
+                    "trimestre_4": 0.000000,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "SD04MN",
+                    "cuenta_nombre": "SERVICIO CORRESPONSALIA",
+                    "orden": 16,
+                    "periodo_anterior": -307.250000,
+                    "periodo_actual": -325.700000,
+                    "variacion_periodo_anterior": -18.450000,
+                    "acumulado_anio_anterior": -2139.990000,
+                    "acumulado_actual": -1877.920000,
+                    "variacion_acumulado": 262.070000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": -1220.430000,
+                    "trimestre_2": -657.490000,
+                    "trimestre_3": -334.240000,
+                    "total_anio": -2212.160000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "S006MN",
+                    "cuenta_nombre": "COMISION SERV. AGENTES CORRESPOSALES",
+                    "orden": 17,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND002",
+                    "cuenta_nombre": "OTRAS COMISIONES",
+                    "orden": 18,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 2,
+                    "cuenta_codigo": "FOR008",
+                    "cuenta_nombre": "RESTO DE INGRESOS NETOS ORDINARIOS",
+                    "orden": 19,
+                    "periodo_anio_anterior": 0.000000,
+                    "periodo_anterior": 0.000000,
+                    "periodo_actual": 0.000000,
+                    "variacion_periodo_anterior": 0.000000,
+                    "acumulado_anio_anterior": 0.000000,
+                    "acumulado_actual": 0.000000,
+                    "variacion_acumulado": 0.000000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 0.000000,
+                    "trimestre_2": 0.000000,
+                    "trimestre_3": 0.000000,
+                    "trimestre_4": 0.000000,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "FOR009",
+                    "cuenta_nombre": "RENDIMIENTO DE OTROS PRODUCTOS Y CARGAS",
+                    "orden": 20,
+                    "periodo_anio_anterior": 0.000000,
+                    "periodo_anterior": 0.000000,
+                    "periodo_actual": 0.000000,
+                    "variacion_periodo_anterior": 0.000000,
+                    "acumulado_anio_anterior": 0.000000,
+                    "acumulado_actual": 0.000000,
+                    "variacion_acumulado": 0.000000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 0.000000,
+                    "trimestre_2": 0.000000,
+                    "trimestre_3": 0.000000,
+                    "trimestre_4": 0.000000,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "S014MN",
+                    "cuenta_nombre": "FONDO DE SEGURO DE DEPOSITO",
+                    "orden": 21,
+                    "periodo_anterior": -350.950000,
+                    "periodo_actual": -358.740000,
+                    "variacion_periodo_anterior": -7.790000,
+                    "acumulado_anio_anterior": -1025.130000,
+                    "acumulado_actual": -2016.740000,
+                    "variacion_acumulado": -991.610000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": -968.970000,
+                    "trimestre_2": -1047.770000,
+                    "trimestre_3": -371.220000,
+                    "total_anio": -2387.960000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "CONS002",
+                    "cuenta_nombre": "RESTO (EXTRAORDINARIOS)",
+                    "orden": 22,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 3,
+                    "cuenta_codigo": "FOR010",
+                    "cuenta_nombre": "MARGEN BRUTO",
+                    "orden": 23,
+                    "periodo_anio_anterior": 47950.060000,
+                    "periodo_anterior": 55839.680000,
+                    "periodo_actual": 54991.510000,
+                    "variacion_periodo_anterior": -848.170000,
+                    "acumulado_anio_anterior": 284893.310000,
+                    "acumulado_actual": 321231.160000,
+                    "variacion_acumulado": 36337.850000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 156653.780000,
+                    "trimestre_2": 164577.380000,
+                    "trimestre_3": 56811.690000,
+                    "trimestre_4": 0.000000,
+                    "total_anio": 378042.850000
+                },
+                {
+                    "style": 2,
+                    "cuenta_codigo": "FOR011",
+                    "cuenta_nombre": "GASTOS DE EXPLOTACION",
+                    "orden": 24,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "FOR012",
+                    "cuenta_nombre": "GASTO DE PERSONAL",
+                    "orden": 25,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND003",
+                    "cuenta_nombre": "DIRECTO",
+                    "orden": 26,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND004",
+                    "cuenta_nombre": "INDIVIDUAL",
+                    "orden": 27,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND005",
+                    "cuenta_nombre": "GRUPAL",
+                    "orden": 28,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND006",
+                    "cuenta_nombre": "OPERACIONES",
+                    "orden": 29,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND007",
+                    "cuenta_nombre": "SOPORTE COMERCIAL",
+                    "orden": 30,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND008",
+                    "cuenta_nombre": "STAFF",
+                    "orden": 31,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND009",
+                    "cuenta_nombre": "INDIRECTO",
+                    "orden": 32,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND010",
+                    "cuenta_nombre": "INDIVIDUAL",
+                    "orden": 33,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND011",
+                    "cuenta_nombre": "GRUPAL",
+                    "orden": 34,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND012",
+                    "cuenta_nombre": "OPERACIONES",
+                    "orden": 35,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND013",
+                    "cuenta_nombre": "SOPORTE COMERCIAL",
+                    "orden": 36,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND014",
+                    "cuenta_nombre": "STAFF",
+                    "orden": 37,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "PEND015",
+                    "cuenta_nombre": "GASTOS GENERALES",
+                    "orden": 38,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND016",
+                    "cuenta_nombre": "DIRECTO",
+                    "orden": 39,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND017",
+                    "cuenta_nombre": "INDIVIDUAL",
+                    "orden": 40,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND018",
+                    "cuenta_nombre": "GRUPAL",
+                    "orden": 41,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND019",
+                    "cuenta_nombre": "OPERACIONES",
+                    "orden": 42,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND020",
+                    "cuenta_nombre": "SOPORTE COMERCIAL",
+                    "orden": 43,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND021",
+                    "cuenta_nombre": "STAFF",
+                    "orden": 44,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND022",
+                    "cuenta_nombre": "INDIRECTO",
+                    "orden": 45,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND023",
+                    "cuenta_nombre": "INDIVIDUAL",
+                    "orden": 46,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND024",
+                    "cuenta_nombre": "GRUPAL",
+                    "orden": 47,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND025",
+                    "cuenta_nombre": "OPERACIONES",
+                    "orden": 48,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND026",
+                    "cuenta_nombre": "SOPORTE COMERCIAL",
+                    "orden": 49,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 5,
+                    "cuenta_codigo": "PEND027",
+                    "cuenta_nombre": "STAFF",
+                    "orden": 50,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "PEND028",
+                    "cuenta_nombre": "IMPUESTOS Y AMORTIZACIONES",
+                    "orden": 51,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND029",
+                    "cuenta_nombre": "IMPUESTOS",
+                    "orden": 52,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND030",
+                    "cuenta_nombre": "IMPUESTOS I",
+                    "orden": 53,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND031",
+                    "cuenta_nombre": "ACTIVO FIJO",
+                    "orden": 54,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 4,
+                    "cuenta_codigo": "PEND032",
+                    "cuenta_nombre": "INTANGIBLE",
+                    "orden": 55,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 3,
+                    "cuenta_codigo": "FOR0013",
+                    "cuenta_nombre": "MARGEN NETO",
+                    "orden": 56,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 2,
+                    "cuenta_codigo": "FOR0014",
+                    "cuenta_nombre": "PERDIDAS POR DETERIORO DE ACTIVOS",
+                    "orden": 57,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "FOR0015",
+                    "cuenta_nombre": "PROVISIÓN DE CREDITOS",
+                    "orden": 58,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "SJ03MN",
+                    "cuenta_nombre": "DOTACION ESPECIFICA",
+                    "orden": 59,
+                    "periodo_anio_anterior": -10325.450000,
+                    "periodo_anterior": -8475.970000,
+                    "periodo_actual": -8943.610000,
+                    "variacion_periodo_anterior": -467.640000,
+                    "acumulado_anio_anterior": -69725.580000,
+                    "acumulado_actual": -49530.080000,
+                    "variacion_acumulado": 20195.500000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": -23354.250000,
+                    "trimestre_2": -26175.830000,
+                    "trimestre_3": -11010.710000,
+                    "total_anio": -60540.790000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "CONS003",
+                    "cuenta_nombre": "PROVISIÓN VOLUNTARÍA",
+                    "orden": 60,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "SJ04MN",
+                    "cuenta_nombre": "RECUPERACION DE FALLIDOS",
+                    "orden": 61,
+                    "periodo_anio_anterior": 88.040000,
+                    "periodo_anterior": 362.740000,
+                    "periodo_actual": 236.240000,
+                    "variacion_periodo_anterior": -126.500000,
+                    "acumulado_anio_anterior": 717.300000,
+                    "acumulado_actual": 1741.450000,
+                    "variacion_acumulado": 1024.150000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": 833.750000,
+                    "trimestre_2": 907.700000,
+                    "trimestre_3": 263.810000,
+                    "total_anio": 2005.260000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "SJ05MN",
+                    "cuenta_nombre": "DOTACION GENERICA NETA (INC. ANTICICLICA)",
+                    "orden": 62,
+                    "periodo_anio_anterior": -93.910000,
+                    "periodo_anterior": -230.670000,
+                    "periodo_actual": -319.910000,
+                    "variacion_periodo_anterior": -89.240000,
+                    "acumulado_anio_anterior": -1313.130000,
+                    "acumulado_actual": -1483.630000,
+                    "variacion_acumulado": -170.500000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": -641.200000,
+                    "trimestre_2": -842.430000,
+                    "trimestre_3": -137.460000,
+                    "total_anio": -1621.090000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "SJ08MN",
+                    "cuenta_nombre": "PERDIDAS POR DETERIORO RESTO DE ACTIVOS",
+                    "orden": 63,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 1,
+                    "cuenta_codigo": "S038MN",
+                    "cuenta_nombre": "CONDONACIÓN DE CAPITAL",
+                    "orden": 64,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                },
+                {
+                    "style": 2,
+                    "cuenta_codigo": "SJ09MN",
+                    "cuenta_nombre": "PROVISIONES POR GESTIÓN DE COBRANZA",
+                    "orden": 65,
+                    "periodo_anio_anterior": -467.370000,
+                    "periodo_anterior": -337.340000,
+                    "periodo_actual": -480.620000,
+                    "variacion_periodo_anterior": -143.280000,
+                    "acumulado_anio_anterior": -2635.490000,
+                    "acumulado_actual": -729.100000,
+                    "variacion_acumulado": 1906.390000,
+                    "variacion_acumulado_pct": 0,
+                    "trimestre_1": -583.050000,
+                    "trimestre_2": -146.050000,
+                    "trimestre_3": 269.070000,
+                    "total_anio": -460.030000
+                },
+                {
+                    "style": 3,
+                    "cuenta_codigo": "FOR0016",
+                    "cuenta_nombre": "RESULTADOS DE EXPLOTACION",
+                    "orden": 66,
+                    "variacion_acumulado_pct": 0,
+                    "total_anio": 0.000000
+                }
+            ]
+        }
+    }
+}
