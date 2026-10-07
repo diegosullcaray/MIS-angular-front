@@ -88,13 +88,15 @@ export function estiloFilaCuenta(fila: Record<string, unknown>): Record<string, 
     'font-variant-numeric': 'tabular-nums',
   };
   switch (nivel(fila)) {
+    // Totales (márgenes): sin relleno, texto principal y filete de marca arriba y abajo; así no se confunden con las cuentas desplegables (2), que van tintadas.
     case 3:
       return {
         ...base,
-        background: 'color-mix(in srgb, var(--mis-primary) 14%, var(--mis-surface))',
-        color: 'var(--mis-primary-text)',
+        background: 'var(--mis-surface)',
+        color: 'var(--mis-text-primary)',
         'font-weight': '800',
         'border-top': '2px solid var(--mis-primary)',
+        'border-bottom': '1px solid var(--mis-primary)',
       };
     case 2:
       return { ...base, background: 'var(--mis-primary-light)', color: 'var(--mis-primary-text)', 'font-weight': '700' };
@@ -171,14 +173,23 @@ const ESTILO_CUENTA_FIJA = {
   'white-space': 'normal',
 };
 
+/** Encabezado tipo macOS (Numbers/Finder): claro, texto secundario sin mayúsculas y filetes finos, en vez de la banda de marca sólida. */
+const ENCABEZADO_MAC = {
+  background: 'var(--mis-surface)',
+  color: 'var(--mis-text-secondary)',
+  'font-weight': '600',
+  'text-transform': 'none',
+  'border-color': 'color-mix(in srgb, var(--mis-border) 60%, transparent)',
+};
+
 /** Encabezado de una cifra: compacto y a la derecha. */
-const ENCABEZADO_CIFRA = { 'text-align': 'right', padding: '4px 8px' };
+const ENCABEZADO_CIFRA = { ...ENCABEZADO_MAC, 'text-align': 'right', padding: '4px 8px' };
 
 /** "Preliminar Ago": el mes aún abierto va en mostaza con texto negro. */
 const ENCABEZADO_PRELIMINAR = {
   ...ENCABEZADO_CIFRA,
-  background: 'var(--mis-escala-3)',
-  color: 'var(--mis-escala-3-texto)',
+  background: 'color-mix(in srgb, var(--mis-escala-3) 30%, var(--mis-surface))',
+  color: 'var(--mis-text-primary)',
 };
 
 /** Ancho fijo de cada cifra: si no entran, la tabla se desplaza en horizontal. */
@@ -224,37 +235,26 @@ function mesAnio(fecha: Date): string {
   return `${mesCorto(fecha)}.${anioCorto(fecha.getFullYear())}`;
 }
 
-/** Columnas relativas al periodo: "PYG {nivel}" sobre los tres meses (agrupados por año), su variación y los acumulados. */
-export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean, nivel?: string): ColumnaDinamica[] {
+/** Filete que separa el bloque del mes del acumulado. */
+const SEPARADOR_BLOQUE = { 'border-left': '2px solid var(--mis-border-strong)' };
+
+/**
+ * Dos bloques con el mismo patrón (valores y luego variación): el mes (mismo mes del año
+ * anterior, mes anterior, mes actual y su variación) y el acumulado del año (año anterior,
+ * actual, variación y %). El nivel ya se lee en la línea de contexto sobre la tabla.
+ */
+export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean): ColumnaDinamica[] {
   const actual = fechaLocal(fecha);
   const anterior = new Date(actual.getFullYear(), actual.getMonth() - 1, 1);
   const anioAnterior = new Date(actual.getFullYear() - 1, actual.getMonth(), 1);
   const mes = mesCorto(actual);
-
-  const meses: [Date, ColumnaDinamica][] = [
-    [anioAnterior, columnaCifra(mesCorto(anioAnterior), 'periodo_anio_anterior')],
-    [anterior, columnaCifra(mesCorto(anterior), 'periodo_anterior')],
-    [
-      actual,
-      preliminar
-        ? columnaCifra(`Preliminar ${mes}`, 'periodo_actual', { style: ENCABEZADO_PRELIMINAR })
-        : columnaCifra(mes, 'periodo_actual'),
-    ],
-  ];
-  // Meses consecutivos del mismo año comparten encabezado.
-  const porAnio: ColumnaDinamica[] = [];
-  for (const [f, columna] of meses) {
-    const anio = String(f.getFullYear());
-    const grupo = porAnio.at(-1);
-    if (grupo?.label === anio) grupo.subs!.push(columna);
-    else porAnio.push({ label: anio, key: `anio_${porAnio.length}_${anio}`, subs: [columna] });
-  }
+  const mesLargo = capitalizar(actual.toLocaleString('es-PE', { month: 'long' }));
 
   return [
     {
       label: 'Estado de ganancias y pérdidas · en miles (PEN)',
       key: 'cuenta_nombre',
-      style: { ...ESTILO_CUENTA_FIJA, 'z-index': '3', 'text-align': 'left' },
+      style: { ...ENCABEZADO_MAC, ...ESTILO_CUENTA_FIJA, 'z-index': '3', 'text-align': 'left' },
       cellStyle: { ...ESTILO_CUENTA_FIJA, 'z-index': '1', 'text-align': 'left' },
       cellStyleFn: (_valor, fila) => {
         const estilo = estiloFilaCuenta(fila);
@@ -262,20 +262,31 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
       },
     },
     {
-      label: nivel ? `PYG ${nivel}` : 'PYG',
-      key: 'pyg',
+      label: `Mes de ${mesLargo}`,
+      key: 'bloque_mes',
+      style: { ...ENCABEZADO_MAC, color: 'var(--mis-text-primary)' },
       subs: [
-        ...porAnio,
-        conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anterior)}`, 'variacion_periodo_anterior')),
-        columnaCifra(`Acum ${mesAnio(anioAnterior)}`, 'acumulado_anio_anterior', {
-          cellStyle: { ...CELDA_CIFRA, 'border-left': '1px solid var(--mis-border)' },
+        columnaCifra(mesAnio(anioAnterior), 'periodo_anio_anterior'),
+        columnaCifra(mesAnio(anterior), 'periodo_anterior'),
+        preliminar
+          ? columnaCifra(`Preliminar ${mesAnio(actual)}`, 'periodo_actual', { style: ENCABEZADO_PRELIMINAR })
+          : columnaCifra(mesAnio(actual), 'periodo_actual'),
+        conSemaforo(columnaCifra(`Δ ${mesCorto(anterior)}`, 'variacion_periodo_anterior')),
+      ],
+    },
+    {
+      label: actual.getMonth() === 0 ? 'Acumulado Ene' : `Acumulado Ene–${mes}`,
+      key: 'bloque_acumulado',
+      style: { ...ENCABEZADO_MAC, ...SEPARADOR_BLOQUE, color: 'var(--mis-text-primary)' },
+      subs: [
+        columnaCifra(String(anioAnterior.getFullYear()), 'acumulado_anio_anterior', {
+          style: { ...ENCABEZADO_CIFRA, ...SEPARADOR_BLOQUE },
+          cellStyle: { ...CELDA_CIFRA, ...SEPARADOR_BLOQUE },
         }),
         // El acumulado del año se juzga por su variación contra el año anterior.
-        conSemaforo(columnaCifra(`Acum ${mesAnio(actual)}`, 'acumulado_actual'), 'variacion_acumulado'),
-        conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)}`, 'variacion_acumulado')),
-        columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)} %`, 'variacion_acumulado_pct', {
-          format: { type: 'percent' },
-        }),
+        conSemaforo(columnaCifra(String(actual.getFullYear()), 'acumulado_actual'), 'variacion_acumulado'),
+        conSemaforo(columnaCifra('Δ', 'variacion_acumulado')),
+        columnaCifra('Δ %', 'variacion_acumulado_pct', { format: { type: 'percent' } }),
       ],
     },
   ];

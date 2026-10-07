@@ -140,36 +140,25 @@ describe('cuenta-resultados.util', () => {
       expect(columnas.map((c) => c.label)).not.toContain('Resultado Trimestral');
     });
 
-    it('encabezado de la maqueta: "PYG {nivel}" sobre las cifras y los meses agrupados por año', () => {
-      const [cuenta, pyg] = crearColumnasCuentaResultados('2026-08-01', true, 'NORTE 1');
+    it('dos bloques, mes y acumulado, cada uno con sus valores y su variación', () => {
+      const [cuenta, mes, acumulado] = crearColumnasCuentaResultados('2026-08-01', true);
       expect(cuenta.label).toBe('Estado de ganancias y pérdidas · en miles (PEN)');
       expect(cuenta.style?.['text-align']).toBe('left');
-      expect(pyg.label).toBe('PYG NORTE 1');
-
-      const [anioPasado, anioActual] = pyg.subs!;
-      expect(anioPasado.label).toBe('2025');
-      expect(anioPasado.subs!.map((c) => c.label)).toEqual(['Ago']);
-      expect(anioActual.label).toBe('2026');
-      expect(anioActual.subs!.map((c) => c.label)).toEqual(['Jul', 'Preliminar Ago']);
-
-      expect(pyg.subs!.slice(2).map((c) => c.label)).toEqual([
-        'Ago.26 vs Jul.26',
-        'Acum Ago.25',
-        'Acum Ago.26',
-        'Ago.26 vs Ago.25',
-        'Ago.26 vs Ago.25 %',
-      ]);
-      expect(crearColumnasCuentaResultados('2026-08-01', false)[1].label).toBe('PYG');
+      expect(mes.label).toBe('Mes de Agosto');
+      expect(mes.subs!.map((c) => c.label)).toEqual(['Ago.25', 'Jul.26', 'Preliminar Ago.26', 'Δ Jul']);
+      expect(acumulado.label).toBe('Acumulado Ene–Ago');
+      expect(acumulado.subs!.map((c) => c.label)).toEqual(['2025', '2026', 'Δ', 'Δ %']);
+      expect(acumulado.subs![0].cellStyle?.['border-left']).toBe('2px solid var(--mis-border-strong)');
     });
 
-    it('el mes preliminar va en mostaza con texto negro; cerrado, solo con su nombre', () => {
+    it('el mes preliminar va con tinte mostaza; cerrado, con el encabezado claro tipo macOS', () => {
       const preliminar = hojas(crearColumnasCuentaResultados('2026-08-01', true)).find((c) => c.key === 'periodo_actual')!;
-      expect(preliminar.style?.['background']).toBe('var(--mis-escala-3)');
-      expect(preliminar.style?.['color']).toBe('var(--mis-escala-3-texto)');
+      expect(preliminar.style?.['background']).toBe('color-mix(in srgb, var(--mis-escala-3) 30%, var(--mis-surface))');
+      expect(preliminar.style?.['color']).toBe('var(--mis-text-primary)');
 
       const cerrado = hojas(crearColumnasCuentaResultados('2026-05-01', false)).find((c) => c.key === 'periodo_actual')!;
-      expect(cerrado.label).toBe('May');
-      expect(cerrado.style?.['background']).toBeUndefined();
+      expect(cerrado.label).toBe('May.26');
+      expect(cerrado.style?.['background']).toBe('var(--mis-surface)');
     });
 
     it('las cifras y sus encabezados van a la derecha', () => {
@@ -179,10 +168,10 @@ describe('cuenta-resultados.util', () => {
       }
     });
 
-    it('enero compara contra diciembre del año anterior, cada mes bajo su año', () => {
-      const pyg = crearColumnasCuentaResultados('2026-01-01', false)[1];
-      expect(pyg.subs!.map((c) => c.label).slice(0, 3)).toEqual(['2025', '2026', 'Ene.26 vs Dic.25']);
-      expect(pyg.subs![0].subs!.map((c) => c.label)).toEqual(['Ene', 'Dic']);
+    it('enero compara contra diciembre del año anterior', () => {
+      const [, mes, acumulado] = crearColumnasCuentaResultados('2026-01-01', false);
+      expect(mes.subs!.map((c) => c.label)).toEqual(['Ene.25', 'Dic.25', 'Ene.26', 'Δ Dic']);
+      expect(acumulado.label).toBe('Acumulado Ene');
     });
 
     it('semáforo en la variación mensual, el acumulado del año y la variación interanual; no en el %', () => {
@@ -232,7 +221,7 @@ describe('cuenta-resultados.util', () => {
     expect(estiloFilaCuenta({ style: 1 })).toEqual(expect.objectContaining({ 'font-weight': '500', color: 'var(--mis-text-secondary)' }));
     expect(estiloFilaCuenta({ style: 2 })).toEqual(expect.objectContaining({ 'font-weight': '700', background: 'var(--mis-primary-light)' }));
     expect(estiloFilaCuenta({ style: 3 })).toEqual(
-      expect.objectContaining({ 'border-top': '2px solid var(--mis-primary)', color: 'var(--mis-primary-text)' }),
+      expect.objectContaining({ 'border-top': '2px solid var(--mis-primary)', color: 'var(--mis-text-primary)', background: 'var(--mis-surface)' }),
     );
   });
 

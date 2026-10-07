@@ -77,10 +77,7 @@ export class CuentaResultadosComponent {
 
   protected readonly columnas = computed(() => {
     const reporte = this.resultado();
-    if (!reporte) return [];
-    const nodo = this.nivelActual();
-    const nivel = nodo?.des_rel ?? nodo?.desc_rel ?? nodo?.lbl_hier;
-    return crearColumnasCuentaResultados(reporte.fecha, reporte.preliminar, nivel);
+    return reporte ? crearColumnasCuentaResultados(reporte.fecha, reporte.preliminar) : [];
   });
 
   /** Códigos de cuentas abiertas; cada consulta nueva las cierra. */
