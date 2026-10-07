@@ -14,17 +14,17 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 14px;
-  height: 14px;
-  margin-right: 6px;
+  width: 11px;
+  height: 11px;
+  margin-right: 5px;
   /* Toma el color de la fila (tokens de `estiloCelda`): en una cuenta principal va en el tono de marca. */
   border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
-  border-radius: 3px;
+  border-radius: 2px;
   background: color-mix(in srgb, currentColor 8%, transparent);
   color: inherit;
 }
 
 .mis-drill-caja .pi {
-  font-size: 8px;
+  font-size: 6px;
   font-weight: 700;
 }
