@@ -15,10 +15,14 @@ export const RESERVA_PIE_PX = 48;
 export const ALTO_MINIMO_FONDO_PX = 240;
 
 /**
- * Contenedor que de verdad hace scroll: el más externo con `overflow-y` auto/scroll (el `main` del
- * shell). Los de adentro (`.mis-window-body`, envoltorios con `overflow-x`) crecen con el contenido.
+ * Contenedor que de verdad hace scroll: en escritorio, el más externo con `overflow-y` auto/scroll
+ * (el `main` del shell; los de adentro crecen con el contenido); en móvil, el cuerpo de la ventana.
  */
 function contenedorDeScroll(el: HTMLElement): HTMLElement | null {
+  // En móvil la ventana mide lo que cabe en pantalla y el que scrollea es su cuerpo (ver
+  // `ventana.css`): la tabla se mide contra él, así llena el panel sin hacerlo scrollear.
+  const cuerpo = el.closest<HTMLElement>('.mis-window-body');
+  if (cuerpo && window.matchMedia?.('(max-width: 639.98px)').matches) return cuerpo;
   let externo: HTMLElement | null = null;
   for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
     if (/(auto|scroll)/.test(getComputedStyle(p).overflowY)) externo = p;
