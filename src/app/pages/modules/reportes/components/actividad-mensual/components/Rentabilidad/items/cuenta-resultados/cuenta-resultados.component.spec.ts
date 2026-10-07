@@ -117,6 +117,29 @@ describe('CuentaResultadosComponent', () => {
     expect(fixture.nativeElement.querySelector('app-empty-state')).toBeNull();
   });
 
+  it('clic en la cuenta abre y cierra su detalle', () => {
+    cuentaResultados.mockReturnValue(
+      of(resultado([FILA, { style: 1, cuenta_codigo: 'EF001', cuenta_nombre: 'COEFICIENTES' }])),
+    );
+    const { fixture, seleccionar } = crear();
+    seleccionar();
+    const filas = () => (fixture.nativeElement.textContent as string);
+    const clic = () => {
+      const celda = [...fixture.nativeElement.querySelectorAll('td')].find((td: HTMLElement) =>
+        td.textContent?.includes('INGRESOS FINANCIEROS'),
+      ) as HTMLElement;
+      celda.click();
+      fixture.detectChanges();
+    };
+
+    expect(filas()).toContain('▸ INGRESOS FINANCIEROS');
+    expect(filas()).not.toContain('COEFICIENTES');
+    clic();
+    expect(filas()).toContain('COEFICIENTES');
+    clic();
+    expect(filas()).not.toContain('COEFICIENTES');
+  });
+
   it('un fallo del backend es error persistente con reintento, no tabla vacía', () => {
     cuentaResultados.mockReturnValueOnce(throwError(() => new Error('500')));
     const { fixture, vista, seleccionar } = crear();

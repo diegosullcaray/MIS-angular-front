@@ -111,6 +111,42 @@ export function estiloFilaCuenta(fila: Record<string, unknown>): Record<string, 
   }
 }
 
+/** Profundidad de la cuenta en el árbol: 2 y 3 (principal y resultado) son raíz; 1, 4 y 5 bajan en ese orden. */
+function profundidad(fila: Record<string, unknown>): number {
+  return { 2: 0, 3: 0, 1: 1, 4: 2, 5: 3 }[nivel(fila)] ?? 0;
+}
+
+/** Códigos de las cuentas que tienen detalle debajo (la fila siguiente es más profunda). */
+export function cuentasConDetalle(filas: readonly Record<string, unknown>[]): Set<string> {
+  const con = new Set<string>();
+  filas.forEach((fila, i) => {
+    const siguiente = filas[i + 1];
+    if (siguiente && profundidad(siguiente) > profundidad(fila)) con.add(String(fila['cuenta_codigo']));
+  });
+  return con;
+}
+
+/**
+ * Filas a dibujar en el drill down: cada cuenta abierta (por su código) muestra su detalle; las demás
+ * lo ocultan, y las que tienen detalle llevan ▸/▾ delante del nombre. Con todo cerrado quedan las raíces.
+ */
+export function filasConDrillDown<T extends Record<string, unknown>>(filas: readonly T[], abiertas: ReadonlySet<string>): T[] {
+  const con = cuentasConDetalle(filas);
+  const visibles: T[] = [];
+  const ruta: boolean[] = []; // ruta[d]: el ancestro a profundidad d está abierto
+  for (const fila of filas) {
+    const d = profundidad(fila);
+    ruta.length = d;
+    const codigo = String(fila['cuenta_codigo']);
+    const abierta = abiertas.has(codigo);
+    ruta[d] = abierta;
+    if (ruta.slice(0, d).some((a) => !a)) continue;
+    const marca = con.has(codigo) ? (abierta ? '▾ ' : '▸ ') : '';
+    visibles.push({ ...fila, cuenta_nombre: `${marca}${fila['cuenta_nombre']}` });
+  }
+  return visibles;
+}
+
 /** Sangría de la cuenta según su nivel — `accountCellStyle()` del legado. */
 function sangriaCuenta(fila: Record<string, unknown>): string {
   switch (nivel(fila)) {

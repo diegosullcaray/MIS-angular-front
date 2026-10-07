@@ -2,6 +2,8 @@ import {
   ContratoCuentaResultadosError,
   colorVariacionCuenta,
   crearColumnasCuentaResultados,
+  cuentasConDetalle,
+  filasConDrillDown,
   estiloFilaCuenta,
   fondoOpaco,
   etiquetaPeriodoCuenta,
@@ -245,5 +247,40 @@ describe('cuenta-resultados.util', () => {
     const cuenta = crearColumnasCuentaResultados('2026-06-01', false)[0];
     const sangria = (style: number) => cuenta.cellStyleFn?.('', { style })?.['padding-left'];
     expect([1, 2, 3, 4, 5].map(sangria)).toEqual(['30px', '12px', '12px', '50px', '90px']);
+  });
+
+  describe('drill down por cuenta (data real de PYG)', () => {
+    const fila = (style: number, codigo: string, nombre: string) => ({ style, cuenta_codigo: codigo, cuenta_nombre: nombre });
+    const FILAS = [
+      fila(2, 'FOR001', 'INGRESOS FINANCIEROS'),
+      fila(1, 'EF001', 'COEFICIENTES'),
+      fila(1, 'S001MN', 'INGRESOS INVERSION GESTIONADA'),
+      fila(2, 'FOR004', 'COMISIONES NETAS'),
+      fila(1, 'FOR005', 'COMISIONES RECIBIDAS'),
+      fila(4, 'PEND001', 'SEGUROS'),
+      fila(5, 'PEND004', 'INDIVIDUAL'),
+      fila(3, 'FOR010', 'MARGEN BRUTO'),
+    ];
+    const nombres = (abiertas: string[]) => filasConDrillDown(FILAS, new Set(abiertas)).map((f) => f.cuenta_nombre);
+
+    it('detalle solo bajo cuentas que lo tienen; resultados (3) y hojas no', () => {
+      expect([...cuentasConDetalle(FILAS)]).toEqual(['FOR001', 'FOR004', 'FOR005', 'PEND001']);
+    });
+
+    it('cerrado deja las raíces; abrir INGRESOS FINANCIEROS muestra su nivel', () => {
+      expect(nombres([])).toEqual(['▸ INGRESOS FINANCIEROS', '▸ COMISIONES NETAS', 'MARGEN BRUTO']);
+      expect(nombres(['FOR001'])).toEqual([
+        '▾ INGRESOS FINANCIEROS',
+        'COEFICIENTES',
+        'INGRESOS INVERSION GESTIONADA',
+        '▸ COMISIONES NETAS',
+        'MARGEN BRUTO',
+      ]);
+    });
+
+    it('un nivel profundo exige que todos sus ancestros estén abiertos', () => {
+      expect(nombres(['PEND001'])).toHaveLength(3);
+      expect(nombres(['FOR004', 'FOR005', 'PEND001']).slice(1, 5)).toEqual(['▾ COMISIONES NETAS', '▾ COMISIONES RECIBIDAS', '▾ SEGUROS', 'INDIVIDUAL']);
+    });
   });
 });

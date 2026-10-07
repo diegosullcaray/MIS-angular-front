@@ -56,9 +56,9 @@
         <div class="mis-card p-3 overflow-x-auto w-full">
           <app-tabla-dinamica [ajustarAncho]="true" [llenarAlto]="true"
             [columnas]="columnas()"
-            [filas]="reporte.filas"
+            [filas]="filas()"
             [cargando]="cargando()"
-            [columnasClicables]="columnasDrillDown()"
+            [columnasClicables]="columnasDrillDown"
             (celdaSeleccionada)="onCeldaSeleccionada($event)"
             [destacarFila]="sinDestacar"
           />
