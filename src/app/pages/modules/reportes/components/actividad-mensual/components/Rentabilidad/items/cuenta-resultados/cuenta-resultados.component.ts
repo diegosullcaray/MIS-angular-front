@@ -31,13 +31,7 @@ interface ConsultaCuenta {
   fecha: string | null;
 }
 
-/**
- * "Cuenta de Resultados" (`repositorio/actividad-mensual/rentabilidad/cuenta-resultados`).
- *
- * Legado `repositorio/cuenta-resultados`: jerarquía 9 y `TAB_CUE_RES_01`. Los
- * periodos no salen de `RS_FECH` sino de la propia respuesta, por eso la primera
- * consulta va con `NOW` y el filtro aparece recién con datos.
- */
+/** "Cuenta de Resultados" (`TAB_CUE_RES_01`). Los periodos vienen en la respuesta: la primera consulta va con `NOW`. */
 @Component({
   selector: 'app-mensual-cuenta-resultados',
   standalone: true,
@@ -60,15 +54,13 @@ export class CuentaResultadosComponent {
   protected readonly paramsHier = PARAMS_HIER_UNIDAD;
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
-  /** Arranca en `true`: la jerarquía resuelve el nivel inicial y, hasta entonces, la pantalla muestra su esqueleto. */
+  /** `true` hasta que la jerarquía resuelve el nivel inicial. */
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly resultado = signal<CuentaResultadosResultado | null>(null);
-  /** El legado muestra el fallo de jerarquía en la página: no es un "elige un nivel". */
   protected readonly errorJerarquia = signal(false);
   private readonly selector = viewChild(HierSelectorComponent);
 
-  /** Se conservan entre consultas: el legado solo los reemplaza cuando llega otra respuesta. */
   protected readonly periodos = signal<OpcionFiltro[]>([]);
   protected readonly periodo = signal('');
 
@@ -78,7 +70,6 @@ export class CuentaResultadosComponent {
     return fecha ? etiquetaPeriodoCuenta(fecha) : '';
   });
 
-  /** Columnas del periodo con el nivel elegido en el título ("PYG NORTE 1"), como la maqueta de PYG. */
   protected readonly columnas = computed(() => {
     const reporte = this.resultado();
     if (!reporte) return [];
@@ -87,22 +78,20 @@ export class CuentaResultadosComponent {
     return crearColumnasCuentaResultados(reporte.fecha, reporte.preliminar, nivel);
   });
 
-  /** Cuentas abiertas en el drill down; al cargar otra consulta vuelven a cerrarse. */
+  /** Códigos de cuentas abiertas; cada consulta nueva las cierra. */
   private readonly abiertas = signal<ReadonlySet<string>>(new Set());
   protected readonly filas = computed(() => filasConDrillDown(this.resultado()?.filas ?? [], this.abiertas()));
   protected readonly columnasDrillDown = ['cuenta_nombre'];
 
-  /** La tabla no resalta por su cuenta: cada nivel ya trae su estilo. */
   protected readonly sinDestacar = () => false;
 
-  /** Solo esta señal dispara consultas; el periodo que devuelve la respuesta no vuelve a pedir. */
   private readonly consulta = signal<ConsultaCuenta | null>(null);
 
   constructor() {
     effect((onCleanup) => {
       const consulta = this.consulta();
       if (!consulta) return;
-      // `untracked`: lo que se lea al suscribirse (p. ej. el token en el interceptor) no debe relanzar la consulta.
+      // `untracked`: lo que se lea al suscribirse no relanza la consulta.
       const suscripcion = untracked(() => this.cargar(consulta));
       onCleanup(() => suscripcion.unsubscribe());
     });
@@ -124,7 +113,6 @@ export class CuentaResultadosComponent {
     });
   }
 
-  /** Reemite el nivel actual para forzar una nueva consulta sin cambiar la selección. */
   protected refrescar(): void {
     const nodo = this.nivelActual();
     if (nodo) this.onNivelSeleccionado({ ...nodo });

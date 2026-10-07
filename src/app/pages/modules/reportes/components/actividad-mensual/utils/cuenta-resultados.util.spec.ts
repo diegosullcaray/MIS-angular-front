@@ -96,14 +96,7 @@ describe('cuenta-resultados.util', () => {
       expect(r.preliminar).toBe(true);
       expect(r.periodos.map((p) => p.id)).toEqual(['2026-06-01', '2026-05-01', '2026-04-01']);
       expect(r.periodos[0].desc).toBe('Junio de 2026');
-      expect(r.filas).toEqual([{ ...FILA, total_anual: FILA.acumulado_actual }]);
-    });
-
-    it('"Total {año}" trimestral: usa total_anual si el backend lo envía; si no, el acumulado del año', () => {
-      const conTotal = mapearCuentaResultados({ headers: METADATOS, data: [{ ...FILA, total_anual: 999 }] }, null);
-      expect(conTotal.filas[0].total_anual).toBe(999);
-      const sinTotal = mapearCuentaResultados({ headers: METADATOS, data: [FILA] }, null);
-      expect(sinTotal.filas[0].total_anual).toBe(FILA.acumulado_actual);
+      expect(r.filas).toEqual([FILA]);
     });
 
     it('conserva la fecha pedida si está entre los periodos', () => {

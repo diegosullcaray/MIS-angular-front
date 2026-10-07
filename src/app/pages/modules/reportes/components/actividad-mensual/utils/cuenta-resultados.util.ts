@@ -10,15 +10,10 @@ import type {
   MetadatosCuentaResultados,
 } from '../models/cuenta-resultados.model';
 
-/**
- * Mapeo de Cuenta de Resultados (`TAB_CUE_RES_01`). Contrato y reglas copiados
- * del legado `repositorio/cuenta-resultados/cuenta-resultados.{component,util}.ts`.
- */
-
 /** Payload que no cumple el contrato: su mensaje es el que ve la persona usuaria. */
 export class ContratoCuentaResultadosError extends Error {}
 
-/** `YYYY-MM-DD` de calendario válido, o `null` — `normalizeReportDate()` del legado. */
+/** `YYYY-MM-DD` de calendario válido, o `null`. */
 export function normalizarFechaCuenta(valor: unknown): string | null {
   if (typeof valor !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(valor)) return null;
   const [anio, mes, dia] = valor.split('-').map(Number);
@@ -27,7 +22,7 @@ export function normalizarFechaCuenta(valor: unknown): string | null {
   return valida ? valor : null;
 }
 
-/** `YYYYMMDD`, el formato que espera el parámetro `fecha` — `toBackendDate()` del legado. */
+/** `YYYYMMDD`, el formato del parámetro `fecha`. */
 export function fechaCuentaParaBackend(valor: unknown): string | null {
   const normalizada = normalizarFechaCuenta(valor);
   return normalizada ? normalizada.replaceAll('-', '') : null;
@@ -41,12 +36,12 @@ function fechaLocal(valor: string): Date {
   return new Date(`${valor}T00:00:00`);
 }
 
-/** "Junio de 2026" — `formatPeriodLabel()` del legado. */
+/** "Junio de 2026" */
 export function etiquetaPeriodoCuenta(valor: string): string {
   return capitalizar(fechaLocal(valor).toLocaleString('es-PE', { month: 'long', year: 'numeric' }));
 }
 
-/** Metadatos de `resultado.headers`, o `null` si no cumplen el contrato — `parseMetadata()` del legado. */
+/** Metadatos de `resultado.headers`, o `null` si no cumplen el contrato. */
 export function leerMetadatosCuenta(crudo: unknown): MetadatosCuentaResultados | null {
   let metadatos: { preliminar?: unknown; fechas?: unknown };
   try {
@@ -60,11 +55,7 @@ export function leerMetadatosCuenta(crudo: unknown): MetadatosCuentaResultados |
   return { preliminar: metadatos.preliminar, fechas: fechas as string[] };
 }
 
-/**
- * Convierte `resultado` en lo que dibuja la pantalla. Si la fecha pedida no
- * figura entre los periodos devueltos (p. ej. se pidió `NOW`), las cifras son
- * del primero. Lanza `ContratoCuentaResultadosError` ante un payload inválido.
- */
+/** Si la fecha pedida no figura entre los periodos (p. ej. `NOW`), las cifras son del primero. Lanza `ContratoCuentaResultadosError` ante un payload inválido. */
 export function mapearCuentaResultados(
   resultado: TablaRegularResultadoRaw | undefined,
   fechaPedida: string | null,
@@ -82,12 +73,7 @@ export function mapearCuentaResultados(
     periodos,
     fecha,
     preliminar,
-    columnas: crearColumnasCuentaResultados(fecha, preliminar),
-    // "Total {año}" del bloque trimestral: si el backend aún no lo envía, es el acumulado del año.
-    filas: (resultado.data as CuentaResultadoFila[]).map((fila) => ({
-      ...fila,
-      total_anual: fila.total_anual ?? fila.acumulado_actual,
-    })),
+    filas: resultado.data as CuentaResultadoFila[],
   };
 }
 
@@ -95,11 +81,7 @@ function nivel(fila: Record<string, unknown>): number {
   return Number(fila['style']);
 }
 
-/**
- * Estilo por nivel de cuenta, como la maqueta de PYG (`governance/tasks/image.png`): el resultado
- * (3: márgenes y resultados) en banda navy con texto claro, la cuenta principal (2) en el fondo
- * claro de marca y el detalle en la superficie, con texto secundario.
- */
+/** Estilo por nivel: resultado (3) en banda navy, cuenta principal (2) en el fondo de marca, detalle en la superficie. */
 export function estiloFilaCuenta(fila: Record<string, unknown>): Record<string, string> {
   switch (nivel(fila)) {
     case 3:
@@ -111,7 +93,7 @@ export function estiloFilaCuenta(fila: Record<string, unknown>): Record<string, 
   }
 }
 
-/** Profundidad de la cuenta en el árbol: 2 y 3 (principal y resultado) son raíz; 1, 4 y 5 bajan en ese orden. */
+/** 2 y 3 (principal y resultado) son raíz; 1, 4 y 5 bajan en ese orden. */
 function profundidad(fila: Record<string, unknown>): number {
   return { 2: 0, 3: 0, 1: 1, 4: 2, 5: 3 }[nivel(fila)] ?? 0;
 }
@@ -126,10 +108,7 @@ export function cuentasConDetalle(filas: readonly Record<string, unknown>[]): Se
   return con;
 }
 
-/**
- * Filas a dibujar en el drill down: cada cuenta abierta (por su código) muestra su detalle; las demás
- * lo ocultan, y las que tienen detalle llevan ▸/▾ delante del nombre. Con todo cerrado quedan las raíces.
- */
+/** Filas del drill down: cada cuenta abierta (por código) muestra su detalle; las que lo tienen llevan ▸/▾. */
 export function filasConDrillDown<T extends Record<string, unknown>>(filas: readonly T[], abiertas: ReadonlySet<string>): T[] {
   const con = cuentasConDetalle(filas);
   const visibles: T[] = [];
@@ -147,7 +126,7 @@ export function filasConDrillDown<T extends Record<string, unknown>>(filas: read
   return visibles;
 }
 
-/** Sangría de la cuenta según su nivel — `accountCellStyle()` del legado. */
+/** Sangría de la cuenta según su nivel. */
 function sangriaCuenta(fila: Record<string, unknown>): string {
   switch (nivel(fila)) {
     case 1:
@@ -161,28 +140,21 @@ function sangriaCuenta(fila: Record<string, unknown>): string {
   }
 }
 
-/**
- * Color del punto de la variación: en cuentas de gasto bajar es favorable; en el
- * resto, subir. El cero cuenta como favorable — `trafficColor()` del legado.
- */
+/** Color del punto de variación: en cuentas de gasto bajar es favorable; en el resto, subir. El cero es favorable. */
 export function colorVariacionCuenta(valor: number, fila: Record<string, unknown>): string {
   const esGasto = CUENTAS_GASTO_CUENTA_RESULTADOS.includes(String(fila['cuenta_codigo']));
   const favorable = esGasto ? valor <= 0 : valor >= 0;
   const color = favorable ? 'var(--mis-success)' : 'var(--mis-danger)';
-  // Sobre la banda navy del resultado el tono de marca se pierde: se aclara (`softColors` del legado).
+  // Sobre la banda navy el tono se pierde: se aclara.
   return nivel(fila) === 3 ? `color-mix(in srgb, ${color} 55%, white)` : color;
 }
 
-/**
- * La columna fija pasa por encima de las cifras al desplazar en horizontal: su fondo tiene que
- * tapar. Algunos niveles usan un tono translúcido (`--mis-hover-bg`), así que se apila sobre la
- * superficie sólida.
- */
+/** La columna fija tapa las cifras al desplazar: su fondo se apila sobre la superficie sólida. */
 export function fondoOpaco(fondo: string | undefined): string {
   return fondo ? `linear-gradient(${fondo}, ${fondo}), var(--mis-surface)` : 'var(--mis-surface)';
 }
 
-/** Columna fija de cuentas; en un teléfono se acota para que no tape las cifras. */
+/** Columna fija de cuentas; en un teléfono se acota. */
 const ESTILO_CUENTA_FIJA = {
   position: 'sticky',
   left: '0',
@@ -191,17 +163,17 @@ const ESTILO_CUENTA_FIJA = {
   'white-space': 'normal',
 };
 
-/** Encabezado de una cifra: compacto y a la derecha, como su valor. */
+/** Encabezado de una cifra: compacto y a la derecha. */
 const ENCABEZADO_CIFRA = { 'text-align': 'right', padding: '4px 8px' };
 
-/** "Preliminar Ago": el mes aún abierto va en mostaza con texto negro, como en la maqueta. */
+/** "Preliminar Ago": el mes aún abierto va en mostaza con texto negro. */
 const ENCABEZADO_PRELIMINAR = {
   ...ENCABEZADO_CIFRA,
   background: 'var(--mis-escala-3)',
   color: 'var(--mis-escala-3-texto)',
 };
 
-/** Ancho fijo y legible de cada cifra: si no entran, la tabla entera se desplaza en horizontal. */
+/** Ancho fijo de cada cifra: si no entran, la tabla se desplaza en horizontal. */
 const CELDA_CIFRA = { 'text-align': 'right', 'min-width': '84px' };
 
 function columnaCifra(label: string, key: string, extra: Partial<ColumnaDinamica> = {}): ColumnaDinamica {
@@ -216,7 +188,7 @@ function columnaCifra(label: string, key: string, extra: Partial<ColumnaDinamica
   };
 }
 
-/** Cifra con el punto de semáforo verde/rojo a su lado; `desde` es la variación que decide el color. */
+/** Cifra con punto de semáforo; `desde` es la variación que decide el color. */
 function conSemaforo(columna: ColumnaDinamica, desde = columna.key): ColumnaDinamica {
   return {
     ...columna,
@@ -230,7 +202,7 @@ function conSemaforo(columna: ColumnaDinamica, desde = columna.key): ColumnaDina
   };
 }
 
-/** "Ago" — mes abreviado sin punto, como `toLocaleString('es-PE', { month: 'short' })` del legado. */
+/** "Ago" */
 function mesCorto(fecha: Date): string {
   return capitalizar(fecha.toLocaleString('es-PE', { month: 'short' }).replace('.', ''));
 }
@@ -244,11 +216,7 @@ function mesAnio(fecha: Date): string {
   return `${mesCorto(fecha)}.${anioCorto(fecha.getFullYear())}`;
 }
 
-/**
- * Columnas relativas al periodo elegido, con el encabezado de la maqueta de PYG: "PYG {nivel}" sobre
- * todas las cifras; debajo, los tres meses agrupados por año (el del año anterior, el mes anterior y
- * el actual, "Preliminar" si aún no cierra), su variación, los acumulados y sus variaciones.
- */
+/** Columnas relativas al periodo: "PYG {nivel}" sobre los tres meses (agrupados por año), su variación y los acumulados. */
 export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean, nivel?: string): ColumnaDinamica[] {
   const actual = fechaLocal(fecha);
   const anterior = new Date(actual.getFullYear(), actual.getMonth() - 1, 1);
@@ -265,7 +233,7 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
         : columnaCifra(mes, 'periodo_actual'),
     ],
   ];
-  // Meses consecutivos del mismo año comparten el encabezado del año (en enero, el mes anterior es del año pasado).
+  // Meses consecutivos del mismo año comparten encabezado.
   const porAnio: ColumnaDinamica[] = [];
   for (const [f, columna] of meses) {
     const anio = String(f.getFullYear());
