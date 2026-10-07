@@ -111,7 +111,7 @@
       </div>
     }
     <ng-content />
-    <!-- Móvil: botón flotante para volver arriba, solo cuando el cuerpo ya se desplazó. -->
+    <!-- Móvil: botón para volver arriba. Hijo del cuerpo (escucha su scroll); el CSS lo hace flotar sobre la ventana. -->
     <p-scrolltop target="parent" [threshold]="200" icon="pi pi-arrow-up" styleClass="sm:!hidden" />
   </div>
 </div>
