@@ -44,7 +44,11 @@
     } @else {
       <div class="flex flex-col gap-2 w-full">
         <p class="m-0 flex items-center gap-2 text-[12px] text-[var(--mis-text-secondary)]">
-          <span>Período: <b class="text-[var(--mis-text-primary)]">{{ etiquetaPeriodo() }}</b></span>
+          @if (etiquetaNivel(); as nivel) {
+            <b class="min-w-0 truncate text-[var(--mis-text-primary)]">{{ nivel }}</b>
+            <span aria-hidden="true">·</span>
+          }
+          <span class="shrink-0 text-[var(--mis-text-primary)]">{{ etiquetaPeriodo() }}</span>
           @if (preliminar()) {
             <span
               class="px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-[var(--mis-warning)] bg-[var(--mis-warning-light)]"

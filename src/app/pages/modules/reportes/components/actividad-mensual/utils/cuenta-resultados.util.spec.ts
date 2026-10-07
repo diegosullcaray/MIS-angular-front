@@ -223,16 +223,16 @@ describe('cuenta-resultados.util', () => {
       expect(colorVariacionCuenta(0, { cuenta_codigo: 'CR018' })).toBe('var(--mis-success)');
     });
 
-    it('sobre la banda navy del resultado el color se aclara para que se vea', () => {
-      expect(colorVariacionCuenta(1, { cuenta_codigo: 'CR021', style: 3 })).toBe('color-mix(in srgb, var(--mis-success) 55%, white)');
+    it('en la fila de resultado usa los mismos colores (ya no hay banda navy)', () => {
+      expect(colorVariacionCuenta(1, { cuenta_codigo: 'CR021', style: 3 })).toBe('var(--mis-success)');
     });
   });
 
   it('distingue detalle, principal y resultado por `style`, como la maqueta', () => {
     expect(estiloFilaCuenta({ style: 1 })).toEqual(expect.objectContaining({ 'font-weight': '500', color: 'var(--mis-text-secondary)' }));
-    expect(estiloFilaCuenta({ style: 2 })).toEqual(expect.objectContaining({ 'font-weight': '800', background: 'var(--mis-primary-light)' }));
+    expect(estiloFilaCuenta({ style: 2 })).toEqual(expect.objectContaining({ 'font-weight': '700', background: 'var(--mis-primary-light)' }));
     expect(estiloFilaCuenta({ style: 3 })).toEqual(
-      expect.objectContaining({ background: 'var(--mis-primary)', color: 'var(--mis-text-on-primary)' }),
+      expect.objectContaining({ 'border-top': '2px solid var(--mis-primary)', color: 'var(--mis-primary-text)' }),
     );
   });
 

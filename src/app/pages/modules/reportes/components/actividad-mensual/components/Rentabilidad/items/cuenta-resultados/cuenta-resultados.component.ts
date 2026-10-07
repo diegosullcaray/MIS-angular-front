@@ -70,6 +70,11 @@ export class CuentaResultadosComponent {
     return fecha ? etiquetaPeriodoCuenta(fecha) : '';
   });
 
+  protected readonly etiquetaNivel = computed(() => {
+    const nodo = this.nivelActual();
+    return nodo?.des_rel ?? nodo?.desc_rel ?? nodo?.lbl_hier ?? '';
+  });
+
   protected readonly columnas = computed(() => {
     const reporte = this.resultado();
     if (!reporte) return [];

@@ -81,15 +81,25 @@ function nivel(fila: Record<string, unknown>): number {
   return Number(fila['style']);
 }
 
-/** Estilo por nivel: resultado (3) en banda navy, cuenta principal (2) en el fondo de marca, detalle en la superficie. */
+/** Estilo por nivel (tipo Numbers): resultado (3) con tinte de marca y filete superior, cuenta principal (2) en el fondo de marca, detalle en la superficie. Todas con filete fino y cifras tabulares. */
 export function estiloFilaCuenta(fila: Record<string, unknown>): Record<string, string> {
+  const base = {
+    'border-bottom': '1px solid color-mix(in srgb, var(--mis-border) 55%, transparent)',
+    'font-variant-numeric': 'tabular-nums',
+  };
   switch (nivel(fila)) {
     case 3:
-      return { background: 'var(--mis-primary)', color: 'var(--mis-text-on-primary)', 'font-weight': '800' };
+      return {
+        ...base,
+        background: 'color-mix(in srgb, var(--mis-primary) 14%, var(--mis-surface))',
+        color: 'var(--mis-primary-text)',
+        'font-weight': '800',
+        'border-top': '2px solid var(--mis-primary)',
+      };
     case 2:
-      return { background: 'var(--mis-primary-light)', color: 'var(--mis-primary-text)', 'font-weight': '800' };
+      return { ...base, background: 'var(--mis-primary-light)', color: 'var(--mis-primary-text)', 'font-weight': '700' };
     default:
-      return { background: 'var(--mis-surface)', color: 'var(--mis-text-secondary)', 'font-weight': '500' };
+      return { ...base, background: 'var(--mis-surface)', color: 'var(--mis-text-secondary)', 'font-weight': '500' };
   }
 }
 
@@ -144,9 +154,7 @@ function sangriaCuenta(fila: Record<string, unknown>): string {
 export function colorVariacionCuenta(valor: number, fila: Record<string, unknown>): string {
   const esGasto = CUENTAS_GASTO_CUENTA_RESULTADOS.includes(String(fila['cuenta_codigo']));
   const favorable = esGasto ? valor <= 0 : valor >= 0;
-  const color = favorable ? 'var(--mis-success)' : 'var(--mis-danger)';
-  // Sobre la banda navy el tono se pierde: se aclara.
-  return nivel(fila) === 3 ? `color-mix(in srgb, ${color} 55%, white)` : color;
+  return favorable ? 'var(--mis-success)' : 'var(--mis-danger)';
 }
 
 /** La columna fija tapa las cifras al desplazar: su fondo se apila sobre la superficie sólida. */
