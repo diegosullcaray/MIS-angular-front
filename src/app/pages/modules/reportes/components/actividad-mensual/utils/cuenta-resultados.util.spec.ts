@@ -145,9 +145,9 @@ describe('cuenta-resultados.util', () => {
       expect(cuenta.label).toBe('Estado de ganancias y pérdidas · en miles (PEN)');
       expect(cuenta.style?.['text-align']).toBe('left');
       expect(mes.label).toBe('Mes de Agosto');
-      expect(mes.subs!.map((c) => c.label)).toEqual(['Ago.25', 'Jul.26', 'Preliminar Ago.26', 'Δ Jul']);
+      expect(mes.subs!.map((c) => c.label)).toEqual(['Ago.25', 'Jul.26', 'Preliminar Ago.26', 'Ago.26 vs Jul.26']);
       expect(acumulado.label).toBe('Acumulado Ene–Ago');
-      expect(acumulado.subs!.map((c) => c.label)).toEqual(['2025', '2026', 'Δ', 'Δ %']);
+      expect(acumulado.subs!.map((c) => c.label)).toEqual(['2025', '2026', 'Ago.26 vs Ago.25', 'Ago.26 vs Ago.25 %']);
       expect(acumulado.subs![0].cellStyle?.['border-left']).toBe('2px solid var(--mis-border-strong)');
     });
 
@@ -170,7 +170,7 @@ describe('cuenta-resultados.util', () => {
 
     it('enero compara contra diciembre del año anterior', () => {
       const [, mes, acumulado] = crearColumnasCuentaResultados('2026-01-01', false);
-      expect(mes.subs!.map((c) => c.label)).toEqual(['Ene.25', 'Dic.25', 'Ene.26', 'Δ Dic']);
+      expect(mes.subs!.map((c) => c.label)).toEqual(['Ene.25', 'Dic.25', 'Ene.26', 'Ene.26 vs Dic.25']);
       expect(acumulado.label).toBe('Acumulado Ene');
     });
 

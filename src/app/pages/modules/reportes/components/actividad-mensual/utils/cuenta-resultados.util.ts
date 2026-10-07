@@ -271,7 +271,7 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
         preliminar
           ? columnaCifra(`Preliminar ${mesAnio(actual)}`, 'periodo_actual', { style: ENCABEZADO_PRELIMINAR })
           : columnaCifra(mesAnio(actual), 'periodo_actual'),
-        conSemaforo(columnaCifra(`Δ ${mesCorto(anterior)}`, 'variacion_periodo_anterior')),
+        conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anterior)}`, 'variacion_periodo_anterior')),
       ],
     },
     {
@@ -285,8 +285,8 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
         }),
         // El acumulado del año se juzga por su variación contra el año anterior.
         conSemaforo(columnaCifra(String(actual.getFullYear()), 'acumulado_actual'), 'variacion_acumulado'),
-        conSemaforo(columnaCifra('Δ', 'variacion_acumulado')),
-        columnaCifra('Δ %', 'variacion_acumulado_pct', { format: { type: 'percent' } }),
+        conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)}`, 'variacion_acumulado')),
+        columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)} %`, 'variacion_acumulado_pct', { format: { type: 'percent' } }),
       ],
     },
   ];
