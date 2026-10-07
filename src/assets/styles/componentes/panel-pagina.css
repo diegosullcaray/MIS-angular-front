@@ -17,9 +17,9 @@
   width: 100%;
   min-height: calc(100vh - 130px);
   padding: var(--mis-space-3);
-  /* El vidrio se apila sobre media superficie: queda translúcido (~78 % opaco) sin dejar leer el fondo del layout. */
-  background: linear-gradient(var(--mis-glass-bg), var(--mis-glass-bg)), color-mix(in srgb, var(--mis-surface) 25%, transparent);
-  backdrop-filter: blur(15px);
+  /* Fondo propio del panel (75 %): no sigue a `--mis-glass-bg`, que la apariencia del usuario sube a 92 %. */
+  background: color-mix(in srgb, var(--mis-surface) 75%, transparent);
+  backdrop-filter: blur(28px);
   border: 1px solid var(--mis-glass-border);
   border-radius: var(--mis-radius-lg);
   box-shadow: var(--mis-shadow-lg);
