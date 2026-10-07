@@ -81,6 +81,8 @@ export class CuentaResultadosComponent {
   /** Códigos de cuentas abiertas; cada consulta nueva las cierra. */
   private readonly abiertas = signal<ReadonlySet<string>>(new Set());
   protected readonly filas = computed(() => filasConDrillDown(this.resultado()?.filas ?? [], this.abiertas()));
+  private readonly conDetalleSet = computed(() => cuentasConDetalle(this.resultado()?.filas ?? []));
+  protected readonly conDetalle = (fila: Record<string, unknown>) => this.conDetalleSet().has(String(fila['cuenta_codigo']));
   protected readonly columnasDrillDown = ['cuenta_nombre'];
 
   protected readonly sinDestacar = () => false;
@@ -105,7 +107,6 @@ export class CuentaResultadosComponent {
   /** Clic en una cuenta con detalle: la abre o la cierra. */
   protected onCeldaSeleccionada(evento: { clave: string; fila: Record<string, unknown> }): void {
     const codigo = String(evento.fila['cuenta_codigo']);
-    if (!cuentasConDetalle(this.resultado()?.filas ?? []).has(codigo)) return;
     this.abiertas.update((a) => {
       const nueva = new Set(a);
       if (!nueva.delete(codigo)) nueva.add(codigo);

@@ -73,6 +73,8 @@ export class TablaDinamicaComponent {
 
   /** Claves de columna que son clicables. */
   readonly columnasClicables = input<readonly string[]>([]);
+  /** Con `columnasClicables`, limita el clic (y el subrayado) a las filas que cumplan. */
+  readonly filaClicable = input<(fila: Record<string, unknown>) => boolean>(() => true);
   readonly celdaSeleccionada = output<{ clave: string; fila: Record<string, unknown> }>();
 
   /** Soporte para expansión de filas (Drill Down). */
@@ -230,8 +232,8 @@ export class TablaDinamicaComponent {
   }
 
   /** Si esta celda concreta responde al clic — solo cuando su clave está en `columnasClicables`. */
-  protected clicable(columna: ColumnaDinamica): boolean {
-    return this.columnasClicables().includes(columna.key);
+  protected clicable(columna: ColumnaDinamica, fila: Record<string, unknown>): boolean {
+    return this.columnasClicables().includes(columna.key) && this.filaClicable()(fila);
   }
 
   protected onClickFila(fila: Record<string, unknown>): void {
@@ -242,7 +244,7 @@ export class TablaDinamicaComponent {
   }
 
   protected onClickCelda(columna: ColumnaDinamica, fila: Record<string, unknown>): void {
-    if (this.clicable(columna)) {
+    if (this.clicable(columna, fila)) {
       this.celdaSeleccionada.emit({ clave: columna.key, fila });
     }
   }

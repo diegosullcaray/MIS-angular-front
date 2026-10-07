@@ -40,8 +40,8 @@
           class="text-[13px] whitespace-nowrap"
           [class.celda-truncada]="truncarTexto()"
           [class.font-bold]="destacada(fila) || (fondoDinamico() && signoFondoDinamico(fila, columna) !== null)"
-          [class.cursor-pointer]="clicable(columna)"
-          [class.underline]="clicable(columna)"
+          [class.cursor-pointer]="clicable(columna, fila)"
+          [class.underline]="clicable(columna, fila)"
           [style]="estiloCelda(fila, columna)"
           (click)="onClickCelda(columna, fila)"
         >

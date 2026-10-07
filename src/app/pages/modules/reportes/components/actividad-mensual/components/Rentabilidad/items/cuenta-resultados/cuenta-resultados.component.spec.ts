@@ -136,6 +136,10 @@ describe('CuentaResultadosComponent', () => {
     expect(filas()).not.toContain('COEFICIENTES');
     clic();
     expect(filas()).toContain('COEFICIENTES');
+    const celdaDe = (texto: string) =>
+      [...fixture.nativeElement.querySelectorAll('td')].find((td: HTMLElement) => td.textContent?.includes(texto)) as HTMLElement;
+    expect(celdaDe('INGRESOS FINANCIEROS').classList).toContain('underline');
+    expect(celdaDe('COEFICIENTES').classList).not.toContain('underline');
     clic();
     expect(filas()).not.toContain('COEFICIENTES');
   });
