@@ -20,8 +20,8 @@
      modo de alto automático). Mismo alto de referencia que `.mis-page`. */
   min-height: calc(100vh - 130px);
   overflow: hidden;
-  /* El vidrio se apila sobre media superficie: queda translúcido (~85 % opaco) sin dejar leer el fondo del layout. */
-  background: linear-gradient(var(--mis-glass-bg), var(--mis-glass-bg)), color-mix(in srgb, var(--mis-surface) 50%, transparent);
+  /* El vidrio se apila sobre media superficie: queda translúcido (~78 % opaco) sin dejar leer el fondo del layout. */
+  background: linear-gradient(var(--mis-glass-bg), var(--mis-glass-bg)), color-mix(in srgb, var(--mis-surface) 25%, transparent);
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
   border: 1px solid var(--mis-glass-border);
