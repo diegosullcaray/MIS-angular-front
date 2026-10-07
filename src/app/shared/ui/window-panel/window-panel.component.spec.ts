@@ -65,6 +65,23 @@ describe('WindowPanelComponent', () => {
     expect(elemento(fixture, '.mis-window-btn--esquina')).not.toBeNull();
   });
 
+  it('el botón de subir aparece al desplazar el cuerpo, fuera de la ventana, y sube al inicio', () => {
+    const fixture = crear();
+    const cuerpo = elemento(fixture, '.mis-window-body') as HTMLElement;
+    cuerpo.scrollTo = vi.fn() as never;
+    expect(elemento(fixture, '.mis-window-subir')).toBeNull();
+
+    Object.defineProperty(cuerpo, 'scrollTop', { value: 300, configurable: true });
+    cuerpo.dispatchEvent(new Event('scroll'));
+    fixture.detectChanges();
+
+    const subir = elemento(fixture, '.mis-window-subir');
+    expect(subir).not.toBeNull();
+    expect(elemento(fixture, '.mis-window')?.contains(subir)).toBe(false);
+    (subir?.querySelector('button') as HTMLButtonElement).click();
+    expect(cuerpo.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
+  });
+
   it('el título va sin ícono ni logo', () => {
     const fixture = crear({ titulo: 'Kaypacha', subtitulo: 'Plataforma de desempeño' });
     const barra = elemento(fixture, '.mis-window-bar')!;

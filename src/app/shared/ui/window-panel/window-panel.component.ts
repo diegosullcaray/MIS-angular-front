@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
-import { ScrollTopModule } from 'primeng/scrolltop';
+import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ShellStateService } from '../../../core/services/shell-state.service';
 import { HierSelectorComponent } from '../hier-selector/hier-selector.component';
@@ -16,7 +16,7 @@ const RUTA_HOME = '/app/dashboard';
 @Component({
   selector: 'app-window-panel',
   standalone: true,
-  imports: [NgIconComponent, ScrollTopModule, TooltipModule],
+  imports: [NgIconComponent, ButtonModule, TooltipModule],
   viewProviders: [provideIcons({ lucideRefreshCw })],
   templateUrl: './window-panel.component.html',
   styleUrl: './window-panel.component.css',
@@ -69,6 +69,8 @@ export class WindowPanelComponent {
   /** El selector de jerarquía del panel (si lo tiene) va con su propio botón, aparte de los filtros. */
   protected readonly conJerarquia = computed(() => !!this.selectorJerarquia());
   private readonly selectorJerarquia = contentChild(HierSelectorComponent);
+  private readonly cuerpo = viewChild<ElementRef<HTMLElement>>('cuerpo');
+  protected readonly mostrarSubir = signal(false);
   private readonly franja = viewChild<ElementRef<HTMLElement>>('franja');
   /** Hay filtros además del selector de jerarquía (se revisa al cambiar la franja: algunos aparecen con datos). */
   protected readonly hayOtrosFiltros = signal(false);
@@ -98,6 +100,10 @@ export class WindowPanelComponent {
 
   protected alternarFiltros(): void {
     this.filtrosVisibles.update((v) => !v);
+  }
+
+  protected subir(): void {
+    this.cuerpo()?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   /** Cierra la franja de filtros (p. ej. tras buscar en móvil, donde flota sobre el resultado). */

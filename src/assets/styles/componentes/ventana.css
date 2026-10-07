@@ -308,17 +308,6 @@
     min-height: 0;
   }
 
-  /* Botón de subir (`p-scrolltop`): PrimeNG lo deja `sticky` al final del contenido; acá flota
-     por delante de la ventana, anclado a su esquina inferior derecha (ancestro posicionado). */
-  .mis-window .p-scrolltop.p-button {
-    position: absolute !important;
-    inset-block-end: var(--mis-space-3);
-    inset-inline-end: var(--mis-space-3);
-    margin: 0;
-    z-index: 15;
-    box-shadow: var(--mis-shadow-lg);
-  }
-
   .mis-window-franja {
     position: absolute;
     top: calc(var(--mis-window-bar-h) + var(--mis-space-2));
@@ -340,6 +329,15 @@
     transform-origin: top right;
     animation: mis-franja-entrada 220ms var(--mis-ease-salida);
   }
+}
+
+/* Botón de subir: fijo a la pantalla, por encima del riel inferior del sidebar (64 px). */
+.mis-window-subir {
+  position: fixed;
+  inset-block-end: calc(64px + var(--mis-space-4));
+  inset-inline-end: var(--mis-space-4);
+  z-index: 30;
+  filter: drop-shadow(var(--mis-shadow-lg));
 }
 
 @keyframes mis-franja-entrada {

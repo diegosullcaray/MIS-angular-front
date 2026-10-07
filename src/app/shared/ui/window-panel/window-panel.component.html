@@ -98,7 +98,7 @@
     </div>
   </header>
 
-  <div class="mis-window-body" [class.mis-window-body--relleno]="conRelleno()">
+  <div #cuerpo class="mis-window-body" (scroll)="mostrarSubir.set(cuerpo.scrollTop > 200)" [class.mis-window-body--relleno]="conRelleno()">
     @if (conFiltros()) {
       <div
         #franja
@@ -111,7 +111,11 @@
       </div>
     }
     <ng-content />
-    <!-- Móvil: botón para volver arriba. Hijo del cuerpo (escucha su scroll); el CSS lo hace flotar sobre la ventana. -->
-    <p-scrolltop target="parent" [threshold]="200" icon="pi pi-arrow-up" styleClass="sm:!hidden" />
   </div>
 </div>
+
+<!-- Móvil: botón para volver arriba. Fuera de `.mis-window` (que tiene `backdrop-filter` y
+     atraparía a un `fixed`): flota sobre toda la pantalla, por delante del layout. -->
+@if (mostrarSubir()) {
+  <p-button class="mis-window-subir sm:hidden" icon="pi pi-arrow-up" [rounded]="true" ariaLabel="Subir al inicio" (onClick)="subir()" />
+}
