@@ -62,6 +62,15 @@ export class TablaDinamicaComponent {
    * anchos fijos de las columnas (lo que forzaba el scroll). Las celdas de datos no se parten.
    */
   readonly ajustarAncho = input(false);
+  /** La primera columna se queda a la vista al hacer scroll horizontal (clase `mis-primera-fija`, en `styles.css`). */
+  readonly primeraColumnaFija = input(false);
+
+  /** ¿La celda `c` del renglón de encabezado `r` es la de la primera columna? (la primera de su renglón, salvo que un `rowspan` de arriba la cubra). */
+  protected esCeldaPrimeraColumna(r: number, c: number): boolean {
+    if (c !== 0) return false;
+    const filas = this.encabezados().filas;
+    return !filas.slice(0, r).some((fila, i) => Number(fila[0]?.rowspan ?? 1) > r - i);
+  }
   /**
    * Crece hasta el pie del panel antes de sacar su scroll. En `'auto'` (por defecto) solo si es la
    * única tabla de su pestaña o panel (ver `MaxFilasDirective.hastaElFondo`).

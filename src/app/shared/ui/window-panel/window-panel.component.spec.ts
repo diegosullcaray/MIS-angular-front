@@ -32,6 +32,17 @@ class SoloJerarquiaComponent {
   protected readonly params = PARAMS_HIER_UNIDAD;
 }
 
+@Component({
+  standalone: true,
+  imports: [WindowPanelComponent, HierSelectorComponent],
+  template: `<app-window-panel [conFiltros]="true">
+    <div ventana-filtros><app-hier-selector [paramsHier]="params" /><input id="otro" /></div>
+  </app-window-panel>`,
+})
+class ConJerarquiaCerradaComponent {
+  protected readonly params = PARAMS_HIER_UNIDAD;
+}
+
 describe('WindowPanelComponent', () => {
   let shell: ShellStateService;
 
@@ -238,5 +249,16 @@ describe('WindowPanelComponent', () => {
 
     expect(el.querySelector('.pi-sitemap')).not.toBeNull();
     expect(el.querySelector('.pi-filter, .pi-filter-slash')).toBeNull();
+  });
+
+  it('con la franja cerrada al entrar, el botón de filtros propios aparece igual (no depende de que estén a la vista)', async () => {
+    const fixture = TestBed.createComponent(ConJerarquiaCerradaComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+
+    expect(el.querySelector('.pi-sitemap')).not.toBeNull();
+    expect(el.querySelector('.pi-filter, .pi-filter-slash')).not.toBeNull();
   });
 });

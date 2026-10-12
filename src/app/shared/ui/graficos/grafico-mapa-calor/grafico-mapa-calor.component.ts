@@ -51,6 +51,8 @@ export class GraficoMapaCalorComponent {
       },
       colorAxis: {
         min: 0,
+        // Las cifras de la leyenda salían en el gris por defecto de Highcharts: ilegibles en claro.
+        labels: { style: { color: texto, fontSize: '11px' } },
         stops: [
           [0, '#ffffcc'],
           [0.2, '#d9f0a3'],

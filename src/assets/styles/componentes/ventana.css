@@ -37,9 +37,11 @@
 .mis-oculta-jerarquia app-hier-selector {
   display: none;
 }
-.mis-oculta-otros *:not(app-hier-selector, :has(app-hier-selector), app-hier-selector *) {
+.mis-oculta-otros:not(.mis-midiendo) *:not(app-hier-selector, :has(app-hier-selector), app-hier-selector *) {
   display: none;
 }
+/* `.mis-midiendo` la pone el panel un instante, solo para medir si hay filtros propios: sin ella,
+   lo que oculta `.mis-oculta-otros` pasaba por «no visible» y el botón de filtros nunca aparecía. */
 
 /* Barra de título. `grid` de 3 columnas (no flex) para que el título quede
    ópticamente centrado en la ventana aunque el semáforo y las acciones tengan

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { NovedadesTourService } from '../../services/novedades-tour.service';
 import type { Novedad } from '../../models/novedad.model';
 import { AnimarDirective } from '../../../../../shared/ui/animaciones/animar.directive';
@@ -50,7 +50,11 @@ export class PanelNovedadesComponent {
       : 'Elige un tema y te guío paso a paso en la pantalla.',
   );
 
-  readonly abierto = signal(this.cabeAbierto());
+  readonly abierto = signal(this.tours.panelAbierto() ?? this.cabeAbierto());
+
+  constructor() {
+    effect(() => this.tours.panelAbierto.set(this.abierto()));
+  }
 
   /** Enciende el punto de aviso de la pestaña cuando hay algo publicado hace poco. */
   readonly hayNuevas = computed(() => this.novedades.some((n) => this.tours.esNueva(n)));

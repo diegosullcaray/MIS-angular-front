@@ -1,6 +1,7 @@
 import type { GraficoDashboardRevision } from '../constantes/cartera-mora.constantes';
 import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { TablaRegularResultadoRaw } from '../../../../../models/tabla-dinamica.model';
+import type { ColumnaDinamica } from '../../../../../models/tabla-dinamica.model';
 import type { KpiCeroCuotas } from '../models/cartera-en-mora.model';
 import type { MapaCalorGrafico, PorcionGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 
@@ -59,6 +60,7 @@ export function concentracionSaldosDashboardRevision(
 
   return {
     titulo: 'Concentración de Saldos por Territorio',
+    tituloEjeY: 'Saldos (en miles)',
     categorias: data.categories.map((categoria) => String(categoria ?? '')),
     apilado: true,
     series: data.series.map((serie, i) => ({
@@ -83,6 +85,7 @@ export function graficoDashboardRevision(
 
   return {
     titulo: config.titulo,
+    ...(config.enMillones ? { enMillones: true } : {}),
     categorias: filas.map((fila) => String(Object.values(fila)[1] ?? '')),
     series: config.series.map((serie) => ({
       nombre: serie.nombre,
@@ -159,4 +162,18 @@ export function kpisCeroCuotas(filas: readonly Record<string, unknown>[]): KpiCe
       favorableCuandoBaja: true,
     },
   ];
+}
+
+/** Columnas de "Top 10 Asesores" cuyas celdas van en verde (Saldo MN, Tot Operaciones, Ope Heredados). */
+const COLUMNAS_TOP_ASESORES_VERDES = /^\s*(saldo\s*mn|tot\.?\s*operaciones|ope\.?\s*heredados)\s*$/i;
+
+/** Pinta de verde las celdas de las columnas de `COLUMNAS_TOP_ASESORES_VERDES`, también dentro de grupos. */
+export function resaltarColumnasTopAsesores(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
+  return columnas.map((columna) => ({
+    ...columna,
+    ...(COLUMNAS_TOP_ASESORES_VERDES.test(columna.label ?? '')
+      ? { cellStyleFn: () => ({ 'background-color': 'var(--mis-success-light)', color: 'var(--mis-success)' }) }
+      : {}),
+    ...(columna.subs ? { subs: resaltarColumnasTopAsesores(columna.subs) } : {}),
+  }));
 }

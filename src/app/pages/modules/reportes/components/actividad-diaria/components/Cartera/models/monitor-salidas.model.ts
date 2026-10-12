@@ -62,14 +62,15 @@ export const COLUMNAS_SALIDAS: ColumnaDinamica[] = [
 
 /** Columnas de clientes de salidas. */
 export const COLUMNAS_CLIENTES_SALIDAS: DataTableColumn[] = [
-  { field: 'ndoc', header: 'Nro. Documento', filterType: 'text' },
-  { field: 'nom', header: 'Nombre', width: '16rem', filterType: 'text' },
-  { field: 'pri', header: 'Prioridad', align: 'right', filterType: 'number' },
-  { field: 'mon_desem', header: 'Monto Desembolsado', align: 'right', filterType: 'number' },
-  { field: 'nrie', header: 'Nivel de Riesgo', filterType: 'text' },
-  { field: 'fec_eval', header: 'Fecha de Salida', filterType: 'date' },
-  { field: 'uni', header: 'Unidad', width: '14rem', filterType: 'text' },
-  { field: 'ase', header: 'Asesor', width: '14rem', filterType: 'text' },
+  // Anchos que suman 70 rem: caben en el diálogo (1200 px) sin scroll horizontal en escritorio.
+  { field: 'ndoc', header: 'Nro. Documento', width: '7.5rem', filterType: 'text' },
+  { field: 'nom', header: 'Nombre', width: '13rem', filterType: 'text' },
+  { field: 'pri', header: 'Prioridad', width: '5.5rem', align: 'right', filterType: 'number' },
+  { field: 'mon_desem', header: 'Monto Desembolsado', width: '8.5rem', align: 'right', filterType: 'number' },
+  { field: 'nrie', header: 'Nivel de Riesgo', width: '7rem', filterType: 'text' },
+  { field: 'fec_eval', header: 'Fecha de Salida', width: '7.5rem', filterType: 'date' },
+  { field: 'uni', header: 'Unidad', width: '10.5rem', filterType: 'text' },
+  { field: 'ase', header: 'Asesor', width: '10.5rem', filterType: 'text' },
 ];
 
 /** Campos de búsqueda. */

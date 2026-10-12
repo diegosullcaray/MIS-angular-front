@@ -1,4 +1,4 @@
-<app-reporte-simple [ajustarAncho]="true"
+<app-reporte-simple [filtrosSoloMovil]="true" [ajustarAncho]="true"
   titulo="Datos por Producto"
   [paramsHier]="paramsHier"
   [nivel]="nivelActual()"
@@ -7,12 +7,11 @@
   (nivelSeleccionado)="onNivelSeleccionado($event)"
   (errorJerarquia)="onErrorJerarquia()"
 >
+  <!-- Fecha de cierre: botón de calendario en la barra (escritorio); en pantallas angostas queda el selector. -->
+  <app-fecha-cierre-boton acciones etiqueta="Fecha Cierre" [opciones]="opcionesFechaBase" [(valor)]="fechaBase" />
   <div filtros>
-    <app-select-filtro
-      etiqueta="Fecha Cierre"
-      [opciones]="opcionesFechaBase"
-      [valor]="fechaBase()"
-      (valorChange)="fechaBase.set($event)"
-    />
+    <div class="lg:hidden">
+      <app-select-filtro etiqueta="Fecha Cierre" [opciones]="opcionesFechaBase" [valor]="fechaBase()" (valorChange)="fechaBase.set($event)" />
+    </div>
   </div>
 </app-reporte-simple>

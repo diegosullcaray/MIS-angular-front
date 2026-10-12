@@ -3,12 +3,13 @@
      y dejaba dos indicadores para una sola espera. Mientras carga, la tabla
      pinta filas de esqueleto (carga independiente: el overlay global se va con
      la primera respuesta) y conserva `aria-busy` para los lectores de pantalla. -->
-<p-table appMaxFilas [hastaElFondo]="llenarAlto()" [value]="filasMostradas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm" [class.mis-tabla-compacta]="ajustarAncho()">
+<p-table appMaxFilas [hastaElFondo]="llenarAlto()" [value]="filasMostradas()" [attr.aria-busy]="cargando()" [rowHover]="true" [scrollable]="true" styleClass="p-datatable-sm" [class.mis-tabla-compacta]="ajustarAncho()" [class.mis-primera-fija]="primeraColumnaFija()">
   <ng-template pTemplate="header">
-    @for (filaEnc of filasEncabezado(); track $index) {
+    @for (filaEnc of filasEncabezado(); track $index; let r = $index) {
       <tr>
-        @for (columna of filaEnc; track columna.columnDef) {
+        @for (columna of filaEnc; track columna.columnDef; let c = $index) {
           <th
+            [class.mis-col-fija]="primeraColumnaFija() && esCeldaPrimeraColumna(r, c)"
             [attr.colspan]="columna.cols || 1"
             [attr.rowspan]="columna.rows || 1"
             class="text-[12px] uppercase text-center border border-[var(--mis-text-on-primary)]/25"

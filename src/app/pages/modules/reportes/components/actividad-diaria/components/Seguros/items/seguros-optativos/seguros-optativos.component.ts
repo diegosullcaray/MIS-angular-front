@@ -3,6 +3,7 @@ import type { Subscription } from 'rxjs';
 import { DecimalPipe, PercentPipe } from '@angular/common';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
@@ -39,7 +40,7 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
     DecimalPipe,
     PercentPipe,
     HierSelectorComponent,
-    SelectFiltroComponent,
+    SelectFiltroComponent, FechaCierreBotonComponent,
     TablaDinamicaComponent,
     EmptyStateComponent,
     WindowPanelComponent,

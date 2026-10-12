@@ -1,32 +1,33 @@
-# Requerimiento de Ajustes: Panel de Cuenta de Resultados
+http://localhost:4200/app/reportes/leg/com/rda/adm/cam-seguros
 
-**URL del panel:** `http://localhost:4200/app/reportes/repositorio/actividad-mensual/rentabilidad/cuenta-resultados`
+Detalle por asesor
+Meta por producto  en esta dos tablas la primera columna debes ser estatica porque en el scrollbar horizontal debe quedarse ahi 
 
-**Ruta de los archivos del componente:**
-`src/app/pages/modules/reportes/components/actividad-mensual/components/Rentabilidad/items/cuenta-resultados/`
 
-## 📋 Tareas a realizar
+http://localhost:4200/app/reportes/repositorio/actividad-diaria/seguro/seguro-com
+ no veo el filtro de fecha , redue de tamaños los kpis de Rendimiento por Tipo de Seguro Optativo
+ ademas  a primera columna debes ser estatica porque en el scrollbar horizontal debe quedarse ahi 
 
-- [ ] **1. Implementar estado de carga (Loading / Skeleton)**
-  - Al ingresar por primera vez al panel, no se muestra el `load spinner` ni el componente `skeleton`. 
-  - Ajustar el componente aplicando las reglas de gobernanza del proyecto para que muestre la animación de carga correcta antes de renderizar la data.
+ http://localhost:4200/app/reportes/leg/com/rda/adm/tab-digital_vr2-ope
 
-- [ ] **2. Ocultar columna "Resultado Trimestral"**
-  - En la tabla principal, ocultar o eliminar la configuración de la columna `resultado trimestral`, ya que se solicitó explícitamente no mostrarla.
+ debe estar de otro color este de qui esta fila Otras Funcionalidades y Transacciones
 
-- [ ] **3. Habilitar Drill-Down en "Estado de Ganancia"**
-  - Configurar la data de la tabla para que la columna `estado de ganancia` soporte la funcionalidad de *drill down*.
-  - Hacer que la data de esta columna sea clickeable/interactiva según el estándar de componentes del proyecto.
+http://localhost:4200/app/reportes/leg/com/rda/adm/v-general-cor
 
-- [ ] **4. Eliminar inyección incorrecta (Kaypacha Service)**
-  - El componente está cargando e inyectando un servicio relacionado a `kaypacha`, lo cual no tiene sentido en este contexto de rentabilidad.
-  - Eliminar esa importación/inyección y asegurarse de utilizar los servicios de datos correspondientes a su propio módulo (por ejemplo, `actividad-mensual-repo.service.ts`).
+ debe estar de otro color este de qui esta fila Corresponsales Instalados , N° Transacciones , Mto Transacciones , Ticket Promedio por Transaccion
+ http://localhost:4200/app/reportes/leg/com/rda/adm/seg_pdm
+ la primera columna debes ser estatica porque en el scrollbar horizontal debe quedarse ahi 
 
-## 📂 Posibles archivos a modificar
+ http://localhost:4200/app/reportes/leg/com/rma/adm/cmg-capta
+ corrje el filtro de fehca de cierree segun la documenatcuion 
+ http://localhost:4200/app/reportes/leg/com/rma/adm/capta-caract-canal-operacional-m
+  corrje el filtro de fehca de cierree segun la documenatcuion 
+http://localhost:4200/app/reportes/leg/com/rma/adm/capta-caract-canal-comercial-m
+  corrje el filtro de fehca de cierree segun la documenatcuion 
+http://localhost:4200/app/reportes/leg/com/rma/adm/cmg-cli
+  corrje el filtro de fehca de cierree segun la documenatcuion 
+http://localhost:4200/app/reportes/leg/com/rma/adm/cmg_cliente_flujo
+  corrje el filtro de fehca de cierree segun la documenatcuion 
 
-* **Componente (Lógica e Inyecciones):** 
-  `.../cuenta-resultados/cuenta-resultados.component.ts`
-* **Vista (Skeleton y Spinner):** 
-  `.../cuenta-resultados/cuenta-resultados.component.html`
-* **Configuración de Tabla (Columnas y Drill-down):**
-  `src/app/pages/modules/reportes/components/actividad-mensual/utils/cuenta-resultados.util.ts`
+
+revisa en ele moidulo de reportes mensuales los panaes  que tienen filtr de fecha cierre y en abse a lla documenatcion que se tiemeeaplica los cambios 

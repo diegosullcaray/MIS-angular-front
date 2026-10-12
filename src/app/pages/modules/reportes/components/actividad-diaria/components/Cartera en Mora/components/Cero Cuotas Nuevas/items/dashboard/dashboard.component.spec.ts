@@ -14,6 +14,7 @@ describe('CeroCuotasDashboardComponent', () => {
 
   beforeEach(() => {
     servicioSpy = {
+      periodosDashboard: vi.fn().mockReturnValue(of([{ id: '2026-10-11', desc: '11/10/2026' }])),
       dashboard: vi.fn().mockReturnValue(of({ headers: [], body: [], rows: [], items: [], total: 0, kpis: {}, estadoRenovacion: { categorias: [], series: [] }, antiguedadCliente: { categorias: [], series: [] }, cards: [], table: [] })),
     };
 

@@ -5,6 +5,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { DataTableComponent } from '../../../../../../../../../shared/ui/data-table/data-table.component';
@@ -47,6 +48,7 @@ import { NavegacionJerarquica } from '../../../../../../models/navegacion-jerarq
     ButtonModule,
     TooltipModule,
     SelectFiltroComponent,
+    FechaCierreBotonComponent,
     HierSelectorComponent,
     TablaDinamicaComponent,
     DataTableComponent,

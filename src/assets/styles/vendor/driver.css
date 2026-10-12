@@ -146,11 +146,19 @@
 .mis-tour-mascota {
   position: static !important;
   width: 64px !important;
-  height: auto !important;
+  height: 64px !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+  object-position: center bottom !important;
+  border-radius: 50% !important;
+  /* Burbuja circular: el PNG es el personaje y el fondo sale de los tokens, así
+     que cambia solo entre claro y oscuro. */
+  background: color-mix(in srgb, var(--mis-primary-light) 55%, var(--mis-surface)) !important;
+  border: 4px solid color-mix(in srgb, var(--mis-primary) 55%, var(--mis-surface)) !important;
+  box-shadow: var(--mis-shadow-lg) !important;
   flex-shrink: 0 !important;
   margin: 0 !important;
   transform: none !important;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.28)) !important;
   pointer-events: none !important;
   animation: mis-tour-pachi-entra 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
@@ -176,7 +184,7 @@
    que entre completo aun con el globo pegado al rail de sistemas. */
 @media (min-width: 900px) {
   .driver-popover {
-    padding-left: 44px !important;
+    padding-left: 76px !important;
   }
 
   .mis-tour-mascota {
@@ -184,9 +192,9 @@
     top: 50% !important;
     left: -56px !important;
     width: 120px !important;
+    height: 120px !important;
     transform: translateY(-50%) !important;
     z-index: 1000000004 !important;
-    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35)) !important;
     animation: mis-tour-pachi-asoma 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
 
@@ -201,8 +209,31 @@
   .driver-popover:has(.driver-popover-arrow-side-left) .mis-tour-mascota {
     position: static !important;
     width: 64px !important;
+    height: 64px !important;
     transform: none !important;
     animation: mis-tour-pachi-entra 0.35s ease-out forwards;
+  }
+}
+
+/* Móvil: Pachi también se asoma por el costado, como en escritorio. El globo se
+   corre a la derecha y se angosta lo justo para que la burbuja quede entera en
+   pantalla (sin él quedaba en x < 0). */
+@media (max-width: 899px) {
+  .driver-popover {
+    margin-left: 22px !important;
+    max-width: min(370px, calc(100vw - 24px - 26px)) !important;
+    padding-left: 36px !important;
+  }
+
+  .mis-tour-mascota {
+    position: absolute !important;
+    top: 50% !important;
+    left: -28px !important;
+    width: 56px !important;
+    height: 56px !important;
+    transform: translateY(-50%) !important;
+    z-index: 1000000004 !important;
+    animation: mis-tour-pachi-asoma 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
 }
 

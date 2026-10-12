@@ -4,6 +4,7 @@ import { PaginatorModule, type PaginatorState } from 'primeng/paginator';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { TablaReporteComponent } from '../../../../../../../../../shared/ui/tablas/tabla-reporte/tabla-reporte.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/formularios/grupo-filtros/grupo-filtros.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
@@ -43,7 +44,7 @@ const POR_PAGINA = 30;
     PaginatorModule,
     HierSelectorComponent,
     TablaReporteComponent,
-    SelectFiltroComponent,
+    SelectFiltroComponent, FechaCierreBotonComponent,
     GrupoFiltrosComponent,
     EmptyStateComponent,
     WindowPanelComponent,
