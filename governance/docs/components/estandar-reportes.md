@@ -26,6 +26,15 @@ con controles sueltos.
 
 - **Ancho completo por defecto.** Las dos tarjetas ocupan todo el ancho de la franja, así quedan
   alineadas una sobre otra. `[anchoCompleto]="false"` las ajusta al contenido; usalo solo con motivo.
+- **Cada grupo tiene su botón en la barra del panel.** `app-window-panel` reparte la franja en dos y
+  pone un botón por parte, junto a «Actualizar»: **jerarquía** (`pi-sitemap`, muestra solo
+  `app-hier-selector`) y **filtros** (`pi-filter`, muestra solo lo que está en `app-grupo-filtros`).
+  El filtro propio del reporte (*Tipo*, *Variable*, *Producto*…) **nunca va dentro de la jerarquía**:
+  es un grupo aparte con su propio botón. El botón de filtros aparece solo si el reporte tiene filtros
+  propios, también con la franja cerrada al entrar (el panel los mide con la regla de ocultación
+  apagada: `.mis-midiendo`). Un reporte que pierde su filtro propio de este modo es un bug del panel,
+  no una decisión de diseño. Ejemplos: *Monitor Reprogramados* (Tipo: Operaciones / Saldo), *CMG Clientes
+  Pasivo* (Variable: Clientes / Cuentas / Saldo), *Panel Operaciones* (Producto).
 - **"Limpiar" va junto al último nivel** de la jerarquía, no empujado al borde derecho.
 - **Controles:** `<app-select-filtro>` y `<app-input-filtro>`. Un `span` + `p-select` a mano sobre
   opciones `{ id, desc }` es exactamente `app-select-filtro`: no se repite. Si un control no encaja
@@ -180,6 +189,11 @@ las columnas **haciendo saltar de línea los encabezados, no los datos**:
 Además, con `[ajustarAncho]` la tabla usa un **modo compacto** (menos relleno y un punto menos de
 letra en celdas y encabezados), para que las columnas se angosten de forma proporcional: 14 columnas
 de montos de siete dígitos entran en 1366 px sin scroll horizontal (`e2e/tablas-anchas.spec.ts`).
+
+**Primera columna fija.** Cuando la tabla igual puede salir con scroll horizontal (pantallas angostas,
+muchas columnas), `[primeraColumnaFija]="true"` (en `app-tabla-reporte` y `app-tabla-dinamica`) deja la
+primera columna —la etiqueta de la fila— a la vista mientras se desplaza el resto. Ejemplos: *Panel
+Operaciones* y *Gestión Pasivo Comercial*. Su estilo es la clase `mis-primera-fija` de `styles.css`.
 
 El contenedor conserva `overflow-x-auto` solo como respaldo para pantallas angostas. Ejemplos:
 *Captaciones por Canal* (18 columnas), *Panel Operaciones*, *Clientes*, *Proyección colocación* y

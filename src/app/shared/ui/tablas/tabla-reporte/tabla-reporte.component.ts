@@ -74,6 +74,8 @@ export class TablaReporteComponent {
 
   /** Ajustar ancho de columnas al contenido. */
   readonly ajustarAncho = input(false);
+  /** La primera columna se queda a la vista al hacer scroll horizontal (clase `mis-primera-fija`, en `styles.css`). */
+  readonly primeraColumnaFija = input(false);
   /**
    * Crece hasta el pie del panel antes de sacar su scroll. En `'auto'` (por defecto) solo si es la
    * única tabla de su pestaña o panel (ver `MaxFilasDirective.hastaElFondo`).

@@ -59,6 +59,7 @@ import { TABLA_VACIA } from '…/pages/modules/reportes/models/tabla-reporte.mod
 | `cargando` | `boolean` | `false` | Estado de carga: mientras es `true` pinta filas de esqueleto en vez de las filas (ver abajo) |
 | `seleccionable` | `boolean` | `false` | Hace las filas clicables |
 | `llenarAlto` | `boolean \| 'auto'` | `'auto'` | Crece hasta el pie del panel; en `'auto'`, solo si es la única tabla de su pestaña o panel y no hay paginador |
+| `primeraColumnaFija` | `boolean` | `false` | La primera columna (etiqueta de la fila) queda a la vista al hacer scroll horizontal; clase `mis-primera-fija` en `styles.css` |
 
 | Output | Cuándo |
 |---|---|
@@ -87,6 +88,7 @@ no sus celdas.
 | `colorearVariaciones` | `boolean` | `false` | Pinta los negativos en rojo |
 | `llenarAlto` | `boolean \| 'auto'` | `'auto'` | Igual que en `<app-tabla-reporte>` |
 | `seleccionable` | `boolean` | `false` | Hace las filas clicables |
+| `primeraColumnaFija` | `boolean` | `false` | La primera columna (etiqueta de la fila) queda a la vista al hacer scroll horizontal; clase `mis-primera-fija` en `styles.css` |
 
 Una columna con `semaforoKey` lee ese campo de la fila (`-1`/`0`/`1`) y dibuja el punto de color,
 mismo criterio que `<app-tabla-reporte>`.

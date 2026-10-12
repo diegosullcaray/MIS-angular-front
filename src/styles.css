@@ -43,3 +43,25 @@
   padding: 0.35rem 0.3rem;
   font-size: 10.5px;
 }
+
+/* `[primeraColumnaFija]` de `app-tabla-reporte` / `app-tabla-dinamica`: al hacer scroll horizontal
+   la primera columna (la etiqueta de la fila) se queda a la vista. Solo la primera celda del primer
+   renglón del encabezado y las del cuerpo; la fila de detalle (`colspan`) no se fija. El fondo es
+   opaco para que lo que pasa por debajo no se transparente; la fila coloreada lo hereda. */
+.mis-primera-fija .p-datatable-thead > tr:first-child > th:first-child,
+.mis-primera-fija .p-datatable-tbody > tr > td:first-child:not([colspan]) {
+  position: sticky;
+  left: 0;
+}
+.mis-primera-fija .p-datatable-thead > tr:first-child > th:first-child {
+  z-index: 3;
+}
+.mis-primera-fija .p-datatable-tbody > tr > td:first-child:not([colspan]) {
+  z-index: 1;
+  background-color: var(--mis-surface);
+  box-shadow: 1px 0 0 var(--mis-border);
+}
+.mis-primera-fija .p-datatable-tbody > tr[style*='background'] > td:first-child:not([colspan]),
+.mis-primera-fija .p-datatable-tbody > tr.fila-destacada > td:first-child:not([colspan]) {
+  background-color: inherit;
+}

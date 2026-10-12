@@ -84,6 +84,19 @@ Tres puntos donde el módulo mete lo suyo, como atributo del elemento proyectado
 | `cerrar` | Luz roja, **antes** de navegar al inicio |
 | `volver` | Luz amarilla, **antes** de navegar |
 
+### Botones de la franja de filtros
+
+Con `[conFiltros]="true"` la barra suma un botón por grupo de la franja:
+
+| Botón | Ícono | Muestra | Aparece |
+|---|---|---|---|
+| Jerarquía | `pi-sitemap` | Solo `app-hier-selector` | Si el panel proyecta un selector de jerarquía |
+| Filtros | `pi-filter` | Todo lo demás de `[ventana-filtros]` (el filtro propio del reporte) | Si hay filtros propios, aunque la franja esté cerrada |
+
+El filtro propio **no va dentro de la jerarquía**. Para saber si existe, el panel lo mide con la
+regla de ocultación apagada (`.mis-midiendo`): si midiera lo que ya está oculto, nunca vería sus
+filtros y el botón no aparecería.
+
 `filtrosAbiertos` es un `linkedSignal`: fija el valor inicial, pero después el usuario manda con el
 botón de filtros. Cambiarlo desde afuera reabre la franja.
 

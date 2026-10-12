@@ -137,12 +137,16 @@ export class WindowPanelComponent {
         }
         return true;
       };
-      const revisar = () =>
+      const revisar = () => {
+        // La franja puede venir con «otros» ocultos por el propio botón: se miden sin esa regla.
+        franja.classList.add('mis-midiendo');
         this.hayOtrosFiltros.set(
           [...franja.querySelectorAll('*')].some(
             (el) => !el.children.length && !el.matches('app-hier-selector, app-hier-selector *') && visible(el),
           ),
         );
+        franja.classList.remove('mis-midiendo');
+      };
       revisar();
       const observador = new MutationObserver(revisar);
       observador.observe(franja, { childList: true, subtree: true });
