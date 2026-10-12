@@ -18,6 +18,9 @@
     <!-- Como en los reportes mensuales: en escritorio el periodo se elige desde el botón de
          calendario de la barra; en pantallas angostas queda el selector en los filtros. -->
     <app-fecha-cierre-boton ventana-acciones etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" />
+  }
+  <!-- Un solo nodo proyectable por bloque: con dos en la raíz del @if, Angular no los manda a su slot. -->
+  @if (periodos().length) {
     <app-grupo-filtros ventana-filtros class="lg:hidden">
       <app-select-filtro etiqueta="Periodo" [opciones]="periodos()" [(valor)]="periodo" ancho="w-44" />
     </app-grupo-filtros>
