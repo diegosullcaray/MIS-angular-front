@@ -27,6 +27,8 @@ export class GraficoPieComponent {
   readonly fondoTransparente = input(false);
   /** Vacía el centro: la torta pasa a ser dona (legado `innerSize: '65%'`). */
   readonly dona = input(false);
+  /** Muestra el porcentaje de cada porción dentro de ella. */
+  readonly porcentajes = input(false);
 
   /** Emite el nombre de la porción clickeada. */
   readonly porcionSeleccionada = output<string>();
@@ -35,6 +37,7 @@ export class GraficoPieComponent {
     opcionesPie(this.porciones(), this.tema.oscuro(), {
       fondoTransparente: this.fondoTransparente(),
       dona: this.dona(),
+      porcentajes: this.porcentajes(),
     })
   );
 }

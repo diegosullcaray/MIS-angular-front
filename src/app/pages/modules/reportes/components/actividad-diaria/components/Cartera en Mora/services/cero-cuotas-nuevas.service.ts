@@ -29,6 +29,7 @@ import type {
   ReporteBloqueUnico,
   TablaReporteResultado,
 } from '../../../../../models/tabla-reporte.model';
+import type { OpcionFiltro } from '../../../../../../../../shared/ui/formularios/opcion-filtro.model';
 import type { BloqueGrafico } from '../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { TablaDinamicaResultado } from '../../../../../models/tabla-dinamica.model';
 import type { KpiCeroCuotas } from '../models/cartera-en-mora.model';
@@ -46,13 +47,19 @@ export class CeroCuotasNuevasService {
   private readonly reportes = inject(ModReportesService);
 
   /** Dashboard. Devuelve gráficos, no una tabla; el `fec` va como filtro. */
-  dashboard(nodo: NodoConsulta): Observable<BloqueGrafico[]> {
+  dashboard(nodo: NodoConsulta, fec?: string): Observable<BloqueGrafico[]> {
     return this.reportes
       .getGraphicData(COD_CERO_CUOTAS.dashboard, {
         ...this.paramsNodo(nodo),
-        fec: this.bloques.fec(),
+        // El selector de fecha de corte entrega `YYYY-MM-DD`; el strand pide `YYYYMMDD`.
+        fec: fec ? fec.replaceAll('-', '') : this.bloques.fec(),
       })
       .pipe(map(mapearBloquesGrafico));
+  }
+
+  /** Cortes disponibles para el selector de fecha de corte del Dashboard (`RS_FECH`, el mismo de Cartera Agrícola).  */
+  periodosDashboard(): Observable<OpcionFiltro[]> {
+    return this.bloques.periodos('RS_FECH');
   }
 
   /** Cuadro de Mando. Sus dos bloques comparten los filtros `prod` y `tipcuota`. */

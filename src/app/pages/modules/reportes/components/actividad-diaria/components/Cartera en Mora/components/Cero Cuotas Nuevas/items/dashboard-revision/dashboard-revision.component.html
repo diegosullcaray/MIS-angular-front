@@ -74,7 +74,7 @@
         <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
           @if (concentracionSaldos(); as concentracion) {
             <div class="mis-card h-[400px] p-3">
-              <app-grafico-mixto [datos]="concentracion" tipo="barra" formato="numero" />
+              <app-grafico-mixto [datos]="concentracion" tipo="barra" formato="millones" [decimales]="2" />
             </div>
           }
           @if (participacionProducto().length) {
@@ -83,6 +83,7 @@
                 titulo="Participación de Saldo por Producto"
                 [porciones]="participacionProducto()"
                 [dona]="true"
+                [porcentajes]="true"
               />
             </div>
           }
@@ -101,7 +102,7 @@
         <section class="grid grid-cols-1 gap-5 xl:grid-cols-2">
           @for (grafico of graficos(); track grafico.titulo) {
             <div class="mis-card h-[360px] p-3">
-              <app-grafico-mixto [datos]="grafico" tipo="linea" formato="numero" />
+              <app-grafico-mixto [datos]="grafico" tipo="linea" [formato]="grafico.enMillones ? 'millones' : 'numero'" [decimales]="2" />
             </div>
           }
         </section>

@@ -86,6 +86,7 @@
         [columnas]="columnas"
         [filas]="filas()"
         [cargando]="cargando()"
+        [primeraColumnaFija]="true"
         [columnasClicables]="columnasClicables()"
         (celdaSeleccionada)="onCeldaSeleccionada($event)"
       />
@@ -102,7 +103,7 @@
   (visibleChange)="cerrarDetalle()"
   [modal]="true"
   [dismissableMask]="true"
-  [style]="{ width: '92vw', maxWidth: '1200px' }"
+  [style]="{ width: '96vw', maxWidth: '1240px' }"
 >
   <div class="flex flex-col gap-3">
     <app-grupo-filtros>

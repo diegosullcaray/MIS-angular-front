@@ -119,7 +119,7 @@ export interface PestanaReporte {
                             <app-chip-informativo [texto]="bloque.chip" />
                           }
                           <div class="mis-card p-3 overflow-x-auto">
-                            <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme() || !!bloque.paginado" />
+                            <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [primeraColumnaFija]="primeraColumnaFija()" [llenarAlto]="llenarAlto()" [encabezadoUniforme]="encabezadoUniforme() || !!bloque.paginado" />
                             @if (bloque.paginado && totalFilas(); as total) {
                               <p-paginator
                                 class="border-t border-[var(--mis-border)] mt-2 pt-1"
@@ -157,7 +157,7 @@ export interface PestanaReporte {
                 <app-chip-informativo [texto]="bloque.chip" />
               }
               <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="filasVisibles(bloque.tabla.body)" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [encabezadoUniforme]="encabezadoUniforme()" />
+                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="filasVisibles(bloque.tabla.body)" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [primeraColumnaFija]="primeraColumnaFija()" [llenarAlto]="llenarAlto()" [encabezadoUniforme]="encabezadoUniforme()" />
                 <!-- El paginador es parte de la tabla, como el mat-paginator de \`app-table-ajax\`: va
                      dentro de su tarjeta, pegado al pie. Los reportes paginados son de un solo bloque. -->
                 @if (primero && totalPaginador(bloque.tabla.body); as total) {
@@ -215,6 +215,10 @@ export class ReporteSimpleComponent {
    * pantallas angostas. Ver `<app-tabla-reporte>`.
    */
   readonly ajustarAncho = input(false);
+  /** La primera columna queda a la vista al desplazar la tabla en horizontal. */
+  readonly primeraColumnaFija = input(false);
+  /** Ver `app-tabla-reporte`: `false` deja la tabla en su tope normal (16 filas / 62 % de la ventana) y no la estira hasta el pie. */
+  readonly llenarAlto = input<boolean | 'auto'>('auto');
   /** Encabezados con el color único del tema (ver `<app-tabla-reporte>`). */
   readonly encabezadoUniforme = input(false);
 

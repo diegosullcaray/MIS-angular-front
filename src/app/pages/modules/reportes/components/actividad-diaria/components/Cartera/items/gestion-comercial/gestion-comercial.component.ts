@@ -6,6 +6,7 @@ import { TabsModule } from 'primeng/tabs';
 import { DatePickerModule } from 'primeng/datepicker';
 import { HierSelectorComponent } from '../../../../../../../../../shared/ui/hier-selector/hier-selector.component';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { TablaDinamicaComponent } from '../../../../../../../../../shared/ui/tablas/tabla-dinamica/tabla-dinamica.component';
 import { GraficoMixtoComponent } from '../../../../../../../../../shared/ui/graficos/grafico-mixto/grafico-mixto.component';
 import { EmptyStateComponent } from '../../../../../../../../../shared/ui/empty-state/empty-state.component';
@@ -46,6 +47,7 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
     DatePickerModule,
     HierSelectorComponent,
     SelectFiltroComponent,
+    FechaCierreBotonComponent,
     TablaDinamicaComponent,
     GraficoMixtoComponent,
     EmptyStateComponent,

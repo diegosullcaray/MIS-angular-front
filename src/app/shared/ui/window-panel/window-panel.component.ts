@@ -68,8 +68,13 @@ export class WindowPanelComponent {
   protected readonly jerarquiaVisible = linkedSignal(() => this.filtrosAbiertos());
 
   /** El selector de jerarquía del panel (si lo tiene) va con su propio botón, aparte de los filtros. */
-  protected readonly conJerarquia = computed(() => !!this.selectorJerarquia());
-  private readonly selectorJerarquia = contentChild(HierSelectorComponent);
+  protected readonly conJerarquia = computed(() => {
+    // Un selector con `class="hidden"` solo resuelve el nodo autorizado (el reporte baja de nivel por
+    // la tabla y las migas): no hay jerarquía que mostrar, así que tampoco se ofrece su botón.
+    const el = this.selectorJerarquia();
+    return !!el && !el.nativeElement.classList.contains('hidden');
+  });
+  private readonly selectorJerarquia = contentChild(HierSelectorComponent, { read: ElementRef });
   private readonly cuerpo = viewChild<ElementRef<HTMLElement>>('cuerpo');
   protected readonly mostrarSubir = signal(false);
   private readonly franja = viewChild<ElementRef<HTMLElement>>('franja');

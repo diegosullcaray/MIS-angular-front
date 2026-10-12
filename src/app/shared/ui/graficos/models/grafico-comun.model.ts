@@ -25,6 +25,8 @@ export interface BloqueGrafico {
   tituloEjeY?: string;
   /** Gráfico de barras o columnas apiladas (ej. Ingresos y Salidas, stacking: 'normal'). */
   apilado?: boolean;
+  /** Los valores ya vienen en millones de soles: el gráfico los rotula `12.34 M` (ver `FormatoValor`). */
+  enMillones?: boolean;
 }
 
 /** Datos neutrales para un heatmap de Highcharts. */
@@ -53,8 +55,11 @@ export interface PorcionGrafico {
  */
 export type TipoGraficoMixto = 'auto' | 'barra' | 'columna' | 'linea';
 
-/** Cómo se formatean los valores en el tooltip: importe en soles o número pelado. */
-export type FormatoValor = 'soles' | 'numero';
+/**
+ * Cómo se formatean los valores: importe en soles, número pelado, o `millones` (el dato ya está en
+ * millones: etiquetas y tooltip `12.34 M`, con los `decimales` del gráfico).
+ */
+export type FormatoValor = 'soles' | 'numero' | 'millones';
 
 /** Ajustes opcionales de presentación que aceptan las fábricas y los componentes de gráfico. */
 export interface OpcionesGrafico {
@@ -68,6 +73,8 @@ export interface OpcionesGrafico {
   decimales?: number;
   /** Solo en torta: la vacía por el centro (`innerSize`) para dejarla como dona. */
   dona?: boolean;
+  /** Solo en torta: el porcentaje de cada porción dentro de ella. */
+  porcentajes?: boolean;
 }
 
 /** Una serie del radar: un valor por eje, en el mismo orden que `ejes`. */

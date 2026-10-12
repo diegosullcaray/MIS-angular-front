@@ -35,14 +35,14 @@ export class CeroCuotasTopComponent extends ReporteBloquesBase {
   protected readonly titulos = [
     'Top 10 Territorio con mayor saldo cero cuotas',
     'Top 10 Unidad con mayor saldo cero cuotas',
-    'Top 5 Territorio nro. cero cuotas nuevo ingreso — tipo producto',
-    'Top 5 Unidad nro. cero cuotas nuevo ingreso — tipo producto',
-    'Top 5 Territorio saldo cuotas nuevo ingreso — tipo producto',
-    'Top 5 Unidad saldo cuotas nuevo ingreso — tipo producto',
-    'Top 5 Territorio saldo cuotas nuevo ingreso — tipo repro',
-    'Top 5 Unidad saldo cuotas nuevo ingreso — tipo repro',
-    'Top 5 Territorio número cuotas nuevo ingreso — tipo repro',
-    'Top 5 Unidad número cuotas nuevo ingreso — tipo repro',
+    'Top 5 Territorio nro. cero cuotas nuevo ingreso',
+    'Top 5 Unidad nro. cero cuotas nuevo ingreso',
+    'Top 5 Territorio saldo cuotas nuevo ingreso',
+    'Top 5 Unidad saldo cuotas nuevo ingreso',
+    'Top 5 Territorio saldo cuotas nuevo ingreso',
+    'Top 5 Unidad saldo cuotas nuevo ingreso',
+    'Top 5 Territorio número cuotas nuevo ingreso',
+    'Top 5 Unidad número cuotas nuevo ingreso',
   ];
 
   protected consultar(nodo: NodoConsulta): Observable<TablaReporteResultado[]> {

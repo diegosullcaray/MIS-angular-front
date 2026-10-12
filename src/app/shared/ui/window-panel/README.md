@@ -90,7 +90,7 @@ Con `[conFiltros]="true"` la barra suma un botón por grupo de la franja:
 
 | Botón | Ícono | Muestra | Aparece |
 |---|---|---|---|
-| Jerarquía | `pi-sitemap` | Solo `app-hier-selector` | Si el panel proyecta un selector de jerarquía |
+| Jerarquía | `pi-sitemap` | Solo `app-hier-selector` | Si el panel proyecta un selector de jerarquía **visible**. Con `class="hidden"` (el reporte baja de nivel por el drill down de la tabla) no hay botón |
 | Filtros | `pi-filter` | Todo lo demás de `[ventana-filtros]` (el filtro propio del reporte) | Si hay filtros propios, aunque la franja esté cerrada |
 
 El filtro propio **no va dentro de la jerarquía**. Para saber si existe, el panel lo mide con la

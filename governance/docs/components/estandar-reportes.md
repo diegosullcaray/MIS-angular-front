@@ -36,6 +36,13 @@ con controles sueltos.
   no una decisión de diseño. Ejemplos: *Monitor Reprogramados* (Tipo: Operaciones / Saldo), *CMG Clientes
   Pasivo* (Variable: Clientes / Cuentas / Saldo), *Panel Operaciones* (Producto).
 - **"Limpiar" va junto al último nivel** de la jerarquía, no empujado al borde derecho.
+- **Fecha de cierre / periodo.** Todo reporte con selector de corte (mensual **o diario**) usa el estilo de
+  los cierres mensuales: `<app-fecha-cierre-boton ventana-acciones>` (botón de calendario en la barra, en
+  escritorio) y, en pantallas angostas, el `app-select-filtro` equivalente dentro de un
+  `<app-grupo-filtros class="lg:hidden">`. No va un selector suelto en la franja. Ejemplos diarios:
+  *Gestión Comercial*, *Portafolio Agrícola* y *Dashboard* de Cero Cuotas Nuevas.
+- **Jerarquía oculta ⇒ sin botón.** Un reporte que baja de nivel por el drill down (selector con
+  `class="hidden"`) no muestra el botón de jerarquía en la barra del panel.
 - **Controles:** `<app-select-filtro>` y `<app-input-filtro>`. Un `span` + `p-select` a mano sobre
   opciones `{ id, desc }` es exactamente `app-select-filtro`: no se repite. Si un control no encaja
   (fecha, asesor con buscador), su etiqueta usa el mismo estilo:

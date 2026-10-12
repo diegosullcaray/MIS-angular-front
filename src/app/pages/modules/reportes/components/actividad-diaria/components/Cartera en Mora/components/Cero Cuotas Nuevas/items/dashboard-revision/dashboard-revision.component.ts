@@ -24,6 +24,7 @@ import type {
   PorcionGrafico,
 } from '../../../../../../../../../../../shared/ui/graficos/models/grafico-comun.model';
 import { CeroCuotasNuevasService } from '../../../../services/cero-cuotas-nuevas.service';
+import { resaltarColumnasTopAsesores } from '../../../../utils/cero-cuotas-mapeo.util';
 import type { KpiCeroCuotas } from '../../../../models/cartera-en-mora.model';
 
 /**
@@ -124,7 +125,7 @@ export class CeroCuotasDashboardRevisionComponent {
       next: ({ graficos, kpis, topAsesores, mapasCalor, participacionProducto, concentracionSaldos }) => {
         this.graficos.set(graficos);
         this.kpis.set(kpis);
-        this.topAsesores.set(topAsesores);
+        this.topAsesores.set({ ...topAsesores, columnas: resaltarColumnasTopAsesores(topAsesores.columnas) });
         this.mapasCalor.set(mapasCalor);
         this.participacionProducto.set(participacionProducto);
         this.concentracionSaldos.set(concentracionSaldos);

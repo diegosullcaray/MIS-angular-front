@@ -123,6 +123,7 @@ export function opcionesMixto(
             if (ejeSecundarioEnPorcentaje || esPorcentaje(serie.nombre)) {
               return `${valor.toFixed(1)}%`;
             }
+            if (formato === 'millones') return `${valor.toFixed(decimales)} M`;
             if (formato === 'soles') {
               return abreviarMonto(valor, decimales);
             }
@@ -148,6 +149,7 @@ export function opcionesMixto(
           if (esPorcentaje(serie.nombre)) {
             return `${valor.toFixed(1)}%`;
           }
+          if (formato === 'millones') return `${(esApilado ? Math.abs(valor) : valor).toFixed(decimales)} M`;
           if (esApilado) {
             return abreviarMonto(Math.abs(valor), decimales);
           }
@@ -224,7 +226,9 @@ export function opcionesMixto(
                   if (!Number.isFinite(val) || val === 0) return '';
                   const absVal = Math.abs(val);
                   const texto =
-                    absVal >= 1_000_000
+                    formato === 'millones'
+                      ? `${val.toFixed(decimales)} M`
+                      : absVal >= 1_000_000
                       ? `${(val / 1_000_000).toFixed(decimales)} M`
                       : absVal >= 1_000
                         ? `${(val / 1_000).toFixed(1)} k`
@@ -298,7 +302,16 @@ export function opcionesPie(
     plotOptions: {
       pie: {
         showInLegend: true,
-        dataLabels: { enabled: false },
+        dataLabels: config.porcentajes
+          ? {
+              enabled: true,
+              // Dentro de la porción (en la dona, sobre el anillo); las muy chicas no llevan etiqueta.
+              distance: config.dona ? -20 : -35,
+              filter: { property: 'percentage', operator: '>', value: 3 },
+              format: '{point.percentage:.1f}%',
+              style: { color: '#ffffff', fontSize: '11px', fontWeight: 'bold', textOutline: 'none' },
+            }
+          : { enabled: false },
         borderWidth: 0,
         ...(config.dona ? { innerSize: '65%' } : {}),
       },
@@ -337,9 +350,11 @@ function formateadorTooltip(formato: FormatoValor): TooltipFormatterCallbackFunc
       const numero = Highcharts.numberFormat(valor, 0, '.', ',');
       const texto = esPorcentaje(nombre)
         ? `${valor.toFixed(2)} %`
-        : formato === 'soles'
-          ? `S/ ${numero}`
-          : numero;
+        : formato === 'millones'
+          ? `${valor.toFixed(2)} M`
+          : formato === 'soles'
+            ? `S/ ${numero}`
+            : numero;
       html += `<span style="color:${punto.color}">●</span> ${nombre}: <b>${texto}</b><br/>`;
     }
     return html;
