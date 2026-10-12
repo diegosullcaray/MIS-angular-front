@@ -215,6 +215,28 @@
   }
 }
 
+/* Móvil: Pachi también se asoma por el costado, como en escritorio. El globo se
+   corre a la derecha y se angosta lo justo para que la burbuja quede entera en
+   pantalla (sin él quedaba en x < 0). */
+@media (max-width: 899px) {
+  .driver-popover {
+    margin-left: 22px !important;
+    max-width: min(370px, calc(100vw - 24px - 26px)) !important;
+    padding-left: 36px !important;
+  }
+
+  .mis-tour-mascota {
+    position: absolute !important;
+    top: 50% !important;
+    left: -28px !important;
+    width: 56px !important;
+    height: 56px !important;
+    transform: translateY(-50%) !important;
+    z-index: 1000000004 !important;
+    animation: mis-tour-pachi-asoma 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+}
+
 @keyframes mis-tour-pachi-asoma {
   from {
     opacity: 0;
