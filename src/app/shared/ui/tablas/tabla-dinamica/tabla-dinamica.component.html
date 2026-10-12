@@ -8,10 +8,11 @@
          [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
          [dataKey]="dataKey()" [expandedRowKeys]="expandedRowKeys()">
   <ng-template pTemplate="header">
-    @for (fila of encabezados().filas; track $index) {
+    @for (fila of encabezados().filas; track $index; let r = $index) {
       <tr>
-        @for (columna of fila; track (columna.key ?? columna.label ?? $index)) {
+        @for (columna of fila; track (columna.key ?? columna.label ?? $index); let c = $index) {
           <th
+            [class.mis-col-fija]="primeraColumnaFija() && esCeldaPrimeraColumna(r, c)"
             [attr.colspan]="columna.colspan"
             [attr.rowspan]="columna.rowspan"
             class="text-[12px] uppercase text-center border border-[var(--mis-text-on-primary)]/25"

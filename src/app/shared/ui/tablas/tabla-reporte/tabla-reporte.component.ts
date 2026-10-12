@@ -123,6 +123,16 @@ export class TablaReporteComponent {
     this.encabezados().map((filaEnc) => filaEncabezadoVisible(this.columnasDe(filaEnc)))
   );
 
+  /**
+   * ¿La celda `c` del renglón de encabezado `r` es la de la primera columna? Es la primera de su
+   * renglón, salvo que la de un renglón de arriba la cubra con `rowspan`.
+   */
+  protected esCeldaPrimeraColumna(r: number, c: number): boolean {
+    if (c !== 0) return false;
+    const filas = this.filasEncabezado();
+    return !filas.slice(0, r).some((fila, i) => Number(fila[0]?.rows ?? 1) > r - i);
+  }
+
   protected valor(fila: FilaReporte, columna: ColumnaReporte): unknown {
     return fila[columna.columnDef];
   }

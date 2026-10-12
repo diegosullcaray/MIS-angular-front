@@ -48,12 +48,14 @@
    la primera columna (la etiqueta de la fila) se queda a la vista. Solo la primera celda del primer
    renglón del encabezado y las del cuerpo; la fila de detalle (`colspan`) no se fija. El fondo es
    opaco para que lo que pasa por debajo no se transparente; la fila coloreada lo hereda. */
-.mis-primera-fija .p-datatable-thead > tr:first-child > th:first-child,
+.mis-primera-fija .p-datatable-thead > tr > th.mis-col-fija,
 .mis-primera-fija .p-datatable-tbody > tr > td:first-child:not([colspan]) {
   position: sticky;
   left: 0;
 }
-.mis-primera-fija .p-datatable-thead > tr:first-child > th:first-child {
+/* Encabezado: la celda de la primera columna de CADA renglón (los de varios renglones repiten la
+   etiqueta al inicio: «Tramo», «Meta del Mes»…), no solo la del primero. */
+.mis-primera-fija .p-datatable-thead > tr > th.mis-col-fija {
   z-index: 3;
 }
 .mis-primera-fija .p-datatable-tbody > tr > td:first-child:not([colspan]) {
