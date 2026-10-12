@@ -55,6 +55,9 @@ export interface PestanaReporte {
       [conFiltros]="true"
     >
       
+      <!-- Acciones de la barra (p. ej. el botón de fecha de cierre): se reproyectan al slot del panel. -->
+      <ng-container ngProjectAs="[ventana-acciones]"><ng-content select="[acciones]" /></ng-container>
+
       <div ventana-filtros class="flex flex-col gap-3">
         <app-hier-selector
           [paramsHier]="paramsHier()"
@@ -62,7 +65,7 @@ export interface PestanaReporte {
           (nodoSeleccionado)="nivelSeleccionado.emit($event)"
           (error)="errorJerarquia.emit()"
         />
-        <app-grupo-filtros>
+        <app-grupo-filtros [class.lg:hidden]="filtrosSoloMovil()">
           <ng-content select="[filtros]" />
         </app-grupo-filtros>
       </div>
@@ -119,7 +122,7 @@ export interface PestanaReporte {
                             <app-chip-informativo [texto]="bloque.chip" />
                           }
                           <div class="mis-card p-3 overflow-x-auto">
-                            <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [primeraColumnaFija]="primeraColumnaFija()" [llenarAlto]="llenarAlto()" [encabezadoUniforme]="encabezadoUniforme() || !!bloque.paginado" />
+                            <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="bloque.tabla.body" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [primeraColumnaFija]="primeraColumnaFija()" [filasSeccion]="filasSeccion()" [llenarAlto]="llenarAlto()" [encabezadoUniforme]="encabezadoUniforme() || !!bloque.paginado" />
                             @if (bloque.paginado && totalFilas(); as total) {
                               <p-paginator
                                 class="border-t border-[var(--mis-border)] mt-2 pt-1"
@@ -157,7 +160,7 @@ export interface PestanaReporte {
                 <app-chip-informativo [texto]="bloque.chip" />
               }
               <div class="mis-card p-3 overflow-x-auto">
-                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="filasVisibles(bloque.tabla.body)" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [primeraColumnaFija]="primeraColumnaFija()" [llenarAlto]="llenarAlto()" [encabezadoUniforme]="encabezadoUniforme()" />
+                <app-tabla-reporte [encabezados]="bloque.tabla.headers" [filas]="filasVisibles(bloque.tabla.body)" [cargando]="cargando() || !!bloque.cargando" [ajustarAncho]="ajustarAncho()" [primeraColumnaFija]="primeraColumnaFija()" [filasSeccion]="filasSeccion()" [llenarAlto]="llenarAlto()" [encabezadoUniforme]="encabezadoUniforme()" />
                 <!-- El paginador es parte de la tabla, como el mat-paginator de \`app-table-ajax\`: va
                      dentro de su tarjeta, pegado al pie. Los reportes paginados son de un solo bloque. -->
                 @if (primero && totalPaginador(bloque.tabla.body); as total) {
@@ -217,6 +220,10 @@ export class ReporteSimpleComponent {
   readonly ajustarAncho = input(false);
   /** La primera columna queda a la vista al desplazar la tabla en horizontal. */
   readonly primeraColumnaFija = input(false);
+  /** Filas (por la etiqueta de su primera columna) que se pintan como banda de sección. */
+  readonly filasSeccion = input<readonly string[]>([]);
+  /** Los `[filtros]` solo existen en pantallas angostas (en escritorio los reemplaza una acción de la barra, como el botón de fecha de cierre). */
+  readonly filtrosSoloMovil = input(false);
   /** Ver `app-tabla-reporte`: `false` deja la tabla en su tope normal (16 filas / 62 % de la ventana) y no la estira hasta el pie. */
   readonly llenarAlto = input<boolean | 'auto'>('auto');
   /** Encabezados con el color único del tema (ver `<app-tabla-reporte>`). */

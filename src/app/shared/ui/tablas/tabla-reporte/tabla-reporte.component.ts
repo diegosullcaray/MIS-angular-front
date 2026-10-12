@@ -7,6 +7,16 @@ import { CLASE_BARRA_ESQUELETO, FILAS_ESQUELETO, columnasEsqueleto } from '../es
 import { colorSemaforo } from '../semaforo.util';
 import { formatearCeldaReporte } from './formato-celda.util';
 
+/** Etiqueta comparable: sin tildes, en minúsculas y con los espacios colapsados. */
+function normalizarEtiqueta(valor: unknown): string {
+  return String(valor ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
 function numeroColumnas(cols: ColumnaReporte['cols']): number {
   return cols ? Number(cols) : 1;
 }
@@ -76,6 +86,11 @@ export class TablaReporteComponent {
   readonly ajustarAncho = input(false);
   /** La primera columna se queda a la vista al hacer scroll horizontal (clase `mis-primera-fija`, en `styles.css`). */
   readonly primeraColumnaFija = input(false);
+  /**
+   * Etiquetas (primera columna) de las filas que se pintan como banda de sección, de otro color que
+   * el resto. Se comparan sin tildes ni mayúsculas. Un `background` que traiga la fila manda.
+   */
+  readonly filasSeccion = input<readonly string[]>([]);
   /**
    * Crece hasta el pie del panel antes de sacar su scroll. En `'auto'` (por defecto) solo si es la
    * única tabla de su pestaña o panel (ver `MaxFilasDirective.hastaElFondo`).
@@ -179,7 +194,12 @@ export class TablaReporteComponent {
   }
 
   protected fondoFila(fila: FilaReporte): string | null {
-    return (fila['background'] as string | undefined) ?? null;
+    const propio = (fila['background'] as string | undefined) ?? null;
+    if (propio || !this.filasSeccion().length) return propio;
+    const etiqueta = this.columnasDato()[0] ? normalizarEtiqueta(fila[this.columnasDato()[0].columnDef]) : '';
+    return this.filasSeccion().some((e) => normalizarEtiqueta(e) === etiqueta)
+      ? 'color-mix(in srgb, var(--mis-brand-sky) 22%, var(--mis-surface))'
+      : null;
   }
 
   protected onClickFila(fila: FilaReporte): void {

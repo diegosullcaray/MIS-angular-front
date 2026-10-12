@@ -3,6 +3,7 @@ import type { Observable } from 'rxjs';
 import { ReporteSimpleComponent } from '../../../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteSimpleBase } from '../../../../../../../../ui/reporte-simple/reporte-simple.base';
 import { SelectFiltroComponent } from '../../../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { PARAMS_HIER_MACRO_SIN_CORREDOR } from '../../../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../../../services/bloque-reporte.service';
 import type { ReporteBloqueUnico } from '../../../../../../../../models/tabla-reporte.model';
@@ -20,7 +21,7 @@ import { ActividadMensualCraService } from '../../../../../../services/actividad
 @Component({
   selector: 'app-mensual-captacion-operacional',
   standalone: true,
-  imports: [ReporteSimpleComponent, SelectFiltroComponent],
+  imports: [ReporteSimpleComponent, SelectFiltroComponent, FechaCierreBotonComponent],
   templateUrl: './captacion-operacional.component.html',
   styleUrl: './captacion-operacional.component.css',
 })

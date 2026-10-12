@@ -41,6 +41,12 @@ con controles sueltos.
   escritorio) y, en pantallas angostas, el `app-select-filtro` equivalente dentro de un
   `<app-grupo-filtros class="lg:hidden">`. No va un selector suelto en la franja. Ejemplos diarios:
   *Gestión Comercial*, *Portafolio Agrícola* y *Dashboard* de Cero Cuotas Nuevas.
+  En `app-reporte-simple` el botón va en el slot `[acciones]` y el selector de las pantallas angostas en
+  `[filtros]` dentro de un `<div class="lg:hidden">`; si ese selector es el único filtro, `[filtrosSoloMovil]="true"`
+  oculta también la baldosa vacía en escritorio. Los 20 reportes mensuales con «Fecha Cierre» siguen esta forma.
+- **Filas de sección.** `[filasSeccion]="['Etiqueta', …]"` (en `app-reporte-simple` y `app-tabla-reporte`) pinta
+  como banda de otro color las filas cuya primera columna coincide (sin tildes ni mayúsculas); p. ej. *Otras
+  Funcionalidades y Transacciones* en Tablero Digital · Operaciones.
 - **Jerarquía oculta ⇒ sin botón.** Un reporte que baja de nivel por el drill down (selector con
   `class="hidden"`) no muestra el botón de jerarquía en la barra del panel.
 - **Controles:** `<app-select-filtro>` y `<app-input-filtro>`. Un `span` + `p-select` a mano sobre

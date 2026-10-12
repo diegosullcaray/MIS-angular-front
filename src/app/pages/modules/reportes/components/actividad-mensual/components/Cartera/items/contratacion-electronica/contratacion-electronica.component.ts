@@ -3,6 +3,7 @@ import type { Observable } from 'rxjs';
 import { ReporteSimpleComponent } from '../../../../../../ui/reporte-simple/reporte-simple.component';
 import { ReporteBloquesBase } from '../../../../../../ui/reporte-simple/reporte-bloques.base';
 import { SelectFiltroComponent } from '../../../../../../../../../shared/ui/formularios/select-filtro/select-filtro.component';
+import { FechaCierreBotonComponent } from '../../../../../../../../../shared/ui/formularios/fecha-cierre-boton/fecha-cierre-boton.component';
 import { PARAMS_HIER_UNIDAD } from '../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
 import type { TablaReporteResultado } from '../../../../../../models/tabla-reporte.model';
@@ -16,7 +17,7 @@ import { ActividadMensualCraService } from '../../../../services/actividad-mensu
 @Component({
   selector: 'app-mensual-contratacion-electronica',
   standalone: true,
-  imports: [ReporteSimpleComponent, SelectFiltroComponent],
+  imports: [ReporteSimpleComponent, SelectFiltroComponent, FechaCierreBotonComponent],
   templateUrl: './contratacion-electronica.component.html',
   styleUrl: './contratacion-electronica.component.css',
 })
