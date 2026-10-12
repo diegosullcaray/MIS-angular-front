@@ -369,6 +369,13 @@ export class NovedadesTourService {
   private readonly driverTour = inject(DriverTourService);
   readonly ejemploActivo = signal<ModoEjemploNovedad>(null);
 
+  /**
+   * Último estado del panel de novedades (`null` = el usuario aún no lo tocó).
+   * Vive aquí, en la raíz, para que al cambiar de módulo y volver al Home el
+   * panel no se reabra solo.
+   */
+  readonly panelAbierto = signal<boolean | null>(null);
+
   /** Las novedades publicadas, de la más reciente a la más antigua. */
   readonly novedades: readonly Novedad[] = NOVEDADES.filter(
     // Sin "Configuración" en el menú, su recorrido no tendría a dónde llevar.
