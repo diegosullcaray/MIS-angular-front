@@ -153,8 +153,8 @@
   border-radius: 50% !important;
   /* Burbuja circular: el PNG es el personaje y el fondo sale de los tokens, así
      que cambia solo entre claro y oscuro. */
-  background: var(--mis-tile-bg, var(--mis-primary-light)) !important;
-  border: 2px solid var(--mis-border-strong) !important;
+  background: color-mix(in srgb, var(--mis-primary-light) 55%, var(--mis-surface)) !important;
+  border: 4px solid color-mix(in srgb, var(--mis-primary) 55%, var(--mis-surface)) !important;
   box-shadow: var(--mis-shadow-lg) !important;
   flex-shrink: 0 !important;
   margin: 0 !important;
@@ -184,7 +184,7 @@
    que entre completo aun con el globo pegado al rail de sistemas. */
 @media (min-width: 900px) {
   .driver-popover {
-    padding-left: 44px !important;
+    padding-left: 76px !important;
   }
 
   .mis-tour-mascota {
