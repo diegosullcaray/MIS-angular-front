@@ -9,7 +9,7 @@ import { InlineErrorComponent } from '../../../../../../../../../shared/ui/inlin
 import { ListSkeletonComponent } from '../../../../../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { OpcionFiltro } from '../../../../../../../../../shared/ui/formularios/opcion-filtro.model';
-import { PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
+import { NIVEL_MAXIMO_JERARQUIA_ASESOR, PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
 import { MENSAJES_CUENTA_RESULTADOS } from '../../../../constantes/actividad-mensual.constantes';
 import type { CuentaResultadosResultado } from '../../../../models/cuenta-resultados.model';
@@ -52,7 +52,8 @@ interface ConsultaCuenta {
 export class CuentaResultadosComponent {
   private readonly servicio = inject(ActividadMensualRepoService);
 
-  protected readonly paramsHier = PARAMS_HIER_UNIDAD;
+  /** Baja más allá del nivel 6 hasta el asesor; un nivel sin hijos no abre otro desplegable. */
+  protected readonly paramsHier = { ...PARAMS_HIER_UNIDAD, maxLvl: NIVEL_MAXIMO_JERARQUIA_ASESOR };
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   /** `true` hasta que la jerarquía resuelve el nivel inicial. */

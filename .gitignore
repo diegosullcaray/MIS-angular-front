@@ -51,7 +51,7 @@ Thumbs.db
 
 # Herramientas de IA locales: configuración personal, no del proyecto.
 /.claude/
-/.impeccable/
+.impeccable/
 /.agents/
 
 # Graphify

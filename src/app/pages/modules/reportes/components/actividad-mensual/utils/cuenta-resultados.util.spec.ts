@@ -151,14 +151,15 @@ describe('cuenta-resultados.util', () => {
       expect(acumulado.subs![0].cellStyle?.['border-left']).toBe('2px solid var(--mis-border-strong)');
     });
 
-    it('el mes preliminar va con tinte mostaza; cerrado, con el encabezado claro tipo macOS', () => {
+    it('el mes preliminar va en oro de marca; cerrado, con la banda de marca como el resto', () => {
       const preliminar = hojas(crearColumnasCuentaResultados('2026-08-01', true)).find((c) => c.key === 'periodo_actual')!;
-      expect(preliminar.style?.['background']).toBe('color-mix(in srgb, var(--mis-escala-3) 30%, var(--mis-surface))');
-      expect(preliminar.style?.['color']).toBe('var(--mis-text-primary)');
+      expect(preliminar.style?.['background']).toBe('var(--mis-brand-gold)');
+      expect(preliminar.style?.['color']).toBe('var(--mis-primary)');
+      expect(preliminar.cellStyleFn!(null, { style: 1 })!['background']).toContain('var(--mis-brand-gold)');
 
       const cerrado = hojas(crearColumnasCuentaResultados('2026-05-01', false)).find((c) => c.key === 'periodo_actual')!;
       expect(cerrado.label).toBe('May.26');
-      expect(cerrado.style?.['background']).toBe('var(--mis-surface)');
+      expect(cerrado.style?.['background']).toBe('var(--mis-primary)');
     });
 
     it('las cifras y sus encabezados van a la derecha', () => {
@@ -219,9 +220,9 @@ describe('cuenta-resultados.util', () => {
 
   it('distingue detalle, principal y resultado por `style`, como la maqueta', () => {
     expect(estiloFilaCuenta({ style: 1 })).toEqual(expect.objectContaining({ 'font-weight': '500', color: 'var(--mis-text-secondary)' }));
-    expect(estiloFilaCuenta({ style: 2 })).toEqual(expect.objectContaining({ 'font-weight': '700', background: 'var(--mis-primary-light)' }));
+    expect(estiloFilaCuenta({ style: 2 })).toEqual(expect.objectContaining({ 'font-weight': '700', background: 'var(--mis-surface)' }));
     expect(estiloFilaCuenta({ style: 3 })).toEqual(
-      expect.objectContaining({ 'border-top': '2px solid var(--mis-primary)', color: 'var(--mis-text-primary)', background: 'var(--mis-surface)' }),
+      expect.objectContaining({ 'border-top': '2px solid var(--mis-primary)', color: 'var(--mis-primary-text)', background: 'var(--mis-primary-light)' }),
     );
   });
 

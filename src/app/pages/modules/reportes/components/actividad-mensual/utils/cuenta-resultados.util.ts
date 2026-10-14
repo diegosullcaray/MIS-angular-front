@@ -81,27 +81,26 @@ function nivel(fila: Record<string, unknown>): number {
   return Number(fila['style']);
 }
 
-/** Estilo por nivel (tipo Numbers): resultado (3) con tinte de marca y filete superior, cuenta principal (2) en el fondo de marca, detalle en la superficie. Todas con filete fino y cifras tabulares. */
+/** Estilo por nivel (maqueta PYG FC): resultado (3) tintado de marca con filete superior, cuenta principal (2) en la superficie con texto de marca, detalle (1, 4, 5) en el fondo de panel. Todas con filete fino y cifras tabulares. */
 export function estiloFilaCuenta(fila: Record<string, unknown>): Record<string, string> {
   const base = {
     'border-bottom': '1px solid color-mix(in srgb, var(--mis-border) 55%, transparent)',
     'font-variant-numeric': 'tabular-nums',
   };
   switch (nivel(fila)) {
-    // Totales (márgenes): sin relleno, texto principal y filete de marca arriba y abajo; así no se confunden con las cuentas desplegables (2), que van tintadas.
     case 3:
       return {
         ...base,
-        background: 'var(--mis-surface)',
-        color: 'var(--mis-text-primary)',
+        background: 'var(--mis-primary-light)',
+        color: 'var(--mis-primary-text)',
         'font-weight': '800',
         'border-top': '2px solid var(--mis-primary)',
-        'border-bottom': '1px solid var(--mis-primary)',
+        'border-bottom': '1px solid var(--mis-border-strong)',
       };
     case 2:
-      return { ...base, background: 'var(--mis-primary-light)', color: 'var(--mis-primary-text)', 'font-weight': '700' };
+      return { ...base, background: 'var(--mis-surface)', color: 'var(--mis-primary-text)', 'font-weight': '700' };
     default:
-      return { ...base, background: 'var(--mis-surface)', color: 'var(--mis-text-secondary)', 'font-weight': '500' };
+      return { ...base, background: 'var(--mis-panel-bg)', color: 'var(--mis-text-secondary)', 'font-weight': '500' };
   }
 }
 
@@ -169,24 +168,49 @@ const ESTILO_CUENTA_FIJA = {
   'white-space': 'normal',
 };
 
-/** Encabezado tipo macOS (Numbers/Finder): claro, texto secundario sin mayúsculas y filetes finos, en vez de la banda de marca sólida. */
-const ENCABEZADO_MAC = {
-  background: 'var(--mis-surface)',
-  color: 'var(--mis-text-secondary)',
+/** Encabezado en banda de marca, como la maqueta; el filete entre bloques es blanco translúcido. */
+const FILETE_ENCABEZADO = 'rgba(255, 255, 255, 0.25)';
+const ENCABEZADO = {
+  background: 'var(--mis-primary)',
+  color: 'var(--mis-text-on-primary)',
   'font-weight': '600',
   'text-transform': 'none',
-  'border-color': 'color-mix(in srgb, var(--mis-border) 60%, transparent)',
+  'border-color': FILETE_ENCABEZADO,
 };
 
 /** Encabezado de una cifra: compacto y a la derecha. */
-const ENCABEZADO_CIFRA = { ...ENCABEZADO_MAC, 'text-align': 'right', padding: '4px 8px' };
+const ENCABEZADO_CIFRA = { ...ENCABEZADO, 'text-align': 'right', padding: '4px 8px' };
 
-/** "Preliminar Ago": el mes aún abierto va en mostaza con texto negro. */
+/** Encabezado de bloque (Flujo mensual / Acumulado): mayúsculas espaciadas, que el `<th>` ya trae. */
+const ENCABEZADO_BLOQUE = { ...ENCABEZADO, 'text-transform': 'uppercase', 'letter-spacing': '0.08em' };
+
+/** "Preliminar Ago": el mes aún abierto va en oro de marca con texto de marca. */
 const ENCABEZADO_PRELIMINAR = {
   ...ENCABEZADO_CIFRA,
-  background: 'color-mix(in srgb, var(--mis-escala-3) 30%, var(--mis-surface))',
-  color: 'var(--mis-text-primary)',
+  background: 'var(--mis-brand-gold)',
+  color: 'var(--mis-primary)',
+  'font-weight': '700',
 };
+
+/** Tinte dorado de las celdas del mes preliminar, sobre el fondo de su fila. */
+function celdaPreliminar(fila: Record<string, unknown>): Record<string, string> {
+  const estilo = estiloFilaCuenta(fila);
+  return { ...estilo, background: `color-mix(in srgb, var(--mis-brand-gold) 22%, ${estilo['background']})` };
+}
+
+/** Porcentaje de variación con fondo y texto del semáforo (verde claro / rojo claro). */
+function celdaPorcentaje(_valor: unknown, fila: Record<string, unknown>): Record<string, string> {
+  const estilo = estiloFilaCuenta(fila);
+  const variacion = fila['variacion_acumulado'];
+  if (variacion == null || variacion === '' || !Number.isFinite(Number(variacion))) return estilo;
+  const favorable = colorVariacionCuenta(Number(variacion), fila) === 'var(--mis-success)';
+  return {
+    ...estilo,
+    background: favorable ? 'var(--mis-success-light)' : 'var(--mis-danger-light)',
+    color: favorable ? 'var(--mis-success)' : 'var(--mis-danger)',
+    'font-weight': '700',
+  };
+}
 
 /** Ancho fijo de cada cifra: si no entran, la tabla se desplaza en horizontal. */
 const CELDA_CIFRA = { 'text-align': 'right', 'min-width': '84px' };
@@ -233,6 +257,7 @@ function mesAnio(fecha: Date): string {
 
 /** Filete que separa el bloque del mes del acumulado. */
 const SEPARADOR_BLOQUE = { 'border-left': '2px solid var(--mis-border-strong)' };
+const SEPARADOR_ENCABEZADO = { 'border-left': `2px solid ${FILETE_ENCABEZADO}` };
 
 /**
  * Dos bloques con el mismo patrón (valores y luego variación): el mes (mismo mes del año
@@ -249,7 +274,7 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
     {
       label: 'Estado de ganancias y pérdidas · en miles (PEN)',
       key: 'cuenta_nombre',
-      style: { ...ENCABEZADO_MAC, ...ESTILO_CUENTA_FIJA, 'z-index': '3', 'text-align': 'left' },
+      style: { ...ENCABEZADO, ...ESTILO_CUENTA_FIJA, 'z-index': '3', 'text-align': 'left' },
       cellStyle: { ...ESTILO_CUENTA_FIJA, 'z-index': '1', 'text-align': 'left' },
       cellStyleFn: (_valor, fila) => {
         const estilo = estiloFilaCuenta(fila);
@@ -259,12 +284,15 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
     {
       label: 'Flujo mensual',
       key: 'bloque_mes',
-      style: { ...ENCABEZADO_MAC, color: 'var(--mis-text-primary)' },
+      style: ENCABEZADO_BLOQUE,
       subs: [
         columnaCifra(mesAnio(anioAnterior), 'periodo_anio_anterior'),
         columnaCifra(mesAnio(anterior), 'periodo_anterior'),
         preliminar
-          ? columnaCifra(`Preliminar ${mesAnio(actual)}`, 'periodo_actual', { style: ENCABEZADO_PRELIMINAR })
+          ? columnaCifra(`Preliminar ${mesAnio(actual)}`, 'periodo_actual', {
+              style: ENCABEZADO_PRELIMINAR,
+              cellStyleFn: (_valor, fila) => celdaPreliminar(fila),
+            })
           : columnaCifra(mesAnio(actual), 'periodo_actual'),
         conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anterior)}`, 'variacion_periodo_anterior')),
       ],
@@ -272,16 +300,19 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
     {
       label: actual.getMonth() === 0 ? 'Acumulado Ene' : `Acumulado Ene–${mes}`,
       key: 'bloque_acumulado',
-      style: { ...ENCABEZADO_MAC, ...SEPARADOR_BLOQUE, color: 'var(--mis-text-primary)' },
+      style: { ...ENCABEZADO_BLOQUE, ...SEPARADOR_ENCABEZADO },
       subs: [
         columnaCifra(String(anioAnterior.getFullYear()), 'acumulado_anio_anterior', {
-          style: { ...ENCABEZADO_CIFRA, ...SEPARADOR_BLOQUE },
+          style: { ...ENCABEZADO_CIFRA, ...SEPARADOR_ENCABEZADO },
           cellStyle: { ...CELDA_CIFRA, ...SEPARADOR_BLOQUE },
         }),
         // El acumulado del año se juzga por su variación contra el año anterior.
         conSemaforo(columnaCifra(String(actual.getFullYear()), 'acumulado_actual'), 'variacion_acumulado'),
         conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)}`, 'variacion_acumulado')),
-        columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)} %`, 'variacion_acumulado_pct', { format: { type: 'percent' } }),
+        columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)} %`, 'variacion_acumulado_pct', {
+          format: { type: 'percent' },
+          cellStyleFn: celdaPorcentaje,
+        }),
       ],
     },
   ];
