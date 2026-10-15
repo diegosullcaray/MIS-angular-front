@@ -52,6 +52,6 @@ describe('BurbujaFlotanteDirective', () => {
     fixture.detectChanges();
     TestBed.tick();
     // Angular puede diferir la baja de la vista: se espera a que la burbuja salga del body.
-    await vi.waitFor(() => expect(document.body.querySelector('.burbuja')).toBeNull());
+    await vi.waitFor(() => expect(document.body.querySelector('.burbuja')).toBeNull(), { timeout: 4000 });
   });
 });

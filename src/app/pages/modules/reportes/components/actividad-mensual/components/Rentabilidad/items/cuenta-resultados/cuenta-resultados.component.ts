@@ -22,6 +22,7 @@ import {
   crearColumnasCuentaResultados,
   cuentasConDetalle,
   filasConDrillDown,
+  marcarResultadoFinal,
   opcionesCierreCuenta,
   normalizarFechaCuenta,
 } from '../../../../utils/cuenta-resultados.util';
@@ -89,7 +90,7 @@ export class CuentaResultadosComponent {
   /** Códigos de cuentas abiertas; cada consulta nueva las cierra. */
   private readonly abiertas = signal<ReadonlySet<string>>(new Set());
   protected readonly filas = computed(() =>
-    filasConDrillDown(this.resultado()?.filas ?? [], this.abiertas()),
+    filasConDrillDown(marcarResultadoFinal(this.resultado()?.filas ?? []), this.abiertas()),
   );
   private readonly conDetalleSet = computed(() => cuentasConDetalle(this.resultado()?.filas ?? []));
   protected readonly conDetalle = (fila: Record<string, unknown>) =>

@@ -5,6 +5,7 @@ import {
   cuentasConDetalle,
   filasConDrillDown,
   estiloFilaCuenta,
+  marcarResultadoFinal,
   fondoOpaco,
   etiquetaPeriodoCuenta,
   fechaCuentaParaBackend,
@@ -261,6 +262,15 @@ describe('cuenta-resultados.util', () => {
     });
   });
 
+  it('marca solo el último resultado como fila final: banda marino y semáforo claro', () => {
+    const filas = marcarResultadoFinal<Record<string, unknown>>([{ style: 3 }, { style: 2 }, { style: 3 }]);
+    expect(filas.map((f) => f['esFinal'])).toEqual([undefined, undefined, true]);
+    expect(estiloFilaCuenta(filas[2])['background']).toBe('var(--pyg-encabezado)');
+    expect(colorVariacionCuenta(5, { cuenta_codigo: 'CR012', esFinal: true })).toBe(
+      'var(--pyg-favorable-claro)',
+    );
+  });
+
   it('distingue detalle, principal y resultado por `style`, como la maqueta', () => {
     expect(estiloFilaCuenta({ style: 1 })).toEqual(
       expect.objectContaining({ 'font-weight': '500', color: 'var(--pyg-texto-detalle)' }),
@@ -271,7 +281,7 @@ describe('cuenta-resultados.util', () => {
     expect(estiloFilaCuenta({ style: 3 })).toEqual(
       expect.objectContaining({
         'border-top': '2px solid var(--pyg-encabezado)',
-        color: 'var(--pyg-texto-principal)',
+        color: 'var(--pyg-texto-total)',
         background: 'var(--pyg-total-bg)',
       }),
     );

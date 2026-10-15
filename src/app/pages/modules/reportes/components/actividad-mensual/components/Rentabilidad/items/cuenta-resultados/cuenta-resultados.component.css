@@ -2,17 +2,44 @@
    `utils/cuenta-resultados.util.ts` solo referencia estas variables; aquí se ajusta la paleta. */
 .pyg-tabla {
   --pyg-radio: var(--mis-radius-md);
+  --pyg-encabezado: #0f2747;
+  --pyg-encabezado-texto: #ffffff;
+  --pyg-preliminar: #f5c35b;
+  --pyg-preliminar-texto: #0f2747;
+  --pyg-total-bg: #e9eff8;
+  --pyg-total-borde: #c9d3e1;
+  --pyg-principal-bg: #ffffff;
+  --pyg-detalle-bg: #fafbfd;
+  --pyg-texto-total: #0f2747;
+  --pyg-texto-principal: #1d3557;
+  --pyg-texto-detalle: #55657c;
+  --pyg-favorable: #0e7a5a;
+  --pyg-favorable-fondo: #e3f4ec;
+  --pyg-favorable-claro: #7fe0bd;
+  --pyg-favorable-fondo-claro: rgb(127 224 189 / 18%);
+  --pyg-desfavorable: #c0392b;
+  --pyg-desfavorable-fondo: #fbe7e4;
+  --pyg-desfavorable-claro: #ffab9e;
+  --pyg-desfavorable-fondo-claro: rgb(255 171 158 / 18%);
+}
+
+/* Oscuro: la maqueta es de modo claro; aquí la paleta sigue los tokens del tema. */
+:host-context(.dark) .pyg-tabla {
   --pyg-encabezado: var(--mis-primary);
   --pyg-encabezado-texto: var(--mis-text-on-primary);
   --pyg-preliminar: var(--mis-brand-gold);
-  --pyg-preliminar-texto: var(--mis-primary);
+  --pyg-preliminar-texto: #0f2747;
   --pyg-total-bg: var(--mis-primary-light);
+  --pyg-total-borde: var(--mis-border-strong);
   --pyg-principal-bg: var(--mis-surface);
   --pyg-detalle-bg: var(--mis-panel-bg);
+  --pyg-texto-total: var(--mis-primary-text);
   --pyg-texto-principal: var(--mis-primary-text);
   --pyg-texto-detalle: var(--mis-text-secondary);
   --pyg-favorable: var(--mis-success);
+  --pyg-favorable-fondo: var(--mis-success-light);
   --pyg-desfavorable: var(--mis-danger);
+  --pyg-desfavorable-fondo: var(--mis-danger-light);
 }
 
 /* Esquinas redondeadas de la propia tabla (encabezado arriba, última fila abajo). */

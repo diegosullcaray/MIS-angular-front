@@ -117,10 +117,15 @@ export function estiloFilaCuenta(fila: Record<string, unknown>): Record<string, 
       return {
         ...base,
         background: 'var(--pyg-total-bg)',
-        color: 'var(--pyg-texto-principal)',
+        color: 'var(--pyg-texto-total)',
         'font-weight': '800',
         'border-top': '2px solid var(--pyg-encabezado)',
-        'border-bottom': '1px solid var(--mis-border-strong)',
+        'border-bottom': '1px solid var(--pyg-total-borde)',
+        ...(fila['esFinal'] ? {
+          background: 'var(--pyg-encabezado)',
+          color: 'var(--pyg-encabezado-texto)',
+          'border-bottom': 'none',
+        } : {}),
       };
     case 2:
       return {
@@ -186,11 +191,15 @@ function sangriaCuenta(fila: Record<string, unknown>): string {
   }
 }
 
-/** Color del punto de variación: en cuentas de gasto bajar es favorable; en el resto, subir. El cero es favorable. */
-export function colorVariacionCuenta(valor: number, fila: Record<string, unknown>): string {
+function esFavorable(valor: number, fila: Record<string, unknown>): boolean {
   const esGasto = CUENTAS_GASTO_CUENTA_RESULTADOS.includes(String(fila['cuenta_codigo']));
-  const favorable = esGasto ? valor <= 0 : valor >= 0;
-  return favorable ? 'var(--pyg-favorable)' : 'var(--pyg-desfavorable)';
+  return esGasto ? valor <= 0 : valor >= 0;
+}
+
+/** Color del punto de variación: en cuentas de gasto bajar es favorable; en el resto, subir. El cero es favorable. En la fila final (fondo marino) usa la variante clara. */
+export function colorVariacionCuenta(valor: number, fila: Record<string, unknown>): string {
+  const claro = fila['esFinal'] ? '-claro' : '';
+  return `var(--pyg-${esFavorable(valor, fila) ? 'favorable' : 'desfavorable'}${claro})`;
 }
 
 /** La columna fija tapa las cifras al desplazar: su fondo se apila sobre la superficie sólida. */
@@ -238,21 +247,25 @@ const ENCABEZADO_PRELIMINAR = {
 /** Tinte dorado de las celdas del mes preliminar, sobre el fondo de su fila. */
 function celdaPreliminar(fila: Record<string, unknown>): Record<string, string> {
   const estilo = estiloFilaCuenta(fila);
+  if (fila['esFinal'])
+    return { ...estilo, background: 'var(--pyg-preliminar)', color: 'var(--pyg-preliminar-texto)' };
   return {
     ...estilo,
     background: `color-mix(in srgb, var(--pyg-preliminar) 22%, ${estilo['background']})`,
   };
 }
 
-/** Porcentaje de variación: solo el texto lleva el color del semáforo, la celda conserva el fondo de su fila. */
+/** Porcentaje de variación: celda resaltada con el fondo y el texto del semáforo (maqueta PYG FC). */
 function celdaPorcentaje(_valor: unknown, fila: Record<string, unknown>): Record<string, string> {
   const estilo = estiloFilaCuenta(fila);
   const variacion = fila['variacion_acumulado'];
   if (variacion == null || variacion === '' || !Number.isFinite(Number(variacion))) return estilo;
-  const favorable = colorVariacionCuenta(Number(variacion), fila) === 'var(--pyg-favorable)';
+  const tono = esFavorable(Number(variacion), fila) ? 'favorable' : 'desfavorable';
+  const claro = fila['esFinal'] ? '-claro' : '';
   return {
     ...estilo,
-    color: favorable ? 'var(--pyg-favorable)' : 'var(--pyg-desfavorable)',
+    background: `var(--pyg-${tono}-fondo${claro})`,
+    color: `var(--pyg-${tono}${claro})`,
     'font-weight': '700',
   };
 }
@@ -378,4 +391,10 @@ export function crearColumnasCuentaResultados(
       ],
     },
   ];
+}
+
+/** La última cuenta de nivel 3 (Resultados de explotación) va en banda marino, como la maqueta. */
+export function marcarResultadoFinal<T extends Record<string, unknown>>(filas: readonly T[]): T[] {
+  const ultima = filas.map(nivel).lastIndexOf(3);
+  return filas.map((f, i) => (i === ultima ? { ...f, esFinal: true } : f));
 }
