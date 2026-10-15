@@ -24,7 +24,7 @@ Se corrigió la documentación contra el código, se agregaron las piezas que fa
 | D6 | Los specs de ejemplo importaban de `'vitest'` | El proyecto usa las globales de Vitest | Media | Corregido; los conteos se obtienen del inventario generado. |
 | D7 | El transporte Winder/Ant no tenía documento propio | Solo aparecía de refilón en `data-flow.md` | Media | Nuevo: `architecture/winder-transport.md` + skill `mis-winder-ant` |
 | D8 | `generar-tokens-paleta.mjs` documentaba su ruta como `scripts/` | Vive en `governance/scripts/` | Baja | Corregido, incluido el encabezado que genera |
-| D9 | La documentación mencionaba "pipelines de CI/CD" | No existía ningún workflow en el repositorio | Media | Nuevo: `.github/workflows/ci.yml` |
+| D9 | La documentación mencionaba "pipelines de CI/CD" | No existía ningún workflow en el repositorio | Media | Se creó un workflow de CI; se retiró después (2026-10-14) |
 
 ## Hallazgos de código
 

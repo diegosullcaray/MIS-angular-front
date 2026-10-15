@@ -97,7 +97,7 @@ npm run inventario:check   # falla si quedaron viejos
 
 ## Pipeline
 
-`.github/workflows/ci.yml` corre cuatro jobs: gobernanza y documentación, unitarias, build con control de bundle, y E2E (que depende de los dos primeros por ser el más caro). Es el mismo contenido de `npm run verify:ci`, para que un rojo en CI se reproduzca en local con un solo comando.
+No hay workflow de CI en el repositorio (se retiró el 2026-10-14). `npm run verify:ci` es el mismo contenido que correría un pipeline; ejecutarlo en local antes de subir.
 
 ## Lo que todavía no está cubierto
 

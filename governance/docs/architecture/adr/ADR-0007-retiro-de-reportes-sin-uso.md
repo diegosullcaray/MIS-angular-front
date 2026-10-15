@@ -24,7 +24,7 @@ Se retiran del frontend, con su ruta, componente, métodos de servicio que solo 
 
 Límites de la decisión:
 
-- **Se conserva el transporte Winder** (`core/winder/instances/`), aunque algunos métodos queden sin llamadas (p. ej. `ModPresupuestoService` y los `getMonImr*` de `ModRep2Service`). La restricción vigente congela Winder. El inventario de rutas de acción marca esos métodos con **0** llamadas para decidir su retiro aparte.
+- **Se conserva el transporte Winder** (`core/winder/instances/`), aunque algunos métodos queden sin llamadas (p. ej. los `getMonImr*` de `ModRep2Service`). La restricción vigente congela Winder. El inventario de rutas de acción marca esos métodos con **0** llamadas para decidir su retiro aparte.
 - **Se conserva** `/app/reportes/leg/com/rda/adm/gest_cart_her` (versión diaria). Solo se retiró la mensual (`rma/adm/gest_cart_her`).
 - **Enmienda (2026-09-25):** negocio volvió a pedir la mensual *Gestión de Cartera Reasignada Mes* (menú *Actividad Mensual > Cartera en Mora*). Se restituyó `/app/reportes/leg/com/rma/adm/gest_cart_her` (`RS_AGE_COM_CRM`, host `cra-v11`), compartiendo componente con `gest_cart_her-flujo` (`RS_AGE_COM_CRM_F`); la ruta elige el reporte con `data.reporte`.
 - **No requirieron cambios** las pantallas de la lista sin implementación en este repositorio: Corresponsal, Prospectos Corresponsal, Reasignación Cartera Capt, Usuarios, Rutas y Usabilidad.
