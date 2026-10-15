@@ -17,13 +17,22 @@
       (error)="onErrorJerarquia()"
     />
     @if (periodos().length > 0) {
-      <app-grupo-filtros class="lg:hidden">
+      <app-grupo-filtros>
         <app-select-filtro
+          class="lg:hidden"
           etiqueta="Período"
           [opciones]="periodos()"
           [valor]="periodo()"
           (valorChange)="onPeriodoChange($event)"
         />
+        @if (productos().length > 1) {
+          <app-select-filtro
+            etiqueta="Producto"
+            [opciones]="productos()"
+            [valor]="producto()"
+            (valorChange)="onProductoChange($event)"
+          />
+        }
       </app-grupo-filtros>
     }
   </div>

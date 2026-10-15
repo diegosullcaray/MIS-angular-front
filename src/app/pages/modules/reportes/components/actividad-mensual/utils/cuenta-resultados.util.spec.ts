@@ -75,6 +75,7 @@ describe('cuenta-resultados.util', () => {
       expect(leerMetadatosCuenta(METADATOS)).toEqual({
         preliminar: 1,
         fechas: ['2026-06-01', '2026-05-01', '2026-04-01'],
+        productos: [],
       });
     });
 

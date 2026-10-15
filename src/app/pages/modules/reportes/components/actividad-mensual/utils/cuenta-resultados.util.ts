@@ -43,7 +43,7 @@ export function etiquetaPeriodoCuenta(valor: string): string {
 
 /** Metadatos de `resultado.headers`, o `null` si no cumplen el contrato. */
 export function leerMetadatosCuenta(crudo: unknown): MetadatosCuentaResultados | null {
-  let metadatos: { preliminar?: unknown; fechas?: unknown };
+  let metadatos: { preliminar?: unknown; fechas?: unknown; productos?: unknown };
   try {
     metadatos = typeof crudo === 'string' ? JSON.parse(crudo) : null;
   } catch {
@@ -52,7 +52,10 @@ export function leerMetadatosCuenta(crudo: unknown): MetadatosCuentaResultados |
   if (!metadatos || (metadatos.preliminar !== 0 && metadatos.preliminar !== 1)) return null;
   const fechas = metadatos.fechas;
   if (!Array.isArray(fechas) || !fechas.length || fechas.some((f) => !normalizarFechaCuenta(f))) return null;
-  return { preliminar: metadatos.preliminar, fechas: fechas as string[] };
+  const productos = Array.isArray(metadatos.productos)
+    ? metadatos.productos.filter((p): p is string => typeof p === 'string' && p !== '')
+    : [];
+  return { preliminar: metadatos.preliminar, fechas: fechas as string[], productos };
 }
 
 /** Si la fecha pedida no figura entre los periodos (p. ej. `NOW`), las cifras son del primero. Lanza `ContratoCuentaResultadosError` ante un payload inválido. */
@@ -71,6 +74,7 @@ export function mapearCuentaResultados(
   const preliminar = metadatos.preliminar === 1;
   return {
     periodos,
+    productos: metadatos.productos.map((p) => ({ id: p, desc: p })),
     fecha,
     preliminar,
     filas: resultado.data as CuentaResultadoFila[],

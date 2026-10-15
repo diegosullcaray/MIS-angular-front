@@ -54,7 +54,7 @@ describe('CuentaResultadosComponent', () => {
     seleccionar();
 
     expect(cuentaResultados).toHaveBeenCalledTimes(1);
-    expect(cuentaResultados).toHaveBeenCalledWith({ tip_cod: 7, cod_rel: '231' }, null);
+    expect(cuentaResultados).toHaveBeenCalledWith({ tip_cod: 7, cod_rel: '231' }, null, null);
     expect(vista.periodo()).toBe('2026-06-01');
     expect(vista.preliminar()).toBe(true);
   });
@@ -76,7 +76,7 @@ describe('CuentaResultadosComponent', () => {
     TestBed.tick();
 
     expect(cuentaResultados).toHaveBeenCalledTimes(2);
-    expect(cuentaResultados).toHaveBeenLastCalledWith({ tip_cod: 7, cod_rel: '231' }, '2026-05-01');
+    expect(cuentaResultados).toHaveBeenLastCalledWith({ tip_cod: 7, cod_rel: '231' }, '2026-05-01', null);
     expect(vista.periodo()).toBe('2026-05-01');
   });
 

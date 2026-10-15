@@ -151,6 +151,7 @@ export class ActividadMensualRepoService {
   cuentaResultados(
     nodo: NodoConsulta,
     periodo: string | null,
+    producto: string | null = null,
   ): Observable<CuentaResultadosResultado> {
     const fecha = periodo === null ? 'NOW' : fechaCuentaParaBackend(periodo);
     if (!fecha) {
@@ -163,6 +164,8 @@ export class ActividadMensualRepoService {
         fecha,
         tip_cod: nodo.tip_cod,
         cod_rel: nodo.cod_rel,
+        // Solo si se elige uno: sin producto la petición queda igual a la del SP vigente.
+        ...(producto ? { producto } : {}),
       })
       .pipe(map((r) => mapearCuentaResultados(resultadoCrudo(r), periodo)));
   }

@@ -22,10 +22,13 @@ export interface MetadatosCuentaResultados {
   preliminar: 0 | 1;
   /** `YYYY-MM-DD`, el más reciente primero. */
   fechas: string[];
+  /** Descripciones de producto para el filtro; el SP anterior no las manda. */
+  productos: string[];
 }
 
 export interface CuentaResultadosResultado {
   periodos: OpcionFiltro[];
+  productos: OpcionFiltro[];
   /** Periodo de las cifras (`YYYY-MM-DD`). */
   fecha: string;
   preliminar: boolean;

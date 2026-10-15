@@ -29,6 +29,7 @@ import { GrupoFiltrosComponent } from '../../../../../../../../../shared/ui/form
 interface ConsultaCuenta {
   nodo: NodoConsulta;
   fecha: string | null;
+  producto: string | null;
 }
 
 /** "Cuenta de Resultados" (`TAB_CUE_RES_01`). Los periodos vienen en la respuesta: la primera consulta va con `NOW`. */
@@ -65,6 +66,9 @@ export class CuentaResultadosComponent {
 
   protected readonly periodos = signal<OpcionFiltro[]>([]);
   protected readonly periodo = signal('');
+  /** Opciones de la respuesta más reciente; el id vacío es "Todos". */
+  protected readonly productos = signal<OpcionFiltro[]>([]);
+  protected readonly producto = signal('');
 
   protected readonly preliminar = computed(() => this.resultado()?.preliminar ?? false);
 
@@ -100,7 +104,7 @@ export class CuentaResultadosComponent {
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
-    this.consulta.set({ nodo: { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, fecha: this.periodo() || null });
+    this.consulta.set({ nodo: { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, fecha: this.periodo() || null, producto: this.producto() || null });
   }
 
   /** Clic en una cuenta con detalle: la abre o la cierra. */
@@ -132,7 +136,13 @@ export class CuentaResultadosComponent {
     }
     this.periodo.set(fecha);
     const nodo = this.consulta()?.nodo;
-    if (nodo) this.consulta.set({ nodo, fecha });
+    if (nodo) this.consulta.set({ nodo, fecha, producto: this.producto() || null });
+  }
+
+  protected onProductoChange(valor: string): void {
+    this.producto.set(valor);
+    const consulta = this.consulta();
+    if (consulta) this.consulta.set({ ...consulta, producto: valor || null });
   }
 
   protected onErrorJerarquia(): void {
@@ -150,14 +160,15 @@ export class CuentaResultadosComponent {
     if (consulta) this.consulta.set({ ...consulta });
   }
 
-  private cargar({ nodo, fecha }: ConsultaCuenta): Subscription {
+  private cargar({ nodo, fecha, producto }: ConsultaCuenta): Subscription {
     this.error.set(null);
     this.resultado.set(null);
     this.abiertas.set(new Set());
     this.cargando.set(true);
-    return this.servicio.cuentaResultados(nodo, fecha).subscribe({
+    return this.servicio.cuentaResultados(nodo, fecha, producto).subscribe({
       next: (resultado) => {
         this.periodos.set(resultado.periodos);
+        this.productos.set([{ id: '', desc: 'Todos' }, ...resultado.productos]);
         this.periodo.set(resultado.fecha);
         this.resultado.set(resultado);
         this.cargando.set(false);
