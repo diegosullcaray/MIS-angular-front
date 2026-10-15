@@ -47,3 +47,6 @@
 .pyg-tabla ::ng-deep thead tr:first-child th:last-child { border-top-right-radius: var(--pyg-radio); }
 .pyg-tabla ::ng-deep tbody tr:last-child td:first-child { border-bottom-left-radius: var(--pyg-radio); }
 .pyg-tabla ::ng-deep tbody tr:last-child td:last-child { border-bottom-right-radius: var(--pyg-radio); }
+
+/* La fila final es marino oscuro: ahí el hover aclara en vez de oscurecer. */
+.pyg-tabla ::ng-deep tbody tr:last-child:hover > td[style*='background'] { filter: brightness(1.3); }

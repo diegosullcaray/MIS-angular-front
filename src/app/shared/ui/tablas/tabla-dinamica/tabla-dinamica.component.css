@@ -28,3 +28,8 @@
   font-size: 6px;
   font-weight: 700;
 }
+
+/* Las celdas con fondo propio (`cellStyleFn`, en línea) tapan el hover de la fila: se oscurece la celda sin tocar su color. */
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr:hover > td[style*='background'] {
+  filter: brightness(0.94);
+}
