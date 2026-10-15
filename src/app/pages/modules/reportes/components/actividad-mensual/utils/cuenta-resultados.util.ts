@@ -255,15 +255,13 @@ function celdaPreliminar(fila: Record<string, unknown>): Record<string, string> 
   };
 }
 
-/** Porcentaje de variación: celda resaltada con el fondo y el texto del semáforo (maqueta PYG FC). */
-function celdaPorcentaje(_valor: unknown, fila: Record<string, unknown>): Record<string, string> {
-  const estilo = estiloFilaCuenta(fila);
+/** Porcentaje de variación: chip con el fondo y el texto del semáforo; la celda conserva el fondo de su fila (maqueta PYG FC). */
+function chipPorcentaje(_valor: unknown, fila: Record<string, unknown>): Record<string, string> | undefined {
   const variacion = fila['variacion_acumulado'];
-  if (variacion == null || variacion === '' || !Number.isFinite(Number(variacion))) return estilo;
+  if (variacion == null || variacion === '' || !Number.isFinite(Number(variacion))) return undefined;
   const tono = esFavorable(Number(variacion), fila) ? 'favorable' : 'desfavorable';
   const claro = fila['esFinal'] ? '-claro' : '';
   return {
-    ...estilo,
     background: `var(--pyg-${tono}-fondo${claro})`,
     color: `var(--pyg-${tono}${claro})`,
     'font-weight': '700',
@@ -385,7 +383,7 @@ export function crearColumnasCuentaResultados(
           'variacion_acumulado_pct',
           {
             format: { type: 'percent' },
-            cellStyleFn: celdaPorcentaje,
+            chipStyleFn: chipPorcentaje,
           },
         ),
       ],

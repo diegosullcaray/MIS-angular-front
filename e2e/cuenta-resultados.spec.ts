@@ -49,26 +49,21 @@ test.describe('Cuenta de Resultados', () => {
     const consultas = await abrir(page, 'datos');
 
     expect(consultas[0]).toContain('NOW');
-    await expect(page.getByRole('heading', { name: 'Cuenta de Resultados', exact: true })).toBeVisible();
-    await expect(page.getByText('Período: Junio de 2026')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'PYG FC · Estado de ganancias y pérdidas' })).toBeVisible();
     // El botón de la barra es solo ícono; el valor elegido se lee en el select de filtros.
-    await expect(page.locator('app-select-filtro').getByLabel('Período')).toContainText('Junio de 2026');
-    await expect(page.getByText('Preliminar', { exact: true })).toBeVisible();
-    // Encabezado de la maqueta de PYG: el nivel elegido, los años y el mes preliminar resaltado.
-    await expect(page.getByRole('columnheader', { name: 'PYG FINANCIERA' })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: '2025', exact: true })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: 'Preliminar Jun' })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: 'Resultado Trimestral' })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: '2T - 2026' })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: 'Total 2026' })).toBeVisible();
+    await expect(page.locator('app-select-filtro').getByLabel('Período')).toContainText('Jun.26');
+    // Encabezado de la maqueta de PYG: bloques de flujo mensual y acumulado, y el mes preliminar resaltado.
+    await expect(page.getByRole('columnheader', { name: 'Estado de ganancias y pérdidas' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Flujo mensual' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Acumulado Ene–Jun' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Preliminar Jun.26' })).toBeVisible();
 
-    // Gasto que baja: punto verde (polaridad invertida del legado) y la cifra con su signo.
+    // Gasto que baja: flecha ▼ verde (polaridad invertida del legado) y la cifra en absoluto.
     const gasto = page.locator('app-tabla-dinamica tr').filter({ hasText: 'GASTOS FINANCIEROS' });
-    await expect(gasto).toContainText('-80');
-    await expect(gasto.locator('i.pi-circle-fill[style*="--mis-success"]')).toHaveCount(1);
+    await expect(gasto).toContainText('80 Baja');
+    await expect(gasto.locator('span[style*="--pyg-favorable"]')).toHaveCount(1);
     const ingreso = page.locator('app-tabla-dinamica tr').filter({ hasText: 'INGRESOS FINANCIEROS' });
-    await expect(ingreso).toContainText('-120');
-    await expect(ingreso.locator('i.pi-circle-fill[style*="--mis-danger"]')).toHaveCount(1);
+    await expect(ingreso.locator('span[style*="--pyg-desfavorable"]')).toHaveCount(1);
   });
 
   test('sin filas muestra el vacío, no un error', async ({ page }) => {

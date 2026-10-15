@@ -177,6 +177,10 @@ export class TablaDinamicaComponent {
     return Object.keys(res).length > 0 ? res : null;
   }
 
+  protected estiloChip(fila: Record<string, unknown>, columna: ColumnaDinamica): Record<string, string> | null {
+    return columna.chipStyleFn?.(fila[columna.key], fila) ?? null;
+  }
+
   /** Número de la celda si la columna dibuja indicador de variación; `null` si no aplica. */
   private numeroVariacion(fila: Record<string, unknown>, columna: ColumnaDinamica): number | null {
     if (!columna.colorVariacion) return null;
