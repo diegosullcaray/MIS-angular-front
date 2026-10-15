@@ -67,7 +67,7 @@
                 {{ valor(fila, columna) }}
               }
               @if (flechaVariacion(fila, columna); as flecha) {
-                <i aria-hidden="true" class="pi text-[10px] ml-1" [class.pi-arrow-up]="flecha === '▲'" [class.pi-arrow-down]="flecha === '▼'"></i>
+                <i aria-hidden="true" class="pi text-[10px] ml-1" [class.pi-caret-up]="flecha === '▲'" [class.pi-caret-down]="flecha === '▼'"></i>
                 <span class="sr-only">{{ flecha === '▲' ? 'Sube' : 'Baja' }}</span>
               }
             </span>

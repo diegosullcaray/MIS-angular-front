@@ -310,7 +310,7 @@ describe('TablaDinamicaComponent: colorVariacion', () => {
     const celda = celdaVariacion(-1500);
     const texto = celda.textContent ?? '';
 
-    expect(celda.querySelector('.pi-arrow-down')).not.toBeNull();
+    expect(celda.querySelector('.pi-caret-down')).not.toBeNull();
     expect(texto).toContain('Baja');
     expect(texto).not.toContain('-');
     expect(texto).toMatch(/1.?500/);
@@ -319,13 +319,13 @@ describe('TablaDinamicaComponent: colorVariacion', () => {
 
   it('positivo: flecha arriba', () => {
     const celda = celdaVariacion(20);
-    expect(celda.querySelector('.pi-arrow-up')).not.toBeNull();
+    expect(celda.querySelector('.pi-caret-up')).not.toBeNull();
     expect(celda.textContent).toContain('Sube');
   });
 
   it('cero: sin flecha, conserva el color', () => {
     const celda = celdaVariacion(0);
-    expect(celda.querySelector('.pi-arrow-up, .pi-arrow-down')).toBeNull();
+    expect(celda.querySelector('.pi-caret-up, .pi-caret-down')).toBeNull();
     expect((celda.querySelector('span[style]') as HTMLElement).style.color).toBe('var(--mis-success)');
   });
 
