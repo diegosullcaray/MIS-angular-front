@@ -31,7 +31,13 @@ import type { OpcionFiltro } from '../opcion-filtro.model';
       <i class="pi pi-calendar text-[14px]"></i>
     </button>
     <p-popover #pop>
-      <app-select-filtro [etiqueta]="etiqueta()" [opciones]="opciones()" [(valor)]="valor" ancho="w-48" />
+      <app-select-filtro
+        [etiqueta]="etiqueta()"
+        [opciones]="opciones()"
+        [(valor)]="valor"
+        ancho="w-48"
+        [conBuscador]="conBuscador()"
+      />
     </p-popover>
   `,
 })
@@ -39,6 +45,7 @@ export class FechaCierreBotonComponent<T extends string | number> {
   readonly etiqueta = input('Fecha Cierre');
   readonly opciones = input.required<OpcionFiltro<T>[]>();
   readonly valor = model.required<T>();
+  readonly conBuscador = input(false);
 
   private readonly popoverRef = viewChild.required<Popover>('pop');
   protected get popover(): Popover {

@@ -24,7 +24,7 @@ lee exactamente esas columnas; el diseño de la imagen ya está implementado ah�
 |---|---|---|
 | 1 | Periodo | `'NOW'` → último `WFECPRO`; si no, el mes de `@fecha` (el front manda el día 1, `WFECPRO` es el cierre). Mes sin datos → último, igual que el front con `NOW`. |
 | 2 | Cabecera | `fechas` = todos los meses de `WREPPYG001` (más reciente primero, formato `YYYY-MM-01`); `preliminar` = 1 solo si el mes mostrado es el último cargado; nuevo `productos` con la lista para un futuro filtro (el front actual ignora claves que no conoce). |
-| 3 | Jerarquía | `tip_cod = 7` → nivel 1 (FC). Cualquier otro nodo (20 territorio, 19 corredor, 21 grupo, 18 unidad, 17 coordinador, 2 asesor) → **suma de sus asesores** en el nivel 3, con `storage.ref.WJERCOR03` vigente (`RINDFEC = 'actual'`, último `RFECPRO`), el mismo patrón que `RRANKM02` o `RSRTOPMIS001`. La instancia verificada expone `WCODSEC` en `WREPPYG001`; el paso 1b confirma si corresponde a `WJERCOR03.RCODSEC`. |
+| 3 | Jerarquía | `tip_cod = 7` → nivel 1 (FC). Cualquier otro nodo (20 territorio, 19 corredor, 21 grupo, 18 unidad, 17 coordinador, 1 o 2 asesor) → **suma de sus asesores** en el nivel 3, con `storage.ref.WJERCOR03` vigente (`RINDFEC = 'actual'`, último `RFECPRO`), el mismo patrón que `RRANKM02` o `RSRTOPMIS001`. La instancia verificada expone códigos alfanuméricos como `ASESO272` en `WCODSEC` para `WCODREL` 3 y 5; el paso 1b confirma su correspondencia con `WJERCOR03.RCODSEC`. |
 | 4 | Producto | Parámetro nuevo `@producto` (por defecto `'TODOS'`): nivel 4 en FC y nivel 5 (asesor y producto) por debajo, con `RDESPROD` por `RETP002/001/003`. |
 | 5 | `variacion_acumulado_pct` | `(WACUMACT − WACUMAA) / WACUMAA`, como **fracción**: el front usa `formatPercent`, que multiplica por 100 (0.1291 → "12.91 %"). La fórmula "× 100" de la observación mostraría 1291 %. Signo como en la imagen: *Resto de ingresos* −2 790 vs −2 267 → +23.08 %. |
 | 6 | Columnas nuevas | `variacion_periodo_anio_anterior` (`WVALACT − WVALAA`) y su `%`, las fórmulas de la observación para el mes. Van al final; el front actual no las muestra. |
@@ -51,7 +51,7 @@ Esto cambia el contrato de salida respecto del SP original; confirmar el consumo
 
 | # | Supuesto | Si no se cumple |
 |---|---|---|
-| S1 | En los niveles 3 y 5, `WCODSEC` corresponde al código del asesor (`WJERCOR03.RCODSEC`). | Si el paso 1b no encuentra coincidencias suficientes, no activar el SP: confirmar el significado del campo y ajustar el mapeo jerárquico. |
+| S1 | En los niveles 3 y 5, `WCODSEC` corresponde al código alfanumérico del asesor (`WJERCOR03.RCODSEC`), y la jerarquía envía `tip_cod = 1` o `2` para asesor. | Si el paso 1b no encuentra coincidencias suficientes, no activar el SP: confirmar el significado del campo y ajustar el mapeo jerárquico. El SP acepta ambos códigos de tipo para el nivel asesor. |
 | S2 | Las cuentas de `REVARPYG` son importes que se pueden sumar entre asesores (márgenes incluidos). | Paso 1e muestra ratios o coeficientes: esas filas se calculan aparte. |
 | S3 | "Preliminar" = el último mes cargado. | Si el cierre se marca en otro lado, indicarlo y se lee de ahí. |
 | S4 | La suma de asesores puede no llegar al total FC (importes sin asesor). | Paso 1c muestra la diferencia; FC usa el nivel 1, así que FC siempre cuadra con lo que se ve hoy. |

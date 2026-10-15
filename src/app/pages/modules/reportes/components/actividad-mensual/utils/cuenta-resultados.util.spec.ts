@@ -11,11 +11,15 @@ import {
   leerMetadatosCuenta,
   mapearCuentaResultados,
   normalizarFechaCuenta,
+  opcionesCierreCuenta,
 } from './cuenta-resultados.util';
 import type { ColumnaDinamica } from '../../../models/tabla-dinamica.model';
 
 /** Casos tomados de las specs del legado `cuenta-resultados.{component,util}.spec.ts`. */
-const METADATOS = JSON.stringify({ preliminar: 1, fechas: ['2026-06-01', '2026-05-01', '2026-04-01'] });
+const METADATOS = JSON.stringify({
+  preliminar: 1,
+  fechas: ['2026-06-01', '2026-05-01', '2026-04-01'],
+});
 const FILA = {
   style: 2,
   cuenta_codigo: 'CR012',
@@ -38,7 +42,9 @@ function hojas(columnas: ColumnaDinamica[]): ColumnaDinamica[] {
 describe('cuenta-resultados.util', () => {
   describe('columna fija de cuentas', () => {
     it('apila el fondo del nivel sobre la superficie sólida, para tapar las cifras al desplazar', () => {
-      expect(fondoOpaco('var(--mis-hover-bg)')).toBe('linear-gradient(var(--mis-hover-bg), var(--mis-hover-bg)), var(--mis-surface)');
+      expect(fondoOpaco('var(--mis-hover-bg)')).toBe(
+        'linear-gradient(var(--mis-hover-bg), var(--mis-hover-bg)), var(--mis-surface)',
+      );
       expect(fondoOpaco(undefined)).toBe('var(--mis-surface)');
     });
 
@@ -65,8 +71,21 @@ describe('cuenta-resultados.util', () => {
       expect(fechaCuentaParaBackend('2026-13-01')).toBeNull();
     });
 
-    it('rotula el periodo en español con mayúscula inicial', () => {
-      expect(etiquetaPeriodoCuenta('2026-06-01')).toBe('Junio de 2026');
+    it('rotula el periodo con el mismo formato abreviado de la tabla mensual', () => {
+      expect(etiquetaPeriodoCuenta('2026-06-01')).toBe('Jun.26');
+    });
+
+    it('normaliza cierres mensuales al primer día y elimina meses duplicados', () => {
+      expect(
+        opcionesCierreCuenta([
+          { id: '2026-06-30', desc: 'Junio 2026' },
+          { id: '2026-05-31', desc: 'Mayo 2026' },
+          { id: '2026-06-15', desc: 'Junio 2026' },
+        ]),
+      ).toEqual([
+        { id: '2026-06-01', desc: 'Jun.26' },
+        { id: '2026-05-01', desc: 'May.26' },
+      ]);
     });
   });
 
@@ -83,9 +102,13 @@ describe('cuenta-resultados.util', () => {
       expect(leerMetadatosCuenta('[]')).toBeNull();
       expect(leerMetadatosCuenta('no-json')).toBeNull();
       expect(leerMetadatosCuenta(undefined)).toBeNull();
-      expect(leerMetadatosCuenta(JSON.stringify({ preliminar: 2, fechas: ['2026-06-01'] }))).toBeNull();
+      expect(
+        leerMetadatosCuenta(JSON.stringify({ preliminar: 2, fechas: ['2026-06-01'] })),
+      ).toBeNull();
       expect(leerMetadatosCuenta(JSON.stringify({ preliminar: 0, fechas: [] }))).toBeNull();
-      expect(leerMetadatosCuenta(JSON.stringify({ preliminar: 0, fechas: ['2026-6-1'] }))).toBeNull();
+      expect(
+        leerMetadatosCuenta(JSON.stringify({ preliminar: 0, fechas: ['2026-6-1'] })),
+      ).toBeNull();
     });
   });
 
@@ -96,12 +119,14 @@ describe('cuenta-resultados.util', () => {
       expect(r.fecha).toBe('2026-06-01');
       expect(r.preliminar).toBe(true);
       expect(r.periodos.map((p) => p.id)).toEqual(['2026-06-01', '2026-05-01', '2026-04-01']);
-      expect(r.periodos[0].desc).toBe('Junio de 2026');
+      expect(r.periodos[0].desc).toBe('Jun.26');
       expect(r.filas).toEqual([FILA]);
     });
 
     it('conserva la fecha pedida si está entre los periodos', () => {
-      expect(mapearCuentaResultados({ headers: METADATOS, data: [FILA] }, '2026-05-01').fecha).toBe('2026-05-01');
+      expect(mapearCuentaResultados({ headers: METADATOS, data: [FILA] }, '2026-05-01').fecha).toBe(
+        '2026-05-01',
+      );
     });
 
     it('sin filas es vacío, no error', () => {
@@ -146,19 +171,37 @@ describe('cuenta-resultados.util', () => {
       expect(cuenta.label).toBe('Estado de ganancias y pérdidas · en miles (PEN)');
       expect(cuenta.style?.['text-align']).toBe('left');
       expect(mes.label).toBe('Flujo mensual');
-      expect(mes.subs!.map((c) => c.label)).toEqual(['Ago.25', 'Jul.26', 'Preliminar Ago.26', 'Ago.26 vs Jul.26']);
+      expect(mes.subs!.map((c) => c.label)).toEqual([
+        'Ago.25',
+        'Jul.26',
+        'Preliminar Ago.26',
+        'Ago.26 vs Jul.26',
+      ]);
       expect(acumulado.label).toBe('Acumulado Ene–Ago');
-      expect(acumulado.subs!.map((c) => c.label)).toEqual(['2025', '2026', 'Ago.26 vs Ago.25', 'Ago.26 vs Ago.25 %']);
-      expect(acumulado.subs![0].cellStyle?.['border-left']).toBe('2px solid var(--mis-border-strong)');
+      expect(acumulado.subs!.map((c) => c.label)).toEqual([
+        '2025',
+        '2026',
+        'Ago.26 vs Ago.25',
+        'Ago.26 vs Ago.25 %',
+      ]);
+      expect(acumulado.subs![0].cellStyle?.['border-left']).toBe(
+        '2px solid var(--mis-border-strong)',
+      );
     });
 
     it('el mes preliminar va en oro de marca; cerrado, con la banda de marca como el resto', () => {
-      const preliminar = hojas(crearColumnasCuentaResultados('2026-08-01', true)).find((c) => c.key === 'periodo_actual')!;
+      const preliminar = hojas(crearColumnasCuentaResultados('2026-08-01', true)).find(
+        (c) => c.key === 'periodo_actual',
+      )!;
       expect(preliminar.style?.['background']).toBe('var(--mis-brand-gold)');
       expect(preliminar.style?.['color']).toBe('var(--mis-primary)');
-      expect(preliminar.cellStyleFn!(null, { style: 1 })!['background']).toContain('var(--mis-brand-gold)');
+      expect(preliminar.cellStyleFn!(null, { style: 1 })!['background']).toContain(
+        'var(--mis-brand-gold)',
+      );
 
-      const cerrado = hojas(crearColumnasCuentaResultados('2026-05-01', false)).find((c) => c.key === 'periodo_actual')!;
+      const cerrado = hojas(crearColumnasCuentaResultados('2026-05-01', false)).find(
+        (c) => c.key === 'periodo_actual',
+      )!;
       expect(cerrado.label).toBe('May.26');
       expect(cerrado.style?.['background']).toBe('var(--mis-primary)');
     });
@@ -172,14 +215,23 @@ describe('cuenta-resultados.util', () => {
 
     it('enero compara contra diciembre del año anterior', () => {
       const [, mes, acumulado] = crearColumnasCuentaResultados('2026-01-01', false);
-      expect(mes.subs!.map((c) => c.label)).toEqual(['Ene.25', 'Dic.25', 'Ene.26', 'Ene.26 vs Dic.25']);
+      expect(mes.subs!.map((c) => c.label)).toEqual([
+        'Ene.25',
+        'Dic.25',
+        'Ene.26',
+        'Ene.26 vs Dic.25',
+      ]);
       expect(acumulado.label).toBe('Acumulado Ene');
     });
 
     it('semáforo en la variación mensual, el acumulado del año y la variación interanual; no en el %', () => {
       const columnas = hojas(crearColumnasCuentaResultados('2026-06-01', false));
       const conPunto = columnas.filter((c) => c.indicadorVariacion === 'punto').map((c) => c.key);
-      expect(conPunto).toEqual(['variacion_periodo_anterior', 'acumulado_actual', 'variacion_acumulado']);
+      expect(conPunto).toEqual([
+        'variacion_periodo_anterior',
+        'acumulado_actual',
+        'variacion_acumulado',
+      ]);
 
       const pct = columnas.find((c) => c.key === 'variacion_acumulado_pct');
       expect(pct?.format?.type).toBe('percent');
@@ -187,10 +239,16 @@ describe('cuenta-resultados.util', () => {
     });
 
     it('el acumulado del año toma el color de su variación contra el año anterior', () => {
-      const acumulado = hojas(crearColumnasCuentaResultados('2026-06-01', false)).find((c) => c.key === 'acumulado_actual')!;
+      const acumulado = hojas(crearColumnasCuentaResultados('2026-06-01', false)).find(
+        (c) => c.key === 'acumulado_actual',
+      )!;
       const gasto = { cuenta_codigo: 'CR018', style: 2 };
-      expect(acumulado.colorVariacion!(12647, { ...gasto, variacion_acumulado: -1022 })).toBe('var(--mis-success)');
-      expect(acumulado.colorVariacion!(12647, { ...gasto, variacion_acumulado: 500 })).toBe('var(--mis-danger)');
+      expect(acumulado.colorVariacion!(12647, { ...gasto, variacion_acumulado: -1022 })).toBe(
+        'var(--mis-success)',
+      );
+      expect(acumulado.colorVariacion!(12647, { ...gasto, variacion_acumulado: 500 })).toBe(
+        'var(--mis-danger)',
+      );
       // Sin variación no hay semáforo.
       expect(acumulado.colorVariacion!(12647, gasto)).toBeNull();
     });
@@ -215,15 +273,25 @@ describe('cuenta-resultados.util', () => {
     });
 
     it('en la fila de resultado usa los mismos colores (ya no hay banda navy)', () => {
-      expect(colorVariacionCuenta(1, { cuenta_codigo: 'CR021', style: 3 })).toBe('var(--mis-success)');
+      expect(colorVariacionCuenta(1, { cuenta_codigo: 'CR021', style: 3 })).toBe(
+        'var(--mis-success)',
+      );
     });
   });
 
   it('distingue detalle, principal y resultado por `style`, como la maqueta', () => {
-    expect(estiloFilaCuenta({ style: 1 })).toEqual(expect.objectContaining({ 'font-weight': '500', color: 'var(--mis-text-secondary)' }));
-    expect(estiloFilaCuenta({ style: 2 })).toEqual(expect.objectContaining({ 'font-weight': '700', background: 'var(--mis-surface)' }));
+    expect(estiloFilaCuenta({ style: 1 })).toEqual(
+      expect.objectContaining({ 'font-weight': '500', color: 'var(--mis-text-secondary)' }),
+    );
+    expect(estiloFilaCuenta({ style: 2 })).toEqual(
+      expect.objectContaining({ 'font-weight': '700', background: 'var(--mis-surface)' }),
+    );
     expect(estiloFilaCuenta({ style: 3 })).toEqual(
-      expect.objectContaining({ 'border-top': '2px solid var(--mis-primary)', color: 'var(--mis-primary-text)', background: 'var(--mis-primary-light)' }),
+      expect.objectContaining({
+        'border-top': '2px solid var(--mis-primary)',
+        color: 'var(--mis-primary-text)',
+        background: 'var(--mis-primary-light)',
+      }),
     );
   });
 
@@ -234,7 +302,11 @@ describe('cuenta-resultados.util', () => {
   });
 
   describe('drill down por cuenta (data real de PYG)', () => {
-    const fila = (style: number, codigo: string, nombre: string) => ({ style, cuenta_codigo: codigo, cuenta_nombre: nombre });
+    const fila = (style: number, codigo: string, nombre: string) => ({
+      style,
+      cuenta_codigo: codigo,
+      cuenta_nombre: nombre,
+    });
     const FILAS = [
       fila(2, 'FOR001', 'INGRESOS FINANCIEROS'),
       fila(1, 'EF001', 'COEFICIENTES'),
@@ -245,7 +317,8 @@ describe('cuenta-resultados.util', () => {
       fila(5, 'PEND004', 'INDIVIDUAL'),
       fila(3, 'FOR010', 'MARGEN BRUTO'),
     ];
-    const nombres = (abiertas: string[]) => filasConDrillDown(FILAS, new Set(abiertas)).map((f) => f.cuenta_nombre);
+    const nombres = (abiertas: string[]) =>
+      filasConDrillDown(FILAS, new Set(abiertas)).map((f) => f.cuenta_nombre);
 
     it('detalle solo bajo cuentas que lo tienen; resultados (3) y hojas no', () => {
       expect([...cuentasConDetalle(FILAS)]).toEqual(['FOR001', 'FOR004', 'FOR005', 'PEND001']);
@@ -264,7 +337,12 @@ describe('cuenta-resultados.util', () => {
 
     it('un nivel profundo exige que todos sus ancestros estén abiertos', () => {
       expect(nombres(['PEND001'])).toHaveLength(3);
-      expect(nombres(['FOR004', 'FOR005', 'PEND001']).slice(1, 5)).toEqual(['COMISIONES NETAS', 'COMISIONES RECIBIDAS', 'SEGUROS', 'INDIVIDUAL']);
+      expect(nombres(['FOR004', 'FOR005', 'PEND001']).slice(1, 5)).toEqual([
+        'COMISIONES NETAS',
+        'COMISIONES RECIBIDAS',
+        'SEGUROS',
+        'INDIVIDUAL',
+      ]);
     });
   });
 });

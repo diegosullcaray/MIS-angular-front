@@ -351,11 +351,15 @@ describe('TablaDinamicaComponent: indicadorVariacion "punto"', () => {
     return fixture.nativeElement.querySelectorAll('tbody td')[1] as HTMLElement;
   }
 
-  it('pone un punto del color del reporte a la derecha y deja la cifra con su signo, sin flecha ni color', () => {
+  it('pone un punto del color del reporte a la izquierda y deja la cifra con su signo, sin flecha ni color', () => {
     const td = celda(-1500);
     const punto = td.querySelector('i.pi-circle-fill') as HTMLElement;
+    const contenido = td.querySelector('div')!;
+    const cifra = td.querySelector('span')!;
 
     expect(punto.style.color).toBe('var(--mis-danger)');
+    expect([...contenido.children].indexOf(punto)).toBeLessThan([...contenido.children].indexOf(cifra));
+    expect(punto.classList).toContain('mr-2');
     expect(td.textContent).not.toContain('▼');
     expect(td.textContent).toMatch(/-1.?500/);
     expect((td.querySelector('span') as HTMLElement).style.color).toBe('');

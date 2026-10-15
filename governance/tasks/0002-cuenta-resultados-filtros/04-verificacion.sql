@@ -18,7 +18,8 @@ FROM    dbo.WREPPYG001
 GROUP BY WCODREL
 ORDER BY WCODREL;
 
--- 1b. ¿WCODSEC en los niveles 3 y 5 corresponde al asesor? Revisar las coincidencias antes de activar.
+-- 1b. ¿WCODSEC en los niveles 3 y 5 corresponde al código alfanumérico del asesor?
+--     Revisar las coincidencias antes de activar.
 DECLARE @ultimo date = (SELECT MAX(WFECPRO) FROM dbo.WREPPYG001 WHERE WCODREL = 3);
 DECLARE @jer date = (SELECT MAX(RFECPRO) FROM storage.ref.WJERCOR03 WHERE RINDFEC = 'actual');
 WITH c   AS (SELECT DISTINCT WCODSEC FROM dbo.WREPPYG001 WHERE WCODREL = 3 AND WFECPRO = @ultimo),
@@ -93,7 +94,11 @@ ORDER BY asesores DESC;
 -- EXEC rep.RTABCUERES01_NEW 'NOW', 18, '<RCODUNI>';
 -- EXEC rep.RTABCUERES01_NEW 'NOW', 20, '<RCODTER>';
 
--- 3c. Producto: un valor de la lista "productos" de la cabecera del paso 2.
+-- 3c. Asesor: la jerarquía entrega tip_cod=1 y códigos como 'ASESO272'.
+--     Debe devolver las 70 filas/cuentas del WCODREL=3 si se usa el periodo verificado.
+EXEC rep.RTABCUERES01_NEW 'NOW', 1, 'ASESO272';
+
+-- 3d. Producto: un valor de la lista "productos" de la cabecera del paso 2.
 -- EXEC rep.RTABCUERES01_NEW 'NOW', 7,  '1', '<producto>';
 -- EXEC rep.RTABCUERES01_NEW 'NOW', 18, '<RCODUNI>', '<producto>';
 GO

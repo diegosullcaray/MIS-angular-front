@@ -9,16 +9,20 @@ import { InlineErrorComponent } from '../../../../../../../../../shared/ui/inlin
 import { ListSkeletonComponent } from '../../../../../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { WindowPanelComponent } from '../../../../../../../../../shared/ui/window-panel/window-panel.component';
 import type { OpcionFiltro } from '../../../../../../../../../shared/ui/formularios/opcion-filtro.model';
-import { NIVEL_MAXIMO_JERARQUIA_ASESOR, PARAMS_HIER_UNIDAD, type HierarquiaNodo } from '../../../../../../models/jerarquia.model';
+import {
+  NIVEL_MAXIMO_JERARQUIA_ASESOR,
+  PARAMS_HIER_UNIDAD,
+  type HierarquiaNodo,
+} from '../../../../../../models/jerarquia.model';
 import type { NodoConsulta } from '../../../../../../services/bloque-reporte.service';
 import { MENSAJES_CUENTA_RESULTADOS } from '../../../../constantes/actividad-mensual.constantes';
 import type { CuentaResultadosResultado } from '../../../../models/cuenta-resultados.model';
 import {
-  
   ContratoCuentaResultadosError,
   crearColumnasCuentaResultados,
   cuentasConDetalle,
   filasConDrillDown,
+  opcionesCierreCuenta,
   normalizarFechaCuenta,
 } from '../../../../utils/cuenta-resultados.util';
 import { RutaJerarquicaComponent } from '../../../../../../ui/ruta-jerarquica/ruta-jerarquica.component';
@@ -53,7 +57,7 @@ interface ConsultaCuenta {
 export class CuentaResultadosComponent {
   private readonly servicio = inject(ActividadMensualRepoService);
 
-  /** Baja más allá del nivel 6 hasta el asesor; un nivel sin hijos no abre otro desplegable. */
+  /** La jerarquía devuelve asesores en el nivel 7; detenerse ahí evita pedir el nivel 8 inexistente. */
   protected readonly paramsHier = { ...PARAMS_HIER_UNIDAD, maxLvl: NIVEL_MAXIMO_JERARQUIA_ASESOR };
 
   protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
@@ -66,6 +70,7 @@ export class CuentaResultadosComponent {
 
   protected readonly periodos = signal<OpcionFiltro[]>([]);
   protected readonly periodo = signal('');
+  protected readonly errorPeriodos = signal(false);
   /** Opciones de la respuesta más reciente; el id vacío es "Todos". */
   protected readonly productos = signal<OpcionFiltro[]>([]);
   protected readonly producto = signal('');
@@ -82,10 +87,14 @@ export class CuentaResultadosComponent {
 
   /** Códigos de cuentas abiertas; cada consulta nueva las cierra. */
   private readonly abiertas = signal<ReadonlySet<string>>(new Set());
-  protected readonly filas = computed(() => filasConDrillDown(this.resultado()?.filas ?? [], this.abiertas()));
+  protected readonly filas = computed(() =>
+    filasConDrillDown(this.resultado()?.filas ?? [], this.abiertas()),
+  );
   private readonly conDetalleSet = computed(() => cuentasConDetalle(this.resultado()?.filas ?? []));
-  protected readonly conDetalle = (fila: Record<string, unknown>) => this.conDetalleSet().has(String(fila['cuenta_codigo']));
-  protected readonly desplegada = (fila: Record<string, unknown>) => this.abiertas().has(String(fila['cuenta_codigo']));
+  protected readonly conDetalle = (fila: Record<string, unknown>) =>
+    this.conDetalleSet().has(String(fila['cuenta_codigo']));
+  protected readonly desplegada = (fila: Record<string, unknown>) =>
+    this.abiertas().has(String(fila['cuenta_codigo']));
   protected readonly columnasDrillDown = ['cuenta_nombre'];
 
   protected readonly sinDestacar = () => false;
@@ -93,6 +102,7 @@ export class CuentaResultadosComponent {
   private readonly consulta = signal<ConsultaCuenta | null>(null);
 
   constructor() {
+    this.cargarPeriodos();
     effect((onCleanup) => {
       const consulta = this.consulta();
       if (!consulta) return;
@@ -104,7 +114,11 @@ export class CuentaResultadosComponent {
 
   protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
     this.nivelActual.set(nodo);
-    this.consulta.set({ nodo: { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel }, fecha: this.periodo() || null, producto: this.producto() || null });
+    this.consulta.set({
+      nodo: { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel },
+      fecha: this.periodo() || null,
+      producto: this.producto() || null,
+    });
   }
 
   /** Clic en una cuenta con detalle: la abre o la cierra. */
@@ -139,6 +153,22 @@ export class CuentaResultadosComponent {
     if (nodo) this.consulta.set({ nodo, fecha, producto: this.producto() || null });
   }
 
+  protected reintentarPeriodos(): void {
+    this.errorPeriodos.set(false);
+    this.cargarPeriodos();
+  }
+
+  private cargarPeriodos(): void {
+    this.servicio.periodos().subscribe({
+      next: (cierres) => {
+        const opciones = opcionesCierreCuenta(cierres);
+        if (opciones.length > 0) this.periodos.set(opciones);
+        this.errorPeriodos.set(false);
+      },
+      error: () => this.errorPeriodos.set(true),
+    });
+  }
+
   protected onProductoChange(valor: string): void {
     this.producto.set(valor);
     const consulta = this.consulta();
@@ -167,14 +197,16 @@ export class CuentaResultadosComponent {
     this.cargando.set(true);
     return this.servicio.cuentaResultados(nodo, fecha, producto).subscribe({
       next: (resultado) => {
-        this.periodos.set(resultado.periodos);
+        if (this.periodos().length === 0) this.periodos.set(resultado.periodos);
         this.productos.set([{ id: '', desc: 'Todos' }, ...resultado.productos]);
         this.periodo.set(resultado.fecha);
         this.resultado.set(resultado);
         this.cargando.set(false);
       },
       error: (e: unknown) => {
-        this.error.set(e instanceof ContratoCuentaResultadosError ? e.message : MENSAJES_CUENTA_RESULTADOS.fallo);
+        this.error.set(
+          e instanceof ContratoCuentaResultadosError ? e.message : MENSAJES_CUENTA_RESULTADOS.fallo,
+        );
         this.cargando.set(false);
       },
     });

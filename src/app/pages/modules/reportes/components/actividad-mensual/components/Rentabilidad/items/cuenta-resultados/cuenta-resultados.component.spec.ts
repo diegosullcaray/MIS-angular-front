@@ -3,21 +3,32 @@ import { Subject, of, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { CuentaResultadosComponent } from './cuenta-resultados.component';
 import { ActividadMensualRepoService } from '../../../../services/actividad-mensual-repo.service';
-import { ContratoCuentaResultadosError, mapearCuentaResultados } from '../../../../utils/cuenta-resultados.util';
+import {
+  ContratoCuentaResultadosError,
+  mapearCuentaResultados,
+} from '../../../../utils/cuenta-resultados.util';
 import type { CuentaResultadosResultado } from '../../../../models/cuenta-resultados.model';
 import type { HierarquiaNodo } from '../../../../../../models/jerarquia.model';
 
 const NODO: HierarquiaNodo = { tip_cod: 7, cod_rel: '231', desc_rel: 'Unidad 231', lvl: 1 };
 const HEADERS = JSON.stringify({ preliminar: 1, fechas: ['2026-06-01', '2026-05-01'] });
-const FILA = { style: 2, cuenta_codigo: 'CR012', cuenta_nombre: 'INGRESOS FINANCIEROS', periodo_actual: 3 };
+const FILA = {
+  style: 2,
+  cuenta_codigo: 'CR012',
+  cuenta_nombre: 'INGRESOS FINANCIEROS',
+  periodo_actual: 3,
+};
 
 function resultado(data: unknown[], fecha: string | null = null): CuentaResultadosResultado {
   return mapearCuentaResultados({ headers: HEADERS, data }, fecha);
 }
 
 type Vista = {
+  paramsHier: { maxLvl: number };
+  periodos(): { id: string; desc: string }[];
   onNivelSeleccionado(nodo: HierarquiaNodo): void;
   onPeriodoChange(valor: string): void;
+  errorPeriodos(): boolean;
   reintentar(): void;
   error(): string | null;
   cargando(): boolean;
@@ -28,11 +39,15 @@ type Vista = {
 
 describe('CuentaResultadosComponent', () => {
   let cuentaResultados: ReturnType<typeof vi.fn>;
+  let periodos: ReturnType<typeof vi.fn>;
 
   function crear() {
     TestBed.configureTestingModule({
       imports: [CuentaResultadosComponent],
-      providers: [{ provide: ActividadMensualRepoService, useValue: { cuentaResultados } }, MessageService],
+      providers: [
+        { provide: ActividadMensualRepoService, useValue: { cuentaResultados, periodos } },
+        MessageService,
+      ],
     });
     const fixture = TestBed.createComponent(CuentaResultadosComponent);
     fixture.detectChanges();
@@ -47,6 +62,19 @@ describe('CuentaResultadosComponent', () => {
 
   beforeEach(() => {
     cuentaResultados = vi.fn((_nodo, fecha: string | null) => of(resultado([FILA], fecha)));
+    periodos = vi.fn(() =>
+      of([
+        { id: '2026-06-30', desc: 'Junio 2026' },
+        { id: '2026-05-31', desc: 'Mayo 2026' },
+        { id: '2026-04-30', desc: 'Abril 2026' },
+      ]),
+    );
+  });
+
+  it('detiene la jerarquía en el nivel 7, donde el backend devuelve asesores', () => {
+    const { vista } = crear();
+
+    expect(vista.paramsHier.maxLvl).toBe(7);
   });
 
   it('la primera consulta va con NOW y toma el periodo devuelto sin pedir otra vez', () => {
@@ -76,8 +104,26 @@ describe('CuentaResultadosComponent', () => {
     TestBed.tick();
 
     expect(cuentaResultados).toHaveBeenCalledTimes(2);
-    expect(cuentaResultados).toHaveBeenLastCalledWith({ tip_cod: 7, cod_rel: '231' }, '2026-05-01', null);
+    expect(cuentaResultados).toHaveBeenLastCalledWith(
+      { tip_cod: 7, cod_rel: '231' },
+      '2026-05-01',
+      null,
+    );
     expect(vista.periodo()).toBe('2026-05-01');
+  });
+
+  it('carga los cierres mensuales completos y los normaliza al primer día de cada mes', () => {
+    const { vista, seleccionar } = crear();
+
+    expect(periodos).toHaveBeenCalledOnce();
+    expect(vista.errorPeriodos()).toBe(false);
+    seleccionar();
+
+    expect(vista.periodos().map(({ id }) => id)).toEqual([
+      '2026-06-01',
+      '2026-05-01',
+      '2026-04-01',
+    ]);
   });
 
   it('un periodo que no ofreció el backend es error y no consulta', () => {
@@ -96,13 +142,17 @@ describe('CuentaResultadosComponent', () => {
     seleccionar();
 
     expect(vista.error()).toBeNull();
-    expect(fixture.nativeElement.textContent).toContain('No se encontraron resultados para los filtros seleccionados.');
+    expect(fixture.nativeElement.textContent).toContain(
+      'No se encontraron resultados para los filtros seleccionados.',
+    );
     expect(fixture.nativeElement.querySelector('app-tabla-dinamica')).toBeNull();
   });
 
   it('un payload inválido muestra el mensaje de contrato', () => {
     cuentaResultados.mockReturnValue(
-      throwError(() => new ContratoCuentaResultadosError('El reporte devolvió metadatos inválidos.')),
+      throwError(
+        () => new ContratoCuentaResultadosError('El reporte devolvió metadatos inválidos.'),
+      ),
     );
     const { fixture, vista, seleccionar } = crear();
     seleccionar();
@@ -123,7 +173,7 @@ describe('CuentaResultadosComponent', () => {
     );
     const { fixture, seleccionar } = crear();
     seleccionar();
-    const filas = () => (fixture.nativeElement.textContent as string);
+    const filas = () => fixture.nativeElement.textContent as string;
     const clic = () => {
       const celda = [...fixture.nativeElement.querySelectorAll('td')].find((td: HTMLElement) =>
         td.textContent?.includes('INGRESOS FINANCIEROS'),
@@ -133,7 +183,9 @@ describe('CuentaResultadosComponent', () => {
     };
 
     const caja = () =>
-      ([...fixture.nativeElement.querySelectorAll('td')] as HTMLElement[]).find((td) => td.textContent?.includes('INGRESOS FINANCIEROS'))!;
+      ([...fixture.nativeElement.querySelectorAll('td')] as HTMLElement[]).find((td) =>
+        td.textContent?.includes('INGRESOS FINANCIEROS'),
+      )!;
     // Cuadro tipo Excel con + (cerrada) y sin subrayado.
     expect(caja().querySelector('.mis-drill-caja .pi-plus')).not.toBeNull();
     expect(caja().classList).not.toContain('underline');
@@ -142,7 +194,9 @@ describe('CuentaResultadosComponent', () => {
     expect(filas()).toContain('COEFICIENTES');
     expect(caja().querySelector('.mis-drill-caja .pi-minus')).not.toBeNull();
     const celdaDe = (texto: string) =>
-      [...fixture.nativeElement.querySelectorAll('td')].find((td: HTMLElement) => td.textContent?.includes(texto)) as HTMLElement;
+      [...fixture.nativeElement.querySelectorAll('td')].find((td: HTMLElement) =>
+        td.textContent?.includes(texto),
+      ) as HTMLElement;
     // Solo las cuentas con detalle llevan el cuadro.
     expect(celdaDe('COEFICIENTES').querySelector('.mis-drill-caja')).toBeNull();
     clic();

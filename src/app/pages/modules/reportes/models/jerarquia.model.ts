@@ -14,8 +14,8 @@ export const COD_JERARQUIA_ORGANIZATIVA = 9;
 /** Nivel máximo de jerarquía organizativa. */
 export const NIVEL_MAXIMO_JERARQUIA = 6;
 
-/** Tope para las pantallas que bajan hasta el asesor; el selector se detiene solo donde el backend ya no devuelve hijos. */
-export const NIVEL_MAXIMO_JERARQUIA_ASESOR = 8;
+/** El backend devuelve los asesores en el nivel 7; no pedir un nivel hijo que no existe. */
+export const NIVEL_MAXIMO_JERARQUIA_ASESOR = 7;
 
 /** Parámetros de jerarquía organizativa. */
 export const PARAMS_HIER_UNIDAD: ParamsJerarquia = {

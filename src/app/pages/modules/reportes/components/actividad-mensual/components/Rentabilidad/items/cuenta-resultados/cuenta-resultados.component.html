@@ -1,11 +1,19 @@
 <app-window-panel
   titulo="PYG FC · Estado de ganancias y pérdidas"
   subtitulo="Cuenta de Resultados"
-  [permitirActualizar]="!!nivelActual()" [actualizando]="cargando()" (actualizar)="refrescar()"
+  [permitirActualizar]="!!nivelActual()"
+  [actualizando]="cargando()"
+  (actualizar)="refrescar()"
   [conFiltros]="true"
 >
   @if (periodos().length > 0) {
-    <app-fecha-cierre-boton ventana-acciones etiqueta="Período" [opciones]="periodos()" [valor]="periodo()" (valorChange)="onPeriodoChange($event)" />
+    <app-fecha-cierre-boton
+      ventana-acciones
+      etiqueta="Período"
+      [opciones]="periodos()"
+      [valor]="periodo()"
+      (valorChange)="onPeriodoChange($event)"
+    />
   }
 
   <div ventana-filtros class="flex flex-col gap-3">
@@ -30,7 +38,10 @@
             etiqueta="Producto"
             [opciones]="productos()"
             [valor]="producto()"
+            [conBuscador]="true"
+            [mostrarLimpiar]="true"
             (valorChange)="onProductoChange($event)"
+            (limpiar)="onProductoChange('')"
           />
         }
       </app-grupo-filtros>
@@ -38,7 +49,15 @@
   </div>
 
   @if (errorJerarquia()) {
-    <app-inline-error titulo="No se pudo cargar la jerarquía." (reintentar)="reintentarJerarquia()" />
+    <app-inline-error
+      titulo="No se pudo cargar la jerarquía."
+      (reintentar)="reintentarJerarquia()"
+    />
+  } @else if (errorPeriodos()) {
+    <app-inline-error
+      titulo="No se pudieron cargar los períodos disponibles."
+      (reintentar)="reintentarPeriodos()"
+    />
   } @else if (error(); as detalle) {
     <app-inline-error [detalle]="detalle" (reintentar)="reintentar()" />
   } @else if (cargando()) {
@@ -53,9 +72,15 @@
       <app-empty-state descripcion="No se encontraron resultados para los filtros seleccionados." />
     } @else {
       <div class="flex flex-col gap-2 w-full">
-        <app-ruta-jerarquica [ruta]="ruta()" etiqueta="Ruta de la cuenta de resultados" (irANivel)="volverANivel($event)" />
+        <app-ruta-jerarquica
+          [ruta]="ruta()"
+          etiqueta="Ruta de la cuenta de resultados"
+          (irANivel)="volverANivel($event)"
+        />
         <div class="mis-card p-3 overflow-x-auto w-full">
-          <app-tabla-dinamica [ajustarAncho]="true" [llenarAlto]="true"
+          <app-tabla-dinamica
+            [ajustarAncho]="true"
+            [llenarAlto]="true"
             [columnas]="columnas()"
             [filas]="filas()"
             [cargando]="cargando()"

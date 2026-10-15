@@ -1,5 +1,6 @@
 import type { ColumnaDinamica } from '../../../models/tabla-dinamica.model';
 import type { TablaRegularResultadoRaw } from '../../../models/tabla-dinamica.model';
+import type { OpcionFiltro } from '../../../../../../shared/ui/formularios/opcion-filtro.model';
 import {
   CUENTAS_GASTO_CUENTA_RESULTADOS,
   MENSAJES_CUENTA_RESULTADOS,
@@ -18,7 +19,10 @@ export function normalizarFechaCuenta(valor: unknown): string | null {
   if (typeof valor !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(valor)) return null;
   const [anio, mes, dia] = valor.split('-').map(Number);
   const fecha = new Date(Date.UTC(anio, mes - 1, dia));
-  const valida = fecha.getUTCFullYear() === anio && fecha.getUTCMonth() === mes - 1 && fecha.getUTCDate() === dia;
+  const valida =
+    fecha.getUTCFullYear() === anio &&
+    fecha.getUTCMonth() === mes - 1 &&
+    fecha.getUTCDate() === dia;
   return valida ? valor : null;
 }
 
@@ -36,9 +40,21 @@ function fechaLocal(valor: string): Date {
   return new Date(`${valor}T00:00:00`);
 }
 
-/** "Junio de 2026" */
+/** "Jun.26", igual que los encabezados de periodo del reporte mensual. */
 export function etiquetaPeriodoCuenta(valor: string): string {
-  return capitalizar(fechaLocal(valor).toLocaleString('es-PE', { month: 'long', year: 'numeric' }));
+  return mesAnio(fechaLocal(valor));
+}
+
+/** Normaliza los cierres de `RS_FECH` al primer día de mes que espera el reporte PYG. */
+export function opcionesCierreCuenta(cierres: readonly OpcionFiltro[]): OpcionFiltro[] {
+  const porMes = new Map<string, OpcionFiltro>();
+  for (const cierre of cierres) {
+    const fecha = normalizarFechaCuenta(cierre.id);
+    if (!fecha) continue;
+    const id = `${fecha.slice(0, 7)}-01`;
+    porMes.set(id, { id, desc: etiquetaPeriodoCuenta(id) });
+  }
+  return [...porMes.values()];
 }
 
 /** Metadatos de `resultado.headers`, o `null` si no cumplen el contrato. */
@@ -51,7 +67,8 @@ export function leerMetadatosCuenta(crudo: unknown): MetadatosCuentaResultados |
   }
   if (!metadatos || (metadatos.preliminar !== 0 && metadatos.preliminar !== 1)) return null;
   const fechas = metadatos.fechas;
-  if (!Array.isArray(fechas) || !fechas.length || fechas.some((f) => !normalizarFechaCuenta(f))) return null;
+  if (!Array.isArray(fechas) || !fechas.length || fechas.some((f) => !normalizarFechaCuenta(f)))
+    return null;
   const productos = Array.isArray(metadatos.productos)
     ? metadatos.productos.filter((p): p is string => typeof p === 'string' && p !== '')
     : [];
@@ -64,12 +81,16 @@ export function mapearCuentaResultados(
   fechaPedida: string | null,
 ): CuentaResultadosResultado {
   const metadatos = leerMetadatosCuenta(resultado?.headers);
-  if (!metadatos) throw new ContratoCuentaResultadosError(MENSAJES_CUENTA_RESULTADOS.metadatosInvalidos);
+  if (!metadatos)
+    throw new ContratoCuentaResultadosError(MENSAJES_CUENTA_RESULTADOS.metadatosInvalidos);
   if (!Array.isArray(resultado?.data)) {
     throw new ContratoCuentaResultadosError(MENSAJES_CUENTA_RESULTADOS.respuestaInvalida);
   }
 
-  const periodos = metadatos.fechas.map((fecha) => ({ id: fecha, desc: etiquetaPeriodoCuenta(fecha) }));
+  const periodos = metadatos.fechas.map((fecha) => ({
+    id: fecha,
+    desc: etiquetaPeriodoCuenta(fecha),
+  }));
   const fecha = metadatos.fechas.find((f) => f === fechaPedida) ?? metadatos.fechas[0];
   const preliminar = metadatos.preliminar === 1;
   return {
@@ -102,9 +123,19 @@ export function estiloFilaCuenta(fila: Record<string, unknown>): Record<string, 
         'border-bottom': '1px solid var(--mis-border-strong)',
       };
     case 2:
-      return { ...base, background: 'var(--mis-surface)', color: 'var(--mis-primary-text)', 'font-weight': '700' };
+      return {
+        ...base,
+        background: 'var(--mis-surface)',
+        color: 'var(--mis-primary-text)',
+        'font-weight': '700',
+      };
     default:
-      return { ...base, background: 'var(--mis-panel-bg)', color: 'var(--mis-text-secondary)', 'font-weight': '500' };
+      return {
+        ...base,
+        background: 'var(--mis-panel-bg)',
+        color: 'var(--mis-text-secondary)',
+        'font-weight': '500',
+      };
   }
 }
 
@@ -118,13 +149,17 @@ export function cuentasConDetalle(filas: readonly Record<string, unknown>[]): Se
   const con = new Set<string>();
   filas.forEach((fila, i) => {
     const siguiente = filas[i + 1];
-    if (siguiente && profundidad(siguiente) > profundidad(fila)) con.add(String(fila['cuenta_codigo']));
+    if (siguiente && profundidad(siguiente) > profundidad(fila))
+      con.add(String(fila['cuenta_codigo']));
   });
   return con;
 }
 
 /** Filas del drill down: cada cuenta abierta (por código) muestra su detalle; el cuadro +/− lo pinta la tabla (`desplegada`). */
-export function filasConDrillDown<T extends Record<string, unknown>>(filas: readonly T[], abiertas: ReadonlySet<string>): T[] {
+export function filasConDrillDown<T extends Record<string, unknown>>(
+  filas: readonly T[],
+  abiertas: ReadonlySet<string>,
+): T[] {
   const visibles: T[] = [];
   const ruta: boolean[] = []; // ruta[d]: el ancestro a profundidad d está abierto
   for (const fila of filas) {
@@ -186,7 +221,11 @@ const ENCABEZADO = {
 const ENCABEZADO_CIFRA = { ...ENCABEZADO, 'text-align': 'right', padding: '4px 8px' };
 
 /** Encabezado de bloque (Flujo mensual / Acumulado): mayúsculas espaciadas, que el `<th>` ya trae. */
-const ENCABEZADO_BLOQUE = { ...ENCABEZADO, 'text-transform': 'uppercase', 'letter-spacing': '0.08em' };
+const ENCABEZADO_BLOQUE = {
+  ...ENCABEZADO,
+  'text-transform': 'uppercase',
+  'letter-spacing': '0.08em',
+};
 
 /** "Preliminar Ago": el mes aún abierto va en oro de marca con texto de marca. */
 const ENCABEZADO_PRELIMINAR = {
@@ -199,7 +238,10 @@ const ENCABEZADO_PRELIMINAR = {
 /** Tinte dorado de las celdas del mes preliminar, sobre el fondo de su fila. */
 function celdaPreliminar(fila: Record<string, unknown>): Record<string, string> {
   const estilo = estiloFilaCuenta(fila);
-  return { ...estilo, background: `color-mix(in srgb, var(--mis-brand-gold) 22%, ${estilo['background']})` };
+  return {
+    ...estilo,
+    background: `color-mix(in srgb, var(--mis-brand-gold) 22%, ${estilo['background']})`,
+  };
 }
 
 /** Porcentaje de variación con fondo y texto del semáforo (verde claro / rojo claro). */
@@ -219,7 +261,11 @@ function celdaPorcentaje(_valor: unknown, fila: Record<string, unknown>): Record
 /** Ancho fijo de cada cifra: si no entran, la tabla se desplaza en horizontal. */
 const CELDA_CIFRA = { 'text-align': 'right', 'min-width': '84px' };
 
-function columnaCifra(label: string, key: string, extra: Partial<ColumnaDinamica> = {}): ColumnaDinamica {
+function columnaCifra(
+  label: string,
+  key: string,
+  extra: Partial<ColumnaDinamica> = {},
+): ColumnaDinamica {
   return {
     label,
     key,
@@ -268,7 +314,10 @@ const SEPARADOR_ENCABEZADO = { 'border-left': `2px solid ${FILETE_ENCABEZADO}` }
  * anterior, mes anterior, mes actual y su variación) y el acumulado del año (año anterior,
  * actual, variación y %). El nivel ya se lee en la línea de contexto sobre la tabla.
  */
-export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean): ColumnaDinamica[] {
+export function crearColumnasCuentaResultados(
+  fecha: string,
+  preliminar: boolean,
+): ColumnaDinamica[] {
   const actual = fechaLocal(fecha);
   const anterior = new Date(actual.getFullYear(), actual.getMonth() - 1, 1);
   const anioAnterior = new Date(actual.getFullYear() - 1, actual.getMonth(), 1);
@@ -282,7 +331,11 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
       cellStyle: { ...ESTILO_CUENTA_FIJA, 'z-index': '1', 'text-align': 'left' },
       cellStyleFn: (_valor, fila) => {
         const estilo = estiloFilaCuenta(fila);
-        return { ...estilo, background: fondoOpaco(estilo['background']), 'padding-left': sangriaCuenta(fila) };
+        return {
+          ...estilo,
+          background: fondoOpaco(estilo['background']),
+          'padding-left': sangriaCuenta(fila),
+        };
       },
     },
     {
@@ -298,7 +351,9 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
               cellStyleFn: (_valor, fila) => celdaPreliminar(fila),
             })
           : columnaCifra(mesAnio(actual), 'periodo_actual'),
-        conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anterior)}`, 'variacion_periodo_anterior')),
+        conSemaforo(
+          columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anterior)}`, 'variacion_periodo_anterior'),
+        ),
       ],
     },
     {
@@ -311,12 +366,21 @@ export function crearColumnasCuentaResultados(fecha: string, preliminar: boolean
           cellStyle: { ...CELDA_CIFRA, ...SEPARADOR_BLOQUE },
         }),
         // El acumulado del año se juzga por su variación contra el año anterior.
-        conSemaforo(columnaCifra(String(actual.getFullYear()), 'acumulado_actual'), 'variacion_acumulado'),
-        conSemaforo(columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)}`, 'variacion_acumulado')),
-        columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)} %`, 'variacion_acumulado_pct', {
-          format: { type: 'percent' },
-          cellStyleFn: celdaPorcentaje,
-        }),
+        conSemaforo(
+          columnaCifra(String(actual.getFullYear()), 'acumulado_actual'),
+          'variacion_acumulado',
+        ),
+        conSemaforo(
+          columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)}`, 'variacion_acumulado'),
+        ),
+        columnaCifra(
+          `${mesAnio(actual)} vs ${mesAnio(anioAnterior)} %`,
+          'variacion_acumulado_pct',
+          {
+            format: { type: 'percent' },
+            cellStyleFn: celdaPorcentaje,
+          },
+        ),
       ],
     },
   ];

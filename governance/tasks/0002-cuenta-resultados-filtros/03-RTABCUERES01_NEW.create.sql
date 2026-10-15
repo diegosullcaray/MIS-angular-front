@@ -115,7 +115,7 @@ BEGIN
                     WHEN @tip_cod = 21 THEN CAST(RCODGRU AS varchar(20))   -- grupo
                     WHEN @tip_cod = 18 THEN CAST(RCODUNI AS varchar(20))   -- unidad de negocio
                     WHEN @tip_cod = 17 THEN CAST(RCODUCO AS varchar(20))   -- coordinador
-                    WHEN @tip_cod = 2  THEN CAST(RCODSEC AS varchar(20))   -- asesor
+                    WHEN @tip_cod IN (1, 2) THEN CAST(RCODSEC AS varchar(20)) -- asesor
                END = @cod_rel;
     END;
 

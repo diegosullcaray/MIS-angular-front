@@ -1,37 +1,48 @@
 <div
-  class="w-full flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-end gap-2.5 sm:gap-3 p-2.5 sm:p-2 mis-baldosa rounded-xl shadow-xs"
+  class="w-full flex flex-col sm:flex-row sm:flex-nowrap items-stretch sm:items-end gap-2.5 sm:gap-2 p-2.5 sm:p-2 mis-baldosa rounded-xl shadow-xs overflow-x-auto"
   [class.sm:w-fit]="!anchoCompleto()"
   [class.sm:w-full]="anchoCompleto()"
 >
   @for (cbo of nodosNivel(); track cbo.level; let i = $index) {
-    <div class="flex flex-col gap-1 w-full sm:w-auto">
+    <div class="flex flex-col gap-1 w-full sm:w-49 sm:shrink-0">
       <span class="text-[11px] font-bold text-[var(--mis-text-secondary)] uppercase tracking-wider">
         {{ cbo.label }}
       </span>
-      <p-select appendTo="body"
+      <p-select
+        appendTo="body"
         [options]="cbo.data"
         [ngModel]="valoresSeleccionados()[i]"
         (onChange)="onSeleccionarNivel(i, $event.value)"
+        [filter]="true"
+        filterBy="desc_rel,des_rel"
+        filterPlaceholder="Buscar…"
         optionLabel="desc_rel"
         dataKey="cod_rel"
-        styleClass="w-full sm:min-w-44 text-[12px]"
+        styleClass="w-full min-w-0 text-[12px]"
         [placeholder]="cbo.label"
         ariaLabel="Seleccionar nivel jerárquico"
       >
         <ng-template pTemplate="selectedItem" let-selectedOption>
           @if (selectedOption) {
-            <span class="truncate block w-full max-w-full sm:max-w-[200px] text-ellipsis">{{ selectedOption.desc_rel || selectedOption.des_rel }}</span>
+            <span class="truncate block w-full max-w-full text-ellipsis">{{
+              selectedOption.desc_rel || selectedOption.des_rel
+            }}</span>
           }
         </ng-template>
         <ng-template pTemplate="item" let-nodo>
-          <span class="truncate block max-w-full sm:max-w-[260px] text-ellipsis">{{ nodo.desc_rel || nodo.des_rel }}</span>
+          <span class="truncate block max-w-full text-ellipsis">{{
+            nodo.desc_rel || nodo.des_rel
+          }}</span>
         </ng-template>
       </p-select>
     </div>
   }
 
-  <div class="flex flex-col gap-1 w-full sm:w-auto pt-1 sm:pt-0">
-    <span class="hidden sm:block text-[11px] font-bold opacity-0 select-none uppercase tracking-wider">&nbsp;</span>
+  <div class="flex flex-col gap-1 w-full sm:w-auto sm:shrink-0 pt-1 sm:pt-0">
+    <span
+      class="hidden sm:block text-[11px] font-bold opacity-0 select-none uppercase tracking-wider"
+      >&nbsp;</span
+    >
     <p-button
       label="Limpiar"
       icon="pi pi-refresh"
