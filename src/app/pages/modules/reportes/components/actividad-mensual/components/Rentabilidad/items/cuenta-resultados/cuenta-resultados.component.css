@@ -1,0 +1,22 @@
+/* Colores y esquinas de la tabla PYG FC (maqueta `governance/tasks/0002-cuenta-resultados-filtros`).
+   `utils/cuenta-resultados.util.ts` solo referencia estas variables; aquí se ajusta la paleta. */
+.pyg-tabla {
+  --pyg-radio: var(--mis-radius-md);
+  --pyg-encabezado: var(--mis-primary);
+  --pyg-encabezado-texto: var(--mis-text-on-primary);
+  --pyg-preliminar: var(--mis-brand-gold);
+  --pyg-preliminar-texto: var(--mis-primary);
+  --pyg-total-bg: var(--mis-primary-light);
+  --pyg-principal-bg: var(--mis-surface);
+  --pyg-detalle-bg: var(--mis-panel-bg);
+  --pyg-texto-principal: var(--mis-primary-text);
+  --pyg-texto-detalle: var(--mis-text-secondary);
+  --pyg-favorable: var(--mis-success);
+  --pyg-desfavorable: var(--mis-danger);
+}
+
+/* Esquinas redondeadas de la propia tabla (encabezado arriba, última fila abajo). */
+.pyg-tabla ::ng-deep thead tr:first-child th:first-child { border-top-left-radius: var(--pyg-radio); }
+.pyg-tabla ::ng-deep thead tr:first-child th:last-child { border-top-right-radius: var(--pyg-radio); }
+.pyg-tabla ::ng-deep tbody tr:last-child td:first-child { border-bottom-left-radius: var(--pyg-radio); }
+.pyg-tabla ::ng-deep tbody tr:last-child td:last-child { border-bottom-right-radius: var(--pyg-radio); }

@@ -116,24 +116,24 @@ export function estiloFilaCuenta(fila: Record<string, unknown>): Record<string, 
     case 3:
       return {
         ...base,
-        background: 'var(--mis-primary-light)',
-        color: 'var(--mis-primary-text)',
+        background: 'var(--pyg-total-bg)',
+        color: 'var(--pyg-texto-principal)',
         'font-weight': '800',
-        'border-top': '2px solid var(--mis-primary)',
+        'border-top': '2px solid var(--pyg-encabezado)',
         'border-bottom': '1px solid var(--mis-border-strong)',
       };
     case 2:
       return {
         ...base,
-        background: 'var(--mis-surface)',
-        color: 'var(--mis-primary-text)',
+        background: 'var(--pyg-principal-bg)',
+        color: 'var(--pyg-texto-principal)',
         'font-weight': '700',
       };
     default:
       return {
         ...base,
-        background: 'var(--mis-panel-bg)',
-        color: 'var(--mis-text-secondary)',
+        background: 'var(--pyg-detalle-bg)',
+        color: 'var(--pyg-texto-detalle)',
         'font-weight': '500',
       };
   }
@@ -190,7 +190,7 @@ function sangriaCuenta(fila: Record<string, unknown>): string {
 export function colorVariacionCuenta(valor: number, fila: Record<string, unknown>): string {
   const esGasto = CUENTAS_GASTO_CUENTA_RESULTADOS.includes(String(fila['cuenta_codigo']));
   const favorable = esGasto ? valor <= 0 : valor >= 0;
-  return favorable ? 'var(--mis-success)' : 'var(--mis-danger)';
+  return favorable ? 'var(--pyg-favorable)' : 'var(--pyg-desfavorable)';
 }
 
 /** La columna fija tapa las cifras al desplazar: su fondo se apila sobre la superficie sólida. */
@@ -210,8 +210,8 @@ const ESTILO_CUENTA_FIJA = {
 /** Encabezado en banda de marca, como la maqueta; el filete entre bloques es blanco translúcido. */
 const FILETE_ENCABEZADO = 'rgba(255, 255, 255, 0.25)';
 const ENCABEZADO = {
-  background: 'var(--mis-primary)',
-  color: 'var(--mis-text-on-primary)',
+  background: 'var(--pyg-encabezado)',
+  color: 'var(--pyg-encabezado-texto)',
   'font-weight': '600',
   'text-transform': 'none',
   'border-color': FILETE_ENCABEZADO,
@@ -230,8 +230,8 @@ const ENCABEZADO_BLOQUE = {
 /** "Preliminar Ago": el mes aún abierto va en oro de marca con texto de marca. */
 const ENCABEZADO_PRELIMINAR = {
   ...ENCABEZADO_CIFRA,
-  background: 'var(--mis-brand-gold)',
-  color: 'var(--mis-primary)',
+  background: 'var(--pyg-preliminar)',
+  color: 'var(--pyg-preliminar-texto)',
   'font-weight': '700',
 };
 
@@ -240,20 +240,19 @@ function celdaPreliminar(fila: Record<string, unknown>): Record<string, string> 
   const estilo = estiloFilaCuenta(fila);
   return {
     ...estilo,
-    background: `color-mix(in srgb, var(--mis-brand-gold) 22%, ${estilo['background']})`,
+    background: `color-mix(in srgb, var(--pyg-preliminar) 22%, ${estilo['background']})`,
   };
 }
 
-/** Porcentaje de variación con fondo y texto del semáforo (verde claro / rojo claro). */
+/** Porcentaje de variación: solo el texto lleva el color del semáforo, la celda conserva el fondo de su fila. */
 function celdaPorcentaje(_valor: unknown, fila: Record<string, unknown>): Record<string, string> {
   const estilo = estiloFilaCuenta(fila);
   const variacion = fila['variacion_acumulado'];
   if (variacion == null || variacion === '' || !Number.isFinite(Number(variacion))) return estilo;
-  const favorable = colorVariacionCuenta(Number(variacion), fila) === 'var(--mis-success)';
+  const favorable = colorVariacionCuenta(Number(variacion), fila) === 'var(--pyg-favorable)';
   return {
     ...estilo,
-    background: favorable ? 'var(--mis-success-light)' : 'var(--mis-danger-light)',
-    color: favorable ? 'var(--mis-success)' : 'var(--mis-danger)',
+    color: favorable ? 'var(--pyg-favorable)' : 'var(--pyg-desfavorable)',
     'font-weight': '700',
   };
 }
@@ -277,7 +276,7 @@ function columnaCifra(
   };
 }
 
-/** Cifra con punto de semáforo; `desde` es la variación que decide el color. */
+/** Cifra con flecha ▲/▼ de semáforo; `desde` es la variación que decide el color. */
 function conSemaforo(columna: ColumnaDinamica, desde = columna.key): ColumnaDinamica {
   return {
     ...columna,
@@ -287,7 +286,6 @@ function conSemaforo(columna: ColumnaDinamica, desde = columna.key): ColumnaDina
       if (variacion == null || variacion === '' || !Number.isFinite(Number(variacion))) return null;
       return colorVariacionCuenta(Number(variacion), fila);
     },
-    indicadorVariacion: 'punto',
   };
 }
 
@@ -365,11 +363,7 @@ export function crearColumnasCuentaResultados(
           style: { ...ENCABEZADO_CIFRA, ...SEPARADOR_ENCABEZADO },
           cellStyle: { ...CELDA_CIFRA, ...SEPARADOR_BLOQUE },
         }),
-        // El acumulado del año se juzga por su variación contra el año anterior.
-        conSemaforo(
-          columnaCifra(String(actual.getFullYear()), 'acumulado_actual'),
-          'variacion_acumulado',
-        ),
+        columnaCifra(String(actual.getFullYear()), 'acumulado_actual'),
         conSemaforo(
           columnaCifra(`${mesAnio(actual)} vs ${mesAnio(anioAnterior)}`, 'variacion_acumulado'),
         ),

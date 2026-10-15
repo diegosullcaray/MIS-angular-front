@@ -53,6 +53,7 @@ interface ConsultaCuenta {
     GrupoFiltrosComponent,
   ],
   templateUrl: './cuenta-resultados.component.html',
+  styleUrl: './cuenta-resultados.component.css',
 })
 export class CuentaResultadosComponent {
   private readonly servicio = inject(ActividadMensualRepoService);

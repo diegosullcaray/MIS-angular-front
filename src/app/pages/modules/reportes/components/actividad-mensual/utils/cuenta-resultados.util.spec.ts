@@ -193,17 +193,17 @@ describe('cuenta-resultados.util', () => {
       const preliminar = hojas(crearColumnasCuentaResultados('2026-08-01', true)).find(
         (c) => c.key === 'periodo_actual',
       )!;
-      expect(preliminar.style?.['background']).toBe('var(--mis-brand-gold)');
-      expect(preliminar.style?.['color']).toBe('var(--mis-primary)');
+      expect(preliminar.style?.['background']).toBe('var(--pyg-preliminar)');
+      expect(preliminar.style?.['color']).toBe('var(--pyg-preliminar-texto)');
       expect(preliminar.cellStyleFn!(null, { style: 1 })!['background']).toContain(
-        'var(--mis-brand-gold)',
+        'var(--pyg-preliminar)',
       );
 
       const cerrado = hojas(crearColumnasCuentaResultados('2026-05-01', false)).find(
         (c) => c.key === 'periodo_actual',
       )!;
       expect(cerrado.label).toBe('May.26');
-      expect(cerrado.style?.['background']).toBe('var(--mis-primary)');
+      expect(cerrado.style?.['background']).toBe('var(--pyg-encabezado)');
     });
 
     it('las cifras y sus encabezados van a la derecha', () => {
@@ -224,73 +224,55 @@ describe('cuenta-resultados.util', () => {
       expect(acumulado.label).toBe('Acumulado Ene');
     });
 
-    it('semáforo en la variación mensual, el acumulado del año y la variación interanual; no en el %', () => {
+    it('flecha de semáforo en las dos variaciones; no en el acumulado ni en el %', () => {
       const columnas = hojas(crearColumnasCuentaResultados('2026-06-01', false));
-      const conPunto = columnas.filter((c) => c.indicadorVariacion === 'punto').map((c) => c.key);
-      expect(conPunto).toEqual([
-        'variacion_periodo_anterior',
-        'acumulado_actual',
-        'variacion_acumulado',
-      ]);
+      const conFlecha = columnas.filter((c) => c.colorVariacion).map((c) => c.key);
+      expect(conFlecha).toEqual(['variacion_periodo_anterior', 'variacion_acumulado']);
+      expect(columnas.some((c) => c.indicadorVariacion === 'punto')).toBe(false);
 
       const pct = columnas.find((c) => c.key === 'variacion_acumulado_pct');
       expect(pct?.format?.type).toBe('percent');
       expect(pct?.colorVariacion).toBeUndefined();
-    });
-
-    it('el acumulado del año toma el color de su variación contra el año anterior', () => {
-      const acumulado = hojas(crearColumnasCuentaResultados('2026-06-01', false)).find(
-        (c) => c.key === 'acumulado_actual',
-      )!;
-      const gasto = { cuenta_codigo: 'CR018', style: 2 };
-      expect(acumulado.colorVariacion!(12647, { ...gasto, variacion_acumulado: -1022 })).toBe(
-        'var(--mis-success)',
-      );
-      expect(acumulado.colorVariacion!(12647, { ...gasto, variacion_acumulado: 500 })).toBe(
-        'var(--mis-danger)',
-      );
-      // Sin variación no hay semáforo.
-      expect(acumulado.colorVariacion!(12647, gasto)).toBeNull();
     });
   });
 
   describe('polaridad de la variación', () => {
     it('ingreso: subir es verde, bajar es rojo', () => {
       const ingreso = { cuenta_codigo: 'CR012' };
-      expect(colorVariacionCuenta(1, ingreso)).toBe('var(--mis-success)');
-      expect(colorVariacionCuenta(-1, ingreso)).toBe('var(--mis-danger)');
+      expect(colorVariacionCuenta(1, ingreso)).toBe('var(--pyg-favorable)');
+      expect(colorVariacionCuenta(-1, ingreso)).toBe('var(--pyg-desfavorable)');
     });
 
     it('gasto: bajar es verde, subir es rojo', () => {
       const gasto = { cuenta_codigo: 'CR018' };
-      expect(colorVariacionCuenta(-1, gasto)).toBe('var(--mis-success)');
-      expect(colorVariacionCuenta(1, gasto)).toBe('var(--mis-danger)');
+      expect(colorVariacionCuenta(-1, gasto)).toBe('var(--pyg-favorable)');
+      expect(colorVariacionCuenta(1, gasto)).toBe('var(--pyg-desfavorable)');
     });
 
     it('el cero es favorable en ambos casos', () => {
-      expect(colorVariacionCuenta(0, { cuenta_codigo: 'CR012' })).toBe('var(--mis-success)');
-      expect(colorVariacionCuenta(0, { cuenta_codigo: 'CR018' })).toBe('var(--mis-success)');
+      expect(colorVariacionCuenta(0, { cuenta_codigo: 'CR012' })).toBe('var(--pyg-favorable)');
+      expect(colorVariacionCuenta(0, { cuenta_codigo: 'CR018' })).toBe('var(--pyg-favorable)');
     });
 
     it('en la fila de resultado usa los mismos colores (ya no hay banda navy)', () => {
       expect(colorVariacionCuenta(1, { cuenta_codigo: 'CR021', style: 3 })).toBe(
-        'var(--mis-success)',
+        'var(--pyg-favorable)',
       );
     });
   });
 
   it('distingue detalle, principal y resultado por `style`, como la maqueta', () => {
     expect(estiloFilaCuenta({ style: 1 })).toEqual(
-      expect.objectContaining({ 'font-weight': '500', color: 'var(--mis-text-secondary)' }),
+      expect.objectContaining({ 'font-weight': '500', color: 'var(--pyg-texto-detalle)' }),
     );
     expect(estiloFilaCuenta({ style: 2 })).toEqual(
-      expect.objectContaining({ 'font-weight': '700', background: 'var(--mis-surface)' }),
+      expect.objectContaining({ 'font-weight': '700', background: 'var(--pyg-principal-bg)' }),
     );
     expect(estiloFilaCuenta({ style: 3 })).toEqual(
       expect.objectContaining({
-        'border-top': '2px solid var(--mis-primary)',
-        color: 'var(--mis-primary-text)',
-        background: 'var(--mis-primary-light)',
+        'border-top': '2px solid var(--pyg-encabezado)',
+        color: 'var(--pyg-texto-principal)',
+        background: 'var(--pyg-total-bg)',
       }),
     );
   });
