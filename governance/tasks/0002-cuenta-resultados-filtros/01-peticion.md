@@ -2,13 +2,13 @@
 
 **Fecha**: 2026-10-15 · **Solicita**: Diego Sullcaray · **Estado**: propuesto (script listo, sin ejecutar)
 
-**Enfoque**: SP nuevo `rep.RTABCUERES01_NEW`; el original no se toca (convención de [modificaciones](../README.md)).
+**Enfoque**: SP nuevo `rep.RTABCUERES01_NEW`; el original no se toca (convención de `modificaciones`).
 
 ## Pedido, tal como llegó
 
-Observación en [observaciones.md](../observaciones.md) (2026-10-15), con la tabla esperada en
-[image.png](../image.png) y la reunión de revisión del 2026-10-07 en las
-[notas de Gemini](<../Reivison datos PyG - 2026_10_07 10_00 GMT-05_00 - Notas de Gemini.txt>):
+Observación en `observaciones.md` (2026-10-15), con la tabla esperada en
+`image.png` y la reunión de revisión del 2026-10-07 en las
+`notas de Gemini`:
 
 > El código del reporte Cuenta de Resultados es TAB_CUE_RES_01. Lo ejecuta mod_rep.rep.RTABCUERES01 y recibe
 > los parámetros fecha, tip_cod y cod_rel. Se requiere modificar el SP donde se quiere tener la tabla de la

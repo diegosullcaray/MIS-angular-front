@@ -20,6 +20,7 @@ describe('cero-cuotas-mapeo.util', () => {
 
     expect(grafico).toEqual({
       titulo: 'Saldo',
+      enMillones: true,
       categorias: ['Sep'],
       series: [{ nombre: 'Nuevo', datos: [2.5], color: '#000' }],
     });

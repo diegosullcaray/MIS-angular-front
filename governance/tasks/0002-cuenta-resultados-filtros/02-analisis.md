@@ -1,8 +1,9 @@
 # MOD-0002 · Análisis
+nPetición: [01-peticion.md](./01-peticion.md).
 
 ## 1. Cómo funciona hoy
 
-`mod_rep.rep.RTABCUERES01` ([copia extraída](../../extraccion/procedimientos/mod_rep/rep/RTABCUERES01.sql),
+`mod_rep.rep.RTABCUERES01` (copia extraída (`extraccion/procedimientos/mod_rep/rep/RTABCUERES01.sql`, repo del backend),
 modificado en la base el 2026-09-23) recibe `@fecha`, `@tip_cod` y `@cod_rel`, pero **no usa ninguno**:
 
 | Qué | Hoy | Efecto en pantalla |
