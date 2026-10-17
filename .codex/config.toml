@@ -1,0 +1,7 @@
+[mcp_servers.highcharts]
+command = "highchart-mcp"
+args = [
+    "serve",
+    "--transport",
+    "stdio",
+]

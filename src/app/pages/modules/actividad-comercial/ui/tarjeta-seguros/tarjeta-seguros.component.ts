@@ -2,33 +2,38 @@ import { Component, computed, input, output } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { lucideShield } from '@ng-icons/lucide';
 import { MeterGroupModule } from 'primeng/metergroup';
-import type { ProgresoMeta, SegurosAsesor } from '../../models/actividad-comercial.model';
-import { formatearValor, porcentaje } from '../../utils/actividad-comercial.util';
-import { BarraMetaComponent } from '../barra-meta/barra-meta.component';
+import type { SegurosAsesor } from '../../models/actividad-comercial.model';
+import { formatearValor } from '../../utils/actividad-comercial.util';
 import { KpiPieComponent } from '../kpi-pie/kpi-pie.component';
 import { TarjetaDominioComponent } from '../tarjeta-dominio/tarjeta-dominio.component';
 
-/** Seguros: ingresos y pólizas contra su meta, con las pólizas partidas por tipo. */
+/** Seguros: pólizas contra su meta, partidas por tipo. `datos` nulo = la carga de seguros aún no corrió (pendiente, no cero). */
 @Component({
   selector: 'app-tarjeta-seguros',
   standalone: true,
-  imports: [TarjetaDominioComponent, BarraMetaComponent, KpiPieComponent, MeterGroupModule],
+  imports: [TarjetaDominioComponent, KpiPieComponent, MeterGroupModule],
   viewProviders: [provideIcons({ lucideShield })],
   templateUrl: './tarjeta-seguros.component.html',
   styleUrl: './tarjeta-seguros.component.css',
 })
 export class TarjetaSegurosComponent {
-  readonly datos = input.required<SegurosAsesor>();
+  readonly datos = input.required<SegurosAsesor | null>();
   readonly verDetalle = output<void>();
 
-  protected readonly pctIngresos = computed(() => porcentaje(this.datos().ingresos.valor, this.datos().ingresos.meta));
-
-  /** Un segmento por tipo de seguro; con `max` = meta de pólizas, el relleno total es el avance. */
+  /** Un segmento por tipo de seguro; con `max` = meta de pólizas (o el total sin meta), el relleno es el avance. */
   protected readonly tipos = computed(() =>
-    this.datos().tipos.map((tipo) => ({ label: tipo.nombre, value: tipo.polizas, color: tipo.color })),
+    (this.datos()?.tipos ?? []).map((tipo) => ({ label: tipo.nombre, value: tipo.polizas, color: tipo.color })),
   );
 
-  protected resumen(p: ProgresoMeta): string {
-    return `${formatearValor(p.valor, p.formato)} / ${formatearValor(p.meta, p.formato)} meta`;
-  }
+  protected readonly resumen = computed(() => {
+    const p = this.datos()?.polizas;
+    if (!p) return '';
+    return p.meta === null ? `${formatearValor(p.valor, p.formato)} · sin meta` : `${formatearValor(p.valor, p.formato)} / ${formatearValor(p.meta, p.formato)} meta`;
+  });
+
+  /** Escala de la barra: la meta; sin meta, el total, para que el reparto por tipo siga leyéndose. */
+  protected readonly escala = computed(() => {
+    const p = this.datos()?.polizas;
+    return p ? Math.max(p.meta ?? p.valor, 1) : 1;
+  });
 }

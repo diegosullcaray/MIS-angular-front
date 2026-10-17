@@ -2,7 +2,7 @@ import { Component, computed, input, output } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { lucideUsers } from '@ng-icons/lucide';
 import type { ClientesAsesor } from '../../models/actividad-comercial.model';
-import { avanceVariacion, formatearAvance, formatearDelta } from '../../utils/actividad-comercial.util';
+import { SIN_DATO, avanceVariacion, formatearAvance, formatearDelta, formatearEntero } from '../../utils/actividad-comercial.util';
 import { BarraMetaComponent } from '../barra-meta/barra-meta.component';
 import { KpiPieComponent } from '../kpi-pie/kpi-pie.component';
 import { TarjetaDominioComponent } from '../tarjeta-dominio/tarjeta-dominio.component';
@@ -20,8 +20,23 @@ export class TarjetaClientesComponent {
   readonly datos = input.required<ClientesAsesor>();
   readonly verDetalle = output<void>();
 
-  protected readonly avance = computed(() => avanceVariacion(this.datos().crecimientoNeto, this.datos().metaVariacion));
-  protected readonly avanceTexto = computed(() => formatearAvance(this.avance().avancePct));
+  protected readonly cierreAnterior = computed(() => {
+    const v = this.datos().cierreAnterior;
+    return v === null ? SIN_DATO : formatearEntero(v);
+  });
+
+  protected readonly crecimientoNeto = computed(() => {
+    const v = this.datos().crecimientoNeto;
+    return v === null ? SIN_DATO : formatearDelta(v);
+  });
+
+  /** Sin crecimiento neto o sin meta de variación no hay avance que dibujar. */
+  protected readonly avance = computed(() => {
+    const { crecimientoNeto, metaVariacion } = this.datos();
+    return crecimientoNeto === null || metaVariacion === null || metaVariacion <= 0 ? null : avanceVariacion(crecimientoNeto, metaVariacion);
+  });
+  protected readonly avanceTexto = computed(() => formatearAvance(this.avance()?.avancePct ?? 0));
+  protected readonly meta = computed(() => formatearDelta(this.datos().metaVariacion ?? 0));
 
   protected delta(valor: number): string {
     return formatearDelta(valor);

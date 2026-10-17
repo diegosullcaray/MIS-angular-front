@@ -1,6 +1,9 @@
 import type { DatosColumnasApiladas } from '../../../../shared/ui/graficos/models/grafico-comun.model';
 import type { ColumnasCartera, FormatoKpi, SegmentoColumna } from '../models/actividad-comercial.model';
 
+/** Texto de un dato que no existe: el tablero nunca lo reemplaza por 0. */
+export const SIN_DATO = '—';
+
 /** Porcentaje de `valor` sobre `total`, acotado a 0–100. Sin total no hay avance. */
 export function porcentaje(valor: number, total: number): number {
   if (!Number.isFinite(valor) || !Number.isFinite(total) || total <= 0) return 0;
@@ -12,11 +15,14 @@ export function formatearEntero(valor: number): string {
   return Math.round(valor).toLocaleString('en-US');
 }
 
-/** Valor listo para mostrar según su formato. */
-export function formatearValor(valor: number, formato: FormatoKpi): string {
+/** Valor listo para mostrar según su formato; `null` es `—`. */
+export function formatearValor(valor: number | null, formato: FormatoKpi): string {
+  if (valor === null) return SIN_DATO;
   switch (formato) {
     case 'porcentaje':
       return `${valor.toFixed(2)}%`;
+    case 'decimal':
+      return valor.toFixed(1);
     case 'operaciones':
       return `${formatearEntero(valor)} ops`;
     case 'asesores':
@@ -30,6 +36,12 @@ export function formatearValor(valor: number, formato: FormatoKpi): string {
 export function formatearDelta(valor: number): string {
   if (valor === 0) return '0';
   return `${valor > 0 ? '+' : '−'}${formatearEntero(Math.abs(valor))}`;
+}
+
+/** Variación con dos decimales y su unidad (`+3.19 pp`, `−0.70 pp`); el cero va sin signo. */
+export function formatearVariacion(valor: number, unidad: string): string {
+  const abs = Math.abs(valor).toFixed(2);
+  return `${valor > 0 ? '+' : valor < 0 ? '−' : ''}${abs} ${unidad}`;
 }
 
 /** Mezcla un hexadecimal `#RRGGBB` con blanco (0 = igual, 1 = blanco); Highcharts no resuelve variables CSS ni `color-mix`. */
@@ -57,7 +69,7 @@ export function datosColumnasCartera(datos: ColumnasCartera, colorBase: string):
     })),
     meta: datos.meta === undefined ? undefined : { valor: datos.meta, etiqueta: `Meta ${formatearValor(datos.meta, datos.formato)}` },
     faltan: faltante ? { desde: datos.totalHoy, etiqueta: `Faltan ${formatearValor(faltante, datos.formato)}` } : undefined,
-    // La Heredada se apila como tramo extra pero no suma al total Hoy (ver governance/tasks/demo).
+    // La trasladada se apila como tramo extra pero no suma al total Hoy.
     totales: [formatearValor(datos.totalHoy, datos.formato), formatearValor(datos.cierreAnterior, datos.formato)],
   };
 }

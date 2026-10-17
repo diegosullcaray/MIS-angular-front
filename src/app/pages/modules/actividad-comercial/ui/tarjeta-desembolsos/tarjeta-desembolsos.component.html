@@ -1,21 +1,28 @@
 <app-tarjeta-dominio titulo="Desembolsos" icono="lucideFlag" (verDetalle)="verDetalle.emit()">
-  @for (barra of barras(); track barra.progreso.etiqueta) {
-    <div class="flex w-full flex-col gap-1">
-      <div class="flex justify-between text-base">
-        <span class="text-[var(--mis-text-primary)]">{{ barra.progreso.etiqueta }}</span>
-        <span class="font-semibold text-[var(--mis-text-secondary)]">Meta: {{ meta(barra.progreso) }}</span>
-      </div>
+  <div class="flex w-full flex-col gap-1">
+    <div class="flex justify-between text-base">
+      <span class="text-[var(--mis-text-primary)]">{{ operaciones().progreso.etiqueta }}</span>
+      <span class="font-semibold text-[var(--mis-text-secondary)]">{{ operaciones().conMeta ? 'Meta: ' + operaciones().meta : 'Sin meta' }}</span>
+    </div>
+    @if (operaciones().conMeta) {
       <app-barra-meta
-        [pct]="barra.pct"
-        [color]="barra.color"
-        [marca]="barra.pct"
+        [pct]="operaciones().pct"
+        color="var(--mis-warning)"
+        [marca]="operaciones().pct"
         [esperado]="datos().avanceEsperado"
         [alto]="14"
-        [etiquetaFlotante]="barra.progreso.etiquetaValor ?? valor(barra.progreso)"
-        [descripcion]="barra.progreso.etiqueta + ': ' + valor(barra.progreso) + ' de ' + meta(barra.progreso)"
+        [etiquetaFlotante]="operaciones().valor"
+        [descripcion]="operaciones().progreso.etiqueta + ': ' + operaciones().valor + ' de ' + operaciones().meta"
       />
-    </div>
-  }
+    } @else {
+      <strong class="text-[28px] font-bold leading-8 tracking-tight text-[var(--mis-primary-text)]">{{ operaciones().valor }}</strong>
+    }
+  </div>
+  <!-- Meta de monto diferida: solo el importe del mes. -->
+  <div class="flex w-full items-baseline justify-between text-base">
+    <span class="text-[var(--mis-text-primary)]">Monto</span>
+    <strong class="text-[28px] font-bold leading-8 tracking-tight text-[var(--mis-primary-text)]">{{ monto() }}</strong>
+  </div>
   <div class="mt-0.5 flex items-center gap-3.5 text-xs text-[var(--mis-text-secondary)]">
     <span class="flex items-center gap-1"><span class="h-[11px] w-0.5 bg-[var(--mis-text-primary)]"></span>Avance actual</span>
     <span class="flex items-center gap-1">

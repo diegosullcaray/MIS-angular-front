@@ -1,23 +1,42 @@
-<app-window-panel [titulo]="titulo" [actualizando]="cargando()" (actualizar)="consultar()">
-  <!-- Orden de estados: error, cargando, contenido (los datos de ejemplo siempre traen contenido; el vacío llegará con el backend). -->
-  @if (error()) {
+<app-window-panel
+  [titulo]="titulo"
+  [conFiltros]="true"
+  [filtrosAbiertos]="true"
+  [permitirActualizar]="!!nivelActual()"
+  [actualizando]="cargando()"
+  (actualizar)="consultar()"
+>
+  <app-hier-selector
+    ventana-filtros
+    [paramsHier]="paramsHier"
+    placeholder="Elegir nivel"
+    (nodoSeleccionado)="onNivelSeleccionado($event)"
+    (error)="onErrorJerarquia()"
+  />
+
+  <!-- Orden de estados: sin nivel, error, cargando, vacío, contenido. -->
+  @if (!nivelActual()) {
+    <app-empty-state titulo="Elige un nivel" descripcion="Selecciona un nivel de la jerarquía en los filtros de arriba para ver el tablero." />
+  } @else if (error()) {
     <app-inline-error [detalle]="error()!" (reintentar)="consultar()" />
+  } @else if (cargando()) {
+    <app-list-skeleton />
+  } @else if (vacio()) {
+    <app-empty-state titulo="Sin información" descripcion="Esta entidad no tiene cartera ni movimientos en el corte." />
   } @else if (tablero(); as t) {
     <div class="flex flex-1 flex-col gap-2">
       <header class="flex flex-wrap items-center justify-between gap-2">
-        <h2 class="m-0 text-base font-bold text-[var(--mis-text-primary)]">{{ t.periodo }}</h2>
+        <h2 class="m-0 text-base font-bold text-[var(--mis-text-primary)]">{{ t.entidad }} · {{ t.periodo }}</h2>
         <span class="rounded-full border border-[var(--mis-border)] bg-[var(--mis-surface)] px-3 py-1 text-xs text-[var(--mis-text-secondary)]">Corte al {{ t.corte }}</span>
       </header>
       <section class="grid flex-1 auto-rows-fr grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3" aria-label="Dominios">
-        <app-tarjeta-desempeno [datos]="t.desempeno" />
+        <app-tarjeta-cartera [datos]="t.cartera" />
         <app-tarjeta-desembolsos [datos]="t.desembolsos" />
         <app-tarjeta-mora [datos]="t.mora" />
-        <app-tarjeta-seguros [datos]="t.seguros" />
-        <app-tarjeta-cartera [datos]="t.cartera" />
         <app-tarjeta-clientes [datos]="t.clientes" />
+        <app-tarjeta-digital [datos]="t.digital" />
+        <app-tarjeta-seguros [datos]="t.seguros" />
       </section>
     </div>
-  } @else {
-    <app-list-skeleton />
   }
 </app-window-panel>

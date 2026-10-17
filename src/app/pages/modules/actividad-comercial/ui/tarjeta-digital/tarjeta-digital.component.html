@@ -1,0 +1,25 @@
+<app-tarjeta-dominio titulo="Digital" icono="lucideSmartphone" (verDetalle)="verDetalle.emit()">
+  <div class="grid min-h-0 w-full flex-1 grid-cols-3 items-center gap-2">
+    @for (a of anillos(); track a.titulo) {
+      <figure class="m-0 flex min-w-0 flex-col items-center gap-1 text-center">
+        <svg class="h-[92px] w-[92px]" viewBox="0 0 100 100" role="img" [attr.aria-label]="a.descripcion">
+          <circle cx="50" cy="50" r="40" fill="none" stroke-width="10" stroke="color-mix(in srgb, var(--mis-text-secondary) 22%, var(--mis-surface))" />
+          <circle cx="50" cy="50" r="40" fill="none" stroke-width="10" stroke-linecap="butt" transform="rotate(-90 50 50)" [attr.stroke]="a.color" [attr.stroke-dasharray]="a.arco" />
+          @if (a.giroMeta !== null) {
+            <line x1="50" y1="3" x2="50" y2="17" stroke-width="3" stroke="var(--mis-text-primary)" [attr.transform]="'rotate(' + a.giroMeta + ' 50 50)'" />
+          }
+          <text x="50" y="56" text-anchor="middle" font-size="17" font-weight="700" fill="var(--mis-text-primary)">{{ a.valor }}</text>
+        </svg>
+        <figcaption class="flex min-w-0 flex-col items-center gap-0.5">
+          <strong class="text-xs text-[var(--mis-text-primary)]">{{ a.titulo }}</strong>
+          <span class="text-[11px] text-[var(--mis-text-secondary)]">
+            {{ a.conteo }} ·
+            <b [class.text-[var(--mis-success)]]="a.sube" [class.text-[var(--mis-danger)]]="a.baja">{{ a.variacion }}</b>
+          </span>
+          <em class="rounded-full border border-[var(--mis-border)] px-2 py-px text-[10px] not-italic text-[var(--mis-text-secondary)]">{{ a.chip }}</em>
+        </figcaption>
+      </figure>
+    }
+  </div>
+  <app-kpi-pie pie [kpis]="datos().kpis" />
+</app-tarjeta-dominio>

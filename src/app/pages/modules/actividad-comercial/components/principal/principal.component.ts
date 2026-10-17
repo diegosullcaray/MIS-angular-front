@@ -1,46 +1,69 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
+import { Component, effect, inject, signal } from '@angular/core';
+import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
+import { HierSelectorComponent } from '../../../../../shared/ui/hier-selector/hier-selector.component';
+import type { HierarquiaNodo } from '../../../../../shared/ui/hier-selector/jerarquia.model';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
-import { TITULO_TABLERO } from '../../constantes/actividad-comercial.constantes';
+import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
+import { ToastService } from '../../../../../shared/services/toast.service';
+import { PARAMS_HIER_TABLERO, TITULO_TABLERO } from '../../constantes/actividad-comercial.constantes';
 import { ActividadComercialService } from '../../services/actividad-comercial.service';
 import { TarjetaCarteraComponent } from '../../ui/tarjeta-cartera/tarjeta-cartera.component';
 import { TarjetaClientesComponent } from '../../ui/tarjeta-clientes/tarjeta-clientes.component';
 import { TarjetaDesembolsosComponent } from '../../ui/tarjeta-desembolsos/tarjeta-desembolsos.component';
-import { TarjetaDesempenoComponent } from '../../ui/tarjeta-desempeno/tarjeta-desempeno.component';
+import { TarjetaDigitalComponent } from '../../ui/tarjeta-digital/tarjeta-digital.component';
 import { TarjetaMoraComponent } from '../../ui/tarjeta-mora/tarjeta-mora.component';
 import { TarjetaSegurosComponent } from '../../ui/tarjeta-seguros/tarjeta-seguros.component';
 
-/** Tablero de Mando del asesor (Actividad Comercial). Contenedor: pide el tablero y reparte cada tarjeta. */
+/** Tablero de Seguimiento (Actividad Comercial). Contenedor: pide el tablero de la entidad elegida y reparte cada tarjeta. */
 @Component({
   selector: 'app-actividad-comercial-principal',
   standalone: true,
   imports: [
     WindowPanelComponent,
+    HierSelectorComponent,
+    EmptyStateComponent,
     InlineErrorComponent,
     ListSkeletonComponent,
-    TarjetaDesempenoComponent,
+    TarjetaCarteraComponent,
     TarjetaDesembolsosComponent,
     TarjetaMoraComponent,
-    TarjetaSegurosComponent,
-    TarjetaCarteraComponent,
     TarjetaClientesComponent,
+    TarjetaDigitalComponent,
+    TarjetaSegurosComponent,
   ],
   templateUrl: './principal.component.html',
 })
-export class PrincipalComponent implements OnInit {
+export class PrincipalComponent {
   private readonly service = inject(ActividadComercialService);
+  private readonly toast = inject(ToastService);
 
   protected readonly titulo = TITULO_TABLERO;
+  protected readonly paramsHier = PARAMS_HIER_TABLERO;
+  protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
   protected readonly tablero = this.service.tablero;
   protected readonly cargando = this.service.cargando;
   protected readonly error = this.service.error;
+  protected readonly vacio = this.service.vacio;
 
-  ngOnInit(): void {
-    this.consultar();
+  constructor() {
+    effect(() => {
+      const nodo = this.nivelActual();
+      if (nodo) this.service.consultar(nodo);
+    });
   }
 
+  protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
+    this.nivelActual.set(nodo);
+  }
+
+  /** Reemite el nivel actual para volver a consultar sin cambiar la selección. */
   protected consultar(): void {
-    this.service.consultar();
+    const nodo = this.nivelActual();
+    if (nodo) this.nivelActual.set({ ...nodo });
+  }
+
+  protected onErrorJerarquia(): void {
+    this.toast.error('No se pudo cargar la jerarquía', 'Inténtalo de nuevo en unos segundos.');
   }
 }

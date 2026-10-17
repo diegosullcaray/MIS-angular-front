@@ -26,7 +26,7 @@ export class ColumnasCarteraComponent {
     return `${d.titulo}. Hoy: ${this.texto(d.totalHoy)} (${tramos}). Cierre anterior: ${this.texto(d.cierreAnterior)}.`;
   });
 
-  protected texto(valor: number): string {
+  protected texto(valor: number | null): string {
     return formatearValor(valor, this.datos().formato);
   }
 }
