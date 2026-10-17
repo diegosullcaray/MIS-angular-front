@@ -1,5 +1,5 @@
 import { DestroyRef, Injectable, inject, signal } from '@angular/core';
-import { Observable, Subscription, map } from 'rxjs';
+import { Observable, Subscription, map, tap } from 'rxjs';
 import { ModReportesService } from '../../../../core/winder/instances/mod-reportes.service';
 import { ShellStateService } from '../../../../core/services/shell-state.service';
 import { fechaCorteJerarquia } from '../../../../shared/ui/hier-selector/fecha-corte.util';
@@ -39,7 +39,12 @@ export class ActividadComercialService {
   /** Origen de los datos. Nulo = el reporte no devolvió fila. */
   protected obtener(nodo: NodoTablero): Observable<TableroAsesor | null> {
     const params = { tip_cod: nodo.tip_cod, cod_rel: nodo.cod_rel, fec: fechaCorteJerarquia(this.shell.usuarioActivo()?.fechaCorte) };
+    console.log('[TAB_SEG] envía', { cod_rep: COD_TABLERO_SEGUIMIENTO, ...params, nodo });
     return this.reportes.getRegularTableResult(COD_TABLERO_SEGUIMIENTO, params).pipe(
+      tap({
+        next: (respuesta) => console.log('[TAB_SEG] recibe', respuesta),
+        error: (err) => console.error('[TAB_SEG] error', err, err?.status, err?.error),
+      }),
       map((respuesta) => {
         const filas = (respuesta.body as { resultado?: { data?: FilaTablero[] } } | null)?.resultado?.data;
         return filas?.[0] ? mapearTablero(filas[0], nodo.des_rel ?? nodo.desc_rel ?? nodo.cod_rel) : null;
