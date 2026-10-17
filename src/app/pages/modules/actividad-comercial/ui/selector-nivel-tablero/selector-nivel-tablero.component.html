@@ -1,0 +1,41 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="cerrar()"
+  [modal]="true"
+  [style]="{ width: '92vw', maxWidth: vista() === 'asesores' ? '1000px' : '620px' }"
+  [draggable]="false"
+  [resizable]="false"
+  appendTo="body"
+  header="Selecciona Nivel"
+>
+  @if (vista() === 'menu') {
+    <div class="flex flex-col gap-3 py-1">
+      <button type="button" class="w-full rounded-lg border border-[var(--mis-border)] bg-[var(--mis-primary-light)] py-3 font-medium text-[var(--mis-text-primary)] transition-opacity hover:opacity-80" (click)="abrirAsesores()">Asesores</button>
+      @for (nivel of niveles; track nivel.tipCodListado) {
+        <button type="button" class="w-full rounded-lg border border-[var(--mis-border)] bg-[var(--mis-primary-light)] py-3 font-medium text-[var(--mis-text-primary)] transition-opacity hover:opacity-80" (click)="abrirNivel(nivel.etiqueta, nivel.tipCodListado)">{{ nivel.etiqueta }}</button>
+      }
+      <button type="button" class="w-full rounded-lg border border-[var(--mis-border)] bg-[var(--mis-primary-light)] py-3 font-medium text-[var(--mis-text-primary)] transition-opacity hover:opacity-80" (click)="elegirFinanciera()">Financiera Confianza</button>
+    </div>
+  } @else {
+    <app-data-table
+      [columns]="vista() === 'asesores' ? columnasAsesor : columnasNivel()"
+      [data]="filas()"
+      [loading]="cargando()"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [searchFields]="vista() === 'asesores' ? camposBusquedaAsesor : ['des_rel']"
+      searchPlaceholder="Buscar..."
+      emptyMessage="Sin resultados para mostrar."
+      [selectableRows]="true"
+      [selectedRow]="seleccionada()"
+      (filaSeleccionada)="seleccionada.set($event)"
+    />
+  }
+
+  <ng-template pTemplate="footer">
+    @if (vista() !== 'menu') {
+      <p-button label="Volver" size="small" severity="secondary" [text]="true" (onClick)="volver()" />
+      <p-button label="Seleccionar" size="small" [disabled]="!seleccionada()" (onClick)="confirmar()" />
+    }
+  </ng-template>
+</p-dialog>

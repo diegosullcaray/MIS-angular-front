@@ -5,13 +5,18 @@
   [actualizando]="cargando()"
   (actualizar)="consultar()"
 >
-  <app-hier-selector
-    ventana-filtros
-    [paramsHier]="paramsHier"
-    placeholder="Elegir nivel"
-    (nodoSeleccionado)="onNivelSeleccionado($event)"
-    (error)="onErrorJerarquia()"
-  />
+  @if (esAdmin()) {
+    <p-button ventana-filtros [label]="nivelActual()?.des_rel ?? 'Elegir nivel'" icon="pi pi-sitemap" size="small" severity="secondary" (onClick)="mostrarSelector.set(true)" />
+  } @else {
+    <app-hier-selector
+      ventana-filtros
+      [paramsHier]="paramsHier"
+      placeholder="Elegir nivel"
+      (nodoSeleccionado)="onNivelSeleccionado($event)"
+      (error)="onErrorJerarquia()"
+    />
+  }
+  <app-selector-nivel-tablero [visible]="mostrarSelector()" (visibleChange)="mostrarSelector.set($event)" (nodoSeleccionado)="onNivelSeleccionado($event)" />
 
   <!-- Orden de estados: sin nivel, error, cargando, vacío, contenido. -->
   @if (!nivelActual()) {

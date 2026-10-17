@@ -32,7 +32,7 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 **No editar a mano**: `npm run inventario` regenera, `npm run inventario:check` verifica en CI.
 
 <!-- generado:inicio rutas-de-accion -->
-<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-10-17 · commit fb3a6793. No editar a mano. -->
+<!-- Generado por governance/scripts/generar-inventario.mjs — 2026-10-17 · commit d225c7ac. No editar a mano. -->
 
 | Módulo Ant | Servicio | Método | Ruta de acción | Verbo | Parámetros de payload | Clave de respuesta | Llamadas |
 |---|---|---|---|---|---|---|---:|
@@ -48,7 +48,7 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 | `app` (6302) | `ModFrameworkEsgService` | `getResumenPor` | `esg.res_por` | GET | — | `resultado` | 1 |
 | `app` (6302) | `ModIncentivosService` | `getCliBanc` | `incentivos3.bancarizados3` | GET | `tip_cod`, `cod_rel`, `fec` | `resultado` | 1 |
 | `app` (6302) | `ModIncentivosService` | `getDetail` | `incentivos3.detalle_var3` | GET | `tip_cod`, `cod_rel`, `cod_var`, `fec` | `resultado` | 1 |
-| `app` (6302) | `ModIncentivosService` | `getFromHierList` | `incentivos3.lista3` | GET | `tip_cod`, `cod_rel`, `tip_cod_l` | `resultado` | 1 |
+| `app` (6302) | `ModIncentivosService` | `getFromHierList` | `incentivos3.lista3` | GET | `tip_cod`, `cod_rel`, `tip_cod_l` | `resultado` | 2 |
 | `app` (6302) | `ModIncentivosService` | `getProd` | `incentivos3.productividad3` | GET | `tip_cod`, `cod_rel`, `fec` | `resultado` | 1 |
 | `app` (6302) | `ModIncentivosService` | `getTasa` | `incentivos3.tasas3` | GET | `tip_cod`, `cod_rel`, `fec` | `resultado` | 1 |
 | `app` (6302) | `ModIncentivosService` | `calcularIndividual` | `incentivos4.calculadora4` | GET | `model`, `params`, `fec` | `resultado` | 1 |
@@ -77,9 +77,9 @@ Los nombres son los del backend y **no se traducen**: `tip_cod` no se convierte 
 | `secciones` (5301) | `ModSeccionesService` | `getListaBecas` | `listas.pro_becas` | GET | `cod_bt` | `resultado` | **0** |
 | `secciones` (5301) | `ModSeccionesService` | `postRegularUpdate` | `regularUpdate` | GET | `cod_rep` | `result` | **0** |
 | `secciones` (5301) | `ModSeccionesService` | `getSecList` | `sec_list2` | GET | `email` | `result_sectorista` | **0** |
-| `admin` (6301) | `ModSysAdminService` | `getBaseHierarchy` | `base_hier` | GET | `email`, `cod_jer` | `base_hierarchy` | 3 |
+| `admin` (6301) | `ModSysAdminService` | `getBaseHierarchy` | `base_hier` | GET | `email`, `cod_jer` | `base_hierarchy` | 4 |
 | `admin` (6301) | `ModSysAdminService` | `getLevelHierarchy` | `level_hier` | GET | `cod_jer`, `lvl_jer`, `tip_cod`, `cod_rels`, `params` | `level_hierarchy` | 1 |
-| `admin` (6301) | `ModSysAdminService` | `getListPick01` | `list_pick_01` | GET | `tip_cod`, `cod_rel` | `list_res` | 2 |
+| `admin` (6301) | `ModSysAdminService` | `getListPick01` | `list_pick_01` | GET | `tip_cod`, `cod_rel` | `list_res` | 3 |
 | `admin` (6301) | `ModSysAdminService` | `getMenuItems` | `list_sec` | GET | `email` | `menu_response` | 1 |
 | `admin` (6301) | `ModSysAdminService` | `postRouteTrack` | `reg_track_info` | POST | `reg_json` | `res` | **0** |
 | `session` (6300) | `ModSysLoginService` | `login` | `login` | POST | `email`, `alt` | `login_response` | 1 |

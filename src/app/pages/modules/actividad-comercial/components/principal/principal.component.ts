@@ -1,13 +1,15 @@
 import { Component, effect, inject, signal } from '@angular/core';
+import { ShellStateService } from '../../../../../core/services/shell-state.service';
+import { ButtonModule } from 'primeng/button';
+import { SelectorNivelTableroComponent } from '../../ui/selector-nivel-tablero/selector-nivel-tablero.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { HierSelectorComponent } from '../../../../../shared/ui/hier-selector/hier-selector.component';
-import type { HierarquiaNodo } from '../../../../../shared/ui/hier-selector/jerarquia.model';
 import { InlineErrorComponent } from '../../../../../shared/ui/inline-error/inline-error.component';
 import { ListSkeletonComponent } from '../../../../../shared/ui/list-skeleton/list-skeleton.component';
 import { WindowPanelComponent } from '../../../../../shared/ui/window-panel/window-panel.component';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { PARAMS_HIER_TABLERO, TITULO_TABLERO } from '../../constantes/actividad-comercial.constantes';
-import { ActividadComercialService } from '../../services/actividad-comercial.service';
+import { ActividadComercialService, type NodoTablero } from '../../services/actividad-comercial.service';
 import { TarjetaCarteraComponent } from '../../ui/tarjeta-cartera/tarjeta-cartera.component';
 import { TarjetaClientesComponent } from '../../ui/tarjeta-clientes/tarjeta-clientes.component';
 import { TarjetaDesembolsosComponent } from '../../ui/tarjeta-desembolsos/tarjeta-desembolsos.component';
@@ -21,6 +23,8 @@ import { TarjetaSegurosComponent } from '../../ui/tarjeta-seguros/tarjeta-seguro
   standalone: true,
   imports: [
     WindowPanelComponent,
+    ButtonModule,
+    SelectorNivelTableroComponent,
     HierSelectorComponent,
     EmptyStateComponent,
     InlineErrorComponent,
@@ -38,9 +42,14 @@ export class PrincipalComponent {
   private readonly service = inject(ActividadComercialService);
   private readonly toast = inject(ToastService);
 
+  /** El administrador elige el nivel; sin él, el selector no consulta la raíz por su cuenta. */
+  protected readonly esAdmin = inject(ShellStateService).esAdmin;
+  /** El administrador entra con el diálogo abierto: sin nivel no hay qué consultar. */
+  protected readonly mostrarSelector = signal(inject(ShellStateService).esAdmin());
+
   protected readonly titulo = TITULO_TABLERO;
   protected readonly paramsHier = PARAMS_HIER_TABLERO;
-  protected readonly nivelActual = signal<HierarquiaNodo | null>(null);
+  protected readonly nivelActual = signal<NodoTablero | null>(null);
   protected readonly tablero = this.service.tablero;
   protected readonly cargando = this.service.cargando;
   protected readonly error = this.service.error;
@@ -53,7 +62,7 @@ export class PrincipalComponent {
     });
   }
 
-  protected onNivelSeleccionado(nodo: HierarquiaNodo): void {
+  protected onNivelSeleccionado(nodo: NodoTablero): void {
     this.nivelActual.set(nodo);
   }
 
