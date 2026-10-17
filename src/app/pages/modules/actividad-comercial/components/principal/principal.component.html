@@ -1,7 +1,6 @@
 <app-window-panel
   [titulo]="titulo"
   [conFiltros]="true"
-  [filtrosAbiertos]="true"
   [permitirActualizar]="!!nivelActual()"
   [actualizando]="cargando()"
   (actualizar)="consultar()"
@@ -24,12 +23,13 @@
   } @else if (vacio()) {
     <app-empty-state titulo="Sin información" descripcion="Esta entidad no tiene cartera ni movimientos en el corte." />
   } @else if (tablero(); as t) {
-    <div class="flex flex-1 flex-col gap-2">
+    <!-- La ventana no debe hacer scroll: el contenido se reparte en el alto disponible (min-h-0) y cada tarjeta recorta lo que no cabe. -->
+    <div class="flex min-h-0 flex-1 flex-col gap-2">
       <header class="flex flex-wrap items-center justify-between gap-2">
-        <h2 class="m-0 text-base font-bold text-[var(--mis-text-primary)]">{{ t.entidad }} · {{ t.periodo }}</h2>
+        <h2 class="m-0 truncate text-base font-bold text-[var(--mis-text-primary)]">{{ t.entidad }} · {{ t.periodo }}</h2>
         <span class="rounded-full border border-[var(--mis-border)] bg-[var(--mis-surface)] px-3 py-1 text-xs text-[var(--mis-text-secondary)]">Corte al {{ t.corte }}</span>
       </header>
-      <section class="grid flex-1 auto-rows-fr grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3" aria-label="Dominios">
+      <section class="grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3" aria-label="Dominios">
         <app-tarjeta-cartera [datos]="t.cartera" />
         <app-tarjeta-desembolsos [datos]="t.desembolsos" />
         <app-tarjeta-mora [datos]="t.mora" />
